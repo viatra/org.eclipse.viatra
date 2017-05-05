@@ -21,14 +21,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  * @noimplement This interface is not intended to be implemented by clients, except in the org.eclipse.viatra.query.runtime plugin.
  */
 public interface IQueryBackendHintProvider {
-	
-	/**
-	 * Suggests query evaluation hints regarding a query. The returned hints reflects the default hints of the 
-	 * query engine merged with the hints provided by the pattern itself. These can be overridden via specific
-	 * advanced API of the engine.  
-	 * 
+    
+    /**
+     * Suggests query evaluation hints regarding a query. The returned hints reflects the default hints of the 
+     * query engine merged with the hints provided by the pattern itself. These can be overridden via specific
+     * advanced API of the engine.  
+     * 
      * @since 1.4
      */
-	QueryEvaluationHint getQueryEvaluationHint(PQuery query);
-	
+    QueryEvaluationHint getQueryEvaluationHint(PQuery query);
+    
 }

@@ -11,6 +11,6 @@
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
 enum ComplexPatternType {
-	NORMAL,
-	ANONYMOUS
+    NORMAL,
+    ANONYMOUS
 }

@@ -20,34 +20,34 @@ import org.junit.Test;
 
 public class DRedCompleteGraphTestCase {
 
-	@Test
-	public void testResult() {        		
-		int nodeCount = 10;
-		Graph<Integer> g = new Graph<Integer>();
-		DFSAlg<Integer> dfsa = new DFSAlg<Integer>(g);
-		DRedAlg<Integer> da = new DRedAlg<Integer>(g);
+    @Test
+    public void testResult() {        		
+        int nodeCount = 10;
+        Graph<Integer> g = new Graph<Integer>();
+        DFSAlg<Integer> dfsa = new DFSAlg<Integer>(g);
+        DRedAlg<Integer> da = new DRedAlg<Integer>(g);
 
-		for (int i = 0; i < nodeCount; i++) {
-			g.insertNode(i);
-		}
+        for (int i = 0; i < nodeCount; i++) {
+            g.insertNode(i);
+        }
 
-		for (int i = 0; i < nodeCount; i++) {
-			for (int j = 0; j < nodeCount; j++) {
-				if (i != j) {
-					g.insertEdge(i, j);
-					assertEquals(da.getTcRelation(), dfsa.getTcRelation());
-				}
-			}
-		}
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < nodeCount; j++) {
+                if (i != j) {
+                    g.insertEdge(i, j);
+                    assertEquals(da.getTcRelation(), dfsa.getTcRelation());
+                }
+            }
+        }
 
-		for (int i = 0; i < nodeCount; i++) {
-			for (int j = 0; j < nodeCount; j++) {
-				if (i != j) {
-					g.deleteEdge(i, j);
-					assertEquals(da.getTcRelation(), dfsa.getTcRelation());
-				}
-			}
-		}
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < nodeCount; j++) {
+                if (i != j) {
+                    g.deleteEdge(i, j);
+                    assertEquals(da.getTcRelation(), dfsa.getTcRelation());
+                }
+            }
+        }
 
-	}
+    }
 }

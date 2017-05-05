@@ -22,8 +22,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  *
  */
 public enum LocalSearchBackendFactory implements IQueryBackendFactory {
-	
-	INSTANCE;
+    
+    INSTANCE;
     
     /**
      * @since 1.5
@@ -35,7 +35,7 @@ public enum LocalSearchBackendFactory implements IQueryBackendFactory {
     
     @Override
     public Class<? extends IQueryBackend> getBackendClass() {
-    	return LocalSearchBackend.class;
+        return LocalSearchBackend.class;
     }
 
     /**

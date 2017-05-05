@@ -49,80 +49,80 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
     
     private ImageRegistry imageRegistry = LocalSearchToolingActivator.getDefault().getImageRegistry();
 
-	private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = Maps.newHashMap();
+    private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = Maps.newHashMap();
 
-	@Override
-	public void update(final ViewerCell cell) {
+    @Override
+    public void update(final ViewerCell cell) {
 
-		localResourceManager = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
+        localResourceManager = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
 
-		final SearchOperationViewerNode node = (SearchOperationViewerNode) cell.getElement();
+        final SearchOperationViewerNode node = (SearchOperationViewerNode) cell.getElement();
 
-		StyledString text = new StyledString();
+        StyledString text = new StyledString();
 
-		text.append(node.getLabelText());
+        text.append(node.getLabelText());
 
-		switch (node.getOperationStatus()) {
-		case EXECUTED:
-			cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_APPLIED_OPERATION));
-			text.setStyle(0, text.length(), new Styler() {
-				public void applyStyles(TextStyle textStyle) {
-					textStyle.font = localResourceManager.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD));
-					doColoring(node, textStyle);
-				}
-			});
-			break;
-		case CURRENT:
-			cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_CURRENT_OPERATION));
-			text.setStyle(0, text.length(), new Styler() {
-				public void applyStyles(TextStyle textStyle) {
-					LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
-					textStyle.font = localResMan.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD | SWT.ITALIC));
-					doColoring(node, textStyle);
-					textStyle.background = localResourceManager.createColor(new RGB(200, 235, 255));
-				}
-			});
-			break;
-		case QUEUED:
-			cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_NOT_APPLIED_OPERATION));
-			text.setStyle(0, text.length(), new Styler() {
-				public void applyStyles(TextStyle textStyle) {
-					LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
-					textStyle.font = localResMan.createFont(FontDescriptor.createFrom("Arial", 10, SWT.NORMAL));
-					doColoring(node, textStyle);
-				}
-			});
-			break;
-		default:
-			throw new UnsupportedOperationException("Unknown operation status: " + node.getOperationStatus());
-		}
+        switch (node.getOperationStatus()) {
+        case EXECUTED:
+            cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_APPLIED_OPERATION));
+            text.setStyle(0, text.length(), new Styler() {
+                public void applyStyles(TextStyle textStyle) {
+                    textStyle.font = localResourceManager.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD));
+                    doColoring(node, textStyle);
+                }
+            });
+            break;
+        case CURRENT:
+            cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_CURRENT_OPERATION));
+            text.setStyle(0, text.length(), new Styler() {
+                public void applyStyles(TextStyle textStyle) {
+                    LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
+                    textStyle.font = localResMan.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD | SWT.ITALIC));
+                    doColoring(node, textStyle);
+                    textStyle.background = localResourceManager.createColor(new RGB(200, 235, 255));
+                }
+            });
+            break;
+        case QUEUED:
+            cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_NOT_APPLIED_OPERATION));
+            text.setStyle(0, text.length(), new Styler() {
+                public void applyStyles(TextStyle textStyle) {
+                    LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
+                    textStyle.font = localResMan.createFont(FontDescriptor.createFrom("Arial", 10, SWT.NORMAL));
+                    doColoring(node, textStyle);
+                }
+            });
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown operation status: " + node.getOperationStatus());
+        }
 
-		cell.setText(text.toString());
-		cell.setStyleRanges(text.getStyleRanges());
+        cell.setText(text.toString());
+        cell.setStyleRanges(text.getStyleRanges());
 
-		super.update(cell);
-	}
+        super.update(cell);
+    }
 
     private void doColoring(SearchOperationViewerNode node, TextStyle textStyle) {
         switch (node.getOperationKind()) {
-		case EXTEND:
-			textStyle.foreground = localResourceManager.createColor(new RGB(0, 200, 0));
-			break;
-		case COUNT:
-			textStyle.foreground = localResourceManager.createColor(new RGB(200,200,200));
-			break;
-		case NAC:
-			textStyle.foreground = localResourceManager.createColor(new RGB(230,0,0));
-			break;
-		case CHECK:
-			textStyle.foreground = localResourceManager.createColor(new RGB(100, 100, 100));
-			break;
-		case MATCH:
-			textStyle.foreground = localResourceManager.createColor(new RGB(0, 0, 255));
-			break;
-		default:
-			throw new UnsupportedOperationException("Unknown operation kind: " + node.getOperationKind());
-		}
+        case EXTEND:
+            textStyle.foreground = localResourceManager.createColor(new RGB(0, 200, 0));
+            break;
+        case COUNT:
+            textStyle.foreground = localResourceManager.createColor(new RGB(200,200,200));
+            break;
+        case NAC:
+            textStyle.foreground = localResourceManager.createColor(new RGB(230,0,0));
+            break;
+        case CHECK:
+            textStyle.foreground = localResourceManager.createColor(new RGB(100, 100, 100));
+            break;
+        case MATCH:
+            textStyle.foreground = localResourceManager.createColor(new RGB(0, 0, 255));
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown operation kind: " + node.getOperationKind());
+        }
         
         if(node.isBreakpoint()){
             textStyle.borderStyle = SWT.BORDER_SOLID;
@@ -144,15 +144,15 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
     }
 
     public void createDummyMatchOperationMapping(Object dummyOperation, SearchPlanExecutor inputElement) {
-		this.dummyMatchOperationMappings.put(dummyOperation, inputElement);
-	}
+        this.dummyMatchOperationMappings.put(dummyOperation, inputElement);
+    }
     public Object getDummyMatchOperation(SearchPlanExecutor planExecutor) {
-    	for (Entry<Object, SearchPlanExecutor> key : dummyMatchOperationMappings.entrySet()) {
-			if(Objects.equals(key.getValue(), planExecutor)){
-				return key.getKey();
-			}
-		}
-		return null;
-	}
+        for (Entry<Object, SearchPlanExecutor> key : dummyMatchOperationMappings.entrySet()) {
+            if(Objects.equals(key.getValue(), planExecutor)){
+                return key.getKey();
+            }
+        }
+        return null;
+    }
 
 }

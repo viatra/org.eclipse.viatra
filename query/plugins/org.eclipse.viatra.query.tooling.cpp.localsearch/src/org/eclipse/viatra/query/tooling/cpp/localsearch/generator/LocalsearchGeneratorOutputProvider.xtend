@@ -19,22 +19,22 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.QueryDescriptor
  * @author Robert Doczi
  */
 abstract class LocalsearchGeneratorOutputProvider implements ILocalsearchGeneratorOutputProvider {
-	
-	var QueryDescriptor query
+    
+    var QueryDescriptor query
 
-	override initialize(QueryDescriptor query) {
-		this.query = query
-	}
+    override initialize(QueryDescriptor query) {
+        this.query = query
+    }
 
-	override getOutput() {
-		val generators = initializeGenerators(query)
-		val root = "Viatra/Query"
+    override getOutput() {
+        val generators = initializeGenerators(query)
+        val root = "Viatra/Query"
 
-		return generators.map[
-			new GeneratorOutputRecord('''«root»/«query.name.toFirstUpper»''', fileName, compile)
-		].toList
-	}
+        return generators.map[
+            new GeneratorOutputRecord('''«root»/«query.name.toFirstUpper»''', fileName, compile)
+        ].toList
+    }
 
-	def Collection<IGenerator> initializeGenerators(QueryDescriptor query)
-	
+    def Collection<IGenerator> initializeGenerators(QueryDescriptor query)
+    
 }

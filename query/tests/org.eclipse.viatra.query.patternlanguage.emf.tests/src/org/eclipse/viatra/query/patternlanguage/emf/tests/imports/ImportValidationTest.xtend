@@ -32,96 +32,96 @@ import org.junit.runner.RunWith
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class ImportValidationTest extends AbstractValidatorTest {
 
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	@Inject
-	EMFPatternLanguageJavaValidator validator
-	@Inject
-	Injector injector
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    @Inject
+    EMFPatternLanguageJavaValidator validator
+    @Inject
+    Injector injector
 
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
 
-	@Inject extension ValidationTestHelper
+    @Inject extension ValidationTestHelper
 
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
 
-	@Test
-	def duplicateImport() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def duplicateImport() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		')
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
-		    getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		);
-	}
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
+            getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        );
+    }
 
-	@Test
-	def implicitJavaImport() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def implicitJavaImport() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(D) = {
-				EDouble(D);
-				check(Math::abs(D) > 10.5);
-			}
-		')
+            pattern name(D) = {
+                EDouble(D);
+                check(Math::abs(D) > 10.5);
+            }
+        ')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
 
-	@Test
-	def javaClassImport() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
-			import java ^java.util.Calendar
+    @Test
+    def javaClassImport() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            import java ^java.util.Calendar
 
-			pattern name(L) = {
-				ELong(L);
-				check(Calendar::getInstance().getTime().getTime() > L);
-			}
-		')
+            pattern name(L) = {
+                ELong(L);
+                check(Calendar::getInstance().getTime().getTime() > L);
+            }
+        ')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
 
-	@Test
-	def javaPackageImport() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
-			import java ^java.util.*
+    @Test
+    def javaPackageImport() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            import java ^java.util.*
 
-			pattern name(L) = {
-				ELong(L);
-				check(Calendar::getInstance().getTime().getTime() > L);
-			}
-		')
-		tester.validate(model).assertAll(
-			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-			getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED),
-			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
+            pattern name(L) = {
+                ELong(L);
+                check(Calendar::getInstance().getTime().getTime() > L);
+            }
+        ')
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
 }

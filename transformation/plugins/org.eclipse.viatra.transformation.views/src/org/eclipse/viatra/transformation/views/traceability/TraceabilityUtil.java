@@ -82,9 +82,9 @@ public class TraceabilityUtil {
      */
     public static void deleteTraceAndTarget(ViatraQueryEngine engine, EObject toDelete) throws ViatraQueryException {
     
-    	Trace trace = (Trace) engine.getMatcher(Trace2targetQuerySpecification.instance()).getAllMatches().iterator().next().getTrace();
-    	EcoreUtil.delete(trace);
-    	
+        Trace trace = (Trace) engine.getMatcher(Trace2targetQuerySpecification.instance()).getAllMatches().iterator().next().getTrace();
+        EcoreUtil.delete(trace);
+        
         // Push up the contained objects and delete the targets
         // Collect
         Collection<EObject> toPush = Lists.newArrayList();
@@ -101,6 +101,6 @@ public class TraceabilityUtil {
     }
     
     private static Trace createTraceEObject() {
-    	return TraceabilityFactory.eINSTANCE.createTrace();
+        return TraceabilityFactory.eINSTANCE.createTrace();
     }
 }

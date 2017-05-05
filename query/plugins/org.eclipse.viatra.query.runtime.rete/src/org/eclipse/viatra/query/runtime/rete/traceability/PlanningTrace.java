@@ -28,54 +28,54 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
  */
 public class PlanningTrace extends RecipeTraceInfo implements PatternTraceInfo {
 
-	protected SubPlan subPlan;
-	protected List<PVariable> variablesTuple;
-	protected Map<PVariable, Integer> posMapping;
+    protected SubPlan subPlan;
+    protected List<PVariable> variablesTuple;
+    protected Map<PVariable, Integer> posMapping;
 
-	public PlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
-			ReteNodeRecipe recipe,
-			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
-		super(recipe, parentRecipeTraces);
-		this.subPlan = subPlan;
-		this.variablesTuple = variablesTuple;
-		
-		this.posMapping = new HashMap<PVariable, Integer>();
-		for (int i = 0; i < variablesTuple.size(); ++i)
-			posMapping.put(variablesTuple.get(i), i);
-	}
+    public PlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
+            ReteNodeRecipe recipe,
+            Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
+        super(recipe, parentRecipeTraces);
+        this.subPlan = subPlan;
+        this.variablesTuple = variablesTuple;
+        
+        this.posMapping = new HashMap<PVariable, Integer>();
+        for (int i = 0; i < variablesTuple.size(); ++i)
+            posMapping.put(variablesTuple.get(i), i);
+    }
 
-	public PlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
-			ReteNodeRecipe recipe,
-			RecipeTraceInfo... parentRecipeTraces) {
-		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
-	}
+    public PlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
+            ReteNodeRecipe recipe,
+            RecipeTraceInfo... parentRecipeTraces) {
+        this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
+    }
 
-	public SubPlan getSubPlan() {
-		return subPlan;
-	}
+    public SubPlan getSubPlan() {
+        return subPlan;
+    }
 
-	public String getPatternName() {
-		return subPlan.getBody().getPattern().getFullyQualifiedName();
-	}
+    public String getPatternName() {
+        return subPlan.getBody().getPattern().getFullyQualifiedName();
+    }
 
-	public List<PVariable> getVariablesTuple() {
-		return variablesTuple;
-	}
+    public List<PVariable> getVariablesTuple() {
+        return variablesTuple;
+    }
 
-	public Map<PVariable, Integer> getPosMapping() {
-		return posMapping;
-	}
+    public Map<PVariable, Integer> getPosMapping() {
+        return posMapping;
+    }
 
-	/**
-	 * Returns a new clone that reinterprets the same compiled form
-	 *  as the compiled form of a (potentially different) subPlan.
-	 * Useful e.g. if child plan turns out to be a no-op, or when promoting a {@link PlanningTrace} to {@link CompiledSubPlan}. 
-	 */
-	public CompiledSubPlan cloneFor(SubPlan newSubPlan) {
-	    return new CompiledSubPlan(newSubPlan, 
-	    		getVariablesTuple(), 
-	    		getRecipe(), 
-	    		getParentRecipeTraces());
-	}
+    /**
+     * Returns a new clone that reinterprets the same compiled form
+     *  as the compiled form of a (potentially different) subPlan.
+     * Useful e.g. if child plan turns out to be a no-op, or when promoting a {@link PlanningTrace} to {@link CompiledSubPlan}. 
+     */
+    public CompiledSubPlan cloneFor(SubPlan newSubPlan) {
+        return new CompiledSubPlan(newSubPlan, 
+                getVariablesTuple(), 
+                getRecipe(), 
+                getParentRecipeTraces());
+    }
 
 }

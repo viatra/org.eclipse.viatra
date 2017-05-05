@@ -41,9 +41,9 @@ public class ExtendConstant extends ExtendOperation<Object> {
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, new Integer[0]);
+    }
     
     @Override
     public String toString() {

@@ -170,7 +170,7 @@ public class TupleMask {
      * Generates a masked view of the original tuple.
      */
     public <T> List<T> transform(List<T> original) {
-    	List<T> signature = new ArrayList<T>(indices.length);
+        List<T> signature = new ArrayList<T>(indices.length);
         for (int i = 0; i < indices.length; ++i)
             signature.add(original.get(indices[i]));
         return signature;

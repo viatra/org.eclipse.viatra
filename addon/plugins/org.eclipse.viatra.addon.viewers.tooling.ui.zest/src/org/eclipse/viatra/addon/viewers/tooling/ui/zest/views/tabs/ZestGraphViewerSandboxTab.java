@@ -42,7 +42,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {//imple
 
     @Override
     public void bindState(ViewerState state) {
-    	ViatraGraphViewers.bind(viewer, state, true);
+        ViatraGraphViewers.bind(viewer, state, true);
 //        ViatraGraphViewers.bindWithIsolatedNodes(viewer, state, true);
     }
 

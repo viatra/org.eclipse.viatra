@@ -29,137 +29,137 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternMo
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
-		
+        
     @Inject
-	ParseHelper<PatternModel> parseHelper
-	@Inject
-	EMFPatternLanguageJavaValidator validator
-	@Inject
-	Injector injector
-	
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
-	@Test
-	def void tooFewParameters() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    ParseHelper<PatternModel> parseHelper
+    @Inject
+    EMFPatternLanguageJavaValidator validator
+    @Inject
+    Injector injector
+    
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
+    @Test
+    def void tooFewParameters() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature
-			pattern pattern2(p : Pattern) = {
-				Pattern(p);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature
+            pattern pattern2(p : Pattern) = {
+                Pattern(p);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertError(QueryBasedFeaturePatternValidator::PATTERN_ISSUE_CODE);
-	}
-	
-	@Test
-	def void emptyFeatureName() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    }
+    
+    @Test
+    def void emptyFeatureName() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature(feature = "")
-			pattern pattern2(p : Pattern, pb : PatternBody) = {
-				Pattern.bodies(p, pb);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature(feature = "")
+            pattern pattern2(p : Pattern, pb : PatternBody) = {
+                Pattern.bodies(p, pb);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertError(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE);
-	}
-	
-	@Test
-	def void notFoundFeature() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    }
+    
+    @Test
+    def void notFoundFeature() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature
-			pattern pattern2(p : Pattern, pb : PatternBody) = {
-				Pattern.bodies(p, pb);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature
+            pattern pattern2(p : Pattern, pb : PatternBody) = {
+                Pattern.bodies(p, pb);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertError(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE);
-	}
-	
-	@Test
-	def void multipleAnnotations() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    }
+    
+    @Test
+    def void multipleAnnotations() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature
-			@QueryBasedFeature
-			pattern pattern2(p : Pattern, pb : PatternBody) = {
-				Pattern.bodies(p, pb);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature
+            @QueryBasedFeature
+            pattern pattern2(p : Pattern, pb : PatternBody) = {
+                Pattern.bodies(p, pb);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertAll(
             getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE),
             getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE)
         );
-	}
-	
-	@Test
-	def void ambiguousAnnotations() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    }
+    
+    @Test
+    def void ambiguousAnnotations() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature(feature = "x")
-			@QueryBasedFeature(feature = "x")
-			pattern pattern2(p : Pattern, pb : PatternBody) = {
-				Pattern.bodies(p, pb);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature(feature = "x")
+            @QueryBasedFeature(feature = "x")
+            pattern pattern2(p : Pattern, pb : PatternBody) = {
+                Pattern.bodies(p, pb);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertAll(
             getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE),
             getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE)
         );
-	}
-	
-	@Test
-	def void incorrectFeature() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    }
+    
+    @Test
+    def void incorrectFeature() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature
-			pattern bodies(p : Pattern, pb : PatternBody) = {
-				Pattern.bodies(p, pb);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature
+            pattern bodies(p : Pattern, pb : PatternBody) = {
+                Pattern.bodies(p, pb);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertAll(getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
-		  getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
-		  getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE)
-		);
-	}
-	
-	@Test
-	def void notVolatileFeature() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+          getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
+          getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE)
+        );
+    }
+    
+    @Test
+    def void notVolatileFeature() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			@QueryBasedFeature
-			pattern variables(pb : PatternBody, v : Variable) = {
-				PatternBody.variables(pb, v);
-			}'
-		) 
-		val validationResult = tester.validate(model)
+            @QueryBasedFeature
+            pattern variables(pb : PatternBody, v : Variable) = {
+                PatternBody.variables(pb, v);
+            }'
+        ) 
+        val validationResult = tester.validate(model)
         validationResult.assertAll(
             getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
             getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE)
         );
-	}
-	
+    }
+    
 }

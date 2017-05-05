@@ -28,8 +28,8 @@ import com.google.common.collect.ImmutableMap;
  */
 public class FormatParser {
 
-	public static final String ANNOTATION_ID = "Format";
-	private final static String PREFIX = "org.eclipse.viatra.viewers.format.";
+    public static final String ANNOTATION_ID = "Format";
+    private final static String PREFIX = "org.eclipse.viatra.viewers.format.";
     public final static String COLOR = PREFIX + "color";
     public final static String LINE_COLOR = PREFIX + "linecolor";
     public final static String TEXT_COLOR = PREFIX + "textcolor";
@@ -109,6 +109,6 @@ public class FormatParser {
      * @return
      */
     public static String getStringProperty(FormattableElement element, String index) {
-    	return (String) element.getFormat().getProperties().get(index);
+        return (String) element.getFormat().getProperties().get(index);
     }
 }

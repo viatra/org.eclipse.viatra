@@ -8,7 +8,7 @@
        uri = "http://www.eclipse.org/viatra/query/tooling/generator/model/IQGenModel" 
        class = "org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelPackage"
        genModel = "model/generated/GeneratorModel.genmodel" /> 
-	
+    
   </extension>
 
 

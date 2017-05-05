@@ -17,6 +17,6 @@ import java.util.List
  */
 interface IGeneratorOutputProvider {
 
-	def List<GeneratorOutputRecord> getOutput()
-	
+    def List<GeneratorOutputRecord> getOutput()
+    
 }

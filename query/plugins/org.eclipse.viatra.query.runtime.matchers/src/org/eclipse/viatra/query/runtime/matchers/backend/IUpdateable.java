@@ -19,11 +19,11 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  *
  */
 public interface IUpdateable {
-	
-	/**
-	 * This callback method must be free of exceptions, even {@link RuntimeException}s (though not {@link Error}s).
-	 * @param updateElement the tuple that is changed
-	 * @param isInsertion true if the tuple appeared in the result set, false if disappeared from the result set
-	 */
-	public void update(Tuple updateElement, boolean isInsertion);
+    
+    /**
+     * This callback method must be free of exceptions, even {@link RuntimeException}s (though not {@link Error}s).
+     * @param updateElement the tuple that is changed
+     * @param isInsertion true if the tuple appeared in the result set, false if disappeared from the result set
+     */
+    public void update(Tuple updateElement, boolean isInsertion);
 }

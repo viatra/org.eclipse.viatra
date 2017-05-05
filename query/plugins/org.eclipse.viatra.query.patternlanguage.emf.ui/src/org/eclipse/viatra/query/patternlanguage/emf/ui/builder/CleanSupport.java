@@ -191,7 +191,7 @@ public class CleanSupport {
                         }
                         final String foundFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
                         if (!foundFQN.equals(fqn)){
-                        	// Incorrect old version found, executing full clean
+                            // Incorrect old version found, executing full clean
                             context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
                             return;
                         }

@@ -41,17 +41,17 @@ import com.google.common.collect.ImmutableSet;
  */
 public class TestUmlDerivedFeatures {
 
-	private static final UMLFactory FACTORY = UMLFactory.eINSTANCE;
+    private static final UMLFactory FACTORY = UMLFactory.eINSTANCE;
 
-	private static ViatraQueryEngine getEngine(Resource resource) throws ViatraQueryException {
-		return ViatraQueryEngine.on(new EMFScope(resource));
-	}
-	
-	private static Resource createResource() {
-		return new ResourceSetImpl().createResource(URI.createURI("test"));
-	}
-	
-	@Test
+    private static ViatraQueryEngine getEngine(Resource resource) throws ViatraQueryException {
+        return ViatraQueryEngine.on(new EMFScope(resource));
+    }
+    
+    private static Resource createResource() {
+        return new ResourceSetImpl().createResource(URI.createURI("test"));
+    }
+    
+    @Test
     public void addAffectsContainment() throws ViatraQueryException {
         Resource resource = createResource();
         Package pkg = FACTORY.createPackage();
@@ -68,24 +68,24 @@ public class TestUmlDerivedFeatures {
         assertEquals(ImmutableSet.of(clazz.getQualifiedName()), matcher.getAllValuesOfqualifiedName(clazz));
     }
 
-	@Test
-	public void associationEndType() throws ViatraQueryException {
-		Resource resource = createResource();
-		Association association = FACTORY.createAssociation();
-		resource.getContents().add(association);
-		Property memberEnd = FACTORY.createProperty();
-		resource.getContents().add(memberEnd);
-		association.getMemberEnds().add(memberEnd);
-		Type endType = FACTORY.createClass();
-		resource.getContents().add(endType);
-		memberEnd.setType(endType);
-		AssociationEndTypeMatcher matcher = AssociationEndTypeMatcher.on(getEngine(resource));
-		assertEquals(ImmutableSet.of(endType), matcher.getAllValuesOftype());
-	}
+    @Test
+    public void associationEndType() throws ViatraQueryException {
+        Resource resource = createResource();
+        Association association = FACTORY.createAssociation();
+        resource.getContents().add(association);
+        Property memberEnd = FACTORY.createProperty();
+        resource.getContents().add(memberEnd);
+        association.getMemberEnds().add(memberEnd);
+        Type endType = FACTORY.createClass();
+        resource.getContents().add(endType);
+        memberEnd.setType(endType);
+        AssociationEndTypeMatcher matcher = AssociationEndTypeMatcher.on(getEngine(resource));
+        assertEquals(ImmutableSet.of(endType), matcher.getAllValuesOftype());
+    }
 
-	@Test
+    @Test
     public void namedElementNamespace() throws ViatraQueryException {
-	    Resource resource = createResource();
+        Resource resource = createResource();
         Package rootPackage = FACTORY.createPackage();
         resource.getContents().add(rootPackage);
         rootPackage.setName("root");
@@ -96,10 +96,10 @@ public class TestUmlDerivedFeatures {
         assertEquals(ImmutableSet.of(rootPackage), matcher.getAllValuesOftarget(childPackage));
     }
 
-	@Test
+    @Test
     public void namedElementQualifiedName() throws ViatraQueryException {
-	    Resource resource = createResource();
-	    Package rootPackage = FACTORY.createPackage();
+        Resource resource = createResource();
+        Package rootPackage = FACTORY.createPackage();
         resource.getContents().add(rootPackage);
         rootPackage.setName("root");
         Package childPackage = FACTORY.createPackage();
@@ -109,9 +109,9 @@ public class TestUmlDerivedFeatures {
         assertEquals(ImmutableSet.of(rootPackage.getName() + NamedElement.SEPARATOR + childPackage.getName()), matcher.getAllValuesOfqualifiedName(childPackage));
     }
 
-	@Test
-	public void stateIsOrthogonal() throws ViatraQueryException {
-	    Resource resource = createResource();
+    @Test
+    public void stateIsOrthogonal() throws ViatraQueryException {
+        Resource resource = createResource();
         State state = FACTORY.createState();
         resource.getContents().add(state);
         state.getRegions().add(FACTORY.createRegion());
@@ -119,6 +119,6 @@ public class TestUmlDerivedFeatures {
         assertEquals(ImmutableSet.of(false), matcher.getAllValuesOftarget(state));
         state.getRegions().add(FACTORY.createRegion());
         assertEquals(ImmutableSet.of(true), matcher.getAllValuesOftarget(state));
-	}
-	
+    }
+    
 }

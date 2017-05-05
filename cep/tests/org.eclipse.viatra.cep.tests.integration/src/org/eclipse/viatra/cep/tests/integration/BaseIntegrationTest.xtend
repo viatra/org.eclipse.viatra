@@ -21,23 +21,23 @@ import org.junit.Before
 
 abstract class BaseIntegrationTest {
 
-	protected extension CepFactory cf = CepFactory.getInstance
+    protected extension CepFactory cf = CepFactory.getInstance
 
-	private DefaultRealm defaultRealm
-	@Accessors(PROTECTED_GETTER, PROTECTED_SETTER) EventStream eventStream
-	@Accessors(PROTECTED_GETTER, PROTECTED_SETTER) CEPEngine engine
+    private DefaultRealm defaultRealm
+    @Accessors(PROTECTED_GETTER, PROTECTED_SETTER) EventStream eventStream
+    @Accessors(PROTECTED_GETTER, PROTECTED_SETTER) CEPEngine engine
 
-	@Before
-	def void setUp() throws Exception {
-		defaultRealm = new DefaultRealm()
-		TestResultHelper.instance.results.clear
-	}
+    @Before
+    def void setUp() throws Exception {
+        defaultRealm = new DefaultRealm()
+        TestResultHelper.instance.results.clear
+    }
 
-	@After
-	def void tearDown() throws Exception {
-		eventStream = null
-		engine = null
-		defaultRealm.dispose
-		TestResultHelper.instance.results.clear
-	}
+    @After
+    def void tearDown() throws Exception {
+        eventStream = null
+        engine = null
+        defaultRealm.dispose
+        TestResultHelper.instance.results.clear
+    }
 }

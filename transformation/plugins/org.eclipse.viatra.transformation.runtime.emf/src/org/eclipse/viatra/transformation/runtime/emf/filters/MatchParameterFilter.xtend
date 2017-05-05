@@ -35,7 +35,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
   }
   
   new(Pair<String, ? extends Object>... parameters) {
-  	this.filterMap = newHashMap(parameters)
+      this.filterMap = newHashMap(parameters)
   }
   
   override isProcessable(IPatternMatch eventAtom) {
@@ -47,14 +47,14 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
   }
   
   def <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> toMatch(Matcher matcher) {
-  	val match = matcher.newEmptyMatch
-  	matcher.parameterNames.forEach[
-  		if (filterMap.containsKey(it)) {
-  			match.set(it, filterMap.get(it))	
-  		}
-  	]
-  	
-  	match
+      val match = matcher.newEmptyMatch
+      matcher.parameterNames.forEach[
+          if (filterMap.containsKey(it)) {
+              match.set(it, filterMap.get(it))	
+          }
+      ]
+      
+      match
   }
 }
 

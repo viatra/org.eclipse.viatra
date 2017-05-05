@@ -26,53 +26,53 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
  */
 public class PEnumerate extends POperation {
 
-	EnumerablePConstraint enumerablePConstraint;
-	
-	public PEnumerate(EnumerablePConstraint enumerablePConstraint) {
-		super();
-		this.enumerablePConstraint = enumerablePConstraint;
-	}
-	public EnumerablePConstraint getEnumerablePConstraint() {
-		return enumerablePConstraint;
-	}
+    EnumerablePConstraint enumerablePConstraint;
+    
+    public PEnumerate(EnumerablePConstraint enumerablePConstraint) {
+        super();
+        this.enumerablePConstraint = enumerablePConstraint;
+    }
+    public EnumerablePConstraint getEnumerablePConstraint() {
+        return enumerablePConstraint;
+    }
 
-	@Override
-	public Set<? extends PConstraint> getDeltaConstraints() {
-		return Collections.singleton(enumerablePConstraint);
-	}
-	@Override
-	public int numParentSubPlans() {
-		return 0;
-	}
-	@Override
-	public String getShortName() {
-		return enumerablePConstraint.toString();
-	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((enumerablePConstraint == null) ? 0 : enumerablePConstraint
-						.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PEnumerate))
-			return false;
-		PEnumerate other = (PEnumerate) obj;
-		if (enumerablePConstraint == null) {
-			if (other.enumerablePConstraint != null)
-				return false;
-		} else if (!enumerablePConstraint.equals(other.enumerablePConstraint))
-			return false;
-		return true;
-	}
-	
+    @Override
+    public Set<? extends PConstraint> getDeltaConstraints() {
+        return Collections.singleton(enumerablePConstraint);
+    }
+    @Override
+    public int numParentSubPlans() {
+        return 0;
+    }
+    @Override
+    public String getShortName() {
+        return enumerablePConstraint.toString();
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime
+                * result
+                + ((enumerablePConstraint == null) ? 0 : enumerablePConstraint
+                        .hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof PEnumerate))
+            return false;
+        PEnumerate other = (PEnumerate) obj;
+        if (enumerablePConstraint == null) {
+            if (other.enumerablePConstraint != null)
+                return false;
+        } else if (!enumerablePConstraint.equals(other.enumerablePConstraint))
+            return false;
+        return true;
+    }
+    
 }

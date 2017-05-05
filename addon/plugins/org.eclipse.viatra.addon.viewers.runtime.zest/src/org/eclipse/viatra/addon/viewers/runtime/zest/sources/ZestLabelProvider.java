@@ -48,7 +48,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
     private Map<RGB, Color> colorMap = Maps.newHashMap();
 
     public ZestLabelProvider(ViewerState state, Display display) {
-    	super(state, display);
+        super(state, display);
 
     }
 
@@ -71,22 +71,22 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
         return colorMap.get(rgb);
     }
 
-	@Override
-	public Color getBackground(Object entity) {
+    @Override
+    public Color getBackground(Object entity) {
         if (entity instanceof Item) {
             return getColorProperty((FormattableElement) entity, FormatParser.COLOR);
         }
         return null;
-	}
+    }
 
-	@Override
-	public Color getForeground(Object entity) {
+    @Override
+    public Color getForeground(Object entity) {
         if (entity instanceof Item) {
             return getColorProperty((FormattableElement) entity, FormatParser.TEXT_COLOR);
         }
         return null;
-	}
-	
+    }
+    
     @Override
     public void dispose() {
         for (Entry<RGB, Color> colorEntry : colorMap.entrySet()) {

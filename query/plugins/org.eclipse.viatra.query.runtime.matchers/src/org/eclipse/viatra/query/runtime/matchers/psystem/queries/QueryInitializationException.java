@@ -29,9 +29,9 @@ public class QueryInitializationException extends QueryProcessingException {
         super(message, context, shortMessage, patternDescription);
     }
 
-	private static final long serialVersionUID = 9106033062252951489L;
+    private static final long serialVersionUID = 9106033062252951489L;
 
 
-	
-	
+    
+    
 }

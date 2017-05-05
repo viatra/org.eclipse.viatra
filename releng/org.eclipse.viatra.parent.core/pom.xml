@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>org.eclipse.viatra.parent.core</artifactId>
-	<name>VIATRA Core Plug-ins</name>
-	<version>1.6.0-SNAPSHOT</version>
-	<url>http://eclipse.org/viatra</url>
-	<packaging>pom</packaging>
-	<modules>
-	    <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.generator</module>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.eclipse.viatra.parent.core</artifactId>
+    <name>VIATRA Core Plug-ins</name>
+    <version>1.6.0-SNAPSHOT</version>
+    <url>http://eclipse.org/viatra</url>
+    <packaging>pom</packaging>
+    <modules>
+        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.generator</module>
         <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage</module>
         <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf</module>
         <module>../../query/plugins/org.eclipse.viatra.query.runtime</module>
@@ -22,24 +22,24 @@
         <module>../../query/features/org.eclipse.viatra.query.runtime.feature</module>
         <module>../../query/features/org.eclipse.viatra.query.language.feature</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.evm</module>
-		<module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
-		<module>../../transformation/features/org.eclipse.viatra.transformation.runtime.emf.feature</module>
-		<module>../../releng/org.eclipse.viatra.target.core</module>
-		<module>../../releng/org.eclipse.viatra.target.all</module>
-		<module>../../releng/org.eclipse.viatra.update.core</module>
-		<module>../../releng/org.eclipse.viatra.parent</module>
-		<module>../../maven/viatra-query-runtime</module>
-		<module>../../maven/viatra-query-language</module>
-		<module>../../maven/viatra-transformation-runtime</module>
-		<module>../../maven/viatra-maven-plugin</module>
-	</modules>
-	<parent>
-		<groupId>org.eclipse.viatra</groupId>
-		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<version>1.6.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
-	</parent>
-	   <build>
+        <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
+        <module>../../transformation/features/org.eclipse.viatra.transformation.runtime.emf.feature</module>
+        <module>../../releng/org.eclipse.viatra.target.core</module>
+        <module>../../releng/org.eclipse.viatra.target.all</module>
+        <module>../../releng/org.eclipse.viatra.update.core</module>
+        <module>../../releng/org.eclipse.viatra.parent</module>
+        <module>../../maven/viatra-query-runtime</module>
+        <module>../../maven/viatra-query-language</module>
+        <module>../../maven/viatra-transformation-runtime</module>
+        <module>../../maven/viatra-maven-plugin</module>
+    </modules>
+    <parent>
+        <groupId>org.eclipse.viatra</groupId>
+        <artifactId>org.eclipse.viatra.parent</artifactId>
+        <version>1.6.0-SNAPSHOT</version>
+        <relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
+    </parent>
+       <build>
         <plugins>
             <plugin>
                 <artifactId>maven-toolchains-plugin</artifactId>

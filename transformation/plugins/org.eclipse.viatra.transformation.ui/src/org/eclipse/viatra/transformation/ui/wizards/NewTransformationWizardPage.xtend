@@ -69,15 +69,15 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
 
     override protected String getTypeContent(String indentation, String lineSeparator) {
         switch (type) {
-        	case BatchTransformation: {
-        		return getBatchTransformationTemplate().toString
-        	}
-        	case EventDrivenTransformation: {
-        	    return getEDTransformationTemplate().toString
-        	}
-        	default: {
-        		return getBatchTransformationTemplate().toString
-        	}
+            case BatchTransformation: {
+                return getBatchTransformationTemplate().toString
+            }
+            case EventDrivenTransformation: {
+                return getEDTransformationTemplate().toString
+            }
+            default: {
+                return getBatchTransformationTemplate().toString
+            }
         }
     }
     

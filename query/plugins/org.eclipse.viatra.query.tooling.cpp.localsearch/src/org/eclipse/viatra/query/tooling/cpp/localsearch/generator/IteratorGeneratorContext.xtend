@@ -23,29 +23,29 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.QueryDescriptor
  */
 class IteratorGeneratorContext extends LocalsearchGeneratorOutputProvider {
 
-	override initializeGenerators(QueryDescriptor query) {
-		val List<IGenerator> generators = newArrayList
+    override initializeGenerators(QueryDescriptor query) {
+        val List<IGenerator> generators = newArrayList
 
-		query.patterns.forEach [name, patterns |
-			val patternName = CaseFormat::LOWER_CAMEL.to(CaseFormat::UPPER_CAMEL, name.substring(name.lastIndexOf('.')+1))
+        query.patterns.forEach [name, patterns |
+            val patternName = CaseFormat::LOWER_CAMEL.to(CaseFormat::UPPER_CAMEL, name.substring(name.lastIndexOf('.')+1))
 
-			// TODO: WARNING! Incredible Hack Inc! works, but ugly...
-			val matchGen = new MatchGenerator(query.name, patternName, patterns.head.patternBodies.head.matchingFrame)
-			generators += matchGen
-			
-			val querySpec = new IteratorQuerySpecificationGenerator(query.name, patterns.toSet)
-			generators += querySpec
-			
-			val matcherGen = new IteratorMatcherGenerator(query.name, patternName, patterns.toSet, matchGen, querySpec)
-			generators += matcherGen
-		]
+            // TODO: WARNING! Incredible Hack Inc! works, but ugly...
+            val matchGen = new MatchGenerator(query.name, patternName, patterns.head.patternBodies.head.matchingFrame)
+            generators += matchGen
+            
+            val querySpec = new IteratorQuerySpecificationGenerator(query.name, patterns.toSet)
+            generators += querySpec
+            
+            val matcherGen = new IteratorMatcherGenerator(query.name, patternName, patterns.toSet, matchGen, querySpec)
+            generators += matcherGen
+        ]
 
-		val queryGroupGenerator = new QueryGroupGenerator(query)
-		generators += queryGroupGenerator
+        val queryGroupGenerator = new QueryGroupGenerator(query)
+        generators += queryGroupGenerator
 
-		generators.forEach[initialize]
+        generators.forEach[initialize]
 
-		return generators
-	}
+        return generators
+    }
 
 }

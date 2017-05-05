@@ -56,16 +56,16 @@ import com.google.common.collect.Maps;
  * @since 1.4
  */
 public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
-	protected final NavigationHelper baseIndex;
+    protected final NavigationHelper baseIndex;
     //private BaseIndexListener listener;
     
-	protected final Map<EClass, EnumSet<IndexingService>> indexedClasses = Maps.newHashMap();
-	protected final Map<EDataType, EnumSet<IndexingService>> indexedDataTypes = Maps.newHashMap();
-	protected final Map<EStructuralFeature, EnumSet<IndexingService>> indexedFeatures = Maps.newHashMap();
+    protected final Map<EClass, EnumSet<IndexingService>> indexedClasses = Maps.newHashMap();
+    protected final Map<EDataType, EnumSet<IndexingService>> indexedDataTypes = Maps.newHashMap();
+    protected final Map<EStructuralFeature, EnumSet<IndexingService>> indexedFeatures = Maps.newHashMap();
     
-	protected final EMFQueryMetaContext metaContext;
+    protected final EMFQueryMetaContext metaContext;
 
-	protected Logger logger;
+    protected Logger logger;
 
     private EMFScope emfScope;
 
@@ -117,12 +117,12 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     @Override
     public boolean isCoalescing() {
-    	return baseIndex.isCoalescing();
+        return baseIndex.isCoalescing();
     }
     
     @Override
     public IQueryMetaContext getMetaContext() {
-    	return metaContext;
+        return metaContext;
     }
     
     @Override
@@ -144,7 +144,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     @Override
     public void ensureIndexed(IInputKey key) {
-    	this.ensureIndexed(key, IndexingService.INSTANCES);
+        this.ensureIndexed(key, IndexingService.INSTANCES);
     }
     
     /**
@@ -182,241 +182,241 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     @Override
     public boolean isIndexed(IInputKey key) {
-    	return isIndexed(key, IndexingService.INSTANCES);
+        return isIndexed(key, IndexingService.INSTANCES);
     }
     
     @Override
     public boolean containsTuple(IInputKey key, Tuple seed) {
-    	ensureValidKey(key);
-    	if (key instanceof JavaTransitiveInstancesKey) {
-    		Class<?> instanceClass = forceGetWrapperInstanceClass((JavaTransitiveInstancesKey) key);
-			if (instanceClass != null)
-				return instanceClass.isInstance(getFromSeed(seed, 0));
-			else
-				return false;
-    	} else if (key instanceof EClassUnscopedTransitiveInstancesKey) {
+        ensureValidKey(key);
+        if (key instanceof JavaTransitiveInstancesKey) {
+            Class<?> instanceClass = forceGetWrapperInstanceClass((JavaTransitiveInstancesKey) key);
+            if (instanceClass != null)
+                return instanceClass.isInstance(getFromSeed(seed, 0));
+            else
+                return false;
+        } else if (key instanceof EClassUnscopedTransitiveInstancesKey) {
             EClass emfKey = ((EClassUnscopedTransitiveInstancesKey) key).getEmfKey();
             Object candidateInstance = getFromSeed(seed, 0);
             if (candidateInstance instanceof EObject) {
                 return baseIndex.isInstanceOfUnscoped((EObject) candidateInstance, emfKey);
             } else return false;            
         } else {
-    		ensureIndexed(key);
-    		if (key instanceof EClassTransitiveInstancesKey) {
-    			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-    			// instance check not enough to satisfy scoping, must lookup from index
-    			return baseIndex.getAllInstances(eClass).contains(getFromSeed(seed, 0));
-    		} else if (key instanceof EDataTypeInSlotsKey) {
-    			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-    	    	return baseIndex.getDataTypeInstances(dataType).contains(getFromSeed(seed, 0));
-    		} else if (key instanceof EStructuralFeatureInstancesKey) {
-    			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-    	    	return baseIndex.findByFeatureValue(getFromSeed(seed, 1), feature).contains(getFromSeed(seed, 0));
-    		} else {
-    			illegalInputKey(key);
-    			return false;
-    		}
-    	}
+            ensureIndexed(key);
+            if (key instanceof EClassTransitiveInstancesKey) {
+                EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+                // instance check not enough to satisfy scoping, must lookup from index
+                return baseIndex.getAllInstances(eClass).contains(getFromSeed(seed, 0));
+            } else if (key instanceof EDataTypeInSlotsKey) {
+                EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+                return baseIndex.getDataTypeInstances(dataType).contains(getFromSeed(seed, 0));
+            } else if (key instanceof EStructuralFeatureInstancesKey) {
+                EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+                return baseIndex.findByFeatureValue(getFromSeed(seed, 1), feature).contains(getFromSeed(seed, 0));
+            } else {
+                illegalInputKey(key);
+                return false;
+            }
+        }
     }
 
-	private Class<?> forceGetWrapperInstanceClass(JavaTransitiveInstancesKey key) {
-		Class<?> instanceClass;
-		try {
-			instanceClass = key.forceGetWrapperInstanceClass();
-		} catch (ClassNotFoundException e) {
-			logger.error("Could not load instance class for type constraint " + key.getWrappedKey(), e);
-			instanceClass = null;
-		}
-		return instanceClass;
-	}
+    private Class<?> forceGetWrapperInstanceClass(JavaTransitiveInstancesKey key) {
+        Class<?> instanceClass;
+        try {
+            instanceClass = key.forceGetWrapperInstanceClass();
+        } catch (ClassNotFoundException e) {
+            logger.error("Could not load instance class for type constraint " + key.getWrappedKey(), e);
+            instanceClass = null;
+        }
+        return instanceClass;
+    }
     
     @Override
     public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed) {
-		ensureIndexed(key);
-		final Collection<Tuple> result = new HashSet<Tuple>();
-		
-		if (key instanceof EClassTransitiveInstancesKey) {
-			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-			
-			Object seedInstance = getFromSeed(seed, 0);
-			if (seedInstance == null) { // unseeded
-				return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
-			} else { // fully seeded
-				if (containsTuple(key, seed)) 
-					result.add(new FlatTuple(seedInstance));
-			}
-		} else if (key instanceof EDataTypeInSlotsKey) {
-			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-			
-			Object seedInstance = getFromSeed(seed, 0);
-			if (seedInstance == null) { // unseeded
-				return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
-			} else { // fully seeded
-				if (containsTuple(key, seed)) 
-					result.add(new FlatTuple(seedInstance));
-			}
-		} else if (key instanceof EStructuralFeatureInstancesKey) {
-			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-			
-			final Object seedSource = getFromSeed(seed, 0);
-			final Object seedTarget = getFromSeed(seed, 1);
-			if (seedSource == null && seedTarget != null) { 
-				final Set<EObject> results = baseIndex.findByFeatureValue(seedTarget, feature);
-				return Iterables.transform(results, new Function<Object, Tuple>() {
-					@Override
-					public Tuple apply(Object obj) {
-						return new FlatTuple(obj, seedTarget);
-					}
-				});
-			} else if (seedSource != null && seedTarget != null) { // fully seeded
-				if (containsTuple(key, seed)) 
-					result.add(new FlatTuple(seedSource, seedTarget));
-			} else if (seedSource == null && seedTarget == null) { // fully unseeded
-				baseIndex.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
-					public void process(EStructuralFeature feature, EObject source, Object target) {
-						result.add(new FlatTuple(source, target));
-					}
-				});
-			} else if (seedSource != null && seedTarget == null) { 
-				final Set<Object> results = baseIndex.getFeatureTargets((EObject) seedSource, feature);
-				return Iterables.transform(results, new Function<Object, Tuple>() {
-					public Tuple apply(Object obj) {
-						return new FlatTuple(seedSource, obj);
-					}
-				});
-			} 
-		} else {
-			illegalInputKey(key);
-		}
-		
-		
-		return result;
+        ensureIndexed(key);
+        final Collection<Tuple> result = new HashSet<Tuple>();
+        
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            
+            Object seedInstance = getFromSeed(seed, 0);
+            if (seedInstance == null) { // unseeded
+                return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
+            } else { // fully seeded
+                if (containsTuple(key, seed)) 
+                    result.add(new FlatTuple(seedInstance));
+            }
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            
+            Object seedInstance = getFromSeed(seed, 0);
+            if (seedInstance == null) { // unseeded
+                return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
+            } else { // fully seeded
+                if (containsTuple(key, seed)) 
+                    result.add(new FlatTuple(seedInstance));
+            }
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            
+            final Object seedSource = getFromSeed(seed, 0);
+            final Object seedTarget = getFromSeed(seed, 1);
+            if (seedSource == null && seedTarget != null) { 
+                final Set<EObject> results = baseIndex.findByFeatureValue(seedTarget, feature);
+                return Iterables.transform(results, new Function<Object, Tuple>() {
+                    @Override
+                    public Tuple apply(Object obj) {
+                        return new FlatTuple(obj, seedTarget);
+                    }
+                });
+            } else if (seedSource != null && seedTarget != null) { // fully seeded
+                if (containsTuple(key, seed)) 
+                    result.add(new FlatTuple(seedSource, seedTarget));
+            } else if (seedSource == null && seedTarget == null) { // fully unseeded
+                baseIndex.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
+                    public void process(EStructuralFeature feature, EObject source, Object target) {
+                        result.add(new FlatTuple(source, target));
+                    }
+                });
+            } else if (seedSource != null && seedTarget == null) { 
+                final Set<Object> results = baseIndex.getFeatureTargets((EObject) seedSource, feature);
+                return Iterables.transform(results, new Function<Object, Tuple>() {
+                    public Tuple apply(Object obj) {
+                        return new FlatTuple(seedSource, obj);
+                    }
+                });
+            } 
+        } else {
+            illegalInputKey(key);
+        }
+        
+        
+        return result;
     }
 
-	private static Function<Object, Tuple> wrapUnary = new Function<Object, Tuple>() {
-		@Override
-		public Tuple apply(Object obj) {
-			return new FlatTuple(obj);
-		}
-	};
+    private static Function<Object, Tuple> wrapUnary = new Function<Object, Tuple>() {
+        @Override
+        public Tuple apply(Object obj) {
+            return new FlatTuple(obj);
+        }
+    };
 
     @Override
     public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed) {
-		ensureIndexed(key);
-		
-		if (key instanceof EClassTransitiveInstancesKey) {
-			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-			
-			Object seedInstance = getFromSeed(seed, 0);
-			if (seedInstance == null) { // unseeded
-				return baseIndex.getAllInstances(eClass);
-			} else {
-				// must be unseeded, this is enumerateValues after all!
-				illegalEnumerateValues(seed);
-			}
-		} else if (key instanceof EDataTypeInSlotsKey) {
-			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-			
-			Object seedInstance = getFromSeed(seed, 0);
-			if (seedInstance == null) { // unseeded
-				return baseIndex.getDataTypeInstances(dataType);
-			} else {
-				// must be unseeded, this is enumerateValues after all!
-				illegalEnumerateValues(seed);
-			}
-		} else if (key instanceof EStructuralFeatureInstancesKey) {
-			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-			
-			Object seedSource = getFromSeed(seed, 0);
-			Object seedTarget = getFromSeed(seed, 1);
-			if (seedSource == null && seedTarget != null) { 
-				return baseIndex.findByFeatureValue(seedTarget, feature);
-			} else if (seedSource != null && seedTarget == null) { 
-				return baseIndex.getFeatureTargets((EObject) seedSource, feature);
-			} else {
-				// must be singly unseeded, this is enumerateValues after all!
-				illegalEnumerateValues(seed);
-			}
-		} else {
-			illegalInputKey(key);
-		}
-		return null;
+        ensureIndexed(key);
+        
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            
+            Object seedInstance = getFromSeed(seed, 0);
+            if (seedInstance == null) { // unseeded
+                return baseIndex.getAllInstances(eClass);
+            } else {
+                // must be unseeded, this is enumerateValues after all!
+                illegalEnumerateValues(seed);
+            }
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            
+            Object seedInstance = getFromSeed(seed, 0);
+            if (seedInstance == null) { // unseeded
+                return baseIndex.getDataTypeInstances(dataType);
+            } else {
+                // must be unseeded, this is enumerateValues after all!
+                illegalEnumerateValues(seed);
+            }
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            
+            Object seedSource = getFromSeed(seed, 0);
+            Object seedTarget = getFromSeed(seed, 1);
+            if (seedSource == null && seedTarget != null) { 
+                return baseIndex.findByFeatureValue(seedTarget, feature);
+            } else if (seedSource != null && seedTarget == null) { 
+                return baseIndex.getFeatureTargets((EObject) seedSource, feature);
+            } else {
+                // must be singly unseeded, this is enumerateValues after all!
+                illegalEnumerateValues(seed);
+            }
+        } else {
+            illegalInputKey(key);
+        }
+        return null;
     }
     
     @Override
     public int countTuples(IInputKey key, Tuple seed) {
-		ensureIndexed(key, IndexingService.STATISTICS);
-		
-		if (key instanceof EClassTransitiveInstancesKey) {
-			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-			
-			Object seedInstance = getFromSeed(seed, 0);
-			if (seedInstance == null) { // unseeded
-				return baseIndex.countAllInstances(eClass);
-			} else { // fully seeded
-				return (containsTuple(key, seed)) ? 1 : 0;
-			}
-		} else if (key instanceof EDataTypeInSlotsKey) {
-			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-			
-			Object seedInstance = getFromSeed(seed, 0);
-			if (seedInstance == null) { // unseeded
-				return baseIndex.countDataTypeInstances(dataType);
-			} else { // fully seeded
-				return (containsTuple(key, seed)) ? 1 : 0;
-			}
-		} else if (key instanceof EStructuralFeatureInstancesKey) {
-			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-			
-			final Object seedSource = getFromSeed(seed, 0);
-			final Object seedTarget = getFromSeed(seed, 1);
-			if (seedSource == null && seedTarget != null) { 
-				return baseIndex.findByFeatureValue(seedTarget, feature).size();
-			} else if (seedSource != null && seedTarget != null) { // fully seeded
-				return (containsTuple(key, seed)) ? 1 : 0;
-			} else if (seedSource == null && seedTarget == null) { // fully unseeded
-				return baseIndex.countFeatures(feature);
-			} else if (seedSource != null && seedTarget == null) { 
-				return baseIndex.countFeatureTargets((EObject) seedSource, feature);
-			} 
-		} else {
-			illegalInputKey(key);
-		}
-		return 0;
+        ensureIndexed(key, IndexingService.STATISTICS);
+        
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            
+            Object seedInstance = getFromSeed(seed, 0);
+            if (seedInstance == null) { // unseeded
+                return baseIndex.countAllInstances(eClass);
+            } else { // fully seeded
+                return (containsTuple(key, seed)) ? 1 : 0;
+            }
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            
+            Object seedInstance = getFromSeed(seed, 0);
+            if (seedInstance == null) { // unseeded
+                return baseIndex.countDataTypeInstances(dataType);
+            } else { // fully seeded
+                return (containsTuple(key, seed)) ? 1 : 0;
+            }
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            
+            final Object seedSource = getFromSeed(seed, 0);
+            final Object seedTarget = getFromSeed(seed, 1);
+            if (seedSource == null && seedTarget != null) { 
+                return baseIndex.findByFeatureValue(seedTarget, feature).size();
+            } else if (seedSource != null && seedTarget != null) { // fully seeded
+                return (containsTuple(key, seed)) ? 1 : 0;
+            } else if (seedSource == null && seedTarget == null) { // fully unseeded
+                return baseIndex.countFeatures(feature);
+            } else if (seedSource != null && seedTarget == null) { 
+                return baseIndex.countFeatureTargets((EObject) seedSource, feature);
+            } 
+        } else {
+            illegalInputKey(key);
+        }
+        return 0;
     }
     
     
     
-	public void ensureEnumerableKey(IInputKey key) {
-		ensureValidKey(key);
-		if (! metaContext.isEnumerable(key))
-			throw new IllegalArgumentException("Key is not enumerable: " + key);
-		
-	}
+    public void ensureEnumerableKey(IInputKey key) {
+        ensureValidKey(key);
+        if (! metaContext.isEnumerable(key))
+            throw new IllegalArgumentException("Key is not enumerable: " + key);
+        
+    }
 
-	public void ensureValidKey(IInputKey key) {
-		metaContext.ensureValidKey(key);
-	}
-	public void illegalInputKey(IInputKey key) {
-		metaContext.illegalInputKey(key);
-	}
-	public void illegalEnumerateValues(Tuple seed) {
-		throw new IllegalArgumentException("Must have exactly one unseeded element in enumerateValues() invocation, received instead: " + seed);
-	}
+    public void ensureValidKey(IInputKey key) {
+        metaContext.ensureValidKey(key);
+    }
+    public void illegalInputKey(IInputKey key) {
+        metaContext.illegalInputKey(key);
+    }
+    public void illegalEnumerateValues(Tuple seed) {
+        throw new IllegalArgumentException("Must have exactly one unseeded element in enumerateValues() invocation, received instead: " + seed);
+    }
 
-	/**
-	 * @deprecated use {@link #ensureIndexed(EClass, IndexingService)} instead
-	 * @param eClass
-	 */
-	@Deprecated
-	public void ensureIndexed(EClass eClass){
-	    ensureIndexed(eClass, IndexingService.INSTANCES);
-	}
-	
-	/**
+    /**
+     * @deprecated use {@link #ensureIndexed(EClass, IndexingService)} instead
+     * @param eClass
+     */
+    @Deprecated
+    public void ensureIndexed(EClass eClass){
+        ensureIndexed(eClass, IndexingService.INSTANCES);
+    }
+    
+    /**
      * @since 1.4
      */
-	public void ensureIndexed(EClass eClass, IndexingService service) {
+    public void ensureIndexed(EClass eClass, IndexingService service) {
         if (addIndexingService(indexedClasses, eClass, service)) {
             final Set<EClass> newClasses = Collections.singleton(eClass);
             IndexingLevel level = IndexingLevel.toLevel(service);
@@ -427,15 +427,15 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         }
     }
 
-	/**
-	 * @deprecated use {@link #ensureIndexed(EDataType, IndexingService)} instead
-	 * @param eDataType
-	 */
-	@Deprecated
-	public void ensureIndexed(EDataType eDataType){
-	    ensureIndexed(eDataType, IndexingService.INSTANCES);
-	}
-	
+    /**
+     * @deprecated use {@link #ensureIndexed(EDataType, IndexingService)} instead
+     * @param eDataType
+     */
+    @Deprecated
+    public void ensureIndexed(EDataType eDataType){
+        ensureIndexed(eDataType, IndexingService.INSTANCES);
+    }
+    
     /**
      * @since 1.4
      */
@@ -484,174 +484,174 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
      * @author Bergmann Gabor
      */
     private abstract static class ListenerAdapter { 
-    	IQueryRuntimeContextListener listener;
-		Tuple seed;
-		/**
-		 * @param listener
-		 * @param seed must be non-null
-		 */
-		public ListenerAdapter(IQueryRuntimeContextListener listener, Object... seed) {
-			this.listener = listener;
-			this.seed = new FlatTuple(seed);
-		}
-				
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((listener == null) ? 0 : listener.hashCode());
-			result = prime * result + ((seed == null) ? 0 : seed.hashCode());
-			return result;
-		}
+        IQueryRuntimeContextListener listener;
+        Tuple seed;
+        /**
+         * @param listener
+         * @param seed must be non-null
+         */
+        public ListenerAdapter(IQueryRuntimeContextListener listener, Object... seed) {
+            this.listener = listener;
+            this.seed = new FlatTuple(seed);
+        }
+                
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((listener == null) ? 0 : listener.hashCode());
+            result = prime * result + ((seed == null) ? 0 : seed.hashCode());
+            return result;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (!(obj.getClass().equals(this.getClass())))
-				return false;
-			ListenerAdapter other = (ListenerAdapter) obj;
-			if (listener == null) {
-				if (other.listener != null)
-					return false;
-			} else if (!listener.equals(other.listener))
-				return false;
-			if (seed == null) {
-				if (other.seed != null)
-					return false;
-			} else if (!seed.equals(other.seed))
-				return false;
-			return true;
-		}
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!(obj.getClass().equals(this.getClass())))
+                return false;
+            ListenerAdapter other = (ListenerAdapter) obj;
+            if (listener == null) {
+                if (other.listener != null)
+                    return false;
+            } else if (!listener.equals(other.listener))
+                return false;
+            if (seed == null) {
+                if (other.seed != null)
+                    return false;
+            } else if (!seed.equals(other.seed))
+                return false;
+            return true;
+        }
 
 
-		@Override
-		public String toString() {
-			return "Wrapped<Seed:" + seed + ">#" + listener;
-		}
-		
-		
+        @Override
+        public String toString() {
+            return "Wrapped<Seed:" + seed + ">#" + listener;
+        }
+        
+        
     }
     private static class EClassTransitiveInstancesAdapter extends ListenerAdapter implements InstanceListener {
-		private Object seedInstance;
-		public EClassTransitiveInstancesAdapter(IQueryRuntimeContextListener listener, Object seedInstance) {
-			super(listener, seedInstance);
-			this.seedInstance = seedInstance;
-		}
-    	@Override
-    	public void instanceInserted(EClass clazz, EObject instance) {
-    		if (seedInstance != null && !seedInstance.equals(instance)) return;
-    		listener.update(new EClassTransitiveInstancesKey(clazz), 
-    				new FlatTuple(instance), true);
-    	}
-    	@Override
-    	public void instanceDeleted(EClass clazz, EObject instance) {
-    		if (seedInstance != null && !seedInstance.equals(instance)) return;
-    		listener.update(new EClassTransitiveInstancesKey(clazz), 
-    				new FlatTuple(instance), false);
-    	}    	
+        private Object seedInstance;
+        public EClassTransitiveInstancesAdapter(IQueryRuntimeContextListener listener, Object seedInstance) {
+            super(listener, seedInstance);
+            this.seedInstance = seedInstance;
+        }
+        @Override
+        public void instanceInserted(EClass clazz, EObject instance) {
+            if (seedInstance != null && !seedInstance.equals(instance)) return;
+            listener.update(new EClassTransitiveInstancesKey(clazz), 
+                    new FlatTuple(instance), true);
+        }
+        @Override
+        public void instanceDeleted(EClass clazz, EObject instance) {
+            if (seedInstance != null && !seedInstance.equals(instance)) return;
+            listener.update(new EClassTransitiveInstancesKey(clazz), 
+                    new FlatTuple(instance), false);
+        }    	
     }
     private static class EDataTypeInSlotsAdapter extends ListenerAdapter implements DataTypeListener {
-		private Object seedValue;
-		public EDataTypeInSlotsAdapter(IQueryRuntimeContextListener listener, Object seedValue) {
-			super(listener, seedValue);
-			this.seedValue = seedValue;
-		}
-		@Override
-		public void dataTypeInstanceInserted(EDataType type, Object instance,
-				boolean firstOccurrence) {
-    		if (firstOccurrence) {
-        		if (seedValue != null && !seedValue.equals(instance)) return;
-				listener.update(new EDataTypeInSlotsKey(type), 
-	    				new FlatTuple(instance), true);
-    		}
-		}
-		@Override
-		public void dataTypeInstanceDeleted(EDataType type, Object instance,
-				boolean lastOccurrence) {
-			if (lastOccurrence) {
-        		if (seedValue != null && !seedValue.equals(instance)) return;
-	    		listener.update(new EDataTypeInSlotsKey(type), 
-	    				new FlatTuple(instance), false);
-			}
-		}
+        private Object seedValue;
+        public EDataTypeInSlotsAdapter(IQueryRuntimeContextListener listener, Object seedValue) {
+            super(listener, seedValue);
+            this.seedValue = seedValue;
+        }
+        @Override
+        public void dataTypeInstanceInserted(EDataType type, Object instance,
+                boolean firstOccurrence) {
+            if (firstOccurrence) {
+                if (seedValue != null && !seedValue.equals(instance)) return;
+                listener.update(new EDataTypeInSlotsKey(type), 
+                        new FlatTuple(instance), true);
+            }
+        }
+        @Override
+        public void dataTypeInstanceDeleted(EDataType type, Object instance,
+                boolean lastOccurrence) {
+            if (lastOccurrence) {
+                if (seedValue != null && !seedValue.equals(instance)) return;
+                listener.update(new EDataTypeInSlotsKey(type), 
+                        new FlatTuple(instance), false);
+            }
+        }
     }
     private static class EStructuralFeatureInstancesKeyAdapter extends ListenerAdapter implements FeatureListener {
-		private Object seedHost;
-		private Object seedValue;
-		public EStructuralFeatureInstancesKeyAdapter(IQueryRuntimeContextListener listener, Object seedHost, Object seedValue) {
-			super(listener, seedHost, seedValue);
-			this.seedHost = seedHost;
-			this.seedValue = seedValue;
-		}
-		@Override
-		public void featureInserted(EObject host, EStructuralFeature feature,
-				Object value) {
-    		if (seedHost != null && !seedHost.equals(host)) return;
-    		if (seedValue != null && !seedValue.equals(value)) return;
-    		listener.update(new EStructuralFeatureInstancesKey(feature), 
-    				new FlatTuple(host, value), true);
-		}
-		@Override
-		public void featureDeleted(EObject host, EStructuralFeature feature,
-				Object value) {
-    		if (seedHost != null && !seedHost.equals(host)) return;
-    		if (seedValue != null && !seedValue.equals(value)) return;
-    		listener.update(new EStructuralFeatureInstancesKey(feature), 
-    				new FlatTuple(host, value), false);
-		}    	
+        private Object seedHost;
+        private Object seedValue;
+        public EStructuralFeatureInstancesKeyAdapter(IQueryRuntimeContextListener listener, Object seedHost, Object seedValue) {
+            super(listener, seedHost, seedValue);
+            this.seedHost = seedHost;
+            this.seedValue = seedValue;
+        }
+        @Override
+        public void featureInserted(EObject host, EStructuralFeature feature,
+                Object value) {
+            if (seedHost != null && !seedHost.equals(host)) return;
+            if (seedValue != null && !seedValue.equals(value)) return;
+            listener.update(new EStructuralFeatureInstancesKey(feature), 
+                    new FlatTuple(host, value), true);
+        }
+        @Override
+        public void featureDeleted(EObject host, EStructuralFeature feature,
+                Object value) {
+            if (seedHost != null && !seedHost.equals(host)) return;
+            if (seedValue != null && !seedValue.equals(value)) return;
+            listener.update(new EStructuralFeatureInstancesKey(feature), 
+                    new FlatTuple(host, value), false);
+        }    	
     }
     
     @Override
     public void addUpdateListener(IInputKey key, Tuple seed /* TODO ignored */, IQueryRuntimeContextListener listener) {
-		// stateless, so NOP
-    	if (key instanceof JavaTransitiveInstancesKey) return;
+        // stateless, so NOP
+        if (key instanceof JavaTransitiveInstancesKey) return;
 
-    	ensureIndexed(key);
-    	if (key instanceof EClassTransitiveInstancesKey) {
-    		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-    		baseIndex.addInstanceListener(Collections.singleton(eClass), 
-    				new EClassTransitiveInstancesAdapter(listener, seed.get(0)));
-    	} else if (key instanceof EDataTypeInSlotsKey) {
-    		EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-    		baseIndex.addDataTypeListener(Collections.singleton(dataType), 
-    				new EDataTypeInSlotsAdapter(listener, seed.get(0)));
-    	} else if (key instanceof EStructuralFeatureInstancesKey) {
-    		EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-    		baseIndex.addFeatureListener(Collections.singleton(feature), 
-    				new EStructuralFeatureInstancesKeyAdapter(listener, seed.get(0), seed.get(1)));
-    	} else {
-    		illegalInputKey(key);
-    	}
+        ensureIndexed(key);
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            baseIndex.addInstanceListener(Collections.singleton(eClass), 
+                    new EClassTransitiveInstancesAdapter(listener, seed.get(0)));
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            baseIndex.addDataTypeListener(Collections.singleton(dataType), 
+                    new EDataTypeInSlotsAdapter(listener, seed.get(0)));
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            baseIndex.addFeatureListener(Collections.singleton(feature), 
+                    new EStructuralFeatureInstancesKeyAdapter(listener, seed.get(0), seed.get(1)));
+        } else {
+            illegalInputKey(key);
+        }
     }
     @Override
     public void removeUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
-		// stateless, so NOP
-    	if (key instanceof JavaTransitiveInstancesKey) return;
+        // stateless, so NOP
+        if (key instanceof JavaTransitiveInstancesKey) return;
 
-    	ensureIndexed(key);
-    	if (key instanceof EClassTransitiveInstancesKey) {
-    		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-    		baseIndex.removeInstanceListener(Collections.singleton(eClass), 
-    				new EClassTransitiveInstancesAdapter(listener, seed.get(0)));
-    	} else if (key instanceof EDataTypeInSlotsKey) {
-    		EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-    		baseIndex.removeDataTypeListener(Collections.singleton(dataType), 
-    				new EDataTypeInSlotsAdapter(listener, seed.get(0)));
-    	} else if (key instanceof EStructuralFeatureInstancesKey) {
-    		EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-    		baseIndex.removeFeatureListener(Collections.singleton(feature), 
-    				new EStructuralFeatureInstancesKeyAdapter(listener, seed.get(0), seed.get(1)));
-    	} else {
-    		illegalInputKey(key);
-    	}
+        ensureIndexed(key);
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            baseIndex.removeInstanceListener(Collections.singleton(eClass), 
+                    new EClassTransitiveInstancesAdapter(listener, seed.get(0)));
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            baseIndex.removeDataTypeListener(Collections.singleton(dataType), 
+                    new EDataTypeInSlotsAdapter(listener, seed.get(0)));
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            baseIndex.removeFeatureListener(Collections.singleton(feature), 
+                    new EStructuralFeatureInstancesKeyAdapter(listener, seed.get(0), seed.get(1)));
+        } else {
+            illegalInputKey(key);
+        }
     }    
     
     private Object getFromSeed(Tuple seed, int index) {
-    	return seed == null ? null : seed.get(index);
+        return seed == null ? null : seed.get(index);
     }
     
     // TODO wrap / unwrap enum literals 
@@ -659,19 +659,19 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     @Override
     public Object unwrapElement(Object internalElement) {
-    	return internalElement;
+        return internalElement;
     }
     @Override
     public Tuple unwrapTuple(Tuple internalElements) {
-    	return internalElements;
+        return internalElements;
     }
     @Override
     public Object wrapElement(Object externalElement) {
-    	return externalElement;
+        return externalElement;
     }
     @Override
     public Tuple wrapTuple(Tuple externalElements) {
-    	return externalElements;
+        return externalElements;
     }
     
     /**

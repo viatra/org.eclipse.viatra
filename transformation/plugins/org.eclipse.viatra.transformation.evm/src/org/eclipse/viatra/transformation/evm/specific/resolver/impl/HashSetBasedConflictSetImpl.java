@@ -18,27 +18,27 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 
 public abstract class HashSetBasedConflictSetImpl implements ChangeableConflictSet {
-	
-	protected Set<Activation<?>> container = new HashSet<Activation<?>>();
+    
+    protected Set<Activation<?>> container = new HashSet<Activation<?>>();
 
-	@Override
-	public Set<Activation<?>> getConflictingActivations() {
-		return Collections.unmodifiableSet(container);
-	}
+    @Override
+    public Set<Activation<?>> getConflictingActivations() {
+        return Collections.unmodifiableSet(container);
+    }
 
-	@Override
-	public boolean addActivation(Activation<?> activation) {
-		return container.add(activation);
-	}
+    @Override
+    public boolean addActivation(Activation<?> activation) {
+        return container.add(activation);
+    }
 
-	@Override
-	public boolean removeActivation(Activation<?> activation) {
-		return container.remove(activation);
-	}
+    @Override
+    public boolean removeActivation(Activation<?> activation) {
+        return container.remove(activation);
+    }
 
-	@Override
-	public Set<Activation<?>> getNextActivations() {
-		return Collections.unmodifiableSet(container);
-	}
+    @Override
+    public Set<Activation<?>> getNextActivations() {
+        return Collections.unmodifiableSet(container);
+    }
 
 }

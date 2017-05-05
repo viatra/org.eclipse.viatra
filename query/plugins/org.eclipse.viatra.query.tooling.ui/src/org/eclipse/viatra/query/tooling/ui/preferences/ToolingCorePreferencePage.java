@@ -35,32 +35,32 @@ import org.eclipse.viatra.query.tooling.core.preferences.ToolingCorePreferenceCo
  */
 
 public class ToolingCorePreferencePage
-	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
+    extends FieldEditorPreferencePage
+    implements IWorkbenchPreferencePage {
 
-	private static final String DISABLE_TARGET_PLATFORM_UPDATE_DESCRIPTION = "By default, VIATRA Query will always "
-	        + "update the state of the target platform metamodel index automatically. This index is used by the query "
-	        + "editor and code generator to load Ecore models and refer to their elements (such as EClasses or features). "
-	        + "If you have large number of workspace plugins, setting this feature can improve editor and generator "
-	        + "performance. If set, you can force an update by unsetting it, applying preference changes, "
-	        + "then setting again. Note that you may have to reopen Query Editors after changes in this preference "
-	        + "to remove all markers.";
+    private static final String DISABLE_TARGET_PLATFORM_UPDATE_DESCRIPTION = "By default, VIATRA Query will always "
+            + "update the state of the target platform metamodel index automatically. This index is used by the query "
+            + "editor and code generator to load Ecore models and refer to their elements (such as EClasses or features). "
+            + "If you have large number of workspace plugins, setting this feature can improve editor and generator "
+            + "performance. If set, you can force an update by unsetting it, applying preference changes, "
+            + "then setting again. Note that you may have to reopen Query Editors after changes in this preference "
+            + "to remove all markers.";
 
     public ToolingCorePreferencePage() {
-		super(GRID);
-		setPreferenceStore(ViatraQueryGeneratorPlugin.INSTANCE.getPreferenceStore());
-		setDescription(null);
-	}
-	
-	/**
-	 * Creates the field editors. Field editors are abstractions of
-	 * the common GUI blocks needed to manipulate various types
-	 * of preferences. Each field editor knows how to save and
-	 * restore itself.
-	 */
-	public void createFieldEditors() {
-	    Composite parent = getFieldEditorParent();
-	    Label traverseSubPatternCallDescriptionLabel = new Label(parent, SWT.NONE | SWT.WRAP);
+        super(GRID);
+        setPreferenceStore(ViatraQueryGeneratorPlugin.INSTANCE.getPreferenceStore());
+        setDescription(null);
+    }
+    
+    /**
+     * Creates the field editors. Field editors are abstractions of
+     * the common GUI blocks needed to manipulate various types
+     * of preferences. Each field editor knows how to save and
+     * restore itself.
+     */
+    public void createFieldEditors() {
+        Composite parent = getFieldEditorParent();
+        Label traverseSubPatternCallDescriptionLabel = new Label(parent, SWT.NONE | SWT.WRAP);
         traverseSubPatternCallDescriptionLabel.setText(DISABLE_TARGET_PLATFORM_UPDATE_DESCRIPTION);
         GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
         layoutData.grabExcessHorizontalSpace = true;
@@ -68,14 +68,14 @@ public class ToolingCorePreferencePage
         layoutData.widthHint = 200;
         traverseSubPatternCallDescriptionLabel.setLayoutData(layoutData);
         
-		addField(
-			new BooleanFieldEditor(
-				ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE,
-				"&[Experimental] Disable automatic update of target platform metamodels",
-				getFieldEditorParent()));
-	}
+        addField(
+            new BooleanFieldEditor(
+                ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE,
+                "&[Experimental] Disable automatic update of target platform metamodels",
+                getFieldEditorParent()));
+    }
 
-	public void init(IWorkbench workbench) {
-	}
-	
+    public void init(IWorkbench workbench) {
+    }
+    
 }

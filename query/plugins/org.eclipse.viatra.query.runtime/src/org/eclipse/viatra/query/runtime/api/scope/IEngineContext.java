@@ -21,30 +21,30 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
  *
  */
 public interface IEngineContext {
-	
-	/**
-	 * Returns the base index. 
-	 * @throws ViatraQueryException 
-	 */	
-	IBaseIndex getBaseIndex() throws ViatraQueryException;
+    
+    /**
+     * Returns the base index. 
+     * @throws ViatraQueryException 
+     */	
+    IBaseIndex getBaseIndex() throws ViatraQueryException;
 
-	/**
-	 * Disposes this context object. Resources in the index may now be freed up.
-	 * No more methods should be called after this one.
-	 * 
+    /**
+     * Disposes this context object. Resources in the index may now be freed up.
+     * No more methods should be called after this one.
+     * 
      * @throws IllegalStateException if there are any active listeners to the underlying index
-	 */
-	void dispose();
+     */
+    void dispose();
 
-	/**
-	 * Provides instance model information for pattern matching.
-	 * 
-	 * <p> Implementors note: must be reentrant. 
-	 * If called while index loading is already in progress, must return the single runtime context instance that will eventually index the model. 
-	 * When the runtime query context is invoked in such a case, incomplete indexes are tolerable, but change notifications must be correctly provided as loading commences. 
-	 * 
-	 * @return a runtime context for pattern matching
-	 * @since 1.2
-	 */
-	public IQueryRuntimeContext getQueryRuntimeContext() throws ViatraQueryException;
+    /**
+     * Provides instance model information for pattern matching.
+     * 
+     * <p> Implementors note: must be reentrant. 
+     * If called while index loading is already in progress, must return the single runtime context instance that will eventually index the model. 
+     * When the runtime query context is invoked in such a case, incomplete indexes are tolerable, but change notifications must be correctly provided as loading commences. 
+     * 
+     * @return a runtime context for pattern matching
+     * @since 1.2
+     */
+    public IQueryRuntimeContext getQueryRuntimeContext() throws ViatraQueryException;
 }

@@ -27,13 +27,13 @@ import com.google.common.collect.Iterables;
  */
 public class QueryBasedFeatures {
 
-	public static final String ANNOTATION_LITERAL  		= "QueryBasedFeature";
-	public static final String ANNOTATION_SOURCE 		= "org.eclipse.viatra.query.querybasedfeature";
-	public static final String LEGACY_ANNOTATION_SOURCE = "org.eclipse.incquery.querybasedfeature";
+    public static final String ANNOTATION_LITERAL  		= "QueryBasedFeature";
+    public static final String ANNOTATION_SOURCE 		= "org.eclipse.viatra.query.querybasedfeature";
+    public static final String LEGACY_ANNOTATION_SOURCE = "org.eclipse.incquery.querybasedfeature";
     public static final String PATTERN_FQN_KEY 			= "patternFQN";
     public static final String ECORE_ANNOTATION     	= "http://www.eclipse.org/emf/2002/Ecore";
     public static final String SETTING_DELEGATES_KEY  	= "settingDelegates";
-    		  
+              
     public static SingleValueQueryBasedFeature newSingleValueFeature(EStructuralFeature feature, boolean keepCache) {
         return new SingleValueQueryBasedFeature(feature, keepCache);
     }
@@ -47,56 +47,56 @@ public class QueryBasedFeatures {
     }
  
     public static boolean checkEcoreAnnotation(EPackage pckg, EStructuralFeature feature, String patternFQN, boolean useModelCode) {
-    	boolean annotationsOK = true;
-    	if(!useModelCode){
-    		annotationsOK = QueryBasedFeatures.checkEcorePackageAnnotation(pckg);
-    	}
-    	annotationsOK &= QueryBasedFeatures.checkFeatureAnnotation(feature, patternFQN);
-    	
-    	return annotationsOK;
-	}
+        boolean annotationsOK = true;
+        if(!useModelCode){
+            annotationsOK = QueryBasedFeatures.checkEcorePackageAnnotation(pckg);
+        }
+        annotationsOK &= QueryBasedFeatures.checkFeatureAnnotation(feature, patternFQN);
+        
+        return annotationsOK;
+    }
     
     public static boolean checkEcorePackageAnnotation(EPackage pckg) {
-    	return Iterables.any(pckg.getEAnnotations(), new Predicate<EAnnotation>() {
-			@Override
-			public boolean apply(EAnnotation annotation) {
-				if(QueryBasedFeatures.ECORE_ANNOTATION.equals(annotation.getSource())){
-					return Iterables.any(annotation.getDetails().entrySet(), new Predicate<Entry<String, String>>() {
-						@Override
-						public boolean apply(Entry<String, String> entry) {
-							if(QueryBasedFeatures.SETTING_DELEGATES_KEY.equals(entry.getKey())){
-								StringTokenizer delegateTokents = new StringTokenizer(entry.getValue());
-						    	while(delegateTokents.hasMoreTokens()){
-						    		if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(delegateTokents.nextToken())){
-						    			return true;
-						    		}
-						    	}
-							}
-							return false;
-						}
-					});
-				}
-				return false;
-			}
-		});
+        return Iterables.any(pckg.getEAnnotations(), new Predicate<EAnnotation>() {
+            @Override
+            public boolean apply(EAnnotation annotation) {
+                if(QueryBasedFeatures.ECORE_ANNOTATION.equals(annotation.getSource())){
+                    return Iterables.any(annotation.getDetails().entrySet(), new Predicate<Entry<String, String>>() {
+                        @Override
+                        public boolean apply(Entry<String, String> entry) {
+                            if(QueryBasedFeatures.SETTING_DELEGATES_KEY.equals(entry.getKey())){
+                                StringTokenizer delegateTokents = new StringTokenizer(entry.getValue());
+                                while(delegateTokents.hasMoreTokens()){
+                                    if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(delegateTokents.nextToken())){
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                }
+                return false;
+            }
+        });
     }
 
     public static boolean checkFeatureAnnotation(EStructuralFeature feature, final String patternFQN) {
-    	return Iterables.any(feature.getEAnnotations(), new Predicate<EAnnotation>() {
-			@Override
-			public boolean apply(EAnnotation annotation) {
-				if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(annotation.getSource())){
-					return Iterables.any(annotation.getDetails().entrySet(), new Predicate<Entry<String, String>>() {
-						@Override
-						public boolean apply(Entry<String, String> entry) {
-							boolean keyOK = QueryBasedFeatures.PATTERN_FQN_KEY.equals(entry.getKey());
-							boolean valueOK = patternFQN.equals(entry.getValue());
-							return keyOK && valueOK;
-						}
-					});
-				}
-				return false;
-			}
-		});
+        return Iterables.any(feature.getEAnnotations(), new Predicate<EAnnotation>() {
+            @Override
+            public boolean apply(EAnnotation annotation) {
+                if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(annotation.getSource())){
+                    return Iterables.any(annotation.getDetails().entrySet(), new Predicate<Entry<String, String>>() {
+                        @Override
+                        public boolean apply(Entry<String, String> entry) {
+                            boolean keyOK = QueryBasedFeatures.PATTERN_FQN_KEY.equals(entry.getKey());
+                            boolean valueOK = patternFQN.equals(entry.getValue());
+                            return keyOK && valueOK;
+                        }
+                    });
+                }
+                return false;
+            }
+        });
     }
 }

@@ -61,17 +61,17 @@ public interface IEMFTypeProvider {
     EClassifier getExplicitClassifierForPatternParameterVariable(Variable variable);
 
     /**
-	 * Calculates the JVM type of the selected variable. The calculation
-	 * includes the inference of the corresponding EMF type, and then the
-	 * calculation of corresponding Java class.
-	 */
-	JvmTypeReference getVariableType(Variable variable);
+     * Calculates the JVM type of the selected variable. The calculation
+     * includes the inference of the corresponding EMF type, and then the
+     * calculation of corresponding Java class.
+     */
+    JvmTypeReference getVariableType(Variable variable);
 
-	/**
-	 * Calculates the corresponding JVM type of a selected EClassifier. The context is used to select the model-specific information, e.g. ResourceSet, project, etc.
-	 */
-	JvmTypeReference getJvmType(EClassifier classifier, EObject context);
-	/**
+    /**
+     * Calculates the corresponding JVM type of a selected EClassifier. The context is used to select the model-specific information, e.g. ResourceSet, project, etc.
+     */
+    JvmTypeReference getJvmType(EClassifier classifier, EObject context);
+    /**
      * @param valueReference
      * @return an {@link EClassifier} for the given input {@link ValueReference}. The ValueReference can be a
      *         {@link LiteralValueReference}, or a {@link ComputationValue}.

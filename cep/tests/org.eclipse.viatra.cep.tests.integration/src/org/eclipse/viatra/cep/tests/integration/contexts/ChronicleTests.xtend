@@ -20,24 +20,24 @@ import static org.eclipse.viatra.cep.core.api.engine.CEPEngine.*
 
 class ChronicleTests extends BaseIntegrationTest {
 
-	@Before
-	override void setUp() {
-		super.setUp
-		engine = newEngine.eventContext(EventContext.CHRONICLE).rule(rule_TestRule).prepare
-		eventStream = engine.getStreamManager().newEventStream()
-	}
+    @Before
+    override void setUp() {
+        super.setUp
+        engine = newEngine.eventContext(EventContext.CHRONICLE).rule(rule_TestRule).prepare
+        eventStream = engine.getStreamManager().newEventStream()
+    }
 
-	@Test
-	def void test() {
-		eventStream.push(createA1_Event);
-		assertEquals(1, TestResultHelper.instance.getResults("or"))
+    @Test
+    def void test() {
+        eventStream.push(createA1_Event);
+        assertEquals(1, TestResultHelper.instance.getResults("or"))
 
-		eventStream.push(createA2_Event);
-		assertEquals(2, TestResultHelper.instance.getResults("or"))
-		assertEquals(1, TestResultHelper.instance.getResults("follows"))
-		assertEquals(1, TestResultHelper.instance.getResults("and"))
-		assertEquals(1, TestResultHelper.instance.getResults("multiplicityatleast"))
-		assertEquals(0, TestResultHelper.instance.getResults("multiplicity3"))
-	}
+        eventStream.push(createA2_Event);
+        assertEquals(2, TestResultHelper.instance.getResults("or"))
+        assertEquals(1, TestResultHelper.instance.getResults("follows"))
+        assertEquals(1, TestResultHelper.instance.getResults("and"))
+        assertEquals(1, TestResultHelper.instance.getResults("multiplicityatleast"))
+        assertEquals(0, TestResultHelper.instance.getResults("multiplicity3"))
+    }
 
 }

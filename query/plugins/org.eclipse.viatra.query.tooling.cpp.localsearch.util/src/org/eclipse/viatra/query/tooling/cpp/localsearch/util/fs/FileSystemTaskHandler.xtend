@@ -28,104 +28,104 @@ import java.nio.charset.Charset
  * @author Robert Doczi
  */
 class FileSystemTaskHandler {
-	val extension ExecutorService executor;
+    val extension ExecutorService executor;
 
-	new() {
+    new() {
 
-		// TODO: More threads seem slower, needs investigation
-		//val pq = new PriorityBlockingQueue<Runnable>(20, Comparator::comparing[(it as FileTask).priority])
-		//executor = new ThreadPoolExecutor(1, 2, 10, TimeUnit.SECONDS, pq)
-		executor = Executors::newSingleThreadExecutor
-	}
+        // TODO: More threads seem slower, needs investigation
+        //val pq = new PriorityBlockingQueue<Runnable>(20, Comparator::comparing[(it as FileTask).priority])
+        //executor = new ThreadPoolExecutor(1, 2, 10, TimeUnit.SECONDS, pq)
+        executor = Executors::newSingleThreadExecutor
+    }
 
-	def addTask(FileTask task) {
-		task.execute
-	}
+    def addTask(FileTask task) {
+        task.execute
+    }
 
-	def flush(long timeout, TimeUnit tu) {
-		executor.shutdown()
-		executor.awaitTermination(timeout, tu)
-	}
+    def flush(long timeout, TimeUnit tu) {
+        executor.shutdown()
+        executor.awaitTermination(timeout, tu)
+    }
 }
 
 abstract class FileTask implements Runnable {
 
-	protected Path path
-	@Accessors(PUBLIC_GETTER)
-	protected int priority
+    protected Path path
+    @Accessors(PUBLIC_GETTER)
+    protected int priority
 
-	new(Path path) {
-		this.path = path;
-	}
+    new(Path path) {
+        this.path = path;
+    }
 }
 
 class CreateDirectoryTask extends FileTask {
 
-	new(Path path) {
-		super(path)
+    new(Path path) {
+        super(path)
 
-		priority = 0
-	}
+        priority = 0
+    }
 
-	override run() {
-		Files.createDirectory(path)
-	}
+    override run() {
+        Files.createDirectory(path)
+    }
 
 }
 
 class GenerateFileTask extends FileTask {
 
-	String content
+    String content
 
-	new(Path path, CharSequence content) {
-		super(path)
-		this.content = content.toString
+    new(Path path, CharSequence content) {
+        super(path)
+        this.content = content.toString
 
-		priority = 1
-	}
+        priority = 1
+    }
 
-	override run() {
-		val parent = path.parent
-		if (parent != null && !Files.exists(parent))
-			Files.createDirectories(parent)
-		if (Files.exists(path))
-			Files.delete(path)
-		Files.createFile(path)
+    override run() {
+        val parent = path.parent
+        if (parent != null && !Files.exists(parent))
+            Files.createDirectories(parent)
+        if (Files.exists(path))
+            Files.delete(path)
+        Files.createFile(path)
 
-		var BufferedWriter writer
-		try {
-			writer = Files.newBufferedWriter(path, Charset::defaultCharset, StandardOpenOption.CREATE)
-			writer.write(content)
-		} finally {
-			writer?.close
-		}
-	}
+        var BufferedWriter writer
+        try {
+            writer = Files.newBufferedWriter(path, Charset::defaultCharset, StandardOpenOption.CREATE)
+            writer.write(content)
+        } finally {
+            writer?.close
+        }
+    }
 
 }
 
 class DeleteFileTask extends FileTask {
 
-	new(Path path) {
-		super(path)
+    new(Path path) {
+        super(path)
 
-		priority = 2
-	}
+        priority = 2
+    }
 
-	override run() {
-		if(!Files.exists(path)) return;
-		Files.walkFileTree(path,
-			new SimpleFileVisitor<Path>() {
+    override run() {
+        if(!Files.exists(path)) return;
+        Files.walkFileTree(path,
+            new SimpleFileVisitor<Path>() {
 
-				override visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-					Files.delete(file)
-					FileVisitResult.CONTINUE
-				}
+                override visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file)
+                    FileVisitResult.CONTINUE
+                }
 
-				override postVisitDirectory(Path dir, IOException exc) throws IOException {
-					Files.delete(dir)
-					FileVisitResult.CONTINUE
-				}
+                override postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir)
+                    FileVisitResult.CONTINUE
+                }
 
-			})
-	}
+            })
+    }
 }

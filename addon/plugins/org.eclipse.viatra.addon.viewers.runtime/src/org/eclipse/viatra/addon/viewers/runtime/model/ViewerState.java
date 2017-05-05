@@ -105,18 +105,18 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
     }
 
     public Collection<Item> getChildren(Item parent) {
-    	try {
-			ChildrenMatcher matcher = model.getEngine().getMatcher(ChildrenQuerySpecification.instance());
-			Collection<ChildrenMatch> matches = matcher.getAllMatches(parent, null);
-			Collection<Item> items = Lists.newArrayList();
-			for (ChildrenMatch match: matches) {
-				items.add(match.getChild());
-			}
-			return items;
-		} catch (ViatraQueryException e) {
-			ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
-		}
-    	return Collections.emptyList();
+        try {
+            ChildrenMatcher matcher = model.getEngine().getMatcher(ChildrenQuerySpecification.instance());
+            Collection<ChildrenMatch> matches = matcher.getAllMatches(parent, null);
+            Collection<Item> items = Lists.newArrayList();
+            for (ChildrenMatch match: matches) {
+                items.add(match.getChild());
+            }
+            return items;
+        } catch (ViatraQueryException e) {
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
     public Item getParent(Item child) {

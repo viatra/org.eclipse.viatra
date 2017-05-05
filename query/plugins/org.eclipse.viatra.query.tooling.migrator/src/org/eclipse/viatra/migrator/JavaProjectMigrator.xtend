@@ -38,204 +38,204 @@ import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper
 import org.eclipse.swt.widgets.Display
 
 class JavaProjectMigrator extends JavaProjectMigratorData{
-	
-	val IJavaProject javaProject
-	
-	new(IProject project) {
-		javaProject = JavaCore.create(project)
-	}
-	
-	new(IJavaProject project){
-		javaProject = project
-	}
-	
-	def migrate(IProgressMonitor monitor){
-		val SubMonitor m = SubMonitor.convert(monitor);
-		
-		/*
-		 * Collect compilation units
-		 */
-		val list = newLinkedList()
-		for(p : javaProject.packageFragments){
-			if (p.kind == IPackageFragmentRoot::K_SOURCE){
-				list.addAll(p.compilationUnits)
-			}
-		}
-		m.beginTask("Migrating project", list.size*2+1)
-		
-		/*
-		 * Update PDE dependencies 
-		 */
-		val project = javaProject.project
-		if (ProjectGenerationHelper.isOpenPDEProject(project)){
-			ProjectGenerationHelper.replaceBundleDependencies(project, bundleRenames, bundleVersions, m.newChild(1))
-		}
-		
-		/*
-		 * Refactor compilation units
-		 */
-		val bufferManager = FileBuffers::textFileBufferManager
-		for(unit : list){
-		    Display.^default.syncExec(new Runnable() {
+    
+    val IJavaProject javaProject
+    
+    new(IProject project) {
+        javaProject = JavaCore.create(project)
+    }
+    
+    new(IJavaProject project){
+        javaProject = project
+    }
+    
+    def migrate(IProgressMonitor monitor){
+        val SubMonitor m = SubMonitor.convert(monitor);
+        
+        /*
+         * Collect compilation units
+         */
+        val list = newLinkedList()
+        for(p : javaProject.packageFragments){
+            if (p.kind == IPackageFragmentRoot::K_SOURCE){
+                list.addAll(p.compilationUnits)
+            }
+        }
+        m.beginTask("Migrating project", list.size*2+1)
+        
+        /*
+         * Update PDE dependencies 
+         */
+        val project = javaProject.project
+        if (ProjectGenerationHelper.isOpenPDEProject(project)){
+            ProjectGenerationHelper.replaceBundleDependencies(project, bundleRenames, bundleVersions, m.newChild(1))
+        }
+        
+        /*
+         * Refactor compilation units
+         */
+        val bufferManager = FileBuffers::textFileBufferManager
+        for(unit : list){
+            Display.^default.syncExec(new Runnable() {
         
             override run() {
-    			val ast = parse(unit, m.newChild(1));
+                val ast = parse(unit, m.newChild(1));
                 val rewrite = collectChanges(ast);
                 m.worked(1)
-			
+            
                 val textEdit = rewrite.rewriteAST()
                 val path = unit.path
                 try{
-				    bufferManager.connect(path, LocationKind::IFILE, null)
-				    val textFileBuffer = bufferManager.getTextFileBuffer(path, LocationKind::IFILE)
-				    val document = textFileBuffer.document
-			
-				    textEdit.apply(document)
-				
-				    textFileBuffer.commit(null, false)
+                    bufferManager.connect(path, LocationKind::IFILE, null)
+                    val textFileBuffer = bufferManager.getTextFileBuffer(path, LocationKind::IFILE)
+                    val document = textFileBuffer.document
+            
+                    textEdit.apply(document)
+                
+                    textFileBuffer.commit(null, false)
                 }finally{
-				    bufferManager.disconnect(path, LocationKind::IFILE, null)
-				    m.worked(1)
+                    bufferManager.disconnect(path, LocationKind::IFILE, null)
+                    m.worked(1)
                 }
             }
-		        
-		    })
-		}
-		
-		/*
-		 * Collect XTend files
-		 */
-		val xtendlist = <IFile>newLinkedList()
-		for(p : javaProject.packageFragmentRoots){
-			if (p.kind == IPackageFragmentRoot::K_SOURCE){
-				ResourcesPlugin.workspace.root.getFolder(p.path).accept([
-					if (it instanceof IFile && "xtend".equalsIgnoreCase(it.fileExtension)){
-						xtendlist.add(it as IFile)
-					}
-					return it instanceof IContainer
-				])
-			}
-		}
-		
-		/*
-		 * Replace imports in XTend files
-		 */
-		for(IFile file : xtendlist){
-			updateXTend(file)
-		}
-	}
-	
-	def updateXTend(IFile xtendFile){
-		val replacer = new FileStringReplacer(xtendFile)
-		for(entry : qualifiedNameRenames.entrySet){
-			if (entry.key.endsWith(".")){
-				//Package rename
-				replacer.replacePattern(entry.key, entry.value)
-			}else{
-				//Class rename
-				if (replacer.replacePattern("import "+entry.key, "import "+entry.value)){
-					//Class was imported, replace all occurences
-					replacer.replacePattern(getLastSegment(entry.key), getLastSegment(entry.value))
-				}else{
-					//Attempt to replace FQN class references
-					replacer.replacePattern(entry.key, entry.value)
-				}
-			}
-		}
-		replacer.save
-	}
-	
-	/**
-	 * Get JLS supported by the runtime JDT platform
-	 */
-	def getJLS(){
-		try{
-			/* Viatra officially supports Java7, but in order to be able to precisely update
-			 * Java8 code also, we detect whether current JDT supports it. 
-			 * This detection uses reflection to avoid compile-time dependency. */ 
-			val f = AST.getField("JLS8")
-			return f.getInt(null);
-		}catch(NoSuchFieldException e){
-			return AST.JLS4;
-		}
-	}
-	
-	def parse(ICompilationUnit unit, IProgressMonitor monitor){
-		val parser = ASTParser.newParser(JLS); 
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return parser.createAST(monitor)
-	}
-	
-	def replaceName(String oldValue, Entry<String, String> entry){
-		return oldValue.replace(entry.key, entry.value)
-	}
-	
-	def getLastSegment(String fqn){
-		if (fqn.endsWith('.')){
-			return ""
-		}
-		val i = fqn.lastIndexOf('.')
-		if (i >= 0){
-			return fqn.substring(i+1);
-		}
-		return fqn
-	}
-	
-	def createChange(ASTRewrite rewrite, ImportDeclaration importDeclaration, Map<String, String> typeRenames){
-		val fullyQualifiedName = importDeclaration.name.fullyQualifiedName
-		for(entry : JavaProjectMigrator.qualifiedNameRenames.entrySet){
-			if ((fullyQualifiedName).startsWith(entry.key)){
-				val newName = replaceName(fullyQualifiedName, entry)
-				val tn_old = getLastSegment(fullyQualifiedName)
-				val tn_new = getLastSegment(newName)
-				if (tn_old != tn_new){
-					typeRenames.put(tn_old, tn_new)
-				}
-				rewrite.set(importDeclaration, ImportDeclaration::NAME_PROPERTY, importDeclaration.AST.newName(newName), null)
-				return
-			}
-		}
-	}
-	
-	def createChange(ASTRewrite rewrite, SimpleType type, Map<String, String> typeRenames){
-		val Name name = type.name;
-		if (name instanceof QualifiedName){
-			val fullyQualifiedName = name.fullyQualifiedName
-			for(entry : JavaProjectMigrator.qualifiedNameRenames.entrySet){
-				if ((fullyQualifiedName).startsWith(entry.key)){
-					rewrite.set(type, ImportDeclaration::NAME_PROPERTY, type.AST.newName(replaceName(fullyQualifiedName, entry)), null)
-					return
-				}
-			}
-		}
-		if (name instanceof SimpleName){
-			val n = name.fullyQualifiedName
-			if (typeRenames.containsKey(n)){
-				rewrite.set(type, SimpleType::NAME_PROPERTY, type.AST.newName(typeRenames.get(n)), null)
-			}
-		}
-	}
-	
-	def collectChanges(ASTNode node){
-		val rewrite = ASTRewrite.create(node.AST)
-		val typeRenames = <String, String>newHashMap
-		
-		node.accept(new ASTVisitor(){
-			
-			override visit(ImportDeclaration node) {
-				createChange(rewrite, node, typeRenames);
-				super.visit(node)
-			}
-			
-			override visit(SimpleType node) {
-				createChange(rewrite, node, typeRenames)
-				super.visit(node)
-			}
-			
-		})
-		return rewrite
-	}
-	
+                
+            })
+        }
+        
+        /*
+         * Collect XTend files
+         */
+        val xtendlist = <IFile>newLinkedList()
+        for(p : javaProject.packageFragmentRoots){
+            if (p.kind == IPackageFragmentRoot::K_SOURCE){
+                ResourcesPlugin.workspace.root.getFolder(p.path).accept([
+                    if (it instanceof IFile && "xtend".equalsIgnoreCase(it.fileExtension)){
+                        xtendlist.add(it as IFile)
+                    }
+                    return it instanceof IContainer
+                ])
+            }
+        }
+        
+        /*
+         * Replace imports in XTend files
+         */
+        for(IFile file : xtendlist){
+            updateXTend(file)
+        }
+    }
+    
+    def updateXTend(IFile xtendFile){
+        val replacer = new FileStringReplacer(xtendFile)
+        for(entry : qualifiedNameRenames.entrySet){
+            if (entry.key.endsWith(".")){
+                //Package rename
+                replacer.replacePattern(entry.key, entry.value)
+            }else{
+                //Class rename
+                if (replacer.replacePattern("import "+entry.key, "import "+entry.value)){
+                    //Class was imported, replace all occurences
+                    replacer.replacePattern(getLastSegment(entry.key), getLastSegment(entry.value))
+                }else{
+                    //Attempt to replace FQN class references
+                    replacer.replacePattern(entry.key, entry.value)
+                }
+            }
+        }
+        replacer.save
+    }
+    
+    /**
+     * Get JLS supported by the runtime JDT platform
+     */
+    def getJLS(){
+        try{
+            /* Viatra officially supports Java7, but in order to be able to precisely update
+             * Java8 code also, we detect whether current JDT supports it. 
+             * This detection uses reflection to avoid compile-time dependency. */ 
+            val f = AST.getField("JLS8")
+            return f.getInt(null);
+        }catch(NoSuchFieldException e){
+            return AST.JLS4;
+        }
+    }
+    
+    def parse(ICompilationUnit unit, IProgressMonitor monitor){
+        val parser = ASTParser.newParser(JLS); 
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(unit);
+        parser.setResolveBindings(true);
+        return parser.createAST(monitor)
+    }
+    
+    def replaceName(String oldValue, Entry<String, String> entry){
+        return oldValue.replace(entry.key, entry.value)
+    }
+    
+    def getLastSegment(String fqn){
+        if (fqn.endsWith('.')){
+            return ""
+        }
+        val i = fqn.lastIndexOf('.')
+        if (i >= 0){
+            return fqn.substring(i+1);
+        }
+        return fqn
+    }
+    
+    def createChange(ASTRewrite rewrite, ImportDeclaration importDeclaration, Map<String, String> typeRenames){
+        val fullyQualifiedName = importDeclaration.name.fullyQualifiedName
+        for(entry : JavaProjectMigrator.qualifiedNameRenames.entrySet){
+            if ((fullyQualifiedName).startsWith(entry.key)){
+                val newName = replaceName(fullyQualifiedName, entry)
+                val tn_old = getLastSegment(fullyQualifiedName)
+                val tn_new = getLastSegment(newName)
+                if (tn_old != tn_new){
+                    typeRenames.put(tn_old, tn_new)
+                }
+                rewrite.set(importDeclaration, ImportDeclaration::NAME_PROPERTY, importDeclaration.AST.newName(newName), null)
+                return
+            }
+        }
+    }
+    
+    def createChange(ASTRewrite rewrite, SimpleType type, Map<String, String> typeRenames){
+        val Name name = type.name;
+        if (name instanceof QualifiedName){
+            val fullyQualifiedName = name.fullyQualifiedName
+            for(entry : JavaProjectMigrator.qualifiedNameRenames.entrySet){
+                if ((fullyQualifiedName).startsWith(entry.key)){
+                    rewrite.set(type, ImportDeclaration::NAME_PROPERTY, type.AST.newName(replaceName(fullyQualifiedName, entry)), null)
+                    return
+                }
+            }
+        }
+        if (name instanceof SimpleName){
+            val n = name.fullyQualifiedName
+            if (typeRenames.containsKey(n)){
+                rewrite.set(type, SimpleType::NAME_PROPERTY, type.AST.newName(typeRenames.get(n)), null)
+            }
+        }
+    }
+    
+    def collectChanges(ASTNode node){
+        val rewrite = ASTRewrite.create(node.AST)
+        val typeRenames = <String, String>newHashMap
+        
+        node.accept(new ASTVisitor(){
+            
+            override visit(ImportDeclaration node) {
+                createChange(rewrite, node, typeRenames);
+                super.visit(node)
+            }
+            
+            override visit(SimpleType node) {
+                createChange(rewrite, node, typeRenames)
+                super.visit(node)
+            }
+            
+        })
+        return rewrite
+    }
+    
 }

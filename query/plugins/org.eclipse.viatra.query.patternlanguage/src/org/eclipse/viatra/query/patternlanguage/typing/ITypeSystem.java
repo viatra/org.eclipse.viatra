@@ -116,38 +116,38 @@ public interface ITypeSystem {
      */
     public static final class NullTypeSystem implements ITypeSystem {
 
-		@Override
-		public boolean isConformant(IInputKey expectedType, IInputKey actualType) {
+        @Override
+        public boolean isConformant(IInputKey expectedType, IInputKey actualType) {
             throw new UnsupportedOperationException();
-		}
+        }
 
-		@Override
-		public boolean isConformToRelationColumn(IInputKey relationType,
-				int columnIndex, IInputKey columnType) {
+        @Override
+        public boolean isConformToRelationColumn(IInputKey relationType,
+                int columnIndex, IInputKey columnType) {
             throw new UnsupportedOperationException();
-		}
+        }
 
-		@Override
-		public IInputKey extractTypeDescriptor(Type type) {
+        @Override
+        public IInputKey extractTypeDescriptor(Type type) {
             throw new UnsupportedOperationException();
-		}
+        }
 
-		@Override
-		public IInputKey extractColumnDescriptor(RelationType type,
-				int columnIndex) {
+        @Override
+        public IInputKey extractColumnDescriptor(RelationType type,
+                int columnIndex) {
             throw new UnsupportedOperationException();
-		}
+        }
 
-		@Override
-		public JvmTypeReference toJvmTypeReference(IInputKey type,
-				EObject context) {
+        @Override
+        public JvmTypeReference toJvmTypeReference(IInputKey type,
+                EObject context) {
             throw new UnsupportedOperationException();
-		}
+        }
 
-		@Override
-		public String typeString(IInputKey type) {
+        @Override
+        public String typeString(IInputKey type) {
             throw new UnsupportedOperationException();
-		}
+        }
 
         /**
          * @since 1.3

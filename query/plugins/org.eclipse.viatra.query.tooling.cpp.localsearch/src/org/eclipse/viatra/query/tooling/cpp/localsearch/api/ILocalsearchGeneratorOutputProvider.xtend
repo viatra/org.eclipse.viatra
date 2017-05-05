@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.QueryDescriptor
  * @author Robert Doczi
  */
 interface ILocalsearchGeneratorOutputProvider extends IGeneratorOutputProvider {
-	
-	def void initialize(QueryDescriptor query)
-	
+    
+    def void initialize(QueryDescriptor query)
+    
 }

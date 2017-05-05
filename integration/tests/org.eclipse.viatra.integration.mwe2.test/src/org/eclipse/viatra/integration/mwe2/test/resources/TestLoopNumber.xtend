@@ -17,8 +17,8 @@ import org.eclipse.viatra.integration.mwe2.providers.impl.BaseProvider
  * 
  */
 public class TestLoopNumber extends BaseProvider implements IIterationNumberProvider{
-	override getIterationNumber() {
-		return 2
-	}
-	
+    override getIterationNumber() {
+        return 2
+    }
+    
 }

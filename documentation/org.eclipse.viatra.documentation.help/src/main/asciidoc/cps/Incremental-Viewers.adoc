@@ -23,17 +23,17 @@ The following patterns define the following:
 @Format(color = "#FBFE00")
 @Item(item = host, label = "Host $host.ip$")
 pattern deploymentHostItem(host) {
-	DeploymentHost(host);
+    DeploymentHost(host);
 }
 
 @Format(color = "#996600")
 @Item(item = app, label = "App $app.id$")
 pattern deploymentApplicationItem(app) {
-	DeploymentApplication(app);
+    DeploymentApplication(app);
 }
 
 @Edge(source = host, target = app, label = "apps")
 pattern deploymentHostApplicationEdge(host, app) {
-	DeploymentHost.applications(host, app);
+    DeploymentHost.applications(host, app);
 }
 ```

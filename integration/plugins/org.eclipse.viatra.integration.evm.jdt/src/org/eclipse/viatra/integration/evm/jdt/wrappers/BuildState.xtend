@@ -15,7 +15,7 @@ import java.util.Map
 import org.eclipse.viatra.integration.evm.jdt.util.QualifiedName
 
 interface BuildState {
-	def List<String> getStructurallyChangedTypes()
-	def Map<String, ReferenceStorage> getReferences()
-	def Iterable<QualifiedName> getAffectedCompilationUnitsInProject()
+    def List<String> getStructurallyChangedTypes()
+    def Map<String, ReferenceStorage> getReferences()
+    def Iterable<QualifiedName> getAffectedCompilationUnitsInProject()
 }

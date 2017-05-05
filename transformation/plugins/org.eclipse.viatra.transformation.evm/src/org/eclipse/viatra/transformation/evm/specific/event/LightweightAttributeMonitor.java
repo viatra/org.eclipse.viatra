@@ -38,18 +38,18 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
         super();
         this.index = index;
         this.observer = new IInstanceObserver() {
-        	@Override
-        	public void notifyBinaryChanged(Object sourceElement,
-        			Object edgeType) {
+            @Override
+            public void notifyBinaryChanged(Object sourceElement,
+                    Object edgeType) {
                 Collection<MatchType> matches = observedMultimap.get(sourceElement);
                 for (MatchType matchType : matches) {
                     notifyListeners(matchType);
                 }
-        	}
-        	
-        	@Override
+            }
+            
+            @Override
             public void notifyTernaryChanged(Object sourceElement,
-            		Object edgeType) {
+                    Object edgeType) {
                 Collection<MatchType> matches = observedMultimap.get(sourceElement);
                 for (MatchType matchType : matches) {
                     notifyListeners(matchType);
@@ -63,8 +63,8 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
     public void registerFor(MatchType atom) {
         Collection<Object> allObjects = findAllObjects(atom);
         for (Object object : allObjects) {
-        	index.addInstanceObserver(observer, object);
-        	observedMultimap.put(object, atom);
+            index.addInstanceObserver(observer, object);
+            observedMultimap.put(object, atom);
         }
     }
 
@@ -79,8 +79,8 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
     public void unregisterFor(MatchType atom) {
         Collection<Object> allObjects = findAllObjects(atom);
         for (Object object : allObjects) {
-        	index.removeInstanceObserver(observer, object);
-        	observedMultimap.remove(object, atom);
+            index.removeInstanceObserver(observer, object);
+            observedMultimap.remove(object, atom);
         }
     }
 

@@ -17,33 +17,33 @@ import org.apache.log4j.spi.LoggingEvent
  * @author Grill Balázs
  */
 class TestingSeverityAggregatorLogAppender extends AppenderSkeleton {
-	
-	var severity=Level.INFO
-	var LoggingEvent event;
-	
-	override void close() {
-	}
-	
-	def void clear(){
-	    severity = Level.INFO
-	}
-	
-	override boolean requiresLayout() {
-		return false 
-	}
-	override protected void append(LoggingEvent event) {
-	   val eventLevel = event.getLevel
-	   if (severity.toInt < eventLevel.toInt){
-	       severity = eventLevel
-	       this.event = event
-	   }
-	}
-	
-	def getEvent(){
-	    event
-	}
-	
-	def getSeverity(){
-	    severity
-	}
+    
+    var severity=Level.INFO
+    var LoggingEvent event;
+    
+    override void close() {
+    }
+    
+    def void clear(){
+        severity = Level.INFO
+    }
+    
+    override boolean requiresLayout() {
+        return false 
+    }
+    override protected void append(LoggingEvent event) {
+       val eventLevel = event.getLevel
+       if (severity.toInt < eventLevel.toInt){
+           severity = eventLevel
+           this.event = event
+       }
+    }
+    
+    def getEvent(){
+        event
+    }
+    
+    def getSeverity(){
+        severity
+    }
 }

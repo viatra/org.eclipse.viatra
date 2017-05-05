@@ -22,12 +22,12 @@ import com.google.common.base.Function;
  */
 public interface IProvider<T> {
 
-	T get();
-	
-	public final class ProvidedValueFunction implements Function<IProvider<PQuery>, PQuery> {
-		@Override
-		public PQuery apply(IProvider<PQuery> input) {
-			return (input == null) ? null : input.get();
-		}
-	}
+    T get();
+    
+    public final class ProvidedValueFunction implements Function<IProvider<PQuery>, PQuery> {
+        @Override
+        public PQuery apply(IProvider<PQuery> input) {
+            return (input == null) ? null : input.get();
+        }
+    }
 }

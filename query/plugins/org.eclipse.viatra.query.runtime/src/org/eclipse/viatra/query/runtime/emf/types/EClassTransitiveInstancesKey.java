@@ -22,28 +22,28 @@ import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
  */
 public class EClassTransitiveInstancesKey extends BaseEMFTypeKey<EClass> {
 
-	public EClassTransitiveInstancesKey(EClass emfKey) {
-		super(emfKey);
-	}
+    public EClassTransitiveInstancesKey(EClass emfKey) {
+        super(emfKey);
+    }
 
-	@Override
-	public String getPrettyPrintableName() {
+    @Override
+    public String getPrettyPrintableName() {
         return "(scoped) "+ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
-	}
+    }
 
-	@Override
-	public String getStringID() {
-		return "eClass(scoped)#"+ ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
-	}
+    @Override
+    public String getStringID() {
+        return "eClass(scoped)#"+ ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+    }
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-	
-	@Override
-	public boolean isEnumerable() {
-		return true;
-	}
+    @Override
+    public int getArity() {
+        return 1;
+    }
+    
+    @Override
+    public boolean isEnumerable() {
+        return true;
+    }
 
 }

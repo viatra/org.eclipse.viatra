@@ -37,7 +37,7 @@ public class RunLocalSearchHandler extends AbstractHandler {
         }
         
         synchronized (LocalSearchDebugger.notifier) {
-        	// notifies the thread that does the matching
+            // notifies the thread that does the matching
             LocalSearchDebugger.notifier.notify();
         }
         

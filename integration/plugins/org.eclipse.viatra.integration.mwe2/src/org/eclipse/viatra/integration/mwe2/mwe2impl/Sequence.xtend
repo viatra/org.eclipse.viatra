@@ -23,39 +23,39 @@ import org.eclipse.viatra.integration.mwe2.ITransformationStep
  * @author Peter Lunk
  */
 class Sequence implements ITransformationStep, ICompositeStep {
-	protected val List<ITransformationStep> step
-	protected var IWorkflowContext ctx;
+    protected val List<ITransformationStep> step
+    protected var IWorkflowContext ctx;
 
-	new() {
-		super()
-		this.step = Lists.newArrayList()
-	}
+    new() {
+        super()
+        this.step = Lists.newArrayList()
+    }
 
-	override void addStep(ITransformationStep step) {
-		this.step.add(step)
-	}
+    override void addStep(ITransformationStep step) {
+        this.step.add(step)
+    }
 
-	override List<ITransformationStep> getStep() {
-		return step
-	}
+    override List<ITransformationStep> getStep() {
+        return step
+    }
 
-	override void initialize(IWorkflowContext ctx) {
-		this.ctx = ctx
-		step.forEach[
-			initialize(ctx)
-		]
-	}
+    override void initialize(IWorkflowContext ctx) {
+        this.ctx = ctx
+        step.forEach[
+            initialize(ctx)
+        ]
+    }
 
-	override void execute() {
-		step.forEach[
-			execute
-		]
-	}
+    override void execute() {
+        step.forEach[
+            execute
+        ]
+    }
 
-	override void dispose() {
-		step.forEach[
-			dispose
-		]
-	}
+    override void dispose() {
+        step.forEach[
+            dispose
+        ]
+    }
 
 }

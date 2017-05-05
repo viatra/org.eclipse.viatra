@@ -3,11 +3,11 @@
       title="Generating Code from Queries">
    <intro href="https://wiki.eclipse.org/VIATRA/Query/UserDocumentation/API">
       <description>
-      	VIATRA Query provides a powerful Java API that you can use to integrate queries into Eclipse/OSGi/Java applications. VIATRA Query automatically generates Java source code for your query pattern definitions inside the <b>src-gen</b> folder located inside your VIATRA Query project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | VIATRA Query | Compiler | Uncheck &quot;Compiler is activated&quot;. As the compilation can be a resource-intensive task (especially for large .vql files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler&apos;s support (see above, &quot;Executing queries on instance models with the Query Explorer&quot;)!<br/><br/>
-      	
-      	To use the generated VIATRA Query pattern matchers, either create your own plug-in project and add a dependency on the VIATRA Query plug-in (the EMF plug-ins corresponding to the referenced metamodels are automatically re-exported and made available to your code), or simply put your own code in the src/ folder of the query project.
-      	
-      	For a more detailed description of the generated code and the API, open the related help.
+          VIATRA Query provides a powerful Java API that you can use to integrate queries into Eclipse/OSGi/Java applications. VIATRA Query automatically generates Java source code for your query pattern definitions inside the <b>src-gen</b> folder located inside your VIATRA Query project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | VIATRA Query | Compiler | Uncheck &quot;Compiler is activated&quot;. As the compilation can be a resource-intensive task (especially for large .vql files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler&apos;s support (see above, &quot;Executing queries on instance models with the Query Explorer&quot;)!<br/><br/>
+          
+          To use the generated VIATRA Query pattern matchers, either create your own plug-in project and add a dependency on the VIATRA Query plug-in (the EMF plug-ins corresponding to the referenced metamodels are automatically re-exported and made available to your code), or simply put your own code in the src/ folder of the query project.
+          
+          For a more detailed description of the generated code and the API, open the related help.
       </description>
    </intro>
    
@@ -28,9 +28,9 @@
    </item>
    
    <item title="Check out advanced API features" href="https://wiki.eclipse.org/VIATRA/Query/UserDocumentation/API/Advanced">
-   	<description>
-   		Advanced API features (such as tracking changes in match sets, using the generic API to use VIATRA Query features without generating code etc) are discussed on the Eclipse wiki (open the related help).
-   	</description>
+       <description>
+           Advanced API features (such as tracking changes in match sets, using the generic API to use VIATRA Query features without generating code etc) are discussed on the Eclipse wiki (open the related help).
+       </description>
    </item>
    
 </cheatsheet>

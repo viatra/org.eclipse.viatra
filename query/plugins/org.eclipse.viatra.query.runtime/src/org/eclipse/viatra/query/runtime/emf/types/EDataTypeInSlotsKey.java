@@ -20,31 +20,31 @@ import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
  */
 public class EDataTypeInSlotsKey extends BaseEMFTypeKey<EDataType> {
 
-	/**
-	 * @param emfKey
-	 */
-	public EDataTypeInSlotsKey(EDataType emfKey) {
-		super(emfKey);
-	}
+    /**
+     * @param emfKey
+     */
+    public EDataTypeInSlotsKey(EDataType emfKey) {
+        super(emfKey);
+    }
 
-	@Override
-	public String getPrettyPrintableName() {
-		return "(Attribute Slot Values: " + ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey) + ")";
-	}
+    @Override
+    public String getPrettyPrintableName() {
+        return "(Attribute Slot Values: " + ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey) + ")";
+    }
 
-	@Override
-	public String getStringID() {
-		return "slotValue#" + ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
-	}
+    @Override
+    public String getStringID() {
+        return "slotValue#" + ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+    }
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-	
-	@Override
-	public boolean isEnumerable() {
-		return true;
-	}
-	
+    @Override
+    public int getArity() {
+        return 1;
+    }
+    
+    @Override
+    public boolean isEnumerable() {
+        return true;
+    }
+    
 }

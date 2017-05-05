@@ -14,14 +14,14 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 
 public abstract class ViewerLabelListenerAdapter implements
-		IViewerLabelListener {
+        IViewerLabelListener {
 
-	@Override
-	public void labelUpdated(Item item, String newLabel) {
-	}
+    @Override
+    public void labelUpdated(Item item, String newLabel) {
+    }
 
-	@Override
-	public void labelUpdated(Edge edge, String newLabel) {
-	}
+    @Override
+    public void labelUpdated(Edge edge, String newLabel) {
+    }
 
 }

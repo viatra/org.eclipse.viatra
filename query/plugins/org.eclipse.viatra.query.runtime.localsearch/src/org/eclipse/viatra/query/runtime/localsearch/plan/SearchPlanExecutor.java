@@ -42,13 +42,13 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     private List<ISearchOperation> operations;
     private final ISearchContext context;
     private final List<ILocalSearchAdapter> adapters = Lists.newCopyOnWriteArrayList();
-	private final BiMap<Integer,PVariable> variableMapping;
+    private final BiMap<Integer,PVariable> variableMapping;
 
-	public BiMap<Integer, PVariable> getVariableMapping() {
-		return variableMapping;
-	}
+    public BiMap<Integer, PVariable> getVariableMapping() {
+        return variableMapping;
+    }
 
-	public int getCurrentOperation() {
+    public int getCurrentOperation() {
         return currentOperation;
     }
     
@@ -76,17 +76,17 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     }
 
     public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping) {
-		Preconditions.checkArgument(context != null, "Context cannot be null");
+        Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
         this.variableMapping = HashBiMap.<PVariable, Integer>create(variableMapping).inverse();
         operations = plan.getOperations();
         this.currentOperation = -1;
-	}
+    }
    
 
     private void init(MatchingFrame frame) throws LocalSearchException {
-    	if (currentOperation == -1) {
+        if (currentOperation == -1) {
             currentOperation++;
             ISearchOperation operation = operations.get(currentOperation);
             if (!adapters.isEmpty()){
@@ -94,7 +94,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
                     adapter.executorInitializing(this,frame);
                 }
             }
-			operation.onInitialize(frame, context);
+            operation.onInitialize(frame, context);
         } else if (currentOperation == operations.size()) {
             currentOperation--;
         } else {
@@ -105,11 +105,11 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
 
     /**
      * Calculates the cost of the search plan.
-	 */
-	public double cost() {
-		/* default generated stub */
-		return 0.0;
-	}
+     */
+    public double cost() {
+        /* default generated stub */
+        return 0.0;
+    }
 
     public boolean execute(MatchingFrame frame) throws LocalSearchException {
         int upperBound = operations.size() - 1;
@@ -122,14 +122,14 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
                 operationSelected(frame);
                 if (currentOperation <= upperBound) {
                     ISearchOperation operation = operations.get(currentOperation);
-					operation.onInitialize(frame, context);
+                    operation.onInitialize(frame, context);
                 }
             } else {
                 operationExecuted(frame);
                 ISearchOperation operation = operations.get(currentOperation);
-				operation.onBacktrack(frame, context);
-				currentOperation--;
-				operationSelected(frame);
+                operation.onBacktrack(frame, context);
+                currentOperation--;
+                operationSelected(frame);
             }
         }
         boolean matchFound = currentOperation > upperBound;
@@ -138,17 +138,17 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
                 adapter.matchFound(this, frame);
             }
         }
-		return matchFound;
+        return matchFound;
     }
     
     public void resetPlan() {
-    	currentOperation = -1;
+        currentOperation = -1;
     }
     
     public void printDebugInformation() {
-    	for (int i = 0; i < operations.size(); i++) {
-    		Logger.getRootLogger().debug("[" + i + "]\t" + operations.get(i).toString());
-    	}
+        for (int i = 0; i < operations.size(); i++) {
+            Logger.getRootLogger().debug("[" + i + "]\t" + operations.get(i).toString());
+        }
     }
     
     private void operationExecuted(MatchingFrame frame) {
@@ -167,9 +167,9 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         }
     }
 
-	public ISearchContext getContext() {
-		return context;
-	}
+    public ISearchContext getContext() {
+        return context;
+    }
 
     @Override
     public List<ILocalSearchAdapter> getAdapters() {

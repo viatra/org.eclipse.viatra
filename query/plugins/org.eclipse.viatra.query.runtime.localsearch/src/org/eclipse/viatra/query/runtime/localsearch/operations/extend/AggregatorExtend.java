@@ -39,10 +39,10 @@ public class AggregatorExtend extends ExtendOperation<Object> {
     private final AggregatorConstraint aggregator;
     
     
-	/**
+    /**
      * @since 1.5
      */
-	public AggregatorExtend(MatcherReference calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
+    public AggregatorExtend(MatcherReference calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
         super(position);
         helper = new CallOperationHelper(calledQuery, parameterMapping);
         this.aggregator = aggregator;
@@ -57,9 +57,9 @@ public class AggregatorExtend extends ExtendOperation<Object> {
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, new Integer[0]);
+    }
     
     @Override
     public String toString() {

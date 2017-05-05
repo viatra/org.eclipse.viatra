@@ -72,7 +72,7 @@ public class Options {
             case PSYSTEM_QUASITREE:
                 return new QuasiTreeLayout(bContext, hintProvider);
             default:
-            	throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException();
             }
         }
     }
@@ -82,17 +82,17 @@ public class Options {
     BuilderMethod.PSYSTEM_QUASITREE;
     
     public enum FunctionalDependencyOption {
-    	OFF,
-    	OPPORTUNISTIC
+        OFF,
+        OPPORTUNISTIC
     }
     public static final FunctionalDependencyOption functionalDependencyOption = 
-    		FunctionalDependencyOption.OPPORTUNISTIC;
+            FunctionalDependencyOption.OPPORTUNISTIC;
     
     public enum PlanTrimOption {
-    	OFF,
-    	OPPORTUNISTIC
+        OFF,
+        OPPORTUNISTIC
     }
     public static final PlanTrimOption planTrimOption = 
-    		PlanTrimOption.OPPORTUNISTIC;
+            PlanTrimOption.OPPORTUNISTIC;
 
 }

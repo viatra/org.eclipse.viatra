@@ -20,7 +20,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
 public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
-	
+    
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
         getViewer().addSelectionChangedListener(listener);
@@ -63,8 +63,8 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
     
     @Override
     public void dispose() {
-    	// TODO is proper dispose support for jface-based viewers necessary?
-    	// getViewer().dispose();
+        // TODO is proper dispose support for jface-based viewers necessary?
+        // getViewer().dispose();
     }
 
     protected abstract Viewer getViewer();

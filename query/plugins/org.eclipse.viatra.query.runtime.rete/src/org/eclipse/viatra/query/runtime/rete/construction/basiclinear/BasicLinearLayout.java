@@ -47,8 +47,8 @@ import org.eclipse.viatra.query.runtime.rete.construction.RetePatternBuildExcept
  */
 public class BasicLinearLayout implements IQueryPlannerStrategy {
 
-	//SubPlanProcessor planProcessor = new SubPlanProcessor();
-	
+    //SubPlanProcessor planProcessor = new SubPlanProcessor();
+    
     private IQueryBackendHintProvider hintProvider;
     private IQueryBackendContext bContext;
     /**
@@ -62,14 +62,14 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
 
     @Override
     public SubPlan plan(final PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException {
-    	SubPlanFactory planFactory = new SubPlanFactory(pSystem);
+        SubPlanFactory planFactory = new SubPlanFactory(pSystem);
         PQuery query = pSystem.getPattern();
         //planProcessor.setCompiler(compiler);
         try {
             logger.debug(String.format(
-            		"%s: patternbody build started for %s",
-            		getClass().getSimpleName(), 
-            		query.getFullyQualifiedName()));
+                    "%s: patternbody build started for %s",
+                    getClass().getSimpleName(), 
+                    query.getFullyQualifiedName()));
 
             // STARTING THE LINE
             SubPlan plan = planFactory.createSubPlan(new PStart());
@@ -84,16 +84,16 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
                 pQueue.remove(pConstraint);
 
                 // if we have no better option than an unready deferred constraint, raise error
-				if (pConstraint instanceof DeferredPConstraint) {
-					final DeferredPConstraint deferred = (DeferredPConstraint) pConstraint;
+                if (pConstraint instanceof DeferredPConstraint) {
+                    final DeferredPConstraint deferred = (DeferredPConstraint) pConstraint;
                     if (!deferred.isReadyAt(plan, context)) {
                         raiseForeverDeferredError(deferred, plan, context);
                     }
                 }
-				// TODO integrate the check above in SubPlan / POperation??
-				
-				// replace incumbent plan with its child
-				plan = planFactory.createSubPlan(new PApply(pConstraint), plan);              		
+                // TODO integrate the check above in SubPlan / POperation??
+                
+                // replace incumbent plan with its child
+                plan = planFactory.createSubPlan(new PApply(pConstraint), plan);              		
             }
 
             // PROJECT TO PARAMETERS
@@ -101,13 +101,13 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
             
             // FINAL CHECK, whether all exported variables are present + all constraint satisfied
             BuildHelper.finalCheck(pSystem, finalPlan, context);
-			// TODO integrate the check above in SubPlan / POperation 
+            // TODO integrate the check above in SubPlan / POperation 
             
             logger.debug(String.format(
-            		"%s: patternbody query plan concluded for %s as: %s",
-            		getClass().getSimpleName(), 
-            		query.getFullyQualifiedName(),
-            		finalPlan.toLongString()));
+                    "%s: patternbody query plan concluded for %s as: %s",
+                    getClass().getSimpleName(), 
+                    query.getFullyQualifiedName(),
+                    finalPlan.toLongString()));
 
             return finalPlan;
 
@@ -125,25 +125,25 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
      *             to indicate the error in detail.
      */
     private void raiseForeverDeferredError(DeferredPConstraint constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
-    	if (constraint instanceof Equality) {
-    		raiseForeverDeferredError((Equality)constraint, plan, context);
-    	} else if (constraint instanceof ExportedParameter) {
-    		raiseForeverDeferredError((ExportedParameter)constraint, plan, context);
-    	} else if (constraint instanceof ExpressionEvaluation) {
-    		raiseForeverDeferredError((ExpressionEvaluation)constraint, plan, context);
-    	} else if (constraint instanceof VariableDeferredPConstraint) {
-    		raiseForeverDeferredError(constraint, plan, context);
-    	}
+        if (constraint instanceof Equality) {
+            raiseForeverDeferredError((Equality)constraint, plan, context);
+        } else if (constraint instanceof ExportedParameter) {
+            raiseForeverDeferredError((ExportedParameter)constraint, plan, context);
+        } else if (constraint instanceof ExpressionEvaluation) {
+            raiseForeverDeferredError((ExpressionEvaluation)constraint, plan, context);
+        } else if (constraint instanceof VariableDeferredPConstraint) {
+            raiseForeverDeferredError(constraint, plan, context);
+        }
     }
     
     private void raiseForeverDeferredError(Equality constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
-    	String[] args = { constraint.getWho().toString(), constraint.getWithWhom().toString() };
+        String[] args = { constraint.getWho().toString(), constraint.getWithWhom().toString() };
         String msg = "Cannot express equality of variables {1} and {2} if neither of them is deducable.";
         String shortMsg = "Equality between undeducible variables.";
         throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
     private void raiseForeverDeferredError(ExportedParameter constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
-    	String[] args = { constraint.getParameterName().toString() };
+        String[] args = { constraint.getParameterName().toString() };
         String msg = "Pattern Graph Search terminated incompletely: "
                 + "exported pattern variable {1} could not be determined based on the pattern constraints. "
                 + "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
@@ -162,7 +162,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
         }
     }
     private void raiseForeverDeferredError(VariableDeferredPConstraint constraint, SubPlan plan) throws RetePatternBuildException {
-    	Set<PVariable> missing = CollectionsFactory.getSet(constraint.getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
+        Set<PVariable> missing = CollectionsFactory.getSet(constraint.getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
         missing.removeAll(plan.getVisibleVariables());
         String[] args = { toString(), Arrays.toString(missing.toArray()) };
         String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. "

@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.viatra</groupId>
-	<artifactId>org.eclipse.viatra.parent</artifactId>
-	<name>VIATRA Parent job</name>
-	<url>http://eclipse.org/viatra</url>
-	<version>1.6.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<properties>
-		<tycho.version>0.24.0</tycho.version>
-		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra/org.eclipse.viatra.git</tycho.scmUrl>
-		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
-		<jacoco.version>0.7.6.201602180812</jacoco.version>
-		<jacoco.targetdir>${project.basedir}/../../jacoco</jacoco.targetdir>
-		<xtend.compiler.version>2.9.2</xtend.compiler.version>
-		<java.version>1.7</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<viatra.main.version>1.6.0-SNAPSHOT</viatra.main.version>
-		<cbi.jarsigner.version>1.1.3</cbi.jarsigner.version>
-		<!-- Composite site related properties -->
-		<viatra.updates.dir>updates</viatra.updates.dir>
-		<viatra.download.area>target/composite</viatra.download.area>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.eclipse.viatra</groupId>
+    <artifactId>org.eclipse.viatra.parent</artifactId>
+    <name>VIATRA Parent job</name>
+    <url>http://eclipse.org/viatra</url>
+    <version>1.6.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <properties>
+        <tycho.version>0.24.0</tycho.version>
+        <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra/org.eclipse.viatra.git</tycho.scmUrl>
+        <eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <jacoco.version>0.7.6.201602180812</jacoco.version>
+        <jacoco.targetdir>${project.basedir}/../../jacoco</jacoco.targetdir>
+        <xtend.compiler.version>2.9.2</xtend.compiler.version>
+        <java.version>1.7</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <viatra.main.version>1.6.0-SNAPSHOT</viatra.main.version>
+        <cbi.jarsigner.version>1.1.3</cbi.jarsigner.version>
+        <!-- Composite site related properties -->
+        <viatra.updates.dir>updates</viatra.updates.dir>
+        <viatra.download.area>target/composite</viatra.download.area>
         <!-- Maven deploy related properties-->
         <viatra.deploy.release>https://repo.eclipse.org/content/repositories/viatra2-releases/</viatra.deploy.release>
         <viatra.deploy.snapshot>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</viatra.deploy.snapshot>
         
         <license.aggregate>true</license.aggregate>
-	</properties>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<executions>
-					<execution>
-						<id>plugin-source</id>
-						<goals>
-							<goal>plugin-source</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-source-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <executions>
+                    <execution>
+                        <id>plugin-source</id>
+                        <goals>
+                            <goal>plugin-source</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
                 <version>1.4</version>
@@ -70,61 +70,61 @@
                     <doUpdate>false</doUpdate>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-packaging-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<sourceReferences>
-						<generate>true</generate>
-					</sourceReferences>
-					<archive>
-					    <manifestEntries>
-					       <SCM-Revision>${buildNumber}</SCM-Revision>
-					    </manifestEntries>
-					</archive>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-sourceref-jgit</artifactId>
-						<version>${tycho.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-p2-publisher-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<publishArtifacts>true</publishArtifacts>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<configuration>
-					<destFile>${jacoco.targetdir}/jacoco.exec</destFile>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-packaging-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <sourceReferences>
+                        <generate>true</generate>
+                    </sourceReferences>
+                    <archive>
+                        <manifestEntries>
+                           <SCM-Revision>${buildNumber}</SCM-Revision>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.tycho.extras</groupId>
+                        <artifactId>tycho-sourceref-jgit</artifactId>
+                        <version>${tycho.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-p2-publisher-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <publishArtifacts>true</publishArtifacts>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <destFile>${jacoco.targetdir}/jacoco.exec</destFile>
 
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.5</version>
-				</plugin>
-				<plugin>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-toolchains-plugin</artifactId>
                     <version>1.1</version>
@@ -143,76 +143,76 @@
                         </execution>
                     </executions>
                 </plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-compiler-plugin</artifactId>
-					<version>${tycho.version}</version>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-						<!-- add JavaFX to classpath (jfxswt.jar for Java 8) -->
-						<extraClasspathElements>
-							<extraClasspathElement>
-								<groupId>com.oracle</groupId>
-								<artifactId>javafxswt</artifactId>
-								<version>8.0.0-SNAPSHOT</version>
-								<systemPath>${java.home}/jre/lib/jfxswt.jar</systemPath>
-								<scope>system</scope>
-							</extraClasspathElement>
-							<extraClasspathElement>
-								<groupId>com.google.inject.extensions</groupId>
-								<artifactId>guice-multibindings</artifactId>
-								<version>3.0</version>
-							</extraClasspathElement>
-							<extraClasspathElement>
-								<groupId>com.google.inject.extensions</groupId>
-								<artifactId>guice-assistedinject</artifactId>
-								<version>3.0</version>
-							</extraClasspathElement>
-						</extraClasspathElements>
-						<useJDK>BREE</useJDK>
- 						<useProjectSettings>true</useProjectSettings>
-						<excludeResources>
-							<excludeResource>**/.gitignore</excludeResource>
-						</excludeResources>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-surefire-plugin</artifactId>
-					<version>${tycho.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-p2-repository-plugin</artifactId>
-					<version>${tycho.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.xtend</groupId>
-					<artifactId>xtend-maven-plugin</artifactId>
-					<version>${xtend.compiler.version}</version>
-					<configuration>
-						<!-- need to prefix by basedir to generate to currently built module -->
-						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${jacoco.version}</version>
-					<configuration>
-						<destFile>${jacoco.targetdir}/jacoco.exec</destFile>
-						<append>true</append>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-compiler-plugin</artifactId>
+                    <version>${tycho.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <!-- add JavaFX to classpath (jfxswt.jar for Java 8) -->
+                        <extraClasspathElements>
+                            <extraClasspathElement>
+                                <groupId>com.oracle</groupId>
+                                <artifactId>javafxswt</artifactId>
+                                <version>8.0.0-SNAPSHOT</version>
+                                <systemPath>${java.home}/jre/lib/jfxswt.jar</systemPath>
+                                <scope>system</scope>
+                            </extraClasspathElement>
+                            <extraClasspathElement>
+                                <groupId>com.google.inject.extensions</groupId>
+                                <artifactId>guice-multibindings</artifactId>
+                                <version>3.0</version>
+                            </extraClasspathElement>
+                            <extraClasspathElement>
+                                <groupId>com.google.inject.extensions</groupId>
+                                <artifactId>guice-assistedinject</artifactId>
+                                <version>3.0</version>
+                            </extraClasspathElement>
+                        </extraClasspathElements>
+                        <useJDK>BREE</useJDK>
+                         <useProjectSettings>true</useProjectSettings>
+                        <excludeResources>
+                            <excludeResource>**/.gitignore</excludeResource>
+                        </excludeResources>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-surefire-plugin</artifactId>
+                    <version>${tycho.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-p2-repository-plugin</artifactId>
+                    <version>${tycho.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.xtend</groupId>
+                    <artifactId>xtend-maven-plugin</artifactId>
+                    <version>${xtend.compiler.version}</version>
+                    <configuration>
+                        <!-- need to prefix by basedir to generate to currently built module -->
+                        <outputDirectory>${basedir}/xtend-gen</outputDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <configuration>
+                        <destFile>${jacoco.targetdir}/jacoco.exec</destFile>
+                        <append>true</append>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                    <groupId>org.apache.maven.plugins</groupId>
                    <artifactId>maven-jar-plugin</artifactId>
                    <version>2.4</version>
@@ -224,54 +224,54 @@
                         </archive>
                     </configuration>
                 </plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-	<distributionManagement>
-		<repository>
-			<id>repo.eclipse.org</id>
-			<name>VIATRA Project Repository - Releases</name>
-			<url>${viatra.deploy.release}</url>
-		</repository>
-		<snapshotRepository>
-			<id>repo.eclipse.org</id>
-			<name>VIATRA Project Repository - Snapshots</name>
-			<url>${viatra.deploy.snapshot}</url>
-		</snapshotRepository>
-	</distributionManagement>
-	<scm>
-		<connection>${tycho.scmUrl}</connection>
-		<url>http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/</url>
-	</scm>
-	<ciManagement>
-		<url>https://hudson.eclipse.org/viatra/</url>
-		<system>Hudson</system>
-	</ciManagement>
-	<issueManagement>
-		<url>${eclipse.bugzillaUrl}</url>
-		<system>Bugzilla</system>
-	</issueManagement>
-	<repositories>
-	    <!-- <repository>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <distributionManagement>
+        <repository>
+            <id>repo.eclipse.org</id>
+            <name>VIATRA Project Repository - Releases</name>
+            <url>${viatra.deploy.release}</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo.eclipse.org</id>
+            <name>VIATRA Project Repository - Snapshots</name>
+            <url>${viatra.deploy.snapshot}</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <connection>${tycho.scmUrl}</connection>
+        <url>http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/</url>
+    </scm>
+    <ciManagement>
+        <url>https://hudson.eclipse.org/viatra/</url>
+        <system>Hudson</system>
+    </ciManagement>
+    <issueManagement>
+        <url>${eclipse.bugzillaUrl}</url>
+        <system>Bugzilla</system>
+    </issueManagement>
+    <repositories>
+        <!-- <repository>
             <id>sonatype-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository> -->
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>cbi-releases</id>
-			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-		</pluginRepository>
-		<!-- <pluginRepository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cbi-releases</id>
+            <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+        </pluginRepository>
+        <!-- <pluginRepository>
             <id>sonatype-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>-->
-	</pluginRepositories>
-	<profiles>
+    </pluginRepositories>
+    <profiles>
         <profile>
             <id>sign_integration</id>
             <activation>
@@ -342,87 +342,17 @@
                 </plugins>
             </build>
         </profile>
-		<profile>
-			<id>sign_milestone</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>BUILD_TYPE</name>
-					<value>milestone</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200a-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>pack200-normalize</id>
-								<goals>
-									<goal>normalize</goal>
-								</goals>
-								<configuration>
-                                    <supportedProjectTypes>
-                                        <supportedProjectType>eclipse-plugin</supportedProjectType>
-                                        <supportedProjectType>eclipse-test-plugin</supportedProjectType>
-                                    </supportedProjectTypes>
-                                </configuration>
-							</execution>
-						</executions>
-					</plugin>
-	                <!--
-	                   Note that plugins bound to same phase will be executed in the same 
-		               order as they are listed, so that metadata generated after signing
-		            -->
-					<plugin>
-						<groupId>org.eclipse.cbi.maven.plugins</groupId>
-						<artifactId>eclipse-jarsigner-plugin</artifactId>
-						<version>${cbi.jarsigner.version}</version>
-						<executions>
-							<execution>
-								<id>sign</id>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200b-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>pack200-pack</id>
-								<goals>
-									<goal>pack</goal>
-								</goals>
-								<configuration>
-                                    <supportedProjectTypes>
-                                        <supportedProjectType>eclipse-plugin</supportedProjectType>
-                                        <supportedProjectType>eclipse-test-plugin</supportedProjectType>
-                                    </supportedProjectTypes>
-                                </configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>sign_release</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>BUILD_TYPE</name>
-					<value>release</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
+        <profile>
+            <id>sign_milestone</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>BUILD_TYPE</name>
+                    <value>milestone</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.eclipse.tycho.extras</groupId>
                         <artifactId>tycho-pack200a-plugin</artifactId>
@@ -479,58 +409,128 @@
                             </execution>
                         </executions>
                     </plugin>
-				</plugins>
-			</build>
-			</profile>
-		<profile>
-			<id>license-check</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<!-- license -->
-					<plugin>
-						<groupId>com.mycila</groupId>
-						<artifactId>license-maven-plugin</artifactId>
-						<version>3.0</version>
-						<configuration>
-							<inlineHeader>
-								All rights reserved. This program and the accompanying materials
-								are made available under the terms of the Eclipse Public License
-								v1.0
-								which accompanies this distribution, and is available at
-								http://www.eclipse.org/legal/epl-v10.html
-							</inlineHeader>
-							<useDefaultExcludes>true</useDefaultExcludes>
-							<failIfMissing>true</failIfMissing>
-							<!-- Needed for EPL as placeholders would be too complicated -->
-							<strictCheck>false</strictCheck>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xtend</include>
-							</includes>
-							<excludes>
-								<exclude>**/src/site/**</exclude>
-								<exclude>**/target/**</exclude>
-								<exclude>**/src-gen/**</exclude>
-								<exclude>**/xtend-gen/**</exclude>
-							</excludes>
-							<mapping>
-								<xtend>JAVADOC_STYLE</xtend>
-							</mapping>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sign_release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>BUILD_TYPE</name>
+                    <value>release</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.tycho.extras</groupId>
+                        <artifactId>tycho-pack200a-plugin</artifactId>
+                        <version>${tycho.version}</version>
+                        <executions>
+                            <execution>
+                                <id>pack200-normalize</id>
+                                <goals>
+                                    <goal>normalize</goal>
+                                </goals>
+                                <configuration>
+                                    <supportedProjectTypes>
+                                        <supportedProjectType>eclipse-plugin</supportedProjectType>
+                                        <supportedProjectType>eclipse-test-plugin</supportedProjectType>
+                                    </supportedProjectTypes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--
+                       Note that plugins bound to same phase will be executed in the same 
+                       order as they are listed, so that metadata generated after signing
+                    -->
+                    <plugin>
+                        <groupId>org.eclipse.cbi.maven.plugins</groupId>
+                        <artifactId>eclipse-jarsigner-plugin</artifactId>
+                        <version>${cbi.jarsigner.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eclipse.tycho.extras</groupId>
+                        <artifactId>tycho-pack200b-plugin</artifactId>
+                        <version>${tycho.version}</version>
+                        <executions>
+                            <execution>
+                                <id>pack200-pack</id>
+                                <goals>
+                                    <goal>pack</goal>
+                                </goals>
+                                <configuration>
+                                    <supportedProjectTypes>
+                                        <supportedProjectType>eclipse-plugin</supportedProjectType>
+                                        <supportedProjectType>eclipse-test-plugin</supportedProjectType>
+                                    </supportedProjectTypes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            </profile>
+        <profile>
+            <id>license-check</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- license -->
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>3.0</version>
+                        <configuration>
+                            <inlineHeader>
+                                All rights reserved. This program and the accompanying materials
+                                are made available under the terms of the Eclipse Public License
+                                v1.0
+                                which accompanies this distribution, and is available at
+                                http://www.eclipse.org/legal/epl-v10.html
+                            </inlineHeader>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <failIfMissing>true</failIfMissing>
+                            <!-- Needed for EPL as placeholders would be too complicated -->
+                            <strictCheck>false</strictCheck>
+                            <includes>
+                                <include>**/*.java</include>
+                                <include>**/*.xtend</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/src/site/**</exclude>
+                                <exclude>**/target/**</exclude>
+                                <exclude>**/src-gen/**</exclude>
+                                <exclude>**/xtend-gen/**</exclude>
+                            </excludes>
+                            <mapping>
+                                <xtend>JAVADOC_STYLE</xtend>
+                            </mapping>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -28,10 +28,10 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 public abstract class BasePatternMatch implements IPatternMatch {
 
     @SafeVarargs
-	protected static <T> List<T> makeImmutableList(T... elements) {
-		return Collections.unmodifiableList(Arrays.asList(elements));
-	}
-	
+    protected static <T> List<T> makeImmutableList(T... elements) {
+        return Collections.unmodifiableList(Arrays.asList(elements));
+    }
+    
     public static String prettyPrintValue(Object o) {
         if (o == null) {
             return "(null)";
@@ -73,7 +73,7 @@ public abstract class BasePatternMatch implements IPatternMatch {
 
     @Override
     public boolean set(int position, Object newValue) {
-    	if (!isMutable()) throw new UnsupportedOperationException();
+        if (!isMutable()) throw new UnsupportedOperationException();
         if (position >= 0 && position < parameterNames().size()) {
             return set(parameterNames().get(position), newValue);
         } else {

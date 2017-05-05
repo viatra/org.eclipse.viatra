@@ -42,8 +42,8 @@ public class PatternMatchCounter extends PatternCallBasedDeferred {
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
-    	result.put(getDeferringVariables(), getDeducedVariables());
+        final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+        result.put(getDeferringVariables(), getDeducedVariables());
         return result;
     }
 

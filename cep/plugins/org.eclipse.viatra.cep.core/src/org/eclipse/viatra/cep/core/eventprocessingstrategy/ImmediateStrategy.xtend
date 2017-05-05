@@ -22,12 +22,12 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
  */
 class ImmediateStrategy extends AbstractImmediateStrategy {
 
-	override EventContext getContext() {
-		return EventContext::IMMEDIATE
-	}
+    override EventContext getContext() {
+        return EventContext::IMMEDIATE
+    }
 
-	new(IEventModelManager eventModelManager) {
-		super(eventModelManager)
-	}
+    new(IEventModelManager eventModelManager) {
+        super(eventModelManager)
+    }
 
 }

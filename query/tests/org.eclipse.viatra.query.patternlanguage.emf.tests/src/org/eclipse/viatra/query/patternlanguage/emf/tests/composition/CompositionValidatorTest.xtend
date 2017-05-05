@@ -31,73 +31,73 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternMo
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CompositionValidatorTest extends AbstractValidatorTest{
-		
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	@Inject
-	EMFPatternLanguageJavaValidator validator
-	@Inject
-	Injector injector
-	
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
-	@Test
-	def void duplicatePatterns() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+        
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    @Inject
+    EMFPatternLanguageJavaValidator validator
+    @Inject
+    Injector injector
+    
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
+    @Test
+    def void duplicatePatterns() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			}'
-		) 
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
-	}	
-	@Test
-	def void duplicatePatternsIgnoreCase() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }'
+        ) 
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
+    }	
+    @Test
+    def void duplicatePatternsIgnoreCase() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }
 
-			pattern calledpattern(p : Pattern) = {
-				Pattern(p);
-			}'
-		) 
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
-	}	
-	@Test
-	def void duplicateParameters() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern calledpattern(p : Pattern) = {
+                Pattern(p);
+            }'
+        ) 
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
+    }	
+    @Test
+    def void duplicateParameters() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern, p) = {
-				Pattern(p);
-			}
+            pattern calledPattern(p : Pattern, p) = {
+                Pattern(p);
+            }
 
-			pattern callPattern(p : Pattern) = {
-				Pattern(p);
-			}'
-		)
-		tester.validate(model).assertAll(
-			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
-		)
-	}	
-	
-	
+            pattern callPattern(p : Pattern) = {
+                Pattern(p);
+            }'
+        )
+        tester.validate(model).assertAll(
+            getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+            getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
+        )
+    }	
+    
+    
    @Test
    def void duplicateParameters2() {
        val model = parseHelper.parse(
@@ -117,81 +117,81 @@ class CompositionValidatorTest extends AbstractValidatorTest{
            getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
        )
    }   
-	
-	
-	@Test
-	def void testTooFewParameters() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    
+    
+    @Test
+    def void testTooFewParameters() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern, p2) = {
-				Pattern(p);
-				Pattern(p2);
-			}
+            pattern calledPattern(p : Pattern, p2) = {
+                Pattern(p);
+                Pattern(p2);
+            }
 
-			pattern callPattern(p : Pattern) = {
-				find calledPattern(p);
-			}'
-		)
-		tester.validate(model).assertAll(
-		    getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER),
-		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def void testTooMuchParameters() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern callPattern(p : Pattern) = {
+                find calledPattern(p);
+            }'
+        )
+        tester.validate(model).assertAll(
+            getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER),
+            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def void testTooMuchParameters() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }
 
-			pattern callPattern(p : Pattern) = {
-				find calledPattern(p, p);
-			}'
-		)
-		tester.validate(model).assertError(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER);
-	}
-	@Test
-	def void testSymbolicParameterSafe() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern callPattern(p : Pattern) = {
+                find calledPattern(p, p);
+            }'
+        )
+        tester.validate(model).assertError(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER);
+    }
+    @Test
+    def void testSymbolicParameterSafe() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-				neg find calledPattern(p);
-			}'
-		)
-		
-		tester.validate(model).assertError(null, "Recursive pattern call")
-	}
-	@Test
-	def void testQuantifiedLocalVariable() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+                neg find calledPattern(p);
+            }'
+        )
+        
+        tester.validate(model).assertError(null, "Recursive pattern call")
+    }
+    @Test
+    def void testQuantifiedLocalVariable() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }
 
-			pattern callerPattern(c) = {
-				Pattern(c);
-				Pattern(p);
-				neg find calledPattern(p);
-			}'
-		)
-		tester.validate(model).assertAll(
-		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
+            pattern callerPattern(c) = {
+                Pattern(c);
+                Pattern(p);
+                neg find calledPattern(p);
+            }'
+        )
+        tester.validate(model).assertAll(
+            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
     def void testNegativeCallOnlySingleUseVariables() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -211,19 +211,19 @@ class CompositionValidatorTest extends AbstractValidatorTest{
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
-	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 
-						   p: Pattern is a positive reference.")
-	def void testNegativeCallCircle() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test @Ignore(value = "This call is unsafe because of a negative call circle. 
+                           p: Pattern is a positive reference.")
+    def void testNegativeCallCircle() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			} or {
-				neg find calledPattern(p);
-			}'
-		)
-		tester.validate(model).assertError("");
-	}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            } or {
+                neg find calledPattern(p);
+            }'
+        )
+        tester.validate(model).assertError("");
+    }
 }

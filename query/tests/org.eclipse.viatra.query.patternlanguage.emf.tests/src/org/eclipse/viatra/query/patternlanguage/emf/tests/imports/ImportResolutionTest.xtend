@@ -28,29 +28,29 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHel
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class ImportResolutionTest {
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	
-	@Inject extension ValidationTestHelper
-	
-	@Test
-	def importResolution() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    
+    @Inject extension ValidationTestHelper
+    
+    @Test
+    def importResolution() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		')
-		model.assertNoErrors
-		val importDecl = EMFPatternLanguageHelper::getAllPackageImports(model).get(0)
-		val ePackage = importDecl.EPackage
-		assertNotNull(ePackage)
-		assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage")
-	}
-	
-	@Test
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ')
+        model.assertNoErrors
+        val importDecl = EMFPatternLanguageHelper::getAllPackageImports(model).get(0)
+        val ePackage = importDecl.EPackage
+        assertNotNull(ePackage)
+        assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage")
+    }
+    
+    @Test
     def importResolutionMultiplePackages() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -64,73 +64,73 @@ class ImportResolutionTest {
         ')
         model.assertNoErrors
     }
-	
-	@Test
-	def importResolutionExtended() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as avql
+    
+    @Test
+    def importResolutionExtended() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as avql
 
-			pattern resolutionTest(name : Pattern) = {
-				avql::Pattern(name);
-			}
-		')
-		model.assertNoErrors
-	}
-	
-	@Test
-	def importResolutionExtendedMultiplePackages() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as avql
-			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage" as vql
+            pattern resolutionTest(name : Pattern) = {
+                avql::Pattern(name);
+            }
+        ')
+        model.assertNoErrors
+    }
+    
+    @Test
+    def importResolutionExtendedMultiplePackages() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as avql
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage" as vql
 
-			pattern resolutionTest(b : PatternBody, c : vql::EClassifierConstraint) = {
-				avql::PatternBody(b);
+            pattern resolutionTest(b : PatternBody, c : vql::EClassifierConstraint) = {
+                avql::PatternBody(b);
                 PatternBody.constraints(b, c);
-			}
-		')
-		model.assertNoErrors
-	}
-	
-	@Test
-	def multipleImportResolution() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage";
-			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage";
+            }
+        ')
+        model.assertNoErrors
+    }
+    
+    @Test
+    def multipleImportResolution() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage";
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage";
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		')
-		model.assertNoErrors
-		val imports = EMFPatternLanguageHelper::getAllPackageImports(model)
-		var importDecl = imports.get(0)
-		var ePackage = importDecl.EPackage
-		assertNotNull(ePackage)
-		assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage")
-		importDecl = imports.get(1)
-		ePackage = importDecl.EPackage
-		assertNotNull(ePackage)
-		assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage")
-	}
-	
-	@Test
-	def importResolutionFailed() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://nonexisting.package.uri"
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ')
+        model.assertNoErrors
+        val imports = EMFPatternLanguageHelper::getAllPackageImports(model)
+        var importDecl = imports.get(0)
+        var ePackage = importDecl.EPackage
+        assertNotNull(ePackage)
+        assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage")
+        importDecl = imports.get(1)
+        ePackage = importDecl.EPackage
+        assertNotNull(ePackage)
+        assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage")
+    }
+    
+    @Test
+    def importResolutionFailed() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://nonexisting.package.uri"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name2);
-			}
-		')
-		val importDecl = model.importPackages.packageImport.get(0)
-		importDecl.assertError(EMFPatternLanguagePackage$Literals::PACKAGE_IMPORT,
-			Diagnostic::LINKING_DIAGNOSTIC, "http://nonexisting.package.uri"
-		)
-	}
-	
-	
+            pattern resolutionTest(Name) = {
+                Pattern(Name2);
+            }
+        ')
+        val importDecl = model.importPackages.packageImport.get(0)
+        importDecl.assertError(EMFPatternLanguagePackage$Literals::PACKAGE_IMPORT,
+            Diagnostic::LINKING_DIAGNOSTIC, "http://nonexisting.package.uri"
+        )
+    }
+    
+    
 }

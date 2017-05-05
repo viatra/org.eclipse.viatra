@@ -31,176 +31,176 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CheckConstraintTest extends AbstractValidatorTest {
 
-	@Inject
-	ParseHelper<PatternModel> parseHelper
+    @Inject
+    ParseHelper<PatternModel> parseHelper
 
-	@Inject
-	EMFPatternLanguageJavaValidator validator
+    @Inject
+    EMFPatternLanguageJavaValidator validator
 
-	@Inject
-	Injector injector
+    @Inject
+    Injector injector
 
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
 
-	@Inject extension ValidationTestHelper
+    @Inject extension ValidationTestHelper
 
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
 
-	@Test
-	def whitelistedMethodCheck1() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def whitelistedMethodCheck1() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(D) = {
-				EDouble(D);
-				check(^java::lang::Math::abs(D) > 10.5);
-			}
-		')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	
-	@Test
-	def whitelistedMethodCheck2() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern name(D) = {
+                EDouble(D);
+                check(^java::lang::Math::abs(D) > 10.5);
+            }
+        ')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    
+    @Test
+    def whitelistedMethodCheck2() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(D) = {
-				EDouble(D);
-				check(Math::max(0,D) < 3);
-			}
-		')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def whitelistedMethodCheck3() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern name(D) = {
+                EDouble(D);
+                check(Math::max(0,D) < 3);
+            }
+        ')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def whitelistedMethodCheck3() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(S) = {
-				EString(S);
-				check(Integer.parseInt(S) < 3);
-			}
-		')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def whitelistedMethodCheck4() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern name(S) = {
+                EString(S);
+                check(Integer.parseInt(S) < 3);
+            }
+        ')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def whitelistedMethodCheck4() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(S) = {
-				EString(S);
-				check(S.contains("abc"));
-			}
-		')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def whitelistedMethodCheck5() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern name(S) = {
+                EString(S);
+                check(S.contains("abc"));
+            }
+        ')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def whitelistedMethodCheck5() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(S) = {
-				EClass.name(_, name);
-				S == eval(String.format("Name: %s", name));
-			}
-		')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def whitelistedClassCheck() {
-		val model = parseHelper.parse('''
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern name(S) = {
+                EClass.name(_, name);
+                S == eval(String.format("Name: %s", name));
+            }
+        ')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def whitelistedClassCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(D) = {
-				EDouble(D);
-				check (org::eclipse::viatra::query::patternlanguage::emf::tests::DummyClass::alwaysTrue());
-			}
-		''')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def whitelistedImportedClassCheck() {
-		val model = parseHelper.parse('''
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
-			import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass
+            pattern name(D) = {
+                EDouble(D);
+                check (org::eclipse::viatra::query::patternlanguage::emf::tests::DummyClass::alwaysTrue());
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def whitelistedImportedClassCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass
 
-			pattern name(D) = {
-				EDouble(D);
-				check (DummyClass::alwaysFalse());
-			}
-		''')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	@Test
-	def nonwhitelistedImportedToplevelCheck() {
-		val model = parseHelper.parse('''
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
-			import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass2
+            pattern name(D) = {
+                EDouble(D);
+                check (DummyClass::alwaysFalse());
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    @Test
+    def nonwhitelistedImportedToplevelCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass2
 
-			pattern name(D) = {
-				EDouble(D);
-				check (DummyClass2::alwaysFalse());
-			}
-		''')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
+            pattern name(D) = {
+                EDouble(D);
+                check (DummyClass2::alwaysFalse());
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
 
-	@Test
-	def nonWhitelistedCheck() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def nonWhitelistedCheck() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(L) = {
-				ELong(L);
-				check(^java::util::Calendar::getInstance().getTime().getTime() > L);
-			}
-		')
-		model.assertNoErrors
-		tester.validate(model).assertAll(
-		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	
-	@Test
+            pattern name(L) = {
+                ELong(L);
+                check(^java::util::Calendar::getInstance().getTime().getTime() > L);
+            }
+        ')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    
+    @Test
     def evalReturnAsParameterCheck() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -216,7 +216,7 @@ class CheckConstraintTest extends AbstractValidatorTest {
         )
     }
     
-	@Test
+    @Test
     def evalReturnAsParameterCheck2() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -233,7 +233,7 @@ class CheckConstraintTest extends AbstractValidatorTest {
         )
     }
     
-	@Test
+    @Test
     def evalReturnAsParameterCheck3() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests

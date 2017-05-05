@@ -17,8 +17,8 @@ package org.eclipse.viatra.cep.vepl;
  */
 public class VeplStandaloneSetup extends VeplStandaloneSetupGenerated{
 
-	public static void doSetup() {
-		new VeplStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
+    public static void doSetup() {
+        new VeplStandaloneSetup().createInjectorAndDoEMFRegistration();
+    }
 }
 

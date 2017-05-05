@@ -27,25 +27,25 @@ import com.google.inject.Inject;
 @InjectWith(EMFPatternLanguageInjectorProvider.class)
 public abstract class AbstractEMFPatternLanguageTest extends AbstractXtextTests {
 
-	static final ImmutableSet<String> defaultPackages = ImmutableSet
-			.of("http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage");
-	
-	@Inject
-	EValidator.Registry validationRegistry;
-	@Inject
-	EMFPatternLanguagePackage languagePackage;
+    static final ImmutableSet<String> defaultPackages = ImmutableSet
+            .of("http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage");
+    
+    @Inject
+    EValidator.Registry validationRegistry;
+    @Inject
+    EMFPatternLanguagePackage languagePackage;
 
-	public String addImports(String content, Collection<String> packages) {
-		StringBuilder sb = new StringBuilder();
-		for (String pack : packages) {
-			sb.append("import \"" + pack + "\"\n");
-		}
-		sb.append(content);
-		return sb.toString();
-	}
+    public String addImports(String content, Collection<String> packages) {
+        StringBuilder sb = new StringBuilder();
+        for (String pack : packages) {
+            sb.append("import \"" + pack + "\"\n");
+        }
+        sb.append(content);
+        return sb.toString();
+    }
 
-	public String addDefaultImports(String content) {
-		return addImports(content, defaultPackages);
-	}
+    public String addDefaultImports(String content) {
+        return addImports(content, defaultPackages);
+    }
 
 }

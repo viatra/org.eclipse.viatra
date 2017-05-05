@@ -43,8 +43,8 @@ public class InstanceOfJavaClassCheck extends CheckOperation {
         return "check     java "+clazz.getName()+"(+"+position+")";
     }
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, new Integer[0]);
+    }
     
 }

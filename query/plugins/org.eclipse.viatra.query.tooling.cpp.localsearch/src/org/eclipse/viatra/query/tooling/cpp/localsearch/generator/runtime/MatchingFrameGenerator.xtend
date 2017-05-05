@@ -24,41 +24,41 @@ import org.eclipse.xtend.lib.annotations.Accessors
  */
 class MatchingFrameGenerator extends ViatraQueryHeaderGenerator {
 
-	val String queryName
-	val String patternName
-	@Accessors val MatchingFrameDescriptor matchingFrame
-	@Accessors val int index
-	
+    val String queryName
+    val String patternName
+    @Accessors val MatchingFrameDescriptor matchingFrame
+    @Accessors val int index
+    
 
-	new(String queryName, String patternName, int index, MatchingFrameDescriptor matchingFrame) {
-		super(#{queryName}, '''«patternName.toFirstUpper»Frame_«index»''')
-		this.queryName = queryName
-		this.patternName = patternName
-		this.matchingFrame = matchingFrame
-		this.index = index
-	}
+    new(String queryName, String patternName, int index, MatchingFrameDescriptor matchingFrame) {
+        super(#{queryName}, '''«patternName.toFirstUpper»Frame_«index»''')
+        this.queryName = queryName
+        this.patternName = patternName
+        this.matchingFrame = matchingFrame
+        this.index = index
+    }
 
-	override initialize() {
-		includes += matchingFrame.allTypes.map[looseType].map[
-			switch it {
-				EClass: Include::fromEClass(it)
-				EDataType: if(it.name.toLowerCase.contains("string")) new Include("string", true)
-				default: null
-			}
-		].filterNull
-	}
+    override initialize() {
+        includes += matchingFrame.allTypes.map[looseType].map[
+            switch it {
+                EClass: Include::fromEClass(it)
+                EDataType: if(it.name.toLowerCase.contains("string")) new Include("string", true)
+                default: null
+            }
+        ].filterNull
+    }
 
-	override compileInner() '''
-		struct «unitName» {
-			
-			«FOR param : matchingFrame.allVariables.sortBy[matchingFrame.getVariablePosition(it)]»
-				«val type = matchingFrame.getVariableLooseType(param)»
-				«IF type instanceof EClass»
-					«val typeFQN = CppHelper::getTypeHelper(type).FQN»
-					«val pos = matchingFrame.getVariablePosition(param)»
-					
-					«typeFQN»* «pos.variableName»;
-					
+    override compileInner() '''
+        struct «unitName» {
+            
+            «FOR param : matchingFrame.allVariables.sortBy[matchingFrame.getVariablePosition(it)]»
+                «val type = matchingFrame.getVariableLooseType(param)»
+                «IF type instanceof EClass»
+                    «val typeFQN = CppHelper::getTypeHelper(type).FQN»
+                    «val pos = matchingFrame.getVariablePosition(param)»
+                    
+                    «typeFQN»* «pos.variableName»;
+                    
 «««					static «typeFQN»* «pos.getter»(«frameName»& frame) {
 «««						return frame.«pos.paramName»;
 «««					}
@@ -66,12 +66,12 @@ class MatchingFrameGenerator extends ViatraQueryHeaderGenerator {
 «««					static void «pos.setter»(«frameName»& frame, «typeFQN»* value) {
 «««						frame.«pos.paramName» = value;
 «««					}
-				«ELSEIF type instanceof EDataType»
-					«val typeFQN = CppHelper::getTypeHelper(type).FQN»
-					«val pos = matchingFrame.getVariablePosition(param)»
-					
-					«typeFQN» «pos.variableName»;
-					
+                «ELSEIF type instanceof EDataType»
+                    «val typeFQN = CppHelper::getTypeHelper(type).FQN»
+                    «val pos = matchingFrame.getVariablePosition(param)»
+                    
+                    «typeFQN» «pos.variableName»;
+                    
 «««					static «typeFQN»& «pos.getter»(«frameName»& frame) {
 «««						return frame.«pos.paramName»;
 «««					}
@@ -79,19 +79,19 @@ class MatchingFrameGenerator extends ViatraQueryHeaderGenerator {
 «««					static void «pos.setter»(«frameName»& frame, «typeFQN» value) {
 «««						frame.«pos.paramName» = value;
 «««					}
-				«ENDIF»
-			«ENDFOR»
-		};
-	'''
+                «ENDIF»
+            «ENDFOR»
+        };
+    '''
 
-	def getVariableName(PVariable variable) {
-		getVariableName(matchingFrame.getVariablePosition(variable))
-	}
-	
-	def getFrameName() {
-		unitName
-	}
+    def getVariableName(PVariable variable) {
+        getVariableName(matchingFrame.getVariablePosition(variable))
+    }
+    
+    def getFrameName() {
+        unitName
+    }
 
-	private def getVariableName(int position) '''_«position»'''
+    private def getVariableName(int position) '''_«position»'''
 
 }

@@ -57,7 +57,7 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
     
     @Deprecated
     protected String getActualPackageName(PatternModel model) {
-		return null;
+        return null;
     }
     
     @Check(CheckType.NORMAL)
@@ -69,9 +69,9 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
         ResourceSet resourceSet = res.getResourceSet();
         IJavaProject javaProject = projectProvider.getJavaProject(resourceSet);
         if (javaProject == null) {
-        	return;
+            return;
         }
-		IProject project = javaProject.getProject();
+        IProject project = javaProject.getProject();
         EPackage ePackage = importDecl.getEPackage();
         GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, ePackage);
         if (genPackage != null) {

@@ -87,7 +87,7 @@ public class ViatraQueryEngineManager {
      * @throws ViatraQueryException
      */
     public ViatraQueryEngine getQueryEngine(QueryScope scope) throws ViatraQueryException {
-    	return getQueryEngine(scope, ViatraQueryEngineOptions.DEFAULT);
+        return getQueryEngine(scope, ViatraQueryEngineOptions.DEFAULT);
     }
     
     /**
@@ -135,7 +135,7 @@ public class ViatraQueryEngineManager {
     public Set<ViatraQueryEngine> getExistingQueryEngines(){
         Set<ViatraQueryEngine> existingEngines = null;
         for (WeakReference<ViatraQueryEngineImpl> engineRef : engines.values()) {
-        	AdvancedViatraQueryEngine engine = engineRef == null ? null : engineRef.get();
+            AdvancedViatraQueryEngine engine = engineRef == null ? null : engineRef.get();
             if(existingEngines == null) {
                 existingEngines = Sets.newHashSet();
             }
@@ -184,7 +184,7 @@ public class ViatraQueryEngineManager {
                 }
             }
         } catch (Exception ex) {
-        	ViatraQueryLoggingUtil.getLogger(getClass()).fatal(
+            ViatraQueryLoggingUtil.getLogger(getClass()).fatal(
                     "VIATRA Query Engine Manager encountered an error in delivering notifications"
                             + " about engine initialization. ", ex);
         }

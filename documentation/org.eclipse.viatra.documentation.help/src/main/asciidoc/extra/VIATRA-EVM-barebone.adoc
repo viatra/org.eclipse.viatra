@@ -109,9 +109,9 @@ Code:
 ----
 // Create custom filter for IP
 var eventFilter = new EventFilter<HostInstancesMatch>() {
-	override isProcessable(HostInstancesMatch eventAtom) {
-		eventAtom.hostInstance.nodeIp == FILTERED_IP
-	}
+    override isProcessable(HostInstancesMatch eventAtom) {
+        eventAtom.hostInstance.nodeIp == FILTERED_IP
+    }
 }
 // Replace the simple rule with the rule->filter pair in the engine
 ruleEngine.removeRule(hostMapping)
@@ -133,9 +133,9 @@ Code for filter:
 ----
 // Create query match filter with a partial match object
 val matchFilter = ViatraQueryMatchEventFilter.createFilter(
-	HostInstancesMatch.newMatch(
-		engine.hostInstancesByIp.getOneArbitraryMatch(null, FILTERED_IP).hostInstance
-	)
+    HostInstancesMatch.newMatch(
+        engine.hostInstancesByIp.getOneArbitraryMatch(null, FILTERED_IP).hostInstance
+    )
 )
 // Add the rule->filter pair to the engine
 ruleEngine.addRule(hostMapping, matchFilter)
@@ -149,19 +149,19 @@ Code for conflict set:
 ----
 // Check that there is any conflicting activation
 if(!ruleEngine.conflictingActivations.empty) {
-	// Create the conflict set
-	val conflictSet = ruleEngine.createScopedConflictSet(resolver,
-		// From filtered hostMapping rule and unfiltered appMapping
-		ImmutableMultimap.of(
-			hostMapping, matchFilter,
-			appMapping, appMapping.createEmptyFilter
-		)
-	)
-	// Iterate over activations of the conflict set
-	var nextActivation = conflictSet.nextActivation
-	while(nextActivation != null) {
-		nextActivation.fire(context)
-		nextActivation = conflictSet.nextActivation
-	}
+    // Create the conflict set
+    val conflictSet = ruleEngine.createScopedConflictSet(resolver,
+        // From filtered hostMapping rule and unfiltered appMapping
+        ImmutableMultimap.of(
+            hostMapping, matchFilter,
+            appMapping, appMapping.createEmptyFilter
+        )
+    )
+    // Iterate over activations of the conflict set
+    var nextActivation = conflictSet.nextActivation
+    while(nextActivation != null) {
+        nextActivation.fire(context)
+        nextActivation = conflictSet.nextActivation
+    }
 }
 ----

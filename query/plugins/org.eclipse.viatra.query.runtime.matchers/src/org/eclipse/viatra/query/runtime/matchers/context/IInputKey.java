@@ -23,25 +23,25 @@ package org.eclipse.viatra.query.runtime.matchers.context;
  */
 public interface IInputKey {
 
-	/**
-	 * A user-friendly name that can be shown on screen for degug purposes, included in exceptions, etc.
-	 */
-	public String getPrettyPrintableName();
-	/**
-	 * An internal string identifier that can be used to uniquely identify to input key (relevant for distributed applications).
-	 */
-	public String getStringID();
-	
-	/**
-	 * The width of tuples in this relation.
-	 */
-	public int getArity();
-	
-	/**
-	 * Returns true iff instance tuples of the key can be enumerated.
-	 * <p> If false, the runtime can only test tuple membership in the extensional relation identified by the key, but not enumerate member tuples in general.
-	 */
-	boolean isEnumerable();
-	
-	
+    /**
+     * A user-friendly name that can be shown on screen for degug purposes, included in exceptions, etc.
+     */
+    public String getPrettyPrintableName();
+    /**
+     * An internal string identifier that can be used to uniquely identify to input key (relevant for distributed applications).
+     */
+    public String getStringID();
+    
+    /**
+     * The width of tuples in this relation.
+     */
+    public int getArity();
+    
+    /**
+     * Returns true iff instance tuples of the key can be enumerated.
+     * <p> If false, the runtime can only test tuple membership in the extensional relation identified by the key, but not enumerate member tuples in general.
+     */
+    boolean isEnumerable();
+    
+    
 }

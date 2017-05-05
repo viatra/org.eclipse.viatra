@@ -35,55 +35,55 @@ import com.google.common.collect.Sets;
  */
 public class SelectionHelper {
 
-	public Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
-	
-	public ISelectionChangedListener trickyListener = new ISelectionChangedListener() {
-		
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			for (ISelectionChangedListener l : selectionChangedListeners) {
-				l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements_ViewersElementsToEObjects(event.getSelection())));
-			}
-		}
-	};
-	
-	private Object getSourceObject(Item i) {
-	    if (i.getParamEObject() != null) {
-	        return i.getParamEObject();
-	    } else if (i.getParamObject() != null) {
-	        return i.getParamObject();
-	    } else {
-	        throw new IllegalStateException("Invalid Item selected - no source model element available.");
-	    }
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ISelection unwrapElements_ViewersElementsToEObjects(ISelection sel) {
-    	List proxy = Lists.newArrayList();
-    	if (sel instanceof IStructuredSelection) {
-	    	for (Object e : ((IStructuredSelection)sel).toArray()) {
-	    		if (e instanceof Item) {
-	    			proxy.add(getSourceObject((Item)e));
-	    		}
-	    		else if (e instanceof Edge) {
-	    		    proxy.add(getSourceObject(((Edge) e).getSource()));
-	    		    proxy.add(getSourceObject(((Edge) e).getTarget()));
-	    		}
-	    	}
-    	}
-    	return new StructuredSelection(proxy);
+    public Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
+    
+    public ISelectionChangedListener trickyListener = new ISelectionChangedListener() {
+        
+        @Override
+        public void selectionChanged(SelectionChangedEvent event) {
+            for (ISelectionChangedListener l : selectionChangedListeners) {
+                l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements_ViewersElementsToEObjects(event.getSelection())));
+            }
+        }
+    };
+    
+    private Object getSourceObject(Item i) {
+        if (i.getParamEObject() != null) {
+            return i.getParamEObject();
+        } else if (i.getParamObject() != null) {
+            return i.getParamObject();
+        } else {
+            throw new IllegalStateException("Invalid Item selected - no source model element available.");
+        }
     }
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ISelection unwrapElements_EObjectsToViewersElements(ISelection sel, ViewerState state) {
-		List proxy = Lists.newArrayList();
-			if (state!=null && sel instanceof IStructuredSelection) {
-                for (Object e : ((IStructuredSelection)sel).toArray()) {
-                	if (e instanceof EObject) {
-                		proxy.addAll(state.getItemsFor(e));
-                	}
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public ISelection unwrapElements_ViewersElementsToEObjects(ISelection sel) {
+        List proxy = Lists.newArrayList();
+        if (sel instanceof IStructuredSelection) {
+            for (Object e : ((IStructuredSelection)sel).toArray()) {
+                if (e instanceof Item) {
+                    proxy.add(getSourceObject((Item)e));
                 }
-			}
-    	return new StructuredSelection(proxy);
+                else if (e instanceof Edge) {
+                    proxy.add(getSourceObject(((Edge) e).getSource()));
+                    proxy.add(getSourceObject(((Edge) e).getTarget()));
+                }
+            }
+        }
+        return new StructuredSelection(proxy);
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public ISelection unwrapElements_EObjectsToViewersElements(ISelection sel, ViewerState state) {
+        List proxy = Lists.newArrayList();
+            if (state!=null && sel instanceof IStructuredSelection) {
+                for (Object e : ((IStructuredSelection)sel).toArray()) {
+                    if (e instanceof EObject) {
+                        proxy.addAll(state.getItemsFor(e));
+                    }
+                }
+            }
+        return new StructuredSelection(proxy);
     }
 }

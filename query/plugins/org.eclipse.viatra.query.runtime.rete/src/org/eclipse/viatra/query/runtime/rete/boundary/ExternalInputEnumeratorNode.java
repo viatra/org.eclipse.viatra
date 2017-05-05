@@ -38,25 +38,25 @@ import org.eclipse.viatra.query.runtime.rete.remote.Address;
  */
 public class ExternalInputEnumeratorNode extends StandardNode implements Disconnectable, Receiver, IQueryRuntimeContextListener {
 
-	private IQueryRuntimeContext context = null;
-	private IInputKey inputKey;
-	private Tuple globalSeed;
-	private InputConnector inputConnector;
-	private Network network;
-	private Address<? extends Receiver> myAddress;
-	private boolean parallelExecutionEnabled;
-	protected final Mailbox mailbox;
+    private IQueryRuntimeContext context = null;
+    private IInputKey inputKey;
+    private Tuple globalSeed;
+    private InputConnector inputConnector;
+    private Network network;
+    private Address<? extends Receiver> myAddress;
+    private boolean parallelExecutionEnabled;
+    protected final Mailbox mailbox;
 
-	public ExternalInputEnumeratorNode(ReteContainer reteContainer) {
-		super(reteContainer);
-		myAddress = Address.of(this);
-		network = reteContainer.getNetwork();
-		inputConnector = network.getInputConnector();
-		mailbox = instantiateMailbox();
+    public ExternalInputEnumeratorNode(ReteContainer reteContainer) {
+        super(reteContainer);
+        myAddress = Address.of(this);
+        network = reteContainer.getNetwork();
+        inputConnector = network.getInputConnector();
+        mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
-	}
-	
-	/**
+    }
+    
+    /**
      * Instantiates the {@link Mailbox} of this receiver.
      * Subclasses may override this method to provide their own mailbox implementation.
      * 
@@ -65,93 +65,93 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
     protected Mailbox instantiateMailbox() {
         return new DefaultMailbox(this, this.reteContainer);
     }
-	
-	@Override
+    
+    @Override
     public Mailbox getMailbox() {
         return mailbox;
     }
-	
-	public void connectThroughContext(ReteEngine engine, IInputKey inputKey, Tuple globalSeed) {
-		this.inputKey = inputKey;
-		this.globalSeed = globalSeed; 
-		setTag(inputKey);
-		
-		final IQueryRuntimeContext context = engine.getRuntimeContext();
-		if (!context.getMetaContext().isEnumerable(inputKey))
-			throw new IllegalArgumentException(
-					this.getClass().getSimpleName() + 
-					" only applicable for enumerable input keys; received instead " + 
-					inputKey);
-		
-		this.context = context;
-		this.parallelExecutionEnabled = engine.isParallelExecutionEnabled();
-		
-		engine.addDisconnectable(this);
-		context.addUpdateListener(inputKey, globalSeed, this);		
-	}
-	
-	@Override
-	public void disconnect() {
-		if (context != null) { // if connected
-			context.removeUpdateListener(inputKey, globalSeed, this);
-			context = null;
-		}
-	}
-	
-	@Override
-	public void pullInto(Collection<Tuple> collector) {
-		if (context != null) { // if connected
-			for (Tuple tuple : context.enumerateTuples(inputKey, globalSeed)) {
-				collector.add(tuple);
-			}
-		}
-	}
-
-	/* Update from runtime context */
-	@Override
-	public void update(IInputKey key, Tuple update, boolean isInsertion) {
-		if (parallelExecutionEnabled) {
-			// send back to myself as an official external update, and then propagate it transparently
-			network.sendExternalUpdate(myAddress, direction(isInsertion), update);			
-		} else {
-			// just propagate the input
-		    mailbox.postMessage(direction(isInsertion), update);
-		    // if the the update method is called from within a delayed execution, the following invocation will be a no-op
-			network.waitForReteTermination();
-		}
-	}
-
-    private static Direction direction(boolean isInsertion) {
-    	return isInsertion ? Direction.INSERT : Direction.REVOKE;
+    
+    public void connectThroughContext(ReteEngine engine, IInputKey inputKey, Tuple globalSeed) {
+        this.inputKey = inputKey;
+        this.globalSeed = globalSeed; 
+        setTag(inputKey);
+        
+        final IQueryRuntimeContext context = engine.getRuntimeContext();
+        if (!context.getMetaContext().isEnumerable(inputKey))
+            throw new IllegalArgumentException(
+                    this.getClass().getSimpleName() + 
+                    " only applicable for enumerable input keys; received instead " + 
+                    inputKey);
+        
+        this.context = context;
+        this.parallelExecutionEnabled = engine.isParallelExecutionEnabled();
+        
+        engine.addDisconnectable(this);
+        context.addUpdateListener(inputKey, globalSeed, this);		
     }
     
-	/* Self-addressed from network */
-	@Override
-	public void update(Direction direction, Tuple updateElement) {
-		propagateUpdate(direction, updateElement);
-	}
+    @Override
+    public void disconnect() {
+        if (context != null) { // if connected
+            context.removeUpdateListener(inputKey, globalSeed, this);
+            context = null;
+        }
+    }
+    
+    @Override
+    public void pullInto(Collection<Tuple> collector) {
+        if (context != null) { // if connected
+            for (Tuple tuple : context.enumerateTuples(inputKey, globalSeed)) {
+                collector.add(tuple);
+            }
+        }
+    }
 
-	@Override
-	public void appendParent(Supplier supplier) {
-		throw new UnsupportedOperationException("Input nodes can't have parents");
-	}
+    /* Update from runtime context */
+    @Override
+    public void update(IInputKey key, Tuple update, boolean isInsertion) {
+        if (parallelExecutionEnabled) {
+            // send back to myself as an official external update, and then propagate it transparently
+            network.sendExternalUpdate(myAddress, direction(isInsertion), update);			
+        } else {
+            // just propagate the input
+            mailbox.postMessage(direction(isInsertion), update);
+            // if the the update method is called from within a delayed execution, the following invocation will be a no-op
+            network.waitForReteTermination();
+        }
+    }
 
-	@Override
-	public void removeParent(Supplier supplier) {
-		throw new UnsupportedOperationException("Input nodes can't have parents");
-	}
+    private static Direction direction(boolean isInsertion) {
+        return isInsertion ? Direction.INSERT : Direction.REVOKE;
+    }
+    
+    /* Self-addressed from network */
+    @Override
+    public void update(Direction direction, Tuple updateElement) {
+        propagateUpdate(direction, updateElement);
+    }
 
-	@Override
-	public Collection<Supplier> getParents() {
-		return Collections.emptySet();
-	}
+    @Override
+    public void appendParent(Supplier supplier) {
+        throw new UnsupportedOperationException("Input nodes can't have parents");
+    }
 
-	public IInputKey getInputKey() {
-		return inputKey;
-	}
+    @Override
+    public void removeParent(Supplier supplier) {
+        throw new UnsupportedOperationException("Input nodes can't have parents");
+    }
 
-	public Tuple getGlobalSeed() {
-		return globalSeed;
-	}
+    @Override
+    public Collection<Supplier> getParents() {
+        return Collections.emptySet();
+    }
+
+    public IInputKey getInputKey() {
+        return inputKey;
+    }
+
+    public Tuple getGlobalSeed() {
+        return globalSeed;
+    }
 
 }

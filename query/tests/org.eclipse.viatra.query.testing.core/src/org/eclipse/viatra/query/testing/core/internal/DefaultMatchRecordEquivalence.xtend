@@ -24,8 +24,8 @@ import org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitutio
  * @author Peter Lunk
  */
 class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
-	
-	
+    
+    
     new(Map<String, JavaObjectAccess> accessMap) {
         super(accessMap)
     }
@@ -33,11 +33,11 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
     new() {
         super(Maps.newHashMap)
     }
-		
-	/* (non-Javadoc)
-	 * @see Equivalence#doEquivalent(java.lang.Object, java.lang.Object)
-	 */
-	override protected boolean doEquivalent(MatchRecord a, MatchRecord b) {
+        
+    /* (non-Javadoc)
+     * @see Equivalence#doEquivalent(java.lang.Object, java.lang.Object)
+     */
+    override protected boolean doEquivalent(MatchRecord a, MatchRecord b) {
         Maps.difference(a.toMap, b.toMap, new Equivalence<Object> {
 
             override protected doEquivalent(Object a, Object b) {
@@ -69,11 +69,11 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
         }).areEqual
     }
 
-	/* (non-Javadoc)
-	 * @see Equivalence#doHash(java.lang.Object)
-	 */
-	override protected int doHash(MatchRecord t) {
-		t.substitutions.map[
+    /* (non-Javadoc)
+     * @see Equivalence#doHash(java.lang.Object)
+     */
+    override protected int doHash(MatchRecord t) {
+        t.substitutions.map[
             val value = it.derivedValue
             
             if (value instanceof InternalEObject && (value as InternalEObject).eIsProxy) {
@@ -86,5 +86,5 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
             }
                 
         ].fold(0, [r, e | r+e])
-	}
+    }
 }

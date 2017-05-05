@@ -161,20 +161,20 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
             //TODO: resolve hack
             String[] type = pTarget.getTypeName().split(Pattern.quote("||"));
             new TypeConstraint(body, new FlatTuple(var_target), 
-            		toInputKey(getClassifierLiteral(type[0], type[1]))/*, 
-            		String.format("{0}/{1}", type[0], type[1])*/);
+                    toInputKey(getClassifierLiteral(type[0], type[1]))/*, 
+                    String.format("{0}/{1}", type[0], type[1])*/);
         }
     }
     
     private static IInputKey toInputKey(EClassifier classifierLiteral) {
-    	if (classifierLiteral instanceof EClass)
-    		return new EClassTransitiveInstancesKey((EClass) classifierLiteral);
-    	else if (classifierLiteral instanceof EDataType)
-    		return new EDataTypeInSlotsKey((EDataType) classifierLiteral);
-    	else return null;
-	}
+        if (classifierLiteral instanceof EClass)
+            return new EClassTransitiveInstancesKey((EClass) classifierLiteral);
+        else if (classifierLiteral instanceof EDataType)
+            return new EDataTypeInSlotsKey((EDataType) classifierLiteral);
+        else return null;
+    }
 
-	protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
+    protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
         Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);
         EClassifier literal = ePackage.getEClassifier(classifierName);
@@ -183,10 +183,10 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         return literal;
     }
 
-	protected Collection<String> getBaseParameters() {
-		return baseQuery.getParameterNames();
-	}
-	
+    protected Collection<String> getBaseParameters() {
+        return baseQuery.getParameterNames();
+    }
+    
     public Multimap<PParameter, PParameter> getReferenceSources() {
         return traceSources;
     }

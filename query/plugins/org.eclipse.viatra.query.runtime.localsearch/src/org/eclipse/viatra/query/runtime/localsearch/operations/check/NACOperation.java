@@ -56,9 +56,9 @@ public class NACOperation extends CheckOperation {
     }
     
     @Override
-	public List<Integer> getVariablePositions() {
-    	return helper.getVariablePositions();
-	}
+    public List<Integer> getVariablePositions() {
+        return helper.getVariablePositions();
+    }
 
 
 }

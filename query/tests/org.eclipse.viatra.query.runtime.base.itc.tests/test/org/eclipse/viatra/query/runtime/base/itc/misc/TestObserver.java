@@ -32,35 +32,35 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
  */
 public class TestObserver<V> implements ITcObserver<V> {
 
-	private Set<Tuple<V>> deletedTuples;
-	private Set<Tuple<V>> insertedTuples;
-	
-	public TestObserver() {
-		this.deletedTuples = new HashSet<Tuple<V>>();
-		this.insertedTuples = new HashSet<Tuple<V>>();
-	}
-	
-	public void addDeletedTuple(Tuple<V> tuple) {
-		this.deletedTuples.add(tuple);
-	}
-	
-	public void addInsertedTuple(Tuple<V> tuple) {
-		this.insertedTuples.add(tuple);
-	}
-	
-	public void clearTuples() {
-		this.deletedTuples.clear();
-		this.insertedTuples.clear();
-	}
+    private Set<Tuple<V>> deletedTuples;
+    private Set<Tuple<V>> insertedTuples;
+    
+    public TestObserver() {
+        this.deletedTuples = new HashSet<Tuple<V>>();
+        this.insertedTuples = new HashSet<Tuple<V>>();
+    }
+    
+    public void addDeletedTuple(Tuple<V> tuple) {
+        this.deletedTuples.add(tuple);
+    }
+    
+    public void addInsertedTuple(Tuple<V> tuple) {
+        this.insertedTuples.add(tuple);
+    }
+    
+    public void clearTuples() {
+        this.deletedTuples.clear();
+        this.insertedTuples.clear();
+    }
 
-	@Override
-	public void tupleInserted(V source, V target) {
-		assertTrue(this.insertedTuples.contains(new Tuple<V>(source, target)));
-	}
+    @Override
+    public void tupleInserted(V source, V target) {
+        assertTrue(this.insertedTuples.contains(new Tuple<V>(source, target)));
+    }
 
-	@Override
-	public void tupleDeleted(V source, V target) {
-		assertTrue(this.deletedTuples.contains(new Tuple<V>(source, target)));
-	}
+    @Override
+    public void tupleDeleted(V source, V target) {
+        assertTrue(this.deletedTuples.contains(new Tuple<V>(source, target)));
+    }
 
 }

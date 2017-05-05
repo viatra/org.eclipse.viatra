@@ -38,11 +38,11 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     protected boolean displayContainment;
     
     public ZestContentProvider() {
-    	this(false);
+        this(false);
     }
     
     public ZestContentProvider(boolean displayContainment) {
-		this.displayContainment = displayContainment;
+        this.displayContainment = displayContainment;
     }
 
     @Override
@@ -90,24 +90,24 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     }
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    	Preconditions.checkArgument(viewer instanceof ModifiableZestContentViewer);
-    	this.viewer = (ModifiableZestContentViewer) viewer;
-    	if (oldInput instanceof ViewerState) {
-    		((ViewerState) oldInput).removeStateListener(this);
-    	}
-    	if (newInput == null) {
-    		this.state = null;
-    	} else if (newInput instanceof ViewerState) {
-    		this.state = (ViewerState) newInput;
-    		if (this.state.isDisposed()) {
-    			this.state = null;
-    		} else {
-    			state.addStateListener(this);
-    		}
-    	} else {
-    		throw new IllegalArgumentException(String.format("Invalid input type %s for Zest Viewer.", newInput
+        Preconditions.checkArgument(viewer instanceof ModifiableZestContentViewer);
+        this.viewer = (ModifiableZestContentViewer) viewer;
+        if (oldInput instanceof ViewerState) {
+            ((ViewerState) oldInput).removeStateListener(this);
+        }
+        if (newInput == null) {
+            this.state = null;
+        } else if (newInput instanceof ViewerState) {
+            this.state = (ViewerState) newInput;
+            if (this.state.isDisposed()) {
+                this.state = null;
+            } else {
+                state.addStateListener(this);
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("Invalid input type %s for Zest Viewer.", newInput
                     .getClass().getName()));
-    	}
+        }
     }
 
     @Override
@@ -132,23 +132,23 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     
     @Override
     public void containmentAppeared(Containment containment) {
-    	if (displayContainment) {
-    		edgeAppeared(containment);
-    	}
+        if (displayContainment) {
+            edgeAppeared(containment);
+        }
     }
 
     @Override
     public void containmentDisappeared(Containment containment) {
-    	if (displayContainment) {
-    		edgeDisappeared(containment);
-    	}
+        if (displayContainment) {
+            edgeDisappeared(containment);
+        }
     }
 
     public void dispose() {
-    	if (state != null) {
-    		state.removeStateListener(this);
-    	}
-    	
+        if (state != null) {
+            state.removeStateListener(this);
+        }
+        
     }
 
 }

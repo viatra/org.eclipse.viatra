@@ -19,52 +19,52 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.PatternBodyDescrip
  * @author Robert Doczi
  */
 abstract class QuerySpecificationGenerator extends ViatraQueryHeaderGenerator {
-	
-	protected val Set<PatternDescriptor> patternGroup
-	protected val String queryName
+    
+    protected val Set<PatternDescriptor> patternGroup
+    protected val String queryName
 
-	protected val String patternName
-	protected val String querySpecificationName
-	
-	
-	new(String queryName, Set<PatternDescriptor> patternGroup) {
-		super(#{queryName.toFirstUpper}, '''«patternGroup.head.name.toFirstUpper»QuerySpecification''')
-		this.patternGroup = patternGroup
-		this.queryName = queryName.toFirstUpper
-		
-		this.patternName = patternGroup.head.name.toFirstUpper
-		this.querySpecificationName = '''«patternName.toFirstUpper»QuerySpecification'''
-	}
-	
-	override initialize() {
-		includes += new Include('''Viatra/Query/«queryName»/«queryName»QueryGroup.h''')
-		
-		includes += new Include("Viatra/Query/Util/Optional.h")
-		includes += new Include("Viatra/Query/Operations/AllOperations.h")
-		includes += new Include("Viatra/Query/Plan/SearchPlan.h")
-	}
+    protected val String patternName
+    protected val String querySpecificationName
+    
+    
+    new(String queryName, Set<PatternDescriptor> patternGroup) {
+        super(#{queryName.toFirstUpper}, '''«patternGroup.head.name.toFirstUpper»QuerySpecification''')
+        this.patternGroup = patternGroup
+        this.queryName = queryName.toFirstUpper
+        
+        this.patternName = patternGroup.head.name.toFirstUpper
+        this.querySpecificationName = '''«patternName.toFirstUpper»QuerySpecification'''
+    }
+    
+    override initialize() {
+        includes += new Include('''Viatra/Query/«queryName»/«queryName»QueryGroup.h''')
+        
+        includes += new Include("Viatra/Query/Util/Optional.h")
+        includes += new Include("Viatra/Query/Operations/AllOperations.h")
+        includes += new Include("Viatra/Query/Plan/SearchPlan.h")
+    }
 
-	// TODO: Iterating over the bodies giving them indices makes the generated code nondeterministic
-	override compileInner() '''
-		template<class ModelRoot>
-		class «patternName»Matcher;
-		
-		template<class ModelRoot>
-		class «unitName» {
-		public:
-			using Matcher = «patternName»Matcher<ModelRoot>;
-		
-			using QueryGroup = «queryName»QueryGroup;
-		
-			«FOR pattern : patternGroup»
-				«FOR body : pattern.patternBodies»
-					«generatePlan(pattern, body)»
-				«ENDFOR»
-			«ENDFOR»
-		
-		};
-	'''
-	
-	abstract def String generatePlan(PatternDescriptor pattern, PatternBodyDescriptor patternBody) 
-	
+    // TODO: Iterating over the bodies giving them indices makes the generated code nondeterministic
+    override compileInner() '''
+        template<class ModelRoot>
+        class «patternName»Matcher;
+        
+        template<class ModelRoot>
+        class «unitName» {
+        public:
+            using Matcher = «patternName»Matcher<ModelRoot>;
+        
+            using QueryGroup = «queryName»QueryGroup;
+        
+            «FOR pattern : patternGroup»
+                «FOR body : pattern.patternBodies»
+                    «generatePlan(pattern, body)»
+                «ENDFOR»
+            «ENDFOR»
+        
+        };
+    '''
+    
+    abstract def String generatePlan(PatternDescriptor pattern, PatternBodyDescriptor patternBody) 
+    
 }

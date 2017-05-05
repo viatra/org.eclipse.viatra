@@ -28,35 +28,35 @@ import java.util.Set;
  */
 public interface ITypeConstraint extends ITypeInfoProviderConstraint {
 
-	public abstract TypeJudgement getEquivalentJudgement();
-	
-	/**
-	 * Static internal utility class for implementations of {@link ITypeConstraint}s.
-	 * @author Bergmann Gabor
-	 */
-	public static class TypeConstraintUtil {
-	    public static Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context, IInputKey inputKey, Tuple variablesTuple) {
-	    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
-	    	
-	    	Set<Entry<Set<Integer>, Set<Integer>>> dependencies = context.getFunctionalDependencies(inputKey).entrySet();
-	    	for (Entry<Set<Integer>, Set<Integer>> dependency : dependencies) {
-				result.put(
-						transcribeVariables(dependency.getKey(), variablesTuple), 
-						transcribeVariables(dependency.getValue(), variablesTuple)
-				);
-			}
+    public abstract TypeJudgement getEquivalentJudgement();
+    
+    /**
+     * Static internal utility class for implementations of {@link ITypeConstraint}s.
+     * @author Bergmann Gabor
+     */
+    public static class TypeConstraintUtil {
+        public static Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context, IInputKey inputKey, Tuple variablesTuple) {
+            final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+            
+            Set<Entry<Set<Integer>, Set<Integer>>> dependencies = context.getFunctionalDependencies(inputKey).entrySet();
+            for (Entry<Set<Integer>, Set<Integer>> dependency : dependencies) {
+                result.put(
+                        transcribeVariables(dependency.getKey(), variablesTuple), 
+                        transcribeVariables(dependency.getValue(), variablesTuple)
+                );
+            }
 
-	    	return result;
-	    }
+            return result;
+        }
 
-		private static Set<PVariable> transcribeVariables(Set<Integer> indices, Tuple variablesTuple) {
-			Set<PVariable> result = new HashSet<PVariable>();
-			for (Integer index : indices) {
-				result.add((PVariable) variablesTuple.get(index));
-			}
-			return result;
-		}
+        private static Set<PVariable> transcribeVariables(Set<Integer> indices, Tuple variablesTuple) {
+            Set<PVariable> result = new HashSet<PVariable>();
+            for (Integer index : indices) {
+                result.add((PVariable) variablesTuple.get(index));
+            }
+            return result;
+        }
 
-	}
+    }
 
 }

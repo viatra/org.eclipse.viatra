@@ -58,9 +58,9 @@ public abstract class StandardNode extends BaseNode implements Supplier {
     
     @Override
     public Set<Tuple> getPulledContents() {
-    	HashSet<Tuple> results = new HashSet<Tuple>();
-    	pullInto(results);
-    	return results;
+        HashSet<Tuple> results = new HashSet<Tuple>();
+        pullInto(results);
+        return results;
     }
 
     @Override

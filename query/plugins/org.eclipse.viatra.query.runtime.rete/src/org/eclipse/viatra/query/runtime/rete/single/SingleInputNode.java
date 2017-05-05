@@ -91,10 +91,10 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateFromStandardNodeToSupplierParent())
-    		if (parent != null)
-    			parent.acceptPropagatedTraceInfo(traceInfo);
+        super.assignTraceInfo(traceInfo);
+        if (traceInfo.propagateFromStandardNodeToSupplierParent())
+            if (parent != null)
+                parent.acceptPropagatedTraceInfo(traceInfo);
     }
 
 }

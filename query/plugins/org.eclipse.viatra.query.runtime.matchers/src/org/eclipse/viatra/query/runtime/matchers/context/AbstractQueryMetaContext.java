@@ -34,14 +34,14 @@ public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
         return HashMultimap.create(0, 0);
     }
 
-	/**
+    /**
      * @since 1.6
      */
-	@Override
-	public boolean canLeadOutOfScope(IInputKey key) {
-		return key.getArity() > 1;
-	}
-	
+    @Override
+    public boolean canLeadOutOfScope(IInputKey key) {
+        return key.getArity() > 1;
+    }
+    
     /**
      * @since 1.6
      */

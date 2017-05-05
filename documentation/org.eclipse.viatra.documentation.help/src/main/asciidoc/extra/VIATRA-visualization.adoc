@@ -31,7 +31,7 @@ VIATRA provides a simple data binding facility that can be used to bind pattern 
 @ObservableValue(name = "total_hdd", expression = "host.totalHdd")
 @ObservableValue(name = "total_ram", expression = "host.totalRam")
 pattern hostInstances(host: HostInstance) {
-	HostInstance(host);
+    HostInstance(host);
 }
 
 @ObservableValue(name = "id", expression = "app.identifier")
@@ -40,7 +40,7 @@ pattern hostInstances(host: HostInstance) {
 @ObservableValue(name = "db_pass", expression = "app.dbPassword")
 @ObservableValue(name = "allocatedTo", expression = "app.allocatedTo")
 pattern applicationInstances(app: ApplicationInstance) {
-	ApplicationInstance(app);
+    ApplicationInstance(app);
 }
 ----
 
@@ -58,19 +58,19 @@ HostInstancesMatcher matcher = HostInstancesMatcher.on(engine);
 GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(HostInstancesMatcher.querySpecification());
 //Bind the matches to the given TableViewer
 ViewerSupport.bind(
-	tableViewer,
-	//Get the matching results as an observable list
+    tableViewer,
+    //Get the matching results as an observable list
         ViatraObservables.observeMatchesAsList(matcher),
         //Specify observed proeprties
         new IValueProperty[] {
-		adapter.getProperty("id"),
-		adapter.getProperty("node_ip"),
-		adapter.getProperty("current_cpu"),
-		adapter.getProperty("current_hdd"),
-		adapter.getProperty("current_ram"),
-		adapter.getProperty("total_cpu"),
-		adapter.getProperty("total_hdd"),
-		adapter.getProperty("total_ram") });
+        adapter.getProperty("id"),
+        adapter.getProperty("node_ip"),
+        adapter.getProperty("current_cpu"),
+        adapter.getProperty("current_hdd"),
+        adapter.getProperty("current_ram"),
+        adapter.getProperty("total_cpu"),
+        adapter.getProperty("total_hdd"),
+        adapter.getProperty("total_ram") });
 ----
 
 === Master - detail data binding with a list
@@ -100,22 +100,22 @@ IObservableValue dbPassTarget = WidgetProperties.text().observe(dbPass);
 
 //Observe the changes in the list selection
 IViewerObservableValue listSelection = ViewerProperties
-	.singleSelection().observe(listViewer);
+    .singleSelection().observe(listViewer);
 
 //Use the data binding context to bind the text property of the target textbox and the given property of the matcher.
 dataBindingContext.bindValue(
-	//Target textbox observable value
-	dbPassTarget,
-	//Get the source observable value from the adapter
-	adapter.getProperty("db_pass").observeDetail(listSelection),
-	//Define EMF update value strategy
-	//In this case its one directional
-	new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-	new EMFUpdateValueStrategy());
+    //Target textbox observable value
+    dbPassTarget,
+    //Get the source observable value from the adapter
+    adapter.getProperty("db_pass").observeDetail(listSelection),
+    //Define EMF update value strategy
+    //In this case its one directional
+    new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
+    new EMFUpdateValueStrategy());
 
 dataBindingContext.bindValue(dbUserTarget, adapter.getProperty("db_user").observeDetail(listSelection),
-	new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-	new EMFUpdateValueStrategy());
+    new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
+    new EMFUpdateValueStrategy());
 ----
 
 == VIATRA Viewers
@@ -142,19 +142,19 @@ In order to use the VIATRA Viewers addon the following steps need to be undertak
 //Format options can be set using the @Format annotation
 @Format(color = "#0033CC", textColor = "#FFFFFF")
 pattern hostTypes(host) {
-	HostType(host);
+    HostType(host);
 }
 //Host types contain host instances
 //Displayed as nodes which have common edges with their parents
 @ContainsItem(container = type, item = instance)
 pattern connectTypesAndInstancesHost(type, instance) {
-	HostType.instances(type,instance);
+    HostType.instances(type,instance);
 }
 //Host instances can communicate with each other
 //Displayed as an edge between the two nodes
 @Edge(source = i1, target = i2, label = "comm")
 pattern communications(i1, i2) {
-	HostInstance.communicateWith(i1,i2);
+    HostInstance.communicateWith(i1,i2);
 }
 ----
 
@@ -167,7 +167,7 @@ pattern communications(i1, i2) {
 GraphViewer viewer = new GraphViewer(parent, SWT.None);
 //Create a new Viewer state based on the created VIATRA query engine and a set of annotated VIATRA query specifications
 ViewerState state = ViatraViewerDataModel.newViewerState(getEngine(), getSpecifications(), ViewerDataFilter.UNFILTERED,
-		ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+        ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
 //This method of binding supports isolated nodes
 ViatraGraphViewers.bindWithIsolatedNodes(viewer, state, true);
 //Define layout algorithm

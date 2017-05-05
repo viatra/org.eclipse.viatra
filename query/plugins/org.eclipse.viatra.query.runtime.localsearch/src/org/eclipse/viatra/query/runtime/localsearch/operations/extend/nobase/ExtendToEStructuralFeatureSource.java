@@ -89,8 +89,8 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<Object> {
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, targetPosition, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, targetPosition, new Integer[0]);
+    }
     
 }

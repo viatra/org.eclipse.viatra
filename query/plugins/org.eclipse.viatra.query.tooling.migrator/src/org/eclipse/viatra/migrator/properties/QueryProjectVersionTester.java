@@ -63,12 +63,12 @@ public class QueryProjectVersionTester extends PropertyTester {
             if (VERSION_TESTER.equals(property) && receiver instanceof IProject && ((IProject)receiver).isAccessible()) {
                 IProject project = (IProject) receiver;
                 for (String ID : MigratorConstants.INCORRECT_NATURE_IDS) {
-	                if (project.hasNature(ID)) {
-	                    return true;
-	                } else if (project.hasNature(ViatraQueryNature.NATURE_ID)) {
-	                     return project.findMember(MigratorConstants.GLOBAL_EIQ_PATH) != null
-	                        || hasIncorrectBuildCommandOrdering(project) || hasLog4jDependency(project);
-	                }
+                    if (project.hasNature(ID)) {
+                        return true;
+                    } else if (project.hasNature(ViatraQueryNature.NATURE_ID)) {
+                         return project.findMember(MigratorConstants.GLOBAL_EIQ_PATH) != null
+                            || hasIncorrectBuildCommandOrdering(project) || hasLog4jDependency(project);
+                    }
                 }
             }
         } catch (Exception e) {

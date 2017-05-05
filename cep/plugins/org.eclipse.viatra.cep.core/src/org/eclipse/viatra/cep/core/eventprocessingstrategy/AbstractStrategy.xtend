@@ -32,49 +32,49 @@ import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 *
 */
 abstract class AbstractStrategy implements IEventProcessingStrategy {
-	@Accessors IEventModelManager eventModelManager;
+    @Accessors IEventModelManager eventModelManager;
 
-	new(IEventModelManager eventModelManager) {
-		this.eventModelManager = eventModelManager
-	}
+    new(IEventModelManager eventModelManager) {
+        this.eventModelManager = eventModelManager
+    }
 
-	override handleEvent(Transition transition, EventToken eventTokenToMove) {
-		eventTokenToMove.addProcessedEvent(eventModelManager.model.latestEvent)
-	}
+    override handleEvent(Transition transition, EventToken eventTokenToMove) {
+        eventTokenToMove.addProcessedEvent(eventModelManager.model.latestEvent)
+    }
 
-	override public fireTransition(Transition transition, EventToken eventTokenToMove) {
-		Preconditions.checkArgument(transition != null)
-		Preconditions.checkArgument(eventTokenToMove != null)
+    override public fireTransition(Transition transition, EventToken eventTokenToMove) {
+        Preconditions.checkArgument(transition != null)
+        Preconditions.checkArgument(eventTokenToMove != null)
 
-		//we only allow one transition to be fired per observed matching event on the stream and thus,
-		//each token in a given state is marked as processed once a transition is fired,
-		//but this might be overridden in other strategies
-		eventTokenToMove.currentState.eventTokens.filter[et|et.lastProcessed == null].forEach [ eventToken |
-			eventToken.addProcessedEvent(eventModelManager.model.latestEvent)
-		]
+        //we only allow one transition to be fired per observed matching event on the stream and thus,
+        //each token in a given state is marked as processed once a transition is fired,
+        //but this might be overridden in other strategies
+        eventTokenToMove.currentState.eventTokens.filter[et|et.lastProcessed == null].forEach [ eventToken |
+            eventToken.addProcessedEvent(eventModelManager.model.latestEvent)
+        ]
 
-		val preState = transition.preState
-		if (preState instanceof FinalState) {
-			return
-		}
+        val preState = transition.preState
+        if (preState instanceof FinalState) {
+            return
+        }
 
-		val nextState = transition.postState
+        val nextState = transition.postState
 
-		eventTokenToMove.setCurrentState(nextState)
-		eventModelManager.callbackOnFiredToken(transition, eventTokenToMove)
-	}
+        eventTokenToMove.setCurrentState(nextState)
+        eventModelManager.callbackOnFiredToken(transition, eventTokenToMove)
+    }
 
-	def protected addProcessedEvent(EventToken eventToken, Event event) {
-		eventToken.recordedEvents.add(event)
-		eventToken.lastProcessed = event
-	}
+    def protected addProcessedEvent(EventToken eventToken, Event event) {
+        eventToken.recordedEvents.add(event)
+        eventToken.lastProcessed = event
+    }
 
-	override public handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
+    override public handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
 
-		model.automata.forEach [ automaton |
-			if (automaton.initialState.empty) {
-				newEventToken(automaton, automaton.initialState)
-			}
-		]
-	}
+        model.automata.forEach [ automaton |
+            if (automaton.initialState.empty) {
+                newEventToken(automaton, automaton.initialState)
+            }
+        ]
+    }
 }

@@ -221,10 +221,10 @@ public class DisplayUtil {
     public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
             String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, IQueryBackendFactory backend) {
         if (matcher == null) {
-        	if (exceptionMessage != null)
-        		return String.format("%s - %s", patternFqn, exceptionMessage);
-        	else
-        		return String.format("%s - See mouseover text for query loading errors", patternFqn);
+            if (exceptionMessage != null)
+                return String.format("%s - %s", patternFqn, exceptionMessage);
+            else
+                return String.format("%s - See mouseover text for query loading errors", patternFqn);
         } else {
             String matchString;
             switch (matchesSize) {
@@ -265,7 +265,7 @@ public class DisplayUtil {
      */
     public static String getMessage(IPatternMatch match)//, boolean generatedMatcher)
     {
-    	return getMessageForMatch(match);
+        return getMessageForMatch(match);
     }
 
 
@@ -302,7 +302,7 @@ public class DisplayUtil {
     }
 
     public PatternModel extractPatternModelFromResource(Resource resource) {
-    	if (resource != null) {
+        if (resource != null) {
             if (resource.getErrors().size() > 0) {
                 return null;
             }
@@ -329,46 +329,46 @@ public class DisplayUtil {
         }
         ResourceSet resourceSet = null;
         IProject project = file.getProject();
-		if (resourceSetMap.containsKey(project)) {
-        	resourceSet = resourceSetMap.get(project);
+        if (resourceSetMap.containsKey(project)) {
+            resourceSet = resourceSetMap.get(project);
         } else {
-        	resourceSet = resSetProvider.get(project);
-        	resourceSetMap.put(project, resourceSet);
+            resourceSet = resSetProvider.get(project);
+            resourceSetMap.put(project, resourceSet);
         }
         URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
         Resource resource = resourceSet.getResource(fileURI, false);
         try {
-        	if (resource == null) {
-        		resource = resourceSet.createResource(fileURI);
-        	} 
-        	else if (resource.isLoaded()) {
-        		// TODO remove this kludgy, side effect-laden code from here
-        		TreeIterator<EObject> it = resource.getAllContents();
+            if (resource == null) {
+                resource = resourceSet.createResource(fileURI);
+            } 
+            else if (resource.isLoaded()) {
+                // TODO remove this kludgy, side effect-laden code from here
+                TreeIterator<EObject> it = resource.getAllContents();
 
-        		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
-				QueryExplorer queryExplorer = QueryExplorer.getInstance();
-        		while (it.hasNext()) {
-        			EObject next = it.next();
-        			if (next instanceof Pattern) {
-						Pattern oldPattern = (Pattern) next;
+                QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
+                QueryExplorer queryExplorer = QueryExplorer.getInstance();
+                while (it.hasNext()) {
+                    EObject next = it.next();
+                    if (next instanceof Pattern) {
+                        Pattern oldPattern = (Pattern) next;
 
 
-						String fqn = CorePatternLanguageHelper.getFullyQualifiedName(oldPattern);
+                        String fqn = CorePatternLanguageHelper.getFullyQualifiedName(oldPattern);
                         queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().removeComponent(fqn);
-						queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().purge();
-						//queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
+                        queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().purge();
+                        //queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
 
-						queryRegistry.removeActivePattern(fqn);
-						it.prune();
-        			}
-        		}
-				queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerRoot());
-        		resource.unload();
-        	}
-			resource.load(null);
-		} catch (IOException e) {
-			return null;
-		}
+                        queryRegistry.removeActivePattern(fqn);
+                        it.prune();
+                    }
+                }
+                queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerRoot());
+                resource.unload();
+            }
+            resource.load(null);
+        } catch (IOException e) {
+            return null;
+        }
 
         return extractPatternModelFromResource(resource);
     }

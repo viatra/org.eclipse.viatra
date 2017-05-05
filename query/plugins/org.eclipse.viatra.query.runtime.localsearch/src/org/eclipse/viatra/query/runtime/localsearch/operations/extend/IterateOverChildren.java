@@ -60,8 +60,8 @@ public class IterateOverChildren extends ExtendOperation<EObject> {
     }
     
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, sourcePosition, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, sourcePosition, new Integer[0]);
+    }
 
 }

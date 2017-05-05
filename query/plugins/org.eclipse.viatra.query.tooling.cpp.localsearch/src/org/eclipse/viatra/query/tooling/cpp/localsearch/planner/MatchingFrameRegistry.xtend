@@ -19,15 +19,15 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.MatchingFrameDescr
  * @author Robert Doczi
  */
 class MatchingFrameRegistry {
-	
-	Map<PBody, MatchingFrameDescriptor> frameMap = newHashMap;
-	
-	def getMatchingFrame(PBody pBody) {
-		return Optional::fromNullable(frameMap.get(pBody))
-	}
-	
-	def putMatchingFrame(PBody pBody, MatchingFrameDescriptor frameStub) {
-		frameMap.put(pBody, frameStub)
-	}
-		
+    
+    Map<PBody, MatchingFrameDescriptor> frameMap = newHashMap;
+    
+    def getMatchingFrame(PBody pBody) {
+        return Optional::fromNullable(frameMap.get(pBody))
+    }
+    
+    def putMatchingFrame(PBody pBody, MatchingFrameDescriptor frameStub) {
+        frameMap.put(pBody, frameStub)
+    }
+        
 }

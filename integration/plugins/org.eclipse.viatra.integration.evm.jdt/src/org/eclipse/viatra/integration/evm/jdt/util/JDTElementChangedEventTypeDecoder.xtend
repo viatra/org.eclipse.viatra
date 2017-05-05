@@ -13,17 +13,17 @@ package org.eclipse.viatra.integration.evm.jdt.util
 import java.util.Set
 
 class JDTElementChangedEventTypeDecoder {
-	public static def ElementChangedEventType toEventType(int value){
-		ElementChangedEventType.values.findFirst[it.value == value]
-	}
-	
-	public static def Set<ElementChangedEventType> toEventTypes(int values) {
-		val result = newHashSet()
-		ElementChangedEventType.values.forEach[flag | 
-			if(values.bitwiseAnd(flag.value) != 0) {
-				result += flag
-			}
-		]
-		return result
-	}
+    public static def ElementChangedEventType toEventType(int value){
+        ElementChangedEventType.values.findFirst[it.value == value]
+    }
+    
+    public static def Set<ElementChangedEventType> toEventTypes(int values) {
+        val result = newHashSet()
+        ElementChangedEventType.values.forEach[flag | 
+            if(values.bitwiseAnd(flag.value) != 0) {
+                result += flag
+            }
+        ]
+        return result
+    }
 }

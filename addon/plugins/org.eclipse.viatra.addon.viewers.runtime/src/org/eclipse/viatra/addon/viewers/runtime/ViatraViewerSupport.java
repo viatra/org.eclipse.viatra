@@ -24,60 +24,60 @@ import org.eclipse.viatra.addon.viewers.runtime.sources.TreeContentProvider;
  */
 public class ViatraViewerSupport {
 
-	/**
-	 * Bind the viewerstate to the list viewer.
-	 * @param viewer
-	 * @param state
-	 */
-	public static void bind(AbstractListViewer viewer, ViewerState state) {
-		// this seems to be necessary to avoid a databinding-related exception 
-		// which comes when the viewer already had some contents before the current run		
-		if (viewer.getInput()!=null) {
-			viewer.setInput(null);
-		}
-		
-		if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof ListContentProvider) {
-			// dispose already existing content provider
-			((ListContentProvider)viewer.getContentProvider()).dispose();
-		}
+    /**
+     * Bind the viewerstate to the list viewer.
+     * @param viewer
+     * @param state
+     */
+    public static void bind(AbstractListViewer viewer, ViewerState state) {
+        // this seems to be necessary to avoid a databinding-related exception 
+        // which comes when the viewer already had some contents before the current run		
+        if (viewer.getInput()!=null) {
+            viewer.setInput(null);
+        }
+        
+        if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof ListContentProvider) {
+            // dispose already existing content provider
+            ((ListContentProvider)viewer.getContentProvider()).dispose();
+        }
 
-		
-		if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
-			// dispose already existing label provider
-			((QueryLabelProvider)viewer.getLabelProvider()).dispose();
-		}
+        
+        if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
+            // dispose already existing label provider
+            ((QueryLabelProvider)viewer.getLabelProvider()).dispose();
+        }
 
-		viewer.setContentProvider(new ListContentProvider());
-		viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
-		viewer.setInput(state);			
-		viewer.refresh();
-	}
+        viewer.setContentProvider(new ListContentProvider());
+        viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
+        viewer.setInput(state);			
+        viewer.refresh();
+    }
 
-	/**
-	 * Bind the viewerstate to the tree viewer.
-	 * @param viewer
-	 * @param state
-	 */
-	public static void bind(AbstractTreeViewer viewer, ViewerState state) {
-		// this seems to be necessary to avoid a databinding-related exception 
-		// which comes when the viewer already had some contents before the current run
-		if (viewer.getInput()!=null) {
-			viewer.setInput(null);
-		}
-		
-		if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof TreeContentProvider) {
-			// dispose already existing content provider
-			((TreeContentProvider)viewer.getContentProvider()).dispose();
-		}
-		
-		if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
-			// dispose already existing label provider
-			((QueryLabelProvider)viewer.getLabelProvider()).dispose();
-		}
-				
-		viewer.setContentProvider(new TreeContentProvider());
-		viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
-		viewer.setInput(state);	
-		viewer.refresh();
-	}
+    /**
+     * Bind the viewerstate to the tree viewer.
+     * @param viewer
+     * @param state
+     */
+    public static void bind(AbstractTreeViewer viewer, ViewerState state) {
+        // this seems to be necessary to avoid a databinding-related exception 
+        // which comes when the viewer already had some contents before the current run
+        if (viewer.getInput()!=null) {
+            viewer.setInput(null);
+        }
+        
+        if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof TreeContentProvider) {
+            // dispose already existing content provider
+            ((TreeContentProvider)viewer.getContentProvider()).dispose();
+        }
+        
+        if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
+            // dispose already existing label provider
+            ((QueryLabelProvider)viewer.getLabelProvider()).dispose();
+        }
+                
+        viewer.setContentProvider(new TreeContentProvider());
+        viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
+        viewer.setInput(state);	
+        viewer.refresh();
+    }
 }

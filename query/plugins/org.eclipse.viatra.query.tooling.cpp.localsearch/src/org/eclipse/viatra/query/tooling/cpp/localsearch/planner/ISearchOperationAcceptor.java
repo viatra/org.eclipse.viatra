@@ -24,14 +24,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  * @author Robert Doczi
  */
 public interface ISearchOperationAcceptor {
-	
-	public void initialize(SubPlan plan, Map<PVariable, Integer> variableMapping, Map<PConstraint, Set<Integer>> variableBindings);
-	
-	public void acceptContainmentCheck(PVariable sourceVariable, PVariable targetVariable, IInputKey inputKey);
-	public void acceptInstanceOfClassCheck(PVariable checkedVariable, IInputKey inputKey);
-	
-	public void acceptIterateOverClassInstances(PVariable location, IInputKey inputKey);
-	public void acceptExtendToAssociationSource(PVariable sourceVariable, PVariable targetVariable, IInputKey inputKey);
-	public void acceptExtendToAssociationTarget(PVariable sourceVariable, PVariable targetVariable, IInputKey inputKey);
-	public void acceptNACOperation(PQuery calledPQuery, Set<PVariable> boundVariables, Set<PParameter> boundParameters);
+    
+    public void initialize(SubPlan plan, Map<PVariable, Integer> variableMapping, Map<PConstraint, Set<Integer>> variableBindings);
+    
+    public void acceptContainmentCheck(PVariable sourceVariable, PVariable targetVariable, IInputKey inputKey);
+    public void acceptInstanceOfClassCheck(PVariable checkedVariable, IInputKey inputKey);
+    
+    public void acceptIterateOverClassInstances(PVariable location, IInputKey inputKey);
+    public void acceptExtendToAssociationSource(PVariable sourceVariable, PVariable targetVariable, IInputKey inputKey);
+    public void acceptExtendToAssociationTarget(PVariable sourceVariable, PVariable targetVariable, IInputKey inputKey);
+    public void acceptNACOperation(PQuery calledPQuery, Set<PVariable> boundVariables, Set<PParameter> boundParameters);
 }

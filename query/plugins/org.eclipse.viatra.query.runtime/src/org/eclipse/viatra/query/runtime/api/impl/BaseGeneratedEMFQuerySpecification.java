@@ -25,18 +25,18 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
-	
-	
+    
+    
     /**
      * Instantiates query specification for the given internal query representation.
-	 */
+     */
     public BaseGeneratedEMFQuerySpecification(PQuery wrappedPQuery) {
         super(wrappedPQuery);
     }
     
     @Override
-	public Class<? extends QueryScope> getPreferredScopeClass() {
-		return EMFScope.class;
-	}
+    public Class<? extends QueryScope> getPreferredScopeClass() {
+        return EMFScope.class;
+    }
     
 }

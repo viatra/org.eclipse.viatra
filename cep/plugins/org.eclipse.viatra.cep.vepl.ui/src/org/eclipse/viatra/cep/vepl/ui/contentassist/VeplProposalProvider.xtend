@@ -22,21 +22,21 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
  */
 class VeplProposalProvider extends AbstractVeplProposalProvider {
 
-	override complete_ComplexEventOperator(EObject model, RuleCall ruleCall, ContentAssistContext context,
-		ICompletionProposalAcceptor acceptor) {
-		createOperatorProposal("->", context, acceptor)
-		createOperatorProposal("OR", context, acceptor)
-		createOperatorProposal("AND", context, acceptor)
-	}
+    override complete_ComplexEventOperator(EObject model, RuleCall ruleCall, ContentAssistContext context,
+        ICompletionProposalAcceptor acceptor) {
+        createOperatorProposal("->", context, acceptor)
+        createOperatorProposal("OR", context, acceptor)
+        createOperatorProposal("AND", context, acceptor)
+    }
 
-	private def createOperatorProposal(String text, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		val obj = VeplFactory.eINSTANCE.createComplexEventOperator
+    private def createOperatorProposal(String text, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        val obj = VeplFactory.eINSTANCE.createComplexEventOperator
 
-		acceptor.accept(createCompletionProposal(" " + text + " ", text, labelProvider.getImage(obj), context))
-	}
+        acceptor.accept(createCompletionProposal(" " + text + " ", text, labelProvider.getImage(obj), context))
+    }
 
-	override completeChainedExpression_Operator(EObject model, Assignment assignment, ContentAssistContext context,
-		ICompletionProposalAcceptor acceptor) {
-		return
-	}
+    override completeChainedExpression_Operator(EObject model, Assignment assignment, ContentAssistContext context,
+        ICompletionProposalAcceptor acceptor) {
+        return
+    }
 }

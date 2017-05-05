@@ -37,86 +37,86 @@ import org.eclipse.viatra.transformation.evm.specific.Lifecycles
  *
  */
 class BatchTransformationRule<Match extends IPatternMatch,Matcher extends ViatraQueryMatcher<Match>> implements ITransformationRule<Match,Matcher> {
-	
-	/**
-	 * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation again. 
-	 */
-	public static val ActivationLifeCycle STATELESS_RULE_LIFECYCLE = {
-		val cycle= ActivationLifeCycle.create(CRUDActivationStateEnum::INACTIVE)
-		
-		cycle.addStateTransition(CRUDActivationStateEnum::INACTIVE, CRUDEventTypeEnum::CREATED, CRUDActivationStateEnum::CREATED)
-		cycle.addStateTransition(CRUDActivationStateEnum::CREATED, RuleEngineEventType::FIRE, CRUDActivationStateEnum::CREATED)
-		cycle.addStateTransition(CRUDActivationStateEnum::CREATED, CRUDEventTypeEnum::DELETED, CRUDActivationStateEnum::INACTIVE)
-		
-		UnmodifiableActivationLifeCycle::copyOf(cycle)
-	}
-	/**
-	 * Lifecycle for a rule that stores the list of fired activations; thus effectively forbids re-firing the same activation.
-	 */
-	public static val STATEFUL_RULE_LIFECYCLE = Lifecycles::getDefault(false, false)
+    
+    /**
+     * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation again. 
+     */
+    public static val ActivationLifeCycle STATELESS_RULE_LIFECYCLE = {
+        val cycle= ActivationLifeCycle.create(CRUDActivationStateEnum::INACTIVE)
+        
+        cycle.addStateTransition(CRUDActivationStateEnum::INACTIVE, CRUDEventTypeEnum::CREATED, CRUDActivationStateEnum::CREATED)
+        cycle.addStateTransition(CRUDActivationStateEnum::CREATED, RuleEngineEventType::FIRE, CRUDActivationStateEnum::CREATED)
+        cycle.addStateTransition(CRUDActivationStateEnum::CREATED, CRUDEventTypeEnum::DELETED, CRUDActivationStateEnum::INACTIVE)
+        
+        UnmodifiableActivationLifeCycle::copyOf(cycle)
+    }
+    /**
+     * Lifecycle for a rule that stores the list of fired activations; thus effectively forbids re-firing the same activation.
+     */
+    public static val STATEFUL_RULE_LIFECYCLE = Lifecycles::getDefault(false, false)
 
-	protected String ruleName
-	private val ActivationLifeCycle lifecycle
-	RuleSpecification<Match> ruleSpec
-	private val IQuerySpecification<Matcher> precondition
-	private val IMatchProcessor<Match> action
-	private val EventFilter<Match> filter
+    protected String ruleName
+    private val ActivationLifeCycle lifecycle
+    RuleSpecification<Match> ruleSpec
+    private val IQuerySpecification<Matcher> precondition
+    private val IMatchProcessor<Match> action
+    private val EventFilter<Match> filter
 
-	protected new() {
-		this("", null, STATELESS_RULE_LIFECYCLE, null)
-		
-	}
-	
-	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
-	    this(rulename, matcher, lifecycle, action, ViatraQueryMatchEventFilter.createFilter(matcher.newEmptyMatch.toImmutable as Match))
-	}
-	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action, EventFilter<Match> filter) {
-		this.ruleName = rulename
-		this.precondition = matcher
-		this.action = action
-		this.lifecycle = lifecycle
-		this.filter = filter
-	}
-	new(BatchTransformationRule<Match, Matcher> rule, EventFilter<Match> filter) {
-	    this.ruleName = rule.ruleName
-	    this.precondition = rule.precondition
-	    this.action = rule.action
-	    this.lifecycle = rule.lifecycle
-	    this.filter = filter
-	}
-	
+    protected new() {
+        this("", null, STATELESS_RULE_LIFECYCLE, null)
+        
+    }
+    
+    new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
+        this(rulename, matcher, lifecycle, action, ViatraQueryMatchEventFilter.createFilter(matcher.newEmptyMatch.toImmutable as Match))
+    }
+    new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action, EventFilter<Match> filter) {
+        this.ruleName = rulename
+        this.precondition = matcher
+        this.action = action
+        this.lifecycle = lifecycle
+        this.filter = filter
+    }
+    new(BatchTransformationRule<Match, Matcher> rule, EventFilter<Match> filter) {
+        this.ruleName = rule.ruleName
+        this.precondition = rule.precondition
+        this.action = rule.action
+        this.lifecycle = rule.lifecycle
+        this.filter = filter
+    }
+    
     override getName() {
         ruleName
     }
 
-	/**
-	 * Returns a RuleSpecification that can be added to a rule engine.
-	 */
+    /**
+     * Returns a RuleSpecification that can be added to a rule engine.
+     */
     override getRuleSpecification(){
-    	if(ruleSpec == null){
-		    val querySpec = precondition
-		    val Job<Match> job = Jobs::newStatelessJob(CRUDActivationStateEnum::CREATED, action)
-		    
-		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job), name)
-    	}
-    	ruleSpec
+        if(ruleSpec == null){
+            val querySpec = precondition
+            val Job<Match> job = Jobs::newStatelessJob(CRUDActivationStateEnum::CREATED, action)
+            
+            ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job), name)
+        }
+        ruleSpec
     }
-	
-	/**
-	 * Returns the query specification representing the pattern used as a precondition.
-	 */
-	override IQuerySpecification<Matcher> getPrecondition() {
-		precondition
-	}
-	
-	/**
-	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
-	 */
-	def IMatchProcessor<Match> getAction() {	
-		action
-	}	
-	
-	override EventFilter<? super Match> getFilter() {
-	    filter
-	}
+    
+    /**
+     * Returns the query specification representing the pattern used as a precondition.
+     */
+    override IQuerySpecification<Matcher> getPrecondition() {
+        precondition
+    }
+    
+    /**
+     * Return an IMatchProcessor representing the model manipulation executed by the rule.
+     */
+    def IMatchProcessor<Match> getAction() {	
+        action
+    }	
+    
+    override EventFilter<? super Match> getFilter() {
+        filter
+    }
 }

@@ -32,86 +32,86 @@ import org.eclipse.viatra.integration.mwe2.mwe2impl.exceptions.NoSuchTopicNameEx
  * @author Peter Lunk
  */
 abstract class TransformationStep implements ITransformationStep {
-	/**
-	 * Broker used to manage Topic subscriptions
-	 */
-	extension MessageBroker broker = MessageBroker.instance
-	
-	protected ListMultimap<Integer, ISubscribeTo> subscribeTo = ArrayListMultimap.create();
-	protected List<IPublishTo> publishTo = new ArrayList<IPublishTo>();
-	protected IWorkflowContext context;
+    /**
+     * Broker used to manage Topic subscriptions
+     */
+    extension MessageBroker broker = MessageBroker.instance
+    
+    protected ListMultimap<Integer, ISubscribeTo> subscribeTo = ArrayListMultimap.create();
+    protected List<IPublishTo> publishTo = new ArrayList<IPublishTo>();
+    protected IWorkflowContext context;
 
-	def IWorkflowContext getContext() {
-		return context;
-	}
-	
-	def void addSubscription(ISubscribeTo sub) {
-		//Add subscription and set parent properties
-		subscribeTo.put(sub.getPriority(), sub);
-		sub.setParent(this);
-		sub.processor.parent = this
-		broker.subscribeTo(sub.topicName,this)
-	}
+    def IWorkflowContext getContext() {
+        return context;
+    }
+    
+    def void addSubscription(ISubscribeTo sub) {
+        //Add subscription and set parent properties
+        subscribeTo.put(sub.getPriority(), sub);
+        sub.setParent(this);
+        sub.processor.parent = this
+        broker.subscribeTo(sub.topicName,this)
+    }
 
-	def List<ISubscribeTo> getSubscriptions(Integer priority) {
-		return subscribeTo.get(priority);
-	}
+    def List<ISubscribeTo> getSubscriptions(Integer priority) {
+        return subscribeTo.get(priority);
+    }
 
-	def List<ISubscribeTo> getSubscriptions() {
-		val ret = new ArrayList<ISubscribeTo>();
-		ret.addAll(subscribeTo.values());
-		return ret;
-	}
+    def List<ISubscribeTo> getSubscriptions() {
+        val ret = new ArrayList<ISubscribeTo>();
+        ret.addAll(subscribeTo.values());
+        return ret;
+    }
 
-	def void addPublishing(IPublishTo channel) {
-		publishTo.add(channel);
-	}
+    def void addPublishing(IPublishTo channel) {
+        publishTo.add(channel);
+    }
 
-	def List<IPublishTo> getPublishings() {
-		return publishTo;
-	}
+    def List<IPublishTo> getPublishings() {
+        return publishTo;
+    }
 
-	def ISubscribeTo getSubscription(String topicName) throws NoSuchTopicNameException{
-		val subs = subscriptions.filter[it.topicName == topicName]
-		if (!subs.isEmpty) {
-			return subs.head
-		}
-		throw new NoSuchTopicNameException
-	}
+    def ISubscribeTo getSubscription(String topicName) throws NoSuchTopicNameException{
+        val subs = subscriptions.filter[it.topicName == topicName]
+        if (!subs.isEmpty) {
+            return subs.head
+        }
+        throw new NoSuchTopicNameException
+    }
 
-	def IPublishTo getPublishing(String topicName) throws NoSuchTopicNameException{
-		val pubs = publishTo.filter[it.topicName == topicName]
-		if (!pubs.isEmpty) {
-			return pubs.head
-		}
-		throw new NoSuchTopicNameException
-	}
+    def IPublishTo getPublishing(String topicName) throws NoSuchTopicNameException{
+        val pubs = publishTo.filter[it.topicName == topicName]
+        if (!pubs.isEmpty) {
+            return pubs.head
+        }
+        throw new NoSuchTopicNameException
+    }
 
-	override execute() {
-		processMessages
-		doExecute
-		publishMessages
-	}
-	
-	def void processMessages() {
+    override execute() {
+        processMessages
+        doExecute
+        publishMessages
+    }
+    
+    def void processMessages() {
         subscriptions.forEach[ 
             processMessages
         ]
     }
 
     def void publishMessages(){
-    	//By default do nothing
-    	//Override this method to send parametric messages
+        //By default do nothing
+        //Override this method to send parametric messages
     }
-	
-	def void doExecute()
-	
-	override initialize(IWorkflowContext ctx) {
-		this.context = ctx
-		doInitialize(ctx)
-	}
-	
-	def void doInitialize(IWorkflowContext ctx)
-	
+    
+    def void doExecute()
+    
+    override initialize(IWorkflowContext ctx) {
+        this.context = ctx
+        doInitialize(ctx)
+    }
+    
+    def void doInitialize(IWorkflowContext ctx)
+    
 
 }

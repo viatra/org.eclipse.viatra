@@ -19,13 +19,13 @@ import org.eclipse.viatra.integration.mwe2.providers.IProvider
  *
  */
 abstract class BaseProvider implements IProvider{
-	private IWorkflowContext ctx;
-	
-	override getContext() {
-		return ctx;
-	}
-	
-	override setContext(IWorkflowContext ctx) {
-		this.ctx = ctx;
-	}
+    private IWorkflowContext ctx;
+    
+    override getContext() {
+        return ctx;
+    }
+    
+    override setContext(IWorkflowContext ctx) {
+        this.ctx = ctx;
+    }
 }

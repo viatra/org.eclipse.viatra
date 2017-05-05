@@ -51,7 +51,7 @@ import com.google.common.collect.Sets.SetView;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class LocalSearchRuntimeBasedStrategy {
-	    
+        
     /**
      * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
      * PBody

@@ -40,12 +40,12 @@ public class Agenda {
     private final Logger logger;
     
     
-	/**
-	*
-	*/
-	public Agenda() {
-		this(new ArbitraryOrderConflictResolver());
-	}
+    /**
+    *
+    */
+    public Agenda() {
+        this(new ArbitraryOrderConflictResolver());
+    }
     
     
     /**
@@ -103,21 +103,21 @@ public class Agenda {
         this.conflictSet = set;
     }
     
-	public void setActivationListener(IActivationNotificationListener activationListener) {
-		this.activationListener = activationListener;
-	}
+    public void setActivationListener(IActivationNotificationListener activationListener) {
+        this.activationListener = activationListener;
+    }
 
     public ChangeableConflictSet getConflictSet() {
         return conflictSet;
     }
     
 
-	protected Logger getLogger() {
-		return logger;
-	}
-	
-	protected ConflictSetUpdater getConflictSetUpdater() {
-		return updatingListener;
-	}
+    protected Logger getLogger() {
+        return logger;
+    }
+    
+    protected ConflictSetUpdater getConflictSetUpdater() {
+        return updatingListener;
+    }
 }
 

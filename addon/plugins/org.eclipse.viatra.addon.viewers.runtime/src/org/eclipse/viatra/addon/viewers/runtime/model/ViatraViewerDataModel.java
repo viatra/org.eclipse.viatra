@@ -50,7 +50,7 @@ public class ViatraViewerDataModel extends ViewerDataModel {
      * @throws ViatraBaseException
      */
     public ViatraViewerDataModel(Collection<IQuerySpecification<?>> patterns, ViatraQueryEngine engine) throws ViatraQueryException, ViatraBaseException {
-    	super(engine);
+        super(engine);
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
         this.logger = ViatraQueryLoggingUtil.getLogger(getClass());
@@ -61,62 +61,62 @@ public class ViatraViewerDataModel extends ViewerDataModel {
         return engine;
     }
 
-	public Collection<IQuerySpecification<?>> getPatterns(final String annotation) {
-		return Collections2.filter(patterns, new Predicate<IQuerySpecification<?>>() {
+    public Collection<IQuerySpecification<?>> getPatterns(final String annotation) {
+        return Collections2.filter(patterns, new Predicate<IQuerySpecification<?>>() {
 
-			@Override
-			public boolean apply(IQuerySpecification<?> pattern) {
-				return !pattern.getAnnotationsByName(annotation).isEmpty();
-			}
-		});
-	}
+            @Override
+            public boolean apply(IQuerySpecification<?> pattern) {
+                return !pattern.getAnnotationsByName(annotation).isEmpty();
+            }
+        });
+    }
 
     public Logger getLogger() {
         return logger;
     }
 
     /* factory method */
- 	
- 	/**
- 	 * Instantiate a {@link ViewerState} and its corresponding {@link ViewerDataModel} instance, for VIATRA-based 
- 	 * model sources.
- 	 * 
- 	 * <p>When the state is disposed, the view model will be disposed too.
- 	 */
- 	public static ViewerState newViewerState(ViatraQueryEngine engine,
- 			Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
- 			Collection<ViewerStateFeature> features) {
- 		ViatraViewerDataModel m;
-		try {
-			m = new ViatraViewerDataModel(patterns, engine);
-		} catch (ViatraQueryException | ViatraBaseException e) {
-			Logger.getLogger(ViatraViewerDataModel.class).error(e.getMessage());
-			return null;
-		}
-  		ViewerState r = newViewerState(m, filter, features);
-  		r.hasExternalViewerDataModel=false;
-  		return r;
- 	}
- 	
- 	/**
- 	 * Instantiate a new {@link ViewerState}, for an already existing {@link ViatraViewerDataModel} instance.
- 	 * 
- 	 * This {@link ViewerDataModel} will not be disposed when the state is disposed.
- 	 * 
- 	 * @param model
- 	 * @param filter
- 	 * @param features
- 	 */
- 	public static ViewerState newViewerState(ViatraViewerDataModel model, ViewerDataFilter filter,
- 			Collection<ViewerStateFeature> features)
- 	{
- 		ViewerState s = new ViewerState(model, filter, features);
- 		s.hasExternalViewerDataModel=true;
- 		return s;
- 	}
+     
+     /**
+      * Instantiate a {@link ViewerState} and its corresponding {@link ViewerDataModel} instance, for VIATRA-based 
+      * model sources.
+      * 
+      * <p>When the state is disposed, the view model will be disposed too.
+      */
+     public static ViewerState newViewerState(ViatraQueryEngine engine,
+             Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
+             Collection<ViewerStateFeature> features) {
+         ViatraViewerDataModel m;
+        try {
+            m = new ViatraViewerDataModel(patterns, engine);
+        } catch (ViatraQueryException | ViatraBaseException e) {
+            Logger.getLogger(ViatraViewerDataModel.class).error(e.getMessage());
+            return null;
+        }
+          ViewerState r = newViewerState(m, filter, features);
+          r.hasExternalViewerDataModel=false;
+          return r;
+     }
+     
+     /**
+      * Instantiate a new {@link ViewerState}, for an already existing {@link ViatraViewerDataModel} instance.
+      * 
+      * This {@link ViewerDataModel} will not be disposed when the state is disposed.
+      * 
+      * @param model
+      * @param filter
+      * @param features
+      */
+     public static ViewerState newViewerState(ViatraViewerDataModel model, ViewerDataFilter filter,
+             Collection<ViewerStateFeature> features)
+     {
+         ViewerState s = new ViewerState(model, filter, features);
+         s.hasExternalViewerDataModel=true;
+         return s;
+     }
 
-	@Override
-	public Collection<IQuerySpecification<?>> getPatterns() {
-		return patterns;
-	}
+    @Override
+    public Collection<IQuerySpecification<?>> getPatterns() {
+        return patterns;
+    }
 }

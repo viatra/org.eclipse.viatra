@@ -19,36 +19,36 @@ import java.util.Iterator;
  *
  */
 public class LexicographicComparator<T> implements Comparator<Iterable<? extends T>> {
-	
-	final Comparator<T> elementComparator;
-	
-	public LexicographicComparator(Comparator<T> elementComparator) {
-		super();
-		this.elementComparator = elementComparator;
-	}
+    
+    final Comparator<T> elementComparator;
+    
+    public LexicographicComparator(Comparator<T> elementComparator) {
+        super();
+        this.elementComparator = elementComparator;
+    }
 
-	@Override
-	public int compare(Iterable<? extends T> o1, Iterable<? extends T> o2) {
-		Iterator<? extends T> it1 = o1.iterator();
-		Iterator<? extends T> it2 = o2.iterator();
-		
-		boolean has1, has2, bothHaveNext;
-		do {
-			has1 = it1.hasNext();
-			has2 = it2.hasNext();
-			bothHaveNext = has1 && has2;
-			if (bothHaveNext) {
-				T element1 = it1.next();
-				T element2 = it2.next();
-				int elementComparison = elementComparator.compare(element1, element2);
-				if (elementComparison != 0) 
-					return elementComparison;
-			}
-		} while (bothHaveNext);
-		if (has1 && !has2) return +1;
-		if (!has1 && has2) return -1;
-		/*if (!has1 && !has2)*/ return 0;
-	}
+    @Override
+    public int compare(Iterable<? extends T> o1, Iterable<? extends T> o2) {
+        Iterator<? extends T> it1 = o1.iterator();
+        Iterator<? extends T> it2 = o2.iterator();
+        
+        boolean has1, has2, bothHaveNext;
+        do {
+            has1 = it1.hasNext();
+            has2 = it2.hasNext();
+            bothHaveNext = has1 && has2;
+            if (bothHaveNext) {
+                T element1 = it1.next();
+                T element2 = it2.next();
+                int elementComparison = elementComparator.compare(element1, element2);
+                if (elementComparison != 0) 
+                    return elementComparison;
+            }
+        } while (bothHaveNext);
+        if (has1 && !has2) return +1;
+        if (!has1 && has2) return -1;
+        /*if (!has1 && !has2)*/ return 0;
+    }
 
 
 

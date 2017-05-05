@@ -115,25 +115,25 @@ public class RuleEngine {
         return added;
     }
 
-	/**
-	 * Decides whether a rule specification is already added to the RuleBase
-	 * without filter.
-	 */
-	public <EventAtom> boolean containsRule(
-			final RuleSpecification<EventAtom> specification) {
-		return containsRule(specification, specification.createEmptyFilter());
-	}
+    /**
+     * Decides whether a rule specification is already added to the RuleBase
+     * without filter.
+     */
+    public <EventAtom> boolean containsRule(
+            final RuleSpecification<EventAtom> specification) {
+        return containsRule(specification, specification.createEmptyFilter());
+    }
 
-	/**
-	 * Decides whether a rule specification is already added to the RuleBase
-	 * with the specified filter.
-	 */
-	public <EventAtom> boolean containsRule(
-			final RuleSpecification<EventAtom> specification,
-			EventFilter<? super EventAtom> filter) {
-		return ruleBase.getRuleSpecificationMultimap().containsEntry(
-				specification, filter);
-	}
+    /**
+     * Decides whether a rule specification is already added to the RuleBase
+     * with the specified filter.
+     */
+    public <EventAtom> boolean containsRule(
+            final RuleSpecification<EventAtom> specification,
+            EventFilter<? super EventAtom> filter) {
+        return ruleBase.getRuleSpecificationMultimap().containsEntry(
+                specification, filter);
+    }
     
     /**
      * 

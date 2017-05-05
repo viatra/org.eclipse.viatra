@@ -20,35 +20,35 @@ import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingCalculator
 
 class VeplSemanticHighlightingCalculator extends XbaseHighlightingCalculator {
 
-	override protected searchAndHighlightElements(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
-		val iterator = resource.getAllContents();
-		while (iterator.hasNext()) {
-			val object = iterator.next();
-			if (object instanceof Timewindow) {
-				val node = NodeModelUtils.findActualNodeFor(object);
-				val children = node.getChildren();
+    override protected searchAndHighlightElements(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
+        val iterator = resource.getAllContents();
+        while (iterator.hasNext()) {
+            val object = iterator.next();
+            if (object instanceof Timewindow) {
+                val node = NodeModelUtils.findActualNodeFor(object);
+                val children = node.getChildren();
 
-				children.filter[ch|ch.bracketNode].forEach[bracketNode|
-					highlightNode(acceptor, bracketNode, CepDslHighlightingConfiguration.KEYWORD_ID);]
-			} else if (object instanceof AbstractMultiplicity) {
-				val node = NodeModelUtils.findActualNodeFor(object);
-				val leafNodes = node.firstChild.leafNodes
+                children.filter[ch|ch.bracketNode].forEach[bracketNode|
+                    highlightNode(acceptor, bracketNode, CepDslHighlightingConfiguration.KEYWORD_ID);]
+            } else if (object instanceof AbstractMultiplicity) {
+                val node = NodeModelUtils.findActualNodeFor(object);
+                val leafNodes = node.firstChild.leafNodes
 
-				val braceNodes = leafNodes.filter[n|n.braceNode]
-				braceNodes.forEach[n|highlightNode(acceptor, n, CepDslHighlightingConfiguration.KEYWORD_ID);]
-				val valueNode = leafNodes.filter[n|!n.braceNode].head
-				highlightNode(acceptor, valueNode, CepDslHighlightingConfiguration.NUMBER_ID);
-			} else {
-				computeReferencedJvmTypeHighlighting(acceptor, object);
-			}
-		}
-	}
+                val braceNodes = leafNodes.filter[n|n.braceNode]
+                braceNodes.forEach[n|highlightNode(acceptor, n, CepDslHighlightingConfiguration.KEYWORD_ID);]
+                val valueNode = leafNodes.filter[n|!n.braceNode].head
+                highlightNode(acceptor, valueNode, CepDslHighlightingConfiguration.NUMBER_ID);
+            } else {
+                computeReferencedJvmTypeHighlighting(acceptor, object);
+            }
+        }
+    }
 
-	def private isBracketNode(INode node) {
-		node.text.equals("[") || node.text.equals("]")
-	}
+    def private isBracketNode(INode node) {
+        node.text.equals("[") || node.text.equals("]")
+    }
 
-	def private isBraceNode(INode node) {
-		node.text.equals("{") || node.text.equals("}")
-	}
+    def private isBraceNode(INode node) {
+        node.text.equals("{") || node.text.equals("}")
+    }
 }

@@ -25,19 +25,19 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class DRedGraphsTestCase extends BaseTransitiveClosureAlgorithmTest {
 
-	private TestGraph<Integer> testGraph;
-	
-	public DRedGraphsTestCase(TestGraph<Integer> testGraph) {
-		this.testGraph = testGraph;
-	}
-	
-	@Test
-	public void testResult() {
-		if (testGraph instanceof Graph4) {
-	    	FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(testGraph);
-	    	DRedAlg<Integer> da = new DRedAlg<Integer>(testGraph);
-	    	testGraph.modify();	
-	        assertEquals(da.getTcRelation(), fwa.getTcRelation());
-		}
-	}
+    private TestGraph<Integer> testGraph;
+    
+    public DRedGraphsTestCase(TestGraph<Integer> testGraph) {
+        this.testGraph = testGraph;
+    }
+    
+    @Test
+    public void testResult() {
+        if (testGraph instanceof Graph4) {
+            FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(testGraph);
+            DRedAlg<Integer> da = new DRedAlg<Integer>(testGraph);
+            testGraph.modify();	
+            assertEquals(da.getTcRelation(), fwa.getTcRelation());
+        }
+    }
 }

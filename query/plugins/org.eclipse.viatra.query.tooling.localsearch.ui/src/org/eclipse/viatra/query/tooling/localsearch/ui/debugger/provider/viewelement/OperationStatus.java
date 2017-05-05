@@ -16,5 +16,5 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewel
  *
  */
 public enum OperationStatus {
-	EXECUTED, CURRENT, QUEUED
+    EXECUTED, CURRENT, QUEUED
 }

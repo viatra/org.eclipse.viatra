@@ -24,29 +24,29 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 @Deprecated
 public class CachedPredicateEvaluatorNode extends OutputCachingEvaluatorNode {
 
-	public CachedPredicateEvaluatorNode(ReteContainer reteContainer,
-			Logger logger, IExpressionEvaluator evaluator,
+    public CachedPredicateEvaluatorNode(ReteContainer reteContainer,
+            Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions,
-			int sourceTupleWidth) {
-		super(reteContainer, new EvaluatorCore.PredicateEvaluatorCore(logger, evaluator, parameterPositions, sourceTupleWidth));
-	}
+            int sourceTupleWidth) {
+        super(reteContainer, new EvaluatorCore.PredicateEvaluatorCore(logger, evaluator, parameterPositions, sourceTupleWidth));
+    }
 
     /**
      * @deprecated use {@link EvaluationCore}
      */
     @Deprecated
-	@Override
-	protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
-		return Boolean.TRUE.equals(evaluationresult) ? incoming : null;
-	}
+    @Override
+    protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
+        return Boolean.TRUE.equals(evaluationresult) ? incoming : null;
+    }
 
     /**
      * @deprecated use {@link EvaluationCore}
      */
     @Deprecated
-	@Override
-	protected String logNodeName() {
-		return "check()";
-	}
+    @Override
+    protected String logNodeName() {
+        return "check()";
+    }
 
 }

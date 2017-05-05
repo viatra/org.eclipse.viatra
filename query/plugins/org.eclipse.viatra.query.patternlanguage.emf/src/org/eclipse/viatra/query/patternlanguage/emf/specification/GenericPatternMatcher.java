@@ -41,71 +41,71 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  * 
  */
 class GenericPatternMatcher extends
-		org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
+        org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
 
     /**
      * @deprecated use {@link #GenericPatternMatcher(GenericQuerySpecification)} instead
      */
     @Deprecated
-	protected GenericPatternMatcher(ViatraQueryEngine engine,
-			GenericQuerySpecification specification) throws ViatraQueryException {
-		super(engine, specification);
-	}
+    protected GenericPatternMatcher(ViatraQueryEngine engine,
+            GenericQuerySpecification specification) throws ViatraQueryException {
+        super(engine, specification);
+    }
 
-	protected GenericPatternMatcher(GenericQuerySpecification specification) throws ViatraQueryException {
+    protected GenericPatternMatcher(GenericQuerySpecification specification) throws ViatraQueryException {
         super(specification);
     }
-	
-	/**
-	 * Initializes the pattern matcher within an existing VIATRA Query engine.
-	 * If the pattern matcher is already constructed in the engine, only a
-	 * light-weight reference is returned. The match set will be incrementally
-	 * refreshed upon updates.
-	 * 
-	 * @param engine
-	 *            the existing VIATRA Query engine in which this matcher will be
-	 *            created.
-	 * @param pattern
-	 *            the VIATRA Query pattern for which the matcher is to be
-	 *            constructed.
-	 * @throws ViatraQueryException
-	 *             if an error occurs during pattern matcher creation
-	 */
-	public static GenericPatternMatcher on(ViatraQueryEngine engine,
-			Pattern pattern) throws ViatraQueryException {
-		try {
-			return on(engine, new GenericQuerySpecification(
-					new GenericEMFPatternPQuery(pattern)));
-		} catch (QueryInitializationException e) {
-			throw new ViatraQueryException(e);
-		}
-	}
+    
+    /**
+     * Initializes the pattern matcher within an existing VIATRA Query engine.
+     * If the pattern matcher is already constructed in the engine, only a
+     * light-weight reference is returned. The match set will be incrementally
+     * refreshed upon updates.
+     * 
+     * @param engine
+     *            the existing VIATRA Query engine in which this matcher will be
+     *            created.
+     * @param pattern
+     *            the VIATRA Query pattern for which the matcher is to be
+     *            constructed.
+     * @throws ViatraQueryException
+     *             if an error occurs during pattern matcher creation
+     */
+    public static GenericPatternMatcher on(ViatraQueryEngine engine,
+            Pattern pattern) throws ViatraQueryException {
+        try {
+            return on(engine, new GenericQuerySpecification(
+                    new GenericEMFPatternPQuery(pattern)));
+        } catch (QueryInitializationException e) {
+            throw new ViatraQueryException(e);
+        }
+    }
 
-	/**
-	 * Initializes the pattern matcher within an existing VIATRA Query engine.
-	 * If the pattern matcher is already constructed in the engine, only a
-	 * light-weight reference is returned. The match set will be incrementally
-	 * refreshed upon updates.
-	 * 
-	 * @param engine
-	 *            the existing VIATRA Query engine in which this matcher will be
-	 *            created.
-	 * @param querySpecification
-	 *            the query specification for which the matcher is to be
-	 *            constructed.
-	 * @throws ViatraQueryException
-	 *             if an error occurs during pattern matcher creation
-	 */
-	public static GenericPatternMatcher on(ViatraQueryEngine engine,
-			GenericQuerySpecification querySpecification)
-			throws ViatraQueryException {
-		// check if matcher already exists
-		GenericPatternMatcher matcher = engine
-				.getExistingMatcher(querySpecification);
-		if (matcher == null) {
-			matcher = engine.getMatcher(querySpecification);
-		}
-		return matcher;
-	}
+    /**
+     * Initializes the pattern matcher within an existing VIATRA Query engine.
+     * If the pattern matcher is already constructed in the engine, only a
+     * light-weight reference is returned. The match set will be incrementally
+     * refreshed upon updates.
+     * 
+     * @param engine
+     *            the existing VIATRA Query engine in which this matcher will be
+     *            created.
+     * @param querySpecification
+     *            the query specification for which the matcher is to be
+     *            constructed.
+     * @throws ViatraQueryException
+     *             if an error occurs during pattern matcher creation
+     */
+    public static GenericPatternMatcher on(ViatraQueryEngine engine,
+            GenericQuerySpecification querySpecification)
+            throws ViatraQueryException {
+        // check if matcher already exists
+        GenericPatternMatcher matcher = engine
+                .getExistingMatcher(querySpecification);
+        if (matcher == null) {
+            matcher = engine.getMatcher(querySpecification);
+        }
+        return matcher;
+    }
 
 }

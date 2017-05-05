@@ -101,31 +101,31 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
                 return String.format("%s. For details, check the Error Log view.", status.getMessage());
             }
         } else if (element instanceof PatternMatcherContent) {
-        	final PatternMatcherContent pmContent = (PatternMatcherContent) element;
-        	final Exception exception = pmContent.getException();
-			final List<PProblem> pProblems = pmContent.getSpecification().getInternalQueryRepresentation().getPProblems();
-			
-			if (! pProblems.isEmpty()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("The following problems have been detected in the query specification: \n");
-				for (PProblem pProblem : pProblems) {
-					sb.append(String.format(" * %s%n", pProblem.getShortMessage()));
-				}
-				return sb.toString();
-			} else if (exception != null)  {
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				pw.println("The following exception occured during query evaluation:");
-				final String msg = exception.getLocalizedMessage();
-				final String exceptionClassName = exception.getClass().getName();
-				if (msg == null) 
-					pw.println("\t " + exceptionClassName);
-				else 
-					pw.println("\t " + exceptionClassName + ": " + msg);
-				pw.println("See Error Log for detailed stack trace.");
-				//exception.printStackTrace(pw);
-				return sw.toString(); 
-			}
+            final PatternMatcherContent pmContent = (PatternMatcherContent) element;
+            final Exception exception = pmContent.getException();
+            final List<PProblem> pProblems = pmContent.getSpecification().getInternalQueryRepresentation().getPProblems();
+            
+            if (! pProblems.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("The following problems have been detected in the query specification: \n");
+                for (PProblem pProblem : pProblems) {
+                    sb.append(String.format(" * %s%n", pProblem.getShortMessage()));
+                }
+                return sb.toString();
+            } else if (exception != null)  {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                pw.println("The following exception occured during query evaluation:");
+                final String msg = exception.getLocalizedMessage();
+                final String exceptionClassName = exception.getClass().getName();
+                if (msg == null) 
+                    pw.println("\t " + exceptionClassName);
+                else 
+                    pw.println("\t " + exceptionClassName + ": " + msg);
+                pw.println("See Error Log for detailed stack trace.");
+                //exception.printStackTrace(pw);
+                return sw.toString(); 
+            }
         }
         return super.getToolTipText(element);
     }

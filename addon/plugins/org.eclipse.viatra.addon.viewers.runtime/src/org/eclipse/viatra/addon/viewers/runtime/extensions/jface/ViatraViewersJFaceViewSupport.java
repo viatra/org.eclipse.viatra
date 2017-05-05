@@ -43,99 +43,99 @@ import com.google.common.collect.ImmutableSet;
  */
 public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport implements ISelectionProvider {
 
-	protected ContentViewer jfaceViewer;
-	
-	public ViatraViewersJFaceViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope, ContentViewer _jfaceViewer) {
-		super(_owner, _config, _scope);
-		this.jfaceViewer = _jfaceViewer;
-	}
+    protected ContentViewer jfaceViewer;
+    
+    public ViatraViewersJFaceViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope, ContentViewer _jfaceViewer) {
+        super(_owner, _config, _scope);
+        this.jfaceViewer = _jfaceViewer;
+    }
 
-	@Override
-	protected void init() {
-		super.init();
-		jfaceViewer.addSelectionChangedListener(selectionHelper.trickyListener);
-	}
-	
-	@Override
-	public void dispose() {
-	    if (jfaceViewer != null) {
-	        jfaceViewer.removeSelectionChangedListener(selectionHelper.trickyListener);
-	    }
-		super.dispose();
-	}
-	
-	@Override
-	protected void bindModel() {
-		Assert.isNotNull(this.configuration);
-		Assert.isNotNull(this.configuration.getPatterns());
-		
-		if (state!=null && !state.isDisposed()) {
-    		state.dispose();
-    	}
-		ViatraQueryEngine engine = getEngine();
-		if (engine!=null) {
-			this.configuration.setModel((EMFScope) engine.getScope());
-			state = ViatraViewerDataModel.newViewerState(
-					engine, 
-	    			this.configuration.getPatterns(), 
-	    			this.configuration.getFilter(), 
-	    			ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-			if (jfaceViewer instanceof AbstractListViewer) {
-				ViatraViewerSupport.bind(((AbstractListViewer)jfaceViewer), state);
-			}
-			else if (jfaceViewer instanceof AbstractTreeViewer) {
-				ViatraViewerSupport.bind(((AbstractTreeViewer)jfaceViewer), state);
-			}
-		}
-	}
-
-	@Override
-	protected void unbindModel() {
-		if (jfaceViewer != null && !jfaceViewer.getControl().isDisposed() && jfaceViewer.getInput() !=null) {
-        	jfaceViewer.setInput(null);
-        	jfaceViewer = null;
+    @Override
+    protected void init() {
+        super.init();
+        jfaceViewer.addSelectionChangedListener(selectionHelper.trickyListener);
+    }
+    
+    @Override
+    public void dispose() {
+        if (jfaceViewer != null) {
+            jfaceViewer.removeSelectionChangedListener(selectionHelper.trickyListener);
         }
-		if (state != null && !state.isDisposed()) {
-			state.dispose();
-		}
-	}
+        super.dispose();
+    }
+    
+    @Override
+    protected void bindModel() {
+        Assert.isNotNull(this.configuration);
+        Assert.isNotNull(this.configuration.getPatterns());
+        
+        if (state!=null && !state.isDisposed()) {
+            state.dispose();
+        }
+        ViatraQueryEngine engine = getEngine();
+        if (engine!=null) {
+            this.configuration.setModel((EMFScope) engine.getScope());
+            state = ViatraViewerDataModel.newViewerState(
+                    engine, 
+                    this.configuration.getPatterns(), 
+                    this.configuration.getFilter(), 
+                    ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+            if (jfaceViewer instanceof AbstractListViewer) {
+                ViatraViewerSupport.bind(((AbstractListViewer)jfaceViewer), state);
+            }
+            else if (jfaceViewer instanceof AbstractTreeViewer) {
+                ViatraViewerSupport.bind(((AbstractTreeViewer)jfaceViewer), state);
+            }
+        }
+    }
+
+    @Override
+    protected void unbindModel() {
+        if (jfaceViewer != null && !jfaceViewer.getControl().isDisposed() && jfaceViewer.getInput() !=null) {
+            jfaceViewer.setInput(null);
+            jfaceViewer = null;
+        }
+        if (state != null && !state.isDisposed()) {
+            state.dispose();
+        }
+    }
 
     // ******************** selection synchronization support **********//
     
-	// "Backward"
-	
-	SelectionHelper selectionHelper = new SelectionHelper();
+    // "Backward"
+    
+    SelectionHelper selectionHelper = new SelectionHelper();
 
-	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionHelper.selectionChangedListeners.add(listener);
-	}
+    @Override
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionHelper.selectionChangedListeners.add(listener);
+    }
 
-	@Override
-	public ISelection getSelection() {
-		return selectionHelper.unwrapElements_ViewersElementsToEObjects(jfaceViewer.getSelection());
-	}
+    @Override
+    public ISelection getSelection() {
+        return selectionHelper.unwrapElements_ViewersElementsToEObjects(jfaceViewer.getSelection());
+    }
 
-	@Override
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
-		selectionHelper.selectionChangedListeners.remove(listener);
-	}
+    @Override
+    public void removeSelectionChangedListener(
+            ISelectionChangedListener listener) {
+        selectionHelper.selectionChangedListeners.remove(listener);
+    }
 
-	@Override
-	public void setSelection(ISelection selection) {
-		// unwrap elements
-		this.jfaceViewer.setSelection(selectionHelper.unwrapElements_EObjectsToViewersElements(selection, state));
-	}
+    @Override
+    public void setSelection(ISelection selection) {
+        // unwrap elements
+        this.jfaceViewer.setSelection(selectionHelper.unwrapElements_EObjectsToViewersElements(selection, state));
+    }
 
-	
-	// "Forward"
-	
-	@Override
-	protected void onSelectionChanged(List<Object> objects) {
-		super.onSelectionChanged(objects);
-		// additionally, attempt to sychronize our contents
+    
+    // "Forward"
+    
+    @Override
+    protected void onSelectionChanged(List<Object> objects) {
+        super.onSelectionChanged(objects);
+        // additionally, attempt to sychronize our contents
         setSelection(new StructuredSelection(objects));
-	}
+    }
 
 }

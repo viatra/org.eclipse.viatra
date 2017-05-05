@@ -30,12 +30,12 @@ public class ViatraQueryException extends Exception {
     public static final String CONVERT_NULL_PARAMETER = "Could not convert null to the designated type";
     public static final String RELATIONAL_PARAM_UNSUITABLE = "The parameters are not acceptable by the operation";
     /**
-	 * @since 0.9
-	 */
+     * @since 0.9
+     */
     public static final String PROCESSING_PROBLEM = "The following error occurred during the processing of a query (e.g. for the preparation of a VIATRA pattern matcher)";
     /**
-	 * @since 0.9
-	 */
+     * @since 0.9
+     */
     public static final String QUERY_INIT_PROBLEM = "The following error occurred during the initialization of a VIATRA query specification";
     public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 

@@ -34,24 +34,24 @@ import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
  * Test cases for bug 419114
  */
 class AmbiguousTypesTest extends AbstractValidatorTest {
-	
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	
-	@Inject
-	EMFPatternLanguageJavaValidator validator
-	
-	@Inject
-	Injector injector
-	
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
-	
-	@Test
+    
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    
+    @Inject
+    EMFPatternLanguageJavaValidator validator
+    
+    @Inject
+    Injector injector
+    
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
+    
+    @Test
     def ambiguousParameterType1() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -81,7 +81,7 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
-	@Test
+    @Test
     def ambiguousParameterType1a() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -110,7 +110,7 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
-	@Test
+    @Test
     def ambiguousParameterType2() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -137,7 +137,7 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
-	@Test
+    @Test
     def ambiguousParameterType3() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -165,7 +165,7 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
-	@Test
+    @Test
     def ambiguousParameterType4() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -194,5 +194,5 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
-	
+    
 }

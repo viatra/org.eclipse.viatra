@@ -21,15 +21,15 @@ import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
  *
  */
 public class ScheduledExecution {
-	private final IExecutor executor;
-	private final RuleBase ruleBase;
-	private boolean scheduling = false;
-	private final String startMessage = "Executing started in " + this;
+    private final IExecutor executor;
+    private final RuleBase ruleBase;
+    private boolean scheduling = false;
+    private final String startMessage = "Executing started in " + this;
     private final String reentrantMessage = "Reentrant schedule call ignored in " + this;
     private final String endMessage = "Executing ended in " + this;
-	
-	
-	/**
+    
+    
+    /**
      * Creates an execution for the given {@link EventRealm}, {@link Executor} and {@link Agenda}.
      * Executions are usually created as part of an ExecutionSchema 
      * through the EventDrivenVM.createExecutionSchema methods.
@@ -39,7 +39,7 @@ public class ScheduledExecution {
      * @param agenda
      */
     public ScheduledExecution(final EventRealm eventRealm, Agenda agenda, IExecutor executor) {
-    	this(new RuleBase(eventRealm, agenda), executor);
+        this(new RuleBase(eventRealm, agenda), executor);
     }
     
     /**
@@ -52,7 +52,7 @@ public class ScheduledExecution {
      * @param agenda
      */
     public ScheduledExecution(final EventRealm eventRealm) {
-    	this(new RuleBase(eventRealm, new Agenda()), new Executor());
+        this(new RuleBase(eventRealm, new Agenda()), new Executor());
     }
     
     /**
@@ -65,10 +65,10 @@ public class ScheduledExecution {
      * @param ruleBase
      */
     public ScheduledExecution(RuleBase ruleBase, IExecutor executor) {
-    	this.ruleBase = ruleBase;
-    	this.executor = executor; 
+        this.ruleBase = ruleBase;
+        this.executor = executor; 
     }
-	
+    
     public RuleBase getRuleBase() {
         return ruleBase;
     }
@@ -76,7 +76,7 @@ public class ScheduledExecution {
     public IExecutor getExecutor() {
         return executor;
     }
-	
+    
     protected void schedule() {
         
         if(!startScheduling()) {
@@ -89,7 +89,7 @@ public class ScheduledExecution {
         
         endScheduling();
     }
-		    
+            
     /**
      * This method is called from schedule() to indicate that a new call
      * was received. If there is already scheduling in progress, that is 

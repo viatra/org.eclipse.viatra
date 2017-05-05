@@ -14,11 +14,11 @@ public class TimewinOr2_Pattern extends ParameterizableComplexEventPattern {
     
     // contained event patterns
     addEventPatternRefrence(new _AnonymousPattern_19(), 1);
-    						
+                            
     Timewindow timewindow = EventsFactory.eINSTANCE.createTimewindow();
     timewindow.setTime(1000);
     setTimewindow(timewindow);
-    	
+        
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.timewinor2_pattern");setEventContext(EventContext.CHRONICLE);
   }
 }

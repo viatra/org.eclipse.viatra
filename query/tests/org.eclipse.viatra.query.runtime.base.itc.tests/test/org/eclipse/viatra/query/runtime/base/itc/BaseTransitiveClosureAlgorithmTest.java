@@ -26,19 +26,19 @@ import org.junit.runners.Parameterized.Parameters;
 
 public class BaseTransitiveClosureAlgorithmTest {
 
-	@Parameters
-	public static Collection<Object[]> getGraphs() {
-		return Arrays.asList(new Object[][] {
-		                 { new SelfLoopGraph()},
-			             { new Graph1() },
-			             { new Graph2() },
-			             { new Graph3() },
-			             { new Graph4() },
-			             { new Graph5() },
-			             { new Graph6() },
-			             { new Graph7() },
-			             { new Graph8() }
-		});
-	}
-	
+    @Parameters
+    public static Collection<Object[]> getGraphs() {
+        return Arrays.asList(new Object[][] {
+                         { new SelfLoopGraph()},
+                         { new Graph1() },
+                         { new Graph2() },
+                         { new Graph3() },
+                         { new Graph4() },
+                         { new Graph5() },
+                         { new Graph6() },
+                         { new Graph7() },
+                         { new Graph8() }
+        });
+    }
+    
 }

@@ -22,29 +22,29 @@ import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
  *
  */
 public class EStructuralFeatureInstancesKey extends BaseEMFTypeKey<EStructuralFeature> {
-	
-	public EStructuralFeatureInstancesKey(EStructuralFeature emfKey) {
-		super(emfKey);
-	}
+    
+    public EStructuralFeatureInstancesKey(EStructuralFeature emfKey) {
+        super(emfKey);
+    }
 
-	@Override
-	public String getPrettyPrintableName() {
-		return ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
-	}
+    @Override
+    public String getPrettyPrintableName() {
+        return ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+    }
 
-	@Override
-	public String getStringID() {
-		return "feature#"+ getPrettyPrintableName();
-	}
+    @Override
+    public String getStringID() {
+        return "feature#"+ getPrettyPrintableName();
+    }
 
-	@Override
-	public int getArity() {
-		return 2;
-	}
-	
-	@Override
-	public boolean isEnumerable() {
-		return true;
-	}
+    @Override
+    public int getArity() {
+        return 2;
+    }
+    
+    @Override
+    public boolean isEnumerable() {
+        return true;
+    }
 
 }

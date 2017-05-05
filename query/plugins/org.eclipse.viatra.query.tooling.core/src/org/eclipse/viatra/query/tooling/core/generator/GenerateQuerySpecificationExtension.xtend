@@ -20,37 +20,37 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 
 class GenerateQuerySpecificationExtension {
 
-	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	@Inject extension ExtensionGenerator exGen
+    @Inject extension EMFPatternLanguageJvmModelInferrerUtil
+    @Inject extension ExtensionGenerator exGen
 
-	def extensionContribution(PatternModel model) {
-		if (model.patterns.empty) {
-			newImmutableList()
-		} else {
-			newImmutableList({
-				val groupClass = model.findInferredClass(typeof(BaseGeneratedPatternGroup))
-				contribExtension(groupClass.qualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
-					contribElement(it, "group") [
-						contribAttribute(it, "id", groupClass.qualifiedName)
-						contribAttribute(it, "group",
-							typeof(SingletonExtensionFactory).canonicalName + ":" + groupClass.qualifiedName)
-						model.patterns.filter[public].filterNull.map[
-						    CorePatternLanguageHelper.getFullyQualifiedName(it)
-						].forEach[ fqn |
-						    contribElement(it, "query-specification") [
-						        contribAttribute(it, "fqn", fqn)
-						    ]
-						]
-					]
-				]
-			})
-		}
-	}
+    def extensionContribution(PatternModel model) {
+        if (model.patterns.empty) {
+            newImmutableList()
+        } else {
+            newImmutableList({
+                val groupClass = model.findInferredClass(typeof(BaseGeneratedPatternGroup))
+                contribExtension(groupClass.qualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
+                    contribElement(it, "group") [
+                        contribAttribute(it, "id", groupClass.qualifiedName)
+                        contribAttribute(it, "group",
+                            typeof(SingletonExtensionFactory).canonicalName + ":" + groupClass.qualifiedName)
+                        model.patterns.filter[public].filterNull.map[
+                            CorePatternLanguageHelper.getFullyQualifiedName(it)
+                        ].forEach[ fqn |
+                            contribElement(it, "query-specification") [
+                                contribAttribute(it, "fqn", fqn)
+                            ]
+                        ]
+                    ]
+                ]
+            })
+        }
+    }
 
-	def static getRemovableExtensionIdentifiers() {
-		newImmutableList(
-			{
-				"" -> IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID
-			})
-	}
+    def static getRemovableExtensionIdentifiers() {
+        newImmutableList(
+            {
+                "" -> IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID
+            })
+    }
 }

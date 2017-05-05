@@ -54,136 +54,136 @@ import com.google.inject.Inject;
  */
 public class SaveSnapshotHandler extends AbstractHandler {
 
-	@Inject
-	SnapshotHelper helper;
-	@Inject
-	ModelLoadHelper loader;
-	@Inject
-	private Logger logger;
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof TreeSelection) {
-			saveSnapshot((TreeSelection) selection, event);
-		}
-		return null;
-	}
+    @Inject
+    SnapshotHelper helper;
+    @Inject
+    ModelLoadHelper loader;
+    @Inject
+    private Logger logger;
+    
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
+        if (selection instanceof TreeSelection) {
+            saveSnapshot((TreeSelection) selection, event);
+        }
+        return null;
+    }
 
-	
-	private void saveSnapshot(TreeSelection selection, ExecutionEvent event) {
-		Object obj = selection.getFirstElement();
-		
-		IEditorPart editor = null;
-		Set<IFilteredMatcherContent> matchers = Sets.newHashSet();
-		ViatraQueryEngine engine = null;
-		if(obj instanceof PatternMatcherContent) {
-		    PatternMatcherContent observablePatternMatcher = (PatternMatcherContent) obj;
-			editor = observablePatternMatcher.getParent().getEditorPart();
-			matchers.add(observablePatternMatcher);
-			ViatraQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
-			if(matcher != null) {
-			    engine = matcher.getEngine();
-			}
-			
-		} else if(obj instanceof PatternMatcherRootContent) {
-		    PatternMatcherRootContent matcherRoot = (PatternMatcherRootContent) obj;
-			editor = matcherRoot.getEditorPart();
-			Iterator<PatternMatcherContent> iterator = matcherRoot.getChildrenIterator();
-			
-			while (iterator.hasNext()) {
-			    PatternMatcherContent patternMatcherContent = iterator.next();
-			    matchers.add(patternMatcherContent);
-			    
+    
+    private void saveSnapshot(TreeSelection selection, ExecutionEvent event) {
+        Object obj = selection.getFirstElement();
+        
+        IEditorPart editor = null;
+        Set<IFilteredMatcherContent> matchers = Sets.newHashSet();
+        ViatraQueryEngine engine = null;
+        if(obj instanceof PatternMatcherContent) {
+            PatternMatcherContent observablePatternMatcher = (PatternMatcherContent) obj;
+            editor = observablePatternMatcher.getParent().getEditorPart();
+            matchers.add(observablePatternMatcher);
+            ViatraQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
+            if(matcher != null) {
+                engine = matcher.getEngine();
+            }
+            
+        } else if(obj instanceof PatternMatcherRootContent) {
+            PatternMatcherRootContent matcherRoot = (PatternMatcherRootContent) obj;
+            editor = matcherRoot.getEditorPart();
+            Iterator<PatternMatcherContent> iterator = matcherRoot.getChildrenIterator();
+            
+            while (iterator.hasNext()) {
+                PatternMatcherContent patternMatcherContent = iterator.next();
+                matchers.add(patternMatcherContent);
+                
                 ViatraQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
                 if(matcher != null && matcher.getEngine() != null) {
                     engine = matcher.getEngine();
                 }
-			}
-		} else {
-		    Iterator<IFilteredMatcherContent> filteredMatchers = Iterators.filter(selection.iterator(), IFilteredMatcherContent.class);
-		    while (filteredMatchers.hasNext()) {
+            }
+        } else {
+            Iterator<IFilteredMatcherContent> filteredMatchers = Iterators.filter(selection.iterator(), IFilteredMatcherContent.class);
+            while (filteredMatchers.hasNext()) {
                 IFilteredMatcherContent selectedElement = filteredMatchers.next();
                 matchers.add(selectedElement);
                 engine = selectedElement.getMatcher().getEngine();
             }
-		}
-		if(engine == null) {
-			logger.error("Cannot save snapshot without ViatraQueryEngine!");
-			return;
-		}
-		ResourceSet resourceSet = getResourceSetForScope(engine.getScope());
-		if(resourceSet == null) {
-			logger.error("Cannot save snapshot, models not in ResourceSet!");
-			return;
-		}
-		IFile snapshotFile = null;
-		IFile[] files = WorkspaceResourceDialog.openFileSelection(HandlerUtil.getActiveShell(event), "Existing snapshot", "Select existing Query snapshot file (Cancel for new file)", false, null, null);
-		QuerySnapshot snapshot = null;
-			
-		if(files.length == 0) {
-			snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select Query snapshot target file (.snapshot extension)", null, null);
-			if(snapshotFile != null && !snapshotFile.exists()) {
-				snapshot = SnapshotFactory.eINSTANCE.createQuerySnapshot();
-				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
-				res.getContents().add(snapshot);
-			} else {
-				logger.error("Selected file name must use .snapshot extension!");
-				return;
-			}
-		} else {
-			snapshotFile = files[0];
-			if(snapshotFile != null && Objects.equals(snapshotFile.getFileExtension(), "snapshot")) {
-			
-				snapshot = loader.loadExpectedResultsFromFile(resourceSet,snapshotFile);
-				
-				if(snapshot != null) {
-					if(!validateInputSpecification(engine, snapshot)) {
-						return;
-					}
-				} else {
-					logger.error("Selected file does not contain snapshot!");
-					return;
-				}
-			} else {
-				logger.error("Selected file not .snapshot!");
-				return;
-			}
-		} 
-		for (IFilteredMatcherContent matcher : matchers) {
-			if(matcher.getMatcher() != null) {
-				IPatternMatch filter = matcher.getFilterMatch();
-			    helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
-			}
-		}
-		
-		if(editor != null) {
-			editor.doSave(new NullProgressMonitor());
-		} else {
-			try {
-				snapshot.eResource().save(null);
-			} catch(IOException e) {
-				logger.error("Error during saving snapshot into file!",e);
-			}
-		}
-	}
+        }
+        if(engine == null) {
+            logger.error("Cannot save snapshot without ViatraQueryEngine!");
+            return;
+        }
+        ResourceSet resourceSet = getResourceSetForScope(engine.getScope());
+        if(resourceSet == null) {
+            logger.error("Cannot save snapshot, models not in ResourceSet!");
+            return;
+        }
+        IFile snapshotFile = null;
+        IFile[] files = WorkspaceResourceDialog.openFileSelection(HandlerUtil.getActiveShell(event), "Existing snapshot", "Select existing Query snapshot file (Cancel for new file)", false, null, null);
+        QuerySnapshot snapshot = null;
+            
+        if(files.length == 0) {
+            snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select Query snapshot target file (.snapshot extension)", null, null);
+            if(snapshotFile != null && !snapshotFile.exists()) {
+                snapshot = SnapshotFactory.eINSTANCE.createQuerySnapshot();
+                Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
+                res.getContents().add(snapshot);
+            } else {
+                logger.error("Selected file name must use .snapshot extension!");
+                return;
+            }
+        } else {
+            snapshotFile = files[0];
+            if(snapshotFile != null && Objects.equals(snapshotFile.getFileExtension(), "snapshot")) {
+            
+                snapshot = loader.loadExpectedResultsFromFile(resourceSet,snapshotFile);
+                
+                if(snapshot != null) {
+                    if(!validateInputSpecification(engine, snapshot)) {
+                        return;
+                    }
+                } else {
+                    logger.error("Selected file does not contain snapshot!");
+                    return;
+                }
+            } else {
+                logger.error("Selected file not .snapshot!");
+                return;
+            }
+        } 
+        for (IFilteredMatcherContent matcher : matchers) {
+            if(matcher.getMatcher() != null) {
+                IPatternMatch filter = matcher.getFilterMatch();
+                helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
+            }
+        }
+        
+        if(editor != null) {
+            editor.doSave(new NullProgressMonitor());
+        } else {
+            try {
+                snapshot.eResource().save(null);
+            } catch(IOException e) {
+                logger.error("Error during saving snapshot into file!",e);
+            }
+        }
+    }
 
 
-	private boolean validateInputSpecification(ViatraQueryEngine engine, QuerySnapshot snapshot) {
-		if(snapshot.getInputSpecification() != null) {
-			Notifier root = helper.getEMFRootForSnapshot(snapshot);
+    private boolean validateInputSpecification(ViatraQueryEngine engine, QuerySnapshot snapshot) {
+        if(snapshot.getInputSpecification() != null) {
+            Notifier root = helper.getEMFRootForSnapshot(snapshot);
             Notifier matcherRoot = getScopeRoot(engine.getScope());
-			if(matcherRoot != root) {
-				logger.error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
-				return false;
-			}
-			return true;
-		}
-		return true;
-	}
-	
-	private ResourceSet getResourceSetForScope(QueryScope scope) {
-	    if (scope instanceof EMFScope) {
+            if(matcherRoot != root) {
+                logger.error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+    
+    private ResourceSet getResourceSetForScope(QueryScope scope) {
+        if (scope instanceof EMFScope) {
             EMFScope emfScope = (EMFScope) scope;
             Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
             if (scopeRoots.size() > 1) {
@@ -208,9 +208,9 @@ public class SaveSnapshotHandler extends AbstractHandler {
         } else {
             throw new IllegalArgumentException("Non-EMF scopes are not supported!");
         }
-	}
-	
-	private Notifier getScopeRoot(QueryScope scope) {
+    }
+    
+    private Notifier getScopeRoot(QueryScope scope) {
         if (scope instanceof EMFScope) {
             EMFScope emfScope = (EMFScope) scope;
             Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();

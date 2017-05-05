@@ -62,7 +62,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
         // Second parameter is NOT bound during execution, but the first is
-		call = helper.createCall(ImmutableSet.of(0), context);
+        call = helper.createCall(ImmutableSet.of(0), context);
     }
     
     @Override
@@ -92,12 +92,12 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
     public String toString() {
         String c = helper.toString();
         int p = c.indexOf('(');
-    	return "check     find "+c.substring(0, p)+"+"+c.substring(p);
+        return "check     find "+c.substring(0, p)+"+"+c.substring(p);
     }
 
-	@Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
-	}
+    @Override
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+    }
 
 }

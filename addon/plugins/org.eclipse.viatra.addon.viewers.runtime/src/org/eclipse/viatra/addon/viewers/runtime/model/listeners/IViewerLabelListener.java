@@ -21,6 +21,6 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
  */
 public interface IViewerLabelListener {
 
-	void labelUpdated(Item item, String newLabel);
-	void labelUpdated(Edge edge, String newLabel);
+    void labelUpdated(Item item, String newLabel);
+    void labelUpdated(Edge edge, String newLabel);
 }

@@ -71,11 +71,11 @@ public abstract class ViatraQueryEngine {
      * @return a (managed) {@link ViatraQueryEngine} instance
      * @throws ViatraQueryException on initialization errors.
      */
-	public static ViatraQueryEngine on(QueryScope scope) throws ViatraQueryException {
-		return ViatraQueryEngineManager.getInstance().getQueryEngine(scope);
-	}
-	
-	/**
+    public static ViatraQueryEngine on(QueryScope scope) throws ViatraQueryException {
+        return ViatraQueryEngineManager.getInstance().getQueryEngine(scope);
+    }
+    
+    /**
      * Obtain a (managed) {@link ViatraQueryEngine} to evaluate queries over a given scope specified by an {@link QueryScope}.
      * 
      * <p> For a given matcher scope, the same engine will be returned to any client. 
@@ -93,7 +93,7 @@ public abstract class ViatraQueryEngine {
      *      Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return a (managed) {@link ViatraQueryEngine} instance
      * @throws ViatraQueryException on initialization errors.
-	 * @since 1.4
+     * @since 1.4
      */
     public static ViatraQueryEngine on(QueryScope scope, ViatraQueryEngineOptions options) throws ViatraQueryException {
         return ViatraQueryEngineManager.getInstance().getQueryEngine(scope, options);
@@ -110,55 +110,55 @@ public abstract class ViatraQueryEngine {
      * @throws ViatraQueryException
      *             if the base index could not be constructed
      */
-	public abstract IBaseIndex getBaseIndex() throws ViatraQueryException;
+    public abstract IBaseIndex getBaseIndex() throws ViatraQueryException;
 
-	/**
-	 * Access a pattern matcher based on a {@link IQuerySpecification}. 
-	 * Multiple calls will return the same matcher.
-	 * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
-	 * @return a pattern matcher corresponding to the specification
-	 * @throws ViatraQueryException if the matcher could not be initialized
-	 */
+    /**
+     * Access a pattern matcher based on a {@link IQuerySpecification}. 
+     * Multiple calls will return the same matcher.
+     * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
+     * @return a pattern matcher corresponding to the specification
+     * @throws ViatraQueryException if the matcher could not be initialized
+     */
     public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws ViatraQueryException;
 
-	/**
-	 * Access a pattern matcher for the graph pattern with the given fully qualified name. 
-	 * Will succeed only if a query specification for this fully qualified name has been generated and registered. 
-	 * Multiple calls will return the same matcher unless the registered specification changes. 
-	 * 
-	 * @param patternFQN the fully qualified name of a VIATRA query specification
-	 * @return a pattern matcher corresponding to the specification
-	 * @throws ViatraQueryException if the matcher could not be initialized
-	 */
-	public abstract ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException;
+    /**
+     * Access a pattern matcher for the graph pattern with the given fully qualified name. 
+     * Will succeed only if a query specification for this fully qualified name has been generated and registered. 
+     * Multiple calls will return the same matcher unless the registered specification changes. 
+     * 
+     * @param patternFQN the fully qualified name of a VIATRA query specification
+     * @return a pattern matcher corresponding to the specification
+     * @throws ViatraQueryException if the matcher could not be initialized
+     */
+    public abstract ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException;
     
     /**
      * Access an existing pattern matcher based on a {@link IQuerySpecification}.
      * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
      * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
      */
-	public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification);
+    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification);
 
     
     /**
      * Access a copy of available {@link ViatraQueryMatcher} pattern matchers.
      * @return a copy of the set of currently available pattern matchers registered on this engine instance
      */
-	public abstract Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers();
-	
-	public Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getRegisteredQuerySpecifications() {
-	    return Sets.newHashSet(Collections2.transform(getCurrentMatchers(), new Function<ViatraQueryMatcher<?>, IQuerySpecification<?>>() {
+    public abstract Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers();
+    
+    public Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getRegisteredQuerySpecifications() {
+        return Sets.newHashSet(Collections2.transform(getCurrentMatchers(), new Function<ViatraQueryMatcher<?>, IQuerySpecification<?>>() {
 
             @Override
             public IQuerySpecification<?> apply(ViatraQueryMatcher<?> arg0) {
                 return arg0.getSpecification();
             }
         }));
-	}
+    }
 
     /**
      * @return the scope of query evaluation; the definition of the set of model elements that this engine is operates on.
      */
-	public abstract QueryScope getScope();
-		
+    public abstract QueryScope getScope();
+        
 }

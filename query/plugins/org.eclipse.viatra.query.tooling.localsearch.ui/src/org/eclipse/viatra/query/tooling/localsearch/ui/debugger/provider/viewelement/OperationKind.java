@@ -16,5 +16,5 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewel
  *
  */
 public enum OperationKind {
-	EXTEND, CHECK, NAC, COUNT, MATCH
+    EXTEND, CHECK, NAC, COUNT, MATCH
 }

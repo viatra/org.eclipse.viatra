@@ -25,14 +25,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
  */
 public interface PConstraint {
 
-	/**
-	 * All variables affected by this constraint.
-	 */
+    /**
+     * All variables affected by this constraint.
+     */
     public Set<PVariable> getAffectedVariables();
 
-	/**
-	 * The set of variables whose potential values can be enumerated (once all non-deduced variables have known values).  
-	 */
+    /**
+     * The set of variables whose potential values can be enumerated (once all non-deduced variables have known values).  
+     */
     public Set<PVariable> getDeducedVariables();
     
     /**
@@ -51,17 +51,17 @@ public interface PConstraint {
     /**
      * Returns an integer ID that is guaranteed to increase strictly monotonously for constraints within a pBody.
      */
-	public abstract int getMonotonousID();
-	
-	
-	/**
-	 * Compares by {@link PConstraint#getMonotonousID()}
-	 */
-	public static enum CompareByMonotonousID implements Comparator<PConstraint> {
-		INSTANCE;
-		@Override
-		public int compare(PConstraint arg0, PConstraint arg1) {
-			return arg0.getMonotonousID() - arg1.getMonotonousID();
-		}
-	}
+    public abstract int getMonotonousID();
+    
+    
+    /**
+     * Compares by {@link PConstraint#getMonotonousID()}
+     */
+    public static enum CompareByMonotonousID implements Comparator<PConstraint> {
+        INSTANCE;
+        @Override
+        public int compare(PConstraint arg0, PConstraint arg1) {
+            return arg0.getMonotonousID() - arg1.getMonotonousID();
+        }
+    }
 }

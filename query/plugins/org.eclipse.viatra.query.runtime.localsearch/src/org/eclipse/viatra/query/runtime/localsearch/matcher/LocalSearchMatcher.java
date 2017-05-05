@@ -75,8 +75,8 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
             nextPlan.addAdapters(adapters);
             nextPlan.resetPlan();
             for (ILocalSearchAdapter adapter : adapters) {
-				adapter.planChanged(currentPlan, nextPlan);
-			}
+                adapter.planChanged(currentPlan, nextPlan);
+            }
             currentPlan = nextPlan;
         }
 
@@ -88,7 +88,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
             try {
                 boolean foundMatch = currentPlan.execute(frame);
                 while ((!foundMatch) && iterator.hasNext()) {
-                	// here ends the previous plan
+                    // here ends the previous plan
                     getNextPlan();
                     // here starts the new plan
                     foundMatch = currentPlan.execute(frame);
@@ -161,7 +161,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     @Override
     public void removeAdapter(ILocalSearchAdapter adapter) {
-    	addAdapters(Lists.newArrayList(adapter));
+        addAdapters(Lists.newArrayList(adapter));
     }
     
     @Override
@@ -198,24 +198,24 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     public boolean hasMatch() throws LocalSearchException {
         boolean hasMatch = hasMatch(editableMatchingFrame());
-		return hasMatch;
+        return hasMatch;
     }
 
     public boolean hasMatch(final MatchingFrame initialFrame) throws LocalSearchException {
-    	matchingStarted();
+        matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         boolean hasMatch = it.hasNext();
         matchingFinished();
-		return hasMatch;
+        return hasMatch;
     }
 
     public int countMatches() throws LocalSearchException {
         int countMatches = countMatches(editableMatchingFrame());
-		return countMatches;
+        return countMatches;
     }
 
     public int countMatches(MatchingFrame initialFrame) throws LocalSearchException {
-    	matchingStarted();
+        matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         
         MatchingTable results = new MatchingTable();
@@ -227,7 +227,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         int result = results.size();
         
         matchingFinished();
-		return result;
+        return result;
     }
     
     public int getParameterCount() {
@@ -236,15 +236,15 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     public MatchingFrame getOneArbitraryMatch() throws LocalSearchException {
         MatchingFrame oneArbitraryMatch = getOneArbitraryMatch(editableMatchingFrame());
-		return oneArbitraryMatch;
+        return oneArbitraryMatch;
     }
 
     public MatchingFrame getOneArbitraryMatch(final MatchingFrame initialFrame) throws LocalSearchException {
-    	matchingStarted();
+        matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         MatchingFrame returnValue = null;
         if (it.hasNext()) {
-			returnValue = it.next();
+            returnValue = it.next();
         }
         matchingFinished();
         return returnValue;
@@ -252,24 +252,24 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     public Collection<Tuple> getAllMatches() throws LocalSearchException {
         Collection<Tuple> allMatches = getAllMatches(editableMatchingFrame());
-		return allMatches;
+        return allMatches;
     }
 
-	private void matchingStarted() {
-		for (ILocalSearchAdapter adapter : adapters) {
-			adapter.patternMatchingStarted(this);
-		}
-	}
+    private void matchingStarted() {
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.patternMatchingStarted(this);
+        }
+    }
 
-	private void matchingFinished() {
-		for (ILocalSearchAdapter adapter : adapters) {
-			adapter.patternMatchingFinished(this);
-		}		
-	}
+    private void matchingFinished() {
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.patternMatchingFinished(this);
+        }		
+    }
 
-	public Collection<Tuple> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
+    public Collection<Tuple> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
         matchingStarted();
-		PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);        
+        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);        
         
         MatchingTable results = new MatchingTable();
         while (it.hasNext()) {

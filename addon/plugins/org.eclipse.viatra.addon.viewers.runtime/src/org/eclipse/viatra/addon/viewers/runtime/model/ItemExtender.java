@@ -17,28 +17,28 @@ import com.google.common.base.Predicate;
 
 public abstract class ItemExtender implements Item {
 
-	public static final class RootItem implements Predicate<Item> {
+    public static final class RootItem implements Predicate<Item> {
 
-		@Override
-		public boolean apply(Item item) {
-			if (item == null) {
-				return false;
-			}
-			return item.getPolicy() == HierarchyPolicy.ROOT
-					|| item.getPolicy() == HierarchyPolicy.ALWAYS;
-		}
-	}
+        @Override
+        public boolean apply(Item item) {
+            if (item == null) {
+                return false;
+            }
+            return item.getPolicy() == HierarchyPolicy.ROOT
+                    || item.getPolicy() == HierarchyPolicy.ALWAYS;
+        }
+    }
 
-	public static final class ChildItem implements Predicate<Item> {
+    public static final class ChildItem implements Predicate<Item> {
 
-		@Override
-		public boolean apply(Item item) {
-			if (item == null) {
-				return false;
-			}
-			return item.getPolicy() == HierarchyPolicy.CHILD
-					|| item.getPolicy() == HierarchyPolicy.ALWAYS
-					|| item.getPolicy() == HierarchyPolicy.PORT;
-		}
-	}
+        @Override
+        public boolean apply(Item item) {
+            if (item == null) {
+                return false;
+            }
+            return item.getPolicy() == HierarchyPolicy.CHILD
+                    || item.getPolicy() == HierarchyPolicy.ALWAYS
+                    || item.getPolicy() == HierarchyPolicy.PORT;
+        }
+    }
 }

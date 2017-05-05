@@ -52,31 +52,31 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
         this.tcObservers = new ArrayList<ITcObserver<EObject>>();
         this.navigationHelper = navigationHelper;
         this.disposeBaseIndexWhenDisposed = disposeBaseIndexWhenDisposed;
-		
-		//NavigationHelper only accepts Set<EStructuralFeature> upon registration
-		this.features = new HashSet<EStructuralFeature>(references);
-		this.classes = collectEClasses();
-		/*this.classes = Collections.emptySet();*/
-		if (!navigationHelper.isInWildcardMode())
-			navigationHelper.registerObservedTypes(classes, null, features);
         
-		this.navigationHelper.addFeatureListener(features, this);
-		this.navigationHelper.addInstanceListener(classes, this);
-		
-		this.dataSource = new EMFDataSource(navigationHelper, references, classes);
-		
+        //NavigationHelper only accepts Set<EStructuralFeature> upon registration
+        this.features = new HashSet<EStructuralFeature>(references);
+        this.classes = collectEClasses();
+        /*this.classes = Collections.emptySet();*/
+        if (!navigationHelper.isInWildcardMode())
+            navigationHelper.registerObservedTypes(classes, null, features);
+        
+        this.navigationHelper.addFeatureListener(features, this);
+        this.navigationHelper.addInstanceListener(classes, this);
+        
+        this.dataSource = new EMFDataSource(navigationHelper, references, classes);
+        
         this.sccAlg = new IncSCCAlg<EObject>(dataSource);
         this.sccAlg.attachObserver(this);
     }
     
-	private Set<EClass> collectEClasses() {
-		Set<EClass> classes = new HashSet<EClass>();
-		for (EStructuralFeature ref : features) {
-			classes.add(ref.getEContainingClass());
-			classes.add(((EReference) ref).getEReferenceType());
-		}
-		return classes;
-	}
+    private Set<EClass> collectEClasses() {
+        Set<EClass> classes = new HashSet<EClass>();
+        for (EStructuralFeature ref : features) {
+            classes.add(ref.getEContainingClass());
+            classes.add(((EReference) ref).getEReferenceType());
+        }
+        return classes;
+    }
 
     @Override
     public void attachObserver(ITcObserver<EObject> to) {
@@ -124,31 +124,31 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
         this.navigationHelper.removeFeatureListener(features, this);
         
         if (disposeBaseIndexWhenDisposed)
-        	this.navigationHelper.dispose();
+            this.navigationHelper.dispose();
     }
 
-	@Override
-	public void featureInserted(EObject host, EStructuralFeature feature, Object value) {
-		this.dataSource.notifyEdgeInserted(host, (EObject) value);
-	}
+    @Override
+    public void featureInserted(EObject host, EStructuralFeature feature, Object value) {
+        this.dataSource.notifyEdgeInserted(host, (EObject) value);
+    }
 
-	@Override
-	public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
-		this.dataSource.notifyEdgeDeleted(host, (EObject) value);
-	}
+    @Override
+    public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
+        this.dataSource.notifyEdgeDeleted(host, (EObject) value);
+    }
 
-	@Override
-	public void instanceInserted(EClass clazz, EObject instance) {
-		this.dataSource.notifyNodeInserted(instance);
-	}
+    @Override
+    public void instanceInserted(EClass clazz, EObject instance) {
+        this.dataSource.notifyNodeInserted(instance);
+    }
 
-	@Override
-	public void instanceDeleted(EClass clazz, EObject instance) {
-		this.dataSource.notifyNodeDeleted(instance);
-	}
-	
-	@Override
-	public IGraphPathFinder<EObject> getPathFinder() {
-	    return this.sccAlg.getPathFinder();
+    @Override
+    public void instanceDeleted(EClass clazz, EObject instance) {
+        this.dataSource.notifyNodeDeleted(instance);
+    }
+    
+    @Override
+    public IGraphPathFinder<EObject> getPathFinder() {
+        return this.sccAlg.getPathFinder();
     }
 }

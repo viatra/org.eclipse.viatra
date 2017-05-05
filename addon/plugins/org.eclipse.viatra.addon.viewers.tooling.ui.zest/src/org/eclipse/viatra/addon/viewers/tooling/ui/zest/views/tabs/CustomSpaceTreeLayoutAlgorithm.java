@@ -14,20 +14,20 @@ import org.eclipse.gef.layout.algorithms.SpaceTreeLayoutAlgorithm;
 
 public class CustomSpaceTreeLayoutAlgorithm extends SpaceTreeLayoutAlgorithm {
 
-	public CustomSpaceTreeLayoutAlgorithm(int bottomUp, boolean b) {
-		super(bottomUp);
-		customStuff();
-	}
+    public CustomSpaceTreeLayoutAlgorithm(int bottomUp, boolean b) {
+        super(bottomUp);
+        customStuff();
+    }
 
-	public CustomSpaceTreeLayoutAlgorithm() {
-		super();
-		customStuff();
-	}
-	
-	void customStuff() {
-		setLeafGap(50);
-		setBranchGap(50 + 15);
-		setLayerGap(70);
-	}
-	
+    public CustomSpaceTreeLayoutAlgorithm() {
+        super();
+        customStuff();
+    }
+    
+    void customStuff() {
+        setLeafGap(50);
+        setBranchGap(50 + 15);
+        setLayerGap(70);
+    }
+    
 }

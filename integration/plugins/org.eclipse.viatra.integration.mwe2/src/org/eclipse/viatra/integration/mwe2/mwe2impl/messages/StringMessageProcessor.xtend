@@ -23,28 +23,28 @@ import org.eclipse.viatra.integration.mwe2.mwe2impl.exceptions.InvalidParameterT
  *
  */
 class StringMessageProcessor implements IMessageProcessor<String, StringMessage> {
-	/**
-	 * Similar to every typical IMessageProcessor, this class also has a reference to its parent transformation step
-	 * This way it can hand its result to the transformation step.
-	 */
-	protected ITransformationStep parent;
+    /**
+     * Similar to every typical IMessageProcessor, this class also has a reference to its parent transformation step
+     * This way it can hand its result to the transformation step.
+     */
+    protected ITransformationStep parent;
 
-	override getParent() {
-		return parent
-	}
+    override getParent() {
+        return parent
+    }
 
-	override setParent(ITransformationStep parent) {
-		this.parent = parent
-	}
-	
-	override processMessage(IMessage<?> message) throws InvalidParameterTypeException{
-		if(message instanceof StringMessage){
-			/**
-			 * Message processing is done here
-			 */
-		}else{
-			throw new InvalidParameterException
-		}
-	}
+    override setParent(ITransformationStep parent) {
+        this.parent = parent
+    }
+    
+    override processMessage(IMessage<?> message) throws InvalidParameterTypeException{
+        if(message instanceof StringMessage){
+            /**
+             * Message processing is done here
+             */
+        }else{
+            throw new InvalidParameterException
+        }
+    }
 
 }

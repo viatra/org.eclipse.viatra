@@ -16,25 +16,25 @@ import org.osgi.framework.BundleContext;
 @SuppressWarnings("all")
 public class ViatraQueryDebugPlugin extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "org.eclipse.viatra.query.tooling.debug";
+    public static final String PLUGIN_ID = "org.eclipse.viatra.query.tooling.debug";
 
-	private static ViatraQueryDebugPlugin plugin;
-	
-	public ViatraQueryDebugPlugin() {
-	}
+    private static ViatraQueryDebugPlugin plugin;
+    
+    public ViatraQueryDebugPlugin() {
+    }
 
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+    }
 
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
 
-	public static ViatraQueryDebugPlugin getDefault() {
-		return plugin;
-	}
+    public static ViatraQueryDebugPlugin getDefault() {
+        return plugin;
+    }
 
 }

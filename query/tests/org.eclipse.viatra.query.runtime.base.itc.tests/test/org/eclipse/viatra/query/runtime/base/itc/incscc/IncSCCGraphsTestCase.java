@@ -24,20 +24,20 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class IncSCCGraphsTestCase extends BaseTransitiveClosureAlgorithmTest {
 
-	protected TestGraph<Integer> testGraph;
-	
-	public IncSCCGraphsTestCase(TestGraph<Integer> testGraph) {
-		this.testGraph = testGraph;
-	}
-	
-	@Test
-	public void testResult() {
-    	FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(testGraph);
-    	IncSCCAlg<Integer> alg = new IncSCCAlg<Integer>(testGraph);
-    	if (testGraph.getObserver() != null) {
-    		alg.attachObserver(testGraph.getObserver());
-    	}
-		testGraph.modify();	
-		assertTrue(alg.checkTcRelation(fwa.getTcRelation()));
-	}
+    protected TestGraph<Integer> testGraph;
+    
+    public IncSCCGraphsTestCase(TestGraph<Integer> testGraph) {
+        this.testGraph = testGraph;
+    }
+    
+    @Test
+    public void testResult() {
+        FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(testGraph);
+        IncSCCAlg<Integer> alg = new IncSCCAlg<Integer>(testGraph);
+        if (testGraph.getObserver() != null) {
+            alg.attachObserver(testGraph.getObserver());
+        }
+        testGraph.modify();	
+        assertTrue(alg.checkTcRelation(fwa.getTcRelation()));
+    }
 }

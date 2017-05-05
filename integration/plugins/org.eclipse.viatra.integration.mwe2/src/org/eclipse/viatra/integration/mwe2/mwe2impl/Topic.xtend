@@ -29,53 +29,53 @@ import org.eclipse.viatra.integration.mwe2.ITransformationStep
  * @author Peter Lunk
  */
 class Topic implements ITopic{
-	
-	protected String name
-	protected Map<ITransformationStep, List<IMessage<?>>> subscriberMap
-	
-	new(String name){
-		this.name = name
-		subscriberMap = Maps.newHashMap
-	}
-	
-	override addMessage(IMessage<?> message){
-		subscriberMap.keySet.forEach[k |
-			subscriberMap.get(k).add(message)
-		]
-	}
-	
-	override addSubscriber(ITransformationStep subscriber) {
-		subscriberMap.put(subscriber, Lists.newArrayList)
-	}
-	
-	override getMessages(ITransformationStep sub) {
-		return subscriberMap.get(sub)
-	}
-	
-	override getName() {
-		return name
-	}
-	
-	override getSubscribers() {
-		return subscriberMap.keySet.toList
-	}
-	
-	override setName(String name) {
-		this.name = name
-	}
-	
-	override removeMessage(IMessage<?> message){
-		subscriberMap.keySet.forEach[k |
-			subscriberMap.get(k).remove(message)
-		]
-	}
-	
-	/**
-	 * Removes the message from the specified step. This is used to inform 
-	 * the topic that the message processing was successful and the message 
-	 * is no longer needed.
-	 */
-	override removeMessage(IMessage<?> message, ITransformationStep sub) {
-		subscriberMap.get(sub).remove(message)
-	}	
+    
+    protected String name
+    protected Map<ITransformationStep, List<IMessage<?>>> subscriberMap
+    
+    new(String name){
+        this.name = name
+        subscriberMap = Maps.newHashMap
+    }
+    
+    override addMessage(IMessage<?> message){
+        subscriberMap.keySet.forEach[k |
+            subscriberMap.get(k).add(message)
+        ]
+    }
+    
+    override addSubscriber(ITransformationStep subscriber) {
+        subscriberMap.put(subscriber, Lists.newArrayList)
+    }
+    
+    override getMessages(ITransformationStep sub) {
+        return subscriberMap.get(sub)
+    }
+    
+    override getName() {
+        return name
+    }
+    
+    override getSubscribers() {
+        return subscriberMap.keySet.toList
+    }
+    
+    override setName(String name) {
+        this.name = name
+    }
+    
+    override removeMessage(IMessage<?> message){
+        subscriberMap.keySet.forEach[k |
+            subscriberMap.get(k).remove(message)
+        ]
+    }
+    
+    /**
+     * Removes the message from the specified step. This is used to inform 
+     * the topic that the message processing was successful and the message 
+     * is no longer needed.
+     */
+    override removeMessage(IMessage<?> message, ITransformationStep sub) {
+        subscriberMap.get(sub).remove(message)
+    }	
 }

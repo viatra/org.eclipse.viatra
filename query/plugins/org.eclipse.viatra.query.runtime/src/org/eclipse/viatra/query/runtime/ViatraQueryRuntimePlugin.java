@@ -22,11 +22,11 @@ public class ViatraQueryRuntimePlugin extends Plugin {
 
     public static final String PLUGIN_ID = "org.eclipse.viatra.query.runtime";
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		ExtensionBasedSurrogateQueryLoader.instance().loadKnownSurrogateQueriesIntoRegistry();
-		ExtensionBasedQuerySpecificationLoader.getInstance().loadRegisteredQuerySpecificationsIntoRegistry();
-	}
+    @Override
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        ExtensionBasedSurrogateQueryLoader.instance().loadKnownSurrogateQueriesIntoRegistry();
+        ExtensionBasedQuerySpecificationLoader.getInstance().loadRegisteredQuerySpecificationsIntoRegistry();
+    }
 
 }

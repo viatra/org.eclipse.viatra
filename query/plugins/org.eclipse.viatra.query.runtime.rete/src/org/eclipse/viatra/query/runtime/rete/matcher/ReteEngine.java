@@ -49,7 +49,7 @@ public class ReteEngine implements IQueryBackend {
     protected ReteBoundary boundary;
 
     private IQueryBackendContext context;
-	private Logger logger;
+    private Logger logger;
     protected IQueryRuntimeContext runtimeContext;
 
     protected Collection<Disconnectable> disconnectables;
@@ -82,8 +82,8 @@ public class ReteEngine implements IQueryBackend {
     public ReteEngine(IQueryBackendContext context, int reteThreads) {
         super();
         this.context = context;
-		this.logger = context.getLogger();
-		this.runtimeContext = context.getRuntimeContext();
+        this.logger = context.getLogger();
+        this.runtimeContext = context.getRuntimeContext();
         this.reteThreads = reteThreads;
         this.parallelExecutionEnabled = reteThreads > 0;
         // this.framework = new WeakReference<IFramework>(context.getFramework());
@@ -101,7 +101,7 @@ public class ReteEngine implements IQueryBackend {
      * initializes engine components
      */
     synchronized private void initEngine() {
-    	this.disposedOrUninitialized = false;
+        this.disposedOrUninitialized = false;
         this.disconnectables = new LinkedList<Disconnectable>();
         // this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
@@ -133,7 +133,7 @@ public class ReteEngine implements IQueryBackend {
      * deconstructs engine components
      */
     synchronized private void deconstructEngine() {
-    	ensureInitialized();
+        ensureInitialized();
         reteNet.kill();
 
         //context.unSubscribeBackendFromUpdates(this.boundary);
@@ -153,7 +153,7 @@ public class ReteEngine implements IQueryBackend {
         // framework, disconnectables
 //        this.traceListener = null;
 
-    	this.disposedOrUninitialized = true;
+        this.disposedOrUninitialized = true;
     }
 
     /**
@@ -190,26 +190,26 @@ public class ReteEngine implements IQueryBackend {
      */
     public synchronized RetePatternMatcher accessMatcher(final PQuery query)
             throws QueryProcessingException {
-    	ensureInitialized();
-    	RetePatternMatcher matcher;
+        ensureInitialized();
+        RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
         // String name = gtPattern.getName();
         // String fqn = namespace + "." + name;
         matcher = matchers.get(query);
         if (matcher == null) {
             constructionWrapper(new Callable<Void>() {
-        		@Override
-        		public Void call() throws QueryProcessingException {
-        			RecipeTraceInfo prodNode;
-        			prodNode = boundary.accessProductionTrace(query);
+                @Override
+                public Void call() throws QueryProcessingException {
+                    RecipeTraceInfo prodNode;
+                    prodNode = boundary.accessProductionTrace(query);
 
-        			RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
-        					prodNode);
-        			retePatternMatcher.setTag(query);
-        			matchers.put(query, retePatternMatcher);
-        			return null;
-        		}
-        	});
+                    RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
+                            prodNode);
+                    retePatternMatcher.setTag(query);
+                    matchers.put(query, retePatternMatcher);
+                    return null;
+                }
+            });
             matcher = matchers.get(query);
         }
 
@@ -230,44 +230,44 @@ public class ReteEngine implements IQueryBackend {
      */
     public synchronized void buildMatchersCoalesced(final Collection<PQuery> specifications)
             throws QueryProcessingException {
-    	ensureInitialized();
-    	constructionWrapper(new Callable<Void>() {
-    		@Override
-    		public Void call() throws QueryProcessingException {
-    			for (PQuery specification : specifications) {
-    			    boundary.accessProductionNode(specification);
-    			}
-    			return null;
-    		}
-    	});
+        ensureInitialized();
+        constructionWrapper(new Callable<Void>() {
+            @Override
+            public Void call() throws QueryProcessingException {
+                for (PQuery specification : specifications) {
+                    boundary.accessProductionNode(specification);
+                }
+                return null;
+            }
+        });
     }
 
-	private void constructionWrapper(final Callable<Void> payload)
-			throws RetePatternBuildException {
+    private void constructionWrapper(final Callable<Void> payload)
+            throws RetePatternBuildException {
 //		context.modelReadLock();
 //		    try {
-		        if (parallelExecutionEnabled)
-		            reteNet.getStructuralChangeLock().lock();
-		        try {
-		            try {
-						runtimeContext.coalesceTraversals(payload);
-		            } catch (InvocationTargetException ex) {
-		                final Throwable cause = ex.getCause();
-		                if (cause instanceof RetePatternBuildException)
-		                    throw (RetePatternBuildException) cause;
-		                if (cause instanceof RuntimeException)
-		                    throw (RuntimeException) cause;
-		                assert (false);
-		            }
-		        } finally {
-		           if (parallelExecutionEnabled)
-		                reteNet.getStructuralChangeLock().unlock();
-		           reteNet.waitForReteTermination();
-		        }
+                if (parallelExecutionEnabled)
+                    reteNet.getStructuralChangeLock().lock();
+                try {
+                    try {
+                        runtimeContext.coalesceTraversals(payload);
+                    } catch (InvocationTargetException ex) {
+                        final Throwable cause = ex.getCause();
+                        if (cause instanceof RetePatternBuildException)
+                            throw (RetePatternBuildException) cause;
+                        if (cause instanceof RuntimeException)
+                            throw (RuntimeException) cause;
+                        assert (false);
+                    }
+                } finally {
+                   if (parallelExecutionEnabled)
+                        reteNet.getStructuralChangeLock().unlock();
+                   reteNet.waitForReteTermination();
+                }
 //		    } finally {
 //		        context.modelReadUnLock();
 //		    }
-	}
+    }
 
     // /**
     // * Accesses the patternmatcher for a given pattern with additional scoping, constructs one if
@@ -332,7 +332,7 @@ public class ReteEngine implements IQueryBackend {
      * @return the Indexer.
      */
     synchronized Indexer accessProjection(RecipeTraceInfo production, TupleMask mask) {
-    	ensureInitialized();
+        ensureInitialized();
         NodeProvisioner nodeProvisioner = reteNet.getHeadContainer().getProvisioner();
         Indexer result = nodeProvisioner.peekProjectionIndexer(production, mask);
         if (result == null) {
@@ -380,7 +380,7 @@ public class ReteEngine implements IQueryBackend {
      * Waits until the pattern matcher is in a steady state and output can be retrieved.
      */
     public void settle() {
-    	ensureInitialized();
+        ensureInitialized();
         reteNet.waitForReteTermination();
     }
 
@@ -392,7 +392,7 @@ public class ReteEngine implements IQueryBackend {
      *            the action to be run when reaching the steady-state.
      */
     public void settle(Runnable action) {
-    	ensureInitialized();
+        ensureInitialized();
         reteNet.waitForReteTermination(action);
     }
 
@@ -415,7 +415,7 @@ public class ReteEngine implements IQueryBackend {
      * @return the boundary
      */
     public ReteBoundary getBoundary() {
-    	ensureInitialized();
+        ensureInitialized();
         return boundary;
     }
 
@@ -431,7 +431,7 @@ public class ReteEngine implements IQueryBackend {
      *            the pattern matcher builder to set
      */
     public void setCompiler(ReteRecipeCompiler builder) {
-    	ensureInitialized();
+        ensureInitialized();
         this.compiler = builder;
     }
 
@@ -456,7 +456,7 @@ public class ReteEngine implements IQueryBackend {
      *            the new Disconnectable adapter.
      */
     public void addDisconnectable(Disconnectable disc) {
-    	ensureInitialized();
+        ensureInitialized();
         disconnectables.add(disc);
     }
 
@@ -469,17 +469,17 @@ public class ReteEngine implements IQueryBackend {
 
 
     public Logger getLogger() {
-    	ensureInitialized();
-		return logger;
-	}
+        ensureInitialized();
+        return logger;
+    }
 
-	public IQueryRuntimeContext getRuntimeContext() {
-    	ensureInitialized();
-		return runtimeContext;
-	}
+    public IQueryRuntimeContext getRuntimeContext() {
+        ensureInitialized();
+        return runtimeContext;
+    }
 
-	public ReteRecipeCompiler getCompiler() {
-    	ensureInitialized();
+    public ReteRecipeCompiler getCompiler() {
+        ensureInitialized();
        return compiler;
     }
 
@@ -505,14 +505,14 @@ public class ReteEngine implements IQueryBackend {
     // }
 
     void ensureInitialized() {
-    	if (disposedOrUninitialized)
-    		throw new IllegalStateException("Trying to use a Rete engine that has been disposed or has not yet been initialized.");
+        if (disposedOrUninitialized)
+            throw new IllegalStateException("Trying to use a Rete engine that has been disposed or has not yet been initialized.");
 
     }
     
     @Override
     public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
-    	return accessMatcher(query);
+        return accessMatcher(query);
     }
     
     /**
@@ -527,19 +527,19 @@ public class ReteEngine implements IQueryBackend {
 
     @Override
     public IQueryResultProvider peekExistingResultProvider(PQuery query) {
-    	ensureInitialized();
-    	return matchers.get(query);
+        ensureInitialized();
+        return matchers.get(query);
     }
 
-	@Override
-	public void dispose() {
-		killEngine();
-	}
-	
-	@Override
-	public boolean isCaching() {
-		return true;
-	}
+    @Override
+    public void dispose() {
+        killEngine();
+    }
+    
+    @Override
+    public boolean isCaching() {
+        return true;
+    }
 
     /**
      * @since 1.5

@@ -22,20 +22,20 @@ Each constraint is defined using `@Constraint` annotations on patterns. The anno
 
 ```
 @Constraint(
-	location = state,
-	message = "Multiple outgoing transitions of $state.id$ define the same action ($action$)",
-	severity = "error"
+    location = state,
+    message = "Multiple outgoing transitions of $state.id$ define the same action ($action$)",
+    severity = "error"
 )
 pattern multipleTransitionsWithSameAction(state, action) {
-	State.outgoingTransitions(state, transition);
-	State.outgoingTransitions(state, otherTransition);
-	find actionOfTransition(transition, action);
-	find actionOfTransition(otherTransition, action);
-	transition != otherTransition;
+    State.outgoingTransitions(state, transition);
+    State.outgoingTransitions(state, otherTransition);
+    find actionOfTransition(transition, action);
+    find actionOfTransition(otherTransition, action);
+    transition != otherTransition;
 }
 
 private pattern actionOfTransition(transition, action) {
-	Transition.action(transition, action);
+    Transition.action(transition, action);
 }
 ```
 

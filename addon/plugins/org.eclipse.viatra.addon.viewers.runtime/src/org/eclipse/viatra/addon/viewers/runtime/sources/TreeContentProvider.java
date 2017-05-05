@@ -44,10 +44,10 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
         if (newInput instanceof ViewerState) {
             this.state = (ViewerState) newInput;
             if (this.state.isDisposed()) {
-				this.state = null;
-			} else {
-				state.addStateListener(this);
-			}
+                this.state = null;
+            } else {
+                state.addStateListener(this);
+            }
         } else if (newInput != null) {
             throw new IllegalArgumentException(String.format("Invalid input type %s for Tree Viewer.", newInput
                     .getClass().getName()));
@@ -56,9 +56,9 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
 
     @Override
     public Object[] getElements(Object inputElement) {
-    	if (state == null) {
-    		return new Object[0];
-    	}
+        if (state == null) {
+            return new Object[0];
+        }
         return Iterables.toArray(Iterables.filter(state.getItems(), filter), Item.class);
     }
 

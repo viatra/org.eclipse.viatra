@@ -17,17 +17,17 @@ import org.eclipse.viatra.transformation.evm.api.event.EventRealm
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification
 
 class JDTEventSourceSpecification implements EventSourceSpecification<JDTEventAtom> {
-	override EventFilter<JDTEventAtom> createEmptyFilter() {
-		return new JDTEventFilter()
-	}
+    override EventFilter<JDTEventAtom> createEmptyFilter() {
+        return new JDTEventFilter()
+    }
 
-	override AbstractRuleInstanceBuilder<JDTEventAtom> getRuleInstanceBuilder(EventRealm realm) {
-		return ( [ RuleInstance<JDTEventAtom> ruleInstance, EventFilter<? super JDTEventAtom> filter |
-			var JDTEventSource source = new JDTEventSource(JDTEventSourceSpecification.this, realm as JDTRealm)
-			var JDTEventHandler handler = new JDTEventHandler(source, filter, ruleInstance)
-			source.addHandler(handler)
-			ruleInstance.handler = handler
-		] as AbstractRuleInstanceBuilder<JDTEventAtom>)
-	}
+    override AbstractRuleInstanceBuilder<JDTEventAtom> getRuleInstanceBuilder(EventRealm realm) {
+        return ( [ RuleInstance<JDTEventAtom> ruleInstance, EventFilter<? super JDTEventAtom> filter |
+            var JDTEventSource source = new JDTEventSource(JDTEventSourceSpecification.this, realm as JDTRealm)
+            var JDTEventHandler handler = new JDTEventHandler(source, filter, ruleInstance)
+            source.addHandler(handler)
+            ruleInstance.handler = handler
+        ] as AbstractRuleInstanceBuilder<JDTEventAtom>)
+    }
 
 }

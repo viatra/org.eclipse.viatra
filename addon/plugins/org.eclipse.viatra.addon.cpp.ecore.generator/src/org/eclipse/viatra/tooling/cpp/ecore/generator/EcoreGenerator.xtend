@@ -28,41 +28,41 @@ import static org.eclipse.viatra.tooling.cpp.ecore.generator.ecore.EClassGenerat
  */
 class EcoreGenerator {
 
-	MakefileGenerator mkgen
+    MakefileGenerator mkgen
 
-	val FileSystemTaskHandler handler
-	val FileSystemAccess fsa
-	val Resource ecoreModel
+    val FileSystemTaskHandler handler
+    val FileSystemAccess fsa
+    val Resource ecoreModel
 
 
-	new(Resource ecoreModel, Path root) {
-		mkgen = new MakefileGenerator(ecoreModel)
-		this.ecoreModel = ecoreModel
-		handler = new FileSystemTaskHandler
-		fsa = new FileSystemAccess(root, handler)
-	}
+    new(Resource ecoreModel, Path root) {
+        mkgen = new MakefileGenerator(ecoreModel)
+        this.ecoreModel = ecoreModel
+        handler = new FileSystemTaskHandler
+        fsa = new FileSystemAccess(root, handler)
+    }
 
-	def startGeneration() {
-		val fullName = ecoreModel.getURI.trimFileExtension.lastSegment
-		fsa.deleteFile(fullName)
-		// TODO: hack inc
-		EClassGenerator::id = 0;
-		ecoreModel.contents.forEach[generate(fsa.createInSubfolder(fullName))]
+    def startGeneration() {
+        val fullName = ecoreModel.getURI.trimFileExtension.lastSegment
+        fsa.deleteFile(fullName)
+        // TODO: hack inc
+        EClassGenerator::id = 0;
+        ecoreModel.contents.forEach[generate(fsa.createInSubfolder(fullName))]
 
-		mkgen.generate(fsa)
+        mkgen.generate(fsa)
 
-		handler.flush(3, TimeUnit.SECONDS)
-	}
+        handler.flush(3, TimeUnit.SECONDS)
+    }
 
-	def dispatch void generate(EPackage pack, FileSystemAccess fsa) {
-		PackageGenerator::generatePackage(pack, fsa)
-		pack.eContents.forEach[generate(fsa.createInSubfolder(pack.name))]
-	}
+    def dispatch void generate(EPackage pack, FileSystemAccess fsa) {
+        PackageGenerator::generatePackage(pack, fsa)
+        pack.eContents.forEach[generate(fsa.createInSubfolder(pack.name))]
+    }
 
-	def dispatch void generate(EClass clazz, FileSystemAccess fsa) {
-		EClassGenerator::generateClass(clazz, fsa)
-	}
+    def dispatch void generate(EClass clazz, FileSystemAccess fsa) {
+        EClassGenerator::generateClass(clazz, fsa)
+    }
 
-	def dispatch void generate(EObject obj, FileSystemAccess fsa) {
-	}
+    def dispatch void generate(EObject obj, FileSystemAccess fsa) {
+    }
 }

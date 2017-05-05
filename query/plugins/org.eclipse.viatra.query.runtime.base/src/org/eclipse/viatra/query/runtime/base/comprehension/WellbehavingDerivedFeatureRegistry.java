@@ -35,8 +35,8 @@ import com.google.common.collect.Multimap;
  */
 public class WellbehavingDerivedFeatureRegistry {
 
-	
-	private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = Collections.newSetFromMap(new WeakHashMap<EStructuralFeature, Boolean>());
+    
+    private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = Collections.newSetFromMap(new WeakHashMap<EStructuralFeature, Boolean>());
     private static Collection<EClass> contributedWellbehavingDerivedClasses = Collections.newSetFromMap(new WeakHashMap<EClass, Boolean>());
     private static Collection<EPackage> contributedWellbehavingDerivedPackages = Collections.newSetFromMap(new WeakHashMap<EPackage, Boolean>());
     private static Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
@@ -96,19 +96,19 @@ public class WellbehavingDerivedFeatureRegistry {
                                 if (feature != null) {
                                     registerWellbehavingDerivedFeature(feature);
                                 } else {
-                                	throw new IllegalStateException(String.format("Feature %s of EClass %s in package %s not found! (plug-in %s)", featureName, classifierName, packageUri, contributorName));
+                                    throw new IllegalStateException(String.format("Feature %s of EClass %s in package %s not found! (plug-in %s)", featureName, classifierName, packageUri, contributorName));
                                 }
                             } else {
-                            	registerWellbehavingDerivedClass((EClass) clsr);
+                                registerWellbehavingDerivedClass((EClass) clsr);
                             }
                         } else {
-                        	throw new IllegalStateException(String.format("EClassifier %s does not exist in package %s! (plug-in %s)", classifierName, packageUri, contributorName));
+                            throw new IllegalStateException(String.format("EClassifier %s does not exist in package %s! (plug-in %s)", classifierName, packageUri, contributorName));
                         }
                     } else {
-                    	if(featureName != null){
-                    		throw new IllegalStateException(String.format("Feature name must be empty if classifier name is not set! (package %s, plug-in %s)", packageUri, contributorName));
-                    	}
-                    	registerWellbehavingDerivedPackage(pckg);
+                        if(featureName != null){
+                            throw new IllegalStateException(String.format("Feature name must be empty if classifier name is not set! (package %s, plug-in %s)", packageUri, contributorName));
+                        }
+                        registerWellbehavingDerivedPackage(pckg);
                     }
                 }
                 contributingPluginOfFeatureMap.put(featureIdBuilder.toString(), contributorName);
@@ -119,24 +119,24 @@ public class WellbehavingDerivedFeatureRegistry {
         }
     }
 
-	public static Multimap<String, String> getContributingPluginOfFeatureMap() {
-		return contributingPluginOfFeatureMap;
-	}
+    public static Multimap<String, String> getContributingPluginOfFeatureMap() {
+        return contributingPluginOfFeatureMap;
+    }
 
-	/**
-	 * 
-	 * @param feature
-	 * @return true if the feature (or its defining EClass or ) is registered as well-behaving
-	 */
-	public static boolean isWellbehavingFeature(EStructuralFeature feature) {
-		if(feature == null){
-			return false;
-		} else if (contributedWellbehavingDerivedFeatures.contains(feature)) {
-	        return true;
-	    } else if (contributedWellbehavingDerivedClasses.contains(feature.getEContainingClass())) {
-	        return true;
-	    } else return contributedWellbehavingDerivedPackages.contains(feature.getEContainingClass().getEPackage());
-	}
+    /**
+     * 
+     * @param feature
+     * @return true if the feature (or its defining EClass or ) is registered as well-behaving
+     */
+    public static boolean isWellbehavingFeature(EStructuralFeature feature) {
+        if(feature == null){
+            return false;
+        } else if (contributedWellbehavingDerivedFeatures.contains(feature)) {
+            return true;
+        } else if (contributedWellbehavingDerivedClasses.contains(feature.getEContainingClass())) {
+            return true;
+        } else return contributedWellbehavingDerivedPackages.contains(feature.getEContainingClass().getEPackage());
+    }
 
     public static void registerWellbehavingDerivedFeature(EStructuralFeature feature) {
         contributedWellbehavingDerivedFeatures.add(feature);

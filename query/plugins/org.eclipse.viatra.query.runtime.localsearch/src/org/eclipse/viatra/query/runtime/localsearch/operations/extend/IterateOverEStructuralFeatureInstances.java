@@ -89,9 +89,9 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+    }
 
     /**
      * @since 1.4

@@ -33,46 +33,46 @@ import com.google.common.base.Preconditions;
  *
  */
 public class RecursionCutoffPoint {
-	final RecipeTraceInfo.ParentTraceList futureTraceList;
-	final CompiledQuery compiledQuery;
-	final ProductionRecipe recipe;
-	final QueryEvaluationHint hint;
+    final RecipeTraceInfo.ParentTraceList futureTraceList;
+    final CompiledQuery compiledQuery;
+    final ProductionRecipe recipe;
+    final QueryEvaluationHint hint;
 
-	public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context) {
-		super();
-		this.hint = hint;
-		this.futureTraceList = new RecipeTraceInfo.ParentTraceList();
-		this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceList, Collections.<ReteNodeRecipe>emptySet(), hint, context);
-		this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
-		Preconditions.checkArgument(
-				compiledQuery.getParentRecipeTraces().isEmpty(), 
-				String.format("Recursion cut-off point of query %s has trace parents: %s", 
-						compiledQuery.getQuery(),
-						Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
-		Preconditions.checkArgument(
-				recipe.getParents().isEmpty(), 
-				String.format("Recursion cut-off point of query %s has recipe parents: %s", 
-						compiledQuery.getQuery(),
-						Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
-	}
-	
-	/**
-	 * Signals that compilation of the recursive query has terminated, culminating into the given compiled form.
-	 * The query composition that has been cut off will be connected now.
-	 */
-	public void mend(CompiledQuery finalCompiledForm) {
-		futureTraceList.addAll(finalCompiledForm.getParentRecipeTraces());
-		recipe.getParents().addAll(((ProductionRecipe)finalCompiledForm.getRecipe()).getParents());
-	}
+    public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context) {
+        super();
+        this.hint = hint;
+        this.futureTraceList = new RecipeTraceInfo.ParentTraceList();
+        this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceList, Collections.<ReteNodeRecipe>emptySet(), hint, context);
+        this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
+        Preconditions.checkArgument(
+                compiledQuery.getParentRecipeTraces().isEmpty(), 
+                String.format("Recursion cut-off point of query %s has trace parents: %s", 
+                        compiledQuery.getQuery(),
+                        Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+        Preconditions.checkArgument(
+                recipe.getParents().isEmpty(), 
+                String.format("Recursion cut-off point of query %s has recipe parents: %s", 
+                        compiledQuery.getQuery(),
+                        Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+    }
+    
+    /**
+     * Signals that compilation of the recursive query has terminated, culminating into the given compiled form.
+     * The query composition that has been cut off will be connected now.
+     */
+    public void mend(CompiledQuery finalCompiledForm) {
+        futureTraceList.addAll(finalCompiledForm.getParentRecipeTraces());
+        recipe.getParents().addAll(((ProductionRecipe)finalCompiledForm.getRecipe()).getParents());
+    }
 
-	public CompiledQuery getCompiledQuery() {
-		return compiledQuery;
-	}
+    public CompiledQuery getCompiledQuery() {
+        return compiledQuery;
+    }
 
-	public ProductionRecipe getRecipe() {
-		return recipe;
-	}
-	
-	
+    public ProductionRecipe getRecipe() {
+        return recipe;
+    }
+    
+    
 
 }

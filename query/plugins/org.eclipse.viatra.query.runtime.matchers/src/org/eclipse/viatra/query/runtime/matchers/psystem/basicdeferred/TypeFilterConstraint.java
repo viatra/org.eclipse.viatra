@@ -34,74 +34,74 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  *
  */
 public class TypeFilterConstraint extends VariableDeferredPConstraint implements
-		ITypeConstraint {
+        ITypeConstraint {
 
     private Tuple variablesTuple;
     private IInputKey inputKey;
     
-	private TypeJudgement equivalentJudgement;
+    private TypeJudgement equivalentJudgement;
 
-	
+    
     public TypeFilterConstraint(PBody pBody, Tuple variablesTuple, IInputKey inputKey) {
         super(pBody, variablesTuple.<PVariable> getDistinctElements());
         this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
 
         this.variablesTuple = variablesTuple;
-		this.inputKey = inputKey;
-		
+        this.inputKey = inputKey;
+        
         if (variablesTuple.getSize() != inputKey.getArity())
-        	throw new IllegalArgumentException(
-        			this.getClass().getSimpleName() + 
-        			" applied for variable tuple " + variablesTuple + " having wrong arity for input key " + 
-        					inputKey);
+            throw new IllegalArgumentException(
+                    this.getClass().getSimpleName() + 
+                    " applied for variable tuple " + variablesTuple + " having wrong arity for input key " + 
+                            inputKey);
    }
 
-	
-	
-	public Tuple getVariablesTuple() {
-		return variablesTuple;
-	}
+    
+    
+    public Tuple getVariablesTuple() {
+        return variablesTuple;
+    }
 
-	public IInputKey getInputKey() {
-		return inputKey;
-	}
+    public IInputKey getInputKey() {
+        return inputKey;
+    }
 
-	@Override
-	public TypeJudgement getEquivalentJudgement() {
-		return equivalentJudgement;
-	}
+    @Override
+    public TypeJudgement getEquivalentJudgement() {
+        return equivalentJudgement;
+    }
 
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-    	variablesTuple = variablesTuple.replaceAll(obsolete, replacement);
+        variablesTuple = variablesTuple.replaceAll(obsolete, replacement);
         this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
     }
 
-	@Override
-	public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
-		return Collections.singleton(equivalentJudgement);
-	}
+    @Override
+    public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
+        return Collections.singleton(equivalentJudgement);
+    }
 
-	@Override
-	public Set<PVariable> getDeducedVariables() {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<PVariable> getDeducedVariables() {
+        return Collections.emptySet();
+    }
 
     @Override
     public Set<PVariable> getDeferringVariables() {
         return getAffectedVariables();
     }
 
-	@Override
-	protected String toStringRest() {
+    @Override
+    protected String toStringRest() {
         return inputKey.getPrettyPrintableName() + "@" + variablesTuple;
-	}
+    }
     
-	@Override
+    @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-		return TypeConstraintUtil.getFunctionalDependencies(context, inputKey, variablesTuple);
-	}
+        return TypeConstraintUtil.getFunctionalDependencies(context, inputKey, variablesTuple);
+    }
 
     
-	
+    
 }

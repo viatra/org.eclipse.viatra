@@ -21,5 +21,5 @@ import com.google.common.base.Predicate;
  */
 public interface IConstraintEvaluablePredicateProvider {
 
-	Predicate<PConstraint> getConstraint(SubPlan plan);
+    Predicate<PConstraint> getConstraint(SubPlan plan);
 }

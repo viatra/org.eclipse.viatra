@@ -21,43 +21,43 @@ import org.eclipse.xtend.lib.annotations.Data
  */
 @Data
 class Include extends BaseGenerator {
-	
-	@Accessors(PUBLIC_GETTER)
-	val boolean isExternal;
-	
-	private val String includePath
-	private val String start;
-	private val String end;
-	
-	new (String includePath) {
-		this(includePath, false)
-	}
-	
-	new (String includePath, boolean isExternal) {
-		this.includePath = includePath
-		this.isExternal = isExternal
-		if(isExternal) {
-			start = "<"
-			end = ">"
-		} else {
-			start = "\""
-			end = "\""
-		}
-	}
-	
-	override getFileName() {
-		""	
-	}
-	
-	override initialize() {
-	}
-	
-	override compile() '''
-		#include «start»«includePath»«end»
-	'''
-	
-	static def fromEClass(EClass eClass) {
-		return new Include(CppHelper::getIncludeHelper(eClass).toString)
-	}
-	
+    
+    @Accessors(PUBLIC_GETTER)
+    val boolean isExternal;
+    
+    private val String includePath
+    private val String start;
+    private val String end;
+    
+    new (String includePath) {
+        this(includePath, false)
+    }
+    
+    new (String includePath, boolean isExternal) {
+        this.includePath = includePath
+        this.isExternal = isExternal
+        if(isExternal) {
+            start = "<"
+            end = ">"
+        } else {
+            start = "\""
+            end = "\""
+        }
+    }
+    
+    override getFileName() {
+        ""	
+    }
+    
+    override initialize() {
+    }
+    
+    override compile() '''
+        #include «start»«includePath»«end»
+    '''
+    
+    static def fromEClass(EClass eClass) {
+        return new Include(CppHelper::getIncludeHelper(eClass).toString)
+    }
+    
 }

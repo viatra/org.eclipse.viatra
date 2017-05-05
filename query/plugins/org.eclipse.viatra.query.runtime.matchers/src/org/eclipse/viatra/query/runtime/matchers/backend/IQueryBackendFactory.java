@@ -23,26 +23,26 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  *
  */
 public interface IQueryBackendFactory {
-	/**
-	 * Creates a new {@link IQueryBackend} instance tied to the given context elements. 
-	 * 
-	 * @return an instance of the class returned by {@link #getBackendClass()} that operates in the given context.
-	 * @since 1.5
-	 */
-	public IQueryBackend 
-		create(IQueryBackendContext context);
-	
-	
-	/**
-	 * The backend instances created by this factory are guaranteed to conform to the returned class.
-	 */
-	public Class<? extends IQueryBackend> getBackendClass();
+    /**
+     * Creates a new {@link IQueryBackend} instance tied to the given context elements. 
+     * 
+     * @return an instance of the class returned by {@link #getBackendClass()} that operates in the given context.
+     * @since 1.5
+     */
+    public IQueryBackend 
+        create(IQueryBackendContext context);
+    
+    
+    /**
+     * The backend instances created by this factory are guaranteed to conform to the returned class.
+     */
+    public Class<? extends IQueryBackend> getBackendClass();
 
-	/**
-	 * Calculate the required capabilities, which are needed to execute the given pattern
-	 * 
-	 * @since 1.4
-	 */
-	public IMatcherCapability calculateRequiredCapability(PQuery query, QueryEvaluationHint hint);
-	
+    /**
+     * Calculate the required capabilities, which are needed to execute the given pattern
+     * 
+     * @since 1.4
+     */
+    public IMatcherCapability calculateRequiredCapability(PQuery query, QueryEvaluationHint hint);
+    
 }

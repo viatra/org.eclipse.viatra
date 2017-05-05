@@ -21,13 +21,13 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.generator.IteratorGenera
  * @author Robert Doczi
  */
 class IteratorGeneratorHandler extends AbstractHandler {
-	
-	@Inject Injector injector	
-	
-	override execute(ExecutionEvent event) throws ExecutionException {
-		val generatorHandler = injector.getInstance(GeneratorHandler)
-		generatorHandler.generate(event, IteratorGeneratorContext)
-		return null
-	}
+    
+    @Inject Injector injector	
+    
+    override execute(ExecutionEvent event) throws ExecutionException {
+        val generatorHandler = injector.getInstance(GeneratorHandler)
+        generatorHandler.generate(event, IteratorGeneratorContext)
+        return null
+    }
 
 }

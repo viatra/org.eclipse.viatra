@@ -27,12 +27,12 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 //		}
 //	}
 public  class UserRequestTrace extends RecipeTraceInfo {
-	public UserRequestTrace(ReteNodeRecipe recipe,
-			Collection<RecipeTraceInfo> parentRecipeTraces) {
-		super(recipe, parentRecipeTraces);
-	}
-	public UserRequestTrace(ReteNodeRecipe recipe,
-			RecipeTraceInfo... parentRecipeTraces) {
-		super(recipe, parentRecipeTraces);
-	}
+    public UserRequestTrace(ReteNodeRecipe recipe,
+            Collection<RecipeTraceInfo> parentRecipeTraces) {
+        super(recipe, parentRecipeTraces);
+    }
+    public UserRequestTrace(ReteNodeRecipe recipe,
+            RecipeTraceInfo... parentRecipeTraces) {
+        super(recipe, parentRecipeTraces);
+    }
 }

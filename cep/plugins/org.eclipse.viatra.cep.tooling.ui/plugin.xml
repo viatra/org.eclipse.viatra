@@ -2,12 +2,12 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-   	point="org.eclipse.ui.newWizards">
-    	<category
-        	id="org.eclipse.viatra.cep.tooling.ui.category"
+       point="org.eclipse.ui.newWizards">
+        <category
+            id="org.eclipse.viatra.cep.tooling.ui.category"
             name="VIATRA-CEP">
-		</category>
-		<wizard
+        </category>
+        <wizard
         category="org.eclipse.viatra.cep.tooling.ui.category"
         class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory:org.eclipse.viatra.cep.tooling.ui.wizards.NewProjectWizard"
         icon="icons/new-project.png"
@@ -15,8 +15,8 @@
         name="New VIATRA-CEP Project"
         preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
         project="true">
-		</wizard>
-		<wizard
+        </wizard>
+        <wizard
         category="org.eclipse.viatra.cep.tooling.ui.category"
         class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory:org.eclipse.viatra.cep.tooling.ui.wizards.NewVeplFileWizard"
         finalPerspective="org.eclipse.pde.ui.PDEPerspective"
@@ -25,15 +25,15 @@
         name="New VIATRA-CEP Event Model File"
         preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
         project="true">
-		</wizard>
+        </wizard>
    </extension>
    <extension
          id="org.eclipse.viatra.cep.tooling.ui.projectbuilder"
          name="VIATRA-CEP Project Builder"
          point="org.eclipse.core.resources.builders">
       <builder
-      	hasNature="true">
-      	<run
+          hasNature="true">
+          <run
                class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory">
                <parameter name="guicekey" value="org.eclipse.viatra.cep.tooling.ui.builder.ViatraCepProjectBuilder"/>
          </run>

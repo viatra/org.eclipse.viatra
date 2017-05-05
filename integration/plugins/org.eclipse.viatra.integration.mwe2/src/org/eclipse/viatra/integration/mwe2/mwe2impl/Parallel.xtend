@@ -24,41 +24,41 @@ import com.google.common.collect.Lists
  * @author Peter Lunk
  */
 class Parallel extends Sequence{
-	
-	/**
-	 * Assign each transformation step to a Thread and run them
-	 */
-	override execute() {
-		var finished = false;
-		val threads = Lists.newArrayList 
-		step.forEach[ s |
-			val worker = new Thread(new ParallelRunnable(s))
+    
+    /**
+     * Assign each transformation step to a Thread and run them
+     */
+    override execute() {
+        var finished = false;
+        val threads = Lists.newArrayList 
+        step.forEach[ s |
+            val worker = new Thread(new ParallelRunnable(s))
             threads.add(worker)
             worker.start();
-		]
-		
-		while(!finished){
-			Thread.sleep(10)
-			finished = true
-			for(Thread thread : threads){
-				if(thread.isAlive){
-					finished = false
-				}
-			}
-		}
-	}
-	
-	static class ParallelRunnable implements Runnable{
-		ITransformationStep step;
-		new(ITransformationStep step){
-			this.step = step;
-		}
-			
-		override run() {
-			step.execute
-		}
-		
-	}
+        ]
+        
+        while(!finished){
+            Thread.sleep(10)
+            finished = true
+            for(Thread thread : threads){
+                if(thread.isAlive){
+                    finished = false
+                }
+            }
+        }
+    }
+    
+    static class ParallelRunnable implements Runnable{
+        ITransformationStep step;
+        new(ITransformationStep step){
+            this.step = step;
+        }
+            
+        override run() {
+            step.execute
+        }
+        
+    }
 }
 
 

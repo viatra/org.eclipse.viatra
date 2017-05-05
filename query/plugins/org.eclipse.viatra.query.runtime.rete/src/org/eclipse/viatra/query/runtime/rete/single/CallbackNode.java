@@ -32,7 +32,7 @@ public class CallbackNode extends SimpleReceiver {
 
     @Override
     public void update(Direction direction, Tuple updateElement) {
-    	updateable.update(updateElement, direction == Direction.INSERT);
+        updateable.update(updateElement, direction == Direction.INSERT);
     }
 
 }

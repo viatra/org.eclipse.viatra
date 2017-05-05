@@ -60,12 +60,12 @@ public class EMFModelComprehension {
      */
     public boolean untraversableDirectly(EStructuralFeature feature) {
 
-	if((feature instanceof EReference && ((EReference)feature).isContainer())) {
+    if((feature instanceof EReference && ((EReference)feature).isContainer())) {
             // container features are always represented through their opposite
             return true;
         }
 
-	//If the feature is filtered by the feature filter specified in the BaseIndexOptions, return true
+    //If the feature is filtered by the feature filter specified in the BaseIndexOptions, return true
         final IBaseIndexFeatureFilter featureFilter = options.getFeatureFilterConfiguration();
         if(featureFilter != null && featureFilter.isFiltered(feature)){
             return true;
@@ -87,8 +87,8 @@ public class EMFModelComprehension {
      */
     public boolean onlySamplingFeature(EStructuralFeature feature) {
         boolean suspect = 
-        		feature.isDerived() || 
-        		feature.isVolatile();
+                feature.isDerived() || 
+                feature.isVolatile();
         if (suspect) {
             // override support here
             // (e.g. if manual notifications available, or no changes expected afterwards)
@@ -137,8 +137,8 @@ public class EMFModelComprehension {
         if (source instanceof EObject) {
             final EObject sourceObject = (EObject) source;
             if (sourceObject.eIsProxy()) 
-            	throw new IllegalArgumentException("Proxy EObject cannot act as model roots for VIATRA: " + source);
-			traverseObject(visitor, sourceObject);
+                throw new IllegalArgumentException("Proxy EObject cannot act as model roots for VIATRA: " + source);
+            traverseObject(visitor, sourceObject);
         } else if (source instanceof Resource) {
             traverseResource(visitor, (Resource) source);
         } else if (source instanceof ResourceSet) {
@@ -156,15 +156,15 @@ public class EMFModelComprehension {
     }
 
     public void traverseResourceIfUnfiltered(EMFVisitor visitor, Resource resource) {
-		final IBaseIndexResourceFilter resourceFilter = options.getResourceFilterConfiguration();
-		if (resourceFilter != null && resourceFilter.isResourceFiltered(resource))
-			return;
-		final IBaseIndexObjectFilter objectFilter = options.getObjectFilterConfiguration();
-		if (objectFilter != null && objectFilter.isFiltered(resource))
-			return;
-		
-		traverseResource(visitor, resource);
-	}
+        final IBaseIndexResourceFilter resourceFilter = options.getResourceFilterConfiguration();
+        if (resourceFilter != null && resourceFilter.isResourceFiltered(resource))
+            return;
+        final IBaseIndexObjectFilter objectFilter = options.getObjectFilterConfiguration();
+        if (objectFilter != null && objectFilter.isFiltered(resource))
+            return;
+        
+        traverseResource(visitor, resource);
+    }
 
     public void traverseResource(EMFVisitor visitor, Resource source) {
         if (source == null)
@@ -178,15 +178,15 @@ public class EMFModelComprehension {
     }
 
 
-	public void traverseObjectIfUnfiltered(EMFVisitor visitor, EObject targetObject) {
-		final IBaseIndexObjectFilter objectFilter = options.getObjectFilterConfiguration();
-		if (objectFilter != null && objectFilter.isFiltered(targetObject))
-			return;
-		
-		traverseObject(visitor, targetObject);
-	}
+    public void traverseObjectIfUnfiltered(EMFVisitor visitor, EObject targetObject) {
+        final IBaseIndexObjectFilter objectFilter = options.getObjectFilterConfiguration();
+        if (objectFilter != null && objectFilter.isFiltered(targetObject))
+            return;
+        
+        traverseObject(visitor, targetObject);
+    }
 
-	public void traverseObject(EMFVisitor visitor, EObject source) {
+    public void traverseObject(EMFVisitor visitor, EObject source) {
         if (source == null)
             return;
 
@@ -202,7 +202,7 @@ public class EMFModelComprehension {
         }
         if (!visitor.preOrder()) visitor.visitElement(source);
     }
-	
+    
     protected void traverseFeatureTargets(EMFVisitor visitor, EObject source, EStructuralFeature feature,
             final boolean visitorPrunes) {
         boolean attemptResolve = (feature instanceof EAttribute) || visitor.attemptProxyResolutions(source, (EReference)feature);
@@ -270,31 +270,31 @@ public class EMFModelComprehension {
             EReference reference = (EReference) feature;
             EObject targetObject = (EObject) target;
             if (reference.isContainment()) {
-            	if (!visitor.avoidTransientContainmentLink(source, reference, targetObject)) {
-            		if (!visitorPrunes)
-            			visitor.visitInternalContainment(source, reference, targetObject);
-            		if (!visitor.pruneSubtrees(source))
-            			traverseObjectIfUnfiltered(visitor, targetObject);
-            		
-            		final EReference opposite = reference.getEOpposite();
-            		if (opposite != null) { // emulated derived edge based on container opposite
-            			emulateUntraversableFeature(visitor, targetObject, opposite, source);
-            		}            		
-            	}
+                if (!visitor.avoidTransientContainmentLink(source, reference, targetObject)) {
+                    if (!visitorPrunes)
+                        visitor.visitInternalContainment(source, reference, targetObject);
+                    if (!visitor.pruneSubtrees(source))
+                        traverseObjectIfUnfiltered(visitor, targetObject);
+                    
+                    final EReference opposite = reference.getEOpposite();
+                    if (opposite != null) { // emulated derived edge based on container opposite
+                        emulateUntraversableFeature(visitor, targetObject, opposite, source);
+                    }            		
+                }
             } else {
                 // if (containedElements.contains(target))
                 if (!visitorPrunes)
                     visitor.visitNonContainmentReference(source, reference, targetObject);
             }
             if (targetObject.eIsProxy()) {
-            	if (!reference.isResolveProxies()) {
-            		throw new IllegalStateException(String.format(
-            				"EReference '%s' of EClass %s is set as proxy-non-resolving (i.e. it should never point to a proxy, and never lead cross-resource), " +
-            						"yet VIATRA Base encountered a proxy object %s referenced from %s.",
-            						reference.getName(), reference.getEContainingClass().getInstanceTypeName(),
-            						targetObject, source));
-            	}
-            	visitor.visitProxyReference(source, reference, targetObject, position);
+                if (!reference.isResolveProxies()) {
+                    throw new IllegalStateException(String.format(
+                            "EReference '%s' of EClass %s is set as proxy-non-resolving (i.e. it should never point to a proxy, and never lead cross-resource), " +
+                                    "yet VIATRA Base encountered a proxy object %s referenced from %s.",
+                                    reference.getName(), reference.getEContainingClass().getInstanceTypeName(),
+                                    targetObject, source));
+                }
+                visitor.visitProxyReference(source, reference, targetObject, position);
             }
         }
 
@@ -315,19 +315,19 @@ public class EMFModelComprehension {
     /**
      * Can be called to attempt to resolve a reference pointing to one or more proxies, using eGet().
      */
-	public void tryResolveReference(EObject source, EReference reference) {
-		final Object result = source.eGet(reference, true);
-		if (reference.isMany()) {
-			// no idea which element to get, have to iterate through
-			for (EObject touch : (Iterable<EObject>) result);         			
-		}
-	}
-	
+    public void tryResolveReference(EObject source, EReference reference) {
+        final Object result = source.eGet(reference, true);
+        if (reference.isMany()) {
+            // no idea which element to get, have to iterate through
+            for (EObject touch : (Iterable<EObject>) result);         			
+        }
+    }
+    
     /**
      * Finds out whether the Resource is currently loading 
      */
-	public boolean isLoading(Resource resource) {
-		return !resource.isLoaded() || ((Resource.Internal)resource).isLoading();
-	}
+    public boolean isLoading(Resource resource) {
+        return !resource.isLoaded() || ((Resource.Internal)resource).isLoading();
+    }
 
 }

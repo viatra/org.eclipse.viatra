@@ -117,9 +117,9 @@ public class PluginXmlModifier {
                     document.adoptNode(data.getNode());
                     Node parentNode = oldData.getNode().getParentNode();
                     if (parentNode != null) {
-                    	parentNode.insertBefore(data.getNode(), oldData.getNode());
+                        parentNode.insertBefore(data.getNode(), oldData.getNode());
                     } else {
-                    	document.getDocumentElement().appendChild(data.getNode());
+                        document.getDocumentElement().appendChild(data.getNode());
                     }
                 }
                 // Removing old items
@@ -235,8 +235,8 @@ public class PluginXmlModifier {
     }
 
     private void removeNode(Node nodeToRemove) {
-    	if (nodeToRemove.getParentNode() != null) {
-    		nodeToRemove.getParentNode().removeChild(nodeToRemove);   		
-    	}
+        if (nodeToRemove.getParentNode() != null) {
+            nodeToRemove.getParentNode().removeChild(nodeToRemove);   		
+        }
     }
 }

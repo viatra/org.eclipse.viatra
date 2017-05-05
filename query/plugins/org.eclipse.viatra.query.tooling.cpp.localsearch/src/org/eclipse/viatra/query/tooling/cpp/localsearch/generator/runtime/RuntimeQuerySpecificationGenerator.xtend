@@ -25,63 +25,63 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.DependentSearchOpe
  * @author Robert Doczi
  */
 class RuntimeQuerySpecificationGenerator extends QuerySpecificationGenerator {
-	
-	val Map<PatternDescriptor, Map<PatternBodyDescriptor, List<RuntimeSearchOperationGenerator>>> searchOperations
-	val Map<PatternBodyDescriptor, MatchingFrameGenerator> frameGenerators
-	
-	new(String queryName, Set<PatternDescriptor> patternGroup, Map<PatternBodyDescriptor, MatchingFrameGenerator> frameGenerators) {
-		super(queryName, patternGroup)
-		
-		this.searchOperations = Maps::asMap(patternGroup)[pattern |
-			Maps::asMap(pattern.patternBodies) [patternBody|
-				patternBody.searchOperations.map[op |
-					new RuntimeSearchOperationGenerator(queryName, op, frameGenerators.get(patternBody))
-				]
-			]
-		]
-		this.frameGenerators = frameGenerators
-	}
-	
-	override initialize() {
-		super.initialize
-		includes += frameGenerators.values.map[include]
-		// TODO: this does not work with if there are multiple query files, somehow the related matcher generator needs to be accessed and its include path should be used
-		searchOperations.keySet
-			.map[it.patternBodies]
-			.flatten
-			.map[it.searchOperations]
-			.flatten
-			.filter(DependentSearchOperationDescriptor)
-			.map[it.dependencies]
-			.flatten
-			.forEach[
-				val matcherName = '''«it.referredQuery.fullyQualifiedName.substring(it.referredQuery.fullyQualifiedName.lastIndexOf('.')+1).toFirstUpper»Matcher'''
-				includes += new Include('''«implementationNamespace.toString("/")»/«matcherName».h''')
-			]
-	}
-	
-	override generatePlan(PatternDescriptor pattern, PatternBodyDescriptor patternBody) '''
-		«val bodyNum = patternBody.index»
-		«val frame = frameGenerators.get(patternBody)»
-		static ::Viatra::Query::Plan::SearchPlan<«frame.frameName»> get_plan_«NameUtils::getPlanName(pattern)»__«bodyNum»(const ModelRoot* model) {
-			using namespace ::Viatra::Query::Operations::Check;
-			using namespace ::Viatra::Query::Operations::Extend;
-		
-			::Viatra::Query::Plan::SearchPlan<«frame.frameName»> sp;
-			«val setupCode = new StringBuilder»
-			«val opCodes = searchOperations.get(pattern).get(patternBody).map[compile(setupCode)]»
-			««« evaluate so setup code gets calculated 
-			«opCodes.forEach[]»
-			
-			«setupCode.toString»
-			
-			«FOR op : opCodes»
-				sp.add_operation(«op»);
-			«ENDFOR»
-			
-			return sp;
-		}
-	'''
-	
-		
+    
+    val Map<PatternDescriptor, Map<PatternBodyDescriptor, List<RuntimeSearchOperationGenerator>>> searchOperations
+    val Map<PatternBodyDescriptor, MatchingFrameGenerator> frameGenerators
+    
+    new(String queryName, Set<PatternDescriptor> patternGroup, Map<PatternBodyDescriptor, MatchingFrameGenerator> frameGenerators) {
+        super(queryName, patternGroup)
+        
+        this.searchOperations = Maps::asMap(patternGroup)[pattern |
+            Maps::asMap(pattern.patternBodies) [patternBody|
+                patternBody.searchOperations.map[op |
+                    new RuntimeSearchOperationGenerator(queryName, op, frameGenerators.get(patternBody))
+                ]
+            ]
+        ]
+        this.frameGenerators = frameGenerators
+    }
+    
+    override initialize() {
+        super.initialize
+        includes += frameGenerators.values.map[include]
+        // TODO: this does not work with if there are multiple query files, somehow the related matcher generator needs to be accessed and its include path should be used
+        searchOperations.keySet
+            .map[it.patternBodies]
+            .flatten
+            .map[it.searchOperations]
+            .flatten
+            .filter(DependentSearchOperationDescriptor)
+            .map[it.dependencies]
+            .flatten
+            .forEach[
+                val matcherName = '''«it.referredQuery.fullyQualifiedName.substring(it.referredQuery.fullyQualifiedName.lastIndexOf('.')+1).toFirstUpper»Matcher'''
+                includes += new Include('''«implementationNamespace.toString("/")»/«matcherName».h''')
+            ]
+    }
+    
+    override generatePlan(PatternDescriptor pattern, PatternBodyDescriptor patternBody) '''
+        «val bodyNum = patternBody.index»
+        «val frame = frameGenerators.get(patternBody)»
+        static ::Viatra::Query::Plan::SearchPlan<«frame.frameName»> get_plan_«NameUtils::getPlanName(pattern)»__«bodyNum»(const ModelRoot* model) {
+            using namespace ::Viatra::Query::Operations::Check;
+            using namespace ::Viatra::Query::Operations::Extend;
+        
+            ::Viatra::Query::Plan::SearchPlan<«frame.frameName»> sp;
+            «val setupCode = new StringBuilder»
+            «val opCodes = searchOperations.get(pattern).get(patternBody).map[compile(setupCode)]»
+            ««« evaluate so setup code gets calculated 
+            «opCodes.forEach[]»
+            
+            «setupCode.toString»
+            
+            «FOR op : opCodes»
+                sp.add_operation(«op»);
+            «ENDFOR»
+            
+            return sp;
+        }
+    '''
+    
+        
 }

@@ -157,12 +157,12 @@ public final class QueryBasedFeatureHelper {
                 newFeature.initialize(matcher, sourceParamName, targetParamName);
                 newFeature.startMonitoring();
             } catch (ViatraQueryException e) {
-            	ViatraQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed", e);
+                ViatraQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed", e);
                 return null;
             }
         } else {
-        	ViatraQueryLoggingUtil
-        	        .getLogger(QueryBasedFeatureHelper.class)
+            ViatraQueryLoggingUtil
+                    .getLogger(QueryBasedFeatureHelper.class)
                     .error(String.format("Handler initialization failed, query specification is null for %s. Make sure to include your VIATRA Query project with the query definitions in the configuration.", patternFQN));
         }
 

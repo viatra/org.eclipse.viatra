@@ -65,27 +65,27 @@ public abstract class ViewerDataModel {
     
     private void prepareBaseNotifier() throws ViatraQueryException, ViatraBaseException {
 
-    	Collection<? extends Notifier> notifiers = getNotifiers();
+        Collection<? extends Notifier> notifiers = getNotifiers();
         Resource resource = null;
 
         for(Notifier notifier : notifiers) {
-        	if(notifier instanceof Resource) {
-        		Resource r = (Resource) notifier;
-        		if(checkNotationResource(r)) {
-        			resource = r;
-        			break;
-        		}
-        	}
-        	if(notifier instanceof ResourceSet) {
-        		ResourceSet resourceSet = (ResourceSet) notifier;
-        		for (Resource r : resourceSet.getResources()) {
-        			if(checkNotationResource(r)) {
-            			resource = r;
-            			break;
-        			}
-    	        }
-        	}
-	        
+            if(notifier instanceof Resource) {
+                Resource r = (Resource) notifier;
+                if(checkNotationResource(r)) {
+                    resource = r;
+                    break;
+                }
+            }
+            if(notifier instanceof ResourceSet) {
+                ResourceSet resourceSet = (ResourceSet) notifier;
+                for (Resource r : resourceSet.getResources()) {
+                    if(checkNotationResource(r)) {
+                        resource = r;
+                        break;
+                    }
+                }
+            }
+            
         }
         if (resource == null) {
             resource = addNotationResource();
@@ -114,16 +114,16 @@ public abstract class ViewerDataModel {
     public abstract Collection<IQuerySpecification<?>> getPatterns();
 
     private Resource addNotationResource() throws ViatraQueryException, ViatraBaseException {
-    	ResourceSet resourceSet = new ResourceSetImpl();
-    	Resource resource = resourceSet.createResource(URI.createURI(getNotationResourceId()));
-    	NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
-    	helper.addRoot(resourceSet);
-    	
-    	return resource;
+        ResourceSet resourceSet = new ResourceSetImpl();
+        Resource resource = resourceSet.createResource(URI.createURI(getNotationResourceId()));
+        NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
+        helper.addRoot(resourceSet);
+        
+        return resource;
     }
     
     private boolean checkNotationResource(Resource r) {
-    	return r.getURI().toString().equals(getNotationResourceId());
+        return r.getURI().toString().equals(getNotationResourceId());
     }
     
     private Collection<? extends Notifier> getNotifiers() {

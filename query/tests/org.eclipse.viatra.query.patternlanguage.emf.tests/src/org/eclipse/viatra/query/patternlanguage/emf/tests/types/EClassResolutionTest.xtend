@@ -31,74 +31,74 @@ import org.eclipse.emf.ecore.EcorePackage
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class EClassResolutionTest {
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	
-	@Inject extension ValidationTestHelper
-	
-	@Test
-	def eClassResolutionSuccess() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    
+    @Inject extension ValidationTestHelper
+    
+    @Test
+    def eClassResolutionSuccess() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-		model.assertNoErrors
-		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
-		val type = constraint.type as ClassType
-		assertEquals(type.classname, PatternLanguagePackage$Literals::PATTERN)		
-	}
-	
-	@Test
-	def eClassifierResolutionSuccess() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        val pattern = model.patterns.get(0)
+        val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
+        val type = constraint.type as ClassType
+        assertEquals(type.classname, PatternLanguagePackage$Literals::PATTERN)		
+    }
+    
+    @Test
+    def eClassifierResolutionSuccess() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern ECoreNamedElement(Name) = {
-				EString(Name);
-			}
-		') as PatternModel
-		model.assertNoErrors
-		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
-		val type = constraint.type as ClassType
-		assertEquals(type.classname, EcorePackage$Literals::ESTRING)		
-	}
+            pattern ECoreNamedElement(Name) = {
+                EString(Name);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        val pattern = model.patterns.get(0)
+        val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
+        val type = constraint.type as ClassType
+        assertEquals(type.classname, EcorePackage$Literals::ESTRING)		
+    }
 
-	@Test
-	def eClassResolutionFailed() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def eClassResolutionFailed() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				UndefinedType(Name);
-			}
-		') as PatternModel
-		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
-		val type = constraint.type as ClassType
-		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
-			Diagnostic::LINKING_DIAGNOSTIC, "UndefinedType")		
-	}
-	
-	@Test
-	def eClassResolutionFailedMissingImport() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
-		val type = constraint.type as ClassType
-		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
-			Diagnostic::LINKING_DIAGNOSTIC, "Pattern")		
-	}
+            pattern resolutionTest(Name) = {
+                UndefinedType(Name);
+            }
+        ') as PatternModel
+        val pattern = model.patterns.get(0)
+        val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
+        val type = constraint.type as ClassType
+        type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
+            Diagnostic::LINKING_DIAGNOSTIC, "UndefinedType")		
+    }
+    
+    @Test
+    def eClassResolutionFailedMissingImport() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ') as PatternModel
+        val pattern = model.patterns.get(0)
+        val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
+        val type = constraint.type as ClassType
+        type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
+            Diagnostic::LINKING_DIAGNOSTIC, "Pattern")		
+    }
 }

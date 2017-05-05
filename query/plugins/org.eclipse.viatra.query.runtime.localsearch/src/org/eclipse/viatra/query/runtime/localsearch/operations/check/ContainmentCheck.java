@@ -57,8 +57,8 @@ public class ContainmentCheck extends CheckOperation {
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(childPosition, containerPosition, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(childPosition, containerPosition, new Integer[0]);
+    }
 
 }

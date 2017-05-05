@@ -33,69 +33,69 @@ import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 
 class OptimizationRules extends MappingRules {
 
-	private extension BuilderPrimitives builderPrimitives
+    private extension BuilderPrimitives builderPrimitives
 
-	new(InternalModel internalModel, TraceModel traceModel) {
-		super(internalModel, traceModel)
-		builderPrimitives = new BuilderPrimitives(traceModel)
-	}
+    new(InternalModel internalModel, TraceModel traceModel) {
+        super(internalModel, traceModel)
+        builderPrimitives = new BuilderPrimitives(traceModel)
+    }
 
-	override getAllRules() {
-		return #[mergeUponEpsilonTransitionRule, mergeEquivalentTransitionsRule, mergeEquivalentStatesRule]
-	}
+    override getAllRules() {
+        return #[mergeUponEpsilonTransitionRule, mergeEquivalentTransitionsRule, mergeEquivalentStatesRule]
+    }
 
-	/**
-	 * Transformation rule to merge {@link State}s connected by an {@link EpsilonTransition}.
-	 */
-	val mergeUponEpsilonTransitionRule = createRule.precondition(EpsilonTransitionMatcher::querySpecification).action[
-	    if (preState == postState) {
-	       removeTransition(transition)	        
-	    } else {	        
-    	   val keepPreState = preState instanceof InitState || preState instanceof FinalState
-    	   val keepPostState = postState instanceof InitState || postState instanceof FinalState
-    	   Preconditions::checkArgument(!(keepPreState && keepPostState))
-    	   if(keepPreState){
-    	       mergeStates(postState, preState, transition)
-    	   } else if(keepPostState){
-    	       mergeStates(preState, postState, transition)	
-    	   } else{
-    	       mergeStates(preState, postState, transition)
-    	   }
-	    }
-	].build
+    /**
+     * Transformation rule to merge {@link State}s connected by an {@link EpsilonTransition}.
+     */
+    val mergeUponEpsilonTransitionRule = createRule.precondition(EpsilonTransitionMatcher::querySpecification).action[
+        if (preState == postState) {
+           removeTransition(transition)	        
+        } else {	        
+           val keepPreState = preState instanceof InitState || preState instanceof FinalState
+           val keepPostState = postState instanceof InitState || postState instanceof FinalState
+           Preconditions::checkArgument(!(keepPreState && keepPostState))
+           if(keepPreState){
+               mergeStates(postState, preState, transition)
+           } else if(keepPostState){
+               mergeStates(preState, postState, transition)	
+           } else{
+               mergeStates(preState, postState, transition)
+           }
+        }
+    ].build
 
-	/**
-	 * Transformation rule to merge equivalent {@link Transition}s.
-	 */
-	val mergeEquivalentTransitionsRule = createRule.precondition(EquivalentTransitionsMatcher::querySpecification).action [
-		unifyParameters(transition2, transition1)
-		removeTransition(transition1)
-	].build
+    /**
+     * Transformation rule to merge equivalent {@link Transition}s.
+     */
+    val mergeEquivalentTransitionsRule = createRule.precondition(EquivalentTransitionsMatcher::querySpecification).action [
+        unifyParameters(transition2, transition1)
+        removeTransition(transition1)
+    ].build
 
-	/**
-	 * Transformation rule to merge equivalent {@link State}s.
-	 */
-	val mergeEquivalentStatesRule = createRule.precondition(EquivalentStatesMatcher::querySpecification).action [
+    /**
+     * Transformation rule to merge equivalent {@link State}s.
+     */
+    val mergeEquivalentStatesRule = createRule.precondition(EquivalentStatesMatcher::querySpecification).action [
         if (postState1 == postState2) {
             mergeStates(postState2, postState1, transition2, transition1) 
         } else {
             Preconditions::checkArgument(!((postState1 instanceof InitState) && (postState2 instanceof FinalState)))
-    		Preconditions::checkArgument(!((postState1 instanceof FinalState) && (postState2 instanceof InitState)))
+            Preconditions::checkArgument(!((postState1 instanceof FinalState) && (postState2 instanceof InitState)))
     
-    		switch (postState1) {
-    			InitState:
-    				mergeStates(postState2, postState1, transition2, transition1)
-    			FinalState:
-    				mergeStates(postState2, postState1, transition2, transition1)
-    			default:
-    				switch (postState2) {
-    					InitState: mergeStates(postState1, postState2, transition1, transition2)
-    					FinalState: mergeStates(postState1, postState2, transition1, transition2)
-    					default: mergeStates(postState1, postState2, transition1, transition2)
-    				}
-    		}
+            switch (postState1) {
+                InitState:
+                    mergeStates(postState2, postState1, transition2, transition1)
+                FinalState:
+                    mergeStates(postState2, postState1, transition2, transition1)
+                default:
+                    switch (postState2) {
+                        InitState: mergeStates(postState1, postState2, transition1, transition2)
+                        FinalState: mergeStates(postState1, postState2, transition1, transition2)
+                        default: mergeStates(postState1, postState2, transition1, transition2)
+                    }
+            }
         }	
-	].build
+    ].build
 
 //	/**
 //	 * Merge a {@link State} into an {@link InitState} through a {@link Transition}.
@@ -111,38 +111,38 @@ class OptimizationRules extends MappingRules {
 //		mergeStates(stateToDelete, stateToKeep, transition)
 //	}
 
-	/**
-	 * Merge two {@link State}s with the respective associated {@link Transition}s.
-	 */
-	private def mergeStates(State stateToDelete, State stateToKeep, TypedTransition transitionToRemove,
-		TypedTransition transitionToKeep) {
-		unifyParameters(transitionToKeep, transitionToRemove)
-		mergeStates(stateToDelete, stateToKeep, transitionToRemove)
-	}
+    /**
+     * Merge two {@link State}s with the respective associated {@link Transition}s.
+     */
+    private def mergeStates(State stateToDelete, State stateToKeep, TypedTransition transitionToRemove,
+        TypedTransition transitionToKeep) {
+        unifyParameters(transitionToKeep, transitionToRemove)
+        mergeStates(stateToDelete, stateToKeep, transitionToRemove)
+    }
 
-	/**
-	 * Merge two {@link State}s through a {@link Transition}.
-	 */
-	private def mergeStates(State stateToDelete, State stateToKeep, Transition transition) {
-		removeTransition(transition)
-		if (stateToDelete != stateToKeep) 
-		  mergeStates(stateToDelete, stateToKeep)
-	}
+    /**
+     * Merge two {@link State}s through a {@link Transition}.
+     */
+    private def mergeStates(State stateToDelete, State stateToKeep, Transition transition) {
+        removeTransition(transition)
+        if (stateToDelete != stateToKeep) 
+          mergeStates(stateToDelete, stateToKeep)
+    }
 
-	/**
-	 * Merge two {@link State}s.
-	 */
-	private def mergeStates(State stateToDelete, State stateToKeep) {
-		stateToKeep.inTransitions += stateToDelete.inTransitions
-		stateToKeep.outTransitions += stateToDelete.outTransitions
+    /**
+     * Merge two {@link State}s.
+     */
+    private def mergeStates(State stateToDelete, State stateToKeep) {
+        stateToKeep.inTransitions += stateToDelete.inTransitions
+        stateToKeep.outTransitions += stateToDelete.outTransitions
 
-		stateToKeep.inStateOf += stateToDelete.inStateOf
-		stateToKeep.outStateOf += stateToDelete.outStateOf
+        stateToKeep.inStateOf += stateToDelete.inStateOf
+        stateToKeep.outStateOf += stateToDelete.outStateOf
 
-		Preconditions::checkArgument(stateToDelete.outTransitions.forall[t|t instanceof EpsilonTransition])
-		removeState(stateToDelete)
-	}
-	
+        Preconditions::checkArgument(stateToDelete.outTransitions.forall[t|t instanceof EpsilonTransition])
+        removeState(stateToDelete)
+    }
+    
 
     /**
      * Unify the parameters of two {@link Transitions}s.
@@ -197,5 +197,5 @@ class OptimizationRules extends MappingRules {
         ]
     }
     
-	
+    
 }

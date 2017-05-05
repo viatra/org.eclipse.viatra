@@ -45,49 +45,49 @@ The CPS plan consists of seven phases and eight operations.
 First, the `ICPSConstraints` interface shall be implemented.
 ```xtend
 class SimpleCPSConstraints implements ICPSConstraints {
-	
-	public String name = "Simple"
-	val hostClass1 = new HostClass(
-				"FirstHostClass",
-				new MinMaxData(1, 3), // HostTypes
-				new MinMaxData(2, 5), // HostInstances
-				new MinMaxData(1, 2) // CommLines
-			)
-	val hostClass2 = new HostClass(
-				"OtherHostClass",
-				new MinMaxData(1, 1), // HostTypes
-				new MinMaxData(2, 2), // HostInstances
-				new MinMaxData(1, 1) // CommLines
-			)
-	
-	override getHostClasses() {
-		#[hostClass, hostClass2];
-	}
-	
-	override getNumberOfSignals() {
-		new MinMaxData(1, 10);
-	}
-	
-	override getApplicationClasses() {
-		val firstAppClassAllocations = new HashMap();
-		firstAppClassAllocations.put(hostClass, 1);
-		firstAppClassAllocations.put(hostClass2, 2);
+    
+    public String name = "Simple"
+    val hostClass1 = new HostClass(
+                "FirstHostClass",
+                new MinMaxData(1, 3), // HostTypes
+                new MinMaxData(2, 5), // HostInstances
+                new MinMaxData(1, 2) // CommLines
+            )
+    val hostClass2 = new HostClass(
+                "OtherHostClass",
+                new MinMaxData(1, 1), // HostTypes
+                new MinMaxData(2, 2), // HostInstances
+                new MinMaxData(1, 1) // CommLines
+            )
+    
+    override getHostClasses() {
+        #[hostClass, hostClass2];
+    }
+    
+    override getNumberOfSignals() {
+        new MinMaxData(1, 10);
+    }
+    
+    override getApplicationClasses() {
+        val firstAppClassAllocations = new HashMap();
+        firstAppClassAllocations.put(hostClass, 1);
+        firstAppClassAllocations.put(hostClass2, 2);
 
-		#[
-			new AppClass(
-				"FirstAppClass",
-				new MinMaxData(1, 3), // AppTypes
-				new MinMaxData(1, 2), // AppInstances
-				new MinMaxData(2, 4), // States
-				new MinMaxData(1, 2) // Transitions
-				, new Percentage(100) // PercentageOfAllocatedInstances 
-				, firstAppClassAllocations // allocationRatios
-				, new Percentage(95) // probabilityOfActionGeneration
-				, new Percentage(60) //probabilityOfSenAction
-			)
-		];
-	}
-	
+        #[
+            new AppClass(
+                "FirstAppClass",
+                new MinMaxData(1, 3), // AppTypes
+                new MinMaxData(1, 2), // AppInstances
+                new MinMaxData(2, 4), // States
+                new MinMaxData(1, 2) // Transitions
+                , new Percentage(100) // PercentageOfAllocatedInstances 
+                , firstAppClassAllocations // allocationRatios
+                , new Percentage(95) // probabilityOfActionGeneration
+                , new Percentage(60) //probabilityOfSenAction
+            )
+        ];
+    }
+    
 }
 ```
 

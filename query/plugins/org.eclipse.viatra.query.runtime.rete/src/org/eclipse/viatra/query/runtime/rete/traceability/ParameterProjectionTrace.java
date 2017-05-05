@@ -23,22 +23,22 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
  */
 public class ParameterProjectionTrace extends RecipeTraceInfo implements PatternTraceInfo {
 
-	public ParameterProjectionTrace(PBody body, ReteNodeRecipe recipe,
-			RecipeTraceInfo... parentRecipeTraces) {
-		this(body, recipe, Arrays.asList(parentRecipeTraces));
-	}
+    public ParameterProjectionTrace(PBody body, ReteNodeRecipe recipe,
+            RecipeTraceInfo... parentRecipeTraces) {
+        this(body, recipe, Arrays.asList(parentRecipeTraces));
+    }
 
-	public ParameterProjectionTrace(PBody body, ReteNodeRecipe recipe,
-			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
-		super(recipe, parentRecipeTraces);
-		this.body = body;
-	}
+    public ParameterProjectionTrace(PBody body, ReteNodeRecipe recipe,
+            Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
+        super(recipe, parentRecipeTraces);
+        this.body = body;
+    }
 
-	PBody body;
+    PBody body;
 
-	@Override
-	public String getPatternName() {
-		return body.getPattern().getFullyQualifiedName();
-	}
+    @Override
+    public String getPatternName() {
+        return body.getPattern().getFullyQualifiedName();
+    }
 
 }

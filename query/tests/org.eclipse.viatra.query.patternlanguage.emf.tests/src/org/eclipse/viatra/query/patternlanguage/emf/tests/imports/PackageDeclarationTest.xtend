@@ -28,61 +28,61 @@ import static org.junit.Assert.*
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class PackageDeclarationTest {
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	
-	@Inject extension ValidationTestHelper
-	
-	@Test
-	def simplePackage() {
-		val model = parseHelper.parse('
-			package school
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    
+    @Inject extension ValidationTestHelper
+    
+    @Test
+    def simplePackage() {
+        val model = parseHelper.parse('
+            package school
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-		model.assertNoErrors
-		val packageName = model.packageName
-		assertEquals(packageName, "school");
-	}
-	@Test
-	def noPackage() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        val packageName = model.packageName
+        assertEquals(packageName, "school");
+    }
+    @Test
+    def noPackage() {
+        val model = parseHelper.parse('
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-		model.assertNoErrors
-	}
-	@Test
-	def hierarchicPackage() {
-		val model = parseHelper.parse('
-			package hu.bme.mit.school;
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+    }
+    @Test
+    def hierarchicPackage() {
+        val model = parseHelper.parse('
+            package hu.bme.mit.school;
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-		model.assertNoErrors
-		val packageName = model.packageName
-		assertEquals(packageName, "hu.bme.mit.school");
-	}
-	
-	@Test
-	def capitalizedPackageName() {
-				val model = parseHelper.parse('
-			package School
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        val packageName = model.packageName
+        assertEquals(packageName, "hu.bme.mit.school");
+    }
+    
+    @Test
+    def capitalizedPackageName() {
+                val model = parseHelper.parse('
+            package School
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-		model.assertError(PatternLanguagePackage$Literals::PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-	}
+            pattern resolutionTest(Name) = {
+                Pattern(Name);
+            }
+        ') as PatternModel
+        model.assertError(PatternLanguagePackage$Literals::PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+    }
 }

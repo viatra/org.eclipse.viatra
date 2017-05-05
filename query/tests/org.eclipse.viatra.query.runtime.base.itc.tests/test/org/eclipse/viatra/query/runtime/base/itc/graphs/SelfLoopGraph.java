@@ -19,7 +19,7 @@ public class SelfLoopGraph extends TestGraph<Integer> {
     private static final long serialVersionUID = 1L;
 
     public SelfLoopGraph() {
-    	super(null);
+        super(null);
     }
     
     @Override

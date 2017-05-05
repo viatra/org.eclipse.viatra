@@ -22,26 +22,26 @@ import org.eclipse.viatra.integration.mwe2.mwe2impl.messages.StringMessage
  * 
  */
 class TestMessageProcessor implements IMessageProcessor<String, StringMessage> {
-	protected ITransformationStep parent;
+    protected ITransformationStep parent;
 
-	override getParent() {
-		return parent
-	}
+    override getParent() {
+        return parent
+    }
 
-	override setParent(ITransformationStep parent) {
-		this.parent = parent
-	}
-	
-	override processMessage(IMessage<?> message) throws InvalidParameterTypeException{
-		if(message instanceof StringMessage){
-			val castparent = parent as TransformationStep
-			val list = castparent.context.get("TestOutput")as BlockingQueue<String>
-			if(list!=null){
-				list.put(message.parameter)
-			}
-		}else{
-			throw new InvalidParameterTypeException
-		}
-	}
+    override setParent(ITransformationStep parent) {
+        this.parent = parent
+    }
+    
+    override processMessage(IMessage<?> message) throws InvalidParameterTypeException{
+        if(message instanceof StringMessage){
+            val castparent = parent as TransformationStep
+            val list = castparent.context.get("TestOutput")as BlockingQueue<String>
+            if(list!=null){
+                list.put(message.parameter)
+            }
+        }else{
+            throw new InvalidParameterTypeException
+        }
+    }
 
 }

@@ -32,45 +32,45 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     @Override
     public IQueryBackend create(IQueryBackendContext context) 
     {
-	    ReteEngine engine;
-	    engine = new ReteEngine(context, reteThreads);
-	    IQueryBackendHintProvider hintConfiguration = engine.getHintConfiguration();
-	    ReteRecipeCompiler compiler = 
-	    		new ReteRecipeCompiler(
-	    				Options.builderMethod.layoutStrategy(context, hintConfiguration), 
-	    				context.getLogger(),
-	    				context.getRuntimeContext().getMetaContext(),
-	    				context.getQueryCacheContext(),
-	    				hintConfiguration,
-	    				context.getQueryAnalyzer());
-	    //EPMBuilder builder = new EPMBuilder(buildable, context);
-	    engine.setCompiler(compiler);
-	    return engine;
-	}
+        ReteEngine engine;
+        engine = new ReteEngine(context, reteThreads);
+        IQueryBackendHintProvider hintConfiguration = engine.getHintConfiguration();
+        ReteRecipeCompiler compiler = 
+                new ReteRecipeCompiler(
+                        Options.builderMethod.layoutStrategy(context, hintConfiguration), 
+                        context.getLogger(),
+                        context.getRuntimeContext().getMetaContext(),
+                        context.getQueryCacheContext(),
+                        hintConfiguration,
+                        context.getQueryAnalyzer());
+        //EPMBuilder builder = new EPMBuilder(buildable, context);
+        engine.setCompiler(compiler);
+        return engine;
+    }
     
     @Override
     public Class<? extends IQueryBackend> getBackendClass() {
-    	return ReteEngine.class;
+        return ReteEngine.class;
     }
 
-	@Override
-	public int hashCode() {
-		return ReteBackendFactory.class.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return ReteBackendFactory.class.hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof ReteBackendFactory)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof ReteBackendFactory)) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * @since 1.4

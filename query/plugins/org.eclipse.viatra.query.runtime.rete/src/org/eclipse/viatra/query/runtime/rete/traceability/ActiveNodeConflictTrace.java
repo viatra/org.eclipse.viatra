@@ -13,14 +13,14 @@ package org.eclipse.viatra.query.runtime.rete.traceability;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 
 public class ActiveNodeConflictTrace extends RecipeTraceInfo { // TODO implement PatternTraceInfo
-	RecipeTraceInfo inactiveRecipeTrace;		
-	public ActiveNodeConflictTrace(ReteNodeRecipe recipe,
-			RecipeTraceInfo parentRecipeTrace,
-			RecipeTraceInfo inactiveRecipeTrace) {
-		super(recipe, parentRecipeTrace);
-		this.inactiveRecipeTrace = inactiveRecipeTrace;
-	}
-	public RecipeTraceInfo getInactiveRecipeTrace() {
-		return inactiveRecipeTrace;
-	}
+    RecipeTraceInfo inactiveRecipeTrace;		
+    public ActiveNodeConflictTrace(ReteNodeRecipe recipe,
+            RecipeTraceInfo parentRecipeTrace,
+            RecipeTraceInfo inactiveRecipeTrace) {
+        super(recipe, parentRecipeTrace);
+        this.inactiveRecipeTrace = inactiveRecipeTrace;
+    }
+    public RecipeTraceInfo getInactiveRecipeTrace() {
+        return inactiveRecipeTrace;
+    }
 }

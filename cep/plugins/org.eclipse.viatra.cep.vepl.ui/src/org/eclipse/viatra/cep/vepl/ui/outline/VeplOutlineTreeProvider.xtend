@@ -26,27 +26,27 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
  */
 class VeplOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	protected def _createNode(IOutlineNode parentNode, Import modelElement) {
-	}
+    protected def _createNode(IOutlineNode parentNode, Import modelElement) {
+    }
 
-	def _isLeaf(Trait model) {
-		true
-	}
+    def _isLeaf(Trait model) {
+        true
+    }
 
-	def _isLeaf(AtomicEventPattern model) {
-		true
-	}
+    def _isLeaf(AtomicEventPattern model) {
+        true
+    }
 
-	def _isLeaf(ComplexEventPattern model) {
-		true
-	}
+    def _isLeaf(ComplexEventPattern model) {
+        true
+    }
 
-	def _isLeaf(QueryResultChangeEventPattern model) {
-		true
-	}
+    def _isLeaf(QueryResultChangeEventPattern model) {
+        true
+    }
 
-	def _isLeaf(Rule model) {
-		true
-	}
+    def _isLeaf(Rule model) {
+        true
+    }
 
 }

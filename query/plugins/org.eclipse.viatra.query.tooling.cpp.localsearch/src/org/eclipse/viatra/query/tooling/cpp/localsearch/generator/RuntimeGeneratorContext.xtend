@@ -24,39 +24,39 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.QueryDescriptor
  */
 class RuntimeGeneratorContext extends LocalsearchGeneratorOutputProvider {
 
-	override initializeGenerators(QueryDescriptor query) {
-		val List<IGenerator> generators = newArrayList
+    override initializeGenerators(QueryDescriptor query) {
+        val List<IGenerator> generators = newArrayList
 
 
-		query.patterns.forEach [ name, patterns |
-			val frameGenMap = newHashMap
-			val patternName = CaseFormat::LOWER_CAMEL.to(CaseFormat::UPPER_CAMEL, name)
-			patterns.forEach[
-				patternBodies.forEach[ patternBody |
-					val matchingFrameGenerator = new MatchingFrameGenerator(query.name, patternName, patternBody.index, patternBody.matchingFrame)
-					frameGenMap.put(patternBody, matchingFrameGenerator)
-					generators += matchingFrameGenerator
-				]
-			]
+        query.patterns.forEach [ name, patterns |
+            val frameGenMap = newHashMap
+            val patternName = CaseFormat::LOWER_CAMEL.to(CaseFormat::UPPER_CAMEL, name)
+            patterns.forEach[
+                patternBodies.forEach[ patternBody |
+                    val matchingFrameGenerator = new MatchingFrameGenerator(query.name, patternName, patternBody.index, patternBody.matchingFrame)
+                    frameGenMap.put(patternBody, matchingFrameGenerator)
+                    generators += matchingFrameGenerator
+                ]
+            ]
 
-			// TODO: WARNING! Incredible Hack Inc! works, but ugly...
-			val matchGen = new MatchGenerator(query.name, patternName, patterns.head.patternBodies.head.matchingFrame)
-			generators += matchGen
-			
-			val querySpec = new RuntimeQuerySpecificationGenerator(query.name, patterns.toSet, frameGenMap)
-			generators += querySpec
-			
-			val matcherGen = new RuntimeMatcherGenerator(query.name, patternName, patterns.toSet, frameGenMap, matchGen, querySpec)
-			generators += matcherGen
-		]
-		
-		val queryGroupGenerator = new QueryGroupGenerator(query)
-		generators += queryGroupGenerator
+            // TODO: WARNING! Incredible Hack Inc! works, but ugly...
+            val matchGen = new MatchGenerator(query.name, patternName, patterns.head.patternBodies.head.matchingFrame)
+            generators += matchGen
+            
+            val querySpec = new RuntimeQuerySpecificationGenerator(query.name, patterns.toSet, frameGenMap)
+            generators += querySpec
+            
+            val matcherGen = new RuntimeMatcherGenerator(query.name, patternName, patterns.toSet, frameGenMap, matchGen, querySpec)
+            generators += matcherGen
+        ]
+        
+        val queryGroupGenerator = new QueryGroupGenerator(query)
+        generators += queryGroupGenerator
 
-		generators.forEach[initialize]
+        generators.forEach[initialize]
 
-		return generators
+        return generators
 
-	}
+    }
 
 }

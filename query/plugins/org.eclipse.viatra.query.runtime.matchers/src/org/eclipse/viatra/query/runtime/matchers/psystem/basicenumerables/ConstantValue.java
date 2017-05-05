@@ -39,7 +39,7 @@ public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+        final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
         final Set<PVariable> emptySet = Collections.emptySet(); // a constant value is functionally determined by everything
         result.put(emptySet, Collections.singleton(getVariableInTuple(0)));
         return result;

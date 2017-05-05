@@ -14,11 +14,11 @@ public class _AnonymousPattern_34 extends ParameterizableComplexEventPattern {
     
     // contained event patterns
     addEventPatternRefrence(new _AnonymousPattern_33(), 1);
-    						
+                            
     Timewindow timewindow = EventsFactory.eINSTANCE.createTimewindow();
     timewindow.setTime(1000);
     setTimewindow(timewindow);
-    	
+        
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_34");setEventContext(EventContext.CHRONICLE);
   }
 }

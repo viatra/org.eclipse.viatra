@@ -27,68 +27,68 @@ import org.eclipse.viatra.transformation.evm.api.event.EventHandler
 import org.eclipse.jdt.core.IJavaElement
 
 class JDTTransactionalEventSource extends JDTEventSource implements EventSource<JDTEventAtom> {
-	
-	new(JDTEventSourceSpecification spec, JDTRealm realm) {
-		super(spec, realm)
-		logger.level = Level.DEBUG
-	}
-	
-	override void createEvent(IJavaElementDelta delta) {
-		// Transactional events are made only for CompilationUnits
-		if((delta.element instanceof ICompilationUnit)){
-			val eventAtom = new JDTEventAtom(delta)
-			
-			// Create events with the correct event types, and send them to the handlers
-			val eventTypes = delta.transactionalEventTypes
-			eventTypes.forEach[ eventTpye |
-				val event = new JDTEvent(eventTpye, eventAtom)
-				debug('''Created event with type «eventTpye» for «eventAtom.delta»''')
-				handlers.forEach[handleEvent(event)]
-			]
-		} else {
-			createEventsForAppearedPackageContents(delta)
-		}
-		
-		// Always process child-deltas
-		delta.affectedChildren.forEach[affectedChildren |
-			createEvent(affectedChildren)
-		]
-	}
-	
-	override sendExistingEvents(EventHandler<JDTEventAtom> handler, IJavaElement element) {
-		val eventAtom = new JDTEventAtom(element)
-		val JDTEvent createEvent = new JDTEvent(JDTTransactionalEventType::CREATE, eventAtom)
-		handler.handleEvent(createEvent)
-		val JDTEvent commitEvent = new JDTEvent(JDTTransactionalEventType::COMMIT, eventAtom)
-		handler.handleEvent(commitEvent)
-	}
-	
-	private def getTransactionalEventTypes(IJavaElementDelta delta) {
-		val result = newArrayList()
-		val flags = delta.flags.toChangeFlags
-		// If something is removed, send delete event
-		if(delta.kind.bitwiseAnd(IJavaElementDelta::REMOVED) != 0) {
-			result.add(JDTTransactionalEventType::DELETE)
-		// If something is added, send modify and commit event
-		} else if( delta.kind.bitwiseAnd(IJavaElementDelta::ADDED) != 0) {
-			result.add(JDTTransactionalEventType::CREATE)
-			result.add(JDTTransactionalEventType::COMMIT)
-		// If something is modified
-		} else {
-			// If its content or its children are changed, send modify event
-			if( flags.exists[ flag |
-				flag == ChangeFlag::CONTENT ||
-				flag == ChangeFlag::CHILDREN
-			]) {
-				result.add(JDTTransactionalEventType::MODIFY)
-			}
-			// If the primary resource is changed (aka saved) send an additional commit event
-			if( flags.exists[ flag | 
-				flag == ChangeFlag::PRIMARY_RESOURCE
-			]) {
-				result.add(JDTTransactionalEventType::COMMIT)
-			}
-		}
-		return result
-	}
+    
+    new(JDTEventSourceSpecification spec, JDTRealm realm) {
+        super(spec, realm)
+        logger.level = Level.DEBUG
+    }
+    
+    override void createEvent(IJavaElementDelta delta) {
+        // Transactional events are made only for CompilationUnits
+        if((delta.element instanceof ICompilationUnit)){
+            val eventAtom = new JDTEventAtom(delta)
+            
+            // Create events with the correct event types, and send them to the handlers
+            val eventTypes = delta.transactionalEventTypes
+            eventTypes.forEach[ eventTpye |
+                val event = new JDTEvent(eventTpye, eventAtom)
+                debug('''Created event with type «eventTpye» for «eventAtom.delta»''')
+                handlers.forEach[handleEvent(event)]
+            ]
+        } else {
+            createEventsForAppearedPackageContents(delta)
+        }
+        
+        // Always process child-deltas
+        delta.affectedChildren.forEach[affectedChildren |
+            createEvent(affectedChildren)
+        ]
+    }
+    
+    override sendExistingEvents(EventHandler<JDTEventAtom> handler, IJavaElement element) {
+        val eventAtom = new JDTEventAtom(element)
+        val JDTEvent createEvent = new JDTEvent(JDTTransactionalEventType::CREATE, eventAtom)
+        handler.handleEvent(createEvent)
+        val JDTEvent commitEvent = new JDTEvent(JDTTransactionalEventType::COMMIT, eventAtom)
+        handler.handleEvent(commitEvent)
+    }
+    
+    private def getTransactionalEventTypes(IJavaElementDelta delta) {
+        val result = newArrayList()
+        val flags = delta.flags.toChangeFlags
+        // If something is removed, send delete event
+        if(delta.kind.bitwiseAnd(IJavaElementDelta::REMOVED) != 0) {
+            result.add(JDTTransactionalEventType::DELETE)
+        // If something is added, send modify and commit event
+        } else if( delta.kind.bitwiseAnd(IJavaElementDelta::ADDED) != 0) {
+            result.add(JDTTransactionalEventType::CREATE)
+            result.add(JDTTransactionalEventType::COMMIT)
+        // If something is modified
+        } else {
+            // If its content or its children are changed, send modify event
+            if( flags.exists[ flag |
+                flag == ChangeFlag::CONTENT ||
+                flag == ChangeFlag::CHILDREN
+            ]) {
+                result.add(JDTTransactionalEventType::MODIFY)
+            }
+            // If the primary resource is changed (aka saved) send an additional commit event
+            if( flags.exists[ flag | 
+                flag == ChangeFlag::PRIMARY_RESOURCE
+            ]) {
+                result.add(JDTTransactionalEventType::COMMIT)
+            }
+        }
+        return result
+    }
 }

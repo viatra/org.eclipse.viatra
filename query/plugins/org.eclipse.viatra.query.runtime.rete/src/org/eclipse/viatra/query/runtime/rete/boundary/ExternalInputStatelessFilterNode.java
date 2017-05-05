@@ -27,44 +27,44 @@ import org.eclipse.viatra.query.runtime.rete.single.FilterNode;
  *
  */
 public class ExternalInputStatelessFilterNode extends FilterNode implements Disconnectable {
-	
-	IQueryRuntimeContext context = null;
-	IInputKey inputKey;
-	private InputConnector inputConnector;
-	private TupleMask mask;
+    
+    IQueryRuntimeContext context = null;
+    IInputKey inputKey;
+    private InputConnector inputConnector;
+    private TupleMask mask;
 
-	public ExternalInputStatelessFilterNode(ReteContainer reteContainer, TupleMask mask) {
-		super(reteContainer);
-		this.mask = mask;
-		this.inputConnector = reteContainer.getNetwork().getInputConnector();
-	}
-	
-	@Override
-	public boolean check(Tuple ps) {
-		if (mask != null) 
-			ps = mask.transform(ps);
-		return context.containsTuple(inputKey, ps);
-	}
-	
-	
-	public void connectThroughContext(ReteEngine engine, IInputKey inputKey) {
-		this.inputKey = inputKey;
-		setTag(inputKey);
-		
-		final IQueryRuntimeContext context = engine.getRuntimeContext();
-		if (!context.getMetaContext().isStateless(inputKey))
-			throw new IllegalArgumentException(
-					this.getClass().getSimpleName() + 
-					" only applicable for stateless input keys; received instead " + 
-					inputKey);
-		
-		this.context = context;
-		
-		engine.addDisconnectable(this);
-	}
-	
-	@Override
-	public void disconnect() {
-		this.context = null;
-	}
+    public ExternalInputStatelessFilterNode(ReteContainer reteContainer, TupleMask mask) {
+        super(reteContainer);
+        this.mask = mask;
+        this.inputConnector = reteContainer.getNetwork().getInputConnector();
+    }
+    
+    @Override
+    public boolean check(Tuple ps) {
+        if (mask != null) 
+            ps = mask.transform(ps);
+        return context.containsTuple(inputKey, ps);
+    }
+    
+    
+    public void connectThroughContext(ReteEngine engine, IInputKey inputKey) {
+        this.inputKey = inputKey;
+        setTag(inputKey);
+        
+        final IQueryRuntimeContext context = engine.getRuntimeContext();
+        if (!context.getMetaContext().isStateless(inputKey))
+            throw new IllegalArgumentException(
+                    this.getClass().getSimpleName() + 
+                    " only applicable for stateless input keys; received instead " + 
+                    inputKey);
+        
+        this.context = context;
+        
+        engine.addDisconnectable(this);
+    }
+    
+    @Override
+    public void disconnect() {
+        this.context = null;
+    }
 }

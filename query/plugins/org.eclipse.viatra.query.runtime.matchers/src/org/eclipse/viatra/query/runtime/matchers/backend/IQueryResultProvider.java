@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  *
  */
 public interface IQueryResultProvider {
-	
+    
     /**
      * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
      *
@@ -29,8 +29,8 @@ public interface IQueryResultProvider {
      * @pre size of input array must be equal to the number of parameters.
      * @return the number of pattern matches found.
      */
-	public int countMatches(Object[] parameters); 
-	
+    public int countMatches(Object[] parameters); 
+    
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
      * Neither determinism nor randomness of selection is guaranteed.
@@ -40,8 +40,8 @@ public interface IQueryResultProvider {
      * @pre size of input array must be equal to the number of parameters.
      * @return a match represented in the internal {@link Tuple} representation.
      */
-	public Tuple getOneArbitraryMatch(Object[] parameters); 
-	
+    public Tuple getOneArbitraryMatch(Object[] parameters); 
+    
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
      *
@@ -50,14 +50,14 @@ public interface IQueryResultProvider {
      * @pre size of input array must be equal to the number of parameters.
      * @return matches represented in the internal {@link Tuple} representation.
      */
-	public Collection<? extends Tuple> getAllMatches(Object[] parameters); 
-	
-	
-	/**
-	 * The underlying query evaluator backend.
-	 */
-	public IQueryBackend getQueryBackend();
-	
+    public Collection<? extends Tuple> getAllMatches(Object[] parameters); 
+    
+    
+    /**
+     * The underlying query evaluator backend.
+     */
+    public IQueryBackend getQueryBackend();
+    
     /**
      * Internal method that registers low-level callbacks for match appearance and disappearance.
      * 
@@ -78,14 +78,14 @@ public interface IQueryResultProvider {
      * @throws UnsupportedOperationException if this is a non-incremental backend 
      * 	(i.e. {@link IQueryBackend#isCaching()} on {@link #getQueryBackend()} returns false)
      */	
-	public void addUpdateListener(final IUpdateable listener, final Object listenerTag, boolean fireNow);
-	
-	/**
-	 * Removes an existing listener previously registered with the given tag.
+    public void addUpdateListener(final IUpdateable listener, final Object listenerTag, boolean fireNow);
+    
+    /**
+     * Removes an existing listener previously registered with the given tag.
      *            
      * @throws UnsupportedOperationException if this is a non-incremental backend 
      * 	(i.e. {@link IQueryBackend#isCaching()} on {@link #getQueryBackend()} returns false)
-	 */
-	public void removeUpdateListener(final Object listenerTag);
+     */
+    public void removeUpdateListener(final Object listenerTag);
 
 }

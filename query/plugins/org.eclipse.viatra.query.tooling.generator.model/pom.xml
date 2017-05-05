@@ -1,91 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
         <artifactId>org.eclipse.viatra.parent.all</artifactId>
         <groupId>org.eclipse.viatra</groupId>
         <version>1.6.0-SNAPSHOT</version>
         <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
     </parent>
-	<artifactId>org.eclipse.viatra.query.tooling.generator.model</artifactId>
-	<packaging>eclipse-plugin</packaging>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>src-gen</directory>
+    <artifactId>org.eclipse.viatra.query.tooling.generator.model</artifactId>
+    <packaging>eclipse-plugin</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src-gen</directory>
                                                         <excludes>
                                                                 <exclude>.gitignore</exclude>
                                                         </excludes>
-						</fileset>
-						<fileset>
-							<directory>xtend-gen</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>xtend-gen</directory>
                                                         <excludes>
                                                                 <exclude>.gitignore</exclude>
                                                         </excludes>
-						</fileset>
-						<fileset>
-							<directory>model/generated</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>model/generated</directory>
                                                         <excludes>
                                                                 <exclude>.gitignore</exclude>
                                                         </excludes>
-						</fileset>
-						<fileset>
-							<directory>../${project.artifactId}.ui/src-gen</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>../${project.artifactId}.ui/src-gen</directory>
                                                         <excludes>
                                                                 <exclude>.gitignore</exclude>
                                                         </excludes>
-						</fileset>
-						<fileset>
-							<directory>../../tests/${project.artifactId}.tests/src-gen</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>../../tests/${project.artifactId}.tests/src-gen</directory>
                                                         <excludes>
                                                                 <exclude>.gitignore</exclude>
                                                         </excludes>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-oaw-m2-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<workflowEngine>mwe2</workflowEngine>
-					<workflowDescriptor>src/org/eclipse/viatra/query/tooling/generator/model/GenerateGeneratorModel.mwe2</workflowDescriptor>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run-workflow</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.xtend</groupId>
-				<artifactId>xtend-maven-plugin</artifactId>
-				<version>${xtend.compiler.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-		</resources>
-	</build>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.fornax.toolsupport</groupId>
+                <artifactId>fornax-oaw-m2-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <workflowEngine>mwe2</workflowEngine>
+                    <workflowDescriptor>src/org/eclipse/viatra/query/tooling/generator/model/GenerateGeneratorModel.mwe2</workflowDescriptor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run-workflow</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.xtend</groupId>
+                <artifactId>xtend-maven-plugin</artifactId>
+                <version>${xtend.compiler.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

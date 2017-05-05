@@ -79,7 +79,7 @@ public class OuterJoinNode extends DualInputNode {
 
     @Override
     public void pullInto(Collection<Tuple> collector) {
-    	if (primarySlot == null || secondarySlot == null) return;
+        if (primarySlot == null || secondarySlot == null) return;
         reteContainer.flushUpdates();
 
         for (Tuple signature : primarySlot.getSignatures()) {

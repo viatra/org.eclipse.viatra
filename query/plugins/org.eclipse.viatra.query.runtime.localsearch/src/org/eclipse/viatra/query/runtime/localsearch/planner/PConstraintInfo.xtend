@@ -30,43 +30,43 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAcc
  */
 class PConstraintInfo implements IConstraintEvaluationContext {
 
-	private PConstraint constraint
-	private Set<PVariable> boundMaskVariables
-	private Set<PVariable> freeMaskVariables
-	private Set<PConstraintInfo> sameWithDifferentBindings
-	private IQueryRuntimeContext runtimeContext
+    private PConstraint constraint
+    private Set<PVariable> boundMaskVariables
+    private Set<PVariable> freeMaskVariables
+    private Set<PConstraintInfo> sameWithDifferentBindings
+    private IQueryRuntimeContext runtimeContext
     private QueryAnalyzer queryAnalyzer
     private IQueryResultProviderAccess resultProviderAccess
 
-	private double cost
+    private double cost
     
 
-	/** 
-	 * Instantiates the wrapper
-	 * @param constraintfor which the information is added and stored
-	 * @param boundMaskVariablesthe bound variables in the operation mask
-	 * @param freeMaskVariablesthe free variables in the operation mask
-	 * @param sameWithDifferentBindingsduring the planning process, multiple operation adornments are considered for a constraint, so that it
-	 * is represented by multiple plan infos. This parameter contains all plan infos that are for the same
-	 * constraint, but with different adornment
-	 * @param context the query backend context
-	 */
-	new(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
-		Set<PConstraintInfo> sameWithDifferentBindings, 
-		IQueryBackendContext context,
-		Function<IConstraintEvaluationContext, Double> costFunction) {
-		this.constraint = constraint
-		this.boundMaskVariables = boundMaskVariables
-		this.freeMaskVariables = freeMaskVariables
-		this.sameWithDifferentBindings = sameWithDifferentBindings
-		this.runtimeContext = context.runtimeContext
-		this.queryAnalyzer = context.queryAnalyzer
-		this.resultProviderAccess = context.resultProviderAccess
+    /** 
+     * Instantiates the wrapper
+     * @param constraintfor which the information is added and stored
+     * @param boundMaskVariablesthe bound variables in the operation mask
+     * @param freeMaskVariablesthe free variables in the operation mask
+     * @param sameWithDifferentBindingsduring the planning process, multiple operation adornments are considered for a constraint, so that it
+     * is represented by multiple plan infos. This parameter contains all plan infos that are for the same
+     * constraint, but with different adornment
+     * @param context the query backend context
+     */
+    new(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
+        Set<PConstraintInfo> sameWithDifferentBindings, 
+        IQueryBackendContext context,
+        Function<IConstraintEvaluationContext, Double> costFunction) {
+        this.constraint = constraint
+        this.boundMaskVariables = boundMaskVariables
+        this.freeMaskVariables = freeMaskVariables
+        this.sameWithDifferentBindings = sameWithDifferentBindings
+        this.runtimeContext = context.runtimeContext
+        this.queryAnalyzer = context.queryAnalyzer
+        this.resultProviderAccess = context.resultProviderAccess
 
-		// Calculate cost of the constraint based on its type
-		this.cost = costFunction.apply(this);
-	}
-	
+        // Calculate cost of the constraint based on its type
+        this.cost = costFunction.apply(this);
+    }
+    
     override getRuntimeContext() {
         runtimeContext
     }
@@ -75,25 +75,25 @@ class PConstraintInfo implements IConstraintEvaluationContext {
         return queryAnalyzer
     }
 
-	override PConstraint getConstraint() {
-		return constraint
-	}
+    override PConstraint getConstraint() {
+        return constraint
+    }
 
-	override Set<PVariable> getFreeVariables() {
-		return freeMaskVariables
-	}
+    override Set<PVariable> getFreeVariables() {
+        return freeMaskVariables
+    }
 
-	override Set<PVariable> getBoundVariables() {
-		return boundMaskVariables
-	}
+    override Set<PVariable> getBoundVariables() {
+        return boundMaskVariables
+    }
 
-	def Set<PConstraintInfo> getSameWithDifferentBindings() {
-		return sameWithDifferentBindings
-	}
+    def Set<PConstraintInfo> getSameWithDifferentBindings() {
+        return sameWithDifferentBindings
+    }
 
-	def double getCost() {
-		return cost
-	}
+    def double getCost() {
+        return cost
+    }
 
     def PConstraintCategory getCategory(PBody pBody, Set<PVariable> boundVariables) {
         if (!Sets.intersection(this.freeMaskVariables, boundVariables).isEmpty) {
@@ -106,8 +106,8 @@ class PConstraintInfo implements IConstraintEvaluationContext {
         }
     }
 
-	override String toString()
-		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''
+    override String toString()
+        '''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''
 
     override resultProviderAccess() {
         this.resultProviderAccess

@@ -25,42 +25,42 @@ import org.eclipse.viatra.integration.mwe2.providers.IConditionProvider
  * @author Peter Lunk
  */
 class Conditional implements ITransformationStep {
-	protected var IWorkflowContext ctx;
-	protected IConditionProvider condition;
-	protected ITransformationStep ifTrue;
-	protected ITransformationStep ifFalse;
-	def setIfTrue(ITransformationStep ifTrue){
-		this.ifTrue = ifTrue
-	}
-	
-	def setIfFalse(ITransformationStep ifFalse){
-		this.ifFalse = ifFalse
-	}
-	
-		
-	def void setCondition(IConditionProvider condition){
-		this.condition = condition
-	}
+    protected var IWorkflowContext ctx;
+    protected IConditionProvider condition;
+    protected ITransformationStep ifTrue;
+    protected ITransformationStep ifFalse;
+    def setIfTrue(ITransformationStep ifTrue){
+        this.ifTrue = ifTrue
+    }
+    
+    def setIfFalse(ITransformationStep ifFalse){
+        this.ifFalse = ifFalse
+    }
+    
+        
+    def void setCondition(IConditionProvider condition){
+        this.condition = condition
+    }
 
-	override void initialize(IWorkflowContext ctx) {
-		this.ctx = ctx
-		if(condition!=null){
-			condition.context = ctx
-		}
-		ifTrue.initialize(ctx)
-		ifFalse.initialize(ctx)
-	}
+    override void initialize(IWorkflowContext ctx) {
+        this.ctx = ctx
+        if(condition!=null){
+            condition.context = ctx
+        }
+        ifTrue.initialize(ctx)
+        ifFalse.initialize(ctx)
+    }
 
-	override void execute() {
-		if(condition.apply){
-			ifTrue.execute
-		}else{
-			ifFalse.execute
-		}
-	}
+    override void execute() {
+        if(condition.apply){
+            ifTrue.execute
+        }else{
+            ifFalse.execute
+        }
+    }
 
-	override void dispose() {
-		ifTrue.dispose
-		ifFalse.dispose
-	}
+    override void dispose() {
+        ifTrue.dispose
+        ifFalse.dispose
+    }
 }

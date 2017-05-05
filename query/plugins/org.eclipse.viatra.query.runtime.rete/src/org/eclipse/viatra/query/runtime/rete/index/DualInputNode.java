@@ -90,8 +90,8 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
     /**
      * Should be called only once, when node is initialized
      */
-	public void connectToIndexers(IterableIndexer primarySlot, Indexer secondarySlot) {
-		this.primarySlot = primarySlot;
+    public void connectToIndexers(IterableIndexer primarySlot, Indexer secondarySlot) {
+        this.primarySlot = primarySlot;
         this.secondarySlot = secondarySlot;
         
         reteContainer.getTracker().registerDependency(primarySlot, this);
@@ -101,8 +101,8 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
         // ...unless in a weird corner case of recursive queries, when there are already receivers attached
         // so we prepare contents to be synced NOW
         Collection<Tuple> contentsToSync = 
-        		getReceivers().isEmpty()? null 
-        				: reteContainer.pullContents(this);       
+                getReceivers().isEmpty()? null 
+                        : reteContainer.pullContents(this);       
         
         // attach listeners
         // if there is syncing, do this after the flush done for pulling, but before syncing updates
@@ -147,15 +147,15 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
         
         // synch contents to receivers now... if any
         if (contentsToSync != null) {
-    		for (Receiver receiver : getReceivers()) {			
-    			reteContainer.sendConstructionUpdates(receiver, Direction.INSERT, contentsToSync);
-    		}
-    		reteContainer.flushUpdates();
+            for (Receiver receiver : getReceivers()) {			
+                reteContainer.sendConstructionUpdates(receiver, Direction.INSERT, contentsToSync);
+            }
+            reteContainer.flushUpdates();
         }
 
-   	}
+       }
 
-	// public Indexer createPrimarySlot(TupleMask mask)
+    // public Indexer createPrimarySlot(TupleMask mask)
     // {
     // return accessSlot(mask, Side.PRIMARY);
     // }
@@ -260,13 +260,13 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateToIndexerParent()) {
-    		if (primarySlot != null)
-    			primarySlot.acceptPropagatedTraceInfo(traceInfo);
-    		if (secondarySlot != null)
-    			secondarySlot.acceptPropagatedTraceInfo(traceInfo);
-    	}
+        super.assignTraceInfo(traceInfo);
+        if (traceInfo.propagateToIndexerParent()) {
+            if (primarySlot != null)
+                primarySlot.acceptPropagatedTraceInfo(traceInfo);
+            if (secondarySlot != null)
+                secondarySlot.acceptPropagatedTraceInfo(traceInfo);
+        }
     }
 
 }

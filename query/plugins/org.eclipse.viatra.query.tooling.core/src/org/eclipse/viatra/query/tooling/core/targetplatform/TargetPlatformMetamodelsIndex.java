@@ -58,17 +58,17 @@ import com.google.inject.Singleton;
 @Singleton
 public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetamodelLoader{
 
-	private static final String EP_GENPACKAGE = "org.eclipse.emf.ecore.generated_package";
-	private static final String PACKAGE = "package";
-	private static final String ATTR_URI = "uri";
-	private static final String ATTR_GENMODEL = "genModel";
-	
+    private static final String EP_GENPACKAGE = "org.eclipse.emf.ecore.generated_package";
+    private static final String PACKAGE = "package";
+    private static final String ATTR_URI = "uri";
+    private static final String ATTR_GENMODEL = "genModel";
+    
     @Inject
     Logger logger;
 
-	private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
-	private final Set<String> processedPlugins = Sets.newHashSet();
-	private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
+    private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
+    private final Set<String> processedPlugins = Sets.newHashSet();
+    private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
     private Map<URI, URI> platformURIMap = new HashMap<URI, URI>();
 //    private Map<String, URI> ePackageNsURIToGenModelLocationMap;
     
@@ -100,63 +100,63 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                     }
                 });
     }
-	
-	private void update(){
-	    if(!automaticIndexing && indexUpToDate) {
-	        return;
-	    }
-		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-		Set<String> workspacePlugins = new HashSet<String>();
-		Map<String, IPluginBase> pluginset = new HashMap<String, IPluginBase>();
-		for(IPluginModelBase mbase : plugins){
-			IPluginBase base = mbase.createPluginBase();
-			String ID = mbase.getInstallLocation();
-			pluginset.put(ID, base);
-			if (mbase.getUnderlyingResource() != null){
-				workspacePlugins.add(ID);
-			}
-		}
-		
-		/* Remove entries that disappeared */
-		Set<String> remove = new HashSet<String>(processedPlugins);
-		remove.removeAll(pluginset.keySet());
-		for(String id : remove){
-			entries.removeAll(id);
-			processedPlugins.remove(id);
-		}
-		/* Add new entries */
-		Set<String> added = new HashSet<String>(pluginset.keySet());
-		added.removeAll(processedPlugins);
-		// compute platform URI map only when platform plugin list changed
-		if(!added.isEmpty()){
-			platformURIMap = EcorePlugin.computePlatformURIMap(true);
-			// TODO this map could be used instead of reading the extensions ourselves
-			// ePackageNsURIToGenModelLocationMap = EcorePlugin.getEPackageNsURIToGenModelLocationMap(true);
-		}
+    
+    private void update(){
+        if(!automaticIndexing && indexUpToDate) {
+            return;
+        }
+        IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
+        Set<String> workspacePlugins = new HashSet<String>();
+        Map<String, IPluginBase> pluginset = new HashMap<String, IPluginBase>();
+        for(IPluginModelBase mbase : plugins){
+            IPluginBase base = mbase.createPluginBase();
+            String ID = mbase.getInstallLocation();
+            pluginset.put(ID, base);
+            if (mbase.getUnderlyingResource() != null){
+                workspacePlugins.add(ID);
+            }
+        }
+        
+        /* Remove entries that disappeared */
+        Set<String> remove = new HashSet<String>(processedPlugins);
+        remove.removeAll(pluginset.keySet());
+        for(String id : remove){
+            entries.removeAll(id);
+            processedPlugins.remove(id);
+        }
+        /* Add new entries */
+        Set<String> added = new HashSet<String>(pluginset.keySet());
+        added.removeAll(processedPlugins);
+        // compute platform URI map only when platform plugin list changed
+        if(!added.isEmpty()){
+            platformURIMap = EcorePlugin.computePlatformURIMap(true);
+            // TODO this map could be used instead of reading the extensions ourselves
+            // ePackageNsURIToGenModelLocationMap = EcorePlugin.getEPackageNsURIToGenModelLocationMap(true);
+        }
 
-		/* Always reload workspace plugins */
-		for(String id : workspacePlugins){
-			entries.removeAll(id);
-			added.add(id);
-		}
-		
-		for(String id : added){
-			IPluginBase base = pluginset.get(id);
-			entries.putAll(id, load(base));
-			processedPlugins.add(id);
-		}
-		
-		if(!automaticIndexing) {
-		    indexUpToDate = true;
-		}
-		return;
-	}
-	
-	private List<TargetPlatformMetamodel> load(IPluginBase base){
-		List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodel>();
-		for(IPluginExtension extension : base.getExtensions()){
-			if (EP_GENPACKAGE.equals(extension.getPoint())){
-				for(IPluginObject po : extension.getChildren()){
+        /* Always reload workspace plugins */
+        for(String id : workspacePlugins){
+            entries.removeAll(id);
+            added.add(id);
+        }
+        
+        for(String id : added){
+            IPluginBase base = pluginset.get(id);
+            entries.putAll(id, load(base));
+            processedPlugins.add(id);
+        }
+        
+        if(!automaticIndexing) {
+            indexUpToDate = true;
+        }
+        return;
+    }
+    
+    private List<TargetPlatformMetamodel> load(IPluginBase base){
+        List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodel>();
+        for(IPluginExtension extension : base.getExtensions()){
+            if (EP_GENPACKAGE.equals(extension.getPoint())){
+                for(IPluginObject po : extension.getChildren()){
                     if (po instanceof IPluginElement && PACKAGE.equals(po.getName())) {
                         IPluginAttribute uriAttrib = ((IPluginElement) po).getAttribute(ATTR_URI);
                         IPluginAttribute genAttrib = ((IPluginElement) po).getAttribute(ATTR_GENMODEL);
@@ -165,11 +165,11 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                             metamodels.add(metamodel);
                         }
                     }
-				}
-			}
-		}
-		return metamodels;
-	}
+                }
+            }
+        }
+        return metamodels;
+    }
 
     private TargetPlatformMetamodel loadMetamodelSpecification(IPluginBase base, IPluginAttribute uriAttrib,
             IPluginAttribute genAttrib) {
@@ -186,27 +186,27 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         }
         return metamodel;
     }
-	
+    
     public final class TargetPlatformMetamodel {
-		
-		private final URI genModelUri;
-		private final String packageURI;
+        
+        private final URI genModelUri;
+        private final String packageURI;
         private Logger logger;
 
         private final static String GENMODEL_LOAD_ERROR = "Error while loading genmodel '%s' for EPackage '%s'. Check corresponding plugin.xml declaration.";
-		
+        
         private TargetPlatformMetamodel(String packageURI, URI genModel, Logger logger) {
             this.logger = logger;
             Preconditions.checkArgument(packageURI != null && !packageURI.isEmpty(), "EPackage nsURI must be set");
             Preconditions.checkArgument(genModel != null, "Genmodel URI must not be null");
-			this.genModelUri = genModel;
-			this.packageURI = packageURI;
-		}
-		
-		public String getPackageURI() {
-			return packageURI;
-		}
-		
+            this.genModelUri = genModel;
+            this.packageURI = packageURI;
+        }
+        
+        public String getPackageURI() {
+            return packageURI;
+        }
+        
         /**
          * Loads and returns the genmodel into the selected {@link ResourceSet}.
          * 
@@ -219,13 +219,13 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
             for (EObject eo : genModel.getContents()) {
                 if (eo instanceof GenModel) {
                     return (GenModel) eo;
-				}
-			}
+                }
+            }
 
             return null;
-		}
-		
-		public GenPackage loadGenPackage(ResourceSet resourceset){
+        }
+        
+        public GenPackage loadGenPackage(ResourceSet resourceset){
             try {
                 GenModel genModel = loadGenModel(resourceset);
                 if (genModel != null) {
@@ -247,19 +247,19 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                     logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI), e);
                 }
             }
-			return null;
-		}
-		
-		public EPackage loadPackage(ResourceSet resourceset){
+            return null;
+        }
+        
+        public EPackage loadPackage(ResourceSet resourceset){
             GenPackage genPack = loadGenPackage(resourceset);
             if (genPack != null) {
                 return genPack.getEcorePackage();
             }
-			return null;
-		}
-		
-	}
-	
+            return null;
+        }
+        
+    }
+    
     private URI resolvePluginResource(IPluginModelBase modelbase, String path) {
         // File exist check removed as it does not work with classpath-based resource paths
         URI platformUri;
@@ -271,48 +271,48 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
             platformUri = URI.createPlatformPluginURI(pathString, false);
         }
         return platformUri;
-	}
+    }
 
-	private Iterable<TargetPlatformMetamodel> load(){
-	    // FIXME we need to ensure that only one caller modifies entries at any given time
-		synchronized (TargetPlatformMetamodelsIndex.class) {
-		    update();
-		    
-		    return Iterables.filter(new ArrayList<TargetPlatformMetamodel>(entries.values()), Predicates.notNull());
+    private Iterable<TargetPlatformMetamodel> load(){
+        // FIXME we need to ensure that only one caller modifies entries at any given time
+        synchronized (TargetPlatformMetamodelsIndex.class) {
+            update();
+            
+            return Iterables.filter(new ArrayList<TargetPlatformMetamodel>(entries.values()), Predicates.notNull());
         }
-	}
+    }
 
-	@Override
-	public List<String> listEPackages() {
-		List<String> packageURIs = new LinkedList<String>();
-		for(TargetPlatformMetamodel entry: load()){
-			packageURIs.add(entry.getPackageURI());
-		}
-		return packageURIs;
-	}
+    @Override
+    public List<String> listEPackages() {
+        List<String> packageURIs = new LinkedList<String>();
+        for(TargetPlatformMetamodel entry: load()){
+            packageURIs.add(entry.getPackageURI());
+        }
+        return packageURIs;
+    }
 
-	@Override
-	public EPackage loadPackage(ResourceSet resourceSet, String nsURI) {
-	    Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
-	    resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
+    @Override
+    public EPackage loadPackage(ResourceSet resourceSet, String nsURI) {
+        Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
+        resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
         for(TargetPlatformMetamodel mm : targetPlatformMetamodels){
-			if (nsURI.equals(mm.packageURI)){
-				return mm.loadPackage(resourceSet);
-			}
-		}
-		return null;
-	}
+            if (nsURI.equals(mm.packageURI)){
+                return mm.loadPackage(resourceSet);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI) {
-	    Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
-	    resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
+    @Override
+    public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI) {
+        Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
+        resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
         for(TargetPlatformMetamodel mm : targetPlatformMetamodels){
-			if (nsURI.equals(mm.packageURI)){
-				return mm.loadGenPackage(resourceSet);
-			}
-		}
-		return null;
-	}
-	
+            if (nsURI.equals(mm.packageURI)){
+                return mm.loadGenPackage(resourceSet);
+            }
+        }
+        return null;
+    }
+    
 }

@@ -19,13 +19,13 @@ import org.eclipse.viatra.query.runtime.rete.network.Node;
  * @author Bergmann Gabor
  */
 public interface TraceInfo {
-	boolean propagateToIndexerParent();
-	boolean propagateFromIndexerToSupplierParent();
-	boolean propagateFromStandardNodeToSupplierParent();  	
-	boolean propagateToProductionNodeParentAlso();
+    boolean propagateToIndexerParent();
+    boolean propagateFromIndexerToSupplierParent();
+    boolean propagateFromStandardNodeToSupplierParent();  	
+    boolean propagateToProductionNodeParentAlso();
 
-	void assignNode(Node node);
-	Node getNode();
+    void assignNode(Node node);
+    Node getNode();
 }
 // /**
 // * The semantics of the tuples contained in this node.

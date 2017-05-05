@@ -17,11 +17,11 @@ import org.eclipse.viatra.integration.mwe2.providers.impl.BaseProvider
  * 
  */
 public class TestAlternatingCondition extends BaseProvider implements IConditionProvider{
-	private Boolean ret = true;
+    private Boolean ret = true;
 
-	override apply() {
-		var toReturn = ret;
-		ret = !ret;
-		return toReturn
-	}
+    override apply() {
+        var toReturn = ret;
+        ret = !ret;
+        return toReturn
+    }
 }

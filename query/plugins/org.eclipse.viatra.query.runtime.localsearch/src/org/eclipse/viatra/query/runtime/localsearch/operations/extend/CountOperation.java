@@ -33,7 +33,7 @@ public class CountOperation extends ExtendOperation<Integer>{
     private final CallOperationHelper helper;
     private PatternCall call;
 
-	
+    
     /**
      * @since 1.5
      */
@@ -50,9 +50,9 @@ public class CountOperation extends ExtendOperation<Integer>{
     }
     
     @Override
-	public List<Integer> getVariablePositions() {
-    	return helper.getVariablePositions();
-	}
+    public List<Integer> getVariablePositions() {
+        return helper.getVariablePositions();
+    }
 
     @Override
     public String toString() {

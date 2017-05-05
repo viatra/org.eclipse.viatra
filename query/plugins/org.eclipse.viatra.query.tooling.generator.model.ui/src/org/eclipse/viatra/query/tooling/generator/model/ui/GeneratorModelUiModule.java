@@ -26,7 +26,7 @@ public class GeneratorModelUiModule extends AbstractGeneratorModelUiModule {
         super(plugin);
     }
 
-	private static final String loggerRoot = "org.eclipse.viatra.query";
+    private static final String loggerRoot = "org.eclipse.viatra.query";
 
     @Provides
     @Singleton

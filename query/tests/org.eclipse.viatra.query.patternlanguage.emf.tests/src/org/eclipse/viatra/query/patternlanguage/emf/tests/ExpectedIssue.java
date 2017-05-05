@@ -19,28 +19,28 @@ import org.eclipse.xtext.nodemodel.INode;
  */
 public class ExpectedIssue {
 
-	String desc;
-	int line;
+    String desc;
+    int line;
 
-	public ExpectedIssue(String desc, int line) {
-		this.desc = desc;
-		this.line = line;
-	}
+    public ExpectedIssue(String desc, int line) {
+        this.desc = desc;
+        this.line = line;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public int getLine() {
-		return line;
-	}
+    public int getLine() {
+        return line;
+    }
 
-	
-	/**
-	 * Decides whether the expected issue matches an error node
-	 */
-	public boolean matchesErrorNode(INode node) {
-		return (node.getStartLine() == line && node.getSyntaxErrorMessage()
-				.getMessage().toLowerCase().contains(desc.toLowerCase()));
-	}
+    
+    /**
+     * Decides whether the expected issue matches an error node
+     */
+    public boolean matchesErrorNode(INode node) {
+        return (node.getStartLine() == line && node.getSyntaxErrorMessage()
+                .getMessage().toLowerCase().contains(desc.toLowerCase()));
+    }
 }

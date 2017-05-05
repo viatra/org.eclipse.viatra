@@ -32,63 +32,63 @@ import com.google.common.base.Joiner;
  *
  */
 public class PStart extends POperation {
-	
-	private Set<PVariable> aPrioriVariables;
+    
+    private Set<PVariable> aPrioriVariables;
 
-	
-	public PStart(Set<PVariable> aPrioriVariables) {
-		super();
-		this.aPrioriVariables = aPrioriVariables;
-	}
-	public PStart(PVariable... aPrioriVariables) {
-		this(new HashSet<PVariable>(Arrays.asList(aPrioriVariables)));
-	}
-	public Set<PVariable> getAPrioriVariables() {
-		return aPrioriVariables;
-	}
+    
+    public PStart(Set<PVariable> aPrioriVariables) {
+        super();
+        this.aPrioriVariables = aPrioriVariables;
+    }
+    public PStart(PVariable... aPrioriVariables) {
+        this(new HashSet<PVariable>(Arrays.asList(aPrioriVariables)));
+    }
+    public Set<PVariable> getAPrioriVariables() {
+        return aPrioriVariables;
+    }
 
-	@Override
-	public String getShortName() {
-		return String.format("START_{%s}", Joiner.on(',').join(aPrioriVariables));
-	}
-	@Override
-	public int numParentSubPlans() {
-		return 0;
-	}
+    @Override
+    public String getShortName() {
+        return String.format("START_{%s}", Joiner.on(',').join(aPrioriVariables));
+    }
+    @Override
+    public int numParentSubPlans() {
+        return 0;
+    }
 
-	@Override
-	public Set<? extends PConstraint> getDeltaConstraints() {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<? extends PConstraint> getDeltaConstraints() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((aPrioriVariables == null) ? 0 : aPrioriVariables.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime
+                * result
+                + ((aPrioriVariables == null) ? 0 : aPrioriVariables.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PStart))
-			return false;
-		PStart other = (PStart) obj;
-		if (aPrioriVariables == null) {
-			if (other.aPrioriVariables != null)
-				return false;
-		} else if (!aPrioriVariables.equals(other.aPrioriVariables))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof PStart))
+            return false;
+        PStart other = (PStart) obj;
+        if (aPrioriVariables == null) {
+            if (other.aPrioriVariables != null)
+                return false;
+        } else if (!aPrioriVariables.equals(other.aPrioriVariables))
+            return false;
+        return true;
+    }
 
 
-	
-	
+    
+    
 }

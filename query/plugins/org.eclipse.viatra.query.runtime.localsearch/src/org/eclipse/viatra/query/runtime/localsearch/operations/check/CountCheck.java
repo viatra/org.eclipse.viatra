@@ -44,10 +44,10 @@ public class CountCheck extends CheckOperation{
     }
 
     @Override
-	public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-		super.onInitialize(frame, context);
-		call = helper.createCall(frame, context);
-	}
+    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+        super.onInitialize(frame, context);
+        call = helper.createCall(frame, context);
+    }
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
@@ -56,13 +56,13 @@ public class CountCheck extends CheckOperation{
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, new Integer[0]);
+    }
     
     @Override
     public String toString() {
-    	return "check     "+position+" = count find "+helper.toString();
+        return "check     "+position+" = count find "+helper.toString();
     }
     
 }

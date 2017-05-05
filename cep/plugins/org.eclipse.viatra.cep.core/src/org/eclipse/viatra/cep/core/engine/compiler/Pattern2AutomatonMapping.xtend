@@ -27,43 +27,43 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchT
 
 class Pattern2AutomatonMapping {
 
-	extension AtomicMappingRules atomicMappingRules
-	extension ComplexMappingRules complexMappingRules
-	extension OptimizationRules optimizationRules
+    extension AtomicMappingRules atomicMappingRules
+    extension ComplexMappingRules complexMappingRules
+    extension OptimizationRules optimizationRules
 
-	extension BatchTransformation transformation
-	extension BatchTransformationStatements statements
-	extension IModelManipulations manipulation
+    extension BatchTransformation transformation
+    extension BatchTransformationStatements statements
+    extension IModelManipulations manipulation
 
-	private InternalModel internalModel
-	private EventModel eventModel
-	private TraceModel traceModel
+    private InternalModel internalModel
+    private EventModel eventModel
+    private TraceModel traceModel
 
-	new(ResourceSet resourceSet) {
-		internalModel = (
-			resourceSet.getResource(TransformationBasedCompiler.AUTOMATON_MODEL_URI, true).contents.head as InternalModel
-		)
-		eventModel = (
-			resourceSet.getResource(TransformationBasedCompiler.EVENT_MODEL_URI, true).contents.head as EventModel
-		)
-		traceModel = (
-			resourceSet.getResource(TransformationBasedCompiler.TRACE_MODEL_URI, true).contents.head as TraceModel
-		)
+    new(ResourceSet resourceSet) {
+        internalModel = (
+            resourceSet.getResource(TransformationBasedCompiler.AUTOMATON_MODEL_URI, true).contents.head as InternalModel
+        )
+        eventModel = (
+            resourceSet.getResource(TransformationBasedCompiler.EVENT_MODEL_URI, true).contents.head as EventModel
+        )
+        traceModel = (
+            resourceSet.getResource(TransformationBasedCompiler.TRACE_MODEL_URI, true).contents.head as TraceModel
+        )
 
-		atomicMappingRules = new AtomicMappingRules(internalModel, traceModel)
-		complexMappingRules = new ComplexMappingRules(internalModel, traceModel)
-		optimizationRules = new OptimizationRules(internalModel, traceModel)
+        atomicMappingRules = new AtomicMappingRules(internalModel, traceModel)
+        complexMappingRules = new ComplexMappingRules(internalModel, traceModel)
+        optimizationRules = new OptimizationRules(internalModel, traceModel)
 
-		transformation = BatchTransformation.forScope(new EMFScope(resourceSet)).build
-		statements = transformation.transformationStatements
-		manipulation = new SimpleModelManipulations(transformation.queryEngine)
-	}
+        transformation = BatchTransformation.forScope(new EMFScope(resourceSet)).build
+        statements = transformation.transformationStatements
+        manipulation = new SimpleModelManipulations(transformation.queryEngine)
+    }
 
-	def mapPatterns() {
-		val ruleGroup = new BatchTransformationRuleGroup()
-		ruleGroup.addAll(atomicMappingRules.allRules)
-		ruleGroup.addAll(complexMappingRules.allRules)
-		ruleGroup.addAll(optimizationRules.allRules)
-		ruleGroup.fireWhilePossible
-	}
+    def mapPatterns() {
+        val ruleGroup = new BatchTransformationRuleGroup()
+        ruleGroup.addAll(atomicMappingRules.allRules)
+        ruleGroup.addAll(complexMappingRules.allRules)
+        ruleGroup.addAll(optimizationRules.allRules)
+        ruleGroup.fireWhilePossible
+    }
 }

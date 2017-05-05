@@ -14,18 +14,18 @@ package org.eclipse.viatra.query.runtime.base.itc.relations;
 import org.eclipse.viatra.query.runtime.base.itc.alg.counting.CountingTcRelation;
 
 public class CountingTcRelation3 extends CountingTcRelation<Integer> {
-	
-	public CountingTcRelation3() {
-		super(true);
-		this.addTuple(1, 2, 1);
-    	this.addTuple(1, 3, 1);
-    	this.addTuple(1, 4, 1);
+    
+    public CountingTcRelation3() {
+        super(true);
+        this.addTuple(1, 2, 1);
+        this.addTuple(1, 3, 1);
+        this.addTuple(1, 4, 1);
 
-    	this.addTuple(2, 3, 1);
-    	this.addTuple(2, 4, 1);
+        this.addTuple(2, 3, 1);
+        this.addTuple(2, 4, 1);
 
-    	this.addTuple(4, 3, 1);
+        this.addTuple(4, 3, 1);
 
-    	this.addTuple(5, 6, 1);
-	}
+        this.addTuple(5, 6, 1);
+    }
 }

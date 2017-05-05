@@ -15,18 +15,18 @@ import org.eclipse.viatra.query.runtime.base.itc.misc.TestObserver;
 
 public abstract class TestGraph<T> extends Graph<T> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected TestObserver<Integer> observer;
-	
-	public TestGraph(TestObserver<Integer> observer) {
-		this.observer = observer;
-	}
-	
-	public abstract void modify();
-	
-	public TestObserver<Integer> getObserver() {
-		return observer;
-	}
-	
+    protected TestObserver<Integer> observer;
+    
+    public TestGraph(TestObserver<Integer> observer) {
+        this.observer = observer;
+    }
+    
+    public abstract void modify();
+    
+    public TestObserver<Integer> getObserver() {
+        return observer;
+    }
+    
 }

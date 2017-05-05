@@ -77,17 +77,17 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      */
     @Deprecated
     public BaseMatcher(ViatraQueryEngine engine,
-    		IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
+            IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
             throws ViatraQueryException {
         super();
         this.engine = engine;
         ViatraQueryEngineImpl engineImpl = (ViatraQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
         try {
-			this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
-		} catch (QueryInitializationException e) {
-			throw new ViatraQueryException(e);
-		}
+            this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
+        } catch (QueryInitializationException e) {
+            throw new ViatraQueryException(e);
+        }
         this.backend = accessMatcher(engineImpl, querySpecification);
         engineImpl.reportMatcherInitialized(querySpecification, this);
         this.capabilities = engineImpl.getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
@@ -379,15 +379,15 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
         return engine;
     }
 
-	@Override
-	public IQuerySpecification<? extends BaseMatcher<Match>> getSpecification() {
-	    return querySpecification;
-	}
+    @Override
+    public IQuerySpecification<? extends BaseMatcher<Match>> getSpecification() {
+        return querySpecification;
+    }
 
-	@Override
-	public String getPatternName() {
-	    return querySpecification.getFullyQualifiedName();
-	}
+    @Override
+    public String getPatternName() {
+        return querySpecification.getFullyQualifiedName();
+    }
 
     /**
      * @since 1.4

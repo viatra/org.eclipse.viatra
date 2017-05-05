@@ -43,7 +43,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
 
     @Override
     public boolean set(String parameterName, Object newValue) {
-    	if (!isMutable()) throw new UnsupportedOperationException();
+        if (!isMutable()) throw new UnsupportedOperationException();
         Integer index = specification.getPositionOfParameter(parameterName);
         if (index == null)
             return false;
@@ -70,17 +70,17 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
         if (this == obj)
             return true;
         if (!(obj instanceof GenericPatternMatch)) { // this should be infrequent
-	        if (obj == null)
-	            return false;
-	        if (!(obj instanceof IPatternMatch))
-	            return false;
-	        IPatternMatch other = (IPatternMatch) obj;
-	        if (!specification().equals(other.specification()))
-	            return false;
-	        return Arrays.deepEquals(array, other.toArray());
+            if (obj == null)
+                return false;
+            if (!(obj instanceof IPatternMatch))
+                return false;
+            IPatternMatch other = (IPatternMatch) obj;
+            if (!specification().equals(other.specification()))
+                return false;
+            return Arrays.deepEquals(array, other.toArray());
         }
-    	final GenericPatternMatch other = (GenericPatternMatch) obj;
-		return specification().equals(other.specification()) && Arrays.deepEquals(array, other.array);
+        final GenericPatternMatch other = (GenericPatternMatch) obj;
+        return specification().equals(other.specification()) && Arrays.deepEquals(array, other.array);
     }
 
     @Override
@@ -106,7 +106,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      * @return the empty match
      */
     public static GenericPatternMatch newEmptyMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification) {
-  	  return new Mutable(specification, new Object[specification.getParameters().size()]);
+        return new Mutable(specification, new Object[specification.getParameters().size()]);
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      * @return the new, mutable (partial) match object.
      */
     public static GenericPatternMatch newMutableMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object... parameters) {
-  	  return new Mutable(specification, parameters);
+        return new Mutable(specification, parameters);
     }
 
     /**
@@ -132,32 +132,32 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      * @return the (partial) match object.
      */
     public static GenericPatternMatch newMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object... parameters) {
-  	  return new Immutable(specification, Arrays.copyOf(parameters, parameters.length));
+        return new Immutable(specification, Arrays.copyOf(parameters, parameters.length));
     }
     
-	@Override
-	public IPatternMatch toImmutable() {
-		return isMutable() ? newMatch(specification, array) : this;
-	}
+    @Override
+    public IPatternMatch toImmutable() {
+        return isMutable() ? newMatch(specification, array) : this;
+    }
 
     static final class Mutable extends GenericPatternMatch {
-		Mutable(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
-			super(specification, array);
-		}
+        Mutable(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
+            super(specification, array);
+        }
 
-		@Override
-		public boolean isMutable() {
-			return true;
-		}
+        @Override
+        public boolean isMutable() {
+            return true;
+        }
     }
     static final class Immutable extends GenericPatternMatch {
-    	Immutable(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
-			super(specification, array);
-		}
+        Immutable(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
+            super(specification, array);
+        }
 
-		@Override
-		public boolean isMutable() {
-			return false;
-		}
+        @Override
+        public boolean isMutable() {
+            return false;
+        }
     }
 }

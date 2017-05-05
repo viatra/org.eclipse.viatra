@@ -16,27 +16,27 @@ import org.junit.Test
 
 class InfinityTests extends ComplexVeplTestCase {
 
-	def static String[] validExpressions() {
-		#['''a1{*}->a2''', '''a1{*} AND a2''', '''NOT a1''', '''(a1 -> a2{*}) -> a3''', '''(a1 -> (a2 -> a3{*})) -> a4''']
-	}
+    def static String[] validExpressions() {
+        #['''a1{*}->a2''', '''a1{*} AND a2''', '''NOT a1''', '''(a1 -> a2{*}) -> a3''', '''(a1 -> (a2 -> a3{*})) -> a4''']
+    }
 
-	def static String[] invalidExpressions() {
-		#['''a1{*}''', '''a1{*} OR a2''', '''NOT a1{*}''']
-	}
+    def static String[] invalidExpressions() {
+        #['''a1{*}''', '''a1{*} OR a2''', '''NOT a1{*}''']
+    }
 
-	@Test
-	def void parseExpressions() {
-		for (expression : validExpressions) {
-			'''complexEvent c1(){
-				as («expression»)
-			}'''.parse.assertNoErrors
-		}
-		for (expression : invalidExpressions) {
-			'''complexEvent c1(){
-				as («expression»)
-			}'''.parse.assertError(VeplPackage::eINSTANCE.complexEventExpression,
-				VeplValidator::UNSAFE_INFINITE_MULTIPLICITY)
-		}
-	}
+    @Test
+    def void parseExpressions() {
+        for (expression : validExpressions) {
+            '''complexEvent c1(){
+                as («expression»)
+            }'''.parse.assertNoErrors
+        }
+        for (expression : invalidExpressions) {
+            '''complexEvent c1(){
+                as («expression»)
+            }'''.parse.assertError(VeplPackage::eINSTANCE.complexEventExpression,
+                VeplValidator::UNSAFE_INFINITE_MULTIPLICITY)
+        }
+    }
 
 }

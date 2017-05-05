@@ -56,31 +56,31 @@ import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstan
  */
 class EMFPatternLanguageJvmModelInferrerUtil {
 
-	@Inject extension TypeReferences
-	@Inject Logger logger
-	@Inject ITypeInferrer typeInferrer
-	@Inject var IJvmModelAssociations associations
+    @Inject extension TypeReferences
+    @Inject Logger logger
+    @Inject ITypeInferrer typeInferrer
+    @Inject var IJvmModelAssociations associations
     @Inject EMFPatternLanguageGrammarAccess grammar
     @Inject IErrorFeedback feedback
-	/**
-	 * This method returns the pattern name.
-	 * If the pattern name contains the package (any dot),
-	 * then removes all segment except the last one.
-	 */
-	def realPatternName(Pattern pattern) {
-		var name = pattern.name
-		if (name.contains(".")) {
-			return name.substring(name.lastIndexOf(".")+1)
-		}
-		return name
-	}
+    /**
+     * This method returns the pattern name.
+     * If the pattern name contains the package (any dot),
+     * then removes all segment except the last one.
+     */
+    def realPatternName(Pattern pattern) {
+        var name = pattern.name
+        if (name.contains(".")) {
+            return name.substring(name.lastIndexOf(".")+1)
+        }
+        return name
+    }
 
-	def validClassName(String simpleName) {
-		Character.isJavaIdentifierStart(simpleName.charAt(0)) && 
-		  simpleName.toCharArray.forall[Character.isJavaIdentifierPart(it)]
-	}
+    def validClassName(String simpleName) {
+        Character.isJavaIdentifierStart(simpleName.charAt(0)) && 
+          simpleName.toCharArray.forall[Character.isJavaIdentifierPart(it)]
+    }
 
-	def modelFileName(EObject object) {
+    def modelFileName(EObject object) {
         val eResource = object.eResource
         if (eResource != null) {
             val name = eResource.URI.trimFileExtension.lastSegment
@@ -101,170 +101,170 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     def String modelFileQualifiedName(Pattern pattern)
         '''«pattern.packageName».«pattern.modelFileName.toFirstUpper»'''
     
-	/**
-	 * Returns the QuerySpecificationClass name based on the Pattern's name
-	 */
-	def querySpecificationClassName(Pattern pattern) {
-		var name = pattern.name
-		if (name.contains(".")) {
-			name = pattern.realPatternName
-		}
-		name.toFirstUpper+"QuerySpecification"
-	}
+    /**
+     * Returns the QuerySpecificationClass name based on the Pattern's name
+     */
+    def querySpecificationClassName(Pattern pattern) {
+        var name = pattern.name
+        if (name.contains(".")) {
+            name = pattern.realPatternName
+        }
+        name.toFirstUpper+"QuerySpecification"
+    }
 
-	/**
-	 * Returns the IQuerySpecificationProvider class name based on the Pattern's name
-	 */
-	def querySpecificationProviderClassName(Pattern pattern) {
-		"Provider"
-	}
-	/**
-	 * Returns the holder class name based on the Pattern's name
-	 */
-	def querySpecificationHolderClassName(Pattern pattern) {
-		"LazyHolder"
-	}
-	/**
-	 * Returns the PQuery class name based on the Pattern's name
-	 */
-	def querySpecificationPQueryClassName(Pattern pattern) {
-		"GeneratedPQuery"
-	}
+    /**
+     * Returns the IQuerySpecificationProvider class name based on the Pattern's name
+     */
+    def querySpecificationProviderClassName(Pattern pattern) {
+        "Provider"
+    }
+    /**
+     * Returns the holder class name based on the Pattern's name
+     */
+    def querySpecificationHolderClassName(Pattern pattern) {
+        "LazyHolder"
+    }
+    /**
+     * Returns the PQuery class name based on the Pattern's name
+     */
+    def querySpecificationPQueryClassName(Pattern pattern) {
+        "GeneratedPQuery"
+    }
 
-	/**
-	 * Returns the MatcherClass name based on the Pattern's name
-	 */
-   	def matcherClassName(Pattern pattern) {
-   		var name = pattern.name
-		if (name.contains(".")) {
-			name = pattern.realPatternName
-		}
-   		name.toFirstUpper+"Matcher"
-   	}
+    /**
+     * Returns the MatcherClass name based on the Pattern's name
+     */
+       def matcherClassName(Pattern pattern) {
+           var name = pattern.name
+        if (name.contains(".")) {
+            name = pattern.realPatternName
+        }
+           name.toFirstUpper+"Matcher"
+       }
 
-	/**
-	 * Returns the MatchClass name based on the Pattern's name
-	 */
-   	def matchClassName(Pattern pattern) {
-   		var name = pattern.name
-		if (name.contains(".")) {
-			name = pattern.realPatternName
-		}
-   		name.toFirstUpper+"Match"
-   	}
+    /**
+     * Returns the MatchClass name based on the Pattern's name
+     */
+       def matchClassName(Pattern pattern) {
+           var name = pattern.name
+        if (name.contains(".")) {
+            name = pattern.realPatternName
+        }
+           name.toFirstUpper+"Match"
+       }
 
-   	def matchImmutableInnerClassName(Pattern pattern) {
-   		"Immutable"
-   	}
-   	def matchMutableInnerClassName(Pattern pattern) {
-   		"Mutable"
-   	}
+       def matchImmutableInnerClassName(Pattern pattern) {
+           "Immutable"
+       }
+       def matchMutableInnerClassName(Pattern pattern) {
+           "Mutable"
+       }
 
-	/**
-	 * Returns the ProcessorClass name based on the Pattern's name
-	 */
-   	def processorClassName(Pattern pattern) {
-   		var name = pattern.name
-		if (name.contains(".")) {
-			name = pattern.realPatternName
-		}
-   		name.toFirstUpper+"Processor"
-   	}
+    /**
+     * Returns the ProcessorClass name based on the Pattern's name
+     */
+       def processorClassName(Pattern pattern) {
+           var name = pattern.name
+        if (name.contains(".")) {
+            name = pattern.realPatternName
+        }
+           name.toFirstUpper+"Processor"
+       }
 
-   	/**
-   	 * Returns field name for Variable
-   	 */
-   	def fieldName(Variable variable) {
-   		"f"+variable?.name.toFirstUpper
-   	}
+       /**
+        * Returns field name for Variable
+        */
+       def fieldName(Variable variable) {
+           "f"+variable?.name.toFirstUpper
+       }
 
-   	/**
-   	 * Returns parameter name for Variable
-   	 */
-   	def parameterName(Variable variable) {
-   		"p"+variable?.name?.toFirstUpper
-   	}
+       /**
+        * Returns parameter name for Variable
+        */
+       def parameterName(Variable variable) {
+           "p"+variable?.name?.toFirstUpper
+       }
 
-   	def positionConstant(Variable variable) {
-   		"POSITION_"+variable?.name?.toUpperCase;
-   	}
+       def positionConstant(Variable variable) {
+           "POSITION_"+variable?.name?.toUpperCase;
+       }
 
-   	/**
-   	 * Returns correct getter method name for variable.
-   	 * For variable with name 'class' returns getValueOfClass, otherwise returns <code>get#variable.name.toFirstUpper#</code>.
-   	 */
-   	def getterMethodName(Variable variable) {
-   		if (variable.name == "class") {
-   			return "getValueOfClass"
-   		} else {
-   			return "get" + variable?.name?.toFirstUpper
-   		}
-   	}
+       /**
+        * Returns correct getter method name for variable.
+        * For variable with name 'class' returns getValueOfClass, otherwise returns <code>get#variable.name.toFirstUpper#</code>.
+        */
+       def getterMethodName(Variable variable) {
+           if (variable.name == "class") {
+               return "getValueOfClass"
+           } else {
+               return "get" + variable?.name?.toFirstUpper
+           }
+       }
 
-   	/**
-   	 * Returns correct setter method name for variable.
-   	 * Currently returns <code>set#variable.name.toFirstUpper#</code>.
-   	 */
-   	def setterMethodName(Variable variable) {
-   		"set" + variable?.name?.toFirstUpper
-   	}
+       /**
+        * Returns correct setter method name for variable.
+        * Currently returns <code>set#variable.name.toFirstUpper#</code>.
+        */
+       def setterMethodName(Variable variable) {
+           "set" + variable?.name?.toFirstUpper
+       }
 
-	/**
-	 * Calls the typeProvider.
-	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
-	 * @see ITypeInferrer
-	 */
-   	def JvmTypeReference calculateType(Variable variable) {
+    /**
+     * Calls the typeProvider.
+     * @return JvmTypeReference pointing the EClass that defines the Variable's type.
+     * @see ITypeInferrer
+     */
+       def JvmTypeReference calculateType(Variable variable) {
           typeInferrer.getJvmType(variable, variable)
-   	}
+       }
 
-   	/**
-   	 * Serializes the EObject into Java String variable.
-   	 */
-   	def serializeToJava(EObject eObject) {
-		val parseString = eObject.serialize
-		if (parseString.nullOrEmpty) {
-			return "";
-		}
-		val splits = parseString.split("[\r\n]+")
-		val stringRep = '''String patternString = ""''' as StringConcatenation
-	  	stringRep.newLine
-	  	for (s : splits) {
-	  		// Extra space needed before and after every line,
-	  		// otherwise parser parses the entire string (or part of it) as package name).
-	  		stringRep.append("+\" " + s + " \"")
-	  		stringRep.newLine
-		}
-	  	stringRep.append(";")
-	  	return stringRep
-  	}
+       /**
+        * Serializes the EObject into Java String variable.
+        */
+       def serializeToJava(EObject eObject) {
+        val parseString = eObject.serialize
+        if (parseString.nullOrEmpty) {
+            return "";
+        }
+        val splits = parseString.split("[\r\n]+")
+        val stringRep = '''String patternString = ""''' as StringConcatenation
+          stringRep.newLine
+          for (s : splits) {
+              // Extra space needed before and after every line,
+              // otherwise parser parses the entire string (or part of it) as package name).
+              stringRep.append("+\" " + s + " \"")
+              stringRep.newLine
+        }
+          stringRep.append(";")
+          return stringRep
+      }
 
-  	/**
-  	 * Serializes the input for Javadoc
-  	 */
-  	def serializeToJavadoc(Pattern pattern) {
-  		var javadocString = pattern.serialize
-  		if (javadocString.nullOrEmpty) {
-  			return "Serialization error, check Log"
-  		}
-  		javadocString = javadocString.replaceAll(java.util.regex.Pattern::quote("\\\""),Matcher::quoteReplacement("\""))
-  		javadocString = javadocString.replaceAll("@","{@literal @}")
-  		javadocString = javadocString.replaceAll("<","{@literal <}")
-  		javadocString = javadocString.replaceAll(">","{@literal >}")
-  		return javadocString.trim
-  	}
-  	
-  	/**
+      /**
+       * Serializes the input for Javadoc
+       */
+      def serializeToJavadoc(Pattern pattern) {
+          var javadocString = pattern.serialize
+          if (javadocString.nullOrEmpty) {
+              return "Serialization error, check Log"
+          }
+          javadocString = javadocString.replaceAll(java.util.regex.Pattern::quote("\\\""),Matcher::quoteReplacement("\""))
+          javadocString = javadocString.replaceAll("@","{@literal @}")
+          javadocString = javadocString.replaceAll("<","{@literal <}")
+          javadocString = javadocString.replaceAll(">","{@literal >}")
+          return javadocString.trim
+      }
+      
+      /**
      * Returns the file header comment at the beginning of the text corresponding
      * to the pattern model.
      * The comment text is escaped, so it does not include stars in multi-line comments.
      * 
      * @since 1.3
      */
-  	def getFileComment(PatternModel patternModel) {
-  	    val patternNode = NodeModelUtils.getNode(patternModel)
-  	    val possibleFileComment = patternNode?.firstChild?.nextSibling
-  	    if (possibleFileComment != null) {
+      def getFileComment(PatternModel patternModel) {
+          val patternNode = NodeModelUtils.getNode(patternModel)
+          val possibleFileComment = patternNode?.firstChild?.nextSibling
+          if (possibleFileComment != null) {
             val grammarElement = possibleFileComment.grammarElement
             if (grammarElement == grammar.getML_COMMENTRule) {
                 val multiLineCommentText = possibleFileComment.text.escape
@@ -274,157 +274,157 @@ class EMFPatternLanguageJvmModelInferrerUtil {
                 return singleLineCommentText
             }
         }
-  	    return '''Generated from «patternModel.eResource?.URI»'''
-  	}
-  	
-  	/**
-  	 * Returns the file header comment at the beginning of the text corresponding 
-  	 * to the pattern model containing the given pattern.
+          return '''Generated from «patternModel.eResource?.URI»'''
+      }
+      
+      /**
+       * Returns the file header comment at the beginning of the text corresponding 
+       * to the pattern model containing the given pattern.
      * The comment text is escaped, so it does not include stars in multi-line comments.
      * 
-  	 * @since 1.3
-  	 */
-  	def getFileComment(Pattern pattern) {
-  	    val patternModel = EcoreUtil2.getContainerOfType(pattern, PatternModel)
-  	    return patternModel.fileComment
-  	}
-  	
-  	/**
-  	 * Escapes the input to be usable in literal strings
-  	 */
-  	def escapeToQuotedString(String inputString) {
-  		var String string = inputString
-  		if (string.nullOrEmpty) {
-  			return ""
-  		}
-  		string = string.replace("\\", "\\\\")
-  		string = string.replace("\n", "\\n")
-  		string = string.replace("\t", "\\t")
-  		string = string.replace('"', "\\\"")
-  		return string.trim
-  	}
+       * @since 1.3
+       */
+      def getFileComment(Pattern pattern) {
+          val patternModel = EcoreUtil2.getContainerOfType(pattern, PatternModel)
+          return patternModel.fileComment
+      }
+      
+      /**
+       * Escapes the input to be usable in literal strings
+       */
+      def escapeToQuotedString(String inputString) {
+          var String string = inputString
+          if (string.nullOrEmpty) {
+              return ""
+          }
+          string = string.replace("\\", "\\\\")
+          string = string.replace("\n", "\\n")
+          string = string.replace("\t", "\\t")
+          string = string.replace('"', "\\\"")
+          return string.trim
+      }
 
-  	/**
-  	 * Serializes EObject to a String representation. Escapes only the double qoutes.
-  	 */
-  	def private serialize(EObject eObject) {
-  		try {
-  			// This call sometimes causes ConcurrentModificationException
+      /**
+       * Serializes EObject to a String representation. Escapes only the double qoutes.
+       */
+      def private serialize(EObject eObject) {
+          try {
+              // This call sometimes causes ConcurrentModificationException
 //			val serializedObject = serializer.serialize(eObject)
-			// Another way to serialize the eObject, uses the current node model
-			// simple getText returns the currently text, that parsed by the editor
-			val eObjectNode = NodeModelUtils::getNode(eObject)
-			if (eObjectNode != null) {
-				return escape(eObjectNode.text)
-			}
-			// getTokenText returns the string without hidden tokens
+            // Another way to serialize the eObject, uses the current node model
+            // simple getText returns the currently text, that parsed by the editor
+            val eObjectNode = NodeModelUtils::getNode(eObject)
+            if (eObjectNode != null) {
+                return escape(eObjectNode.text)
+            }
+            // getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
-		} catch (Exception e) {
-			if (logger != null) {
-				logger.error("Error when serializing " + eObject.eClass.name, e)
-			}
-		}
-		return null
-  	}
+        } catch (Exception e) {
+            if (logger != null) {
+                logger.error("Error when serializing " + eObject.eClass.name, e)
+            }
+        }
+        return null
+      }
 
-  	def private escape(String escapable) {
-  		if (escapable == null) return null
-  		// escape double quotes
-  		var escapedString = escapable.replaceAll("\"", "\\\\\"")
-		escapedString = escapedString.replaceAll("\\*+/", "")
-			.replaceAll("/*\\*", "");
-  		return escapedString
-  	}
+      def private escape(String escapable) {
+          if (escapable == null) return null
+          // escape double quotes
+          var escapedString = escapable.replaceAll("\"", "\\\\\"")
+        escapedString = escapedString.replaceAll("\\*+/", "")
+            .replaceAll("/*\\*", "");
+          return escapedString
+      }
 
-  	/**
-  	 * Returns the packageName: PatternModel.packageName or "" when nullOrEmpty.
-  	 */
-  	def getPackageName(Pattern pattern) {
-  		var packageName = (pattern.eContainer as PatternModel).packageName
-	   	if (packageName.nullOrEmpty) {
-	   		packageName = ""
-	   	}
-	   	return packageName.toLowerCase
-  	}
+      /**
+       * Returns the packageName: PatternModel.packageName or "" when nullOrEmpty.
+       */
+      def getPackageName(Pattern pattern) {
+          var packageName = (pattern.eContainer as PatternModel).packageName
+           if (packageName.nullOrEmpty) {
+               packageName = ""
+           }
+           return packageName.toLowerCase
+      }
 
-  	def getUtilPackageName(Pattern pattern) {
-  		return getPackageName(pattern)+".util"
-  	}
-  	
-  	/**
-  	 * @since 1.6
-  	 */
-  	def getInternalSpecificationPackage(Pattern pattern) {
-  		return getPackageName(pattern)+".internal"
-  	}
+      def getUtilPackageName(Pattern pattern) {
+          return getPackageName(pattern)+".util"
+      }
+      
+      /**
+       * @since 1.6
+       */
+      def getInternalSpecificationPackage(Pattern pattern) {
+          return getPackageName(pattern)+".internal"
+      }
 
-	/**
-  	 * Returns the packageName: PatternModel.packageName + Pattern.name, packageName is ignored, when nullOrEmpty.
-  	 */
-  	def getPackageNameOld(Pattern pattern) {
-  		var packageName = (pattern.eContainer as PatternModel).packageName
-	   	if (packageName.nullOrEmpty) {
-	   		packageName = ""
-	   	} else {
-	   		packageName = packageName + "."
-	   	}
-	   	return (packageName + pattern.name).toLowerCase
-  	}
+    /**
+       * Returns the packageName: PatternModel.packageName + Pattern.name, packageName is ignored, when nullOrEmpty.
+       */
+      def getPackageNameOld(Pattern pattern) {
+          var packageName = (pattern.eContainer as PatternModel).packageName
+           if (packageName.nullOrEmpty) {
+               packageName = ""
+           } else {
+               packageName = packageName + "."
+           }
+           return (packageName + pattern.name).toLowerCase
+      }
 
 
-	def getPackagePath(Pattern pattern) {
-		pattern.packageName.replace(".","/")
-	}
+    def getPackagePath(Pattern pattern) {
+        pattern.packageName.replace(".","/")
+    }
 
-	/**
-	 * Calculates the correct package path for a selected fqn
-	 */
-	def getPackagePath(String fqn) {
-		val split = Splitter.on(".").split(fqn)
+    /**
+     * Calculates the correct package path for a selected fqn
+     */
+    def getPackagePath(String fqn) {
+        val split = Splitter.on(".").split(fqn)
 
-		split.take(split.size - 1).join("/")
-	}
+        split.take(split.size - 1).join("/")
+    }
 
-	/**
-	 * This method returns the pattern name.
-	 * If the pattern name contains the package (any dot),
-	 * then removes all segment except the last one.
-	 */
-	def realPatternName(String fqn) {
-		Splitter.on(".").split(fqn).last
-	}
-	
-	def findInferredSpecification(Pattern pattern) {
-		pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification), typeof (BaseGeneratedPrivateEMFQuerySpecification))
-	}
-	
-	/**
-	 * Returns an inferred class with a predefined <em>direct</em> subtype
-	 */
-	def findInferredClass(EObject pattern, Class<?> clazz) {
-	    findInferredClass(pattern, #{clazz})
-	}
-	/**
-	 * Returns an inferred class with a predefined <em>direct</em> subtype (one of the given values)
-	 * @param pattern the source pattern
-	 * @param clazzes a set of classes to check whether the inferred class has any as given values
-	 * @since 1.6
-	 */
-	def findInferredClass(EObject pattern, Class<?>... clazzes) {
-		associations.getJvmElements(pattern).filter(typeof(JvmType)).findFirst[
-			clazzes.exists[clazz | isCompatibleWith(clazz)]
-		]
-	}
-	
-	def boolean isCompatibleWith(JvmType type, Class<?> clazz) {
-		type.is(clazz) || (
-			type instanceof JvmDeclaredType && (type as JvmDeclaredType).superTypes.exists[it.is(clazz)]
-		)
-	}
-	
-	def isPublic(Pattern pattern) {
-		!CorePatternLanguageHelper::isPrivate(pattern)
-	}
+    /**
+     * This method returns the pattern name.
+     * If the pattern name contains the package (any dot),
+     * then removes all segment except the last one.
+     */
+    def realPatternName(String fqn) {
+        Splitter.on(".").split(fqn).last
+    }
+    
+    def findInferredSpecification(Pattern pattern) {
+        pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification), typeof (BaseGeneratedPrivateEMFQuerySpecification))
+    }
+    
+    /**
+     * Returns an inferred class with a predefined <em>direct</em> subtype
+     */
+    def findInferredClass(EObject pattern, Class<?> clazz) {
+        findInferredClass(pattern, #{clazz})
+    }
+    /**
+     * Returns an inferred class with a predefined <em>direct</em> subtype (one of the given values)
+     * @param pattern the source pattern
+     * @param clazzes a set of classes to check whether the inferred class has any as given values
+     * @since 1.6
+     */
+    def findInferredClass(EObject pattern, Class<?>... clazzes) {
+        associations.getJvmElements(pattern).filter(typeof(JvmType)).findFirst[
+            clazzes.exists[clazz | isCompatibleWith(clazz)]
+        ]
+    }
+    
+    def boolean isCompatibleWith(JvmType type, Class<?> clazz) {
+        type.is(clazz) || (
+            type instanceof JvmDeclaredType && (type as JvmDeclaredType).superTypes.exists[it.is(clazz)]
+        )
+    }
+    
+    def isPublic(Pattern pattern) {
+        !CorePatternLanguageHelper::isPrivate(pattern)
+    }
 
     def variables(XExpression ex) {
         val body = EcoreUtil2.getContainerOfType(ex, PatternBody)

@@ -31,10 +31,10 @@ public class JoinOrderingHeuristics implements Comparator<JoinCandidate> {
                         && consider(preferTrue(a.isSubsumption(), b.isSubsumption()))
                         && consider(preferTrue(a.isCheckOnly(), b.isCheckOnly()))
                         && consider( 
-                        		Options.functionalDependencyOption == Options.FunctionalDependencyOption.OFF ?
-                        		dontCare() :
-                        		preferTrue(a.isHeath(), b.isHeath())
-                        	)
+                                Options.functionalDependencyOption == Options.FunctionalDependencyOption.OFF ?
+                                dontCare() :
+                                preferTrue(a.isHeath(), b.isHeath())
+                            )
                         && consider(preferFalse(a.isDescartes(), b.isDescartes()))
 
                         // TODO main heuristic decisions

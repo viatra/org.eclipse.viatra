@@ -62,18 +62,18 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
      *            the projection indexer whose tuple groups should be aggregated
      */
     public void initializeWith(ProjectionIndexer projection) {
-    	this.projection = projection;
-    	this.sourceWidth = projection.getMask().indices.length;
-    	
-    	for (Tuple signature : projection.getSignatures()) {
-    		mainAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
-    	}
-    	projection.attachListener(new DefaultIndexerListener(this) {
-    		@Override
-    		public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-    			aggregateUpdate(direction, updateElement, signature, change);
-    		}
-    	});
+        this.projection = projection;
+        this.sourceWidth = projection.getMask().indices.length;
+        
+        for (Tuple signature : projection.getSignatures()) {
+            mainAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
+        }
+        projection.attachListener(new DefaultIndexerListener(this) {
+            @Override
+            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+                aggregateUpdate(direction, updateElement, signature, change);
+            }
+        });
     }
 
     /**
@@ -173,8 +173,8 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateToIndexerParent() && projection != null)
+        super.assignTraceInfo(traceInfo);
+        if (traceInfo.propagateToIndexerParent() && projection != null)
             projection.acceptPropagatedTraceInfo(traceInfo);
     }
 

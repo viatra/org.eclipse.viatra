@@ -31,40 +31,40 @@ import org.eclipse.ui.part.WorkbenchPart;
  */
 public abstract class ViatraViewersPartSupport {
 
-	/**
-	 * The "owner" of this support instance.
-	 */
-	protected IWorkbenchPart owner;
-	
-	/**
-	 * Constructs a new support instance.
-	 */
-	public ViatraViewersPartSupport(IWorkbenchPart _owner, ViewersComponentConfiguration _config) {
-		this.owner = _owner;
-		this.configuration = _config;
-	}
-	
-	/**
-	 * Initialize the support instance.
-	 */
-	protected void init() {
-		this.owner.getSite().getPage().addSelectionListener(forwardRevealListener);
-	}
-	
-	/**
-	 * Dispose the support instance.
-	 * Should be called when the owner {@link IWorkbenchPart} it starting to dispose itself.
-	 */
-	public void dispose() {
-		this.owner.getSite().getPage().removeSelectionListener(forwardRevealListener);
-	}
-	
-	/**
-	 * The configuration DTO.
-	 */
-	public ViewersComponentConfiguration configuration;
-	
-	/**
+    /**
+     * The "owner" of this support instance.
+     */
+    protected IWorkbenchPart owner;
+    
+    /**
+     * Constructs a new support instance.
+     */
+    public ViatraViewersPartSupport(IWorkbenchPart _owner, ViewersComponentConfiguration _config) {
+        this.owner = _owner;
+        this.configuration = _config;
+    }
+    
+    /**
+     * Initialize the support instance.
+     */
+    protected void init() {
+        this.owner.getSite().getPage().addSelectionListener(forwardRevealListener);
+    }
+    
+    /**
+     * Dispose the support instance.
+     * Should be called when the owner {@link IWorkbenchPart} it starting to dispose itself.
+     */
+    public void dispose() {
+        this.owner.getSite().getPage().removeSelectionListener(forwardRevealListener);
+    }
+    
+    /**
+     * The configuration DTO.
+     */
+    public ViewersComponentConfiguration configuration;
+    
+    /**
      * Selection listener for the "forward reveal" feature.
      */
     private final ISelectionListener forwardRevealListener = new ISelectionListener() {
@@ -76,7 +76,7 @@ public abstract class ViatraViewersPartSupport {
             }
         }
     };
-	
+    
     protected abstract void onSelectionChanged(List<Object> object);
     
 }

@@ -241,26 +241,26 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         
         // 7. if resource is not writable, the generation will fail
         EPackage ePackage = sourceClass.getEPackage();
-		URI uri = ePackage.eResource().getURI();
+        URI uri = ePackage.eResource().getURI();
         // only file and platform resource URIs are considered safely writable
         if(!(uri.isFile() || uri.isPlatformResource())) {
-        	ValueReference useModelCodeRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
-        	boolean useModelCode = false;
-        	if(useModelCodeRef != null){
-        		useModelCode = CorePatternLanguageHelper.getValue(useModelCodeRef, Boolean.class);
-        	}
-        	String patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-			boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);
-        	
-        	if(!annotationsOK){
-        		validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, "
-        				+ "but resource with URI %s is not!", sourceClass.getName(), uri.toString()), annotation,
-        				PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
-        	} else {
-        		validator.warning(String.format("Resource at URI %s for EPackage of %s is not writable,"
-        				+ " but it already contains correct annotations.", uri.toString(), sourceClass.getName()), annotation,
-        				PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
-        	}
+            ValueReference useModelCodeRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
+            boolean useModelCode = false;
+            if(useModelCodeRef != null){
+                useModelCode = CorePatternLanguageHelper.getValue(useModelCodeRef, Boolean.class);
+            }
+            String patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+            boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);
+            
+            if(!annotationsOK){
+                validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, "
+                        + "but resource with URI %s is not!", sourceClass.getName(), uri.toString()), annotation,
+                        PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
+            } else {
+                validator.warning(String.format("Resource at URI %s for EPackage of %s is not writable,"
+                        + " but it already contains correct annotations.", uri.toString(), sourceClass.getName()), annotation,
+                        PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
+            }
         }
         
 

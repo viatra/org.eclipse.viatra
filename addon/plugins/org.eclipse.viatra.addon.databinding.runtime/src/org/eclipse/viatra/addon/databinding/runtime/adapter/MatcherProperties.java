@@ -31,16 +31,16 @@ import com.google.common.base.Preconditions;
  */
 public class MatcherProperties{
 
-	private static final String SOURCE_MUST_BE_A_PATTERN_MATCH = "Source must be a Pattern Match";
-	
-	/**
+    private static final String SOURCE_MUST_BE_A_PATTERN_MATCH = "Source must be a Pattern Match";
+    
+    /**
      * Returns the array of observable values based on a VIATRA Query specification.
      * 
      * @param The query specification
      * @return the array of values
      */
     public static String[] getPropertyNames(IQuerySpecification query) {
-    	Map<String, ObservableDefinition> parameterMap = ViatraObservables.calculateObservableValues(query);
+        Map<String, ObservableDefinition> parameterMap = ViatraObservables.calculateObservableValues(query);
         return parameterMap.keySet().toArray(new String[parameterMap.keySet().size()]);
     }
     
@@ -56,8 +56,8 @@ public class MatcherProperties{
      * @return an observable value
      */
     public static IObservableValue getObservableValue(IQuerySpecification query, IPatternMatch match, String parameterName) {
-    	Map<String, ObservableDefinition> parameterMap = ViatraObservables.calculateObservableValues(query);
-    	if (parameterMap.size() > 0) {
+        Map<String, ObservableDefinition> parameterMap = ViatraObservables.calculateObservableValues(query);
+        if (parameterMap.size() > 0) {
             ObservableDefinition def = parameterMap.get(parameterName);
             String expression = def.getExpression();
             switch (def.getType()) {
@@ -82,8 +82,8 @@ public class MatcherProperties{
      * @return a value property
      */
     public static IValueProperty getValueProperty(IQuerySpecification query, String parameterName) {
-    	Map<String, ObservableDefinition> parameterMap = ViatraObservables.calculateObservableValues(query);
-    	Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");
+        Map<String, ObservableDefinition> parameterMap = ViatraObservables.calculateObservableValues(query);
+        Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");
         ObservableDefinition def = parameterMap.get(parameterName);
         switch (def.getType()) {
             case OBSERVABLE_FEATURE:
@@ -106,7 +106,7 @@ public class MatcherProperties{
         @Override
         public Object getValueType() {
             //TODO if typed as object bindings are not displayed correctly
-        	return null;
+            return null;
         }
 
         @Override

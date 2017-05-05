@@ -37,9 +37,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
  */
 public interface PQuery extends PQueryHeader {
 
-	// TODO add "published as" back-trace to IQuerySpecification
-	// TODO rewritten as / rewritten from traceability to PDisjunction?
-	
+    // TODO add "published as" back-trace to IQuerySpecification
+    // TODO rewritten as / rewritten from traceability to PDisjunction?
+    
     /**
      * @author Zoltan Ujhelyi
      * 
@@ -119,29 +119,29 @@ public interface PQuery extends PQueryHeader {
     boolean isMutable();
 
     /**
-	 * Optional hints regarding the query evaluation strategy, to be interpreted by the query engine.
-	 * <p> To ensure the possibility of external overrides, 
-	 * 	the evaluation engine should not directly consult this field, 
-	 * 	but use an {@link IQueryBackendHintProvider} instead.
-	 */
-	public QueryEvaluationHint getEvaluationHints();
+     * Optional hints regarding the query evaluation strategy, to be interpreted by the query engine.
+     * <p> To ensure the possibility of external overrides, 
+     * 	the evaluation engine should not directly consult this field, 
+     * 	but use an {@link IQueryBackendHintProvider} instead.
+     */
+    public QueryEvaluationHint getEvaluationHints();
 
-	
-	/**
-	 * Type information, expressed on query parameters, that all matches of the query are guaranteed to respect. 
-	 * <p> At the very minimum, this should include the declared types of the parameters.
-	 * <p> The type judgement tuples shall contain the <i>parameter index</i>, NOT the {@link PParameter} object.
-	 * 
-	 * @return a non-null set of type judgements that the query guarantees for its matches
-	 */
-	public Set<TypeJudgement> getTypeGuarantees();
+    
+    /**
+     * Type information, expressed on query parameters, that all matches of the query are guaranteed to respect. 
+     * <p> At the very minimum, this should include the declared types of the parameters.
+     * <p> The type judgement tuples shall contain the <i>parameter index</i>, NOT the {@link PParameter} object.
+     * 
+     * @return a non-null set of type judgements that the query guarantees for its matches
+     */
+    public Set<TypeJudgement> getTypeGuarantees();
 
-	/**
-	 * If the query definition is uninitialized, initializes it.
-	 * @throws QueryInitializationException if initialization of query specification fails
-	 */
-	public abstract void ensureInitialized() throws QueryInitializationException;
-	
+    /**
+     * If the query definition is uninitialized, initializes it.
+     * @throws QueryInitializationException if initialization of query specification fails
+     */
+    public abstract void ensureInitialized() throws QueryInitializationException;
+    
     /**
      * Returns the end-user query specification API objects that wrap this query.
      * 

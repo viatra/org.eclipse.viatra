@@ -21,16 +21,16 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
  */
 public class ViewersRuntimeModelUtil {
 
-	public static boolean isItemQuerySpecification(IQuerySpecification<?> querySpecification) {
-		return querySpecification.getFirstAnnotationByName(ItemQuerySpecificationDescriptor.ANNOTATION_ID) != null;
-	}
-	
-	public static boolean isEdgeQuerySpecification(IQuerySpecification<?> querySpecification) {
-	    return querySpecification.getFirstAnnotationByName(EdgeQuerySpecificationDescriptor.ANNOTATION_ID) != null;
-	}
-	
-	public static boolean isContainmentQuerySpecification(IQuerySpecification<?> querySpecification) {
-	    return querySpecification.getFirstAnnotationByName(ContainmentQuerySpecificationDescriptor.ANNOTATION_ID) != null;
-	}
-	
+    public static boolean isItemQuerySpecification(IQuerySpecification<?> querySpecification) {
+        return querySpecification.getFirstAnnotationByName(ItemQuerySpecificationDescriptor.ANNOTATION_ID) != null;
+    }
+    
+    public static boolean isEdgeQuerySpecification(IQuerySpecification<?> querySpecification) {
+        return querySpecification.getFirstAnnotationByName(EdgeQuerySpecificationDescriptor.ANNOTATION_ID) != null;
+    }
+    
+    public static boolean isContainmentQuerySpecification(IQuerySpecification<?> querySpecification) {
+        return querySpecification.getFirstAnnotationByName(ContainmentQuerySpecificationDescriptor.ANNOTATION_ID) != null;
+    }
+    
 }

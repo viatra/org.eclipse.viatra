@@ -17,58 +17,58 @@ import org.eclipse.viatra.query.runtime.base.itc.misc.TestObserver;
 
 public class Graph8 extends TestGraph<Integer> {
 
-	private static final long serialVersionUID = -3807323812221410872L;
-	
-	public Graph8() {
-		super(new TestObserver<Integer>());
-	}
-	
-	public void modify() {
-		Integer n1 = Integer.valueOf(1);
-		Integer n2 = Integer.valueOf(2);
-		Integer n3 = Integer.valueOf(3);
-		Integer n4 = Integer.valueOf(4);
-		Integer n5 = Integer.valueOf(5);
-		
-		this.insertNode(n1);
-		this.insertNode(n2);
-		this.insertNode(n3);
-		this.insertNode(n4);
-		this.insertNode(n5);
-		
-		this.observer.clearTuples();
-		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n2));
-		this.insertEdge(n1, n2);
-		
-		this.observer.clearTuples();
-		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n3));
-		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n3));
-		this.insertEdge(n2, n3);
-		
-		this.observer.clearTuples();
-		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
-		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n4));
-		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n4));
-		this.insertEdge(n3, n4);
-		
-		this.observer.clearTuples();
-		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n5));
-		this.insertEdge(n1, n5);
-		
-		this.observer.clearTuples();
-		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n4));
-		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
-		this.insertEdge(n5, n4);
+    private static final long serialVersionUID = -3807323812221410872L;
+    
+    public Graph8() {
+        super(new TestObserver<Integer>());
+    }
+    
+    public void modify() {
+        Integer n1 = Integer.valueOf(1);
+        Integer n2 = Integer.valueOf(2);
+        Integer n3 = Integer.valueOf(3);
+        Integer n4 = Integer.valueOf(4);
+        Integer n5 = Integer.valueOf(5);
+        
+        this.insertNode(n1);
+        this.insertNode(n2);
+        this.insertNode(n3);
+        this.insertNode(n4);
+        this.insertNode(n5);
+        
+        this.observer.clearTuples();
+        this.observer.addInsertedTuple(new Tuple<Integer>(n1, n2));
+        this.insertEdge(n1, n2);
+        
+        this.observer.clearTuples();
+        this.observer.addInsertedTuple(new Tuple<Integer>(n1, n3));
+        this.observer.addInsertedTuple(new Tuple<Integer>(n2, n3));
+        this.insertEdge(n2, n3);
+        
+        this.observer.clearTuples();
+        this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
+        this.observer.addInsertedTuple(new Tuple<Integer>(n2, n4));
+        this.observer.addInsertedTuple(new Tuple<Integer>(n3, n4));
+        this.insertEdge(n3, n4);
+        
+        this.observer.clearTuples();
+        this.observer.addInsertedTuple(new Tuple<Integer>(n1, n5));
+        this.insertEdge(n1, n5);
+        
+        this.observer.clearTuples();
+        this.observer.addInsertedTuple(new Tuple<Integer>(n5, n4));
+        this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
+        this.insertEdge(n5, n4);
 
-		this.observer.clearTuples();
-		this.observer.addDeletedTuple(new Tuple<Integer>(n3, n4));
-		this.observer.addDeletedTuple(new Tuple<Integer>(n2, n4));
-		this.deleteEdge(n3, n4);
-		
-		this.observer.clearTuples();
-		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n4));
-		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
-		this.insertEdge(n5, n4);
-		
-	}
+        this.observer.clearTuples();
+        this.observer.addDeletedTuple(new Tuple<Integer>(n3, n4));
+        this.observer.addDeletedTuple(new Tuple<Integer>(n2, n4));
+        this.deleteEdge(n3, n4);
+        
+        this.observer.clearTuples();
+        this.observer.addInsertedTuple(new Tuple<Integer>(n5, n4));
+        this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
+        this.insertEdge(n5, n4);
+        
+    }
 }

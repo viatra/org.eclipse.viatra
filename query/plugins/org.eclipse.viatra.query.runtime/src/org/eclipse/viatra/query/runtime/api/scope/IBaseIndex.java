@@ -20,9 +20,9 @@ import java.util.concurrent.Callable;
  * 
  */
 public interface IBaseIndex {
-	// TODO lightweightObserver?
-	// TODO ViatraBaseIndexChangeListener?
-	
+    // TODO lightweightObserver?
+    // TODO ViatraBaseIndexChangeListener?
+    
     /**
      * The given callback will be executed, and all model traversals and index registrations will be delayed until the
      * execution is done. If there are any outstanding feature, class or datatype registrations, a single coalesced model
@@ -31,7 +31,7 @@ public interface IBaseIndex {
      * @param callable
      */
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
-	
+    
     /**
      * Adds a coarse-grained listener that will be invoked after the NavigationHelper index or the underlying model is changed. Can be used
      * e.g. to check model contents. Not intended for general use.

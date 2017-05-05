@@ -24,13 +24,13 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ 
-		DRedGraphsTestCase.class,
-		DRedCompleteGraphTestCase.class, 
-		DFSCompleteGraphTestCase.class, 
-		CountingCompleteGraphTestCase.class,
-		IncSCCGraphsTestCase.class,
-		IncSCCCompleteGraphTestCase.class,
-		IncSCCPathConstructionTestCase.class
+        DRedGraphsTestCase.class,
+        DRedCompleteGraphTestCase.class, 
+        DFSCompleteGraphTestCase.class, 
+        CountingCompleteGraphTestCase.class,
+        IncSCCGraphsTestCase.class,
+        IncSCCCompleteGraphTestCase.class,
+        IncSCCPathConstructionTestCase.class
 })
 public class TransitiveClosureAlgorithmTestSuite {
 

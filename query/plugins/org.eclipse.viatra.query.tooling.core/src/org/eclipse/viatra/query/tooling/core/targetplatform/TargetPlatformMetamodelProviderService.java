@@ -40,7 +40,7 @@ import com.google.inject.Inject;
  *
  */
 public class TargetPlatformMetamodelProviderService extends
-		BaseMetamodelProviderService implements IMetamodelProviderInstance {
+        BaseMetamodelProviderService implements IMetamodelProviderInstance {
     
     @Override
     public String getIdentifier() {
@@ -67,47 +67,47 @@ public class TargetPlatformMetamodelProviderService extends
         return metamodelLoader.listEPackages();
     }
     
-	@Inject
-	private ITargetPlatformMetamodelLoader metamodelLoader;
-	
-	 @Override
-	public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
-		final ResourceSet resourceSet = context.eResource().getResourceSet();
-		List<String> tpmetamodels = metamodelLoader.listEPackages();
-		List<IEObjectDescription> metamodels = new ArrayList<IEObjectDescription>();
-		for (String metamodel : tpmetamodels) {
-		    EPackage ePackage = metamodelLoader.loadPackage(resourceSet, metamodel);
+    @Inject
+    private ITargetPlatformMetamodelLoader metamodelLoader;
+    
+     @Override
+    public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
+        final ResourceSet resourceSet = context.eResource().getResourceSet();
+        List<String> tpmetamodels = metamodelLoader.listEPackages();
+        List<IEObjectDescription> metamodels = new ArrayList<IEObjectDescription>();
+        for (String metamodel : tpmetamodels) {
+            EPackage ePackage = metamodelLoader.loadPackage(resourceSet, metamodel);
             QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(metamodel);
             metamodels.add(EObjectDescription.create(qualifiedName, ePackage,
                     Collections.singletonMap("nsURI", "true")));
-		}
-		
-		for (IEObjectDescription description : delegateScope.getAllElements()) {
-		    String value = description.getUserData("nsURI");
-		    boolean isNsURI = (value == null) ? false : Boolean.valueOf(value);
-		    if (!tpmetamodels.contains(description.getQualifiedName().toString()) && isNsURI) {
-		        metamodels.add(description);
-		        tpmetamodels.add(description.getQualifiedName().toString());
-		    }
-		}
+        }
+        
+        for (IEObjectDescription description : delegateScope.getAllElements()) {
+            String value = description.getUserData("nsURI");
+            boolean isNsURI = (value == null) ? false : Boolean.valueOf(value);
+            if (!tpmetamodels.contains(description.getQualifiedName().toString()) && isNsURI) {
+                metamodels.add(description);
+                tpmetamodels.add(description.getQualifiedName().toString());
+            }
+        }
         return new SimpleScope(IScope.NULLSCOPE, Iterables.filter(metamodels, 
-        		new Predicate<IEObjectDescription>() {
-        	public boolean apply(IEObjectDescription desc){
-        		return desc.getEObjectOrProxy() != null;
-        	}
-		}));
-	}
-	
-	protected GenPackage internalFindGenPackage(ResourceSet resourceSet, String packageUri){
-		return metamodelLoader.loadGenPackage(resourceSet, packageUri);
-	}
-	
-	@Override
-	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-	    EPackage pack = metamodelLoader.loadPackage(resourceSet, packageUri);
+                new Predicate<IEObjectDescription>() {
+            public boolean apply(IEObjectDescription desc){
+                return desc.getEObjectOrProxy() != null;
+            }
+        }));
+    }
+    
+    protected GenPackage internalFindGenPackage(ResourceSet resourceSet, String packageUri){
+        return metamodelLoader.loadGenPackage(resourceSet, packageUri);
+    }
+    
+    @Override
+    public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
+        EPackage pack = metamodelLoader.loadPackage(resourceSet, packageUri);
         return pack;
-	}
-	
+    }
+    
     @Override
     protected String doGetQualifiedClassName(EClassifier classifier, EObject context) {
         if (context.eResource() != null) {

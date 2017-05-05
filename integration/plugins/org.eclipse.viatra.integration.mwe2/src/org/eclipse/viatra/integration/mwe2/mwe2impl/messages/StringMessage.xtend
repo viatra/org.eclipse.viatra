@@ -18,20 +18,20 @@ import org.eclipse.viatra.integration.mwe2.IMessage
  * @author Peter Lunk
  */
 class StringMessage implements IMessage<String>{
-	
-	String parameter
-	
-	new(String parameter){
-		this.parameter = parameter
-	}
-	
-	override getParameter() {
-		return parameter
-	}
-	
-	override setParameter(String parameter) {
-		this.parameter = parameter
-	}
-	
+    
+    String parameter
+    
+    new(String parameter){
+        this.parameter = parameter
+    }
+    
+    override getParameter() {
+        return parameter
+    }
+    
+    override setParameter(String parameter) {
+        this.parameter = parameter
+    }
+    
 
 }

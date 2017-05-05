@@ -15,5 +15,5 @@ package org.eclipse.viatra.query.runtime.rete.traceability;
  * @author Bergmann Gabor
  */
 public interface PatternTraceInfo extends TraceInfo {
-	String getPatternName();		
+    String getPatternName();		
 }

@@ -19,32 +19,32 @@ import org.eclipse.xtend.lib.annotations.Accessors
  */
 class QueryDescriptor {
 
-	@Accessors(PUBLIC_GETTER)
-	val String name
+    @Accessors(PUBLIC_GETTER)
+    val String name
 
-	val Set<PatternDescriptor> patterns
-	val Set<EClass> classes
+    val Set<PatternDescriptor> patterns
+    val Set<EClass> classes
 
-	new(String name, Set<PatternDescriptor> patterns, Set<EClass> classes) {
-		this.name = name
+    new(String name, Set<PatternDescriptor> patterns, Set<EClass> classes) {
+        this.name = name
 
-		this.patterns = patterns
-		this.classes = classes
-	}
+        this.patterns = patterns
+        this.classes = classes
+    }
 
-	def getPatterns() {
-		patterns.groupBy[it.name].unmodifiableView
-	}
+    def getPatterns() {
+        patterns.groupBy[it.name].unmodifiableView
+    }
 
-	def getClasses() {
-		classes.unmodifiableView
-	}
-	
-	override toString() '''
-		Query<«name»>:
-			«FOR pattern : patterns»
-				«pattern»
-			«ENDFOR»		
-	'''
-	
+    def getClasses() {
+        classes.unmodifiableView
+    }
+    
+    override toString() '''
+        Query<«name»>:
+            «FOR pattern : patterns»
+                «pattern»
+            «ENDFOR»		
+    '''
+    
 }

@@ -20,14 +20,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
  *
  */
 public interface IFlattenCallPredicate {
-	
-	/**
+    
+    /**
      * Decides whether the called query by the pattern call should be flattened into the caller or not.
      * 
      * @param positivePatternCall
      *            the pattern call
      * @return true if the call should be flattened
      */
-	boolean shouldFlatten(PositivePatternCall positivePatternCall);
-	
+    boolean shouldFlatten(PositivePatternCall positivePatternCall);
+    
 }

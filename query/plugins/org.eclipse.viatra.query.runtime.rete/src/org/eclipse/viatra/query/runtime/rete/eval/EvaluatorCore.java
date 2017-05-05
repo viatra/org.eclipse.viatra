@@ -24,29 +24,29 @@ import org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider;
  * @since 1.5
  */
 public abstract class EvaluatorCore {
-	
-	public abstract Tuple tupleFromResult(Tuple incoming, Object evaluationresult); 
-	/**
-	 * E.g. "eval()"
-	 */
-	protected abstract String evaluationKind(); 
-	
+    
+    public abstract Tuple tupleFromResult(Tuple incoming, Object evaluationresult); 
+    /**
+     * E.g. "eval()"
+     */
+    protected abstract String evaluationKind(); 
+    
 
     protected Logger logger;
     protected IExpressionEvaluator evaluator;    
     int sourceTupleWidth;
     private Map<String, Integer> parameterPositions;
-	protected IQueryRuntimeContext runtimeContext;
+    protected IQueryRuntimeContext runtimeContext;
     
-	protected IEvaluatorNode evaluatorNode;
+    protected IEvaluatorNode evaluatorNode;
     
     public EvaluatorCore(Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
-		this.logger = logger;
-		this.evaluator = evaluator;
+        this.logger = logger;
+        this.evaluator = evaluator;
         this.parameterPositions = parameterPositions;
-		this.sourceTupleWidth = sourceTupleWidth;
-	}
+        this.sourceTupleWidth = sourceTupleWidth;
+    }
     
     public void init(IEvaluatorNode evaluatorNode) {
         this.evaluatorNode = evaluatorNode;
@@ -65,14 +65,14 @@ public abstract class EvaluatorCore {
             result = evaluator.evaluateExpression(tupleParameters);
         } catch (Exception e) {
             logger.warn(
-            		String.format(
-            				"The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
-            				evaluationKind(), 
-            				evaluatorNode.prettyPrintTraceInfoPatternList(), 
-            				prettyPrintTuple(ps), 
-            				e.getMessage(), e.getClass().getSimpleName(), 
-            				this.evaluatorNode
-            		), 
+                    String.format(
+                            "The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
+                            evaluationKind(), 
+                            evaluatorNode.prettyPrintTraceInfoPatternList(), 
+                            prettyPrintTuple(ps), 
+                            e.getMessage(), e.getClass().getSimpleName(), 
+                            this.evaluatorNode
+                    ), 
             e);
 
             result = errorResult();
@@ -81,12 +81,12 @@ public abstract class EvaluatorCore {
         return result;
     }
     
-	protected String prettyPrintTuple(Tuple ps) {
+    protected String prettyPrintTuple(Tuple ps) {
         return ps.toString();
     }
-	protected Object errorResult() {return null; }
+    protected Object errorResult() {return null; }
 
-	public static class PredicateEvaluatorCore extends EvaluatorCore {
+    public static class PredicateEvaluatorCore extends EvaluatorCore {
 
         public PredicateEvaluatorCore(Logger logger, IExpressionEvaluator evaluator,
                 Map<String, Integer> parameterPositions, int sourceTupleWidth) {
@@ -102,9 +102,9 @@ public abstract class EvaluatorCore {
         protected String evaluationKind() {
             return "check()";
         }
-	    
-	}
-	
+        
+    }
+    
     public static class FunctionEvaluatorCore extends EvaluatorCore {
 
         public FunctionEvaluatorCore(Logger logger, IExpressionEvaluator evaluator,

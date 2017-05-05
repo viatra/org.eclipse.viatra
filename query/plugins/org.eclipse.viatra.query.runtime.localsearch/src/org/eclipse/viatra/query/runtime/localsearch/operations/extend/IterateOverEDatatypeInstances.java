@@ -56,9 +56,9 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
     }
     
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(position, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(position, new Integer[0]);
+    }
 
     /**
      * @since 1.4

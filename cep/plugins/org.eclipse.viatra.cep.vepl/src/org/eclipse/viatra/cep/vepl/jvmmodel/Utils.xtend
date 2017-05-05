@@ -27,70 +27,70 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 class Utils {
 
-	@Inject extension TypeReferenceSerializer typeReferenceSerializer
-	@Inject extension JvmTypesBuilder jvmTypesBuilder
-	@Inject extension TypeReferences references
+    @Inject extension TypeReferenceSerializer typeReferenceSerializer
+    @Inject extension JvmTypesBuilder jvmTypesBuilder
+    @Inject extension TypeReferences references
 
-	def JvmOperation toAdvancedSetter(ModelElement element, String name, JvmTypeReference type,
-		JvmTypeReferenceBuilder typeRefBuilder, int index) {
-		val advancedSetter = TypesFactory.eINSTANCE.createJvmOperation
-		advancedSetter.simpleName = "set" + name.toFirstUpper
-		advancedSetter.returnType = typeRefBuilder.typeRef("void")
-		advancedSetter.parameters.add(element.toParameter(name, type))
-		advancedSetter.setVisibility(JvmVisibility.PUBLIC)
-		advancedSetter.setBody [
-			append(
-				'''
-				this.«name» = «name»;
-				getParameters().set(«index», «name»);''')
-		]
-		return advancedSetter
-	}
+    def JvmOperation toAdvancedSetter(ModelElement element, String name, JvmTypeReference type,
+        JvmTypeReferenceBuilder typeRefBuilder, int index) {
+        val advancedSetter = TypesFactory.eINSTANCE.createJvmOperation
+        advancedSetter.simpleName = "set" + name.toFirstUpper
+        advancedSetter.returnType = typeRefBuilder.typeRef("void")
+        advancedSetter.parameters.add(element.toParameter(name, type))
+        advancedSetter.setVisibility(JvmVisibility.PUBLIC)
+        advancedSetter.setBody [
+            append(
+                '''
+                this.«name» = «name»;
+                getParameters().set(«index», «name»);''')
+        ]
+        return advancedSetter
+    }
 
-	def addOverrideAnnotation(JvmOperation method, EObject context) {
-		method.annotations += TypesFactory.eINSTANCE.createJvmAnnotationReference => [
-			it.annotation = references.findDeclaredType(typeof(Override), context) as JvmAnnotationType
-		]
-	}
+    def addOverrideAnnotation(JvmOperation method, EObject context) {
+        method.annotations += TypesFactory.eINSTANCE.createJvmAnnotationReference => [
+            it.annotation = references.findDeclaredType(typeof(Override), context) as JvmAnnotationType
+        ]
+    }
 
-	def wildCardExtends(JvmTypeReference clone) {
-		var result = TypesFactory.eINSTANCE.createJvmWildcardTypeReference();
-		var upperBound = TypesFactory.eINSTANCE.createJvmUpperBound();
-		upperBound.setTypeReference(clone);
-		result.getConstraints().add(upperBound);
-		return result;
-	}
+    def wildCardExtends(JvmTypeReference clone) {
+        var result = TypesFactory.eINSTANCE.createJvmWildcardTypeReference();
+        var upperBound = TypesFactory.eINSTANCE.createJvmUpperBound();
+        upperBound.setTypeReference(clone);
+        result.getConstraints().add(upperBound);
+        return result;
+    }
 
-	def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, QualifiedName fqn, EObject ctx) {
-		referClass(appendable, typeRefBuilder, fqn.toString, ctx)
-	}
+    def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, QualifiedName fqn, EObject ctx) {
+        referClass(appendable, typeRefBuilder, fqn.toString, ctx)
+    }
 
-	def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, String fqn, EObject ctx) {
-		val ref = typeRefBuilder.typeRef(fqn)
-		if (ref != null) {
-			appendable.serialize(ref, ctx)
-		} else {
+    def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, String fqn, EObject ctx) {
+        val ref = typeRefBuilder.typeRef(fqn)
+        if (ref != null) {
+            appendable.serialize(ref, ctx)
+        } else {
 
-			//Class resolution error - error handling required here
-			//A fallback to writing out the fqn of the class
-			appendable.append(fqn.toString)
-		}
-	}
+            //Class resolution error - error handling required here
+            //A fallback to writing out the fqn of the class
+            appendable.append(fqn.toString)
+        }
+    }
 
-	def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, EObject ctx, Class<?> clazz,
-		JvmTypeReference... typeArgs) {
-		val ref = typeRefBuilder.typeRef(clazz, typeArgs)
-		if (ref != null) {
-			appendable.serialize(ref, ctx)
-		} else {
+    def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, EObject ctx, Class<?> clazz,
+        JvmTypeReference... typeArgs) {
+        val ref = typeRefBuilder.typeRef(clazz, typeArgs)
+        if (ref != null) {
+            appendable.serialize(ref, ctx)
+        } else {
 
-			//Class resolution error - error handling required here
-			//A fallback to writing out the fqn of the class
-			appendable.append(clazz.canonicalName)
-		}
-	}
+            //Class resolution error - error handling required here
+            //A fallback to writing out the fqn of the class
+            appendable.append(clazz.canonicalName)
+        }
+    }
 
-	def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
-		typeReferenceSerializer.serialize(ref, ctx, appendable)
-	}
+    def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
+        typeReferenceSerializer.serialize(ref, ctx, appendable)
+    }
 }

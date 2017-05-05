@@ -21,22 +21,22 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchT
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
 
 class ResetTransformations {
-	extension BatchTransformationRuleFactory ruleFactory = new BatchTransformationRuleFactory
-	extension BatchTransformation transformation
-	extension BatchTransformationStatements statements
-	extension IModelManipulations manipulation
+    extension BatchTransformationRuleFactory ruleFactory = new BatchTransformationRuleFactory
+    extension BatchTransformation transformation
+    extension BatchTransformationStatements statements
+    extension IModelManipulations manipulation
 
-	new(InternalModel internalModel) {
-		transformation = BatchTransformation.forScope(new EMFScope(internalModel)).build
-		statements = transformation.transformationStatements
-		manipulation = new SimpleModelManipulations(transformation.queryEngine)
-	}
+    new(InternalModel internalModel) {
+        transformation = BatchTransformation.forScope(new EMFScope(internalModel)).build
+        statements = transformation.transformationStatements
+        manipulation = new SimpleModelManipulations(transformation.queryEngine)
+    }
 
-	def resetAll() {
-		deleteTokensDuringReset.fireWhilePossible
-	}
+    def resetAll() {
+        deleteTokensDuringReset.fireWhilePossible
+    }
 
-	val deleteTokensDuringReset = createRule.precondition(ResettableEventTokenMatcher::querySpecification).action[
-			automaton.eventTokens.remove(eventToken)
-		].build
+    val deleteTokensDuringReset = createRule.precondition(ResettableEventTokenMatcher::querySpecification).action[
+            automaton.eventTokens.remove(eventToken)
+        ].build
 }

@@ -124,7 +124,7 @@ public class BaseIndexOptions {
      * @since 0.9
      */
     public BaseIndexOptions withDynamicEMFMode(boolean dynamicEMFMode) {
-    	BaseIndexOptions result = copy();
+        BaseIndexOptions result = copy();
         result.dynamicEMFMode = dynamicEMFMode;
         return result;
     }
@@ -150,7 +150,7 @@ public class BaseIndexOptions {
      * @since 0.9
      */
     public BaseIndexOptions withObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
-    	BaseIndexOptions result = copy();
+        BaseIndexOptions result = copy();
         result.notifierFilterConfiguration = filter;
         return result;
     }
@@ -169,7 +169,7 @@ public class BaseIndexOptions {
      * @since 0.9
      */
     public BaseIndexOptions withResourceFilterConfiguration(IBaseIndexResourceFilter filter) {
-    	BaseIndexOptions result = copy();
+        BaseIndexOptions result = copy();
         result.resourceFilterConfiguration = filter;
         return result;
     }
@@ -232,7 +232,7 @@ public class BaseIndexOptions {
      * @deprecated use {@link #withWildcardLevel(IndexingLevel)} instead.
      */
     public BaseIndexOptions withWildcardMode(boolean wildcardMode) {
-    	BaseIndexOptions result = copy();
+        BaseIndexOptions result = copy();
         result.wildcardMode = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
         return result;
    }
@@ -299,83 +299,83 @@ public class BaseIndexOptions {
         return baseIndexOptions;
     }
 
-	@Override
-	public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(dynamicEMFMode, notifierFilterConfiguration, resourceFilterConfiguration,
                 featureFilterConfiguration, traverseOnlyWellBehavingDerivedFeatures, wildcardMode, strictNotificationMode,
                 danglingFreeAssumption);
-	}
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof BaseIndexOptions))
-			return false;
-		BaseIndexOptions other = (BaseIndexOptions) obj;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof BaseIndexOptions))
+            return false;
+        BaseIndexOptions other = (BaseIndexOptions) obj;
         if (dynamicEMFMode != other.dynamicEMFMode)
             return false;
         if (danglingFreeAssumption != other.danglingFreeAssumption)
             return false;
-		if (notifierFilterConfiguration == null) {
-			if (other.notifierFilterConfiguration != null)
-				return false;
-		} else if (!notifierFilterConfiguration
-				.equals(other.notifierFilterConfiguration))
-			return false;
-		if (resourceFilterConfiguration == null) {
-			if (other.resourceFilterConfiguration != null)
-				return false;
-		} else if (!resourceFilterConfiguration
-				.equals(other.resourceFilterConfiguration)){
-			return false;
-		}
-		
-		if (featureFilterConfiguration == null) {
+        if (notifierFilterConfiguration == null) {
+            if (other.notifierFilterConfiguration != null)
+                return false;
+        } else if (!notifierFilterConfiguration
+                .equals(other.notifierFilterConfiguration))
+            return false;
+        if (resourceFilterConfiguration == null) {
+            if (other.resourceFilterConfiguration != null)
+                return false;
+        } else if (!resourceFilterConfiguration
+                .equals(other.resourceFilterConfiguration)){
+            return false;
+        }
+        
+        if (featureFilterConfiguration == null) {
             if (other.featureFilterConfiguration != null)
                 return false;
         } else if (!featureFilterConfiguration
                 .equals(other.featureFilterConfiguration)){
             return false;
         }
-		
-		if (traverseOnlyWellBehavingDerivedFeatures != other.traverseOnlyWellBehavingDerivedFeatures)
-			return false;
-		if (wildcardMode != other.wildcardMode)
-			return false;
-		if (strictNotificationMode != other.strictNotificationMode) {
-		    return false;
-		}
-		return true;
-	}
+        
+        if (traverseOnlyWellBehavingDerivedFeatures != other.traverseOnlyWellBehavingDerivedFeatures)
+            return false;
+        if (wildcardMode != other.wildcardMode)
+            return false;
+        if (strictNotificationMode != other.strictNotificationMode) {
+            return false;
+        }
+        return true;
+    }
     
     
     @Override
     public String toString() {
-    	StringBuilder sb = new StringBuilder();
-    	appendModifier(sb, dynamicEMFMode, DYNAMIC_EMF_MODE_DEFAULT, "dynamicEMF");
+        StringBuilder sb = new StringBuilder();
+        appendModifier(sb, dynamicEMFMode, DYNAMIC_EMF_MODE_DEFAULT, "dynamicEMF");
         appendModifier(sb, wildcardMode, WILDCARD_MODE_DEFAULT, "wildcard");
         appendModifier(sb, danglingFreeAssumption, DANGLING_FREE_ASSUMPTION_DEFAULT, "danglingFreeAssumption");
-    	appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERSE_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
-    	appendModifier(sb, strictNotificationMode, STRICT_NOTIFICATION_MODE_DEFAULT, "strictNotificationMode");
-    	appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
-    	appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");
-    	appendModifier(sb, featureFilterConfiguration, null, "featureFilterConfiguration=");
-    	final String result = sb.toString();
-		return result.isEmpty() ? "defaults" : result;
+        appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERSE_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
+        appendModifier(sb, strictNotificationMode, STRICT_NOTIFICATION_MODE_DEFAULT, "strictNotificationMode");
+        appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
+        appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");
+        appendModifier(sb, featureFilterConfiguration, null, "featureFilterConfiguration=");
+        final String result = sb.toString();
+        return result.isEmpty() ? "defaults" : result;
     }
 
-	private static void appendModifier(StringBuilder sb, Object actualValue, Object expectedValue, String switchName) {
-		if (Objects.equal(expectedValue, actualValue)) {
-			// silent
-		} else {
-			sb.append(Boolean.FALSE.equals(actualValue) ? '-' : '+');
-			sb.append(switchName);
-			if (! (actualValue instanceof Boolean)) 
-				sb.append(actualValue);
-		}
-	}
+    private static void appendModifier(StringBuilder sb, Object actualValue, Object expectedValue, String switchName) {
+        if (Objects.equal(expectedValue, actualValue)) {
+            // silent
+        } else {
+            sb.append(Boolean.FALSE.equals(actualValue) ? '-' : '+');
+            sb.append(switchName);
+            if (! (actualValue instanceof Boolean)) 
+                sb.append(actualValue);
+        }
+    }
 
 }

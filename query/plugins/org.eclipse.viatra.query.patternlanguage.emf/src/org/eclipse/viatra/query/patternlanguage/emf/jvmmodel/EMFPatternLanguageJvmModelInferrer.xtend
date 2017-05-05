@@ -38,146 +38,146 @@ import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
-	private static final String JVM_MODEL_INFERRER_PREFIX = "org.eclipse.viatra.query.patternlanguage.emf.inferrer"
-	public static final String INVALID_PATTERN_MODEL_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.patternmodel";
+    private static final String JVM_MODEL_INFERRER_PREFIX = "org.eclipse.viatra.query.patternlanguage.emf.inferrer"
+    public static final String INVALID_PATTERN_MODEL_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.patternmodel";
     public static final String INVALID_TYPEREF_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.typeref";
     public static final String SPECIFICATION_BUILDER_CODE = JVM_MODEL_INFERRER_PREFIX + ".specification.builder";
 
-	@Inject
-	private Logger logger;
-	@Inject
-	private IErrorFeedback errorFeedback;
+    @Inject
+    private Logger logger;
+    @Inject
+    private IErrorFeedback errorFeedback;
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */
-	@Inject extension EMFJvmTypesBuilder
-	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	@Inject extension PatternMatchClassInferrer
-	@Inject extension PatternMatcherClassInferrer
-	@Inject extension PatternQuerySpecificationClassInferrer
-	@Inject extension PatternMatchProcessorClassInferrer
-	@Inject extension PatternGroupClassInferrer
-	@Inject extension IJvmModelAssociator associator
+    @Inject extension EMFJvmTypesBuilder
+    @Inject extension EMFPatternLanguageJvmModelInferrerUtil
+    @Inject extension PatternMatchClassInferrer
+    @Inject extension PatternMatcherClassInferrer
+    @Inject extension PatternQuerySpecificationClassInferrer
+    @Inject extension PatternMatchProcessorClassInferrer
+    @Inject extension PatternGroupClassInferrer
+    @Inject extension IJvmModelAssociator associator
 
-	/**
-	 * Is called for each Pattern instance in a resource.
-	 *
-	 * @param pattern - the model to create one or more JvmDeclaredTypes from.
-	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
-	 *                   current resource.
-	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
-	 *        must not rely on linking using the index if this is <code>true</code>
-	 */
-   	def void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
-		boolean isPrelinkingPhase) {
-		if (!pattern.name.nullOrEmpty) {
-    		val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
-    		try {
-    			if (isPublic) {
-    				pattern.inferPublic(acceptor, builder, isPrelinkingPhase)
-    			} else {
-    				pattern.inferPrivate(acceptor, builder, isPrelinkingPhase)
-    			}
-    		} catch (Exception e) {
-    				logger.error("Exception during Jvm Model Infer for: " + pattern, e)
-    		}
-		}
-	}
+    /**
+     * Is called for each Pattern instance in a resource.
+     *
+     * @param pattern - the model to create one or more JvmDeclaredTypes from.
+     * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
+     *                   current resource.
+     * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
+     *        must not rely on linking using the index if this is <code>true</code>
+     */
+       def void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+        boolean isPrelinkingPhase) {
+        if (!pattern.name.nullOrEmpty) {
+            val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
+            try {
+                if (isPublic) {
+                    pattern.inferPublic(acceptor, builder, isPrelinkingPhase)
+                } else {
+                    pattern.inferPrivate(acceptor, builder, isPrelinkingPhase)
+                }
+            } catch (Exception e) {
+                    logger.error("Exception during Jvm Model Infer for: " + pattern, e)
+            }
+        }
+    }
 
-	private def void inferPublic(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
-		boolean isPrelinkingPhase) {
-		logger.debug("Inferring Jvm Model for pattern" + pattern.name);
-		val packageName = pattern.getPackageName
-		val utilPackageName = pattern.utilPackageName
+    private def void inferPublic(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+        boolean isPrelinkingPhase) {
+        logger.debug("Inferring Jvm Model for pattern" + pattern.name);
+        val packageName = pattern.getPackageName
+        val utilPackageName = pattern.utilPackageName
 
-		val matchClass = pattern.toClass(pattern.matchClassName) [
-			it.packageName = packageName
-			superTypes += typeRef(typeof(BasePatternMatch))
-			fileHeader = pattern.fileComment
-		]
+        val matchClass = pattern.toClass(pattern.matchClassName) [
+            it.packageName = packageName
+            superTypes += typeRef(typeof(BasePatternMatch))
+            fileHeader = pattern.fileComment
+        ]
 
-		val matcherClass = pattern.toClass(pattern.matcherClassName) [
-			it.packageName = packageName
-			superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
-			fileHeader = pattern.fileComment
-		]
-		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
-			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
-		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        val matcherClass = pattern.toClass(pattern.matcherClassName) [
+            it.packageName = packageName
+            superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
+            fileHeader = pattern.fileComment
+        ]
+        val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
+            matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
 
-		acceptor.accept(querySpecificationClass) [
-			initializeSpecification(pattern, matcherClass, matchClass, builder)
-		]
-		acceptor.accept(processorClass) [
-			processorClass.inferProcessorClassMethods(pattern, matchClass)
-		]
+        acceptor.accept(querySpecificationClass) [
+            initializeSpecification(pattern, matcherClass, matchClass, builder)
+        ]
+        acceptor.accept(processorClass) [
+            processorClass.inferProcessorClassMethods(pattern, matchClass)
+        ]
 
-		acceptor.accept(matchClass) [
-			inferMatchClassElements(pattern, querySpecificationClass, _typeReferenceBuilder, _annotationTypesBuilder)
-		]
+        acceptor.accept(matchClass) [
+            inferMatchClassElements(pattern, querySpecificationClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        ]
 
-		acceptor.accept(matcherClass) [
-			inferMatcherClassElements(pattern, querySpecificationClass, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
-		]
+        acceptor.accept(matcherClass) [
+            inferMatcherClassElements(pattern, querySpecificationClass, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        ]
 
-		associator.associatePrimary(pattern, matcherClass)
-		associator.associate(pattern, matcherClass)
-		associator.associate(pattern, querySpecificationClass)
-		associator.associate(pattern, processorClass)
+        associator.associatePrimary(pattern, matcherClass)
+        associator.associate(pattern, matcherClass)
+        associator.associate(pattern, querySpecificationClass)
+        associator.associate(pattern, processorClass)
 
-	}
-
-
-	private def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
-		boolean isPrelinkingPhase) {
-		logger.debug("Inferring Jvm Model for private pattern " + pattern.name);
-		val utilPackageName = pattern.internalSpecificationPackage /* This package is not exported by design */
+    }
 
 
-		val matcherClass = typeRef(typeof(GenericPatternMatcher)).type 
-		val matchClass = typeRef(typeof(GenericPatternMatch)).type 
-		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
-			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
-		associator.associatePrimary(pattern, querySpecificationClass)
-		acceptor.accept(querySpecificationClass) [
-			initializeSpecification(querySpecificationClass, pattern, matcherClass, matchClass, builder)
-		]
-	}
-		
-   	/**
-	 * Is called for each PatternModel instance in a resource.
-	 *
-	 * @param model - the model to create one or more JvmDeclaredTypes from.
-	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
-	 *                   current resource.
-	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
-	 *        must not rely on linking using the index if this is <code>true</code>
-	 */
-   	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
-	   	try {
-	   		val builder = new SpecificationBuilder()
-   			for (pattern : model.patterns){
-   				pattern.infer(acceptor, builder, isPrelinkingPhase)
-   			}
-	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
-   			if (!model.patterns.empty) {
-	   			val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder, false)
-   				acceptor.accept(groupClass) [
-   					initializePatternGroup(model, _typeReferenceBuilder, false)
-   				]
-	   			if (model.patterns.exists[CorePatternLanguageHelper.isPrivate(it)]) {
-    	   			val privateGroupClass = model.inferPatternGroupClass(_typeReferenceBuilder, true)
-       				acceptor.accept(privateGroupClass) [
-       					initializePatternGroup(model, _typeReferenceBuilder, true)
-       				]
-	   			}
-   				model.associatePrimary(groupClass)
-   			}
-   				
-   		} catch (IllegalArgumentException e){
-   			errorFeedback.reportErrorNoLocation(model, e.message, EMFPatternLanguageJvmModelInferrer::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
-   		} catch(Exception e) {
-	   		logger.error("Exception during Jvm Model Infer for pattern model: " + model, e)
-	   	}
-   	}
+    private def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+        boolean isPrelinkingPhase) {
+        logger.debug("Inferring Jvm Model for private pattern " + pattern.name);
+        val utilPackageName = pattern.internalSpecificationPackage /* This package is not exported by design */
+
+
+        val matcherClass = typeRef(typeof(GenericPatternMatcher)).type 
+        val matchClass = typeRef(typeof(GenericPatternMatch)).type 
+        val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
+            matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        associator.associatePrimary(pattern, querySpecificationClass)
+        acceptor.accept(querySpecificationClass) [
+            initializeSpecification(querySpecificationClass, pattern, matcherClass, matchClass, builder)
+        ]
+    }
+        
+       /**
+     * Is called for each PatternModel instance in a resource.
+     *
+     * @param model - the model to create one or more JvmDeclaredTypes from.
+     * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
+     *                   current resource.
+     * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
+     *        must not rely on linking using the index if this is <code>true</code>
+     */
+       def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
+           try {
+               val builder = new SpecificationBuilder()
+               for (pattern : model.patterns){
+                   pattern.infer(acceptor, builder, isPrelinkingPhase)
+               }
+               logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
+               if (!model.patterns.empty) {
+                   val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder, false)
+                   acceptor.accept(groupClass) [
+                       initializePatternGroup(model, _typeReferenceBuilder, false)
+                   ]
+                   if (model.patterns.exists[CorePatternLanguageHelper.isPrivate(it)]) {
+                       val privateGroupClass = model.inferPatternGroupClass(_typeReferenceBuilder, true)
+                       acceptor.accept(privateGroupClass) [
+                           initializePatternGroup(model, _typeReferenceBuilder, true)
+                       ]
+                   }
+                   model.associatePrimary(groupClass)
+               }
+                   
+           } catch (IllegalArgumentException e){
+               errorFeedback.reportErrorNoLocation(model, e.message, EMFPatternLanguageJvmModelInferrer::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
+           } catch(Exception e) {
+               logger.error("Exception during Jvm Model Infer for pattern model: " + model, e)
+           }
+       }
 }

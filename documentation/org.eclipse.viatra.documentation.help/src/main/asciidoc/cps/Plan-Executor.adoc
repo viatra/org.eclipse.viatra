@@ -19,7 +19,7 @@ The initializer is responsible for creating an initial fragment object at the st
 
 ```xtend
 interface Initializer<FragmentType> {
-	def FragmentType getInitialFragment();
+    def FragmentType getInitialFragment();
 }
 ```
 
@@ -29,7 +29,7 @@ Operations are defined for a given fragment type and are executed as part of pha
 
 ```xtend
 interface IOperation<FragmentType> {
-	def boolean execute(FragmentType fragment);
+    def boolean execute(FragmentType fragment);
 }
 ```
 
@@ -39,7 +39,7 @@ Phases represent standalone execution steps that define a list of operations on 
 
 ```xtend
 interface IPhase<FragmentType> {
-	def Iterable<IOperation<FragmentType>> getOperations(FragmentType fragment);
+    def Iterable<IOperation<FragmentType>> getOperations(FragmentType fragment);
 }
 ```
 
@@ -49,8 +49,8 @@ The plan is created by adding phases that were already prepared by the same frag
 
 ```xtend
 interface IPlan<FragmentType> {
-	def void addPhase(IPhase<FragmentType> phase);
-	def Iterable<IPhase<FragmentType>> getPhases();
+    def void addPhase(IPhase<FragmentType> phase);
+    def Iterable<IPhase<FragmentType>> getPhases();
 }
 ```
 
@@ -61,84 +61,84 @@ First step is to create custom implementations of `IPlan`, `IPhase`, `IOperation
 **MyFragment**:
 ```xtend
 class MyFragment {
-	SecretStore secretStore = "";
+    SecretStore secretStore = "";
 
-	def addSecretInformation(String info) {
-		secretStore.add(info);
-	}
+    def addSecretInformation(String info) {
+        secretStore.add(info);
+    }
 
-	def encryptStore() {
-		secretStore.encrypt;
-	}
-	
-	def print() {
-		secretStore.print;
-	}
+    def encryptStore() {
+        secretStore.encrypt;
+    }
+    
+    def print() {
+        secretStore.print;
+    }
 }
 ```
 **MyInitializer**:
 ```xtend
 class MyInitializer implements Initializer<MyFragment> {
-	
-	override getInitialFragment() {
-		return new MyFragment();
-	}
-	
+    
+    override getInitialFragment() {
+        return new MyFragment();
+    }
+    
 }
 ```
 
 **MyPlan**:
 ```xtend
 class MyPlan implements IPlan<MyFragment> {
-	
-	List<IPhase<MyFragment>> phases = Lists.newArrayList;
-	
-	override addPhase(IPhase<MyFragment> phase) {
-		phases.add(phase);
-	}
-	
-	override getPhases() {
-		return phases;
-	}
-	
+    
+    List<IPhase<MyFragment>> phases = Lists.newArrayList;
+    
+    override addPhase(IPhase<MyFragment> phase) {
+        phases.add(phase);
+    }
+    
+    override getPhases() {
+        return phases;
+    }
+    
 }
 ```
 
 **MyPhase**:
 ```xtend
 class MyPhase implements IPhase<MyFragment>{
-	
-	override getOperations(MyFragment fragment) {
-		Lists.newArrayList(
+    
+    override getOperations(MyFragment fragment) {
+        Lists.newArrayList(
                    new AddSecretOperation(),
                    new EncryptStoreOperation(),
                 );
-	}
-	
+    }
+    
 }
 ```
 
 **AddSecretOperation**:
 ```xtend
 class AddSecretOperation implements IOperation<MyFragment> {
-	
-	override execute(MyFragment fragment) {
-		fragment.addSecretInformation("My Secret Information");	
-		return true;
-	}
-	
+    
+    override execute(MyFragment fragment) {
+        fragment.addSecretInformation("My Secret Information");	
+        return true;
+    }
+    
 }
 ```
 
 **EncryptStoreOperation**:
 ```xtend
 class EncryptStoreOperation implements IOperation<MyFragment> {
-	
-	override execute(MyFragment fragment) {
-		fragment.encryptStore;	
-		return true;
-	}
-	
+    
+    override execute(MyFragment fragment) {
+        fragment.encryptStore;	
+        return true;
+    }
+    
 }
 ```
 
@@ -148,13 +148,13 @@ class EncryptStoreOperation implements IOperation<MyFragment> {
 Second step is to build plan and the initializer.
 ```xtend
 class Example {
-	def static void main(String[] args) {
-		var MyPlan plan = new MyPlan;
-		plan.addPhase(new MyPhase());
-		plan.addPhase(new MyOtherPhase());
+    def static void main(String[] args) {
+        var MyPlan plan = new MyPlan;
+        plan.addPhase(new MyPhase());
+        plan.addPhase(new MyOtherPhase());
 
-		var MyInitializer initializer = new MyInitializer;
-	}
+        var MyInitializer initializer = new MyInitializer;
+    }
 }
 ```
 
@@ -163,17 +163,17 @@ class Example {
 The last step is to instantiate correct `PlanExecutor` and call the `process` method.
 ```xtend
 class Example {
-	def static void main(String[] args) {
-		var MyPlan plan = new MyPlan;
-		plan.addPhase(new MyPhase());
-		plan.addPhase(new MyOtherPhase());
+    def static void main(String[] args) {
+        var MyPlan plan = new MyPlan;
+        plan.addPhase(new MyPhase());
+        plan.addPhase(new MyOtherPhase());
 
-		var MyInitializer initializer = new MyInitializer;
+        var MyInitializer initializer = new MyInitializer;
 
-		var PlanExecutor<MyFragment, MyInitializer> planExecutor = new PlanExecutor();
-		var output = planExecutor.process(plan, initializer);
+        var PlanExecutor<MyFragment, MyInitializer> planExecutor = new PlanExecutor();
+        var output = planExecutor.process(plan, initializer);
 
-		output.print;
-	}
+        output.print;
+    }
 }
 ```

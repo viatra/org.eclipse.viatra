@@ -73,39 +73,39 @@ import com.google.common.collect.Maps;
 public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkbenchPart*/ {
 
 
-	public static final String ID = "org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView";
+    public static final String ID = "org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView";
 
-	public static final String VIEWER_KEY = "key";
+    public static final String VIEWER_KEY = "key";
     
     private OperationListContentProvider operationListContentProvider;
     private TreeViewer operationListViewer;
 
     private ZestContentViewer graphViewer;
     
-	private SashForm planSashForm;
-	private CTabFolder matchesTabFolder;
+    private SashForm planSashForm;
+    private CTabFolder matchesTabFolder;
 
-	private Map<String, TableViewer> matchViewersMap = Maps.newHashMap();
+    private Map<String, TableViewer> matchViewersMap = Maps.newHashMap();
 
-	private LocalSearchDebugger debugger;
-	private Thread planExecutorThread = null;
+    private LocalSearchDebugger debugger;
+    private Thread planExecutorThread = null;
 
-	public void createDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> query, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
-	    disposeExistingDebugger();
-	    initializeDebugger(engine, query, adornment);
-	    closeMatchTabs();
-	}
-	
+    public void createDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> query, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
+        disposeExistingDebugger();
+        initializeDebugger(engine, query, adornment);
+        closeMatchTabs();
+    }
+    
 
     private String getSimpleQueryName(PQuery query) {
         String[] stringTokens = query.getFullyQualifiedName().split("\\.");
         String queryName = stringTokens[stringTokens.length - 1];
         return queryName;
     }
-	
-	private void initializeDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> specification, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
-	    final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
-	    final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
+    
+    private void initializeDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> specification, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
+        final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
+        final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
                 .getResultProvider(specification.getInternalQueryRepresentation());
         final LocalSearchBackend localSearchBackend = (LocalSearchBackend) lsBackend;
         debugger = new LocalSearchDebugger() {
@@ -132,31 +132,31 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         //Casting is required for backward compatibility with old platform versions
         IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
-	}
-	
-	public void setDebugger(LocalSearchDebugger localSearchDebugger) {
-		this.debugger = localSearchDebugger;
-		//Casting is required for backward compatibility with old platform versions
-		IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
-		service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
-	}
-	public LocalSearchDebugger getDebugger() {
-		return this.debugger;
-	}
+    }
+    
+    public void setDebugger(LocalSearchDebugger localSearchDebugger) {
+        this.debugger = localSearchDebugger;
+        //Casting is required for backward compatibility with old platform versions
+        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
+    }
+    public LocalSearchDebugger getDebugger() {
+        return this.debugger;
+    }
 
-	public CTabFolder getMatchesTabFolder() {
-		return matchesTabFolder;
-	}
+    public CTabFolder getMatchesTabFolder() {
+        return matchesTabFolder;
+    }
 
-	@Override
+    @Override
     public void createPartControl(Composite parent) {
         parent.setLayoutData(new FillLayout());
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
 
-		planSashForm = new SashForm(sashForm, SWT.VERTICAL);
+        planSashForm = new SashForm(sashForm, SWT.VERTICAL);
 
-		// TreeViewer for the plan
-		createTreeViewer(planSashForm);
+        // TreeViewer for the plan
+        createTreeViewer(planSashForm);
 
         matchesTabFolder = new CTabFolder(planSashForm, SWT.MULTI | SWT.CLOSE);
         
@@ -172,32 +172,32 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
      * @param parent the parent container
      * @param viewer the table viewer that will show the variable values
      */
-	public void recreateColumns(List<String> colNames, int keySize, TableViewer matchesViewer) {
-		// TODO solve situations where the variable list changes (also in size)
-		TableColumn[] columns = matchesViewer.getTable().getColumns();
-		for (TableColumn tableColumn : columns) {
-			tableColumn.dispose();
-		}
-		
-		for (int i = 0; i < colNames.size(); i++) {
-			// For now the header font style cannot be changed, see bug 63038
-			TableViewerColumn col = createTableViewerColumn(colNames.get(i), 100, i, matchesViewer);
-			col.setLabelProvider(new MatchesTableLabelProvider(i, i < keySize, matchesViewer));
-		}
+    public void recreateColumns(List<String> colNames, int keySize, TableViewer matchesViewer) {
+        // TODO solve situations where the variable list changes (also in size)
+        TableColumn[] columns = matchesViewer.getTable().getColumns();
+        for (TableColumn tableColumn : columns) {
+            tableColumn.dispose();
+        }
+        
+        for (int i = 0; i < colNames.size(); i++) {
+            // For now the header font style cannot be changed, see bug 63038
+            TableViewerColumn col = createTableViewerColumn(colNames.get(i), 100, i, matchesViewer);
+            col.setLabelProvider(new MatchesTableLabelProvider(i, i < keySize, matchesViewer));
+        }
 
-	}
+    }
 
-	private TableViewerColumn createTableViewerColumn(String title, int bound, int colNumber, TableViewer matchesViewer) {
-		TableViewerColumn viewerColumn = new TableViewerColumn(matchesViewer, SWT.NONE);
-		TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(true);
-		return viewerColumn;
-	}
+    private TableViewerColumn createTableViewerColumn(String title, int bound, int colNumber, TableViewer matchesViewer) {
+        TableViewerColumn viewerColumn = new TableViewerColumn(matchesViewer, SWT.NONE);
+        TableColumn column = viewerColumn.getColumn();
+        column.setText(title);
+        column.setWidth(bound);
+        column.setResizable(true);
+        column.setMoveable(true);
+        return viewerColumn;
+    }
     
-	private void createZestViewer(SashForm sashForm) {
+    private void createZestViewer(SashForm sashForm) {
         this.graphViewer = new ModifiableZestContentViewer();
         graphViewer.createControl(sashForm, SWT.BORDER);
         
@@ -240,18 +240,18 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
     }
 
     public void refreshView() {
-    	PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				operationListViewer.refresh();
-				graphViewer.refresh();
-				Collection<TableViewer> tableViewers = matchViewersMap.values();
-				for (TableViewer tableViewer : tableViewers) {
-					tableViewer.refresh();
-				}
-			}
-		});
-    	
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                operationListViewer.refresh();
+                graphViewer.refresh();
+                Collection<TableViewer> tableViewers = matchViewersMap.values();
+                for (TableViewer tableViewer : tableViewers) {
+                    tableViewer.refresh();
+                }
+            }
+        });
+        
         //Casting is required for backward compatibility with old platform versions
         IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
@@ -266,123 +266,123 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
     }
     
     public OperationListContentProvider getOperationListContentProvider() {
-    	return operationListContentProvider;
+        return operationListContentProvider;
     }
 
     public ZestContentViewer getGraphViewer() {
         return graphViewer;
     }
 
-	public TableViewer getMatchesViewer(PQuery query) {
-	    String queryName = getSimpleQueryName(query);
-		TableViewer viewer = matchViewersMap.get(queryName);
-		if(viewer == null){
-			getOrCreateMatchesTab(queryName);
-		}
-		return matchViewersMap.get(queryName);
-	}
+    public TableViewer getMatchesViewer(PQuery query) {
+        String queryName = getSimpleQueryName(query);
+        TableViewer viewer = matchViewersMap.get(queryName);
+        if(viewer == null){
+            getOrCreateMatchesTab(queryName);
+        }
+        return matchViewersMap.get(queryName);
+    }
 
-	private void getOrCreateMatchesTab(final String tabTitle) {
-		// This method is called from a non-ui thread so that a syncexec is required here
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				CTabItem item = new CTabItem(getMatchesTabFolder(), SWT.NULL);
-				item.setText(tabTitle);		
+    private void getOrCreateMatchesTab(final String tabTitle) {
+        // This method is called from a non-ui thread so that a syncexec is required here
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                CTabItem item = new CTabItem(getMatchesTabFolder(), SWT.NULL);
+                item.setText(tabTitle);		
 
-				// Mark as active
-				getMatchesTabFolder().setSelection(item);
-				
-				// Table viewer for the matches
-				Composite container = new Composite(getMatchesTabFolder(),SWT.NONE);
-				container.setLayout(new FillLayout());
-				final TableViewer viewer = createTableViewer(container);
-				
-				viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						if(event.getSelection() instanceof IStructuredSelection){
-							IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-							MatchingFrame frame = (MatchingFrame) selection.getFirstElement();
-							graphViewer.setInput(frame);
-							graphViewer.refresh();
-						}
-					}
-				});
-				
-				matchViewersMap.put(tabTitle, viewer);
-				
-				viewer.refresh();
-				List<MatchingFrame> matchViewerInput = Lists.<MatchingFrame>newArrayList();
-				viewer.setData(VIEWER_KEY, matchViewerInput);
-				viewer.setInput(matchViewerInput);
-				
-				item.setControl(container);
-				item.addListener(SWT.FOCUSED, new Listener() {
-					
-					@Override
-					public void handleEvent(Event event) {
-						viewer.setSelection(null);
-					}
-				}); 
-				item.addListener(SWT.FocusIn, new Listener() {
-					
-					@Override
-					public void handleEvent(Event event) {
-						viewer.setSelection(null);
-					}
-				}); 
-			}
-		});
-		
-	}
+                // Mark as active
+                getMatchesTabFolder().setSelection(item);
+                
+                // Table viewer for the matches
+                Composite container = new Composite(getMatchesTabFolder(),SWT.NONE);
+                container.setLayout(new FillLayout());
+                final TableViewer viewer = createTableViewer(container);
+                
+                viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+                    @Override
+                    public void selectionChanged(SelectionChangedEvent event) {
+                        if(event.getSelection() instanceof IStructuredSelection){
+                            IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                            MatchingFrame frame = (MatchingFrame) selection.getFirstElement();
+                            graphViewer.setInput(frame);
+                            graphViewer.refresh();
+                        }
+                    }
+                });
+                
+                matchViewersMap.put(tabTitle, viewer);
+                
+                viewer.refresh();
+                List<MatchingFrame> matchViewerInput = Lists.<MatchingFrame>newArrayList();
+                viewer.setData(VIEWER_KEY, matchViewerInput);
+                viewer.setInput(matchViewerInput);
+                
+                item.setControl(container);
+                item.addListener(SWT.FOCUSED, new Listener() {
+                    
+                    @Override
+                    public void handleEvent(Event event) {
+                        viewer.setSelection(null);
+                    }
+                }); 
+                item.addListener(SWT.FocusIn, new Listener() {
+                    
+                    @Override
+                    public void handleEvent(Event event) {
+                        viewer.setSelection(null);
+                    }
+                }); 
+            }
+        });
+        
+    }
 
-	
-	private static class MatchTableContentProvider implements IStructuredContentProvider {
+    
+    private static class MatchTableContentProvider implements IStructuredContentProvider {
 
-		@Override
-		public void dispose() {
-			// nop
-		}
+        @Override
+        public void dispose() {
+            // nop
+        }
 
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// nop
-		}
+        @Override
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+            // nop
+        }
 
-		@Override
-		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof Object[]) {
-				return (Object[]) inputElement;
-			}
-			if (inputElement instanceof Collection) {
-				return ((Collection<?>) inputElement).toArray();
-			}
-			return new Object[0];
-		}
+        @Override
+        public Object[] getElements(Object inputElement) {
+            if (inputElement instanceof Object[]) {
+                return (Object[]) inputElement;
+            }
+            if (inputElement instanceof Collection) {
+                return ((Collection<?>) inputElement).toArray();
+            }
+            return new Object[0];
+        }
 
-	}
+    }
 
-	private TableViewer createTableViewer(Composite parent) {
-		TableViewer matchesViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-    	
-		matchesViewer.setContentProvider(new MatchTableContentProvider());
+    private TableViewer createTableViewer(Composite parent) {
+        TableViewer matchesViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+        
+        matchesViewer.setContentProvider(new MatchTableContentProvider());
 
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.horizontalAlignment = GridData.FILL;
-		matchesViewer.getControl().setLayoutData(gridData);
+        GridData gridData = new GridData();
+        gridData.verticalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.horizontalAlignment = GridData.FILL;
+        matchesViewer.getControl().setLayoutData(gridData);
 
-		final Table table = matchesViewer.getTable();
-		table.setHeaderVisible(true);
-    	table.setLinesVisible(true); 
-    	
-    	return matchesViewer;
-    	
-	}
-	
+        final Table table = matchesViewer.getTable();
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true); 
+        
+        return matchesViewer;
+        
+    }
+    
     @Override
     public void dispose() {
         disposeExistingDebugger();

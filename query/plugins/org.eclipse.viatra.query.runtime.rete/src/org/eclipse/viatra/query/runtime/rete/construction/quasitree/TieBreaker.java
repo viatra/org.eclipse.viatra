@@ -22,12 +22,12 @@ import org.eclipse.viatra.query.runtime.rete.util.LexicographicComparator;
  */
 public class TieBreaker {
     public static final Comparator<PConstraint> CONSTRAINT_COMPARATOR = new Comparator<PConstraint>() {
-		@Override
-		public int compare(PConstraint arg0, PConstraint arg1) {
-			return arg0.getMonotonousID() - arg1.getMonotonousID();
-		}
-	};
+        @Override
+        public int compare(PConstraint arg0, PConstraint arg1) {
+            return arg0.getMonotonousID() - arg1.getMonotonousID();
+        }
+    };
     public static final Comparator<Iterable<? extends PConstraint>> CONSTRAINT_LIST_COMPARATOR = 
-    		new LexicographicComparator<PConstraint>(CONSTRAINT_COMPARATOR);
+            new LexicographicComparator<PConstraint>(CONSTRAINT_COMPARATOR);
 
 }

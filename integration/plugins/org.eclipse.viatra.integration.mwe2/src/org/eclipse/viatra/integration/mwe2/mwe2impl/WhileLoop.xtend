@@ -20,25 +20,25 @@ import org.eclipse.viatra.integration.mwe2.providers.IConditionProvider
  * @author Peter Lunk
  */
 class WhileLoop extends Sequence{
-	protected IConditionProvider condition;
-	
-	override void execute() {
-		while(condition.apply()){
-			step.forEach[
-				execute
-			]
-		}
-	}
-	
-	override initialize(IWorkflowContext ctx) {
-		super.initialize(ctx)
-		if(condition!=null){
-			condition.context = ctx
-		}
-	}
-	
-	def void setCondition(IConditionProvider condition){
-		this.condition = condition
-	}
-		
+    protected IConditionProvider condition;
+    
+    override void execute() {
+        while(condition.apply()){
+            step.forEach[
+                execute
+            ]
+        }
+    }
+    
+    override initialize(IWorkflowContext ctx) {
+        super.initialize(ctx)
+        if(condition!=null){
+            condition.context = ctx
+        }
+    }
+    
+    def void setCondition(IConditionProvider condition){
+        this.condition = condition
+    }
+        
 }

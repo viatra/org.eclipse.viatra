@@ -15,10 +15,10 @@ package org.eclipse.viatra.query.tooling.cpp.localsearch.serializer
  */
 interface IFileAccessor {
 
-	def void createFile(String folderPath, String fileName, CharSequence contents)
+    def void createFile(String folderPath, String fileName, CharSequence contents)
 
-	def void deleteFile(String folderPath, String fileName)
+    def void deleteFile(String folderPath, String fileName)
 
-	def void createFolder(String folderPath, String folderName)
+    def void createFolder(String folderPath, String folderName)
 
 }

@@ -99,9 +99,9 @@ public class GraphitiModelConnector extends EMFModelConnector {
     }
     
     private EditPart findEditPart(DiagramEditor editor, PictogramElement element) {
-    	 try {
-    		 //pre-0.10: return editor.getEditPartForPictogramElement(element);
-    		 //since 0.10: return editor.getDiagramBehavior().getEditPartForPictogramElement(element);
+         try {
+             //pre-0.10: return editor.getEditPartForPictogramElement(element);
+             //since 0.10: return editor.getDiagramBehavior().getEditPartForPictogramElement(element);
              Method m = null;
              try {
                  m = editor.getClass().getMethod("getEditPartForPictogramElement");                 
@@ -111,14 +111,14 @@ public class GraphitiModelConnector extends EMFModelConnector {
                  m = behaviourClass.getMethod("getEditPartForPictogramElement");                 
              }
              if (m != null) {
-            	 return (EditPart) m.invoke(editorPart, element);
+                 return (EditPart) m.invoke(editorPart, element);
              }
          } catch (Exception e) {
-			logger.log(new Status(IStatus.ERROR,
-					"org.eclipse.viatra.integration.graphiti",
-					"Error while connecting to Graphiti based editor", e));
+            logger.log(new Status(IStatus.ERROR,
+                    "org.eclipse.viatra.integration.graphiti",
+                    "Error while connecting to Graphiti based editor", e));
          }
-    	 return null;
+         return null;
     }
 
     @Override

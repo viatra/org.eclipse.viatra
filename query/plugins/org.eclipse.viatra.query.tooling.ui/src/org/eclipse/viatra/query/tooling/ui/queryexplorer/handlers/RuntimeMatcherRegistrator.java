@@ -111,13 +111,13 @@ public class RuntimeMatcherRegistrator implements Runnable {
     }
 
     private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) throws ViatraQueryException {
-    	PatternModel newParsedModel = null;
-    	if (this.resource!=null) {
-    		newParsedModel = dbUtil.extractPatternModelFromResource(resource);
-    	} else {
-    		// TODO dangerously slow due to xbase jvm model inference process being invoked
-    		newParsedModel = dbUtil.parseEPM(file);
-    	}
+        PatternModel newParsedModel = null;
+        if (this.resource!=null) {
+            newParsedModel = dbUtil.extractPatternModelFromResource(resource);
+        } else {
+            // TODO dangerously slow due to xbase jvm model inference process being invoked
+            newParsedModel = dbUtil.parseEPM(file);
+        }
         // end TODO
         final Set<IQuerySpecification<?>> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
         final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();

@@ -28,66 +28,66 @@ import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
  * Helper class for the {@link VeplValidator}.
  */
 class ValidationHelper {
-	def static dispatch hasTimewindow(ComplexEventExpression expression) {
-		return expression.timewindow != null
-	}
+    def static dispatch hasTimewindow(ComplexEventExpression expression) {
+        return expression.timewindow != null
+    }
 
-	def static dispatch hasTimewindow(Atom atom) {
-		return atom.timewindow != null
-	}
+    def static dispatch hasTimewindow(Atom atom) {
+        return atom.timewindow != null
+    }
 
-	def static dispatch hasMultiplicity(ComplexEventExpression expression) {
-		return expression.multiplicity != null
-	}
+    def static dispatch hasMultiplicity(ComplexEventExpression expression) {
+        return expression.multiplicity != null
+    }
 
-	def static dispatch hasMultiplicity(Atom atom) {
-		return atom.multiplicity != null
-	}
+    def static dispatch hasMultiplicity(Atom atom) {
+        return atom.multiplicity != null
+    }
 
-	def static hasInfiniteMultiplicity(ComplexEventExpression complexEventExpression) {
-		return complexEventExpression.multiplicity instanceof Infinite
-	}
+    def static hasInfiniteMultiplicity(ComplexEventExpression complexEventExpression) {
+        return complexEventExpression.multiplicity instanceof Infinite
+    }
 
-	def static nullOrOneMultiplicity(AbstractMultiplicity multiplicity) {
-		if (multiplicity == null) {
-			return true
-		}
-		if (!(multiplicity instanceof Multiplicity)) {
-			return false
-		}
-		return (multiplicity as Multiplicity).value == 1
-	}
+    def static nullOrOneMultiplicity(AbstractMultiplicity multiplicity) {
+        if (multiplicity == null) {
+            return true
+        }
+        if (!(multiplicity instanceof Multiplicity)) {
+            return false
+        }
+        return (multiplicity as Multiplicity).value == 1
+    }
 
-	def static hasParameterList(ParameterizedPatternCall patternCall) {
-		return patternCall.parameterList != null
-	}
+    def static hasParameterList(ParameterizedPatternCall patternCall) {
+        return patternCall.parameterList != null
+    }
 
-	def static qualifiesAsFollowingOperator(ComplexEventOperator operator) {
-		return (operator instanceof FollowsOperator) || (operator instanceof AndOperator)
-	}
+    def static qualifiesAsFollowingOperator(ComplexEventOperator operator) {
+        return (operator instanceof FollowsOperator) || (operator instanceof AndOperator)
+    }
 
-	def static subListFrom(List<ChainedExpression> list, ComplexEventExpression element) {
-		return list.subList(list.indexOf(list.findFirst [ che |
-			che.expression.equals(element)
-		]) + 1, list.size)
-	}
+    def static subListFrom(List<ChainedExpression> list, ComplexEventExpression element) {
+        return list.subList(list.indexOf(list.findFirst [ che |
+            che.expression.equals(element)
+        ]) + 1, list.size)
+    }
 
-	def static findContainingComplexEventPatternDefinition(ParameterizedPatternCall parameterizedPatternCall) {
-		var ComplexEventPattern complexEventPattern = null
-		var EObject tmp = parameterizedPatternCall.eContainer
+    def static findContainingComplexEventPatternDefinition(ParameterizedPatternCall parameterizedPatternCall) {
+        var ComplexEventPattern complexEventPattern = null
+        var EObject tmp = parameterizedPatternCall.eContainer
 
-		while (complexEventPattern == null) {
-			if (tmp instanceof ComplexEventPattern) {
-				complexEventPattern = tmp as ComplexEventPattern
-			} else {
-				tmp = tmp.eContainer
-			}
-		}
+        while (complexEventPattern == null) {
+            if (tmp instanceof ComplexEventPattern) {
+                complexEventPattern = tmp as ComplexEventPattern
+            } else {
+                tmp = tmp.eContainer
+            }
+        }
 
-		return complexEventPattern
-	}
+        return complexEventPattern
+    }
 
-	def static foldWithComma(Iterable<String> iterable) {
-		iterable.fold("")[a, b|if (a.empty) {a +  b} else {a +", " +b}]
-	}
+    def static foldWithComma(Iterable<String> iterable) {
+        iterable.fold("")[a, b|if (a.empty) {a +  b} else {a +", " +b}]
+    }
 }

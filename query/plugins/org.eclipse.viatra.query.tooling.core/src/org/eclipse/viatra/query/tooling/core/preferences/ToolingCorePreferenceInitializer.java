@@ -25,9 +25,9 @@ public class ToolingCorePreferenceInitializer extends AbstractPreferenceInitiali
     /**
      * @noreference This method is not intended to be referenced by clients.
      */
-	public void initializeDefaultPreferences() {
-		IPreferenceStore store = ViatraQueryGeneratorPlugin.INSTANCE.getPreferenceStore();
-		store.setDefault(ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE, false);
-	}
+    public void initializeDefaultPreferences() {
+        IPreferenceStore store = ViatraQueryGeneratorPlugin.INSTANCE.getPreferenceStore();
+        store.setDefault(ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE, false);
+    }
 
 }

@@ -52,8 +52,8 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
 
-	private static Collection<Param2itemMatch> executeParam2itemMatcher(ViatraQueryEngine engine, Object source) {
-		try {
+    private static Collection<Param2itemMatch> executeParam2itemMatcher(ViatraQueryEngine engine, Object source) {
+        try {
 
             Param2itemMatcher matcher = Param2itemMatcher.on(engine);
             return matcher.getAllMatches(source, null, null);
@@ -62,8 +62,8 @@ public final class ViewerTraceabilityUtil {
             Logger logger = ViatraQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
             logger.error(e.getMessage());
         }
-		return Collections.emptySet(); 
-	}
+        return Collections.emptySet(); 
+    }
 
     public static Collection<Edge> traceToEdge(ViatraQueryEngine engine, Object source, Object target) {
 
@@ -76,8 +76,8 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
 
-	private static Collection<Param2edgeMatch> executeParam2edgeMatcher(ViatraQueryEngine engine, Object source, Object target) {
-		try {
+    private static Collection<Param2edgeMatch> executeParam2edgeMatcher(ViatraQueryEngine engine, Object source, Object target) {
+        try {
 
             Param2edgeMatcher matcher = Param2edgeMatcher.on(engine);
             return matcher.getAllMatches(source, target, null, null);
@@ -86,8 +86,8 @@ public final class ViewerTraceabilityUtil {
             Logger logger = ViatraQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
             logger.error(e.getMessage());
         }
-		return Collections.emptySet(); 
-	}
+        return Collections.emptySet(); 
+    }
 
     public static Collection<Containment> traceTocontainment(ViatraQueryEngine engine, Object source, Object target) {
 
@@ -100,8 +100,8 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
 
-	private static Collection<Param2containmentMatch> executeParam2containmentMatcher(ViatraQueryEngine engine, Object source, Object target) {
-		try {
+    private static Collection<Param2containmentMatch> executeParam2containmentMatcher(ViatraQueryEngine engine, Object source, Object target) {
+        try {
 
             Param2containmentMatcher matcher = Param2containmentMatcher.on(engine);
             return matcher.getAllMatches(source, target, null, null);
@@ -110,16 +110,16 @@ public final class ViewerTraceabilityUtil {
             Logger logger = ViatraQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
             logger.error(e.getMessage());
         }
-		return Collections.emptySet(); 
-	}
-	
-	public static Collection<Item> deleteTracesAndItems(ViatraQueryEngine engine, Object source) {
-    	ArrayList<Item> list = Lists.newArrayList();
+        return Collections.emptySet(); 
+    }
+    
+    public static Collection<Item> deleteTracesAndItems(ViatraQueryEngine engine, Object source) {
+        ArrayList<Item> list = Lists.newArrayList();
         Collection<Param2itemMatch> allMatches = executeParam2itemMatcher(engine, source);
         
         for (Param2itemMatch match : allMatches) {
-        	EcoreUtil.delete(match.getTrace());
-        	EcoreUtil.delete(match.getItem());
+            EcoreUtil.delete(match.getTrace());
+            EcoreUtil.delete(match.getItem());
             list.add(match.getItem());
         }
         
@@ -127,12 +127,12 @@ public final class ViewerTraceabilityUtil {
     }
     
     public static Collection<Edge> deleteTracesAndEdges(ViatraQueryEngine engine, Object source, Object target) {
-    	ArrayList<Edge> list = Lists.newArrayList();
+        ArrayList<Edge> list = Lists.newArrayList();
         Collection<Param2edgeMatch> allMatches = executeParam2edgeMatcher(engine, source, target);
         
         for (Param2edgeMatch match : allMatches) {
-        	EcoreUtil.delete(match.getTrace());
-        	EcoreUtil.delete(match.getEdge());
+            EcoreUtil.delete(match.getTrace());
+            EcoreUtil.delete(match.getEdge());
             list.add(match.getEdge());
         }
         
@@ -140,13 +140,13 @@ public final class ViewerTraceabilityUtil {
     }
     
     public static Collection<Containment> deleteTracesAndContainments(ViatraQueryEngine engine, Object source, Object target) {
-    	ArrayList<Containment> list = Lists.newArrayList();
+        ArrayList<Containment> list = Lists.newArrayList();
         Collection<Param2containmentMatch> allMatches = executeParam2containmentMatcher(engine, source, target);
         
         for (Param2containmentMatch match : allMatches) {
-        	match.getContainment().getTarget().setParent(null);
-        	EcoreUtil.delete(match.getTrace());
-        	EcoreUtil.delete(match.getContainment());
+            match.getContainment().getTarget().setParent(null);
+            EcoreUtil.delete(match.getTrace());
+            EcoreUtil.delete(match.getContainment());
             list.add(match.getContainment());
         }
         

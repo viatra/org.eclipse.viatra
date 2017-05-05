@@ -21,40 +21,40 @@ import org.eclipse.viatra.integration.mwe2.IMessage
  * @author Peter Lunk
  */
 class PublishTo implements IPublishTo{
-	//Broker to which the message will be sent
-	extension MessageBroker broker = MessageBroker.instance
-	
-	private String topicName;
+    //Broker to which the message will be sent
+    extension MessageBroker broker = MessageBroker.instance
+    
+    private String topicName;
     private IMessageFactory<? extends Object, ? extends IMessage<? extends Object>> factory;
-	
-	override getFactory() {
-		return factory
-	}
-	
-	override getTopicName() {
-		return topicName
-	}
-	
-	/**
-	 * Uses the factory to create a new message instance and sends it to the Topic specified by the topicName attribute.
-	 */
-	override publishMessage(Object parameter) {
-		if (factory.isValidParameter(parameter)) {
+    
+    override getFactory() {
+        return factory
+    }
+    
+    override getTopicName() {
+        return topicName
+    }
+    
+    /**
+     * Uses the factory to create a new message instance and sends it to the Topic specified by the topicName attribute.
+     */
+    override publishMessage(Object parameter) {
+        if (factory.isValidParameter(parameter)) {
             try {
-            	val message = factory.createMessage(parameter);
-            	sendMessage(topicName, message)
+                val message = factory.createMessage(parameter);
+                sendMessage(topicName, message)
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-	}
-	
-	override setFactory(IMessageFactory<?, ? extends IMessage<?>> factory) {
-		this.factory = factory
-	}
-	
-	override setTopicName(String name) {
-		this.topicName = name
-	}
-	
+    }
+    
+    override setFactory(IMessageFactory<?, ? extends IMessage<?>> factory) {
+        this.factory = factory
+    }
+    
+    override setTopicName(String name) {
+        this.topicName = name
+    }
+    
 }

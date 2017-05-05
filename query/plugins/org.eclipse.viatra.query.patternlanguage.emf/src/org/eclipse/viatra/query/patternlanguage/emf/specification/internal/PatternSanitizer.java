@@ -155,55 +155,55 @@ public class PatternSanitizer {
         
         boolean ok = !nullPatternFound && inadmissible.isEmpty();
         if (ok && !skipPatternValidation) {
-        	Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-        	PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
-        	PatternSetValidationDiagnostics validatorResult = validator.validate(newPatternsByName.values());
-        	if (logger != null) validatorResult.logErrors(logger);
-        	if (validatorResult.getStatus().equals(PatternValidationStatus.ERROR)) {        		
-        		ok = false;
-        		for (Pattern currentPattern : patterns) {
-        			// if the pattern is in a resource set, we can determine whether it contains the problem
-        			final ResourceSet resourceSet = 
-        					currentPattern.eResource() == null ? 
-        							null : currentPattern.eResource().getResourceSet();
-        			
-        			for (Issue error: validatorResult.getAllErrors()) {
-        				// is this the current pattern?
-        				final URI uriToProblem = error.getUriToProblem();
-						if (resourceSet != null && uriToProblem != null) {
-        					Resource errorResource = resourceSet.getResource(uriToProblem.trimFragment(), true);
-        					if (errorResource != null) {
-        						EObject errorLocation = errorResource.getEObject(uriToProblem.fragment());
-        						EObject errorContainer = errorLocation;
-        						while (errorContainer != null && !(errorContainer instanceof Pattern))
-        							errorContainer = errorContainer.eContainer();
-        						if (errorContainer != null) { // we have found the pattern that contains the error!
-        							if (!currentPattern.equals(errorContainer)) { 
-        								// the error is in a different pattern
-        								
-        								Pattern errorPattern = (Pattern) errorContainer;
-        								problemsByPattern.put(currentPattern, new PProblem(
-        										String.format("Query depends on erroneous pattern %s", 
-        												CorePatternLanguageHelper.getFullyQualifiedName(errorPattern))));
-        								inadmissible.add(currentPattern);
-        								
-        								// skip this error - do not indicate directly for this pattern 
-        								continue;
-        							}
-        						}
-        					}
-        				}
-        				
-        				// the detected error is directly in the current pattern, or so we assume
-        				problemsByPattern.put(currentPattern, new PProblem(error.getMessage()));
-        				inadmissible.add(currentPattern);
-        			}
-        		}
-        	}
+            Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+            PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
+            PatternSetValidationDiagnostics validatorResult = validator.validate(newPatternsByName.values());
+            if (logger != null) validatorResult.logErrors(logger);
+            if (validatorResult.getStatus().equals(PatternValidationStatus.ERROR)) {        		
+                ok = false;
+                for (Pattern currentPattern : patterns) {
+                    // if the pattern is in a resource set, we can determine whether it contains the problem
+                    final ResourceSet resourceSet = 
+                            currentPattern.eResource() == null ? 
+                                    null : currentPattern.eResource().getResourceSet();
+                    
+                    for (Issue error: validatorResult.getAllErrors()) {
+                        // is this the current pattern?
+                        final URI uriToProblem = error.getUriToProblem();
+                        if (resourceSet != null && uriToProblem != null) {
+                            Resource errorResource = resourceSet.getResource(uriToProblem.trimFragment(), true);
+                            if (errorResource != null) {
+                                EObject errorLocation = errorResource.getEObject(uriToProblem.fragment());
+                                EObject errorContainer = errorLocation;
+                                while (errorContainer != null && !(errorContainer instanceof Pattern))
+                                    errorContainer = errorContainer.eContainer();
+                                if (errorContainer != null) { // we have found the pattern that contains the error!
+                                    if (!currentPattern.equals(errorContainer)) { 
+                                        // the error is in a different pattern
+                                        
+                                        Pattern errorPattern = (Pattern) errorContainer;
+                                        problemsByPattern.put(currentPattern, new PProblem(
+                                                String.format("Query depends on erroneous pattern %s", 
+                                                        CorePatternLanguageHelper.getFullyQualifiedName(errorPattern))));
+                                        inadmissible.add(currentPattern);
+                                        
+                                        // skip this error - do not indicate directly for this pattern 
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // the detected error is directly in the current pattern, or so we assume
+                        problemsByPattern.put(currentPattern, new PProblem(error.getMessage()));
+                        inadmissible.add(currentPattern);
+                    }
+                }
+            }
         }
         if (ok) {
-        	admittedPatterns.addAll(newPatterns);
-        	patternsByName.putAll(newPatternsByName);
+            admittedPatterns.addAll(newPatterns);
+            patternsByName.putAll(newPatternsByName);
         } 
 
         //Updating list of rejected patterns                
@@ -264,15 +264,15 @@ public class PatternSanitizer {
      * @return a problem recorded for this pattern, if any
      */
     public Collection<PProblem> getProblemByPattern(Pattern pattern) {
-		return problemsByPattern.get(pattern);
-	}
+        return problemsByPattern.get(pattern);
+    }
 
-	/**
+    /**
      * @param fqn the fully qualified name of the pattern
      * @returns the admitted pattern with the given qualified name, or null of there is no such admitted pattern
      */
     public Pattern getAdmittedPatternByName(String fqn) {
-    	return patternsByName.get(fqn);
+        return patternsByName.get(fqn);
     }
 
     /**

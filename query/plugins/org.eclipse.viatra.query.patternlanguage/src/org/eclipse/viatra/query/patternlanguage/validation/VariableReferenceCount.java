@@ -45,11 +45,11 @@ class VariableReferenceCount {
         }
         
         for (Variable variable : variables) {
-        	if (variable instanceof ParameterRef 
-        	        && ((ParameterRef) variable).getReferredParam().getType() != null
-        	        && !(((ParameterRef) variable).getReferredParam().getType() instanceof JavaType)) {
-        		counters.put(ReferenceType.POSITIVE, 1);
-        	}
+            if (variable instanceof ParameterRef 
+                    && ((ParameterRef) variable).getReferredParam().getType() != null
+                    && !(((ParameterRef) variable).getReferredParam().getType() instanceof JavaType)) {
+                counters.put(ReferenceType.POSITIVE, 1);
+            }
         }
     }
 

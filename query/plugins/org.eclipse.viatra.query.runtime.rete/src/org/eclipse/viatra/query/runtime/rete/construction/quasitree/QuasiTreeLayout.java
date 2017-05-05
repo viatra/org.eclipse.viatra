@@ -72,7 +72,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         return new Scaffold(pSystem, logger, context).run();
     }
 
-	public class Scaffold {
+    public class Scaffold {
         PBody pSystem;
         PQuery query;
         IQueryMetaContext context;
@@ -85,11 +85,11 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         Set<EnumerablePConstraint> enumerableConstraints = null;
         Set<ConstantValue> constantConstraints = null;
         Set<SubPlan> forefront = new LinkedHashSet<SubPlan>();
-		Logger logger;
+        Logger logger;
 
         Scaffold(PBody pSystem, Logger logger, /*IOperationCompiler compiler,*/ IQueryMetaContext context) {
             this.pSystem = pSystem;
-			this.logger = logger;
+            this.logger = logger;
             this.context = context;
             this.planFactory = new SubPlanFactory(pSystem);
             query = pSystem.getPattern();
@@ -102,9 +102,9 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         public SubPlan run() throws QueryProcessingException {
             try {
                 logger.debug(String.format(
-                		"%s: patternbody build started for %s",
-                		getClass().getSimpleName(), 
-                		query.getFullyQualifiedName()));
+                        "%s: patternbody build started for %s",
+                        getClass().getSimpleName(), 
+                        query.getFullyQualifiedName()));
 
                 // PROCESS CONSTRAINTS
                 deferredConstraints = pSystem.getConstraintsOfType(DeferredPConstraint.class);
@@ -137,13 +137,13 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 
                 // FINAL CHECK, whether all exported variables are present + all constraint satisfied
                 BuildHelper.finalCheck(pSystem, finalPlan, context);
-    			// TODO integrate the check above in SubPlan / POperation 
+                // TODO integrate the check above in SubPlan / POperation 
 
                 logger.debug(String.format(
-                		"%s: patternbody query plan concluded for %s as: %s",
-                		getClass().getSimpleName(), 
-                		query.getFullyQualifiedName(),
-                		finalPlan.toLongString()));
+                        "%s: patternbody query plan concluded for %s as: %s",
+                        getClass().getSimpleName(), 
+                        query.getFullyQualifiedName(),
+                        finalPlan.toLongString()));
                return finalPlan;
             } catch (RetePatternBuildException ex) {
                 ex.setPatternDescription(query);
@@ -177,15 +177,15 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                     }                    
                 }
             }
-        	// are there any variables that will not be needed anymore and are worth trimming?
-        	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
-        	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
-        			!plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
-        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(
-        		        planFactory, plan, true, queryAnalyzer);
-				plan = trimmed;
-        	}        	
-        	// are there any checkable constraints?
+            // are there any variables that will not be needed anymore and are worth trimming?
+            // (check only if there are unenforced enumerables, so that there are still upcoming joins)
+            if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
+                    !plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
+                final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(
+                        planFactory, plan, true, queryAnalyzer);
+                plan = trimmed;
+            }        	
+            // are there any checkable constraints?
             for (DeferredPConstraint deferred : deferredConstraints) {
                 if (!plan.getAllEnforcedConstraints().contains(deferred)) {
                     if (deferred.isReadyAt(plan, context)) {

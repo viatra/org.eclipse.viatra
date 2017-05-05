@@ -27,8 +27,8 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
  */
 public abstract class QueryResultWrapper {
 
-	protected IQueryResultProvider backend;
+    protected IQueryResultProvider backend;
 
-	protected abstract void setBackend(ViatraQueryEngine engine, IQueryResultProvider resultProvider, IMatcherCapability capabilities);
-	
+    protected abstract void setBackend(ViatraQueryEngine engine, IQueryResultProvider resultProvider, IMatcherCapability capabilities);
+    
 }

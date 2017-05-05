@@ -25,13 +25,13 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  */
 public final class ViewersToolingViewsUtil {
 
-	public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.viatra.addon.viewers.tooling.ui.viewersandboxtab";
+    public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.viatra.addon.viewers.tooling.ui.viewersandboxtab";
 
-	public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws ViatraQueryException {
-		//ViewersSandboxView.getInstance().setContents(model, patterns, filter);
-		ViewersMultiSandboxView.ensureOpen();
-		ViewersMultiSandboxView.getInstance().initializeContents(new EMFScope(model), queries, filter);
-	}
-	
-	
+    public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws ViatraQueryException {
+        //ViewersSandboxView.getInstance().setContents(model, patterns, filter);
+        ViewersMultiSandboxView.ensureOpen();
+        ViewersMultiSandboxView.getInstance().initializeContents(new EMFScope(model), queries, filter);
+    }
+    
+    
 }

@@ -24,13 +24,13 @@ import org.eclipse.viatra.transformation.evm.notification.IActivationNotificatio
  *
  */
 public final class DefaultActivationNotificationListener implements IActivationNotificationListener {
-	private Agenda agenda;
-	
-	DefaultActivationNotificationListener(Agenda agenda){
-		this.agenda = agenda;
-	}
-	
-	@Override
+    private Agenda agenda;
+    
+    DefaultActivationNotificationListener(Agenda agenda){
+        this.agenda = agenda;
+    }
+    
+    @Override
     public void activationChanged(final Activation<?> activation,
             final ActivationState oldState, final EventType event) {
         if(agenda.getLogger().isDebugEnabled()){

@@ -25,26 +25,26 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.QueryDescriptor
  */
 class LocalSearchCppGenerator {
 
-	ILocalsearchGeneratorOutputProvider generator
+    ILocalsearchGeneratorOutputProvider generator
 
-	new(Class<? extends ILocalsearchGeneratorOutputProvider> generator) {
-		this.generator = generator.newInstance
-	}
+    new(Class<? extends ILocalsearchGeneratorOutputProvider> generator) {
+        this.generator = generator.newInstance
+    }
 
-	def IGeneratorOutputProvider generate(String queryFileName, Resource resource, List<PQuery> queries) {
+    def IGeneratorOutputProvider generate(String queryFileName, Resource resource, List<PQuery> queries) {
 
-		val patternModel = resource.contents.get(0) as PatternModel
-		val classes = patternModel.importPackages.packageImport.map[it.EPackage].map[it.EClassifiers].flatten.filter(EClass).toSet
+        val patternModel = resource.contents.get(0) as PatternModel
+        val classes = patternModel.importPackages.packageImport.map[it.EPackage].map[it.EClassifiers].flatten.filter(EClass).toSet
 
-		val planCompiler = new PlanCompiler
-		val patternStubs = queries.map[
-			planCompiler.compilePlan(it)
-		].flatten.toSet
+        val planCompiler = new PlanCompiler
+        val patternStubs = queries.map[
+            planCompiler.compilePlan(it)
+        ].flatten.toSet
 
-		val queryStub = new QueryDescriptor(queryFileName, patternStubs, classes)
-		generator.initialize(queryStub)
+        val queryStub = new QueryDescriptor(queryFileName, patternStubs, classes)
+        generator.initialize(queryStub)
 
-		return generator
-	}
+        return generator
+    }
 
 }

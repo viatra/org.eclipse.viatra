@@ -129,7 +129,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
             if (shouldGenerate(deltaResource, context)) {
                 try {
-                	registerCurrentSourceFolder(context, delta, fileSystemAccess);
+                    registerCurrentSourceFolder(context, delta, fileSystemAccess);
                     // do inferred jvm model to code transformation
                     generator.doGenerate(deltaResource, fileSystemAccess);
                     doPostGenerate(deltaResource, context);

@@ -75,18 +75,18 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         this.listChangeListener = new ListChangeListener();
 
         if (specification.getInternalQueryRepresentation().getStatus() != PQueryStatus.ERROR) {
-	        try {
-	            usedBackend = hint.getQueryBackendFactory();
-	            matcher = (ViatraQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
-	        } catch (ViatraQueryException e) {
-	            this.exceptionMessage = e.getShortMessage();
-	            this.exception = e;
-	            logException();
-	        } catch (Exception e) {
-	            this.exceptionMessage = e.getMessage();
-	            this.exception = e;
-	            logException();
-	        }
+            try {
+                usedBackend = hint.getQueryBackendFactory();
+                matcher = (ViatraQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
+            } catch (ViatraQueryException e) {
+                this.exceptionMessage = e.getShortMessage();
+                this.exception = e;
+                logException();
+            } catch (Exception e) {
+                this.exceptionMessage = e.getMessage();
+                this.exception = e;
+                logException();
+            }
         }
 
         this.generated = generated;
@@ -113,24 +113,24 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     }
     
     /**
-	 * @param e
-	 */
-	private void logException() {
-		String logMessage = 
-				String.format(
-						"Query Explorer has encountered an error during evaluation of query %s%s",
-						specification.getFullyQualifiedName(),
-						exceptionMessage == null ? "" : (": " + exceptionMessage)
-				);
-		ViatraQueryGUIPlugin.getDefault().getLog().log(new Status(
-				IStatus.ERROR, 
-				ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), 
-				logMessage, 
-				exception)
-		);
-	}
+     * @param e
+     */
+    private void logException() {
+        String logMessage = 
+                String.format(
+                        "Query Explorer has encountered an error during evaluation of query %s%s",
+                        specification.getFullyQualifiedName(),
+                        exceptionMessage == null ? "" : (": " + exceptionMessage)
+                );
+        ViatraQueryGUIPlugin.getDefault().getLog().log(new Status(
+                IStatus.ERROR, 
+                ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), 
+                logMessage, 
+                exception)
+        );
+    }
 
-	@Override
+    @Override
     public void dispose() {
         super.dispose();
         this.matcher = null;
@@ -273,10 +273,10 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     }
     
     public Exception getException() {
-		return exception;
-	}
+        return exception;
+    }
 
-	@Override
+    @Override
     public Iterator<PatternMatchContent> getChildrenIterator() {
         /*
          *  XXX the iterator is Iterator<Object> but its contents are guaranteed to be PatternMatchContent,

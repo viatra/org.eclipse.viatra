@@ -43,25 +43,25 @@ import com.google.common.collect.Sets;
 public abstract class QueryBasedFeature {
 
     private final class MatchUpdateListener implements
-			IMatchUpdateListener<IPatternMatch> {
-		@Override
-		public void notifyAppearance(IPatternMatch match) {
-			boolean removed = matchLostEvents.remove(match);
-			if(!removed){
-				matchFoundEvents.add(match);
-			}
-		}
+            IMatchUpdateListener<IPatternMatch> {
+        @Override
+        public void notifyAppearance(IPatternMatch match) {
+            boolean removed = matchLostEvents.remove(match);
+            if(!removed){
+                matchFoundEvents.add(match);
+            }
+        }
 
-		@Override
-		public void notifyDisappearance(IPatternMatch match) {
-			boolean removed = matchFoundEvents.remove(match);
-			if(!removed){
-				matchLostEvents.add(match);
-			}
-		}
-	}
+        @Override
+        public void notifyDisappearance(IPatternMatch match) {
+            boolean removed = matchFoundEvents.remove(match);
+            if(!removed){
+                matchLostEvents.add(match);
+            }
+        }
+    }
 
-	/**
+    /**
      * @author Abel Hegedus
      * 
      */
@@ -132,7 +132,7 @@ public abstract class QueryBasedFeature {
 
     private ModelUpdateListener listener;
     private EngineLifecycleListener engineLifecycleListener;
-	private MatchUpdateListener matchUpdateListener;
+    private MatchUpdateListener matchUpdateListener;
 
     protected void initialize(final ViatraQueryMatcher<IPatternMatch> matcher, String sourceParamName,
             String targetParamName) {
@@ -156,7 +156,7 @@ public abstract class QueryBasedFeature {
         this.matchFoundEvents = Sets.newHashSet();
         this.matchLostEvents = Sets.newHashSet();
         matchUpdateListener = new MatchUpdateListener();
-		engineLifecycleListener = new EngineLifecycleListener();
+        engineLifecycleListener = new EngineLifecycleListener();
         listener = new ModelUpdateListener();
     }
 
@@ -177,8 +177,8 @@ public abstract class QueryBasedFeature {
     }
     
     protected void setMatcher(ViatraQueryMatcher<IPatternMatch> matcher) {
-		this.matcher = matcher;
-	}
+        this.matcher = matcher;
+    }
 
     protected EStructuralFeature getFeature() {
         return feature;
@@ -189,16 +189,16 @@ public abstract class QueryBasedFeature {
     }
     
     protected void setSourceParamName(String sourceParamName) {
-		this.sourceParamName = sourceParamName;
-	}
+        this.sourceParamName = sourceParamName;
+    }
 
     protected String getTargetParamName() {
         return targetParamName;
     }
     
     protected void setTargetParamName(String targetParamName) {
-		this.targetParamName = targetParamName;
-	}
+        this.targetParamName = targetParamName;
+    }
 
     protected boolean isCached() {
         return keepCache;

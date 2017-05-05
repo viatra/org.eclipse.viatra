@@ -21,33 +21,33 @@ import org.eclipse.viatra.integration.mwe2.providers.impl.BaseIterationNumberPro
  * @author Peter Lunk
  */
 class ForLoop extends Sequence {
-	private var IIterationNumberProvider provider;
-	
-	/**
-	 * Specify the numebr of iteration explicitly
-	 */
-	def void setIterations(String maxValue){
-		try {
-			var value = Integer.parseInt(maxValue)
-			provider = new BaseIterationNumberProvider(value)
-		}catch (NumberFormatException e) {
-			e.printStackTrace
-		}
-	}
-	
-	/**
-	 * Add a provider
-	 */	
-	def void setIterationProvider(IIterationNumberProvider provider){
-		this.provider = provider
-	}
+    private var IIterationNumberProvider provider;
+    
+    /**
+     * Specify the numebr of iteration explicitly
+     */
+    def void setIterations(String maxValue){
+        try {
+            var value = Integer.parseInt(maxValue)
+            provider = new BaseIterationNumberProvider(value)
+        }catch (NumberFormatException e) {
+            e.printStackTrace
+        }
+    }
+    
+    /**
+     * Add a provider
+     */	
+    def void setIterationProvider(IIterationNumberProvider provider){
+        this.provider = provider
+    }
 
-	override void execute() {
-		for (var i = 0; i < provider.iterationNumber; i = i + 1){
-			step.forEach [
-				execute
-			]
-		}
-	}
-		
+    override void execute() {
+        for (var i = 0; i < provider.iterationNumber; i = i + 1){
+            step.forEach [
+                execute
+            ]
+        }
+    }
+        
 }

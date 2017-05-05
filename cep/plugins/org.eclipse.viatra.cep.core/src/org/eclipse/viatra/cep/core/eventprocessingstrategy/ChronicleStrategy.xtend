@@ -23,16 +23,16 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
  */
 class ChronicleStrategy extends AbstractStrategy {
 
-	override EventContext getContext() {
-		return EventContext::CHRONICLE
-	}
+    override EventContext getContext() {
+        return EventContext::CHRONICLE
+    }
 
-	new(IEventModelManager eventModelManager) {
-		super(eventModelManager)
-	}
+    new(IEventModelManager eventModelManager) {
+        super(eventModelManager)
+    }
 
-	override handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
-		return
-	}
+    override handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
+        return
+    }
 
 }

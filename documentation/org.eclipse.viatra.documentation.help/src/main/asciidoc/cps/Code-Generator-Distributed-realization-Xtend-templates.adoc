@@ -16,10 +16,10 @@ image::codegenerator.png[Code Generator]
 The public API of the transformation contains four methods.
 ```xtend
 interface ICPSGenerator {
-	def CharSequence generateHostCode(DeploymentHost host) throws CPSGeneratorException
-	def CharSequence generateApplicationCode(DeploymentApplication application) throws CPSGeneratorException
-	def CharSequence generateBehaviorCode(DeploymentBehavior behavior) throws CPSGeneratorException
-	def CharSequence generateDeploymentCode(Deployment deployment) throws CPSGeneratorException
+    def CharSequence generateHostCode(DeploymentHost host) throws CPSGeneratorException
+    def CharSequence generateApplicationCode(DeploymentApplication application) throws CPSGeneratorException
+    def CharSequence generateBehaviorCode(DeploymentBehavior behavior) throws CPSGeneratorException
+    def CharSequence generateDeploymentCode(Deployment deployment) throws CPSGeneratorException
 }
 ```
 This implementation of the code generator is stateless. Each separate model element is generated individually.
@@ -30,15 +30,15 @@ The host objects keep references to their own applications.
 #### Generated Code
 ```java
 public class Host152661025 extends BaseHost {
-	
-	public Host152661025(CommunicationNetwork network) {
-		super(network);
-		// Add Applications of Host
-		applications = Lists.<Application>newArrayList(
-			new AlarmApplication(this),
+    
+    public Host152661025(CommunicationNetwork network) {
+        super(network);
+        // Add Applications of Host
+        applications = Lists.<Application>newArrayList(
+            new AlarmApplication(this),
                         new OtherApplication(this),
-		);
-	}
+        );
+    }
 
 } 
 ```
@@ -49,20 +49,20 @@ Applications store their `ApplicationID` and their current state of the behavior
 ```java 
 public class AlarmApplication extends BaseApplication<BehaviorAlarmB> {
 
-	protected static final String APP_ID = "Alarm";
+    protected static final String APP_ID = "Alarm";
 
-	public AlarmApplication(Host host) {
-		super(host);
-		
-		// Set initial State
-		currentState = BehaviorAlarmB.AInit;
-	}
+    public AlarmApplication(Host host) {
+        super(host);
+        
+        // Set initial State
+        currentState = BehaviorAlarmB.AInit;
+    }
 
-	@Override
-	public String getAppID() {
-		return APP_ID;
-	}
-	
+    @Override
+    public String getAppID() {
+        return APP_ID;
+    }
+    
 }
 ```
 
@@ -71,72 +71,72 @@ Behavior represents a statemachine of the application. It stores and manages the
 #### Generated Code
 ```java
 public enum BehaviorAlarmB implements State<BehaviorAlarmB> {
-	 ///////////
-	// States
-	AInit {
+     ///////////
+    // States
+    AInit {
         @Override
         public List<State<BehaviorAlarmB>> possibleNextStates(Application app) {
-        	List<State<BehaviorAlarmB>> possibleStates = Lists.newArrayList();
-        	
-        	// Add Neutral Transitions
-        	
-        	// Add Send Transitions
-        	possibleStates.add(ASent);
-        	
-        	// Add Wait Transitions
-        	
-        	return possibleStates;
+            List<State<BehaviorAlarmB>> possibleStates = Lists.newArrayList();
+            
+            // Add Neutral Transitions
+            
+            // Add Send Transitions
+            possibleStates.add(ASent);
+            
+            // Add Wait Transitions
+            
+            return possibleStates;
         }
         
         @Override
         public BehaviorAlarmB stepTo(BehaviorAlarmB nextState, Application app) {
-        	// Send triggers
-        	if(nextState == ASent){
-        		app.sendTrigger("152.66.102.5", "Alarm", "ISSReceiving");
-        		return super.stepTo(nextState, app);
-        	}
-        	
-        	// Other cases (wait, neutral)
-        	return super.stepTo(nextState, app);
+            // Send triggers
+            if(nextState == ASent){
+                app.sendTrigger("152.66.102.5", "Alarm", "ISSReceiving");
+                return super.stepTo(nextState, app);
+            }
+            
+            // Other cases (wait, neutral)
+            return super.stepTo(nextState, app);
         }
     },
     ASent {
         @Override
         public List<State<BehaviorAlarmB>> possibleNextStates(Application app) {
-        	List<State<BehaviorAlarmB>> possibleStates = Lists.newArrayList();
-        	
-        	// Add Neutral Transitions
-        	possibleStates.add(AInit);
-        	
-        	// Add Send Transitions
-        	        	
-        	// Add Wait Transitions
-        	
-        	return possibleStates;
+            List<State<BehaviorAlarmB>> possibleStates = Lists.newArrayList();
+            
+            // Add Neutral Transitions
+            possibleStates.add(AInit);
+            
+            // Add Send Transitions
+                        
+            // Add Wait Transitions
+            
+            return possibleStates;
         }
     };
-	
+    
     private static Logger logger = Logger.getLogger("cps.proto.distributed.state");
     
      ////////////
     // Triggers
     
-	 /////////////////
-	// General part
-	@Override
-	abstract public List<State<BehaviorAlarmB>> possibleNextStates(Application app);
-	
-	@Override
-	public BehaviorAlarmB stepTo(BehaviorAlarmB nextState, Application app){
-		if(possibleNextStates(app).contains(nextState)){
-			logger.info("Step from " + this.name() + " to " + nextState.name());
-			return nextState;
-		}else{
-			logger.info("!!! Warning: Unable to step from " + this.name() + " to " + nextState.name() 
-					+ " because the target state is not possible state.");
-		}
-		return this;
-	}
+     /////////////////
+    // General part
+    @Override
+    abstract public List<State<BehaviorAlarmB>> possibleNextStates(Application app);
+    
+    @Override
+    public BehaviorAlarmB stepTo(BehaviorAlarmB nextState, Application app){
+        if(possibleNextStates(app).contains(nextState)){
+            logger.info("Step from " + this.name() + " to " + nextState.name());
+            return nextState;
+        }else{
+            logger.info("!!! Warning: Unable to step from " + this.name() + " to " + nextState.name() 
+                    + " because the target state is not possible state.");
+        }
+        return this;
+    }
 
 }
 ```

@@ -26,25 +26,25 @@ interface ISearchOperationDescriptor {
 
 @Data
 abstract class AbstractSearchOperationDescriptor implements ISearchOperationDescriptor{
-	
-	val MatchingFrameDescriptor matchingFrame
-	
+    
+    val MatchingFrameDescriptor matchingFrame
+    
 }
 
 @Data class InstanceOfDescriptor extends AbstractSearchOperationDescriptor {
 
-	val PVariable variable
+    val PVariable variable
 
-	val EClassifier key
+    val EClassifier key
 
 }
 
 @Data class SingleNavigationDescriptor extends AbstractSearchOperationDescriptor {
 
-	val PVariable source
-	val PVariable target
+    val PVariable source
+    val PVariable target
 
-	val EStructuralFeature key
+    val EStructuralFeature key
 }
 
 @Data class MultiNavigationDescriptor extends SingleNavigationDescriptor {
@@ -52,66 +52,66 @@ abstract class AbstractSearchOperationDescriptor implements ISearchOperationDesc
 }
 
 @Data class ExpressionDescriptor extends AbstractSearchOperationDescriptor {
-	
-	val Set<PVariable> variables
-	
-	val CharSequence expression
-	
+    
+    val Set<PVariable> variables
+    
+    val CharSequence expression
+    
 }
 
 @Data class CheckInstanceOfDescriptor extends InstanceOfDescriptor {
 
-	public static val String NAME = "InstanceOfCheck"
+    public static val String NAME = "InstanceOfCheck"
 
 }
 
 @Data class CheckSingleNavigationDescriptor extends SingleNavigationDescriptor {
-	
-	public static val String NAME = "SingleAssociationCheck"
-	
+    
+    public static val String NAME = "SingleAssociationCheck"
+    
 }
 
 @Data class CheckMultiNavigationDescriptor extends MultiNavigationDescriptor {
-	
-	public static val String NAME = "MultiAssociationCheck"
-	
+    
+    public static val String NAME = "MultiAssociationCheck"
+    
 }
 
 @Data abstract class DependentSearchOperationDescriptor extends AbstractSearchOperationDescriptor {
-	
-	@Accessors(NONE) val Set<MatcherReference> dependencies
-	
-	def getDependencies() {
-		dependencies
-	}
-		
+    
+    @Accessors(NONE) val Set<MatcherReference> dependencies
+    
+    def getDependencies() {
+        dependencies
+    }
+        
 }
 
 @Data class NACOperationDescriptor extends DependentSearchOperationDescriptor {
-	
-	public static val String NAME = "NACOperation"
-	
-	val CharSequence matcher
-	val Set<PVariable> bindings
-		
+    
+    public static val String NAME = "NACOperation"
+    
+    val CharSequence matcher
+    val Set<PVariable> bindings
+        
 }
 
 @Data class ExtendInstanceOfDescriptor extends InstanceOfDescriptor {
 
-	public static val String NAME = "IterateOverInstances"
+    public static val String NAME = "IterateOverInstances"
 
 }
 
 @Data class ExtendSingleNavigationDescriptor extends SingleNavigationDescriptor {
-	
-	public static val String NAME = "NavigateSingleAssociation"
-	
+    
+    public static val String NAME = "NavigateSingleAssociation"
+    
 }
 
 @Data class ExtendMultiNavigationDescriptor extends MultiNavigationDescriptor {
-	
-	public static val String NAME = "NavigateMultiAssociation"
-	
+    
+    public static val String NAME = "NavigateMultiAssociation"
+    
 }
 
 @Data class ExtendExpressionDescriptor extends ExpressionDescriptor {

@@ -40,7 +40,7 @@ public class ImportListLabelProvider extends StyledCellLabelProvider implements 
 
     @Override
     public String getText(Object element) {
-    	return element.toString();
+        return element.toString();
     }
 
     @Override

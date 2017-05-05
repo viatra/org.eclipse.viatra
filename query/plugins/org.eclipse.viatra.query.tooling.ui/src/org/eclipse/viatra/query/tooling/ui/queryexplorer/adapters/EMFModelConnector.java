@@ -99,9 +99,9 @@ public class EMFModelConnector implements IModelConnector {
         navigateToElements(key.getEditorPart(), preparedSelection);
         workbenchPage.bringToTop(key.getEditorPart());
         if (key.getEditorPart() instanceof ISelectionProvider) {
-			ISelectionProvider selectionProvider = (ISelectionProvider) key.getEditorPart();
-			selectionProvider.setSelection(preparedSelection);
-        	
+            ISelectionProvider selectionProvider = (ISelectionProvider) key.getEditorPart();
+            selectionProvider.setSelection(preparedSelection);
+            
         }
         reflectiveSetSelection(key.getEditorPart(), preparedSelection);
     }
@@ -124,16 +124,16 @@ public class EMFModelConnector implements IModelConnector {
                 result = editingDomainProvider.getEditingDomain().getResourceSet();
             }
         } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum) && editorPart instanceof ISelectionProvider) {
-		    ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
-		    if (selectionProvider.getSelection() instanceof TreeSelection) {
-		        Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
-		        if (object instanceof Resource) {
-		            result = (Resource) object;
-		        } else if (object instanceof EObject) {
-		            result = ((EObject) object).eResource();
-		        }
-		    }
-		}
+            ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
+            if (selectionProvider.getSelection() instanceof TreeSelection) {
+                Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
+                if (object instanceof Resource) {
+                    result = (Resource) object;
+                } else if (object instanceof EObject) {
+                    result = ((EObject) object).eResource();
+                }
+            }
+        }
         return result;
     }
 
@@ -144,17 +144,17 @@ public class EMFModelConnector implements IModelConnector {
      * 
      */
     private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
-    	if (editorPart instanceof IViewerProvider 
-    			&& (((IViewerProvider) editorPart).getViewer() instanceof TreeViewer)) {
-	        try {
-	            Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
-	            if (m!=null) {
-	                m.invoke(editorPart, preparedSelection.toList());
-	            }
-	        } catch (Exception e) {
-	            logger.log(new Status(IStatus.INFO, ViatraQueryGUIPlugin.PLUGIN_ID, "Error while setting selection. If this is not an EMF Tree editor, consider providing a specialized ModelConnector implementation.", e));
-	        }
-    	}
+        if (editorPart instanceof IViewerProvider 
+                && (((IViewerProvider) editorPart).getViewer() instanceof TreeViewer)) {
+            try {
+                Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
+                if (m!=null) {
+                    m.invoke(editorPart, preparedSelection.toList());
+                }
+            } catch (Exception e) {
+                logger.log(new Status(IStatus.INFO, ViatraQueryGUIPlugin.PLUGIN_ID, "Error while setting selection. If this is not an EMF Tree editor, consider providing a specialized ModelConnector implementation.", e));
+            }
+        }
     }
 
     protected TreeSelection prepareSelection(Object[] locationObjects) {
@@ -193,10 +193,10 @@ public class EMFModelConnector implements IModelConnector {
         return new TreePath(nodes.toArray());
     }
 
-	@Override
-	public IWorkbenchPart getOwner() {
-		return this.editorPart;
-	}
+    @Override
+    public IWorkbenchPart getOwner() {
+        return this.editorPart;
+    }
 
     @Override
     public Collection<EObject> getSelectedEObjects() {

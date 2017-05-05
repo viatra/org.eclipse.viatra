@@ -41,7 +41,7 @@ import com.google.common.collect.Table;
  * @author Gabor Bergmann
  */
 public class EMFBaseIndexMetaStore {
-	
+    
     private static final EClass EOBJECT_CLASS = EcorePackage.eINSTANCE.getEObject();
     private final boolean isDynamicModel;
     private NavigationHelperImpl navigationHelper;
@@ -101,7 +101,7 @@ public class EMFBaseIndexMetaStore {
      * Map from enum classes generated for {@link EEnum}s to the actual EEnum.
      */
     Map<Class<?>, EEnum> generatedEENumClasses = new HashMap<Class<?>, EEnum>();
-	
+    
     /**
      * @return the eObjectClassKey
      */
@@ -394,6 +394,6 @@ public class EMFBaseIndexMetaStore {
         }
         return cls;
     }
-	
-	
+    
+    
 }

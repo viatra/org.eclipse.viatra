@@ -91,8 +91,8 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
             dsm.undoUntilRoot();
             Object[] nextTrajectory = queue.poll();
             if (nextTrajectory == null) {
-				throw new DSEException("Could not generate enough initial solutions.");
-			}
+                throw new DSEException("Could not generate enough initial solutions.");
+            }
             for (Object iTransition : nextTrajectory) {
                 dsm.fireActivation(iTransition);
             }

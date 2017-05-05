@@ -24,15 +24,15 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
  * 
  */
 public abstract class BasePConstraint implements PConstraint {
-	
-	
+    
+    
     protected PBody pBody;
     private final Set<PVariable> affectedVariables;
     
     
     private final int sequentialID = nextID++;
 
-	private static int nextID = 0;
+    private static int nextID = 0;
 
     public BasePConstraint(PBody pBody, Set<PVariable> affectedVariables) {
         super();
@@ -59,7 +59,7 @@ public abstract class BasePConstraint implements PConstraint {
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-    	return Collections.emptyMap();
+        return Collections.emptyMap();
     }
 
     @Override
@@ -93,7 +93,7 @@ public abstract class BasePConstraint implements PConstraint {
     }
     
     @Override
-	public int getMonotonousID() {
-		return sequentialID;
-	}    
+    public int getMonotonousID() {
+        return sequentialID;
+    }    
 }

@@ -91,23 +91,23 @@ public class ViewModelManager {
         Resource resource = null;
 
         for(Notifier notifier : notifiers) {
-        	if(notifier instanceof Resource) {
-        		Resource r = (Resource) notifier;
-        		if(checkTraceabilityResource(r)) {
-        			resource = r;
-        			break;
-        		}
-        	}
-        	if(notifier instanceof ResourceSet) {
-        		ResourceSet resourceSet = (ResourceSet) notifier;
-        		for (Resource r : resourceSet.getResources()) {
-        			if(checkTraceabilityResource(r)) {
-            			resource = r;
-            			break;
-        			}
-    	        }
-        	}
-	        
+            if(notifier instanceof Resource) {
+                Resource r = (Resource) notifier;
+                if(checkTraceabilityResource(r)) {
+                    resource = r;
+                    break;
+                }
+            }
+            if(notifier instanceof ResourceSet) {
+                ResourceSet resourceSet = (ResourceSet) notifier;
+                for (Resource r : resourceSet.getResources()) {
+                    if(checkTraceabilityResource(r)) {
+                        resource = r;
+                        break;
+                    }
+                }
+            }
+            
         }
         if (resource == null) {
             resource = addTraceabilityResource();
@@ -117,7 +117,7 @@ public class ViewModelManager {
     }
 
     private boolean checkTraceabilityResource(Resource r) {
-    	return r.getURI().toString().equals(getTraceabilityResourceId());
+        return r.getURI().toString().equals(getTraceabilityResourceId());
     }
     
     public ViatraQueryEngine getEngine() {
@@ -125,12 +125,12 @@ public class ViewModelManager {
     }
 
     private Resource addTraceabilityResource() throws ViatraQueryException, ViatraBaseException {
-    	ResourceSet resourceSet = new ResourceSetImpl();
-    	Resource resource = resourceSet.createResource(URI.createURI(getTraceabilityResourceId()));
-    	NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
-    	helper.addRoot(resourceSet);
-    	
-    	return resource;
+        ResourceSet resourceSet = new ResourceSetImpl();
+        Resource resource = resourceSet.createResource(URI.createURI(getTraceabilityResourceId()));
+        NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
+        helper.addRoot(resourceSet);
+        
+        return resource;
     }
     
     public void setEngine(ViatraQueryEngine engine) {

@@ -95,7 +95,7 @@ public class ContainmentRule extends ViewModelRule {
 
     @Override
     protected Job<GenericPatternMatch> getUpdatedJob() {
-    	return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED,
+        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED,
                 new IMatchProcessor<GenericPatternMatch>() {
 
                     @Override
@@ -116,8 +116,8 @@ public class ContainmentRule extends ViewModelRule {
                             Collection<EObject> edges = ViewModelUtil.delete(match);
                             Iterator<EObject> iterator = edges.iterator();
                             while(iterator.hasNext()) {
-                            	EObject edge = iterator.next();
-                            	EcoreUtil.delete(edge);
+                                EObject edge = iterator.next();
+                                EcoreUtil.delete(edge);
                                 state.containmentDisappeared((Containment) edge);
                                 logger.debug("Containment disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
                             }

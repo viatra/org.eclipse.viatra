@@ -38,31 +38,31 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  * @since 0.9
  */
 public abstract class GenericQuerySpecification<Matcher extends GenericPatternMatcher> extends
-		BaseQuerySpecification<Matcher> {
+        BaseQuerySpecification<Matcher> {
 
     /**
      * Instantiates query specification for the given internal query representation.
-	 */
-	public GenericQuerySpecification(PQuery wrappedPQuery) {
-		super(wrappedPQuery);
-	}
+     */
+    public GenericQuerySpecification(PQuery wrappedPQuery) {
+        super(wrappedPQuery);
+    }
 
-	@Override
-	public GenericPatternMatch newEmptyMatch() {
-		return GenericPatternMatch.newEmptyMatch(this);
-	}
+    @Override
+    public GenericPatternMatch newEmptyMatch() {
+        return GenericPatternMatch.newEmptyMatch(this);
+    }
 
-	@Override
-	public GenericPatternMatch newMatch(Object... parameters) {
-		return GenericPatternMatch.newMatch(this, parameters);
-	}
+    @Override
+    public GenericPatternMatch newMatch(Object... parameters) {
+        return GenericPatternMatch.newMatch(this, parameters);
+    }
 
-	/**
-	 * Derived classes should use this implementation of {@link #instantiate(ViatraQueryEngine)} 
-	 * if they use {@link GenericPatternMatcher} proper.
-	 */
-	protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws ViatraQueryException {
-		return GenericPatternMatcher.instantiate(engine, this);
-	}
+    /**
+     * Derived classes should use this implementation of {@link #instantiate(ViatraQueryEngine)} 
+     * if they use {@link GenericPatternMatcher} proper.
+     */
+    protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws ViatraQueryException {
+        return GenericPatternMatcher.instantiate(engine, this);
+    }
 
 }

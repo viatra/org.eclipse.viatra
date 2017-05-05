@@ -25,34 +25,34 @@ import java.util.ArrayList
  * @author Peter Lunk
  */
 class TransformationChain implements IWorkflowComponent, ICompositeStep{
-	private List<ITransformationStep> steps = new ArrayList<ITransformationStep>();
-	
-	/**
-	 * Upon being invoked by the MWE runner, the transformation chain will initialize its 
-	 * subcomponents and execute them as well.
-	 */
-	override invoke(IWorkflowContext ctx) {
+    private List<ITransformationStep> steps = new ArrayList<ITransformationStep>();
+    
+    /**
+     * Upon being invoked by the MWE runner, the transformation chain will initialize its 
+     * subcomponents and execute them as well.
+     */
+    override invoke(IWorkflowContext ctx) {
         steps.forEach[initialize(ctx)]
-		steps.forEach[execute]
-	}
-	
-	/**
-	 * After it is invoked, it disposes all of the subcomponents.
-	 */
-	override postInvoke() {
-		steps.forEach[dispose]
-	}
-	
-	override preInvoke() {
-		//do nothing
-	}
-	
-	override addStep(ITransformationStep step) {
-		steps.add(step)
-	}
-	
-	override getStep() {
-		return step
-	}
-	
+        steps.forEach[execute]
+    }
+    
+    /**
+     * After it is invoked, it disposes all of the subcomponents.
+     */
+    override postInvoke() {
+        steps.forEach[dispose]
+    }
+    
+    override preInvoke() {
+        //do nothing
+    }
+    
+    override addStep(ITransformationStep step) {
+        steps.add(step)
+    }
+    
+    override getStep() {
+        return step
+    }
+    
 }

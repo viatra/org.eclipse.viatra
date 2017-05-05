@@ -30,23 +30,23 @@ import com.google.common.base.Joiner;
  */
 public class CompiledSubPlan extends PlanningTrace {
 
-	public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
-			ReteNodeRecipe recipe,
-			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
-		super(subPlan, variablesTuple, recipe, parentRecipeTraces);
-		
-		// Make sure that each variable occurs only once
-		Set<PVariable> variablesSet = new HashSet<PVariable>(variablesTuple);
-		if (variablesSet.size() != variablesTuple.size()) {
-			throw new IllegalStateException(String.format(
-					"Illegal column duplication (%s) while the query plan %s was compiled into a Rete Recipe %s", 
-					Joiner.on(',').join(variablesTuple), subPlan.toShortString(), recipe));
-		}
-	}
-	public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
-			ReteNodeRecipe recipe,
-			RecipeTraceInfo... parentRecipeTraces) {
-		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
-	}
+    public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
+            ReteNodeRecipe recipe,
+            Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
+        super(subPlan, variablesTuple, recipe, parentRecipeTraces);
+        
+        // Make sure that each variable occurs only once
+        Set<PVariable> variablesSet = new HashSet<PVariable>(variablesTuple);
+        if (variablesSet.size() != variablesTuple.size()) {
+            throw new IllegalStateException(String.format(
+                    "Illegal column duplication (%s) while the query plan %s was compiled into a Rete Recipe %s", 
+                    Joiner.on(',').join(variablesTuple), subPlan.toShortString(), recipe));
+        }
+    }
+    public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
+            ReteNodeRecipe recipe,
+            RecipeTraceInfo... parentRecipeTraces) {
+        this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
+    }
 
 }

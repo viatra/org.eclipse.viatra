@@ -33,7 +33,7 @@ public interface ILocalSearchAdapter {
     
     /**
      * Callback method to indicate the start of a matching process
-	 *
+     *
      * @param lsMatcher the local search matcher that starts the matching
      */
     void patternMatchingStarted(LocalSearchMatcher lsMatcher);
@@ -75,13 +75,13 @@ public interface ILocalSearchAdapter {
      * @param planExecutor the search plan executor that found the match
      * @param frame the frame that holds the substitutions of the variables that match
      */
-	void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame);
+    void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame);
 
-	/**
-	 * Callback method to indicate that a search plan executor is initialized with the given frame and starting operation
-	 * 
-	 * @param searchPlanExecutor
-	 * @param frame
-	 */
-	void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame);
+    /**
+     * Callback method to indicate that a search plan executor is initialized with the given frame and starting operation
+     * 
+     * @param searchPlanExecutor
+     * @param frame
+     */
+    void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame);
 }

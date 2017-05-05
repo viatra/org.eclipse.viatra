@@ -74,21 +74,21 @@ public abstract class StandardIndexer extends BaseNode implements Indexer {
     }
 
     @Override
-	public ReteContainer getContainer() {
+    public ReteContainer getContainer() {
         return reteContainer;
     }
 
     @Override
     protected String toStringCore() {
-    	return super.toStringCore() + "(" + parent + "/" + mask + ")";
+        return super.toStringCore() + "(" + parent + "/" + mask + ")";
     }
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateFromIndexerToSupplierParent())
-    		if (parent != null)
-    			parent.acceptPropagatedTraceInfo(traceInfo);
+        super.assignTraceInfo(traceInfo);
+        if (traceInfo.propagateFromIndexerToSupplierParent())
+            if (parent != null)
+                parent.acceptPropagatedTraceInfo(traceInfo);
     }
 
     

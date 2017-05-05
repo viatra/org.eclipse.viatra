@@ -222,7 +222,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 }
             }
         } catch (Exception ex) {
-        	logger.error(
+            logger.error(
                     "The derived feature adapter encountered an error in processing the EMF model. "
                             + "This happened while maintaining the derived feature " + derivedFeature.getName()
                             + " of object " + source, ex);
@@ -245,8 +245,8 @@ public class DerivedFeatureAdapter extends AdapterImpl {
         };
 
         /**
-		 * 
-		 */
+         * 
+         */
         public DependentFeaturePath(EStructuralFeature navigationFeature, EStructuralFeature dependantFeature) {
             this.dependantFeature = dependantFeature;
             this.navigationFeature = navigationFeature;
@@ -280,13 +280,13 @@ public class DerivedFeatureAdapter extends AdapterImpl {
      */
     protected class DerivedFeatureEMFVisitor extends EMFVisitor {
 
-		public DerivedFeatureEMFVisitor() {
-			super(true /* preOrder */);
-		}
+        public DerivedFeatureEMFVisitor() {
+            super(true /* preOrder */);
+        }
 
-		@Override
+        @Override
         public void visitAttribute(EObject source, EAttribute feature, Object target) {
-		    logger.trace("Attribute refresh.");
+            logger.trace("Attribute refresh.");
             // send set notification
             sendSetNotification(source, feature, currentValue, target);
             storeSingleValue(feature, target);

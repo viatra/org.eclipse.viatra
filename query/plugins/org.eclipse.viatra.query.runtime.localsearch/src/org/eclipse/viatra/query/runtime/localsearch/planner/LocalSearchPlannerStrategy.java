@@ -47,27 +47,27 @@ import com.google.common.collect.ImmutableSet;
 @Deprecated
 public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
 
-	private IConstraintEvaluablePredicateProvider constraintPredicateProvider;
+    private IConstraintEvaluablePredicateProvider constraintPredicateProvider;
 
-	public LocalSearchPlannerStrategy() {
-		this(true);
-	}
+    public LocalSearchPlannerStrategy() {
+        this(true);
+    }
 
-	public LocalSearchPlannerStrategy(final boolean allowInverseNavigation) {
-		//TODO this method should be removed later
-		constraintPredicateProvider = new IConstraintEvaluablePredicateProvider() {
-			
-			@Override
-			public Predicate<PConstraint> getConstraint(SubPlan plan) {
-				return new EvaluablePConstraint(plan, allowInverseNavigation);
-			}
-		};
-	}
-	
-	public LocalSearchPlannerStrategy(IConstraintEvaluablePredicateProvider constraintEnabler) {
-		this.constraintPredicateProvider = constraintEnabler;
-	}
-	
+    public LocalSearchPlannerStrategy(final boolean allowInverseNavigation) {
+        //TODO this method should be removed later
+        constraintPredicateProvider = new IConstraintEvaluablePredicateProvider() {
+            
+            @Override
+            public Predicate<PConstraint> getConstraint(SubPlan plan) {
+                return new EvaluablePConstraint(plan, allowInverseNavigation);
+            }
+        };
+    }
+    
+    public LocalSearchPlannerStrategy(IConstraintEvaluablePredicateProvider constraintEnabler) {
+        this.constraintPredicateProvider = constraintEnabler;
+    }
+    
     private Set<PVariable> initialBoundVariables = Collections.emptySet();
 
     /**
@@ -107,14 +107,14 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
     }
 
     protected PConstraint selectFirstConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
-    	List<PVariable> parameterVariables = pBody.getSymbolicParameterVariables();
+        List<PVariable> parameterVariables = pBody.getSymbolicParameterVariables();
         for (PVariable pVariable : parameterVariables) {
             Set<PConstraint> referringPConstraints = pVariable.getReferringConstraints();
             for (PConstraint referringPConstraint : referringPConstraints) {
                 // If the type constraint is unprocessed and is unary, then select it
                 if (constraintSet.contains(referringPConstraint) && 
-                		referringPConstraint instanceof TypeConstraint && 
-                		referringPConstraint.getAffectedVariables().size()==1) {
+                        referringPConstraint instanceof TypeConstraint && 
+                        referringPConstraint.getAffectedVariables().size()==1) {
                     return referringPConstraint;
                 }
             }
@@ -123,7 +123,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
     }
     
     protected PConstraint selectNextConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
-    	// TODO use better ordering heuristic based on the runtime context
+        // TODO use better ordering heuristic based on the runtime context
         return Collections.min(Collections2.filter(constraintSet, constraintPredicateProvider.getConstraint(plan)),
                 new OrderingHeuristics(plan,context));
     }
@@ -143,7 +143,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         // Strategy: begin with TypeUnary constraints from parameters, if able
         // TODO consider adornment here as well
         if(plan.getOperation() instanceof PStart){
-	        pConstraint = selectFirstConstraint(pBody, plan, constraintSet, context);
+            pConstraint = selectFirstConstraint(pBody, plan, constraintSet, context);
         }
         // If no such constraint left, go with the ordering heuristic for the rest of the constraints
         if (pConstraint == null) {

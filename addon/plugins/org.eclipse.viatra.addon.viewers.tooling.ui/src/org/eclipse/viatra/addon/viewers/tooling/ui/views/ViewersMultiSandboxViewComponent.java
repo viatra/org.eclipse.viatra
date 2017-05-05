@@ -75,141 +75,141 @@ import com.google.common.collect.Lists;
  */
 public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
-	private List<IViewerSandboxTab> tabList;
-	CTabFolder folder;
-	private AdvancedViatraQueryEngine engine;
-	private ViewerState state;
-	private ViewersMultiSandboxView host;
-	private ViewersMultiSandoxViewComponentSettings settings;
-	
-	public ViewersMultiSandboxViewComponent(ViewersMultiSandboxView v) {
-		this.host = v;
-		createPartControl(host.container);
-	}
+    private List<IViewerSandboxTab> tabList;
+    CTabFolder folder;
+    private AdvancedViatraQueryEngine engine;
+    private ViewerState state;
+    private ViewersMultiSandboxView host;
+    private ViewersMultiSandoxViewComponentSettings settings;
+    
+    public ViewersMultiSandboxViewComponent(ViewersMultiSandboxView v) {
+        this.host = v;
+        createPartControl(host.container);
+    }
 
-	public void initializeTabList() {
-		tabList = Lists.newArrayList();
-		IConfigurationElement[] providers = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(
-						ViewersToolingViewsUtil.SANDBOX_TAB_EXTENSION_ID);
-		for (IConfigurationElement provider : providers) {
-			IViewerSandboxTab tab;
-			try {
-				tab = (IViewerSandboxTab) provider.createExecutableExtension("implementation");
-				tabList.add(tab);
-			} catch (CoreException e) {
-				ViewersMultiSandboxView.log("initializeTabList",e);
-			}
-		}
-	}
+    public void initializeTabList() {
+        tabList = Lists.newArrayList();
+        IConfigurationElement[] providers = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(
+                        ViewersToolingViewsUtil.SANDBOX_TAB_EXTENSION_ID);
+        for (IConfigurationElement provider : providers) {
+            IViewerSandboxTab tab;
+            try {
+                tab = (IViewerSandboxTab) provider.createExecutableExtension("implementation");
+                tabList.add(tab);
+            } catch (CoreException e) {
+                ViewersMultiSandboxView.log("initializeTabList",e);
+            }
+        }
+    }
 
-	private void createSettingsTab() {
-		this.settings = new ViewersMultiSandoxViewComponentSettings(this);
-		this.settings.createUI();
-	}
-	
-	
-	private void createPartControl(Composite parent) {
-		initializeTabList();
-		
-		folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER);
-		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		folder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-		
-		// create settings tab
-		createSettingsTab();
-				
-		for (IViewerSandboxTab tab : tabList) {
-			tab.createPartControl(folder);
-			// initialize our tricky listener to punch through unwrapped selections in a 2nd round
-			tab.addSelectionChangedListener(selectionHelper.trickyListener);
-		}
+    private void createSettingsTab() {
+        this.settings = new ViewersMultiSandoxViewComponentSettings(this);
+        this.settings.createUI();
+    }
+    
+    
+    private void createPartControl(Composite parent) {
+        initializeTabList();
+        
+        folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER);
+        folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        folder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+        
+        // create settings tab
+        createSettingsTab();
+                
+        for (IViewerSandboxTab tab : tabList) {
+            tab.createPartControl(folder);
+            // initialize our tricky listener to punch through unwrapped selections in a 2nd round
+            tab.addSelectionChangedListener(selectionHelper.trickyListener);
+        }
 
-		folder.setSelection(0);
-		folder.addSelectionListener(new SelectionListener() {
-			// make sure the contributed menu is refreshed each time the current
-			// tab changes
+        folder.setSelection(0);
+        folder.addSelectionListener(new SelectionListener() {
+            // make sure the contributed menu is refreshed each time the current
+            // tab changes
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				host.fillToolBar(ViewersMultiSandboxViewComponent.this);
-			}
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                host.fillToolBar(ViewersMultiSandboxViewComponent.this);
+            }
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				host.fillToolBar(ViewersMultiSandboxViewComponent.this);
-			}
-		});
-		
-		
-		folder.addMouseListener(new MouseAdapter() {
-			
-			@Override
-			public void mouseUp(MouseEvent e) {
-				host.setCurrentComponent(ViewersMultiSandboxViewComponent.this);
-			}
-			
-		});
-		
-		setBackGround();
-		
-	}
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                host.fillToolBar(ViewersMultiSandboxViewComponent.this);
+            }
+        });
+        
+        
+        folder.addMouseListener(new MouseAdapter() {
+            
+            @Override
+            public void mouseUp(MouseEvent e) {
+                host.setCurrentComponent(ViewersMultiSandboxViewComponent.this);
+            }
+            
+        });
+        
+        setBackGround();
+        
+    }
 
-	public void dispose() {
-		
-		for (IViewerSandboxTab tab : tabList) {
-			tab.removeSelectionChangedListener(selectionHelper.trickyListener);
-			tab.dispose();
-		}
-		if (state != null) {
-			state.dispose();
-		}
-		if (engine != null) {
-			engine.dispose();
-		}
-		
-		if (!folder.isDisposed()) {
-			folder.dispose();
-		}
+    public void dispose() {
+        
+        for (IViewerSandboxTab tab : tabList) {
+            tab.removeSelectionChangedListener(selectionHelper.trickyListener);
+            tab.dispose();
+        }
+        if (state != null) {
+            state.dispose();
+        }
+        if (engine != null) {
+            engine.dispose();
+        }
+        
+        if (!folder.isDisposed()) {
+            folder.dispose();
+        }
 
-	}
-	
-	
-	public void setFocus() {
+    }
+    
+    
+    public void setFocus() {
         if (!tabList.isEmpty()) {
             getCurrentTabItem().getControl().setFocus();
         }
-	}
+    }
 
-	void setForeground() {
-		Color bgColor = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
-		folder.setBackground(bgColor);
-		getCurrentTabItem().getControl().setBackground(bgColor);
-	}
-	
-	void setBackGround() {
-		Color bgColor = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		folder.setBackground(bgColor);
-		getCurrentTabItem().getControl().setBackground(bgColor);
-	}
-	
-	private IViewSite getViewSite() {
-		return host.getViewSite();
-	}
-	
-	private IViewerSandboxTab getCurrentContributedTab() {
-		if (folder.getSelectionIndex()<=0) return null;
-		else return tabList.get(folder.getSelectionIndex()-1);
-	}
-	
-	private CTabItem getCurrentTabItem() {
-		return folder.getSelection();
-	}
-	
-	// this should be called whenever the active tab changes
+    void setForeground() {
+        Color bgColor = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
+        folder.setBackground(bgColor);
+        getCurrentTabItem().getControl().setBackground(bgColor);
+    }
+    
+    void setBackGround() {
+        Color bgColor = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+        folder.setBackground(bgColor);
+        getCurrentTabItem().getControl().setBackground(bgColor);
+    }
+    
+    private IViewSite getViewSite() {
+        return host.getViewSite();
+    }
+    
+    private IViewerSandboxTab getCurrentContributedTab() {
+        if (folder.getSelectionIndex()<=0) return null;
+        else return tabList.get(folder.getSelectionIndex()-1);
+    }
+    
+    private CTabItem getCurrentTabItem() {
+        return folder.getSelection();
+    }
+    
+    // this should be called whenever the active tab changes
     void fillToolBarBasedOnCurrentTab() 
     {
-    	IViewerSandboxTab tab = getCurrentContributedTab();
+        IViewerSandboxTab tab = getCurrentContributedTab();
         if (tab!=null) {
             IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
             //mgr.removeAll(); // this is moved to ViewersMultiSandboxView.fillToolBar
@@ -235,8 +235,8 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
             // getViewSite().getActionBars().updateActionBars(); // this is moved to ViewersMultiSandboxView.fillToolBar
         }
     }
-	
-	private List<IContributionItem> getDropdownMenuContributions(IViewerSandboxTab tab) {
+    
+    private List<IContributionItem> getDropdownMenuContributions(IViewerSandboxTab tab) {
         List<IContributionItem> r = new ArrayList<IContributionItem>();
         if (tab!=null && tab.getDropDownMenuContributions()!=null) {
             r.addAll(tab.getDropDownMenuContributions());
@@ -256,41 +256,41 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     
     // this is called by the settings tab
     void applyConfiguration(ViewersComponentConfiguration c) {
-    	try {
-			doSetContents(c.getScope(), c.getPatterns(), c.getFilter());
-		} catch (ViatraQueryException e) {
-			ViewersMultiSandboxView.log("applyConfiguration", e);
-		}
+        try {
+            doSetContents(c.getScope(), c.getPatterns(), c.getFilter());
+        } catch (ViatraQueryException e) {
+            ViewersMultiSandboxView.log("applyConfiguration", e);
+        }
     }
     
     public void initializeContents(ViewersComponentConfiguration c) throws ViatraQueryException {
-    	if (c!=null) {
-    		initializeContents(c.getScope(), c.getPatterns(), c.getFilter());
-    	}
+        if (c!=null) {
+            initializeContents(c.getScope(), c.getPatterns(), c.getFilter());
+        }
     }
 
-	public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
+    public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
             throws ViatraQueryException {
         if (model != null) {
-        	Collection<IQuerySpecification<?>> patterns = getPatternsWithProperAnnotations(_patterns);
-        	this.initialConfiguration = new ViewersComponentConfiguration(model,patterns,filter);
-        	doSetContents(model, patterns, filter);
+            Collection<IQuerySpecification<?>> patterns = getPatternsWithProperAnnotations(_patterns);
+            this.initialConfiguration = new ViewersComponentConfiguration(model,patterns,filter);
+            doSetContents(model, patterns, filter);
             settings.initialConfigurationChanged(this.initialConfiguration);
         }
     }
 
-	private void doSetContents(EMFScope scope, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws ViatraQueryException {
-		if (state!=null) {
-    		// dispose any previous viewerstate
-    		state.dispose();
-    	}
+    private void doSetContents(EMFScope scope, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws ViatraQueryException {
+        if (state!=null) {
+            // dispose any previous viewerstate
+            state.dispose();
+        }
         state = ViatraViewerDataModel.newViewerState(getEngine(scope), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
         for (IViewerSandboxTab tab : tabList) {
             tab.bindState(state);
         }
-	}
-	
-	
+    }
+    
+    
     private AdvancedViatraQueryEngine getEngine(EMFScope scope) throws ViatraQueryException {
         if (engine != null) {
             engine.dispose();
@@ -316,12 +316,12 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         }
         return res;
     }
-	
-	
-	@Override
+    
+    
+    @Override
     public void setSelection(ISelection selection) {
         for (IViewerSandboxTab tab : tabList) {
-        	// unwrap for forward selection synchronization
+            // unwrap for forward selection synchronization
             tab.setSelection(selectionHelper.unwrapElements_EObjectsToViewersElements(selection, state));
         }
     }
@@ -329,8 +329,8 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
     @Override
     public ISelection getSelection() {
-       	IViewerSandboxTab tab = getCurrentContributedTab();
-       	if (tab!=null) {
+           IViewerSandboxTab tab = getCurrentContributedTab();
+           if (tab!=null) {
             // unwrap VIATRA viewers model elements to EObjects
             return selectionHelper.unwrapElements_ViewersElementsToEObjects( tab.getSelection() );
         } else {
@@ -342,7 +342,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
-    	selectionHelper.selectionChangedListeners.add(listener);
+        selectionHelper.selectionChangedListeners.add(listener);
         for (IViewerSandboxTab tab : tabList) {
             tab.addSelectionChangedListener(listener);
         }
@@ -350,7 +350,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
     @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-    	selectionHelper.selectionChangedListeners.remove(listener);
+        selectionHelper.selectionChangedListeners.remove(listener);
         for (IViewerSandboxTab tab : tabList) {
             tab.removeSelectionChangedListener(listener);
         }

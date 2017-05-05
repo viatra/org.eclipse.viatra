@@ -78,352 +78,352 @@ public class ZestContentViewer extends ContentViewer {
         }
     };
 
-	private Injector injector;
-	private FXCanvas canvas;
-	private IDomain domain;
-	private IViewer viewer;
-	private ILayoutAlgorithm layoutAlgorithm;
-	protected Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
-	protected Map<Object, Edge> contentEdgeMap = new IdentityHashMap<>();
+    private Injector injector;
+    private FXCanvas canvas;
+    private IDomain domain;
+    private IViewer viewer;
+    private ILayoutAlgorithm layoutAlgorithm;
+    protected Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
+    protected Map<Object, Edge> contentEdgeMap = new IdentityHashMap<>();
 
-	/**
-	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
-	 * saved so that it can be later used to create an {@link Injector} that is
-	 * later used for the injection of members and the construction of the
-	 * {@link FXDomain}.
-	 *
-	 * @param module
-	 *            The {@link Module} from which an {@link Injector} is created
-	 *            later.
-	 */
-	public ZestContentViewer(Module module) {
-		injector = Guice.createInjector(module);
-		// injector.injectMembers(this);
-	}
+    /**
+     * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
+     * saved so that it can be later used to create an {@link Injector} that is
+     * later used for the injection of members and the construction of the
+     * {@link FXDomain}.
+     *
+     * @param module
+     *            The {@link Module} from which an {@link Injector} is created
+     *            later.
+     */
+    public ZestContentViewer(Module module) {
+        injector = Guice.createInjector(module);
+        // injector.injectMembers(this);
+    }
 
-	/**
-	 * Creates an {@link FXCanvas} inside of the given <i>parent</i>
-	 * {@link Composite}. The {@link FXCanvas} serves acs the container for the
-	 * JavaFX {@link Scene} which renders the contents.
-	 *
-	 * @param parent
-	 *            The parent {@link Composite}.
-	 * @param style
-	 *            The SWT style bits to be used for the to be created canvas.
-	 * @return An {@link FXCanvas} inside of the given <i>parent</i>.
-	 */
-	protected FXCanvas createCanvas(final Composite parent, int style) {
-		IFXCanvasFactory canvasFactory = injector.getInstance(IFXCanvasFactory.class);
-		return canvasFactory.createCanvas(parent, style);
-	}
+    /**
+     * Creates an {@link FXCanvas} inside of the given <i>parent</i>
+     * {@link Composite}. The {@link FXCanvas} serves acs the container for the
+     * JavaFX {@link Scene} which renders the contents.
+     *
+     * @param parent
+     *            The parent {@link Composite}.
+     * @param style
+     *            The SWT style bits to be used for the to be created canvas.
+     * @return An {@link FXCanvas} inside of the given <i>parent</i>.
+     */
+    protected FXCanvas createCanvas(final Composite parent, int style) {
+        IFXCanvasFactory canvasFactory = injector.getInstance(IFXCanvasFactory.class);
+        return canvasFactory.createCanvas(parent, style);
+    }
 
-	/**
-	 * Creates the control for this {@link ZestContentViewer} inside of the
-	 * given <i>parent</i> {@link Composite}.
-	 *
-	 * @param parent
-	 *            The parent {@link Composite}.
-	 * @param style
-	 *            The SWT style for this {@link ZestContentViewer}, which will
-	 *            be forwarded to its {@link FXCanvas} control.
-	 */
-	public void createControl(Composite parent, int style) {
-		// create viewer and canvas only after toolkit has been initialized
-		canvas = createCanvas(parent, style);
+    /**
+     * Creates the control for this {@link ZestContentViewer} inside of the
+     * given <i>parent</i> {@link Composite}.
+     *
+     * @param parent
+     *            The parent {@link Composite}.
+     * @param style
+     *            The SWT style for this {@link ZestContentViewer}, which will
+     *            be forwarded to its {@link FXCanvas} control.
+     */
+    public void createControl(Composite parent, int style) {
+        // create viewer and canvas only after toolkit has been initialized
+        canvas = createCanvas(parent, style);
 
-		// inject domain
-		domain = (IDomain) injector.getInstance(IDomain.class);
+        // inject domain
+        domain = (IDomain) injector.getInstance(IDomain.class);
 
-		// hook viewer
-		viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
-		canvas.setScene(new Scene(viewer.getCanvas()));
+        // hook viewer
+        viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));
+        canvas.setScene(new Scene(viewer.getCanvas()));
 
-		getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);
+        getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);
 
-		// activate domain
-		domain.activate();
-	}
+        // activate domain
+        domain.activate();
+    }
 
-	/**
-	 * Constructs and returns a new {@link Edge} connecting the given
-	 * <i>sourceNode</i> and <i>targetNode</i>. If the <i>labelProvider</i>
-	 * implements {@link IGraphAttributesProvider}, then attributes for the edge
-	 * are determined using the
-	 * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)}
-	 * methods and inserted into the edge.
-	 *
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @param contentSourceNode
-	 *            The content element representing the source node of this edge.
-	 * @param sourceNode
-	 *            The already created source {@link Node} of this edge.
-	 * @param contentTargetNode
-	 *            The content element representing the target node of this edge.
-	 * @param targetNode
-	 *            The already created target {@link Node} of this edge.
-	 * @return The new {@link Edge}.
-	 */
-	protected Edge createEdge(ILabelProvider labelProvider, Object contentSourceNode, Node sourceNode,
-			Object contentTargetNode, Node targetNode) {
-		Edge edge = new Edge(sourceNode, targetNode);
-		if (labelProvider instanceof IGraphAttributesProvider) {
-			IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
-			Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,
-					contentTargetNode);
-			if (edgeAttributes != null) {
-				edge.attributesProperty().putAll(edgeAttributes);
-			}
-		}
-		return edge;
-	}
-	
-	/**
-	 * Constructs and returns a new {@link Edge} connecting the given
-	 * <i>sourceNode</i> and <i>targetNode</i>. If the <i>labelProvider</i>
-	 * implements {@link IGraphAttributesProvider}, then attributes for the edge
-	 * are determined using the
-	 * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)}
-	 * methods and inserted into the edge.
-	 *
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @param contentSourceNode
-	 *            The content element representing the source node of this edge.
-	 * @param sourceNode
-	 *            The already created source {@link Node} of this edge.
-	 * @param contentTargetNode
-	 *            The content element representing the target node of this edge.
-	 * @param targetNode
-	 *            The already created target {@link Node} of this edge.
-	 * @return The new {@link Edge}.
-	 */
-	protected Edge createEdge(ILabelProvider labelProvider, Object contentEdgeNode, Node sourceNode,
-	        Node targetNode) {
-	    Edge edge = new Edge(sourceNode, targetNode);
-	    if (labelProvider instanceof IGraphAttributesProvider2) {
-	        IGraphAttributesProvider2 graphNodeLabelProvider = (IGraphAttributesProvider2) labelProvider;
-	        Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentEdgeNode);
-	        if (edgeAttributes != null) {
-	            edge.attributesProperty().putAll(edgeAttributes);
-	        }
-	    }
-	    return edge;
-	}
+    /**
+     * Constructs and returns a new {@link Edge} connecting the given
+     * <i>sourceNode</i> and <i>targetNode</i>. If the <i>labelProvider</i>
+     * implements {@link IGraphAttributesProvider}, then attributes for the edge
+     * are determined using the
+     * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)}
+     * methods and inserted into the edge.
+     *
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @param contentSourceNode
+     *            The content element representing the source node of this edge.
+     * @param sourceNode
+     *            The already created source {@link Node} of this edge.
+     * @param contentTargetNode
+     *            The content element representing the target node of this edge.
+     * @param targetNode
+     *            The already created target {@link Node} of this edge.
+     * @return The new {@link Edge}.
+     */
+    protected Edge createEdge(ILabelProvider labelProvider, Object contentSourceNode, Node sourceNode,
+            Object contentTargetNode, Node targetNode) {
+        Edge edge = new Edge(sourceNode, targetNode);
+        if (labelProvider instanceof IGraphAttributesProvider) {
+            IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
+            Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,
+                    contentTargetNode);
+            if (edgeAttributes != null) {
+                edge.attributesProperty().putAll(edgeAttributes);
+            }
+        }
+        return edge;
+    }
+    
+    /**
+     * Constructs and returns a new {@link Edge} connecting the given
+     * <i>sourceNode</i> and <i>targetNode</i>. If the <i>labelProvider</i>
+     * implements {@link IGraphAttributesProvider}, then attributes for the edge
+     * are determined using the
+     * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)}
+     * methods and inserted into the edge.
+     *
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @param contentSourceNode
+     *            The content element representing the source node of this edge.
+     * @param sourceNode
+     *            The already created source {@link Node} of this edge.
+     * @param contentTargetNode
+     *            The content element representing the target node of this edge.
+     * @param targetNode
+     *            The already created target {@link Node} of this edge.
+     * @return The new {@link Edge}.
+     */
+    protected Edge createEdge(ILabelProvider labelProvider, Object contentEdgeNode, Node sourceNode,
+            Node targetNode) {
+        Edge edge = new Edge(sourceNode, targetNode);
+        if (labelProvider instanceof IGraphAttributesProvider2) {
+            IGraphAttributesProvider2 graphNodeLabelProvider = (IGraphAttributesProvider2) labelProvider;
+            Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentEdgeNode);
+            if (edgeAttributes != null) {
+                edge.attributesProperty().putAll(edgeAttributes);
+            }
+        }
+        return edge;
+    }
 
-	/**
-	 * Constructs and returns a new {@link Graph} and inserts default attributes
-	 * into it:
-	 * <ol>
-	 * <li>layout algorithm</li>
-	 * </ol>
-	 *
-	 * @return A new {@link Graph} with default attributes.
-	 */
-	protected Graph createEmptyGraph() {
-		Graph graph = new Graph();
-		if (layoutAlgorithm != null) {
-			ZestProperties.setLayoutAlgorithm(graph, layoutAlgorithm);
-		}
-		return graph;
-	}
+    /**
+     * Constructs and returns a new {@link Graph} and inserts default attributes
+     * into it:
+     * <ol>
+     * <li>layout algorithm</li>
+     * </ol>
+     *
+     * @return A new {@link Graph} with default attributes.
+     */
+    protected Graph createEmptyGraph() {
+        Graph graph = new Graph();
+        if (layoutAlgorithm != null) {
+            ZestProperties.setLayoutAlgorithm(graph, layoutAlgorithm);
+        }
+        return graph;
+    }
 
-	
-	protected void createNestedGraph(Object contentNestingNode, IContentProvider contentProvider,
+    
+    protected void createNestedGraph(Object contentNestingNode, IContentProvider contentProvider,
             ILabelProvider labelProvider) {
-	    if (contentProvider instanceof IGraphContentProvider && ((IGraphContentProvider) contentProvider).hasNestedGraph(contentNestingNode)) {
-	        Graph graph = createNestedGraph(contentNestingNode, (IGraphContentProvider)contentProvider, labelProvider);
-	        graph.setNestingNode(contentNodeMap.get(contentNestingNode));
-	    } else if (contentProvider instanceof INestedGraphContentProvider && ((INestedGraphContentProvider) contentProvider).hasNestedGraph(contentNestingNode)) {
-	        Graph graph = createNestedGraph(contentNestingNode, (INestedGraphContentProvider)contentProvider, labelProvider);
-	        graph.setNestingNode(contentNodeMap.get(contentNestingNode));
-	    }
-	}
-	
-	/**
-	 * Creates a {@link Graph} nested in the node represented by the given
-	 * <i>contentNestingNode</i>.
-	 *
-	 * @param contentNestingNode
-	 *            The content {@link Object} that represents the nesting node.
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @return The new {@link Graph}.
-	 */
-	protected Graph createNestedGraph(Object contentNestingNode, IGraphContentProvider graphContentProvider,
-	        ILabelProvider labelProvider) {
-	    Graph graph = createEmptyGraph();
-	    if (labelProvider instanceof IGraphAttributesProvider) {
-	        IGraphAttributesProvider nestedGraphLabelProvider = (IGraphAttributesProvider) labelProvider;
-	        Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
-	                .getNestedGraphAttributes(contentNestingNode);
-	        if (nestedGraphAttributes != null) {
-	            graph.attributesProperty().putAll(nestedGraphAttributes);
-	        }
-	    }
-	    Object[] contentNodes = graphContentProvider.getNestedGraphNodes(contentNestingNode);
-	    if (contentNodes != null) {
-	        createNodesAndEdges(graphContentProvider, labelProvider, graph, contentNodes);
-	    }
-	    return graph;
-	}
-	
-	/**
-	 * Creates a {@link Graph} nested in the node represented by the given
-	 * <i>contentNestingNode</i>.
-	 *
-	 * @param contentNestingNode
-	 *            The content {@link Object} that represents the nesting node.
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @return The new {@link Graph}.
-	 */
-	protected Graph createNestedGraph(Object contentNestingNode, INestedGraphContentProvider graphContentProvider,
-			ILabelProvider labelProvider) {
-		Graph graph = createEmptyGraph();
-		if (labelProvider instanceof IGraphAttributesProvider) {
-			IGraphAttributesProvider nestedGraphLabelProvider = (IGraphAttributesProvider) labelProvider;
-			Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
-					.getNestedGraphAttributes(contentNestingNode);
-			if (nestedGraphAttributes != null) {
-				graph.attributesProperty().putAll(nestedGraphAttributes);
-			}
-		}
-		Object[] contentNodes = graphContentProvider.getNestedGraphNodes(contentNestingNode);
-		if (contentNodes != null) {
-			createNodesAndEdges(graphContentProvider, labelProvider, graph, contentNodes);
-		}
-		return graph;
-	}
+        if (contentProvider instanceof IGraphContentProvider && ((IGraphContentProvider) contentProvider).hasNestedGraph(contentNestingNode)) {
+            Graph graph = createNestedGraph(contentNestingNode, (IGraphContentProvider)contentProvider, labelProvider);
+            graph.setNestingNode(contentNodeMap.get(contentNestingNode));
+        } else if (contentProvider instanceof INestedGraphContentProvider && ((INestedGraphContentProvider) contentProvider).hasNestedGraph(contentNestingNode)) {
+            Graph graph = createNestedGraph(contentNestingNode, (INestedGraphContentProvider)contentProvider, labelProvider);
+            graph.setNestingNode(contentNodeMap.get(contentNestingNode));
+        }
+    }
+    
+    /**
+     * Creates a {@link Graph} nested in the node represented by the given
+     * <i>contentNestingNode</i>.
+     *
+     * @param contentNestingNode
+     *            The content {@link Object} that represents the nesting node.
+     * @param graphContentProvider
+     *            This viewer's {@link IGraphContentProvider} for convenience.
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @return The new {@link Graph}.
+     */
+    protected Graph createNestedGraph(Object contentNestingNode, IGraphContentProvider graphContentProvider,
+            ILabelProvider labelProvider) {
+        Graph graph = createEmptyGraph();
+        if (labelProvider instanceof IGraphAttributesProvider) {
+            IGraphAttributesProvider nestedGraphLabelProvider = (IGraphAttributesProvider) labelProvider;
+            Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
+                    .getNestedGraphAttributes(contentNestingNode);
+            if (nestedGraphAttributes != null) {
+                graph.attributesProperty().putAll(nestedGraphAttributes);
+            }
+        }
+        Object[] contentNodes = graphContentProvider.getNestedGraphNodes(contentNestingNode);
+        if (contentNodes != null) {
+            createNodesAndEdges(graphContentProvider, labelProvider, graph, contentNodes);
+        }
+        return graph;
+    }
+    
+    /**
+     * Creates a {@link Graph} nested in the node represented by the given
+     * <i>contentNestingNode</i>.
+     *
+     * @param contentNestingNode
+     *            The content {@link Object} that represents the nesting node.
+     * @param graphContentProvider
+     *            This viewer's {@link IGraphContentProvider} for convenience.
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @return The new {@link Graph}.
+     */
+    protected Graph createNestedGraph(Object contentNestingNode, INestedGraphContentProvider graphContentProvider,
+            ILabelProvider labelProvider) {
+        Graph graph = createEmptyGraph();
+        if (labelProvider instanceof IGraphAttributesProvider) {
+            IGraphAttributesProvider nestedGraphLabelProvider = (IGraphAttributesProvider) labelProvider;
+            Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
+                    .getNestedGraphAttributes(contentNestingNode);
+            if (nestedGraphAttributes != null) {
+                graph.attributesProperty().putAll(nestedGraphAttributes);
+            }
+        }
+        Object[] contentNodes = graphContentProvider.getNestedGraphNodes(contentNestingNode);
+        if (contentNodes != null) {
+            createNodesAndEdges(graphContentProvider, labelProvider, graph, contentNodes);
+        }
+        return graph;
+    }
 
-	/**
-	 * Creates a {@link Node} for the specified <i>contentNode</i> using the
-	 * {@link IContentProvider} and {@link ILabelProvider}. Moreover, the new
-	 * node is put into the given <i>contentToGraphMap</i>.
-	 *
-	 * @param contentNode
-	 *            The content {@link Object} that represents the node.
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @return The new {@link Node}.
-	 */
-	protected Node createNode(final Object contentNode, IContentProvider graphContentProvider,
-			final ILabelProvider labelProvider) {
-		// do not create the same node twice
-		if (contentNodeMap.containsKey(contentNode)) {
-			throw new IllegalStateException("A node for content <" + contentNode + "> has already been created.");
-		}
+    /**
+     * Creates a {@link Node} for the specified <i>contentNode</i> using the
+     * {@link IContentProvider} and {@link ILabelProvider}. Moreover, the new
+     * node is put into the given <i>contentToGraphMap</i>.
+     *
+     * @param contentNode
+     *            The content {@link Object} that represents the node.
+     * @param graphContentProvider
+     *            This viewer's {@link IGraphContentProvider} for convenience.
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @return The new {@link Node}.
+     */
+    protected Node createNode(final Object contentNode, IContentProvider graphContentProvider,
+            final ILabelProvider labelProvider) {
+        // do not create the same node twice
+        if (contentNodeMap.containsKey(contentNode)) {
+            throw new IllegalStateException("A node for content <" + contentNode + "> has already been created.");
+        }
 
-		Node node = new Node();
-		contentNodeMap.put(contentNode, node);
+        Node node = new Node();
+        contentNodeMap.put(contentNode, node);
 
-		// label
-		ZestProperties.setLabel(node, new Provider<String>() {
-			@Override
-			public String get() {
-				return labelProvider.getText(contentNode);
-			}
-		});
+        // label
+        ZestProperties.setLabel(node, new Provider<String>() {
+            @Override
+            public String get() {
+                return labelProvider.getText(contentNode);
+            }
+        });
 
-		// icon
-		// TODO: use provider
-		Image icon = labelProvider.getImage(contentNode);
-		if (icon != null) {
-			ZestProperties.setIcon(node, SWTFXUtils.toFXImage(icon.getImageData(), null));
-		}
+        // icon
+        // TODO: use provider
+        Image icon = labelProvider.getImage(contentNode);
+        if (icon != null) {
+            ZestProperties.setIcon(node, SWTFXUtils.toFXImage(icon.getImageData(), null));
+        }
 
-		// tooltip
-		if (labelProvider instanceof IToolTipProvider) {
-			final IToolTipProvider toolTipProvider = (IToolTipProvider) labelProvider;
-			ZestProperties.setTooltip(node, new Provider<String>() {
+        // tooltip
+        if (labelProvider instanceof IToolTipProvider) {
+            final IToolTipProvider toolTipProvider = (IToolTipProvider) labelProvider;
+            ZestProperties.setTooltip(node, new Provider<String>() {
 
-				@Override
-				public String get() {
-					return toolTipProvider.getToolTipText(contentNode);
-				}
-			});
-		}
+                @Override
+                public String get() {
+                    return toolTipProvider.getToolTipText(contentNode);
+                }
+            });
+        }
 
-		String textCssStyle = "";
+        String textCssStyle = "";
 
-		// colors
-		if (labelProvider instanceof IColorProvider) {
-			IColorProvider colorProvider = (IColorProvider) labelProvider;
-			Color foreground = colorProvider.getForeground(contentNode);
-			Color background = colorProvider.getBackground(contentNode);
-			String rectCssStyle = "";
-			if (background != null) {
-				rectCssStyle = rectCssStyle + "-fx-fill: " + toCssRgb(background) + ";";
-			}
-			if (foreground != null) {
-				rectCssStyle = rectCssStyle + "-fx-stroke: " + toCssRgb(foreground) + ";";
-				textCssStyle = "-fx-fill: " + toCssRgb(foreground) + ";";
-			}
-			if (!rectCssStyle.isEmpty()) {
-				ZestProperties.setShapeCssStyle(node, rectCssStyle);
-			}
-		}
+        // colors
+        if (labelProvider instanceof IColorProvider) {
+            IColorProvider colorProvider = (IColorProvider) labelProvider;
+            Color foreground = colorProvider.getForeground(contentNode);
+            Color background = colorProvider.getBackground(contentNode);
+            String rectCssStyle = "";
+            if (background != null) {
+                rectCssStyle = rectCssStyle + "-fx-fill: " + toCssRgb(background) + ";";
+            }
+            if (foreground != null) {
+                rectCssStyle = rectCssStyle + "-fx-stroke: " + toCssRgb(foreground) + ";";
+                textCssStyle = "-fx-fill: " + toCssRgb(foreground) + ";";
+            }
+            if (!rectCssStyle.isEmpty()) {
+                ZestProperties.setShapeCssStyle(node, rectCssStyle);
+            }
+        }
 
-		// font
-		if (labelProvider instanceof IFontProvider) {
-			IFontProvider fontProvider = (IFontProvider) labelProvider;
-			Font font = fontProvider.getFont(contentNode);
-			FontData[] fontData = font == null ? null : font.getFontData();
-			if (fontData != null && fontData.length > 0 && fontData[0] != null) {
-				String name = fontData[0].getName();
-				int size = fontData[0].getHeight();
-				int style = fontData[0].getStyle();
+        // font
+        if (labelProvider instanceof IFontProvider) {
+            IFontProvider fontProvider = (IFontProvider) labelProvider;
+            Font font = fontProvider.getFont(contentNode);
+            FontData[] fontData = font == null ? null : font.getFontData();
+            if (fontData != null && fontData.length > 0 && fontData[0] != null) {
+                String name = fontData[0].getName();
+                int size = fontData[0].getHeight();
+                int style = fontData[0].getStyle();
 
-				// TODO: support all SWT font styles
-				boolean isBold = (style & SWT.BOLD) != 0;
-				boolean isItalic = (style & SWT.ITALIC) != 0;
+                // TODO: support all SWT font styles
+                boolean isBold = (style & SWT.BOLD) != 0;
+                boolean isItalic = (style & SWT.ITALIC) != 0;
 
-				textCssStyle = textCssStyle + "-fx-font-family: \"" + name + "\";" + "-fx-font-size: " + size + "pt;";
-				if (isItalic) {
-					textCssStyle = textCssStyle + "-fx-font-style: italic;";
-				}
-				if (isBold) {
-					textCssStyle = textCssStyle + "-fx-font-weight: bold;";
-				}
-			}
-		}
+                textCssStyle = textCssStyle + "-fx-font-family: \"" + name + "\";" + "-fx-font-size: " + size + "pt;";
+                if (isItalic) {
+                    textCssStyle = textCssStyle + "-fx-font-style: italic;";
+                }
+                if (isBold) {
+                    textCssStyle = textCssStyle + "-fx-font-weight: bold;";
+                }
+            }
+        }
 
-		ZestProperties.setLabelCssStyle(node, textCssStyle);
+        ZestProperties.setLabelCssStyle(node, textCssStyle);
 
-		// custom attributes
-		if (labelProvider instanceof IGraphAttributesProvider) {
-			IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
-			Map<String, Object> nodeAttributes = graphNodeLabelProvider.getNodeAttributes(contentNode);
-			if (nodeAttributes != null) {
-				node.attributesProperty().putAll(nodeAttributes);
-			}
-		}
+        // custom attributes
+        if (labelProvider instanceof IGraphAttributesProvider) {
+            IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
+            Map<String, Object> nodeAttributes = graphNodeLabelProvider.getNodeAttributes(contentNode);
+            if (nodeAttributes != null) {
+                node.attributesProperty().putAll(nodeAttributes);
+            }
+        }
 
-		// create nested graph (optional)
-		createNestedGraph(contentNode, graphContentProvider, labelProvider);
+        // create nested graph (optional)
+        createNestedGraph(contentNode, graphContentProvider, labelProvider);
 
-		return node;
-	}
-	
-	protected void createNodesAndEdges(IContentProvider contentProvider, ILabelProvider labelProvider, Graph graph, Object[] contentNodes) {
-	    if (contentProvider instanceof IGraphContentProvider) {
-	        createNodesAndEdges((IGraphContentProvider)contentProvider, labelProvider, graph, contentNodes);
-	    } else if (contentProvider instanceof IGraphEdgeContentProvider) {
-	        createNodesAndEdges((IGraphEdgeContentProvider)contentProvider, labelProvider, graph, contentNodes);
-	    } else if (contentProvider instanceof IGraphEntityRelationshipContentProvider) {
-	        createNodesAndEdges((IGraphEntityRelationshipContentProvider)contentProvider, labelProvider, graph, contentNodes);
-	    } else {
-	        throw new UnsupportedOperationException("Content provider type " + contentProvider.getClass().getName() + " is not supported.");
-	    }
-	}
-	
-	/**
+        return node;
+    }
+    
+    protected void createNodesAndEdges(IContentProvider contentProvider, ILabelProvider labelProvider, Graph graph, Object[] contentNodes) {
+        if (contentProvider instanceof IGraphContentProvider) {
+            createNodesAndEdges((IGraphContentProvider)contentProvider, labelProvider, graph, contentNodes);
+        } else if (contentProvider instanceof IGraphEdgeContentProvider) {
+            createNodesAndEdges((IGraphEdgeContentProvider)contentProvider, labelProvider, graph, contentNodes);
+        } else if (contentProvider instanceof IGraphEntityRelationshipContentProvider) {
+            createNodesAndEdges((IGraphEntityRelationshipContentProvider)contentProvider, labelProvider, graph, contentNodes);
+        } else {
+            throw new UnsupportedOperationException("Content provider type " + contentProvider.getClass().getName() + " is not supported.");
+        }
+    }
+    
+    /**
      * Creates graph {@link Node nodes} and {@link Edge edges} from the given
      * array of <i>contentNodes</i>.
      *
@@ -457,261 +457,261 @@ public class ZestContentViewer extends ContentViewer {
             }
         }
     }
-	
-	/**
-	 * Creates graph {@link Node nodes} and {@link Edge edges} from the given
-	 * array of <i>contentNodes</i>.
-	 *
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @param graph
-	 *            The {@link Graph} for which nodes and edges are created.
-	 * @param contentNodes
-	 *            Content elements which represent nodes that are to be created
-	 *            together with the edges between them.
-	 */
-	protected void createNodesAndEdges(IGraphEdgeContentProvider graphContentProvider, ILabelProvider labelProvider,
-	        Graph graph, Object[] contentNodes) {
-	    // create nodes
-	    for (Object node : contentNodes) {
-	        Node graphNode = createNode(node, graphContentProvider, labelProvider);
-	        graph.getNodes().add(graphNode);
-	    }
-	    // create edges
-	    for (Object contentSourceEdge : graphContentProvider.getEdges()) {
-	        Object contentSourceNode = graphContentProvider.getSource(contentSourceEdge);
-	        Node sourceNode = getContentNodeMap().get(contentSourceNode); 
-	        Object contentTargetNode = graphContentProvider.getTarget(contentSourceEdge);
-	        Node targetNode = getContentNodeMap().get(contentTargetNode); 
-	        
-	        Edge edge = createEdge(labelProvider, contentSourceNode, sourceNode, contentTargetNode, targetNode);
-	        contentEdgeMap.put(contentSourceEdge, edge);
-	        graph.getEdges().add(edge);
-	    }
-	}
-	
-	/**
-	 * Creates graph {@link Node nodes} and {@link Edge edges} from the given
-	 * array of <i>contentNodes</i>.
-	 *
-	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphContentProvider} for convenience.
-	 * @param labelProvider
-	 *            This viewer's {@link ILabelProvider} for convenience.
-	 * @param graph
-	 *            The {@link Graph} for which nodes and edges are created.
-	 * @param contentNodes
-	 *            Content elements which represent nodes that are to be created
-	 *            together with the edges between them.
-	 */
-	protected void createNodesAndEdges(IGraphEntityRelationshipContentProvider graphContentProvider, ILabelProvider labelProvider,
-	        Graph graph, Object[] contentNodes) {
-	    // create nodes
-	    for (Object node : contentNodes) {
-	        Node graphNode = createNode(node, graphContentProvider, labelProvider);
-	        graph.getNodes().add(graphNode);
-	    }
-	    // create edges
-	    for (Object contentSourceNode : contentNodes) {
-	        Node sourceNode = getContentNodeMap().get(contentSourceNode); 
-    	    for (Object contentTargetNode : contentNodes) {
-    	        Node targetNode = getContentNodeMap().get(contentTargetNode); 
-    	        for (Object contentSourceEdge : graphContentProvider.getEdges(contentSourceNode, contentTargetNode)) {
-    	            Edge edge = createEdge(labelProvider, contentSourceEdge, sourceNode, targetNode);
-    	            graph.getEdges().add(edge);
-    	        }
-    	    }
-	    }
-	}
+    
+    /**
+     * Creates graph {@link Node nodes} and {@link Edge edges} from the given
+     * array of <i>contentNodes</i>.
+     *
+     * @param graphContentProvider
+     *            This viewer's {@link IGraphContentProvider} for convenience.
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @param graph
+     *            The {@link Graph} for which nodes and edges are created.
+     * @param contentNodes
+     *            Content elements which represent nodes that are to be created
+     *            together with the edges between them.
+     */
+    protected void createNodesAndEdges(IGraphEdgeContentProvider graphContentProvider, ILabelProvider labelProvider,
+            Graph graph, Object[] contentNodes) {
+        // create nodes
+        for (Object node : contentNodes) {
+            Node graphNode = createNode(node, graphContentProvider, labelProvider);
+            graph.getNodes().add(graphNode);
+        }
+        // create edges
+        for (Object contentSourceEdge : graphContentProvider.getEdges()) {
+            Object contentSourceNode = graphContentProvider.getSource(contentSourceEdge);
+            Node sourceNode = getContentNodeMap().get(contentSourceNode); 
+            Object contentTargetNode = graphContentProvider.getTarget(contentSourceEdge);
+            Node targetNode = getContentNodeMap().get(contentTargetNode); 
+            
+            Edge edge = createEdge(labelProvider, contentSourceNode, sourceNode, contentTargetNode, targetNode);
+            contentEdgeMap.put(contentSourceEdge, edge);
+            graph.getEdges().add(edge);
+        }
+    }
+    
+    /**
+     * Creates graph {@link Node nodes} and {@link Edge edges} from the given
+     * array of <i>contentNodes</i>.
+     *
+     * @param graphContentProvider
+     *            This viewer's {@link IGraphContentProvider} for convenience.
+     * @param labelProvider
+     *            This viewer's {@link ILabelProvider} for convenience.
+     * @param graph
+     *            The {@link Graph} for which nodes and edges are created.
+     * @param contentNodes
+     *            Content elements which represent nodes that are to be created
+     *            together with the edges between them.
+     */
+    protected void createNodesAndEdges(IGraphEntityRelationshipContentProvider graphContentProvider, ILabelProvider labelProvider,
+            Graph graph, Object[] contentNodes) {
+        // create nodes
+        for (Object node : contentNodes) {
+            Node graphNode = createNode(node, graphContentProvider, labelProvider);
+            graph.getNodes().add(graphNode);
+        }
+        // create edges
+        for (Object contentSourceNode : contentNodes) {
+            Node sourceNode = getContentNodeMap().get(contentSourceNode); 
+            for (Object contentTargetNode : contentNodes) {
+                Node targetNode = getContentNodeMap().get(contentTargetNode); 
+                for (Object contentSourceEdge : graphContentProvider.getEdges(contentSourceNode, contentTargetNode)) {
+                    Edge edge = createEdge(labelProvider, contentSourceEdge, sourceNode, targetNode);
+                    graph.getEdges().add(edge);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Creates a complete {@link Graph} using the given {@link IContentProvider}
-	 * and {@link ILabelProvider}.
-	 *
-	 * @param contentProvider
-	 *            The {@link IContentProvider} for this viewer.
-	 * @param labelProvider
-	 *            The {@link ILabelProvider} for this viewer.
-	 * @return A complete {@link Graph} constructed by using the given
-	 *         providers.
-	 */
-	protected Graph createRootGraph(IContentProvider contentProvider, ILabelProvider labelProvider) {
-		Graph graph = createEmptyGraph();
-		if (labelProvider instanceof IGraphAttributesProvider) {
-			IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
-			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getGraphAttributes();
-			if (rootGraphAttributes != null) {
-				graph.attributesProperty().putAll(rootGraphAttributes);
-			}
-		}
-		if (contentProvider instanceof IGraphEdgeContentProvider) {
-			IGraphEdgeContentProvider graphNodeProvider = (IGraphEdgeContentProvider) contentProvider;
-			Object[] nodes = graphNodeProvider.getNodes();
-			if (nodes != null) {
-				createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
-			}
-		} else if (contentProvider instanceof IGraphEntityRelationshipContentProvider) {
-		    IGraphEntityRelationshipContentProvider graphNodeProvider = (IGraphEntityRelationshipContentProvider) contentProvider;
-		    Object[] nodes = graphNodeProvider.getNodes();
-		    if (nodes != null) {
-		        createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
-		    }
-		} else if (contentProvider instanceof IGraphContentProvider) {
-		    IGraphContentProvider graphNodeProvider = (IGraphContentProvider) contentProvider;
-		    Object[] nodes = graphNodeProvider.getNodes();
-		    if (nodes != null) {
-		        createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
-	    }
-	}
-		return graph;
-	}
+    /**
+     * Creates a complete {@link Graph} using the given {@link IContentProvider}
+     * and {@link ILabelProvider}.
+     *
+     * @param contentProvider
+     *            The {@link IContentProvider} for this viewer.
+     * @param labelProvider
+     *            The {@link ILabelProvider} for this viewer.
+     * @return A complete {@link Graph} constructed by using the given
+     *         providers.
+     */
+    protected Graph createRootGraph(IContentProvider contentProvider, ILabelProvider labelProvider) {
+        Graph graph = createEmptyGraph();
+        if (labelProvider instanceof IGraphAttributesProvider) {
+            IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
+            Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getGraphAttributes();
+            if (rootGraphAttributes != null) {
+                graph.attributesProperty().putAll(rootGraphAttributes);
+            }
+        }
+        if (contentProvider instanceof IGraphEdgeContentProvider) {
+            IGraphEdgeContentProvider graphNodeProvider = (IGraphEdgeContentProvider) contentProvider;
+            Object[] nodes = graphNodeProvider.getNodes();
+            if (nodes != null) {
+                createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
+            }
+        } else if (contentProvider instanceof IGraphEntityRelationshipContentProvider) {
+            IGraphEntityRelationshipContentProvider graphNodeProvider = (IGraphEntityRelationshipContentProvider) contentProvider;
+            Object[] nodes = graphNodeProvider.getNodes();
+            if (nodes != null) {
+                createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
+            }
+        } else if (contentProvider instanceof IGraphContentProvider) {
+            IGraphContentProvider graphNodeProvider = (IGraphContentProvider) contentProvider;
+            Object[] nodes = graphNodeProvider.getNodes();
+            if (nodes != null) {
+                createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
+        }
+    }
+        return graph;
+    }
 
-	/**
-	 * Returns an unmodifiable view of the content-node-map.
-	 *
-	 * @return An unmodifiable view of the content-node-map.
-	 */
-	public Map<Object, Node> getContentNodeMap() {
-		return Collections.unmodifiableMap(contentNodeMap);
-	}
+    /**
+     * Returns an unmodifiable view of the content-node-map.
+     *
+     * @return An unmodifiable view of the content-node-map.
+     */
+    public Map<Object, Node> getContentNodeMap() {
+        return Collections.unmodifiableMap(contentNodeMap);
+    }
 
-	@Override
-	public FXCanvas getControl() {
-		return canvas;
-	}
+    @Override
+    public FXCanvas getControl() {
+        return canvas;
+    }
 
-	/**
-	 * Returns the {@link FXViewer} that displays the contents.
-	 *
-	 * @return The {@link FXViewer} that displays the contents.
-	 */
-	public IViewer getFXViewer() {
-		return viewer;
-	}
+    /**
+     * Returns the {@link FXViewer} that displays the contents.
+     *
+     * @return The {@link FXViewer} that displays the contents.
+     */
+    public IViewer getFXViewer() {
+        return viewer;
+    }
 
-	@Override
-	public ILabelProvider getLabelProvider() {
-		return (ILabelProvider) super.getLabelProvider();
-	}
+    @Override
+    public ILabelProvider getLabelProvider() {
+        return (ILabelProvider) super.getLabelProvider();
+    }
 
-	/**
-	 * Returns the {@link ILayoutAlgorithm} that is used for laying out the
-	 * contents.
-	 *
-	 * @return The {@link ILayoutAlgorithm} that is used for laying out the
-	 *         contents.
-	 */
-	public ILayoutAlgorithm getLayoutAlgorithm() {
-		return layoutAlgorithm;
-	}
+    /**
+     * Returns the {@link ILayoutAlgorithm} that is used for laying out the
+     * contents.
+     *
+     * @return The {@link ILayoutAlgorithm} that is used for laying out the
+     *         contents.
+     */
+    public ILayoutAlgorithm getLayoutAlgorithm() {
+        return layoutAlgorithm;
+    }
 
-	@Override
-	public ISelection getSelection() {
-		// construct a new selection by using the selection model contents
-		List<Object> selectedContents = new ArrayList<>();
-		SelectionModel selectionModel = getSelectionModel();
-		for (IContentPart<? extends javafx.scene.Node> selectedPart : selectionModel
-				.getSelectionUnmodifiable()) {
-			selectedContents.add(selectedPart.getContent());
-		}
-		return new StructuredSelection(selectedContents);
-	}
+    @Override
+    public ISelection getSelection() {
+        // construct a new selection by using the selection model contents
+        List<Object> selectedContents = new ArrayList<>();
+        SelectionModel selectionModel = getSelectionModel();
+        for (IContentPart<? extends javafx.scene.Node> selectedPart : selectionModel
+                .getSelectionUnmodifiable()) {
+            selectedContents.add(selectedPart.getContent());
+        }
+        return new StructuredSelection(selectedContents);
+    }
 
-	/**
-	 * Retrieves the {@link SelectionModel} used by the viewer (
-	 * {@link #getFXViewer()})
-	 *
-	 * @return The {@link SelectionModel} adapted to the viewer (
-	 *         {@link #getFXViewer()}).
-	 */
-	protected SelectionModel getSelectionModel() {
-		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
-		if (selectionModel == null) {
-			throw new IllegalStateException("No SelectionModel bound.");
-		}
-		return selectionModel;
-	}
+    /**
+     * Retrieves the {@link SelectionModel} used by the viewer (
+     * {@link #getFXViewer()})
+     *
+     * @return The {@link SelectionModel} adapted to the viewer (
+     *         {@link #getFXViewer()}).
+     */
+    protected SelectionModel getSelectionModel() {
+        SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
+        if (selectionModel == null) {
+            throw new IllegalStateException("No SelectionModel bound.");
+        }
+        return selectionModel;
+    }
 
-	@Override
-	protected void handleDispose(DisposeEvent event) {
-		getSelectionModel().getSelectionUnmodifiable().removeListener(selectionNotifier);
+    @Override
+    protected void handleDispose(DisposeEvent event) {
+        getSelectionModel().getSelectionUnmodifiable().removeListener(selectionNotifier);
 
-		domain.deactivate();
-		domain.dispose();
-		super.handleDispose(event);
-	}
+        domain.deactivate();
+        domain.dispose();
+        super.handleDispose(event);
+    }
 
-	@Override
-	protected void inputChanged(Object input, Object oldInput) {
-		if (input != oldInput && (input == null || !input.equals(oldInput))) {
-			refresh();
-		}
-	}
-	
+    @Override
+    protected void inputChanged(Object input, Object oldInput) {
+        if (input != oldInput && (input == null || !input.equals(oldInput))) {
+            refresh();
+        }
+    }
+    
    protected Graph getRootGraph() {
         return (Graph) viewer.getContents().get(0);
     }
-	
-	@Override
-	public void refresh() {
-		contentNodeMap.clear();
-		viewer.getContents()
-				.setAll(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
-	}
+    
+    @Override
+    public void refresh() {
+        contentNodeMap.clear();
+        viewer.getContents()
+                .setAll(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
+    }
 
-	/**
-	 * Changes the {@link ILayoutAlgorithm} that is used for laying out the
-	 * contents to the given value.
-	 *
-	 * @param layoutAlgorithm
-	 *            The new {@link ILayoutAlgorithm} to use.
-	 */
-	public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
-		this.layoutAlgorithm = layoutAlgorithm;
-	}
+    /**
+     * Changes the {@link ILayoutAlgorithm} that is used for laying out the
+     * contents to the given value.
+     *
+     * @param layoutAlgorithm
+     *            The new {@link ILayoutAlgorithm} to use.
+     */
+    public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
+        this.layoutAlgorithm = layoutAlgorithm;
+    }
 
-	@Override
-	public void setSelection(ISelection selection, boolean reveal) {
-		if (selection.isEmpty()) {
-			getSelectionModel().clearSelection();
-		} else if (selection instanceof StructuredSelection) {
-			StructuredSelection structuredSelection = (StructuredSelection) selection;
-			if (!structuredSelection.isEmpty()) {
-				List<IContentPart<? extends javafx.scene.Node>> toBeSelectedParts = new ArrayList<>();
-				for (Object toBeSelectedContent : structuredSelection.toArray()) {
-					IContentPart<? extends javafx.scene.Node> toBeSelectedPart = viewer
-							.getContentPartMap().get(toBeSelectedContent);
-					if (toBeSelectedPart != null) {
-						toBeSelectedParts.add(toBeSelectedPart);
-						if (reveal) {
-							// TODO: we need to reveal all in a single step
-							viewer.reveal(toBeSelectedPart);
-						}
-					} else {
-						throw new IllegalArgumentException(
-								toBeSelectedContent + " is not visualized by a content part of this viewer.");
-					}
-				}
-				getSelectionModel().prependToSelection(toBeSelectedParts);
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"A non-empty selection of unsupported type '" + selection.getClass() + "' was passed in.");
-		}
-	}
+    @Override
+    public void setSelection(ISelection selection, boolean reveal) {
+        if (selection.isEmpty()) {
+            getSelectionModel().clearSelection();
+        } else if (selection instanceof StructuredSelection) {
+            StructuredSelection structuredSelection = (StructuredSelection) selection;
+            if (!structuredSelection.isEmpty()) {
+                List<IContentPart<? extends javafx.scene.Node>> toBeSelectedParts = new ArrayList<>();
+                for (Object toBeSelectedContent : structuredSelection.toArray()) {
+                    IContentPart<? extends javafx.scene.Node> toBeSelectedPart = viewer
+                            .getContentPartMap().get(toBeSelectedContent);
+                    if (toBeSelectedPart != null) {
+                        toBeSelectedParts.add(toBeSelectedPart);
+                        if (reveal) {
+                            // TODO: we need to reveal all in a single step
+                            viewer.reveal(toBeSelectedPart);
+                        }
+                    } else {
+                        throw new IllegalArgumentException(
+                                toBeSelectedContent + " is not visualized by a content part of this viewer.");
+                    }
+                }
+                getSelectionModel().prependToSelection(toBeSelectedParts);
+            }
+        } else {
+            throw new IllegalArgumentException(
+                    "A non-empty selection of unsupported type '" + selection.getClass() + "' was passed in.");
+        }
+    }
 
-	/**
-	 * Converts the given {@link Color} into a CSS string:
-	 * <code>"rgb(red,green,blue)"</code>.
-	 *
-	 * @param color
-	 *            The {@link Color} to convert.
-	 * @return The corresponding CSS string.
-	 */
-	protected String toCssRgb(Color color) {
-		return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
-	}
+    /**
+     * Converts the given {@link Color} into a CSS string:
+     * <code>"rgb(red,green,blue)"</code>.
+     *
+     * @param color
+     *            The {@link Color} to convert.
+     * @return The corresponding CSS string.
+     */
+    protected String toCssRgb(Color color) {
+        return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
+    }
 
 }

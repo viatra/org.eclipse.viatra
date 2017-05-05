@@ -18,34 +18,34 @@ import org.eclipse.jdt.core.IJavaElementDelta
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class JDTEventAtom {
-	@Accessors
-	val IJavaElement element
-	@Accessors
-	Optional<? extends IJavaElementDelta> delta
-	@Accessors
-	val Deque<IJavaElementDelta> unprocessedDeltas
-	
-	new(IJavaElementDelta delta) {
-		this.delta = Optional::of(delta)
-		this.element = delta.element
-		this.unprocessedDeltas = Lists.newLinkedList(#{delta})
-	}
-	
-	new(IJavaElement javaElement) {
-		this.delta = Optional::absent
-		this.element = javaElement
-		this.unprocessedDeltas = Lists.newLinkedList()
-	}
-	
-	override equals(Object obj) {
-		if(obj instanceof JDTEventAtom) {
-			return element == obj.element
-		}
-		return false
-	}
-	
-	override toString() {
-		element.toString() + " : " + delta.toString()
-	}
-	
+    @Accessors
+    val IJavaElement element
+    @Accessors
+    Optional<? extends IJavaElementDelta> delta
+    @Accessors
+    val Deque<IJavaElementDelta> unprocessedDeltas
+    
+    new(IJavaElementDelta delta) {
+        this.delta = Optional::of(delta)
+        this.element = delta.element
+        this.unprocessedDeltas = Lists.newLinkedList(#{delta})
+    }
+    
+    new(IJavaElement javaElement) {
+        this.delta = Optional::absent
+        this.element = javaElement
+        this.unprocessedDeltas = Lists.newLinkedList()
+    }
+    
+    override equals(Object obj) {
+        if(obj instanceof JDTEventAtom) {
+            return element == obj.element
+        }
+        return false
+    }
+    
+    override toString() {
+        element.toString() + " : " + delta.toString()
+    }
+    
 }

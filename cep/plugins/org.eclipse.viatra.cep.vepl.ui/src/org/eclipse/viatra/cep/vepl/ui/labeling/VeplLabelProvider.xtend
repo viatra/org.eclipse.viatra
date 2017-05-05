@@ -30,43 +30,43 @@ import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
  */
 class VeplLabelProvider extends XbaseLabelProvider {
 
-	@Inject
-	new(AdapterFactoryLabelProvider delegate) {
-		super(delegate);
-	}
+    @Inject
+    new(AdapterFactoryLabelProvider delegate) {
+        super(delegate);
+    }
 
-	// Labels and icons can be computed like this:
-	//	def text(Greeting ele) {
-	//		'A greeting to ' + ele.name
-	//	}
-	//
-	//	def image(Greeting ele) {
-	//		'Greeting.gif'
-	//	}
-	override image(Object element) {
+    // Labels and icons can be computed like this:
+    //	def text(Greeting ele) {
+    //		'A greeting to ' + ele.name
+    //	}
+    //
+    //	def image(Greeting ele) {
+    //		'Greeting.gif'
+    //	}
+    override image(Object element) {
 
-		// icons are stored in the 'icons' folder of this project
-		switch element {
-			EventModel:
-				'package.gif'
-			Trait:
-				'trait.png'
-			AtomicEventPattern:
-				'atomic-event.png'
-			ComplexEventPattern:
-				'complex-event.png'
-			QueryResultChangeEventPattern:
-				'model-query.png'
-			Rule:
-				'rule.png'
-			Import:
-				'import-declaration.png'
-			ComplexEventOperator:
-				'operator.png'
-			Timewindow:
-				'clock.png'
-			default:
-				super.image(element)
-		}
-	}
+        // icons are stored in the 'icons' folder of this project
+        switch element {
+            EventModel:
+                'package.gif'
+            Trait:
+                'trait.png'
+            AtomicEventPattern:
+                'atomic-event.png'
+            ComplexEventPattern:
+                'complex-event.png'
+            QueryResultChangeEventPattern:
+                'model-query.png'
+            Rule:
+                'rule.png'
+            Import:
+                'import-declaration.png'
+            ComplexEventOperator:
+                'operator.png'
+            Timewindow:
+                'clock.png'
+            default:
+                super.image(element)
+        }
+    }
 }

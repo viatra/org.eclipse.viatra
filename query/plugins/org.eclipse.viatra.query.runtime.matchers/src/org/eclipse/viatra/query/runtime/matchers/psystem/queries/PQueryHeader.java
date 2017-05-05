@@ -25,54 +25,54 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
  */
 public interface PQueryHeader {
 
-	/**
-	 * Identifies the pattern for which matchers can be instantiated.
-	 */
-	public String getFullyQualifiedName();
+    /**
+     * Identifies the pattern for which matchers can be instantiated.
+     */
+    public String getFullyQualifiedName();
 
-	/**
-	 * Return the list of parameter names
-	 * 
-	 * @return a non-null, but possibly empty list of parameter names
-	 */
-	public List<String> getParameterNames();
+    /**
+     * Return the list of parameter names
+     * 
+     * @return a non-null, but possibly empty list of parameter names
+     */
+    public List<String> getParameterNames();
 
-	/**
-	 * Returns a list of parameter descriptions
-	 * 
-	 * @return a non-null, but possibly empty list of parameter descriptions
-	 */
-	public List<PParameter> getParameters();
+    /**
+     * Returns a list of parameter descriptions
+     * 
+     * @return a non-null, but possibly empty list of parameter descriptions
+     */
+    public List<PParameter> getParameters();
 
-	/**
-	 * Returns the index of a named parameter
-	 * 
-	 * @param parameterName
-	 * @return the index, or null of no such parameter is available
-	 */
-	public Integer getPositionOfParameter(String parameterName);
+    /**
+     * Returns the index of a named parameter
+     * 
+     * @param parameterName
+     * @return the index, or null of no such parameter is available
+     */
+    public Integer getPositionOfParameter(String parameterName);
 
-	/**
-	 * Returns the list of annotations specified for this query
-	 * 
-	 * @return a non-null, but possibly empty list of annotations
-	 */
-	public List<PAnnotation> getAllAnnotations();
+    /**
+     * Returns the list of annotations specified for this query
+     * 
+     * @return a non-null, but possibly empty list of annotations
+     */
+    public List<PAnnotation> getAllAnnotations();
 
-	/**
-	 * Returns the list of annotations with a specified name
-	 * 
-	 * @param annotationName
-	 * @return a non-null, but possibly empty list of annotations
-	 */
-	public List<PAnnotation> getAnnotationsByName(String annotationName);
+    /**
+     * Returns the list of annotations with a specified name
+     * 
+     * @param annotationName
+     * @return a non-null, but possibly empty list of annotations
+     */
+    public List<PAnnotation> getAnnotationsByName(String annotationName);
 
-	/**
-	 * Returns the first annotation with a specified name
-	 * 
-	 * @param annotationName
-	 * @return the found annotation, or null if non is available
-	 */
-	public PAnnotation getFirstAnnotationByName(String annotationName);
+    /**
+     * Returns the first annotation with a specified name
+     * 
+     * @param annotationName
+     * @return the found annotation, or null if non is available
+     */
+    public PAnnotation getFirstAnnotationByName(String annotationName);
 
 }

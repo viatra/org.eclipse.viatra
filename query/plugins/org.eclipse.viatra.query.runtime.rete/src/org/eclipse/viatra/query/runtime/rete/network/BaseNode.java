@@ -53,9 +53,9 @@ public abstract class BaseNode implements Node {
     /**
      * clients should override this to append before the tag / trace indicators
      */
-	protected String toStringCore() {
-		return "[" + nodeId + "]" + getClass().getSimpleName();
-	}
+    protected String toStringCore() {
+        return "[" + nodeId + "]" + getClass().getSimpleName();
+    }
 
     @Override
     public ReteContainer getContainer() {
@@ -78,33 +78,33 @@ public abstract class BaseNode implements Node {
     }
         
     @Override
-	public Set<TraceInfo> getTraceInfos() {
-		return Collections.unmodifiableSet(traceInfos);
-	}
+    public Set<TraceInfo> getTraceInfos() {
+        return Collections.unmodifiableSet(traceInfos);
+    }
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	traceInfos.add(traceInfo);
-    	traceInfo.assignNode(this);
+        traceInfos.add(traceInfo);
+        traceInfo.assignNode(this);
     }
     
     @Override
     public void acceptPropagatedTraceInfo(TraceInfo traceInfo) {
-    	assignTraceInfo(traceInfo);
+        assignTraceInfo(traceInfo);
     }
     
     /**
      * Descendants should use this in e.g. logging
      */
     protected String getTraceInfoPatternsEnumerated() {
-    	TreeSet<String> patternNames = new TreeSet<String>();
-    	for (TraceInfo trInfo : traceInfos) {
-    		if (trInfo instanceof PatternTraceInfo) {
-	    		final String pName = ((PatternTraceInfo) trInfo).getPatternName();
-				patternNames.add(pName);
-    		}
-    	}
-    	return patternNames.toString();
+        TreeSet<String> patternNames = new TreeSet<String>();
+        for (TraceInfo trInfo : traceInfos) {
+            if (trInfo instanceof PatternTraceInfo) {
+                final String pName = ((PatternTraceInfo) trInfo).getPatternName();
+                patternNames.add(pName);
+            }
+        }
+        return patternNames.toString();
     }
 
 }

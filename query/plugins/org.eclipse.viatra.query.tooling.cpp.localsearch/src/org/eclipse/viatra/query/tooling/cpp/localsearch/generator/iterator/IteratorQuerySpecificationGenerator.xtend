@@ -19,12 +19,12 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.model.PatternBodyDescrip
  * @author Robert Doczi
  */
 class IteratorQuerySpecificationGenerator extends QuerySpecificationGenerator {
-	
-	new(String queryName, Set<PatternDescriptor> patternGroup) {
-		super(queryName, patternGroup)
-	}
-	
-	override generatePlan(PatternDescriptor pattern, PatternBodyDescriptor patternBody) ''''''
-	
-		
+    
+    new(String queryName, Set<PatternDescriptor> patternGroup) {
+        super(queryName, patternGroup)
+    }
+    
+    override generatePlan(PatternDescriptor pattern, PatternBodyDescriptor patternBody) ''''''
+    
+        
 }

@@ -20,34 +20,34 @@ import org.junit.Test;
 
 public class IncSCCCompleteGraphTestCase {
 
-	@Test
-	public void testResult() {
-				
-		final int nodeCount = 10;
-		Graph<Integer> graph = new Graph<Integer>();
-		DFSAlg<Integer> dfsAlg = new DFSAlg<Integer>(graph);
-		IncSCCAlg<Integer> incsccAlg = new IncSCCAlg<Integer>(graph);
-		
-		for (int i = 0; i < nodeCount; i++) {
-			graph.insertNode(i);
-		}
+    @Test
+    public void testResult() {
+                
+        final int nodeCount = 10;
+        Graph<Integer> graph = new Graph<Integer>();
+        DFSAlg<Integer> dfsAlg = new DFSAlg<Integer>(graph);
+        IncSCCAlg<Integer> incsccAlg = new IncSCCAlg<Integer>(graph);
+        
+        for (int i = 0; i < nodeCount; i++) {
+            graph.insertNode(i);
+        }
 
-		for (int i = 0; i < nodeCount; i++) {
-			for (int j = 0; j < nodeCount; j++) {
-				if (i != j) {
-					graph.insertEdge(i, j);
-					assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
-				}
-			}
-		}
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < nodeCount; j++) {
+                if (i != j) {
+                    graph.insertEdge(i, j);
+                    assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
+                }
+            }
+        }
 
-		for (int i = 0; i < nodeCount; i++) {
-			for (int j = 0; j < nodeCount; j++) {
-				if (i != j) {
-					graph.deleteEdge(i, j);
-					assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
-				}
-			}
-		}
-	}
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < nodeCount; j++) {
+                if (i != j) {
+                    graph.deleteEdge(i, j);
+                    assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
+                }
+            }
+        }
+    }
 }

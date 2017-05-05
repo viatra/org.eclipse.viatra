@@ -27,29 +27,29 @@ import com.google.common.base.Preconditions;
  */
 public abstract class POperation {
 
-	/**
-	 * Newly enforced constraints
-	 */
-	public abstract Set<? extends PConstraint> getDeltaConstraints();
-	
-	public abstract String getShortName();
-	
-	/**
-	 * @return the number of SubPlans that must be specified as parents
-	 */
-	public abstract int numParentSubPlans();
-	
-	/**
-	 * Checks whether this constraint can be properly applied at the given SubPlan.
-	 */
-	public void checkConsistency(SubPlan subPlan) {
-		Preconditions.checkArgument(this == subPlan.getOperation(), "POperation misalignment");
-		Preconditions.checkArgument(subPlan.getParentPlans().size() == numParentSubPlans(), "Incorrect number of parent SubPlans");
-	}
-		
-	@Override
-	public String toString() {
-		return getShortName();
-	}
+    /**
+     * Newly enforced constraints
+     */
+    public abstract Set<? extends PConstraint> getDeltaConstraints();
+    
+    public abstract String getShortName();
+    
+    /**
+     * @return the number of SubPlans that must be specified as parents
+     */
+    public abstract int numParentSubPlans();
+    
+    /**
+     * Checks whether this constraint can be properly applied at the given SubPlan.
+     */
+    public void checkConsistency(SubPlan subPlan) {
+        Preconditions.checkArgument(this == subPlan.getOperation(), "POperation misalignment");
+        Preconditions.checkArgument(subPlan.getParentPlans().size() == numParentSubPlans(), "Incorrect number of parent SubPlans");
+    }
+        
+    @Override
+    public String toString() {
+        return getShortName();
+    }
 
 }

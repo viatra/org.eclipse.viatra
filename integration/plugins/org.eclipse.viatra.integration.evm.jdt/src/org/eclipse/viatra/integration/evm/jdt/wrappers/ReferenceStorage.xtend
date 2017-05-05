@@ -14,7 +14,7 @@ import org.eclipse.viatra.integration.evm.jdt.util.QualifiedName
 import java.util.Set
 
 interface ReferenceStorage {
-	def Set<QualifiedName> getQualifiedNameReferences()
-	def Set<String> getSimpleNameReferences()
-	def Set<String> getRootReferences()
+    def Set<QualifiedName> getQualifiedNameReferences()
+    def Set<String> getSimpleNameReferences()
+    def Set<String> getRootReferences()
 }

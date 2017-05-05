@@ -14,17 +14,17 @@ import org.eclipse.jdt.core.IJavaElementDelta
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum
 
 class JDTEventTypeDecoder {
-	public static def toEventType(int value) {
-		switch value {
-			case IJavaElementDelta.ADDED:
-				return CRUDEventTypeEnum.CREATED
-			case IJavaElementDelta.REMOVED:
-				return CRUDEventTypeEnum.DELETED
-			case IJavaElementDelta.CHANGED:
-				return CRUDEventTypeEnum.UPDATED
-			default :
-				throw new IllegalArgumentException("Event type value is invalid.")
-				
-		}
-	}
+    public static def toEventType(int value) {
+        switch value {
+            case IJavaElementDelta.ADDED:
+                return CRUDEventTypeEnum.CREATED
+            case IJavaElementDelta.REMOVED:
+                return CRUDEventTypeEnum.DELETED
+            case IJavaElementDelta.CHANGED:
+                return CRUDEventTypeEnum.UPDATED
+            default :
+                throw new IllegalArgumentException("Event type value is invalid.")
+                
+        }
+    }
 }

@@ -37,36 +37,36 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  * @noinstantiate This class is not intended to be instantiated by clients
  */
 public class GenericQuerySpecification 
-	extends org.eclipse.viatra.query.runtime.api.GenericQuerySpecification<GenericPatternMatcher> 
+    extends org.eclipse.viatra.query.runtime.api.GenericQuerySpecification<GenericPatternMatcher> 
 {
-	protected GenericEMFPatternPQuery genericEMFPatternPQuery;
+    protected GenericEMFPatternPQuery genericEMFPatternPQuery;
 
-	public GenericQuerySpecification(GenericEMFPatternPQuery genericEMFPatternPQuery) {
-		super(genericEMFPatternPQuery);
-		this.genericEMFPatternPQuery = genericEMFPatternPQuery;
-	}
+    public GenericQuerySpecification(GenericEMFPatternPQuery genericEMFPatternPQuery) {
+        super(genericEMFPatternPQuery);
+        this.genericEMFPatternPQuery = genericEMFPatternPQuery;
+    }
 
-	@Override
-	public GenericEMFPatternPQuery getInternalQueryRepresentation() {
-		return genericEMFPatternPQuery;
-	}
+    @Override
+    public GenericEMFPatternPQuery getInternalQueryRepresentation() {
+        return genericEMFPatternPQuery;
+    }
 
     @Override
     public GenericPatternMatcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException {
         return GenericPatternMatcher.on(engine, this);
     }
 
-	@Override
-	public Class<? extends QueryScope> getPreferredScopeClass() {
-		return EMFScope.class;
-	}
+    @Override
+    public Class<? extends QueryScope> getPreferredScopeClass() {
+        return EMFScope.class;
+    }
 
-	/**
+    /**
      * @since 1.4
      */
-	@Override
-	public GenericPatternMatcher instantiate() throws ViatraQueryException {
-	    return new GenericPatternMatcher(this);
-	}
+    @Override
+    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+        return new GenericPatternMatcher(this);
+    }
     
 }

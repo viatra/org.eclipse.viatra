@@ -22,54 +22,54 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
  *
  */
 public class PJoin extends POperation {
-	
+    
 //	// TODO leave here? is this a problem in equivalnece checking?
 //	private Set<PVariable> onVariables;
 
-	public PJoin(/*Set<PVariable> onVariables*/) {
-		super();
-		//this.onVariables = new HashSet<PVariable>(onVariables);
-	}
+    public PJoin(/*Set<PVariable> onVariables*/) {
+        super();
+        //this.onVariables = new HashSet<PVariable>(onVariables);
+    }
 //	public Set<PVariable> getOnVariables() {
 //		return onVariables;
 //	}
 
-	@Override
-	public Set<? extends PConstraint> getDeltaConstraints() {
-		return Collections.emptySet();
-	}
-	@Override
-	public int numParentSubPlans() {
-		return 2;
-	}
+    @Override
+    public Set<? extends PConstraint> getDeltaConstraints() {
+        return Collections.emptySet();
+    }
+    @Override
+    public int numParentSubPlans() {
+        return 2;
+    }
 
-	@Override
-	public String getShortName() {
-		return "JOIN"; //String.format("JOIN_{%s}", Joiner.on(",").join(onVariables));
-	}
+    @Override
+    public String getShortName() {
+        return "JOIN"; //String.format("JOIN_{%s}", Joiner.on(",").join(onVariables));
+    }
 
-	@Override
-	public void checkConsistency(SubPlan subPlan) {
-		super.checkConsistency(subPlan);
+    @Override
+    public void checkConsistency(SubPlan subPlan) {
+        super.checkConsistency(subPlan);
 //		for (SubPlan parentPlan : subPlan.getParentPlans())
 //			Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(onVariables),
 //					"Variables missing from join: " + Joiner.on(',').join(Sets.difference(onVariables, parentPlan.getVisibleVariables())));		
-	}	
-	
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PJoin))
-			return false;
-		return true;
-	}
-	
+    }	
+    
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof PJoin))
+            return false;
+        return true;
+    }
+    
 
 }

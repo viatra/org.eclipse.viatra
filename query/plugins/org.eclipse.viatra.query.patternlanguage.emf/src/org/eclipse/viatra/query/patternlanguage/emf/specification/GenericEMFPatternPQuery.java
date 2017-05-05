@@ -53,7 +53,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
 
     private Pattern pattern;
     private ImmutableList<PParameter> parameters;
-	
+    
     /**
      * Initializes a generic query representation for a given pattern. </p>
      * <p>
@@ -95,14 +95,14 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     
     @Override
     public boolean equals(Object obj) {
-    	return (obj == this) ||
-    			(obj instanceof GenericEMFPatternPQuery &&
-    					pattern.equals(((GenericEMFPatternPQuery)obj).pattern));
+        return (obj == this) ||
+                (obj instanceof GenericEMFPatternPQuery &&
+                        pattern.equals(((GenericEMFPatternPQuery)obj).pattern));
     }
 
     @Override
     public int hashCode() {
-    	return pattern.hashCode();
+        return pattern.hashCode();
     }
 
     @Override
@@ -145,10 +145,10 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
                         
                         IInputKey unaryDeclaredType = null; 
                         Type type = var.getType();
-    					if (type != null) 
-                        	unaryDeclaredType = typeSystem.extractTypeDescriptor(type);
+                        if (type != null) 
+                            unaryDeclaredType = typeSystem.extractTypeDescriptor(type);
                         
-    					return new PParameter(var.getName(), clazz, unaryDeclaredType, direction);
+                        return new PParameter(var.getName(), clazz, unaryDeclaredType, direction);
                     }
                 }
     
@@ -174,13 +174,13 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     protected Set<PBody> doGetContainedBodies() throws QueryInitializationException {
         SpecificationBuilder specificationBuilder = new SpecificationBuilder();
         try {
-			return specificationBuilder.getBodies(pattern, this);
-		} catch (RewriterException e) {
+            return specificationBuilder.getBodies(pattern, this);
+        } catch (RewriterException e) {
             addError(new PProblem(e, e.getShortMessage()));
             throw e;
-		}
+        }
     }
-	
+    
     /**
      * Sets up the bodies stored inside this query specification. Only available for uninitialized specifications.
      * @param bodies a non-empty set of {@link PBody} instances
@@ -196,17 +196,17 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     }
     
     @Override
-	public final void setStatus(PQueryStatus newStatus) {
+    public final void setStatus(PQueryStatus newStatus) {
         Preconditions.checkState(isMutable(), "The status of the specification can only be set for uninitialized queries.");
         super.setStatus(newStatus);
     }
-	@Override
-	public void addError(PProblem problem) {
+    @Override
+    public void addError(PProblem problem) {
         Preconditions.checkState(
                 isMutable() || getStatus().equals(PQueryStatus.ERROR), 
-        		"Errors can only be added to unitialized or erroneous queries.");
+                "Errors can only be added to unitialized or erroneous queries.");
         super.addError(problem);
-	}
+    }
 
 
 }

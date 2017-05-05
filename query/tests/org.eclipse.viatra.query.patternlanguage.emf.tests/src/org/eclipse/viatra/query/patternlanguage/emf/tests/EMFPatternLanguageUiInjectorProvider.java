@@ -20,11 +20,11 @@ import com.google.inject.Injector;
 
 public class EMFPatternLanguageUiInjectorProvider implements IInjectorProvider {
 
-	public Injector getInjector() {
-		Injector injector = EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage");
-	    ViatraQueryLoggingUtil.setExternalLogger(injector.getInstance(Logger.class));
-	    EMFPatternLanguagePlugin.getInstance().addCompoundInjector(injector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+    public Injector getInjector() {
+        Injector injector = EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage");
+        ViatraQueryLoggingUtil.setExternalLogger(injector.getInstance(Logger.class));
+        EMFPatternLanguagePlugin.getInstance().addCompoundInjector(injector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
         return injector;
-	}
+    }
 
 }

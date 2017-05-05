@@ -21,14 +21,14 @@ import com.google.inject.Injector;
  */
 public class GeneratorExecutableExtensionFactory extends AbstractGuiceAwareExecutableExtensionFactory {
 
-	@Override
-	protected Bundle getBundle() {
-		return CPPQueryToolingPlugin.getDefault().getBundle();
-	}
+    @Override
+    protected Bundle getBundle() {
+        return CPPQueryToolingPlugin.getDefault().getBundle();
+    }
 
-	@Override
-	protected Injector getInjector() {
-		return EMFPatternLanguageActivator.getInstance().getInjector(EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
-	}
+    @Override
+    protected Injector getInjector() {
+        return EMFPatternLanguageActivator.getInstance().getInjector(EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
+    }
 
 }

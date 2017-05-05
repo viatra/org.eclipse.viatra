@@ -38,12 +38,12 @@ public class MatchingFrame extends Tuple implements Cloneable {
     /**
      * The pattern variant for which this MatchingFrame is a
      * matching. 
-	 */
+     */
     private Object pattern;
 
-	/**
+    /**
      * The array that physically holds the values.
-	 */
+     */
     private Object[] frame;
 
     private int[] keys;
@@ -99,10 +99,10 @@ public class MatchingFrame extends Tuple implements Cloneable {
      * @throws IllegalArgumentException
      *             if the position is larger then the length of the frame
      */
-	public Object getValue(int position) {
+    public Object getValue(int position) {
         Preconditions.checkElementIndex(position, frame.length);
         return frame[position];
-	}
+    }
     
     /**
      * Sets the value of the variable at the given position. For internal use in LS matching only.
@@ -161,16 +161,16 @@ public class MatchingFrame extends Tuple implements Cloneable {
     }
     
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	for (int i = 0; i < frame.length; i++) {
-			builder.append("frame[" + i + "]\t" + (frame[i] == null ? "null" : frame[i]).toString() + "\n");
-		}
-    	return builder.toString();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < frame.length; i++) {
+            builder.append("frame[" + i + "]\t" + (frame[i] == null ? "null" : frame[i]).toString() + "\n");
+        }
+        return builder.toString();
     }
     
     @Override
     public int getSize() {
-    	return frame.length;
+        return frame.length;
     }
 
     @Override

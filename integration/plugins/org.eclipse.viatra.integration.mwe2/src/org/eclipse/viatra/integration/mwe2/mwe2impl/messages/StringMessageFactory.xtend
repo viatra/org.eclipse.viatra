@@ -19,25 +19,25 @@ import org.eclipse.viatra.integration.mwe2.mwe2impl.exceptions.InvalidParameterT
  *
  */
 class StringMessageFactory implements IMessageFactory<String,StringMessage>{
-	
-	/**
-	 * Creates a StringMessage using the provided parameter. If the parameter is of a wrong type, it throws an InvalidParameterTypeException
-	 */
-	override createMessage(Object parameter) throws InvalidParameterTypeException{
-		if(parameter.isValidParameter){
-			return new StringMessage(parameter as String)
-		}
-		throw new InvalidParameterTypeException
-	}
-	
-	/**
-	 * Checks if the type of the given parameter matches the parameter type of StringMessage
-	 */
-	override isValidParameter(Object parameter) {
-		if(parameter instanceof String){
-			return true
-		}
-		return false;
-	}
-	
+    
+    /**
+     * Creates a StringMessage using the provided parameter. If the parameter is of a wrong type, it throws an InvalidParameterTypeException
+     */
+    override createMessage(Object parameter) throws InvalidParameterTypeException{
+        if(parameter.isValidParameter){
+            return new StringMessage(parameter as String)
+        }
+        throw new InvalidParameterTypeException
+    }
+    
+    /**
+     * Checks if the type of the given parameter matches the parameter type of StringMessage
+     */
+    override isValidParameter(Object parameter) {
+        if(parameter instanceof String){
+            return true
+        }
+        return false;
+    }
+    
 }

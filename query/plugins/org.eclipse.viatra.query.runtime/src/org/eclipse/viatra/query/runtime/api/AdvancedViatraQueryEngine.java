@@ -194,25 +194,25 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
             IMatchUpdateListener<? super Match> listener);
 
     
-	/**
-	 * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
-	 * Multiple calls may return the same matcher depending on the actual evaluation hints. 
-	 * 
-	 * <p> It is guaranteed that this method will always return a matcher instance which is functionally compatible 
-	 *   with the requested functionality (see {@link IMatcherCapability}). 
-	 *   Otherwise, the query evaluator is free to ignore any hints.
-	 * 
-	 * <p> For stateful query backends (Rete), hints may be effective only the first time a matcher is created.
-	 * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query
-	 * @return a pattern matcher corresponding to the specification
+    /**
+     * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
+     * Multiple calls may return the same matcher depending on the actual evaluation hints. 
+     * 
+     * <p> It is guaranteed that this method will always return a matcher instance which is functionally compatible 
+     *   with the requested functionality (see {@link IMatcherCapability}). 
+     *   Otherwise, the query evaluator is free to ignore any hints.
+     * 
+     * <p> For stateful query backends (Rete), hints may be effective only the first time a matcher is created.
+     * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query
+     * @return a pattern matcher corresponding to the specification
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with the query
-	 * @throws ViatraQueryException if the matcher could not be initialized
-	 * @since 0.9
-	 */
+     * @throws ViatraQueryException if the matcher could not be initialized
+     * @since 0.9
+     */
     public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
-    		IQuerySpecification<Matcher> querySpecification, 
-    		QueryEvaluationHint optionalEvaluationHints)
-    	throws ViatraQueryException;
+            IQuerySpecification<Matcher> querySpecification, 
+            QueryEvaluationHint optionalEvaluationHints)
+        throws ViatraQueryException;
 
     /**
      * Initializes matchers for a group of patterns as one step (optionally overriding some of the default query evaluation hints). 
@@ -225,16 +225,16 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * This is typically more efficient than traversing the model each time an individual pattern matcher is initialized on demand. 
      * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
-	 * @param queryGroup a {@link IQueryGroup} identifying a set of VIATRA queries
+     * @param queryGroup a {@link IQueryGroup} identifying a set of VIATRA queries
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with each query
      * @throws ViatraQueryException
      *             if there was an error in preparing the engine
      * @since 0.9
      */
     public abstract void prepareGroup(
-    		IQueryGroup queryGroup, 
-    		QueryEvaluationHint optionalEvaluationHints)
-    	throws ViatraQueryException;
+            IQueryGroup queryGroup, 
+            QueryEvaluationHint optionalEvaluationHints)
+        throws ViatraQueryException;
  
     /**
      * Indicates whether the engine is managed, i.e. the default engine assigned to the given scope root by
@@ -313,36 +313,36 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * Provides access to the selected query backend component of the VIATRA Query engine.
      * @noreference for internal use only
      */
-	public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory)
-			throws ViatraQueryException;
+    public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory)
+            throws ViatraQueryException;
 
-	/**
-	 * Access an existing pattern matcher based on a {@link IQuerySpecification}, and optional hints override.
+    /**
+     * Access an existing pattern matcher based on a {@link IQuerySpecification}, and optional hints override.
      * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
      * @param optionalOverrideHints a {@link QueryEvaluationHint} that may override the pattern hints (can be null)
      * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
      * @since 1.4
      */
-	public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalOverrideHints);
-	
-	/**
-	 * Returns the immutable {@link ViatraQueryEngineOptions} of the engine.
-	 * 
-	 * @return the engine options
-	 * @since 1.4
-	 */
-	public abstract ViatraQueryEngineOptions getEngineOptions();
-	
-	/**
-	 * Return the underlying result provider for the given matcher.
-	 * 
-	 * @beta This method may change in future versions
-	 * @since 1.4
-	 * @noreference This method is considered internal API
-	 */
-	public abstract IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher);
-	
-	/**
+    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalOverrideHints);
+    
+    /**
+     * Returns the immutable {@link ViatraQueryEngineOptions} of the engine.
+     * 
+     * @return the engine options
+     * @since 1.4
+     */
+    public abstract ViatraQueryEngineOptions getEngineOptions();
+    
+    /**
+     * Return the underlying result provider for the given matcher.
+     * 
+     * @beta This method may change in future versions
+     * @since 1.4
+     * @noreference This method is considered internal API
+     */
+    public abstract IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher);
+    
+    /**
      * The given callable will be executed, and all update propagation will be delayed until the
      * execution is done. 
      * 

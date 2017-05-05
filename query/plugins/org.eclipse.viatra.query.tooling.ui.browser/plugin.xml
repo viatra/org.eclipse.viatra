@@ -211,7 +211,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-               		 definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registryentry">
+                        definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registryentry">
                </reference>
             </visibleWhen>
          </command>

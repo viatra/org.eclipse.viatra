@@ -42,7 +42,7 @@ public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> 
     
     @Override
     public PQuery getReferredQuery() {
-    	return supplierKey;
+        return supplierKey;
     }
     
     /**
@@ -50,6 +50,6 @@ public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> 
      */
     @Override
     public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
-    	return PositivePatternCall.getTypesImpliedByCall(supplierKey, variablesTuple);
+        return PositivePatternCall.getTypesImpliedByCall(supplierKey, variablesTuple);
     }
 }

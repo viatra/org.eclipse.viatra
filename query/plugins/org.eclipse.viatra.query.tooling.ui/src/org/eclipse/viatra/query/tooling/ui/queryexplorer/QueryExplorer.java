@@ -228,11 +228,11 @@ public class QueryExplorer extends ViewPart {
      * @since 1.0
      */
     public static QueryExplorer getInstance(IWorkbenchWindow activeWorkbenchWindow) {
-    	IWorkbenchPart instance = null;
+        IWorkbenchPart instance = null;
         if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
-        	instance = activeWorkbenchWindow.getActivePage().getActivePart();
+            instance = activeWorkbenchWindow.getActivePage().getActivePart();
             if (!(instance instanceof QueryExplorer)) {
-            	instance = activeWorkbenchWindow.getActivePage().findView(ID);
+                instance = activeWorkbenchWindow.getActivePage().findView(ID);
             }
         }
         return (QueryExplorer) instance;
@@ -447,7 +447,7 @@ public class QueryExplorer extends ViewPart {
      * on the root elements are correct. 
      */
     public void refreshPatternsViewer() {
-    	patternsTreeViewer.refresh();
+        patternsTreeViewer.refresh();
         patternsViewerInput.getGeneratedPatternsRoot().updateHasChildren();
         patternsViewerInput.getGenericPatternsRoot().updateHasChildren();
     }

@@ -34,41 +34,41 @@ import org.eclipse.ui.handlers.HandlerUtil
  * @author Robert Doczi
  */
 class GenerateCommand extends AbstractHandler {
-	final static String GEN_ROOT = "./cpp-gen".replace(Character.valueOf('/').charValue, File::separatorChar)
+    final static String GEN_ROOT = "./cpp-gen".replace(Character.valueOf('/').charValue, File::separatorChar)
 
-	override Object execute(ExecutionEvent event) throws ExecutionException {
-		var ISelection sel = HandlerUtil::getActiveMenuSelection(event)
-		var IStructuredSelection selection = sel as IStructuredSelection
+    override Object execute(ExecutionEvent event) throws ExecutionException {
+        var ISelection sel = HandlerUtil::getActiveMenuSelection(event)
+        var IStructuredSelection selection = sel as IStructuredSelection
 
-		var IResource parent = getRoot(selection.getFirstElement() as IFile)
-		var Path rootPath = Paths::get(parent.getLocation().toOSString, GEN_ROOT).normalize
+        var IResource parent = getRoot(selection.getFirstElement() as IFile)
+        var Path rootPath = Paths::get(parent.getLocation().toOSString, GEN_ROOT).normalize
 
-		var ResourceSet loader = new ResourceSetImpl
+        var ResourceSet loader = new ResourceSetImpl
 
-		var Resource ecore = loader.getResource(
-			URI::createFileURI((selection.firstElement as IFile).rawLocation.toOSString),
-			true
-		)
+        var Resource ecore = loader.getResource(
+            URI::createFileURI((selection.firstElement as IFile).rawLocation.toOSString),
+            true
+        )
 
-		// Resolve proxies
-		ecore.getContents().forEach[EcoreUtil::resolveAll(it)]
+        // Resolve proxies
+        ecore.getContents().forEach[EcoreUtil::resolveAll(it)]
 
-		generateCPPModel(ecore, rootPath)
+        generateCPPModel(ecore, rootPath)
 
-		parent.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-		return null
-	}
+        parent.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+        return null
+    }
 
-	def private void generateCPPModel(Resource ecore, Path rootPath) {
-		new EcoreGenerator(ecore, rootPath).startGeneration()
-	}
+    def private void generateCPPModel(Resource ecore, Path rootPath) {
+        new EcoreGenerator(ecore, rootPath).startGeneration()
+    }
 
-	def private IResource getRoot(IFile element) {
-		var IResource parent = element
-		while (!(parent instanceof IProject)) {
-			parent = parent.getParent()
-		}
-		return parent
-	}
+    def private IResource getRoot(IFile element) {
+        var IResource parent = element
+        while (!(parent instanceof IProject)) {
+            parent = parent.getParent()
+        }
+        return parent
+    }
 
 }

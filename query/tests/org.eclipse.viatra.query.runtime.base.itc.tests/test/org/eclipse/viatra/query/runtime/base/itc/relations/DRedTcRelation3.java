@@ -15,18 +15,18 @@ import org.eclipse.viatra.query.runtime.base.itc.alg.dred.DRedTcRelation;
 
 public class DRedTcRelation3 extends DRedTcRelation<Integer>{
 
-	private static final long serialVersionUID = -9211874694848138868L;
-	
-	public DRedTcRelation3() {
-		this.addTuple(1, 2);
-    	this.addTuple(1, 3);
-    	this.addTuple(1, 4);
+    private static final long serialVersionUID = -9211874694848138868L;
+    
+    public DRedTcRelation3() {
+        this.addTuple(1, 2);
+        this.addTuple(1, 3);
+        this.addTuple(1, 4);
 
-    	this.addTuple(2, 3);
-    	this.addTuple(2, 4);
+        this.addTuple(2, 3);
+        this.addTuple(2, 4);
 
-    	this.addTuple(4, 3);
+        this.addTuple(4, 3);
 
-    	this.addTuple(5, 6);
-	}
+        this.addTuple(5, 6);
+    }
 }

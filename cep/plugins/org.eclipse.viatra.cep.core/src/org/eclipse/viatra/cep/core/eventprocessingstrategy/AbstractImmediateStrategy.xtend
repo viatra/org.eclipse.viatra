@@ -28,43 +28,43 @@ import org.apache.log4j.Logger
  * 
  */
 abstract class AbstractImmediateStrategy extends AbstractStrategy {
-	val extension Logger logger = LoggerUtils.instance.logger;
+    val extension Logger logger = LoggerUtils.instance.logger;
 
-	new(IEventModelManager eventModelManager) {
-		super(eventModelManager)
-	}
+    new(IEventModelManager eventModelManager) {
+        super(eventModelManager)
+    }
 
-	override public handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
-		model.automata.filter[automaton|automaton.needsReset].forEach [ automaton |
-			debug(String.format("ImmediateStrategy: No update in automaton: %s. Resetting automaton.", automaton.id));
-			automaton.normalStates.filter[state|state.notEmpty].forEach [ state |
-				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", state.prettyLabel))
-				state.clear
-			]
+    override public handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
+        model.automata.filter[automaton|automaton.needsReset].forEach [ automaton |
+            debug(String.format("ImmediateStrategy: No update in automaton: %s. Resetting automaton.", automaton.id));
+            automaton.normalStates.filter[state|state.notEmpty].forEach [ state |
+                debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", state.prettyLabel))
+                state.clear
+            ]
 
-			var initState = automaton.initialState
-			if (initState.empty) {
-				newEventToken(automaton, initState)
-			}
-		]
-	}
+            var initState = automaton.initialState
+            if (initState.empty) {
+                newEventToken(automaton, initState)
+            }
+        ]
+    }
 
-	def private prettyLabel(State state) {
-		if (state.label.nullOrEmpty) {
-			return state.toString
-		}
-		state.label
-	}
+    def private prettyLabel(State state) {
+        if (state.label.nullOrEmpty) {
+            return state.toString
+        }
+        state.label
+    }
 
-	def private clear(State state) {
-		state.eventTokens.clear
-	}
+    def private clear(State state) {
+        state.eventTokens.clear
+    }
 
-	def private id(Automaton automaton) {
-		automaton.eventPatternId
-	}
+    def private id(Automaton automaton) {
+        automaton.eventPatternId
+    }
 
-	def private needsReset(Automaton automaton) {
-		!(eventModelManager.enabledAutomataForTheLatestEvent.contains(automaton));
-	}
+    def private needsReset(Automaton automaton) {
+        !(eventModelManager.enabledAutomataForTheLatestEvent.contains(automaton));
+    }
 }

@@ -33,56 +33,56 @@ import com.google.common.collect.SetMultimap;
  *
  */
 public class TypeJudgement {
-	
-	private IInputKey inputKey;
-	private Tuple variablesTuple;
-	/**
-	 * @param inputKey
-	 * @param variablesTuple
-	 */
-	public TypeJudgement(IInputKey inputKey, Tuple variablesTuple) {
-		super();
-		this.inputKey = inputKey;
-		this.variablesTuple = variablesTuple;
-	}
-	public IInputKey getInputKey() {
-		return inputKey;
-	}
-	public Tuple getVariablesTuple() {
-		return variablesTuple;
-	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((inputKey == null) ? 0 : inputKey.hashCode());
-		result = prime * result
-				+ ((variablesTuple == null) ? 0 : variablesTuple.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof TypeJudgement))
-			return false;
-		TypeJudgement other = (TypeJudgement) obj;
-		if (inputKey == null) {
-			if (other.inputKey != null)
-				return false;
-		} else if (!inputKey.equals(other.inputKey))
-			return false;
-		if (variablesTuple == null) {
-			if (other.variablesTuple != null)
-				return false;
-		} else if (!variablesTuple.equals(other.variablesTuple))
-			return false;
-		return true;
-	}
-	
+    
+    private IInputKey inputKey;
+    private Tuple variablesTuple;
+    /**
+     * @param inputKey
+     * @param variablesTuple
+     */
+    public TypeJudgement(IInputKey inputKey, Tuple variablesTuple) {
+        super();
+        this.inputKey = inputKey;
+        this.variablesTuple = variablesTuple;
+    }
+    public IInputKey getInputKey() {
+        return inputKey;
+    }
+    public Tuple getVariablesTuple() {
+        return variablesTuple;
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((inputKey == null) ? 0 : inputKey.hashCode());
+        result = prime * result
+                + ((variablesTuple == null) ? 0 : variablesTuple.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof TypeJudgement))
+            return false;
+        TypeJudgement other = (TypeJudgement) obj;
+        if (inputKey == null) {
+            if (other.inputKey != null)
+                return false;
+        } else if (!inputKey.equals(other.inputKey))
+            return false;
+        if (variablesTuple == null) {
+            if (other.variablesTuple != null)
+                return false;
+        } else if (!variablesTuple.equals(other.variablesTuple))
+            return false;
+        return true;
+    }
+    
     public Set<TypeJudgement> getDirectlyImpliedJudgements(IQueryMetaContext context) {
         Set<TypeJudgement> results = new HashSet<TypeJudgement>();
         results.add(this);
@@ -113,9 +113,9 @@ public class TypeJudgement {
         return results;
     }
     
-	/**
-	 * @since 1.6
-	 */
+    /**
+     * @since 1.6
+     */
     public SetMultimap<TypeJudgement, TypeJudgement> getConditionalImpliedJudgements(IQueryMetaContext context) {
         SetMultimap<TypeJudgement, TypeJudgement> results = HashMultimap.create();
         
@@ -129,27 +129,27 @@ public class TypeJudgement {
         
         return results;
     }
-	
-	
-	
+    
+    
+    
     private TypeJudgement transcribeImplication(InputKeyImplication inputKeyImplication) {
         return new TypeJudgement(
                 inputKeyImplication.getImpliedKey(), 
-        		transcribeVariablesToTuple(inputKeyImplication.getImpliedIndices())
+                transcribeVariablesToTuple(inputKeyImplication.getImpliedIndices())
         );
     }
-	private Tuple transcribeVariablesToTuple(List<Integer> indices) {
-		Object[] elements = new Object[indices.size()];
-		for (int i = 0; i < indices.size(); ++i)
-			elements[i] = variablesTuple.get(indices.get(i));
-		return new FlatTuple(elements);
-	}
+    private Tuple transcribeVariablesToTuple(List<Integer> indices) {
+        Object[] elements = new Object[indices.size()];
+        for (int i = 0; i < indices.size(); ++i)
+            elements[i] = variablesTuple.get(indices.get(i));
+        return new FlatTuple(elements);
+    }
 
-	@Override
-	public String toString() {
-		return "TypeJudgement:" + inputKey.getPrettyPrintableName() + "@" + variablesTuple.toString();
-	}
-	
+    @Override
+    public String toString() {
+        return "TypeJudgement:" + inputKey.getPrettyPrintableName() + "@" + variablesTuple.toString();
+    }
+    
     /**
      * Creates this judgement as a direct type constraint in the given PBody under construction.
      * <p> pre: the variables tuple must be formed of variables of that PBody.

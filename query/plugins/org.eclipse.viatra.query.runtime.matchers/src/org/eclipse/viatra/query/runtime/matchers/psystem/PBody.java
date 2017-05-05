@@ -220,8 +220,8 @@ public class PBody {
      * @return a non-null, but possibly empty list
      */
     public List<ExportedParameter> getSymbolicParameters() {
-    	if (symbolicParameters == null) 
-    		symbolicParameters = Lists.<ExportedParameter> newArrayList();
+        if (symbolicParameters == null) 
+            symbolicParameters = Lists.<ExportedParameter> newArrayList();
         return symbolicParameters;
     }
 
@@ -286,9 +286,9 @@ public class PBody {
      */
     public Map<PVariable, Set<TypeJudgement>> getAllUnaryTypeRestrictions(IQueryMetaContext context) {
         Map<PVariable, Set<TypeJudgement>> currentRestrictions = allUnaryTypeRestrictions.get(context);
-		if (currentRestrictions == null) {
-			currentRestrictions = TypeHelper.inferUnaryTypes(getConstraints(), context);
-			allUnaryTypeRestrictions.put(context, currentRestrictions);
+        if (currentRestrictions == null) {
+            currentRestrictions = TypeHelper.inferUnaryTypes(getConstraints(), context);
+            allUnaryTypeRestrictions.put(context, currentRestrictions);
         }
         return currentRestrictions;
     }

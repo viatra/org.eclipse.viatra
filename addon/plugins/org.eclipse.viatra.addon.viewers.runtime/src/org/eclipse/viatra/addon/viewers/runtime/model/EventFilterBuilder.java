@@ -26,23 +26,23 @@ import com.google.common.collect.Lists;
  */
 public final class EventFilterBuilder {
 
-	//Disable constructor
-	private EventFilterBuilder(){}
-	
-	@SuppressWarnings("unchecked")
-	public static <T extends IPatternMatch> EventFilter<T> createEventFilter(ViewerFilterDefinition filterDefinition, GenericReferencedQuerySpecification specification) {
-		if(filterDefinition.singleFilterMatch != null) {
-			IPatternMatch singleFilterMatch = filterDefinition.singleFilterMatch;
-			T newSingleFilterMatch = (T) specification.createFromBaseMatch(singleFilterMatch);
-			return Rules.newSingleMatchFilter(newSingleFilterMatch);
-		}
-		
-		Collection<IPatternMatch> filterMatches = filterDefinition.filterMatches;
-		List<T> newFilterMatches = Lists.newArrayList();
-		for (IPatternMatch filterMatch : filterMatches) {
-			T newFilterMatch = (T) specification.createFromBaseMatch(filterMatch);
-			newFilterMatches.add(newFilterMatch);
-		}
-		return Rules.newMultiMatchFilter(newFilterMatches, filterDefinition.semantics);
-	}
+    //Disable constructor
+    private EventFilterBuilder(){}
+    
+    @SuppressWarnings("unchecked")
+    public static <T extends IPatternMatch> EventFilter<T> createEventFilter(ViewerFilterDefinition filterDefinition, GenericReferencedQuerySpecification specification) {
+        if(filterDefinition.singleFilterMatch != null) {
+            IPatternMatch singleFilterMatch = filterDefinition.singleFilterMatch;
+            T newSingleFilterMatch = (T) specification.createFromBaseMatch(singleFilterMatch);
+            return Rules.newSingleMatchFilter(newSingleFilterMatch);
+        }
+        
+        Collection<IPatternMatch> filterMatches = filterDefinition.filterMatches;
+        List<T> newFilterMatches = Lists.newArrayList();
+        for (IPatternMatch filterMatch : filterMatches) {
+            T newFilterMatch = (T) specification.createFromBaseMatch(filterMatch);
+            newFilterMatches.add(newFilterMatch);
+        }
+        return Rules.newMultiMatchFilter(newFilterMatches, filterDefinition.semantics);
+    }
 }

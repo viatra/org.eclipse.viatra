@@ -45,10 +45,10 @@ public abstract class BaseTypeSafeConstraint extends
     public BaseTypeSafeConstraint(PBody pBody,
             Set<PVariable> inputVariables, final PVariable outputVariable) {
         super(pBody, 
-        		(outputVariable == null) ? 
-        				inputVariables : 
-        				ImmutableSet.<PVariable>builder().addAll(inputVariables).add(outputVariable).build()
-        			);
+                (outputVariable == null) ? 
+                        inputVariables : 
+                        ImmutableSet.<PVariable>builder().addAll(inputVariables).add(outputVariable).build()
+                    );
         this.inputVariables = inputVariables;
         this.outputVariable = outputVariable;
     }
@@ -56,9 +56,9 @@ public abstract class BaseTypeSafeConstraint extends
     @Override
     public Set<PVariable> getDeducedVariables() {
         if (outputVariable == null) 
-        	return Collections.emptySet(); 
+            return Collections.emptySet(); 
         else
-        	return Collections.singleton(outputVariable);
+            return Collections.singleton(outputVariable);
     }
 
     @Override
@@ -81,11 +81,11 @@ public abstract class BaseTypeSafeConstraint extends
      * @return a variable whose type safety is not enforced yet, or null if the plan is typesafe
      */
     public PVariable checkTypeSafety(SubPlan plan, IQueryMetaContext context) {
-    	Set<TypeJudgement> impliedJudgements = plan.getAllImpliedTypeJudgements(context);
-    	
+        Set<TypeJudgement> impliedJudgements = plan.getAllImpliedTypeJudgements(context);
+        
         for (PVariable pVariable : inputVariables) {
             Set<TypeJudgement> allTypeRestrictionsForVariable = pBody.getAllUnaryTypeRestrictions(context).get(pVariable);
-        	if (allTypeRestrictionsForVariable != null && !impliedJudgements.containsAll(allTypeRestrictionsForVariable))
+            if (allTypeRestrictionsForVariable != null && !impliedJudgements.containsAll(allTypeRestrictionsForVariable))
                 return pVariable;
         }
         return null;
@@ -93,9 +93,9 @@ public abstract class BaseTypeSafeConstraint extends
     
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-    	if (inputVariables.remove(obsolete)) 
-    		inputVariables.add(replacement);
-    	if (outputVariable == obsolete) 
-    		outputVariable = replacement;
+        if (inputVariables.remove(obsolete)) 
+            inputVariables.add(replacement);
+        if (outputVariable == obsolete) 
+            outputVariable = replacement;
     }
 }

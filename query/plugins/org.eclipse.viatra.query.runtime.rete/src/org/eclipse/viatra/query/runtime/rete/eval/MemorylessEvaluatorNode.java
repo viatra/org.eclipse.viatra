@@ -26,30 +26,30 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  */
 public class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 
-	/**
+    /**
      * @since 1.5
      */
     public MemorylessEvaluatorNode(ReteContainer reteContainer, EvaluatorCore core) {
         super(reteContainer, core);
     }
 
-	@Override
-	public void pullInto(Collection<Tuple> collector) {
-		Collection<Tuple> parentTuples = new ArrayList<Tuple>();
-		propagatePullInto(parentTuples);
-		for (Tuple incomingTuple : parentTuples) {
-			Tuple evaluated = core.performEvaluation(incomingTuple);
+    @Override
+    public void pullInto(Collection<Tuple> collector) {
+        Collection<Tuple> parentTuples = new ArrayList<Tuple>();
+        propagatePullInto(parentTuples);
+        for (Tuple incomingTuple : parentTuples) {
+            Tuple evaluated = core.performEvaluation(incomingTuple);
             if (evaluated != null) 
                 collector.add(evaluated);
-		}
-	}
+        }
+    }
 
-	@Override
-	public void update(Direction direction, Tuple updateElement) {
+    @Override
+    public void update(Direction direction, Tuple updateElement) {
         Tuple evaluated = core.performEvaluation(updateElement);
         if (evaluated != null) 
             propagateUpdate(direction, evaluated);
-	}
+    }
 
 
     /**
@@ -81,7 +81,7 @@ public class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
         // TODO Auto-generated method stub
         return null;
     }
-	
-	
+    
+    
 
 }

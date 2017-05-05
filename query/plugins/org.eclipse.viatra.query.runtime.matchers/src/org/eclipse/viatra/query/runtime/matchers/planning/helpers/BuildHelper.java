@@ -56,20 +56,20 @@ public class BuildHelper {
      */
     public static SubPlan trimUnneccessaryVariables(SubPlanFactory planFactory, /*IOperationCompiler buildable,*/
             SubPlan plan, boolean onlyIfNotDetermined, QueryAnalyzer analyzer) {
-    	Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
-    	Set<PVariable> variablesInPlan = plan.getVisibleVariables();
-    	for (PVariable trimCandidate : variablesInPlan) {
-    		if (trimCandidate.getReferringConstraintsOfType(ExportedParameter.class).isEmpty()) {
-    			if (plan.getAllEnforcedConstraints().containsAll(trimCandidate.getReferringConstraints()))
-    				canBeTrimmed.add(trimCandidate);
-    		}
-    	}
-		final Set<PVariable> retainedVars = setMinus(variablesInPlan, canBeTrimmed);   	
-    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed, analyzer, false))) {
-    		// TODO add smart ordering? 
-    		plan = planFactory.createSubPlan(new PProject(retainedVars), plan);
-    	}
-    	return plan;
+        Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
+        Set<PVariable> variablesInPlan = plan.getVisibleVariables();
+        for (PVariable trimCandidate : variablesInPlan) {
+            if (trimCandidate.getReferringConstraintsOfType(ExportedParameter.class).isEmpty()) {
+                if (plan.getAllEnforcedConstraints().containsAll(trimCandidate.getReferringConstraints()))
+                    canBeTrimmed.add(trimCandidate);
+            }
+        }
+        final Set<PVariable> retainedVars = setMinus(variablesInPlan, canBeTrimmed);   	
+        if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed, analyzer, false))) {
+            // TODO add smart ordering? 
+            plan = planFactory.createSubPlan(new PProject(retainedVars), plan);
+        }
+        return plan;
     }
     
     /**
@@ -89,8 +89,8 @@ public class BuildHelper {
      * @since 1.5
      */
     public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, QueryAnalyzer analyzer, boolean strict) {
-		return areVariablesDetermined(plan, determining, plan.getVisibleVariables(), analyzer, strict);
-	}
+        return areVariablesDetermined(plan, determining, plan.getVisibleVariables(), analyzer, strict);
+    }
     
     /**
      * @deprecated use {@link BuildHelper#areAllVariablesDetermined(SubPlan, Collection, QueryAnalyzer, boolean)}
@@ -112,10 +112,10 @@ public class BuildHelper {
     public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined, 
             QueryAnalyzer analyzer, boolean strict) {
         Map<Set<PVariable>, Set<PVariable>> dependencies = analyzer.getFunctionalDependencies(plan.getAllEnforcedConstraints(), strict);
-		final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
-		final boolean isDetermined = closure.containsAll(determined);
-		return isDetermined;
-	}
+        final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
+        final boolean isDetermined = closure.containsAll(determined);
+        return isDetermined;
+    }
     
     /**
      * @deprecated use {@link BuildHelper#areVariablesDetermined(SubPlan, Collection, Collection, QueryAnalyzer, boolean)}
@@ -127,11 +127,11 @@ public class BuildHelper {
     }
 
 
-	private static <T> Set<T> setMinus(Set<T> a, Set<T> b) {
-		Set<T> difference = new HashSet<T>(a);
-		difference.removeAll(b);
-		return difference;
-	}
+    private static <T> Set<T> setMinus(Set<T> a, Set<T> b) {
+        Set<T> difference = new HashSet<T>(a);
+        difference.removeAll(b);
+        return difference;
+    }
     
     /**
      * Finds an arbitrary constraint that is not enforced at the given plan.

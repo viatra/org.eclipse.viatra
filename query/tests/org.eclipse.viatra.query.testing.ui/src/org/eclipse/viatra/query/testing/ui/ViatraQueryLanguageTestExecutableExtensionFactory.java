@@ -15,11 +15,11 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecuta
 import org.osgi.framework.Bundle;
 
 public class ViatraQueryLanguageTestExecutableExtensionFactory extends
-		EMFPatternLanguageExecutableExtensionFactory {
+        EMFPatternLanguageExecutableExtensionFactory {
 
-	@Override
-	protected Bundle getBundle() {
-		return ViatraQueryTestingUIPlugin.getDefault().getBundle();
-	}
+    @Override
+    protected Bundle getBundle() {
+        return ViatraQueryTestingUIPlugin.getDefault().getBundle();
+    }
 
 }

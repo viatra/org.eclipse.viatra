@@ -23,66 +23,66 @@ import org.eclipse.viatra.integration.mwe2.IMessageBroker
  * @author Peter Lunk
  */
 class MessageBroker implements IMessageBroker{
-	
-	protected static  MessageBroker broker
-	protected List<ITopic> topics
-	
-	protected new(){
-		topics = Lists.newArrayList
-	}
-	
-	public static def getInstance(){
-		if(broker == null){
-			broker = new MessageBroker
-		}
-		return broker
-	}
-		
-	override subscribeTo(String topicName, ITransformationStep step) {
-		getTopic(topicName).addSubscriber(step)
-	}
+    
+    protected static  MessageBroker broker
+    protected List<ITopic> topics
+    
+    protected new(){
+        topics = Lists.newArrayList
+    }
+    
+    public static def getInstance(){
+        if(broker == null){
+            broker = new MessageBroker
+        }
+        return broker
+    }
+        
+    override subscribeTo(String topicName, ITransformationStep step) {
+        getTopic(topicName).addSubscriber(step)
+    }
 
-	
-	override sendMessage(String topicName, IMessage<?> message) {
-		val topic = getTopic(topicName)
-		topic.addMessage(message)
-	}
-	
-	/**
-	 * Returns all messages sent to a topic that have not been processed by the specified transformation step.
-	 */
-	override List<IMessage<?>> getMessages(String topicName, ITransformationStep step) {
-		val topic = getTopic(topicName)
-		topic.getMessages(step)
-	}
-	
-	/**
-	 * Removes the specified message from the specified topic and the specified subscriber queue.
-	 * It can be used to inform the broker and the topic that the given transformation step has 
-	 * finished processing the specified message, and therefore it is no longer needed.
-	 */
-	override void removeMessage(String topicName, ITransformationStep step, IMessage<?> message) {
-		val topic = getTopic(topicName)
-		topic.removeMessage(message, step)
+    
+    override sendMessage(String topicName, IMessage<?> message) {
+        val topic = getTopic(topicName)
+        topic.addMessage(message)
+    }
+    
+    /**
+     * Returns all messages sent to a topic that have not been processed by the specified transformation step.
+     */
+    override List<IMessage<?>> getMessages(String topicName, ITransformationStep step) {
+        val topic = getTopic(topicName)
+        topic.getMessages(step)
+    }
+    
+    /**
+     * Removes the specified message from the specified topic and the specified subscriber queue.
+     * It can be used to inform the broker and the topic that the given transformation step has 
+     * finished processing the specified message, and therefore it is no longer needed.
+     */
+    override void removeMessage(String topicName, ITransformationStep step, IMessage<?> message) {
+        val topic = getTopic(topicName)
+        topic.removeMessage(message, step)
 
-	}
-	
-	protected def getTopic(String topicName){
-		var ITopic retVal;
-		val reducedList = topics.filter[name == topicName]
-		if(reducedList.isEmpty){
-			retVal = new Topic(topicName)
-			topics.add(retVal)
-		}else{
-			retVal = reducedList.head
-		}
-		return retVal
-	}
-	
-	protected def void removeTopic(String topicName){
-		val reducedList = topics.filter[name == topicName]
-		if(!reducedList.isEmpty){
-			topics.removeAll(reducedList)
-		}
-	}	
+    }
+    
+    protected def getTopic(String topicName){
+        var ITopic retVal;
+        val reducedList = topics.filter[name == topicName]
+        if(reducedList.isEmpty){
+            retVal = new Topic(topicName)
+            topics.add(retVal)
+        }else{
+            retVal = reducedList.head
+        }
+        return retVal
+    }
+    
+    protected def void removeTopic(String topicName){
+        val reducedList = topics.filter[name == topicName]
+        if(!reducedList.isEmpty){
+            topics.removeAll(reducedList)
+        }
+    }	
 }

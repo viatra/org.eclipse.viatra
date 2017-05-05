@@ -32,87 +32,87 @@ import org.junit.runner.RunWith
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPatternLanguageTest{
 
-	@Inject
-	private ParseHelper<EObject> parseHelper
+    @Inject
+    private ParseHelper<EObject> parseHelper
 
-	@Inject
-	private EMFPatternLanguageJavaValidator validator
+    @Inject
+    private EMFPatternLanguageJavaValidator validator
 
-	@Inject
-	private Injector injector
+    @Inject
+    private Injector injector
 
-	private ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    private ValidatorTester<EMFPatternLanguageJavaValidator> tester
 
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
-	
-	@Inject extension ValidationTestHelper
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
+    
+    @Inject extension ValidationTestHelper
 
-	@Test
-	def void testSimpleComposition() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testSimpleComposition() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }
 
-			pattern callPattern(p : Pattern) = {
-				find calledPattern(p);
-			}'
-		)
-		tester.validate(model).assertOK
-	}
+            pattern callPattern(p : Pattern) = {
+                find calledPattern(p);
+            }'
+        )
+        tester.validate(model).assertOK
+    }
 
-	@Test
-	def void testRecursiveComposition() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testRecursiveComposition() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-			} or {
-				find calledPattern(p);
-			}'
-		)
-		tester.validate(model).assertWarning(IssueCodes::RECURSIVE_PATTERN_CALL)
-	}
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            } or {
+                find calledPattern(p);
+            }'
+        )
+        tester.validate(model).assertWarning(IssueCodes::RECURSIVE_PATTERN_CALL)
+    }
 
-	@Test
-	def void testNegativeComposition() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testNegativeComposition() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern calledPattern(p : Pattern) = {
-				Pattern(p);
-				neg find calledPattern(p);
-			}'
-		)
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+                neg find calledPattern(p);
+            }'
+        )
 
-		tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
-	}
+        tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
+    }
 
-	@Test
-	def void testMissingComposition() {
-		val model = parseHelper.parse(
-			'
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testMissingComposition() {
+        val model = parseHelper.parse(
+            '
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern callPattern(p : Pattern) = {
-				find calledPatternMissing(p);
-			}'
-		)
-		
-		model.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
-			Diagnostic::LINKING_DIAGNOSTIC, 
-			"calledPatternMissing"
-		)
-	}
+            pattern callPattern(p : Pattern) = {
+                find calledPatternMissing(p);
+            }'
+        )
+        
+        model.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
+            Diagnostic::LINKING_DIAGNOSTIC, 
+            "calledPatternMissing"
+        )
+    }
 
 }

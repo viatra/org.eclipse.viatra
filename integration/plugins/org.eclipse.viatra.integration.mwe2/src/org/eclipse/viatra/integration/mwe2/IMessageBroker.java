@@ -20,27 +20,27 @@ import java.util.List;
  *
  */
 public interface IMessageBroker {
-	
+    
     /**
      * Subscribes the given transformation step to the Topic whose name matches the @param topicName parameter.
      */
-	public void subscribeTo(String topicName, ITransformationStep step);
-	
-	/**
+    public void subscribeTo(String topicName, ITransformationStep step);
+    
+    /**
      * Send the specified message to the topic whose name is matching the @param topicName parameter.
      */
-	public void sendMessage(String topicName, IMessage<?> message);
-	
-	/**
-	 * Returns messages sent to the transformation step subscription. 
-	 * The @param topicName and  @param step parameters define a subscription.
-	 */
-	public List<IMessage<?>> getMessages(String topicName, ITransformationStep step);
-	
-	/**
-	 * Removes the message from the queue of the specified subscription.
-	 */
-	public void removeMessage(String topicName, ITransformationStep step, IMessage<?> message);
+    public void sendMessage(String topicName, IMessage<?> message);
+    
+    /**
+     * Returns messages sent to the transformation step subscription. 
+     * The @param topicName and  @param step parameters define a subscription.
+     */
+    public List<IMessage<?>> getMessages(String topicName, ITransformationStep step);
+    
+    /**
+     * Removes the message from the queue of the specified subscription.
+     */
+    public void removeMessage(String topicName, ITransformationStep step, IMessage<?> message);
 
-	
+    
 }

@@ -30,14 +30,14 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class MigrateProjectHandler extends AbstractHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelectionChecked(event);
-		final List<JavaProjectMigrator> projects = new ArrayList<JavaProjectMigrator>(selection.size());
-		
-		for(Object o : selection.toArray()){
-			if (o instanceof IProject){
-			    try {
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelectionChecked(event);
+        final List<JavaProjectMigrator> projects = new ArrayList<JavaProjectMigrator>(selection.size());
+        
+        for(Object o : selection.toArray()){
+            if (o instanceof IProject){
+                try {
                     if (((IProject) o).hasNature(JavaCore.NATURE_ID)) {
                         // Only call Java project migration for Java projects!
                         projects.add(new JavaProjectMigrator((IProject) o));
@@ -45,30 +45,30 @@ public class MigrateProjectHandler extends AbstractHandler {
                 } catch (CoreException e) {
                     throw new ExecutionException("Unexpected error during migration: " + e.getMessage(), e);
                 }
-			}
-			if (o instanceof IJavaProject){
-				projects.add(new JavaProjectMigrator((IJavaProject) o));
-			}
-		}
-		
-		Job job = new Job("Migrate projects") {
-			
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor m = SubMonitor.convert(monitor);
-				m.beginTask(getName(), projects.size());
-				
-				for(JavaProjectMigrator migrator : projects){
-					migrator.migrate(m.newChild(1));
-				}
-				
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-		
-		return null;
-	}
+            }
+            if (o instanceof IJavaProject){
+                projects.add(new JavaProjectMigrator((IJavaProject) o));
+            }
+        }
+        
+        Job job = new Job("Migrate projects") {
+            
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                SubMonitor m = SubMonitor.convert(monitor);
+                m.beginTask(getName(), projects.size());
+                
+                for(JavaProjectMigrator migrator : projects){
+                    migrator.migrate(m.newChild(1));
+                }
+                
+                return Status.OK_STATUS;
+            }
+        };
+        job.setUser(true);
+        job.schedule();
+        
+        return null;
+    }
 
 }

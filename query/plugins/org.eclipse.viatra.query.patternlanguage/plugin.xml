@@ -10,7 +10,7 @@
        uri = "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" 
        class = "org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"
        genModel = "model/generated/PatternLanguage.genmodel" /> 
-	
+    
   </extension>
   <extension
         point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">

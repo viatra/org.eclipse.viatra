@@ -29,66 +29,66 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
  *
  */
 public class MatchesTableLabelProvider extends ColumnLabelProvider {
-	private int columnIndex;
-	private Font boldFont = null;
-	private TableViewer viewer;
+    private int columnIndex;
+    private Font boldFont = null;
+    private TableViewer viewer;
 
-	public MatchesTableLabelProvider(int i, boolean parameter, TableViewer viewer) {
-		this.columnIndex = i;
-		this.viewer = viewer;
-		if (parameter) {
-			FontRegistry fregistry = JFaceResources.getFontRegistry();
-			boldFont = fregistry.getBold(JFaceResources.DEFAULT_FONT);
-		}
-	}
+    public MatchesTableLabelProvider(int i, boolean parameter, TableViewer viewer) {
+        this.columnIndex = i;
+        this.viewer = viewer;
+        if (parameter) {
+            FontRegistry fregistry = JFaceResources.getFontRegistry();
+            boldFont = fregistry.getBold(JFaceResources.DEFAULT_FONT);
+        }
+    }
 
-	@Override
-	public Font getFont(Object element) {
-		if (boldFont != null) {
-			return boldFont;
-		}
-		return super.getFont(element);
-	}
+    @Override
+    public Font getFont(Object element) {
+        if (boldFont != null) {
+            return boldFont;
+        }
+        return super.getFont(element);
+    }
 
-	@Override
-	public Color getBackground(final Object element) {
+    @Override
+    public Color getBackground(final Object element) {
 
-		MatchingFrame currentFrame = (MatchingFrame) element;
-		
-		@SuppressWarnings("unchecked")
-		List<MatchingFrame> input = (List<MatchingFrame>) viewer.getInput();
-		MatchingFrame lastFrame = input.get(input.size() - 1);
-		if (currentFrame.equals(lastFrame)) {
-			return new Color(Display.getDefault(), 0xFF, 0, 0);
-		}
-		return super.getBackground(element);
-	}
+        MatchingFrame currentFrame = (MatchingFrame) element;
+        
+        @SuppressWarnings("unchecked")
+        List<MatchingFrame> input = (List<MatchingFrame>) viewer.getInput();
+        MatchingFrame lastFrame = input.get(input.size() - 1);
+        if (currentFrame.equals(lastFrame)) {
+            return new Color(Display.getDefault(), 0xFF, 0, 0);
+        }
+        return super.getBackground(element);
+    }
 
-	@Override
-	public String getText(Object inputElement) {
+    @Override
+    public String getText(Object inputElement) {
 
-		MatchingFrame frame = (MatchingFrame) inputElement;
-		Object element = frame.get(columnIndex);
+        MatchingFrame frame = (MatchingFrame) inputElement;
+        Object element = frame.get(columnIndex);
 
-		if (element == null) {
-			return "null";
-		}
-		if (element instanceof EObject) {
-			EObject eObject = ((EObject) element);
+        if (element == null) {
+            return "null";
+        }
+        if (element instanceof EObject) {
+            EObject eObject = ((EObject) element);
 
-			EStructuralFeature feature = eObject.eClass().getEStructuralFeature("name");
-			if (feature != null) {
-				if (!feature.isMany()) {
-					return eObject.eGet(feature).toString();
-				}
-			} else {
-				feature = eObject.eClass().getEStructuralFeature(0);
-				if (!feature.isMany()) {
-					return eObject.eGet(feature).toString();
-				}
-			}
-		}
-		return element.toString();
-	}
+            EStructuralFeature feature = eObject.eClass().getEStructuralFeature("name");
+            if (feature != null) {
+                if (!feature.isMany()) {
+                    return eObject.eGet(feature).toString();
+                }
+            } else {
+                feature = eObject.eClass().getEStructuralFeature(0);
+                if (!feature.isMany()) {
+                    return eObject.eGet(feature).toString();
+                }
+            }
+        }
+        return element.toString();
+    }
 
 }

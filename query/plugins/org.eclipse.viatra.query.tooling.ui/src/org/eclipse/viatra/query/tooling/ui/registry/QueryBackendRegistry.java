@@ -41,7 +41,7 @@ public class QueryBackendRegistry {
     /**
      * Default caching backend implementation (in case the regular default is non-caching).
      */
-	private QueryBackendRegistry () {
+    private QueryBackendRegistry () {
     }
 
     /**
@@ -61,7 +61,7 @@ public class QueryBackendRegistry {
      * @return the default caching backend, if a caching backend is explicitly requested
      */
     public IQueryBackendFactory getDefaultCachingBackendClass() {
-    	return defaultCachingBackendFactory;
+        return defaultCachingBackendFactory;
     }
     
     /**

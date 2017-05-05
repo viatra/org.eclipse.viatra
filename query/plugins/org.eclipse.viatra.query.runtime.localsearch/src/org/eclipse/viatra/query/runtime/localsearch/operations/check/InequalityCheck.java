@@ -50,8 +50,8 @@ public class InequalityCheck extends CheckOperation {
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(sourceLocation, targetLocation, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(sourceLocation, targetLocation, new Integer[0]);
+    }
 
 }

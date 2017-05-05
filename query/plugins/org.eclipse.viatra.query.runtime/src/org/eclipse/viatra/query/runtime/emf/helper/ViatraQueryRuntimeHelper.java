@@ -26,7 +26,7 @@ import com.google.common.base.Function;
  *
  */
 public class ViatraQueryRuntimeHelper {
-	
+    
     private static final StringValueTransformer STRING_VALUE_TRANSFORMER = new StringValueTransformer();
     private static final class StringValueTransformer implements Function<Object, String> {
         @Override
@@ -36,8 +36,8 @@ public class ViatraQueryRuntimeHelper {
     }
 
     /**
-	 * Gives a human-readable name of an EMF type. 
-	 */
+     * Gives a human-readable name of an EMF type. 
+     */
     public static String prettyPrintEMFType(Object typeObject) {
         if (typeObject == null) {
             return "(null)";

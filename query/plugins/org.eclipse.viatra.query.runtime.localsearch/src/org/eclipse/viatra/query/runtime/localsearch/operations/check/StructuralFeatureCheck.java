@@ -63,8 +63,8 @@ public class StructuralFeatureCheck extends CheckOperation {
     }
     
     @Override
-	public List<Integer> getVariablePositions() {
-		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
-	}
+    public List<Integer> getVariablePositions() {
+        return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+    }
 
 }

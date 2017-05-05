@@ -58,8 +58,8 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
      *            the initial collection of tuples
      */
     public void reinitializeWith(Collection<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple> tuples) {
-    	clear();
-    	
+        clear();
+        
         for (org.eclipse.viatra.query.runtime.matchers.tuple.Tuple t : tuples) {
             graphDataSource.insertNode(t.get(0));
             graphDataSource.insertNode(t.get(1));

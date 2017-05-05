@@ -33,11 +33,11 @@ import com.google.common.collect.Sets;
  */
 public final class EvaluablePConstraint implements Predicate<PConstraint> {
     private final SubPlan plan;
-	private boolean allowInverseNavigation;
+    private boolean allowInverseNavigation;
 
     public EvaluablePConstraint(SubPlan plan, boolean allowInverseNavigation) {
         this.plan = plan;
-		this.allowInverseNavigation = allowInverseNavigation;
+        this.allowInverseNavigation = allowInverseNavigation;
     }
 
     @Override
@@ -56,12 +56,12 @@ public final class EvaluablePConstraint implements Predicate<PConstraint> {
         } else if (input instanceof ExportedParameter) {
             return plan.getAllDeducedVariables().contains(((ExportedParameter) input).getParameterVariable());
         } else if (input instanceof TypeConstraint){
-        	if(!allowInverseNavigation && ((TypeConstraint) input).getSupplierKey().getArity() == 2){
-        		Tuple variables = ((TypeConstraint) input).getVariablesTuple();
-        		if(!plan.getAllDeducedVariables().contains(variables.get(0))){
-        			return false;
-        		}
-        	}
+            if(!allowInverseNavigation && ((TypeConstraint) input).getSupplierKey().getArity() == 2){
+                Tuple variables = ((TypeConstraint) input).getVariablesTuple();
+                if(!plan.getAllDeducedVariables().contains(variables.get(0))){
+                    return false;
+                }
+            }
         }
         return true;
     }

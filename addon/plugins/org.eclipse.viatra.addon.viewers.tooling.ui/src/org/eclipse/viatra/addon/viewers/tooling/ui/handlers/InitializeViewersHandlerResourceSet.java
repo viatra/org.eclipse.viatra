@@ -22,8 +22,8 @@ import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
  */
 public class InitializeViewersHandlerResourceSet extends InitializeViewersHandler {
 
-	public InitializeViewersHandlerResourceSet() {
-		super(IModelConnectorTypeEnum.RESOURCESET);
-	}
+    public InitializeViewersHandlerResourceSet() {
+        super(IModelConnectorTypeEnum.RESOURCESET);
+    }
 
 }

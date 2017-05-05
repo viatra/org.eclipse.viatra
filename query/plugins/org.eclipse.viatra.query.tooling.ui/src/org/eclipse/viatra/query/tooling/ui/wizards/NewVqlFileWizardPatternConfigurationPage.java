@@ -189,12 +189,12 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
      * @return the list of imports
      */
     public List<EPackage> getImports() {
-    	return Lists.transform(importList.getElements(), new Function<String, EPackage>() {
+        return Lists.transform(importList.getElements(), new Function<String, EPackage>() {
 
-			@Override
-			public EPackage apply(String input) {
-				return metamodelLoader.loadPackage(resourceSet, input);
-			}});
+            @Override
+            public EPackage apply(String input) {
+                return metamodelLoader.loadPackage(resourceSet, input);
+            }});
     }
 
     /**
@@ -206,9 +206,9 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
         return objectList.getElements();
     }
 
-	public ResourceSet getResourceSet() {
-		return resourceSet;
-	}
+    public ResourceSet getResourceSet() {
+        return resourceSet;
+    }
     
     
 }

@@ -72,7 +72,7 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
              * Omit notifications about the executions of a RecordingJob
              */
             if (event.getTransaction() instanceof EMFCommandTransaction) {
-            	EMFCommandTransaction transaction = (EMFCommandTransaction) event.getTransaction();
+                EMFCommandTransaction transaction = (EMFCommandTransaction) event.getTransaction();
                 // FIXME this is a really ugly hack!
                 if (transaction.getCommand().getLabel().equals(RecordingJob.RECORDING_JOB)) {
                     needsNotification = false;

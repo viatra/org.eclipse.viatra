@@ -15,45 +15,45 @@ import org.eclipse.jdt.core.IJavaElementDelta;
 
 public enum ElementChangedEventType {
 
-	/**
-	 * Event type constant (bit mask) indicating an after-the-fact
-	 * report of creations, deletions, and modifications
-	 * to one or more Java element(s) expressed as a hierarchical
-	 * java element delta as returned by <code>getDelta()</code>.
-	 *
-	 * Note: this notification occurs during the corresponding POST_CHANGE
-	 * resource change notification, and contains a full delta accounting for
-	 * any JavaModel operation  and/or resource change.
-	 *
-	 * @see IJavaElementDelta
-	 * @see org.eclipse.core.resources.IResourceChangeEvent
-	 * @see #getDelta()
-	 * @since 2.0
-	 */
-	POST_CHANGE (ElementChangedEvent.POST_CHANGE),
-	
-	/**
-	 * Event type constant (bit mask) indicating an after-the-fact
-	 * report of creations, deletions, and modifications
-	 * to one or more Java element(s) expressed as a hierarchical
-	 * java element delta as returned by <code>getDelta</code>.
-	 *
-	 * Note: this notification occurs as a result of a working copy reconcile
-	 * operation.
-	 *
-	 * @see IJavaElementDelta
-	 * @see org.eclipse.core.resources.IResourceChangeEvent
-	 * @see #getDelta()
-	 * @since 2.0
-	 */
-	POST_RECONCILE (ElementChangedEvent.POST_RECONCILE);
-	
-	private final int value;
-	ElementChangedEventType(int value) {
-		this.value = value;
-	}
-	
-	public final int getValue() {
-		return this.value;
-	}
+    /**
+     * Event type constant (bit mask) indicating an after-the-fact
+     * report of creations, deletions, and modifications
+     * to one or more Java element(s) expressed as a hierarchical
+     * java element delta as returned by <code>getDelta()</code>.
+     *
+     * Note: this notification occurs during the corresponding POST_CHANGE
+     * resource change notification, and contains a full delta accounting for
+     * any JavaModel operation  and/or resource change.
+     *
+     * @see IJavaElementDelta
+     * @see org.eclipse.core.resources.IResourceChangeEvent
+     * @see #getDelta()
+     * @since 2.0
+     */
+    POST_CHANGE (ElementChangedEvent.POST_CHANGE),
+    
+    /**
+     * Event type constant (bit mask) indicating an after-the-fact
+     * report of creations, deletions, and modifications
+     * to one or more Java element(s) expressed as a hierarchical
+     * java element delta as returned by <code>getDelta</code>.
+     *
+     * Note: this notification occurs as a result of a working copy reconcile
+     * operation.
+     *
+     * @see IJavaElementDelta
+     * @see org.eclipse.core.resources.IResourceChangeEvent
+     * @see #getDelta()
+     * @since 2.0
+     */
+    POST_RECONCILE (ElementChangedEvent.POST_RECONCILE);
+    
+    private final int value;
+    ElementChangedEventType(int value) {
+        this.value = value;
+    }
+    
+    public final int getValue() {
+        return this.value;
+    }
 }

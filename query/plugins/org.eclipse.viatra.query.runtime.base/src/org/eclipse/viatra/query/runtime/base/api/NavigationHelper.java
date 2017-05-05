@@ -155,7 +155,7 @@ public interface NavigationHelper {
      * 
      * <p>
      * <strong>Precondition:</strong> Unset / null attribute values are not indexed, so <code>value!=null</code>
-	 *
+     *
      * <p>
      * <strong>Precondition:</strong> Will only find those EAttributes that have already been registered using
      * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
@@ -681,7 +681,7 @@ public interface NavigationHelper {
      * Examines whether execution is currently in the callable 
      * 	block of an invocation of {#link {@link #coalesceTraversals(Callable)}}. 
      */
-	public boolean isCoalescing();
+    public boolean isCoalescing();
 
     /**
      * Adds a coarse-grained listener that will be invoked after the NavigationHelper index or the underlying model is changed. Can be used
@@ -745,34 +745,34 @@ public interface NavigationHelper {
 
     
     /**
-	 * Traverses all instances of a selected data type stored in the base index, and allows executing a custom function on
+     * Traverses all instances of a selected data type stored in the base index, and allows executing a custom function on
      * it. There is no guaranteed order in which the processor will be called with the selected features.
-	 * 
-	 * @param type
-	 * @param processor
-	 * @since 0.8
-	 */
+     * 
+     * @param type
+     * @param processor
+     * @since 0.8
+     */
     void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor);
     
-	/**
-	 * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
+    /**
+     * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
      * it. There is no guaranteed order in which the processor will be called with the selected features.
-	 * 
-	 * @param type
-	 * @param processor
-	 * @since 0.8
-	 */
-	void processAllInstances(EClass type, IEClassProcessor processor);
+     * 
+     * @param type
+     * @param processor
+     * @since 0.8
+     */
+    void processAllInstances(EClass type, IEClassProcessor processor);
 
-	/**
-	 * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
+    /**
+     * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
      * it. There is no guaranteed order in which the processor will be called with the selected features.
-	 * 
-	 * @param type
-	 * @param processor
-	 * @since 0.8
-	 */
-	void processDirectInstances(EClass type, IEClassProcessor processor);
+     * 
+     * @param type
+     * @param processor
+     * @since 0.8
+     */
+    void processDirectInstances(EClass type, IEClassProcessor processor);
     
     /**
      * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
@@ -831,22 +831,22 @@ public interface NavigationHelper {
      * 	as both method inputs and the results returned are automatically canonicalized in dynamic EMF mode. 
      * Using this method is required only if the client wants to do querying/filtering on the results returned, and wants to know what to look for.   
      */
-	Object toCanonicalValueRepresentation(Object value);
+    Object toCanonicalValueRepresentation(Object value);
 
-	/**
+    /**
      * @since 1.4
      */
-	IndexingLevel getIndexingLevel(EClass type);
-	
-	/**
+    IndexingLevel getIndexingLevel(EClass type);
+    
+    /**
      * @since 1.4
      */
-	IndexingLevel getIndexingLevel(EDataType type);
-	
-	/**
+    IndexingLevel getIndexingLevel(EDataType type);
+    
+    /**
      * @since 1.4
      */
-	IndexingLevel getIndexingLevel(EStructuralFeature feature);
+    IndexingLevel getIndexingLevel(EStructuralFeature feature);
 
     /**
      * @since 1.4
@@ -862,5 +862,5 @@ public interface NavigationHelper {
      * @since 1.4
      */
     public int countFeatures(EStructuralFeature feature);
-	
+    
 }

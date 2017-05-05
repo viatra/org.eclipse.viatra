@@ -19,14 +19,14 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
 public interface ITransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
 
-	String getName();
-	RuleSpecification<Match> getRuleSpecification();
-	IQuerySpecification<Matcher> getPrecondition();
-	/**
-	 * Returns the event filter set up for this rule; if no specific filter is
-	 * set up, an dedicated empty filter is returned
-	 * 
-	 * @return the event filter for this rule, never null
-	 */
-	EventFilter<? super Match> getFilter();
+    String getName();
+    RuleSpecification<Match> getRuleSpecification();
+    IQuerySpecification<Matcher> getPrecondition();
+    /**
+     * Returns the event filter set up for this rule; if no specific filter is
+     * set up, an dedicated empty filter is returned
+     * 
+     * @return the event filter for this rule, never null
+     */
+    EventFilter<? super Match> getFilter();
 }

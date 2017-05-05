@@ -63,79 +63,79 @@ class SnapshotHelper {
     new(Map<String, JavaObjectAccess> accessMap){
         this.accessMap = accessMap
     }
-	
-	/**
-	 * Returns the actual value of the substitution based on its type
-	 */
-	def derivedValue(MatchSubstitutionRecord substitution){
-		switch substitution{
-			BooleanSubstitution: substitution.value
-			DateSubstitution: substitution.value
-			DoubleSubstitution: substitution.value
-			EMFSubstitution: substitution.value
-			EnumSubstitution: substitution.valueLiteral
-			FloatSubstitution: substitution.value
-			IntSubstitution: substitution.value
-			LongSubstitution: substitution.value
-			MiscellaneousSubstitution: substitution.value
-			StringSubstitution: substitution.value
-			SerializedJavaObjectSubstitution: substitution
-		}
-	}
-	
-	/**
-	 * Returns the EMF root that was used by the matchers recorded into the given snapshot,
-	 *  based on the input specification and the model roots.
-	 */
-	def getEMFRootForSnapshot(QuerySnapshot snapshot){
-		if(snapshot.inputSpecification == InputSpecification::EOBJECT){
-			if(snapshot.modelRoots.size > 0){
-				snapshot.modelRoots.get(0)
-			}
-		} else if(snapshot.inputSpecification == InputSpecification::RESOURCE){
-			if(snapshot.modelRoots.size > 0){
-				snapshot.modelRoots.get(0).eResource
-			}
-		} else if(snapshot.inputSpecification == InputSpecification::RESOURCE_SET){
-			snapshot.eResource.resourceSet
-		}
-	}
+    
+    /**
+     * Returns the actual value of the substitution based on its type
+     */
+    def derivedValue(MatchSubstitutionRecord substitution){
+        switch substitution{
+            BooleanSubstitution: substitution.value
+            DateSubstitution: substitution.value
+            DoubleSubstitution: substitution.value
+            EMFSubstitution: substitution.value
+            EnumSubstitution: substitution.valueLiteral
+            FloatSubstitution: substitution.value
+            IntSubstitution: substitution.value
+            LongSubstitution: substitution.value
+            MiscellaneousSubstitution: substitution.value
+            StringSubstitution: substitution.value
+            SerializedJavaObjectSubstitution: substitution
+        }
+    }
+    
+    /**
+     * Returns the EMF root that was used by the matchers recorded into the given snapshot,
+     *  based on the input specification and the model roots.
+     */
+    def getEMFRootForSnapshot(QuerySnapshot snapshot){
+        if(snapshot.inputSpecification == InputSpecification::EOBJECT){
+            if(snapshot.modelRoots.size > 0){
+                snapshot.modelRoots.get(0)
+            }
+        } else if(snapshot.inputSpecification == InputSpecification::RESOURCE){
+            if(snapshot.modelRoots.size > 0){
+                snapshot.modelRoots.get(0).eResource
+            }
+        } else if(snapshot.inputSpecification == InputSpecification::RESOURCE_SET){
+            snapshot.eResource.resourceSet
+        }
+    }
 
-	/**
-	 * Returns the model roots that were used by the given ViatraQueryEngine.
-	 */
-	def getModelRootsForEngine(ViatraQueryEngine engine){
+    /**
+     * Returns the model roots that were used by the given ViatraQueryEngine.
+     */
+    def getModelRootsForEngine(ViatraQueryEngine engine){
         switch scope : engine.scope {
             EMFScope: {
-        		scope.scopeRoots.map[
-        		    switch it {
-        		        EObject: #[it]
-        		        Resource: contents
-        		        ResourceSet: resources.map[contents].flatten.toList
-        		    }
-        		].flatten.toList
-       		}
-       		default: #[]
-       	}
-	}
+                scope.scopeRoots.map[
+                    switch it {
+                        EObject: #[it]
+                        Resource: contents
+                        ResourceSet: resources.map[contents].flatten.toList
+                    }
+                ].flatten.toList
+               }
+               default: #[]
+           }
+    }
 
-	/**
-	 * Returns the input specification for the given matcher.
-	 */
-	def getInputSpecificationForMatcher(ViatraQueryMatcher matcher){
-		switch scope : matcher.engine.scope {
-		    EMFScope: {
-		        switch scope.scopeRoots.head {
-		            EObject: InputSpecification::EOBJECT
-		            Resource: InputSpecification::RESOURCE
-		            ResourceSet: InputSpecification::RESOURCE_SET 
-		        }
-		    }
-		    default: InputSpecification::UNSET
-		}
-	}
-	
-	/**
+    /**
+     * Returns the input specification for the given matcher.
+     */
+    def getInputSpecificationForMatcher(ViatraQueryMatcher matcher){
+        switch scope : matcher.engine.scope {
+            EMFScope: {
+                switch scope.scopeRoots.head {
+                    EObject: InputSpecification::EOBJECT
+                    Resource: InputSpecification::RESOURCE
+                    ResourceSet: InputSpecification::RESOURCE_SET 
+                }
+            }
+            default: InputSpecification::UNSET
+        }
+    }
+    
+    /**
      * Saves the matches of the given matcher (using the partial match) into the given snapshot.
      * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
      */
@@ -160,69 +160,69 @@ class SnapshotHelper {
         return actualRecord
     }
 
-	/**
-	 * Creates a match record that corresponds to the given match.
-	 *  Each parameter with a value is saved as a substitution.
-	 */
-	def createMatchRecordForMatch(IPatternMatch match){
-		val matchRecord = SnapshotFactory::eINSTANCE.createMatchRecord
-		match.parameterNames.forEach()[param |
-			if(match.get(param) != null){
-				matchRecord.substitutions.add(param.createSubstitution(match.get(param)))
-			}
-		]
-		return matchRecord
-	}
-	
-	/**
-	 * Creates a match set record which holds the snapshot of a single matcher instance. It is also possible to enter
-	 * a filter for the matcher.
-	 */
-	def <Match extends IPatternMatch> MatchSetRecord createMatchSetRecordForMatcher(ViatraQueryMatcher<Match> matcher, Match filter){
-		val matchSetRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
-		matcher.forEachMatch(filter,[ match |
-			matchSetRecord.matches.add(createMatchRecordForMatch(match))
-		] );
-		return matchSetRecord
-	}
+    /**
+     * Creates a match record that corresponds to the given match.
+     *  Each parameter with a value is saved as a substitution.
+     */
+    def createMatchRecordForMatch(IPatternMatch match){
+        val matchRecord = SnapshotFactory::eINSTANCE.createMatchRecord
+        match.parameterNames.forEach()[param |
+            if(match.get(param) != null){
+                matchRecord.substitutions.add(param.createSubstitution(match.get(param)))
+            }
+        ]
+        return matchRecord
+    }
+    
+    /**
+     * Creates a match set record which holds the snapshot of a single matcher instance. It is also possible to enter
+     * a filter for the matcher.
+     */
+    def <Match extends IPatternMatch> MatchSetRecord createMatchSetRecordForMatcher(ViatraQueryMatcher<Match> matcher, Match filter){
+        val matchSetRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
+        matcher.forEachMatch(filter,[ match |
+            matchSetRecord.matches.add(createMatchRecordForMatch(match))
+        ] );
+        return matchSetRecord
+    }
 
-	/**
-	 * Creates a partial match that corresponds to the given match record.
-	 *  Each substitution is used as a value for the parameter with the same name.
-	 * 
-	 * @deprecated use createMatchForMatchRecord(IQuerySpecification, MatchRecord) instead
-	 */
-	@Deprecated
-	def createMatchForMachRecord(ViatraQueryMatcher matcher, MatchRecord matchRecord){
-		val match = matcher.newEmptyMatch
-		matchRecord.substitutions.forEach()[
-			var target = derivedValue
-			/*if(target instanceof EObject){
-				var etarget = target as EObject
-				if(etarget.eIsProxy){
-					target = EcoreUtil::resolve(etarget, matchRecord)
-				}
-			}*/
-			match.set(parameterName,target)
-		]
-		return match
-	}
+    /**
+     * Creates a partial match that corresponds to the given match record.
+     *  Each substitution is used as a value for the parameter with the same name.
+     * 
+     * @deprecated use createMatchForMatchRecord(IQuerySpecification, MatchRecord) instead
+     */
+    @Deprecated
+    def createMatchForMachRecord(ViatraQueryMatcher matcher, MatchRecord matchRecord){
+        val match = matcher.newEmptyMatch
+        matchRecord.substitutions.forEach()[
+            var target = derivedValue
+            /*if(target instanceof EObject){
+                var etarget = target as EObject
+                if(etarget.eIsProxy){
+                    target = EcoreUtil::resolve(etarget, matchRecord)
+                }
+            }*/
+            match.set(parameterName,target)
+        ]
+        return match
+    }
 
-	/**
-	 * Creates a partial match that corresponds to the given match record.
-	 *  Each substitution is used as a value for the parameter with the same name.
-	 */
-	def <Match extends IPatternMatch> Match createMatchForMatchRecord(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, MatchRecord matchRecord){
-		val match = querySpecification.newEmptyMatch as Match
-		matchRecord.substitutions.forEach()[
-			var target = derivedValue
-			match.set(parameterName,target)
-		]
-		return match
-	}
+    /**
+     * Creates a partial match that corresponds to the given match record.
+     *  Each substitution is used as a value for the parameter with the same name.
+     */
+    def <Match extends IPatternMatch> Match createMatchForMatchRecord(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, MatchRecord matchRecord){
+        val match = querySpecification.newEmptyMatch as Match
+        matchRecord.substitutions.forEach()[
+            var target = derivedValue
+            match.set(parameterName,target)
+        ]
+        return match
+    }
 
-	
-	/**
+    
+    /**
      * Saves all matches of the given matcher into the given snapshot.
      * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
      */
@@ -230,116 +230,116 @@ class SnapshotHelper {
         matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
     }
 
-	/**
-	 * Returns the match set record for the given pattern FQN from the snapshot,
-	 *  if there is only one such record.
-	 */
-	def getMatchSetRecordForPattern(QuerySnapshot snapshot, String patternFQN){
-		val matchsetrecord = snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)]
-		if(matchsetrecord.size == 1){
-			return matchsetrecord.iterator.next
-		}
-	}
+    /**
+     * Returns the match set record for the given pattern FQN from the snapshot,
+     *  if there is only one such record.
+     */
+    def getMatchSetRecordForPattern(QuerySnapshot snapshot, String patternFQN){
+        val matchsetrecord = snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)]
+        if(matchsetrecord.size == 1){
+            return matchsetrecord.iterator.next
+        }
+    }
 
-	/**
-	 * Returns the match set records for the given pattern FQN from the snapshot.
-	 */
-	def getMatchSetRecordsForPattern(QuerySnapshot snapshot, String patternFQN){
-		val matchSetRecords = new ArrayList<MatchSetRecord>
-		matchSetRecords.addAll(snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)])
-		return matchSetRecords
-	}
+    /**
+     * Returns the match set records for the given pattern FQN from the snapshot.
+     */
+    def getMatchSetRecordsForPattern(QuerySnapshot snapshot, String patternFQN){
+        val matchSetRecords = new ArrayList<MatchSetRecord>
+        matchSetRecords.addAll(snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)])
+        return matchSetRecords
+    }
 
-	/**
-	 * Creates a substitution for the given parameter name using the given value.
-	 *  The type of the substitution is decided based on the type of the value.
-	 */
-	def createSubstitution(String parameterName, Object value){
-		return switch(value) {
-			Enumerator: {
+    /**
+     * Creates a substitution for the given parameter name using the given value.
+     *  The type of the substitution is decided based on the type of the value.
+     */
+    def createSubstitution(String parameterName, Object value){
+        return switch(value) {
+            Enumerator: {
                 val sub = SnapshotFactory::eINSTANCE.createEnumSubstitution
                 sub.setValueLiteral((value as Enumerator).literal)
                 sub.setParameterName(parameterName)
                 sub
             }
-			EObject : {
-				val sub = SnapshotFactory::eINSTANCE.createEMFSubstitution
-				sub.setValue(value as EObject)
-				sub.setParameterName(parameterName)
-				sub
-			}
-			Integer : {
-				val sub = SnapshotFactory::eINSTANCE.createIntSubstitution
-				sub.setValue(value as Integer)
-				sub.setParameterName(parameterName)
-				sub
-			}
-			Long : {
-				val sub = SnapshotFactory::eINSTANCE.createLongSubstitution
-				sub.setValue(value as Long)
-				sub.setParameterName(parameterName)
-				sub
-			}
-			Double : {
-				val sub = SnapshotFactory::eINSTANCE.createDoubleSubstitution
-				sub.setValue(value as Double)
-				sub.setParameterName(parameterName)
-				sub				
-			}
-			Float : {
-				val sub = SnapshotFactory::eINSTANCE.createFloatSubstitution
-				sub.setValue(value as Float)
-				sub.setParameterName(parameterName)
-				sub	
-			}
-			Boolean : {
-				val sub = SnapshotFactory::eINSTANCE.createBooleanSubstitution
-				sub.setValue(value as Boolean)
-				sub.setParameterName(parameterName)
-				sub
-			}
-			String : {
-				val sub = SnapshotFactory::eINSTANCE.createStringSubstitution
-				sub.setValue(value as String)
-				sub.setParameterName(parameterName)
-				sub	
-			}
-			Date : {
-				val sub = SnapshotFactory::eINSTANCE.createDateSubstitution
-				sub.setValue(value as Date)
-				sub.setParameterName(parameterName)
-				sub				
-			}
-			default : {
-			    val access = accessMap.get(value.class.name)
-			    if(access!=null){
-			       val sub = access.toSubstitution(value)
-			       sub.parameterName = parameterName
-			       sub
-			    }else{
-			       val sub = SnapshotFactory::eINSTANCE.createMiscellaneousSubstitution
+            EObject : {
+                val sub = SnapshotFactory::eINSTANCE.createEMFSubstitution
+                sub.setValue(value as EObject)
+                sub.setParameterName(parameterName)
+                sub
+            }
+            Integer : {
+                val sub = SnapshotFactory::eINSTANCE.createIntSubstitution
+                sub.setValue(value as Integer)
+                sub.setParameterName(parameterName)
+                sub
+            }
+            Long : {
+                val sub = SnapshotFactory::eINSTANCE.createLongSubstitution
+                sub.setValue(value as Long)
+                sub.setParameterName(parameterName)
+                sub
+            }
+            Double : {
+                val sub = SnapshotFactory::eINSTANCE.createDoubleSubstitution
+                sub.setValue(value as Double)
+                sub.setParameterName(parameterName)
+                sub				
+            }
+            Float : {
+                val sub = SnapshotFactory::eINSTANCE.createFloatSubstitution
+                sub.setValue(value as Float)
+                sub.setParameterName(parameterName)
+                sub	
+            }
+            Boolean : {
+                val sub = SnapshotFactory::eINSTANCE.createBooleanSubstitution
+                sub.setValue(value as Boolean)
+                sub.setParameterName(parameterName)
+                sub
+            }
+            String : {
+                val sub = SnapshotFactory::eINSTANCE.createStringSubstitution
+                sub.setValue(value as String)
+                sub.setParameterName(parameterName)
+                sub	
+            }
+            Date : {
+                val sub = SnapshotFactory::eINSTANCE.createDateSubstitution
+                sub.setValue(value as Date)
+                sub.setParameterName(parameterName)
+                sub				
+            }
+            default : {
+                val access = accessMap.get(value.class.name)
+                if(access!=null){
+                   val sub = access.toSubstitution(value)
+                   sub.parameterName = parameterName
+                   sub
+                }else{
+                   val sub = SnapshotFactory::eINSTANCE.createMiscellaneousSubstitution
                    sub.setValue(value)
                    sub.setParameterName(parameterName)
                    sub  
-			    }
-			}
-		}
-	}
-	
-	/**
-	 * Retrieve a human-readable string denoting the given record
-	 */
-	def dispatch String prettyPrint(MatchRecord record){
-		'''«FOR substitution : record.substitutions SEPARATOR ", "»«substitution.parameterName» = «substitution.derivedValue?.prettyPrint»«ENDFOR»'''
-	}
-	
-	def dispatch String prettyPrint(EObject obj) {
-	    val eClass = obj.eClass
-	    '''«eClass.name» («FOR attr : eClass.EAllAttributes» «attr.name» = «obj.eGet(attr)?.prettyPrint» «ENDFOR»)'''
-	}
-	
-	def dispatch String prettyPrint(Object obj) {
-	    return obj.toString
-	}
+                }
+            }
+        }
+    }
+    
+    /**
+     * Retrieve a human-readable string denoting the given record
+     */
+    def dispatch String prettyPrint(MatchRecord record){
+        '''«FOR substitution : record.substitutions SEPARATOR ", "»«substitution.parameterName» = «substitution.derivedValue?.prettyPrint»«ENDFOR»'''
+    }
+    
+    def dispatch String prettyPrint(EObject obj) {
+        val eClass = obj.eClass
+        '''«eClass.name» («FOR attr : eClass.EAllAttributes» «attr.name» = «obj.eGet(attr)?.prettyPrint» «ENDFOR»)'''
+    }
+    
+    def dispatch String prettyPrint(Object obj) {
+        return obj.toString
+    }
 
 }

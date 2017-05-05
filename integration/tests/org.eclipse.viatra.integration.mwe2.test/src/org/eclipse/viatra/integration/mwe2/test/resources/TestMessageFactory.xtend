@@ -18,19 +18,19 @@ import org.eclipse.viatra.integration.mwe2.mwe2impl.messages.StringMessage
  * 
  */
 class TestMessageFactory implements IMessageFactory<String,StringMessage>{
-	
-	override createMessage(Object parameter) throws InvalidParameterTypeException{
-		if(parameter.isValidParameter){
-			return new StringMessage(parameter as String)
-		}
-		throw new InvalidParameterTypeException
-	}
-	
-	override isValidParameter(Object parameter) {
-		if(parameter instanceof String){
-			return true
-		}
-		return false;
-	}
-	
+    
+    override createMessage(Object parameter) throws InvalidParameterTypeException{
+        if(parameter.isValidParameter){
+            return new StringMessage(parameter as String)
+        }
+        throw new InvalidParameterTypeException
+    }
+    
+    override isValidParameter(Object parameter) {
+        if(parameter instanceof String){
+            return true
+        }
+        return false;
+    }
+    
 }

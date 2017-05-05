@@ -22,18 +22,18 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  *
  */
 public interface IQueryCacheContext {
-	
-	/**
-	 * Checks if there already is a caching result provider for the given query.
-	 * <p> Returns false if called while the caching result provider of the given query is being constructed in the first place. 
-	 */
-	public boolean isResultCached(PQuery query);
-	
-	/**
-	 * Returns a caching result provider for the given query; it must be constructed if it does not exist yet.
-	 * <p> <b>Caution:</b> behavior undefined if called while the caching result provider of the given query is being constructed. 
-	 *   Beware of infinite loops. 
-	 * <p> <b>Postcondition:</b> {@link IQueryBackend#isCaching()} returns true for the {@link #getQueryBackend()} of the returned provider
-	 */
-	public IQueryResultProvider getCachingResultProvider(PQuery query) throws QueryProcessingException;
+    
+    /**
+     * Checks if there already is a caching result provider for the given query.
+     * <p> Returns false if called while the caching result provider of the given query is being constructed in the first place. 
+     */
+    public boolean isResultCached(PQuery query);
+    
+    /**
+     * Returns a caching result provider for the given query; it must be constructed if it does not exist yet.
+     * <p> <b>Caution:</b> behavior undefined if called while the caching result provider of the given query is being constructed. 
+     *   Beware of infinite loops. 
+     * <p> <b>Postcondition:</b> {@link IQueryBackend#isCaching()} returns true for the {@link #getQueryBackend()} of the returned provider
+     */
+    public IQueryResultProvider getCachingResultProvider(PQuery query) throws QueryProcessingException;
 }

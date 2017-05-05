@@ -25,23 +25,23 @@ import static org.eclipse.viatra.cep.vepl.jvmmodel.NamingProvider.*
 @Singleton
 class PackageExportHelper {
 
-	def getExportablePackages(EventModel eventModel) {
-		val basePackageName = eventModel.name.toString
+    def getExportablePackages(EventModel eventModel) {
+        val basePackageName = eventModel.name.toString
 
-		val packages = ImmutableList.builder.add(basePackageName).add(
-			Joiner.on('.').join(basePackageName, EVENTCLASS_PACKAGE_NAME_ELEMENT)).add(
-			Joiner.on('.').join(basePackageName, ATOMIC_PATTERN_PACKAGE_NAME_ELEMENT)).add(
-			Joiner.on('.').join(basePackageName, QUERYRESULT_PATTERN_PACKAGE_NAME_ELEMENT)).add(
-			Joiner.on('.').join(basePackageName, COMPLEX_PATTERN_PACKAGE_NAME_ELEMENT)).add(
-			Joiner.on('.').join(basePackageName, RULES_PACKAGE_NAME_ELEMENT)).add(
-			Joiner.on('.').join(basePackageName, JOBS_PACKAGE_NAME_ELEMENT)).add(
-			Joiner.on('.').join(basePackageName, MAPPING_PACKAGE_NAME_ELEMENT)).build
+        val packages = ImmutableList.builder.add(basePackageName).add(
+            Joiner.on('.').join(basePackageName, EVENTCLASS_PACKAGE_NAME_ELEMENT)).add(
+            Joiner.on('.').join(basePackageName, ATOMIC_PATTERN_PACKAGE_NAME_ELEMENT)).add(
+            Joiner.on('.').join(basePackageName, QUERYRESULT_PATTERN_PACKAGE_NAME_ELEMENT)).add(
+            Joiner.on('.').join(basePackageName, COMPLEX_PATTERN_PACKAGE_NAME_ELEMENT)).add(
+            Joiner.on('.').join(basePackageName, RULES_PACKAGE_NAME_ELEMENT)).add(
+            Joiner.on('.').join(basePackageName, JOBS_PACKAGE_NAME_ELEMENT)).add(
+            Joiner.on('.').join(basePackageName, MAPPING_PACKAGE_NAME_ELEMENT)).build
 
-		return packages
-	}
+        return packages
+    }
 
-	def static packageShouldBeExported(ModelElement modelElement) {
-		(modelElement instanceof AtomicEventPattern) || (modelElement instanceof ComplexEventPattern) ||
-			(modelElement instanceof QueryResultChangeEventPattern) || (modelElement instanceof Rule)
-	}
+    def static packageShouldBeExported(ModelElement modelElement) {
+        (modelElement instanceof AtomicEventPattern) || (modelElement instanceof ComplexEventPattern) ||
+            (modelElement instanceof QueryResultChangeEventPattern) || (modelElement instanceof Rule)
+    }
 }

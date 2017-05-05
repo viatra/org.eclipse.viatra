@@ -307,9 +307,9 @@ public class ChangeMonitor extends IChangeMonitor {
             updateMatches.remove(match);
         
         if (appearMatches.contains(match)){
-        	appearMatches.remove(match);
+            appearMatches.remove(match);
         }else{
-        	disappearMatches.add(match);
+            disappearMatches.add(match);
         }
         
             

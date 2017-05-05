@@ -25,50 +25,50 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewele
  */
 public class OperationListContentProvider implements ITreeContentProvider {
 
-	@Override
-	public void dispose() {
-	}
+    @Override
+    public void dispose() {
+    }
 
-	/**
-	 * Initialiser method that is called after each top level search plan change
-	 */
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput /*new search plan*/) {
-		
-	}
+    /**
+     * Initialiser method that is called after each top level search plan change
+     */
+    @Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput /*new search plan*/) {
+        
+    }
 
-	@Override
-	public Object[] getElements(Object inputElement/*root*/) {
-		if (inputElement != null) {
-			SearchPlanViewModel model = (SearchPlanViewModel)inputElement;
-			List<SearchOperationViewerNode> elements = model.getTopLevelElements();
-			return elements.toArray(new Object[elements.size()]);
-		}
-		return new Object[0];
-	}
+    @Override
+    public Object[] getElements(Object inputElement/*root*/) {
+        if (inputElement != null) {
+            SearchPlanViewModel model = (SearchPlanViewModel)inputElement;
+            List<SearchOperationViewerNode> elements = model.getTopLevelElements();
+            return elements.toArray(new Object[elements.size()]);
+        }
+        return new Object[0];
+    }
 
-	@Override
-	public Object[] getChildren(Object parentElement) {
-		if(parentElement instanceof SearchOperationViewerNode){
-			return ((SearchOperationViewerNode) parentElement).getChildren().toArray();
-		}
-		return null;
-	}
+    @Override
+    public Object[] getChildren(Object parentElement) {
+        if(parentElement instanceof SearchOperationViewerNode){
+            return ((SearchOperationViewerNode) parentElement).getChildren().toArray();
+        }
+        return null;
+    }
 
-	@Override
-	public Object getParent(Object element) {
-		if(element instanceof SearchOperationViewerNode){
-			return ((SearchOperationViewerNode) element).getParent();
-		}
-		return null;
-	}
+    @Override
+    public Object getParent(Object element) {
+        if(element instanceof SearchOperationViewerNode){
+            return ((SearchOperationViewerNode) element).getParent();
+        }
+        return null;
+    }
 
-	@Override
-	public boolean hasChildren(Object element) {
-		if(element instanceof SearchOperationViewerNode){
-			return ((SearchOperationViewerNode) element).getChildren().size() > 0;
-		}
-		return false;
-	}
+    @Override
+    public boolean hasChildren(Object element) {
+        if(element instanceof SearchOperationViewerNode){
+            return ((SearchOperationViewerNode) element).getChildren().size() > 0;
+        }
+        return false;
+    }
 
 }

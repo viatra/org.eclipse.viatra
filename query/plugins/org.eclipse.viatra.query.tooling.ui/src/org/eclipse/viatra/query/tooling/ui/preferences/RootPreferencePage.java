@@ -19,24 +19,24 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class RootPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public RootPreferencePage() {
-	}
+    public RootPreferencePage() {
+    }
 
-	public RootPreferencePage(String title) {
-		super(title);
-	}
+    public RootPreferencePage(String title) {
+        super(title);
+    }
 
-	public RootPreferencePage(String title, ImageDescriptor image) {
-		super(title, image);
-	}
+    public RootPreferencePage(String title, ImageDescriptor image) {
+        super(title, image);
+    }
 
-	@Override
-	public void init(IWorkbench workbench) {
-	}
+    @Override
+    public void init(IWorkbench workbench) {
+    }
 
-	@Override
-	protected Control createContents(Composite parent) {
-		return null;
-	}
+    @Override
+    protected Control createContents(Composite parent) {
+        return null;
+    }
 
 }

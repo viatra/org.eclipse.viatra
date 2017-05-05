@@ -25,7 +25,7 @@ public abstract class BaseQueryGroup implements IQueryGroup {
 
     @Override
     public void prepare(ViatraQueryEngine engine) throws ViatraQueryException {
-    	prepare(AdvancedViatraQueryEngine.from(engine));
+        prepare(AdvancedViatraQueryEngine.from(engine));
     }
     
     protected void prepare(AdvancedViatraQueryEngine engine) throws ViatraQueryException {

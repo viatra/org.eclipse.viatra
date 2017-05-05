@@ -21,17 +21,17 @@ import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
  */
 abstract class ComplexVeplTestCase extends VeplTestCase {
 
-	override protected parse(CharSequence text) {
-		super.parse(baseModel + text)
-	}
+    override protected parse(CharSequence text) {
+        super.parse(baseModel + text)
+    }
 
-	val baseModel = '''
-		atomicEvent a1
-		atomicEvent a2
-		atomicEvent a3
-		atomicEvent a4
-		atomicEvent a5
-		atomicEvent a6
-		
-	'''
+    val baseModel = '''
+        atomicEvent a1
+        atomicEvent a2
+        atomicEvent a3
+        atomicEvent a4
+        atomicEvent a5
+        atomicEvent a6
+        
+    '''
 }

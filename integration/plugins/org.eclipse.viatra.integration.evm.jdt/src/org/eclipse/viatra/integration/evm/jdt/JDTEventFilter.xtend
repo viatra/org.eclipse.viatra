@@ -15,14 +15,14 @@ import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class JDTEventFilter implements EventFilter<JDTEventAtom> {
-	@Accessors
-	IJavaProject project
-	
-	new(){
-	}
-	
-	override boolean isProcessable(JDTEventAtom eventAtom) {
-		eventAtom.element.javaProject == this.project
-	}
+    @Accessors
+    IJavaProject project
+    
+    new(){
+    }
+    
+    override boolean isProcessable(JDTEventAtom eventAtom) {
+        eventAtom.element.javaProject == this.project
+    }
 
 }

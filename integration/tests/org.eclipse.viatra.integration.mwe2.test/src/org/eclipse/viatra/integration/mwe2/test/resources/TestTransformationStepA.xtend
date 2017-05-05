@@ -15,22 +15,22 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 import org.eclipse.viatra.integration.mwe2.mwe2impl.TransformationStep
 
 class TestTransformationStepA extends TransformationStep {
-	override void dispose() {}
+    override void dispose() {}
 
-	override void doExecute() {
-		val list = context.get("TestOutput")as BlockingQueue<String>
-		if(list!=null){
-			list.put("exec_A")
-		}
-	}
+    override void doExecute() {
+        val list = context.get("TestOutput")as BlockingQueue<String>
+        if(list!=null){
+            list.put("exec_A")
+        }
+    }
 
-	override void publishMessages() {
-		publishings.forEach[ p |
-			p.publishMessage("message_A"+p.topicName)
-		]
-	}
-	
-	override doInitialize(IWorkflowContext ctx) {
-		//Do nothing
-	}
+    override void publishMessages() {
+        publishings.forEach[ p |
+            p.publishMessage("message_A"+p.topicName)
+        ]
+    }
+    
+    override doInitialize(IWorkflowContext ctx) {
+        //Do nothing
+    }
 }

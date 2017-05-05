@@ -99,7 +99,7 @@
             implementation="org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.ListViewerSandboxTab">
       </tab>
       <tab
-      		implementation="org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.TreeViewerSandboxTab">
+              implementation="org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.TreeViewerSandboxTab">
       </tab>
    </extension>
    <extension

@@ -21,6 +21,6 @@ import org.eclipse.xtend.lib.annotations.Data
  */
 @Data
 class MatcherReference {
-	PQuery referredQuery
-	Set<PParameter> adornment
+    PQuery referredQuery
+    Set<PParameter> adornment
 }

@@ -105,10 +105,10 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                	monitor.beginTask("Creating " + fileName, 1);
+                    monitor.beginTask("Creating " + fileName, 1);
                     IFile file = createEiqFile(containerName, fileName, packageName, patternName, imports, parameters);
                     BasicNewResourceWizard.selectAndReveal(file,
-        					workbench.getActiveWorkbenchWindow());
+                            workbench.getActiveWorkbenchWindow());
                     IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
                     monitor.worked(1);
                 } catch (Exception e) {
@@ -118,9 +118,9 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
                 }
             }
         };
-		try {
-			getContainer().run(false, false, op);
-		} catch (InterruptedException e) {
+        try {
+            getContainer().run(false, false, op);
+        } catch (InterruptedException e) {
             // This is never thrown as of false cancelable parameter of getContainer().run
             return false;
         } catch (InvocationTargetException e) {

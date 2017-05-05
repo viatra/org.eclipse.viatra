@@ -37,7 +37,7 @@ public interface InitializablePQuery extends PQuery {
      *
      * @param problem the new problem
      */
-	void addError(PProblem problem);
+    void addError(PProblem problem);
 
     /**
      * Sets up the bodies of the pattern. Only applicable if the pattern is still {@link PQueryStatus#UNINITIALIZED

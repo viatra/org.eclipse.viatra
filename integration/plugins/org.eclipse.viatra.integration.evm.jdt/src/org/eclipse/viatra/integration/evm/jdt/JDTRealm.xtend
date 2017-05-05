@@ -27,83 +27,83 @@ import com.google.common.base.Joiner
 import org.eclipse.viatra.integration.evm.jdt.util.ElementChangedEventType
 
 class JDTRealm implements EventRealm {
-	Set<JDTEventSource> sources = Sets.newHashSet()
-	IElementChangedListener listener
-	JDTUpdateCompleteProvider provider
-	UpdateCompleteBasedSchedulerFactory schedulerFactory
-	@Accessors(PROTECTED_GETTER)
-	boolean active = false
+    Set<JDTEventSource> sources = Sets.newHashSet()
+    IElementChangedListener listener
+    JDTUpdateCompleteProvider provider
+    UpdateCompleteBasedSchedulerFactory schedulerFactory
+    @Accessors(PROTECTED_GETTER)
+    boolean active = false
 
-	private static JDTRealm instance = null
+    private static JDTRealm instance = null
 
-	/**
-	 * Constructor hidden for singleton class.
-	 */
-	protected new() {
-		listener = [ ElementChangedEvent event |
-			val delta = event.delta
-			val types = JDTElementChangedEventTypeDecoder.toEventTypes(event.type)
-			val typeString = Joiner.on(",").join(types)
-			// Ignore POST_RECONCILE events as we only care about saved changes
-			if (types.contains(ElementChangedEventType.POST_CHANGE)) {
-				notifySources(delta)
-			}
-		]
-		provider = new JDTUpdateCompleteProvider
-		schedulerFactory = new UpdateCompleteBasedSchedulerFactory(provider)
-	}
+    /**
+     * Constructor hidden for singleton class.
+     */
+    protected new() {
+        listener = [ ElementChangedEvent event |
+            val delta = event.delta
+            val types = JDTElementChangedEventTypeDecoder.toEventTypes(event.type)
+            val typeString = Joiner.on(",").join(types)
+            // Ignore POST_RECONCILE events as we only care about saved changes
+            if (types.contains(ElementChangedEventType.POST_CHANGE)) {
+                notifySources(delta)
+            }
+        ]
+        provider = new JDTUpdateCompleteProvider
+        schedulerFactory = new UpdateCompleteBasedSchedulerFactory(provider)
+    }
 
-	static def JDTRealm getInstance() {
-		if (instance == null) {
-			instance = new JDTRealm
-		}
-		return instance
-	}
+    static def JDTRealm getInstance() {
+        if (instance == null) {
+            instance = new JDTRealm
+        }
+        return instance
+    }
 
-	/**
-	 * All events JDT sends on various threads should be handled synchronously.
-	 */
-	protected synchronized def notifySources(IJavaElement javaElement) {
-		sources.forEach [
-			createReferenceRefreshEvent(javaElement)
-		]
-	}
+    /**
+     * All events JDT sends on various threads should be handled synchronously.
+     */
+    protected synchronized def notifySources(IJavaElement javaElement) {
+        sources.forEach [
+            createReferenceRefreshEvent(javaElement)
+        ]
+    }
 
-	/**
-	 * All events JDT sends on various threads should be handled synchronously.
-	 */
-	private synchronized def notifySources(IJavaElementDelta delta) {
-		sources.forEach [
-			createEvent(delta)
-		]
-	}
+    /**
+     * All events JDT sends on various threads should be handled synchronously.
+     */
+    private synchronized def notifySources(IJavaElementDelta delta) {
+        sources.forEach [
+            createEvent(delta)
+        ]
+    }
 
-	protected def void addSource(JDTEventSource source) {
-		if (sources.empty) {
-			JavaCore.addElementChangedListener(listener)
-			active = true
-		}
-		sources.add(source)
-	}
+    protected def void addSource(JDTEventSource source) {
+        if (sources.empty) {
+            JavaCore.addElementChangedListener(listener)
+            active = true
+        }
+        sources.add(source)
+    }
 
-	protected def void removeSource(JDTEventSource source) {
-		sources.remove(source)
-	}
+    protected def void removeSource(JDTEventSource source) {
+        sources.remove(source)
+    }
 
-	protected def void buildFinishedOnProject(IJavaProject project) {
-		provider.updateCompleted
-	}
+    protected def void buildFinishedOnProject(IJavaProject project) {
+        provider.updateCompleted
+    }
 
-	def UpdateCompleteBasedSchedulerFactory getJDTBuilderSchedulerFactory() {
-		return schedulerFactory
-	}
+    def UpdateCompleteBasedSchedulerFactory getJDTBuilderSchedulerFactory() {
+        return schedulerFactory
+    }
 
 }
 
 class JDTUpdateCompleteProvider extends UpdateCompleteProvider {
 
-	override protected updateCompleted() {
-		super.updateCompleted()
-	}
+    override protected updateCompleted() {
+        super.updateCompleted()
+    }
 
 }

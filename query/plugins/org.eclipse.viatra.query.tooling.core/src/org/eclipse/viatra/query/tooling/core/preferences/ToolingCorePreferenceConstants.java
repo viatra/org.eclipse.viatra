@@ -23,6 +23,6 @@ public class ToolingCorePreferenceConstants {
      * @see org.eclipse.viatra.query.tooling.core.targetplatform.TargetPlatformMetamodelsIndex
      * @noreference This experimental constant is not intended to be referenced by clients.
      */
-	public static final String P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE = "org.eclipse.viatra.query.tooling.core.disableTargetPlatformIndex";
+    public static final String P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE = "org.eclipse.viatra.query.tooling.core.disableTargetPlatformIndex";
 
 }

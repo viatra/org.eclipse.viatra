@@ -93,10 +93,10 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateFromStandardNodeToSupplierParent())
-    		if (parent != null)
-    			parent.acceptPropagatedTraceInfo(traceInfo);
+        super.assignTraceInfo(traceInfo);
+        if (traceInfo.propagateFromStandardNodeToSupplierParent())
+            if (parent != null)
+                parent.acceptPropagatedTraceInfo(traceInfo);
     }
 
 }

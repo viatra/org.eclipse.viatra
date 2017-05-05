@@ -41,7 +41,7 @@ public final class EventDrivenVM {
      * @return the prepared rule engine
      */
     public static RuleEngine createRuleEngine(final EventRealm eventRealm) {
-    	RuleBase ruleBase = new RuleBase(eventRealm, new Agenda());
+        RuleBase ruleBase = new RuleBase(eventRealm, new Agenda());
         return RuleEngine.create(ruleBase);
     }
     

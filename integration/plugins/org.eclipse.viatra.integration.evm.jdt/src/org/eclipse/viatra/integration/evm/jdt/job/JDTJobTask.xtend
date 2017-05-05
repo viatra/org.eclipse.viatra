@@ -15,5 +15,5 @@ import org.eclipse.viatra.integration.evm.jdt.JDTEventAtom
 import org.eclipse.viatra.transformation.evm.api.Activation
 
 interface JDTJobTask {
-	def void run(Activation<? extends JDTEventAtom> activation, Context context)
+    def void run(Activation<? extends JDTEventAtom> activation, Context context)
 }

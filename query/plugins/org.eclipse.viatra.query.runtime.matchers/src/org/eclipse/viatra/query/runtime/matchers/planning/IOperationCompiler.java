@@ -38,8 +38,8 @@ public interface IOperationCompiler<Collector> {
     public void buildConnection(SubPlan parentPlan, Collector collector);
     
     /**
-	 * @since 0.9
-	 */
+     * @since 0.9
+     */
     public void patternFinished(PQuery pattern, Collector collector);
     
     public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)

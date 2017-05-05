@@ -79,8 +79,8 @@ public abstract class AbstractBackendSelectionControl extends WorkbenchWindowCon
         });
         viewer.setInput(Iterables.toArray(getRegisteredQueryBackendImplementations(), IQueryBackendFactory.class));
         IQueryBackendFactory queryBackendFactory = getHints().getQueryBackendFactory();
-    	viewer.setSelection(
-    			queryBackendFactory != null ? new StructuredSelection(queryBackendFactory) : new StructuredSelection());
+        viewer.setSelection(
+                queryBackendFactory != null ? new StructuredSelection(queryBackendFactory) : new StructuredSelection());
         
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             

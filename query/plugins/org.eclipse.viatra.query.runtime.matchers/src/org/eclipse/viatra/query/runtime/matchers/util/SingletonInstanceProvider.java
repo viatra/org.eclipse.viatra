@@ -18,16 +18,16 @@ import com.google.common.base.Preconditions;
  */
 public class SingletonInstanceProvider<T> implements IProvider<T>{
 
-	private T instance;
+    private T instance;
 
-	public SingletonInstanceProvider(T instance) {
-		Preconditions.checkArgument(instance != null, "Instance parameter must not be null.");
-		this.instance = instance;
-	}
-	
-	@Override
-	public T get() {
-		return instance;
-	}
-	
+    public SingletonInstanceProvider(T instance) {
+        Preconditions.checkArgument(instance != null, "Instance parameter must not be null.");
+        this.instance = instance;
+    }
+    
+    @Override
+    public T get() {
+        return instance;
+    }
+    
 }

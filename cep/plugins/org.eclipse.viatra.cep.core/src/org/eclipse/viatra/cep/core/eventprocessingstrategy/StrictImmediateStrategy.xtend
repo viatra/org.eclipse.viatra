@@ -25,20 +25,20 @@ import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
  */
 class StrictImmediateStrategy extends AbstractImmediateStrategy {
 
-	override EventContext getContext() {
-		return EventContext::STRICT_IMMEDIATE
-	}
+    override EventContext getContext() {
+        return EventContext::STRICT_IMMEDIATE
+    }
 
-	new(IEventModelManager eventModelManager) {
-		super(eventModelManager)
-	}
+    new(IEventModelManager eventModelManager) {
+        super(eventModelManager)
+    }
 
-	override handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
-		model.automata.forEach [ automaton |
-			if (automaton.eventTokens.forall[eventToken|eventToken.currentState.enablesStrictInitTokenCreation]) {
-				newEventToken(automaton, automaton.initialState)
-			}
-		]
-	}
+    override handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
+        model.automata.forEach [ automaton |
+            if (automaton.eventTokens.forall[eventToken|eventToken.currentState.enablesStrictInitTokenCreation]) {
+                newEventToken(automaton, automaton.initialState)
+            }
+        ]
+    }
 
 }

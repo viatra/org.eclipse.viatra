@@ -11,16 +11,16 @@
   <artifactId>org.eclipse.viatra.cep.core.tests.compiler.testdata</artifactId>
   <packaging>eclipse-plugin</packaging>
   <properties>
-		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
+        <vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
   </properties>
   <build>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-			<resource>
-				<directory>src-gen</directory>
-			</resource>
-		</resources>
-	</build>
+        <resources>
+            <resource>
+                <directory>src</directory>
+            </resource>
+            <resource>
+                <directory>src-gen</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

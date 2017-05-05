@@ -38,10 +38,10 @@ import com.google.common.collect.Iterables;
 public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> implements
         IQuerySpecification<Matcher> {
 
-	/**
+    /**
      * @since 1.6
      */
-	protected static ViatraQueryException processInitializerError(ExceptionInInitializerError err) {
+    protected static ViatraQueryException processInitializerError(ExceptionInInitializerError err) {
         Throwable cause1 = err.getCause();
         if (cause1 instanceof RuntimeException) {
             Throwable cause2 = ((RuntimeException) cause1).getCause();
@@ -54,7 +54,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
         throw err;
     }
     protected final PQuery wrappedPQuery;
-	
+    
     protected abstract Matcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException;
 
     /**
@@ -72,17 +72,17 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     
     /**
      * Instantiates query specification for the given internal query representation.
-	 */
-	public BaseQuerySpecification(PQuery wrappedPQuery) {
-		super();
-		this.wrappedPQuery = wrappedPQuery;
-		wrappedPQuery.publishedAs().add(this);
-	}
+     */
+    public BaseQuerySpecification(PQuery wrappedPQuery) {
+        super();
+        this.wrappedPQuery = wrappedPQuery;
+        wrappedPQuery.publishedAs().add(this);
+    }
 
 
-	@Override
+    @Override
     public PQuery getInternalQueryRepresentation() {
-    	return wrappedPQuery;
+        return wrappedPQuery;
     }
 
     @Override
@@ -114,22 +114,22 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
         return instantiate(engine);
     }
 
-	protected void ensureInitializedInternal() throws ViatraQueryException {
-		try {
-			wrappedPQuery.ensureInitialized();
-		} catch (QueryInitializationException e) {
-			throw new ViatraQueryException(e);
-		}
-	}
-	protected void ensureInitializedInternalSneaky() {
-		try {
-			wrappedPQuery.ensureInitialized();
-		} catch (QueryInitializationException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	
+    protected void ensureInitializedInternal() throws ViatraQueryException {
+        try {
+            wrappedPQuery.ensureInitialized();
+        } catch (QueryInitializationException e) {
+            throw new ViatraQueryException(e);
+        }
+    }
+    protected void ensureInitializedInternalSneaky() {
+        try {
+            wrappedPQuery.ensureInitialized();
+        } catch (QueryInitializationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    
 
     // // EXPERIMENTAL
     //
@@ -147,37 +147,37 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     // throw new ViatraQueryException(e);
     // }
     // }
-	
-	
-	// // DELEGATIONS
-	
-	@Override
-	public List<PAnnotation> getAllAnnotations() {
-		return wrappedPQuery.getAllAnnotations();
-	}
-	@Override
-	public List<PAnnotation> getAnnotationsByName(String annotationName) {
-		return wrappedPQuery.getAnnotationsByName(annotationName);
-	}
-	@Override
-	public PAnnotation getFirstAnnotationByName(String annotationName) {
-		return wrappedPQuery.getFirstAnnotationByName(annotationName);
-	}
-	@Override
-	public String getFullyQualifiedName() {
-		return wrappedPQuery.getFullyQualifiedName();
-	}
-	@Override
-	public List<String> getParameterNames() {
-		return wrappedPQuery.getParameterNames();
-	}
-	@Override
-	public List<PParameter> getParameters() {
-		return wrappedPQuery.getParameters();
-	}
-	@Override
-	public Integer getPositionOfParameter(String parameterName) {
-		return wrappedPQuery.getPositionOfParameter(parameterName);
-	}
+    
+    
+    // // DELEGATIONS
+    
+    @Override
+    public List<PAnnotation> getAllAnnotations() {
+        return wrappedPQuery.getAllAnnotations();
+    }
+    @Override
+    public List<PAnnotation> getAnnotationsByName(String annotationName) {
+        return wrappedPQuery.getAnnotationsByName(annotationName);
+    }
+    @Override
+    public PAnnotation getFirstAnnotationByName(String annotationName) {
+        return wrappedPQuery.getFirstAnnotationByName(annotationName);
+    }
+    @Override
+    public String getFullyQualifiedName() {
+        return wrappedPQuery.getFullyQualifiedName();
+    }
+    @Override
+    public List<String> getParameterNames() {
+        return wrappedPQuery.getParameterNames();
+    }
+    @Override
+    public List<PParameter> getParameters() {
+        return wrappedPQuery.getParameters();
+    }
+    @Override
+    public Integer getPositionOfParameter(String parameterName) {
+        return wrappedPQuery.getPositionOfParameter(parameterName);
+    }
 
 }

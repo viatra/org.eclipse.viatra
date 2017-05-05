@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.api.IGeneratorOutputProv
  * @author Robert Doczi
  */
 interface ISerializer {
-	def void serialize(String folderPath, IGeneratorOutputProvider provider, IFileAccessor fileAccessor)
-	
-	def void createFolder(String folderPath, String folderName, IFileAccessor fileAccessor)		
+    def void serialize(String folderPath, IGeneratorOutputProvider provider, IFileAccessor fileAccessor)
+    
+    def void createFolder(String folderPath, String folderName, IFileAccessor fileAccessor)		
 }

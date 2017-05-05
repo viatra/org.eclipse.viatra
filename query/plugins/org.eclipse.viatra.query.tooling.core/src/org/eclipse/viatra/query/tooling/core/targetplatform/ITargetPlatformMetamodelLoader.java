@@ -23,26 +23,26 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
  */
 public interface ITargetPlatformMetamodelLoader {
 
-	/**
-	 * List the URIs of the available EPackages 
-	 * @return a list containing the ns URIs of the registered EPackages
-	 */
-	public List<String> listEPackages();
-	
-	/**
-	 * Load the EPackage with the given ns URI
-	 * @param nsURI
-	 * @param resourceSet
-	 * @return The EPackage instance, or null if it could not be loaded
-	 */
-	public EPackage loadPackage(ResourceSet resourceSet, String nsURI);
-	
-	/**
-	 * Load the GenPackage of the EPackage with the given ns URI
-	 * @param resourceSet
-	 * @param nsURI
-	 * @return the registered GenPackage of the generated package
-	 */
-	public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI);
-	
+    /**
+     * List the URIs of the available EPackages 
+     * @return a list containing the ns URIs of the registered EPackages
+     */
+    public List<String> listEPackages();
+    
+    /**
+     * Load the EPackage with the given ns URI
+     * @param nsURI
+     * @param resourceSet
+     * @return The EPackage instance, or null if it could not be loaded
+     */
+    public EPackage loadPackage(ResourceSet resourceSet, String nsURI);
+    
+    /**
+     * Load the GenPackage of the EPackage with the given ns URI
+     * @param resourceSet
+     * @param nsURI
+     * @return the registered GenPackage of the generated package
+     */
+    public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI);
+    
 }

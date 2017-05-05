@@ -23,33 +23,33 @@ import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
  */
 public class ViatraGraphViewers {
 
-	private ViatraGraphViewers() {
-	}
+    private ViatraGraphViewers() {
+    }
 
-	/**
-	 * The basic bindings does not support isolated nodes but is more
-	 * performant. If the graph contains isolated nodes, use
-	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.
-	 */
-	public static void bind(ModifiableZestContentViewer viewer, ViewerState state) {
-		viewer.setContentProvider(new ZestContentProvider());
-		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
-				.getControl().getDisplay()));
-		viewer.setInput(state);
-	}
+    /**
+     * The basic bindings does not support isolated nodes but is more
+     * performant. If the graph contains isolated nodes, use
+     * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.
+     */
+    public static void bind(ModifiableZestContentViewer viewer, ViewerState state) {
+        viewer.setContentProvider(new ZestContentProvider());
+        viewer.setLabelProvider(new ZestLabelProvider(state, viewer
+                .getControl().getDisplay()));
+        viewer.setInput(state);
+    }
 
-	/**
-	 * The basic bindings does not support isolated nodes but is more
-	 * performant. If the graph contains isolated nodes, use
-	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState, boolean)} instead.
-	 */
-	public static void bind(ModifiableZestContentViewer viewer, ViewerState state,
-			boolean displayContainment) {
-		viewer.setContentProvider(new ZestContentProvider(displayContainment));
-		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
-				.getControl().getDisplay()));
-		viewer.setInput(state);
-	}
+    /**
+     * The basic bindings does not support isolated nodes but is more
+     * performant. If the graph contains isolated nodes, use
+     * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState, boolean)} instead.
+     */
+    public static void bind(ModifiableZestContentViewer viewer, ViewerState state,
+            boolean displayContainment) {
+        viewer.setContentProvider(new ZestContentProvider(displayContainment));
+        viewer.setLabelProvider(new ZestLabelProvider(state, viewer
+                .getControl().getDisplay()));
+        viewer.setInput(state);
+    }
 
 
 

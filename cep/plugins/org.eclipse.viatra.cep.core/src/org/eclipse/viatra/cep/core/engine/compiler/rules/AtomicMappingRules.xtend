@@ -19,45 +19,45 @@ import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 
 class AtomicMappingRules extends MappingRules {
 
-	new(InternalModel internalModel, TraceModel traceModel) {
-		super(internalModel, traceModel)
-	}
+    new(InternalModel internalModel, TraceModel traceModel) {
+        super(internalModel, traceModel)
+    }
 
-	override getAllRules() {
-		return #[atomicPattern2AutomatonRule]
-	}
+    override getAllRules() {
+        return #[atomicPattern2AutomatonRule]
+    }
 
-	/**
-	 * Transformation rule to compile {@link AtomicEventPattern}s to {@link Automaton}.
-	 */
-	val atomicPattern2AutomatonRule = createRule.precondition(AtomicEventPatternMatcher::querySpecification).action [
-		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
-		if (mappedAutomaton != null) {
-			createTrace(eventPattern, mappedAutomaton)
-			return
-		}
+    /**
+     * Transformation rule to compile {@link AtomicEventPattern}s to {@link Automaton}.
+     */
+    val atomicPattern2AutomatonRule = createRule.precondition(AtomicEventPatternMatcher::querySpecification).action [
+        val mappedAutomaton = checkForMappedAutomaton(eventPattern)
+        if (mappedAutomaton != null) {
+            createTrace(eventPattern, mappedAutomaton)
+            return
+        }
 
-		var automaton = eventPattern.initializeAutomaton
-		var transition = createTypedTransition
-		var guard = createGuard
-		guard.eventType = eventPattern
-		transition.guards += guard
-		
-		var k = 0;
-		for (String parameterName : eventPattern.parameterNames) {
-		    val param = createParameter
-		    param.position = k++;
+        var automaton = eventPattern.initializeAutomaton
+        var transition = createTypedTransition
+        var guard = createGuard
+        guard.eventType = eventPattern
+        transition.guards += guard
+        
+        var k = 0;
+        for (String parameterName : eventPattern.parameterNames) {
+            val param = createParameter
+            param.position = k++;
             param.symbolicName = parameterName
-		    transition.parameters += param
-		}
+            transition.parameters += param
+        }
 
-		transition.preState = automaton.initialState
+        transition.preState = automaton.initialState
 
-		val finalState = createFinalState
-		automaton.states += finalState
-		transition.postState = finalState
+        val finalState = createFinalState
+        automaton.states += finalState
+        transition.postState = finalState
 
-		createTrace(eventPattern, automaton)
-	].build
+        createTrace(eventPattern, automaton)
+    ].build
 
 }

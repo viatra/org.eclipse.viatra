@@ -30,213 +30,213 @@ import org.junit.runner.RunWith
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class RecursivePatternCallTest extends AbstractValidatorTest {
 
-	@Inject
-	private ParseHelper<EObject> parseHelper
+    @Inject
+    private ParseHelper<EObject> parseHelper
 
-	@Inject
-	private EMFPatternLanguageJavaValidator validator
+    @Inject
+    private EMFPatternLanguageJavaValidator validator
 
-	@Inject
-	private Injector injector
+    @Inject
+    private Injector injector
 
-	private ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    private ValidatorTester<EMFPatternLanguageJavaValidator> tester
 
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
 
-	@Test
-	def void testNoRecursion() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testNoRecursion() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				Pattern(p);
-			}
+            pattern p1(p : Pattern) = {
+                Pattern(p);
+            }
 
-			pattern p2(p : Pattern) = {
-				find p1(p);
-			}'
-		)
-		tester.validate(model).assertOK
-	}
+            pattern p2(p : Pattern) = {
+                find p1(p);
+            }'
+        )
+        tester.validate(model).assertOK
+    }
 
-	@Test
-	def void testSelfRecursion() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testSelfRecursion() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				Pattern(p);
-			} or {
-				find p1(p);
-			}'
-		)
-		tester.validate(model).assertWarning(IssueCodes::RECURSIVE_PATTERN_CALL)
-	}
+            pattern p1(p : Pattern) = {
+                Pattern(p);
+            } or {
+                find p1(p);
+            }'
+        )
+        tester.validate(model).assertWarning(IssueCodes::RECURSIVE_PATTERN_CALL)
+    }
 
-	@Test
-	def void testSelfRecursionNeg() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testSelfRecursionNeg() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				Pattern(p);
-			} or {
-				neg find p1(p);
-			}'
-		)
-		tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
-	}
+            pattern p1(p : Pattern) = {
+                Pattern(p);
+            } or {
+                neg find p1(p);
+            }'
+        )
+        tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
+    }
 
-	@Test
-	def void testChainNoRecursion() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testChainNoRecursion() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				find p2(p);
-			}
+            pattern p1(p : Pattern) = {
+                find p2(p);
+            }
 
-			pattern p2(p : Pattern) = {
-				find p3(p);
-			}
+            pattern p2(p : Pattern) = {
+                find p3(p);
+            }
 
-			pattern p3(p : Pattern) = {
-				Pattern(p);
-			}
-			'
-		)
+            pattern p3(p : Pattern) = {
+                Pattern(p);
+            }
+            '
+        )
 
-		tester.validate(model).assertOK
-	}
+        tester.validate(model).assertOK
+    }
 
-	@Test
-	def void testChainNoRecursionNeg() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testChainNoRecursionNeg() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				neg find p2(p);
-			}
+            pattern p1(p : Pattern) = {
+                neg find p2(p);
+            }
 
-			pattern p2(p : Pattern) = {
-				neg find p3(p);
-			}
+            pattern p2(p : Pattern) = {
+                neg find p3(p);
+            }
 
-			pattern p3(p : Pattern) = {
-				Pattern(p);
-			}
-			'
-		)
+            pattern p3(p : Pattern) = {
+                Pattern(p);
+            }
+            '
+        )
 
-		tester.validate(model).assertOK
-	}
+        tester.validate(model).assertOK
+    }
 
-	@Test
-	def void testCycleRecursion() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testCycleRecursion() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				find p2(p);
-			}
+            pattern p1(p : Pattern) = {
+                find p2(p);
+            }
 
-			pattern p2(p : Pattern) = {
-				find p3(p);
-			}
+            pattern p2(p : Pattern) = {
+                find p3(p);
+            }
 
-			pattern p3(p : Pattern) = {
-				find p1(p);
-			}
-			'
-		)
+            pattern p3(p : Pattern) = {
+                find p1(p);
+            }
+            '
+        )
 
-		val result = tester.validate(model)
+        val result = tester.validate(model)
 
-		result.assertAll(
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p3 -> p1 -> p2 -> p3"),
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p2 -> p3 -> p1 -> p2"),
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p1 -> p2 -> p3 -> p1"))
-	}
+        result.assertAll(
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p3 -> p1 -> p2 -> p3"),
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p2 -> p3 -> p1 -> p2"),
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p1 -> p2 -> p3 -> p1"))
+    }
 
-	@Test
-	def void testCycleRecursionNeg() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+    @Test
+    def void testCycleRecursionNeg() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 
-			pattern p1(p : Pattern) = {
-				find p2(p);
-			}
+            pattern p1(p : Pattern) = {
+                find p2(p);
+            }
 
-			pattern p2(p : Pattern) = {
-				find p3(p);
-			}
+            pattern p2(p : Pattern) = {
+                find p3(p);
+            }
 
-			pattern p3(p : Pattern) = {
-				neg find p1(p);
-			}
-			'
-		)
+            pattern p3(p : Pattern) = {
+                neg find p1(p);
+            }
+            '
+        )
 
-		val result = tester.validate(model)
-		result.assertAll(
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p3 -> neg p1 -> p2 -> p3"),
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p2 -> p3 -> neg p1 -> p2"),
-			AssertableDiagnostics.error(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: neg p1 -> p2 -> p3 -> neg p1"))
-	}
+        val result = tester.validate(model)
+        result.assertAll(
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p3 -> neg p1 -> p2 -> p3"),
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p2 -> p3 -> neg p1 -> p2"),
+            AssertableDiagnostics.error(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: neg p1 -> p2 -> p3 -> neg p1"))
+    }
 
-	@Test
-	def void testCycleRecursionMultiPath() {
-		val model = parseHelper.parse(
-			'package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-			
-			pattern p1(p : Pattern) = {
-				find p2(p);
-			}
-			
-			pattern p2(p : Pattern) = {
-				find p3(p);
-			} or {
-				find p4(p);
-			}
-			
-			pattern p3(p : Pattern) = {
-				find p1(p);
-			}
-			
-			pattern p4(p : Pattern) = {
-				find p1(p);
-			}
-			'
-		)
+    @Test
+    def void testCycleRecursionMultiPath() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            
+            pattern p1(p : Pattern) = {
+                find p2(p);
+            }
+            
+            pattern p2(p : Pattern) = {
+                find p3(p);
+            } or {
+                find p4(p);
+            }
+            
+            pattern p3(p : Pattern) = {
+                find p1(p);
+            }
+            
+            pattern p4(p : Pattern) = {
+                find p1(p);
+            }
+            '
+        )
 
-		val result = tester.validate(model)
-		result.assertAll(
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p1 -> p2 -> p3 -> p1"),
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p1 -> p2 -> p4 -> p1"), 
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p2 -> p3 -> p1 -> p2"), 
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p3 -> p1 -> p2 -> p3"),
-			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-				"Recursive pattern call: p4 -> p1 -> p2 -> p4"))
-	}
+        val result = tester.validate(model)
+        result.assertAll(
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p1 -> p2 -> p3 -> p1"),
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p1 -> p2 -> p4 -> p1"), 
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p2 -> p3 -> p1 -> p2"), 
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p3 -> p1 -> p2 -> p3"),
+            AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+                "Recursive pattern call: p4 -> p1 -> p2 -> p4"))
+    }
 }

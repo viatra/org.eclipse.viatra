@@ -50,7 +50,7 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
         return headContainer;
     }
 
-	protected final InputConnector inputConnector;
+    protected final InputConnector inputConnector;
 
 
     protected Map<SubPlan, Address<? extends Supplier>> subplanToAddressMapping;
@@ -346,8 +346,8 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
     public synchronized RecipeTraceInfo accessProductionTrace(PQuery query)
             throws QueryProcessingException 
     {
-    	final CompiledQuery compiled = engine.getCompiler().getCompiledForm(query);
-    	return compiled;
+        final CompiledQuery compiled = engine.getCompiler().getCompiledForm(query);
+        return compiled;
 //    	RecipeTraceInfo pn;
 //        pn = queryPlans.get(query);
 //        if (pn == null) {
@@ -367,8 +367,8 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
      */
     public synchronized Address<? extends Production> accessProductionNode(PQuery query)
             throws QueryProcessingException {
-    	final RecipeTraceInfo productionTrace = accessProductionTrace(query);
-		return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
+        final RecipeTraceInfo productionTrace = accessProductionTrace(query);
+        return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
     }
 
 //    /**
@@ -455,7 +455,7 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
     // if the corresponding rete input isn't created yet, call is ignored
     
     private static Direction direction(boolean isInsertion) {
-    	return isInsertion ? Direction.INSERT : Direction.REVOKE;
+        return isInsertion ? Direction.INSERT : Direction.REVOKE;
     }
     
 //    @Override

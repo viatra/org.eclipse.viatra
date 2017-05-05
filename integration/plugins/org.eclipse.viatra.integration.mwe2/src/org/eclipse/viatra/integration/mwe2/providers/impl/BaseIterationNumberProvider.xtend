@@ -19,23 +19,23 @@ import org.eclipse.viatra.integration.mwe2.providers.IIterationNumberProvider
  *
  */
 class BaseIterationNumberProvider extends BaseProvider implements IIterationNumberProvider{
-	private IWorkflowContext ctx;
-	private Integer value;
-	
-	new(Integer value){
-		this.value = value
-	}
-	
-	override getContext() {
-		return ctx;
-	}
-	
-	override setContext(IWorkflowContext ctx) {
-		this.ctx = ctx;
-	}
-	
-	override getIterationNumber() {
-		return value
-	}
-	
+    private IWorkflowContext ctx;
+    private Integer value;
+    
+    new(Integer value){
+        this.value = value
+    }
+    
+    override getContext() {
+        return ctx;
+    }
+    
+    override setContext(IWorkflowContext ctx) {
+        this.ctx = ctx;
+    }
+    
+    override getIterationNumber() {
+        return value
+    }
+    
 }

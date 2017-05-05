@@ -8,7 +8,7 @@
        uri = "http://www.eclipse.org/viatra/cep/vepl/Vepl" 
        class = "org.eclipse.viatra.cep.vepl.vepl.VeplPackage"
        genModel = "model/generated/Vepl.genmodel" /> 
-	
+    
   </extension>
 
 

@@ -21,23 +21,23 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
  *
  */
 public class CompiledQuery extends RecipeTraceInfo implements
-		PatternTraceInfo {
-	
-	private PQuery query;
-	
-	public CompiledQuery(ReteNodeRecipe recipe,
-			Collection<? extends RecipeTraceInfo> parentRecipeTraces,
-			PQuery query) {
-		super(recipe, parentRecipeTraces);
-		this.query = query;
-	}
-	public PQuery getQuery() {
-		return query;
-	}
+        PatternTraceInfo {
+    
+    private PQuery query;
+    
+    public CompiledQuery(ReteNodeRecipe recipe,
+            Collection<? extends RecipeTraceInfo> parentRecipeTraces,
+            PQuery query) {
+        super(recipe, parentRecipeTraces);
+        this.query = query;
+    }
+    public PQuery getQuery() {
+        return query;
+    }
 
-	@Override
-	public String getPatternName() {
-		return query.getFullyQualifiedName();
-	}
+    @Override
+    public String getPatternName() {
+        return query.getFullyQualifiedName();
+    }
 
 }

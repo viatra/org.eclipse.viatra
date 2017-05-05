@@ -71,8 +71,8 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     }
     
     protected ListMultimap<ViatraQueryEngine,QueryBasedFeature> getDelayedFeatures() {
-		return delayedFeatures;
-	}
+        return delayedFeatures;
+    }
     
     protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws ViatraQueryException {
         if(dynamicEMFMode) {

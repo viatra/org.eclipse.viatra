@@ -21,13 +21,13 @@ import org.eclipse.core.commands.ExecutionException
  * @author Robert Doczi
  */
 class RuntimeGeneratorHandler extends AbstractHandler {
-	
-	@Inject Injector injector	
-	
-	override execute(ExecutionEvent event) throws ExecutionException {
-		val generatorHandler = injector.getInstance(GeneratorHandler)
-		generatorHandler.generate(event, RuntimeGeneratorContext)
-		return null
-	}
+    
+    @Inject Injector injector	
+    
+    override execute(ExecutionEvent event) throws ExecutionException {
+        val generatorHandler = injector.getInstance(GeneratorHandler)
+        generatorHandler.generate(event, RuntimeGeneratorContext)
+        return null
+    }
 
 }

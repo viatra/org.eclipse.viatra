@@ -21,15 +21,15 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
  */
 public class SubPlanFactory {
 
-	protected PBody body;
+    protected PBody body;
 
-	public SubPlanFactory(PBody body) {
-		super();
-		this.body = body;
-	}
-	
-	public SubPlan createSubPlan(POperation operation, SubPlan... parentPlans) {
-		return new SubPlan(body, operation, parentPlans);		
-	}
-	
+    public SubPlanFactory(PBody body) {
+        super();
+        this.body = body;
+    }
+    
+    public SubPlan createSubPlan(POperation operation, SubPlan... parentPlans) {
+        return new SubPlan(body, operation, parentPlans);		
+    }
+    
 }

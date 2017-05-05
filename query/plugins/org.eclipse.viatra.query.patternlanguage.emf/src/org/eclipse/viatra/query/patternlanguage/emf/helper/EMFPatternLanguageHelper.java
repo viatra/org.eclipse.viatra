@@ -47,9 +47,9 @@ public class EMFPatternLanguageHelper {
     public static Iterable<PackageImport> getPackageImportsIterable(PatternModel model) {
         XImportSection imports = model.getImportPackages();
         if (imports == null) {
-        	return ImmutableList.of();
+            return ImmutableList.of();
         }
-		return Iterables.filter(imports.getPackageImport(),
+        return Iterables.filter(imports.getPackageImport(),
                 new Predicate<PackageImport>() {
 
                     @Override

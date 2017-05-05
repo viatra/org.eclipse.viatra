@@ -19,8 +19,8 @@ package org.eclipse.viatra.cep.vepl.ui.labeling
  */
 class VeplDescriptionLabelProvider extends org.eclipse.xtext.xbase.ui.labeling.XbaseDescriptionLabelProvider {
 
-	// Labels and icons can be computed like this:
-	
+    // Labels and icons can be computed like this:
+    
 //	override text(IEObjectDescription ele) {
 //		ele.name.toString
 //	}

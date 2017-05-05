@@ -43,50 +43,50 @@ import com.google.common.collect.ImmutableSet;
  *
  */
 public class ViatraViewersZestViewSupport extends
-		ViatraViewersJFaceViewSupport {
+        ViatraViewersJFaceViewSupport {
 
-	private final ModifiableZestContentViewer graphViewer;
-	
+    private final ModifiableZestContentViewer graphViewer;
+    
     public ModifiableZestContentViewer getGraphViewer() {
         return graphViewer;
     }
     
-	public ViatraViewersZestViewSupport(
-			IViewPart _owner,
-			ViewersComponentConfiguration _config,
-			IModelConnectorTypeEnum _scope,
-			ModifiableZestContentViewer _graphViewer) {
-		super(_owner, _config, _scope, _graphViewer);
-		this.graphViewer = _graphViewer;
-	}
+    public ViatraViewersZestViewSupport(
+            IViewPart _owner,
+            ViewersComponentConfiguration _config,
+            IModelConnectorTypeEnum _scope,
+            ModifiableZestContentViewer _graphViewer) {
+        super(_owner, _config, _scope, _graphViewer);
+        this.graphViewer = _graphViewer;
+    }
 
-	@Override
-	protected void init() {
-		super.init();
-		//this.getGraphViewer().setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-		this.getGraphViewer().setLayoutAlgorithm(new RadialLayoutAlgorithm());
-	}
-	
-	@Override
-	protected void bindModel() {
-		Assert.isNotNull(this.configuration);
-		Assert.isNotNull(this.configuration.getPatterns());
-		
-		if (state!=null && !state.isDisposed()) {
-    		state.dispose();
-    	}
-		ViatraQueryEngine engine = getEngine();
-		if (engine!=null) {
-			state = ViatraViewerDataModel.newViewerState(
-					engine, 
-	    			this.configuration.getPatterns(), 
-	    			this.configuration.getFilter(),  
-	    			ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-			ViatraGraphViewers.bind((graphViewer), state);
-		}
-	}
-	
-	public void createToolbar() {
+    @Override
+    protected void init() {
+        super.init();
+        //this.getGraphViewer().setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
+        this.getGraphViewer().setLayoutAlgorithm(new RadialLayoutAlgorithm());
+    }
+    
+    @Override
+    protected void bindModel() {
+        Assert.isNotNull(this.configuration);
+        Assert.isNotNull(this.configuration.getPatterns());
+        
+        if (state!=null && !state.isDisposed()) {
+            state.dispose();
+        }
+        ViatraQueryEngine engine = getEngine();
+        if (engine!=null) {
+            state = ViatraViewerDataModel.newViewerState(
+                    engine, 
+                    this.configuration.getPatterns(), 
+                    this.configuration.getFilter(),  
+                    ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+            ViatraGraphViewers.bind((graphViewer), state);
+        }
+    }
+    
+    public void createToolbar() {
         refreshGraph.setImageDescriptor(ViewersZestPlugin.imageDescriptorFromPlugin(ViewersZestPlugin.PLUGIN_ID, "icons/refresh.gif"));
         clearGraph.setImageDescriptor(ViewersZestPlugin.imageDescriptorFromPlugin(ViewersZestPlugin.PLUGIN_ID, "icons/clear.gif"));
 

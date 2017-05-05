@@ -156,10 +156,10 @@ public class SpecificationBuilder {
         IQuerySpecification<?> specification = getSpecification(pattern);
         if (specification == null) {
             try {
-				specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
-			} catch (QueryInitializationException e) {
-				throw new ViatraQueryException(e);
-			}
+                specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
+            } catch (QueryInitializationException e) {
+                throw new ViatraQueryException(e);
+            }
         }
         return specification;
     }
@@ -200,16 +200,16 @@ public class SpecificationBuilder {
             }
             // Updating bodies
             for (Pattern newPattern : newPatterns) {
-            	String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
-            	GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
-            	GenericEMFPatternPQuery pQuery = specification.getInternalQueryRepresentation();
+                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
+                GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
+                GenericEMFPatternPQuery pQuery = specification.getInternalQueryRepresentation();
                 try {
-                	buildAnnotations(newPattern, pQuery);
-                	buildBodies(newPattern, pQuery);
-            	} catch (ViatraQueryException e) {
-            		pQuery.addError(new PProblem(e, e.getShortMessage()));
+                    buildAnnotations(newPattern, pQuery);
+                    buildBodies(newPattern, pQuery);
+                } catch (ViatraQueryException e) {
+                    pQuery.addError(new PProblem(e, e.getShortMessage()));
                 } catch (RewriterException e) {
-                	pQuery.addError(new PProblem(e, e.getShortMessage()));
+                    pQuery.addError(new PProblem(e, e.getShortMessage()));
                 }
                 if (!PQueryStatus.ERROR.equals(pQuery.getStatus())) {
                     for (PQuery query : pQuery.getDirectReferredQueries()) {
@@ -223,7 +223,7 @@ public class SpecificationBuilder {
                 if (!patternMap.containsKey(patternFqn)) {
                     GenericQuerySpecification rejected = new GenericQuerySpecification(new GenericEMFPatternPQuery(rejectedPattern, true));
                     for (PProblem problem: sanitizer.getProblemByPattern(rejectedPattern)) 
-                    	rejected.getInternalQueryRepresentation().addError(problem);
+                        rejected.getInternalQueryRepresentation().addError(problem);
                     patternMap.put(patternFqn, rejected);
                     patternNameMap.put(patternFqn, rejectedPattern);
                     newSpecifications.add(rejected);
@@ -267,7 +267,7 @@ public class SpecificationBuilder {
         for (PatternBody body : pattern.getBodies()) {
             EPMToPBody acceptor = new EPMToPBody(pattern, query, patternMap);
             PBody pBody = transformer.transform(body, acceptor);
-			pBodies.add(pBody);
+            pBodies.add(pBody);
         }
         return pBodies;
     }

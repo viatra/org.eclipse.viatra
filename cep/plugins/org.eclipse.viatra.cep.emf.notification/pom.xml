@@ -10,14 +10,14 @@
     </parent>
   <artifactId>org.eclipse.viatra.cep.emf.notification</artifactId>
   <packaging>eclipse-plugin</packaging>
-	<build>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-			<resource>
-				<directory>src-gen</directory>
-			</resource>
-		</resources>
-	</build>
+    <build>
+        <resources>
+            <resource>
+                <directory>src</directory>
+            </resource>
+            <resource>
+                <directory>src-gen</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

@@ -33,79 +33,79 @@ import com.google.common.collect.Sets;
  */
 public class PProject extends POperation {
 
-	private Collection<PVariable> toVariables;
-	private boolean ordered;
-		
-	
-	public PProject(Set<PVariable> toVariables) {
-		super();
-		this.toVariables = toVariables;
-		this.ordered = false;
-	}
-	public PProject(List<PVariable> toVariables) {
-		super();
-		this.toVariables = toVariables;
-		this.ordered = true;
-	}
-	
-	public Collection<PVariable> getToVariables() {
-		return toVariables;
-	}
-	public boolean isOrdered() {		
-		return ordered;
-	}
-	
-	@Override
-	public Set<? extends PConstraint> getDeltaConstraints() {
-		return Collections.emptySet();
-	}
-	@Override
-	public int numParentSubPlans() {
-		return 1;
-	}
-	@Override
-	public void checkConsistency(SubPlan subPlan) {
-		super.checkConsistency(subPlan);
-		final SubPlan parentPlan = subPlan.getParentPlans().get(0);
-		Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(toVariables),
-				"Variables missing from project: "  + 
-					Joiner.on(',').join(Sets.difference(new HashSet<PVariable>(toVariables), parentPlan.getVisibleVariables())));
-	}
+    private Collection<PVariable> toVariables;
+    private boolean ordered;
+        
+    
+    public PProject(Set<PVariable> toVariables) {
+        super();
+        this.toVariables = toVariables;
+        this.ordered = false;
+    }
+    public PProject(List<PVariable> toVariables) {
+        super();
+        this.toVariables = toVariables;
+        this.ordered = true;
+    }
+    
+    public Collection<PVariable> getToVariables() {
+        return toVariables;
+    }
+    public boolean isOrdered() {		
+        return ordered;
+    }
+    
+    @Override
+    public Set<? extends PConstraint> getDeltaConstraints() {
+        return Collections.emptySet();
+    }
+    @Override
+    public int numParentSubPlans() {
+        return 1;
+    }
+    @Override
+    public void checkConsistency(SubPlan subPlan) {
+        super.checkConsistency(subPlan);
+        final SubPlan parentPlan = subPlan.getParentPlans().get(0);
+        Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(toVariables),
+                "Variables missing from project: "  + 
+                    Joiner.on(',').join(Sets.difference(new HashSet<PVariable>(toVariables), parentPlan.getVisibleVariables())));
+    }
 
-	@Override
-	public String getShortName() {
-		return String.format("PROJECT%s_{%s}", ordered? "!" : "", Joiner.on(",").join(toVariables));
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (ordered ? 1231 : 1237);
-		result = prime * result
-				+ ((toVariables == null) ? 0 : toVariables.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PProject))
-			return false;
-		PProject other = (PProject) obj;
-		if (ordered != other.ordered)
-			return false;
-		if (toVariables == null) {
-			if (other.toVariables != null)
-				return false;
-		} else if (!toVariables.equals(other.toVariables))
-			return false;
-		return true;
-	}
+    @Override
+    public String getShortName() {
+        return String.format("PROJECT%s_{%s}", ordered? "!" : "", Joiner.on(",").join(toVariables));
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (ordered ? 1231 : 1237);
+        result = prime * result
+                + ((toVariables == null) ? 0 : toVariables.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof PProject))
+            return false;
+        PProject other = (PProject) obj;
+        if (ordered != other.ordered)
+            return false;
+        if (toVariables == null) {
+            if (other.toVariables != null)
+                return false;
+        } else if (!toVariables.equals(other.toVariables))
+            return false;
+        return true;
+    }
 
 
-	
+    
 
 }

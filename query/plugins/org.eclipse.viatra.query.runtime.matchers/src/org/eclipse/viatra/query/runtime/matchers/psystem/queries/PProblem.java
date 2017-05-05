@@ -19,28 +19,28 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
  */
 public class PProblem {
 
-	private final String shortMessage;
-	private final Exception exception;
+    private final String shortMessage;
+    private final Exception exception;
 
-	public PProblem(String shortMessage) {
-		this(null, shortMessage);
-	}
-	public PProblem(QueryProcessingException exception) {
-		this(exception, exception.getShortMessage());
-	}
-	public PProblem(Exception exception, String shortMessage) {
-		super();
-		this.shortMessage = shortMessage;
-		this.exception = exception;
-	}
+    public PProblem(String shortMessage) {
+        this(null, shortMessage);
+    }
+    public PProblem(QueryProcessingException exception) {
+        this(exception, exception.getShortMessage());
+    }
+    public PProblem(Exception exception, String shortMessage) {
+        super();
+        this.shortMessage = shortMessage;
+        this.exception = exception;
+    }
 
-	public String getShortMessage() {
-		return shortMessage;
-	}
-	public Exception getException() {
-		return exception;
-	}
-	
-	
-	
+    public String getShortMessage() {
+        return shortMessage;
+    }
+    public Exception getException() {
+        return exception;
+    }
+    
+    
+    
 }

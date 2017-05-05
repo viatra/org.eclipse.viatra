@@ -48,7 +48,7 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider {
     public String getText(Object element) {
         @SuppressWarnings("restriction")
         String inherited = super.getText(element);
-		StringBuilder text = new StringBuilder(inherited == null? "" : inherited);
+        StringBuilder text = new StringBuilder(inherited == null? "" : inherited);
         if (element instanceof Item) {
             Item item = (Item) element;
             Object paramObject = item.getParamEObject();

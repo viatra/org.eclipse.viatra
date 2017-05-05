@@ -13,17 +13,17 @@ package org.eclipse.viatra.integration.evm.jdt.util
 import java.util.Set
 
 class JDTChangeFlagDecoder {
-	public static def ChangeFlag toChangeFlag(int value){
-		ChangeFlag.values.findFirst[it.value == value]
-	}
-	
-	public static def Set<ChangeFlag> toChangeFlags(int values) {
-		val result = newHashSet()
-		ChangeFlag.values.forEach[flag | 
-			if(values.bitwiseAnd(flag.value) != 0) {
-				result += flag
-			}
-		]
-		return result
-	}
+    public static def ChangeFlag toChangeFlag(int value){
+        ChangeFlag.values.findFirst[it.value == value]
+    }
+    
+    public static def Set<ChangeFlag> toChangeFlags(int values) {
+        val result = newHashSet()
+        ChangeFlag.values.forEach[flag | 
+            if(values.bitwiseAnd(flag.value) != 0) {
+                result += flag
+            }
+        ]
+        return result
+    }
 }

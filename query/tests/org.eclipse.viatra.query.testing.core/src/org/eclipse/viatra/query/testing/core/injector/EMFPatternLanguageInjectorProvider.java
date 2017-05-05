@@ -28,36 +28,36 @@ import com.google.inject.Injector;
 public class EMFPatternLanguageInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 
     protected GlobalStateMemento stateBeforeInjectorCreation;
-	protected GlobalStateMemento stateAfterInjectorCreation;
-	protected Injector injector;
+    protected GlobalStateMemento stateAfterInjectorCreation;
+    protected Injector injector;
 
-	static {
-		GlobalRegistries.initializeDefaults();
-	}
+    static {
+        GlobalRegistries.initializeDefaults();
+    }
 
-	public Injector getInjector()
-	{
-		if (injector == null) {
-			stateBeforeInjectorCreation = GlobalRegistries.makeCopyOfGlobalState();
-			this.injector = internalCreateInjector();
-			stateAfterInjectorCreation = GlobalRegistries.makeCopyOfGlobalState();
-		}
-		return injector;
-	}
+    public Injector getInjector()
+    {
+        if (injector == null) {
+            stateBeforeInjectorCreation = GlobalRegistries.makeCopyOfGlobalState();
+            this.injector = internalCreateInjector();
+            stateAfterInjectorCreation = GlobalRegistries.makeCopyOfGlobalState();
+        }
+        return injector;
+    }
 
-	protected Injector internalCreateInjector() {
-	    Injector newInjector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
-	    ViatraQueryLoggingUtil.setExternalLogger(newInjector.getInstance(Logger.class));
-	    EMFPatternLanguagePlugin.getInstance().addCompoundInjector(newInjector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+    protected Injector internalCreateInjector() {
+        Injector newInjector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+        ViatraQueryLoggingUtil.setExternalLogger(newInjector.getInstance(Logger.class));
+        EMFPatternLanguagePlugin.getInstance().addCompoundInjector(newInjector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
         return newInjector;
-	}
+    }
 
-	public void restoreRegistry() {
-		stateBeforeInjectorCreation.restoreGlobalState();
-	}
+    public void restoreRegistry() {
+        stateBeforeInjectorCreation.restoreGlobalState();
+    }
 
-	public void setupRegistry() {
-		getInjector();
-		stateAfterInjectorCreation.restoreGlobalState();
-	}
+    public void setupRegistry() {
+        getInjector();
+        stateAfterInjectorCreation.restoreGlobalState();
+    }
 }

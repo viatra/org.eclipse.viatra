@@ -21,22 +21,22 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewele
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 
 public class CreateBreakPointHandler extends AbstractHandler {
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		try {
-		    
-			LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(LocalSearchDebugView.ID);
-			ISelection selection = localSearchDebugView.getOperationListViewer().getSelection();
-			breakPointHandler(localSearchDebugView, (IStructuredSelection) selection);
-		} catch (PartInitException e) {
-			throw new ExecutionException("Error while creating breakpoint", e);
-		}
-		
-		return null;
-	}
+    
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        try {
+            
+            LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(LocalSearchDebugView.ID);
+            ISelection selection = localSearchDebugView.getOperationListViewer().getSelection();
+            breakPointHandler(localSearchDebugView, (IStructuredSelection) selection);
+        } catch (PartInitException e) {
+            throw new ExecutionException("Error while creating breakpoint", e);
+        }
+        
+        return null;
+    }
 
-	public void breakPointHandler(LocalSearchDebugView localSearchDebugView, IStructuredSelection thisSelection) throws PartInitException {
+    public void breakPointHandler(LocalSearchDebugView localSearchDebugView, IStructuredSelection thisSelection) throws PartInitException {
         if (thisSelection.size() != 1) {
             // when more than one operation is selected, place no breakpoints
             return;
@@ -44,9 +44,9 @@ public class CreateBreakPointHandler extends AbstractHandler {
         
         SearchOperationViewerNode selectedNode = (SearchOperationViewerNode) thisSelection.getFirstElement();
         selectedNode.setBreakpoint(!selectedNode.isBreakpoint());
-			
-		localSearchDebugView.refreshView();
-		localSearchDebugView.getOperationListViewer().setSelection(null);
-	}
-	
+            
+        localSearchDebugView.refreshView();
+        localSearchDebugView.getOperationListViewer().setSelection(null);
+    }
+    
 }

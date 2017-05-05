@@ -95,7 +95,7 @@ public class POperationCompiler {
     private List<ISearchOperation> operations;
     private Set<MatcherReference> dependencies = Sets.newHashSet();
     private Map<PConstraint, Set<Integer>> variableBindings;
-	private Map<PVariable, Integer> variableMappings;
+    private Map<PVariable, Integer> variableMappings;
     private final boolean baseIndexAvailable;
     private final EMFQueryRuntimeContext runtimeContext;
     private final IQueryBackend backend;
@@ -141,12 +141,12 @@ public class POperationCompiler {
         this.baseIndexAvailable = baseIndexAvailable;
     }
 
-	/**
+    /**
      * Compiles a plan of <code>POperation</code>s to a list of type <code>List&ltISearchOperation></code>
      * 
      * @param plan
      * @param boundParameters
-	 * @return an ordered list of POperations that make up the compiled search plan
+     * @return an ordered list of POperations that make up the compiled search plan
      * @throws QueryProcessingException 
      */
     public List<ISearchOperation> compile(SubPlan plan, Set<PParameter> boundParameters) throws QueryProcessingException {
@@ -301,11 +301,11 @@ public class POperationCompiler {
     }
     
     private void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
-    	final IInputKey inputKey = typeConstraint.getSupplierKey();
-		if (inputKey instanceof EClassTransitiveInstancesKey) {
-	        operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
-	        operations.add(new ScopeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), runtimeContext.getEmfScope()));
-		} else if (inputKey instanceof EStructuralFeatureInstancesKey) {
+        final IInputKey inputKey = typeConstraint.getSupplierKey();
+        if (inputKey instanceof EClassTransitiveInstancesKey) {
+            operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
+            operations.add(new ScopeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), runtimeContext.getEmfScope()));
+        } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
             int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
             int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
             operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition,
@@ -316,7 +316,7 @@ public class POperationCompiler {
         } else {
             String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
             throw new QueryProcessingException(msg, null, msg, null);
-	    }
+        }
     }
 
     private void createCheck(BinaryTransitiveClosure binaryTransitiveColsure, Map<PVariable, Integer> variableMapping) {
@@ -414,10 +414,10 @@ public class POperationCompiler {
     }
 
     private void createExtend(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
-    	final IInputKey inputKey = typeConstraint.getSupplierKey();
-    	if (inputKey instanceof EDataTypeInSlotsKey) {
-    	    if(baseIndexAvailable){
-    	        operations.add(new IterateOverEDatatypeInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)), ((EDataTypeInSlotsKey) inputKey).getEmfKey()));		        
+        final IInputKey inputKey = typeConstraint.getSupplierKey();
+        if (inputKey instanceof EDataTypeInSlotsKey) {
+            if(baseIndexAvailable){
+                operations.add(new IterateOverEDatatypeInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)), ((EDataTypeInSlotsKey) inputKey).getEmfKey()));		        
             } else {
                 int position = variableMapping.get(typeConstraint.getVariableInTuple(0));
                 operations
@@ -425,8 +425,8 @@ public class POperationCompiler {
                                 ((EDataTypeInSlotsKey) inputKey).getEmfKey(), runtimeContext.getEmfScope(), (LocalSearchBackend) backend));
                 operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
-    	} else if (inputKey instanceof EClassTransitiveInstancesKey) {
-		    if(baseIndexAvailable){
+        } else if (inputKey instanceof EClassTransitiveInstancesKey) {
+            if(baseIndexAvailable){
                 operations.add(new IterateOverEClassInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)),
                         ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
             } else {
@@ -437,14 +437,14 @@ public class POperationCompiler {
                                 ((EClassTransitiveInstancesKey) inputKey).getEmfKey(), runtimeContext.getEmfScope()));
                 operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
-	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
-	    	final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
-	    	
-	        int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
-	        int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
+        } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
+            final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
+            
+            int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
+            int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
 
-	        boolean fromBound = variableBindings.get(typeConstraint).contains(sourcePosition);
-	        boolean toBound = variableBindings.get(typeConstraint).contains(targetPosition);
+            boolean fromBound = variableBindings.get(typeConstraint).contains(sourcePosition);
+            boolean toBound = variableBindings.get(typeConstraint).contains(targetPosition);
 
             if (fromBound && !toBound) {
                 if (baseIndexAvailable) {
@@ -456,18 +456,18 @@ public class POperationCompiler {
                     operations.add(new ScopeCheck(targetPosition, runtimeContext.getEmfScope()));
                 }
             }
-	        else if(!fromBound && toBound){
-	            if(baseIndexAvailable){
-	                operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
-	            } else {
+            else if(!fromBound && toBound){
+                if(baseIndexAvailable){
+                    operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
+                } else {
                     operations
                             .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(
                                     sourcePosition, targetPosition, feature));
                     operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
                 }
-	        } else {
-	            // TODO Elaborate solution based on the navigability of edges
-	            // As of now a static solution is implemented
+            } else {
+                // TODO Elaborate solution based on the navigability of edges
+                // As of now a static solution is implemented
                 if (baseIndexAvailable) {
                     operations.add(new IterateOverEClassInstances(sourcePosition, feature.getEContainingClass()));
                     operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
@@ -483,9 +483,9 @@ public class POperationCompiler {
                 }
             }
 
-	    } else {
-	    	throw new IllegalArgumentException(UNSUPPORTED_TYPE_MESSAGE + inputKey);
-	    }        
+        } else {
+            throw new IllegalArgumentException(UNSUPPORTED_TYPE_MESSAGE + inputKey);
+        }        
     }
 
     private void createExtend(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
@@ -528,9 +528,9 @@ public class POperationCompiler {
         return dependencies;
     }
     /**
-	 * @return the cached variable bindings for the previously created plan
-	 */
-	public Map<PVariable, Integer> getVariableMappings() {
-		return variableMappings;
-	}
+     * @return the cached variable bindings for the previously created plan
+     */
+    public Map<PVariable, Integer> getVariableMappings() {
+        return variableMappings;
+    }
 }

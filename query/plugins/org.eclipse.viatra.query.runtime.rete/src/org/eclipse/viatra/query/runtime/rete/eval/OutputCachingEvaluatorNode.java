@@ -26,19 +26,19 @@ import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
  *
  */
 public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements Clearable {
-	
+    
     /**
      * @deprecated use {@link EvaluationCore}
      */
     @Deprecated
-	public OutputCachingEvaluatorNode(ReteContainer reteContainer,
-			Logger logger, IExpressionEvaluator evaluator,
+    public OutputCachingEvaluatorNode(ReteContainer reteContainer,
+            Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
-		super(reteContainer, logger, evaluator, parameterPositions, sourceTupleWidth);
-		reteContainer.registerClearable(this);
-	}
-	
-	
+        super(reteContainer, logger, evaluator, parameterPositions, sourceTupleWidth);
+        reteContainer.registerClearable(this);
+    }
+    
+    
     /**
      * @since 1.5
      */
@@ -50,37 +50,37 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
 
 
     Map<Tuple, Tuple> outputCache = CollectionsFactory.getMap();
-	//Map<Tuple, SoftReference<Object>> opportunisticCacheResults = new WeakHashMap<Tuple, SoftReference<Object>>();
-	
-	@Override
-	public void clear() {
-		outputCache.clear();
-	}
+    //Map<Tuple, SoftReference<Object>> opportunisticCacheResults = new WeakHashMap<Tuple, SoftReference<Object>>();
+    
+    @Override
+    public void clear() {
+        outputCache.clear();
+    }
 
-	@Override
-	public void pullInto(Collection<Tuple> collector) {
-		for (Tuple output : outputCache.values()) {
-			collector.add(output);
-		}
-	}
+    @Override
+    public void pullInto(Collection<Tuple> collector) {
+        for (Tuple output : outputCache.values()) {
+            collector.add(output);
+        }
+    }
 
-	@Override
-	public void update(Direction direction, Tuple updateElement) {
-		switch (direction) {
-			case INSERT:
-				final Tuple insertedOutput = core.performEvaluation(updateElement);
-				if (insertedOutput != null) {
-					outputCache.put(updateElement, insertedOutput);
-					propagateUpdate(direction, insertedOutput);
-				}
-				break;
-			case REVOKE:
-				final Tuple revokedOutput = outputCache.remove(updateElement);
-				if (revokedOutput != null) {
-					propagateUpdate(direction, revokedOutput);
-				}				
-		}
-	}
+    @Override
+    public void update(Direction direction, Tuple updateElement) {
+        switch (direction) {
+            case INSERT:
+                final Tuple insertedOutput = core.performEvaluation(updateElement);
+                if (insertedOutput != null) {
+                    outputCache.put(updateElement, insertedOutput);
+                    propagateUpdate(direction, insertedOutput);
+                }
+                break;
+            case REVOKE:
+                final Tuple revokedOutput = outputCache.remove(updateElement);
+                if (revokedOutput != null) {
+                    propagateUpdate(direction, revokedOutput);
+                }				
+        }
+    }
 
 
     /**
@@ -104,7 +104,7 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
         return null;
     }
 
-	// TODO
+    // TODO
 //    @Override
 //    public ProjectionIndexer constructIndex(TupleMask mask) {
 //        if (Options.employTrivialIndexers) {

@@ -17,15 +17,15 @@ import org.eclipse.viatra.query.tooling.cpp.localsearch.api.IGeneratorOutputProv
  * @author Robert Doczi
  */
 class DefaultSerializer implements ISerializer {
-	
-	override serialize(String folderPath, IGeneratorOutputProvider provider, IFileAccessor fileAccessor) {
-		provider.output.forEach[
-			fileAccessor.createFile('''«folderPath»«File.separator»«it.folderPath»''', fileName, content)
-		]
-	}
-	
-	override createFolder(String folderPath, String folderName, IFileAccessor fileAccessor) {
-		fileAccessor.createFolder(folderPath, folderName)
-	}
-	
+    
+    override serialize(String folderPath, IGeneratorOutputProvider provider, IFileAccessor fileAccessor) {
+        provider.output.forEach[
+            fileAccessor.createFile('''«folderPath»«File.separator»«it.folderPath»''', fileName, content)
+        ]
+    }
+    
+    override createFolder(String folderPath, String folderName, IFileAccessor fileAccessor) {
+        fileAccessor.createFolder(folderPath, folderName)
+    }
+    
 }

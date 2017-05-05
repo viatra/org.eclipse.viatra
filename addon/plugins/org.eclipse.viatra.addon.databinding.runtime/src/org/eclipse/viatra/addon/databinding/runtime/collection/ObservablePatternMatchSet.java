@@ -172,15 +172,15 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             final SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(item), Collections.EMPTY_SET);
             Realm realm = getRealm();
             Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
-			realm.exec(new Runnable() {
+            realm.exec(new Runnable() {
 
-				@Override
-				public void run() {
-				    if (!isDisposed()) {
-				        fireSetChange(diff);
-				    }
-				}
-			});
+                @Override
+                public void run() {
+                    if (!isDisposed()) {
+                        fireSetChange(diff);
+                    }
+                }
+            });
         }
     
         @Override
@@ -194,15 +194,15 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             final SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(item));
             Realm realm = getRealm();
             Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
-			realm.exec(new Runnable() {
+            realm.exec(new Runnable() {
 
-				@Override
-				public void run() {
-				    if (!isDisposed()) {
-				        fireSetChange(diff);
-				    }
-				}
-			});
+                @Override
+                public void run() {
+                    if (!isDisposed()) {
+                        fireSetChange(diff);
+                    }
+                }
+            });
         }
 
         @Override

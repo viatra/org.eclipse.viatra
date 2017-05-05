@@ -18,11 +18,11 @@ import com.google.common.collect.Lists
  * 
  */
 public class TestLoopIterable extends BaseProvider implements IIterableProvider{
-	override getIterable() {
-		var list = Lists.newArrayList
-		list.add("1")
-		list.add("2")
-		return list
-	}
-	
+    override getIterable() {
+        var list = Lists.newArrayList
+        list.add("1")
+        list.add("2")
+        return list
+    }
+    
 }

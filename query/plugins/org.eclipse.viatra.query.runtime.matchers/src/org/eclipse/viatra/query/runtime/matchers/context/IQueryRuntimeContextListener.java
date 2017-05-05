@@ -18,12 +18,12 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  *
  */
 public interface IQueryRuntimeContextListener {
-	
-	/**
-	 * The given tuple was inserted into or removed from the input relation indicated by the given key.
-	 * @param key the key identifying the input relation that was updated
-	 * @param updateTuple the tuple that was inserted or removed
-	 * @param isInsertion true if it was an insertion, false otherwise.
-	 */
-	public void update(IInputKey key, Tuple updateTuple, boolean isInsertion);
+    
+    /**
+     * The given tuple was inserted into or removed from the input relation indicated by the given key.
+     * @param key the key identifying the input relation that was updated
+     * @param updateTuple the tuple that was inserted or removed
+     * @param isInsertion true if it was an insertion, false otherwise.
+     */
+    public void update(IInputKey key, Tuple updateTuple, boolean isInsertion);
 }

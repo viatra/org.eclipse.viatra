@@ -29,18 +29,18 @@ import org.junit.runner.RunWith
 @RunWith(typeof(XtextRunner))
 abstract class VeplTestCase {
 
-	@Inject
-	protected extension ParseHelper<EventModel> parser
+    @Inject
+    protected extension ParseHelper<EventModel> parser
 
-	@Inject
-	protected extension ValidationTestHelper
+    @Inject
+    protected extension ValidationTestHelper
 
-	def protected parse(CharSequence text) {
-		parser.parse(packageDeclaration + text)
-	}
+    def protected parse(CharSequence text) {
+        parser.parse(packageDeclaration + text)
+    }
 
-	val packageDeclaration = '''
-		package org.eclipse.viatra.cep.vepl.tests
-		
-	'''
+    val packageDeclaration = '''
+        package org.eclipse.viatra.cep.vepl.tests
+        
+    '''
 }

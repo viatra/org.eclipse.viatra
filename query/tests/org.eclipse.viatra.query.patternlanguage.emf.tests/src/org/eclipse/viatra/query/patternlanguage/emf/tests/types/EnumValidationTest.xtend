@@ -30,99 +30,99 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class EnumValidationTest extends AbstractValidatorTest {
-	
-	@Inject
-	ParseHelper<PatternModel> parseHelper
-	@Inject
-	EMFPatternLanguageJavaValidator validator
-	@Inject
-	Injector injector
-	
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
-	@Inject extension ValidationTestHelper
-	
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
-	
-	@Test
-	def validateEnum() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/GenModel"
+    
+    @Inject
+    ParseHelper<PatternModel> parseHelper
+    @Inject
+    EMFPatternLanguageJavaValidator validator
+    @Inject
+    Injector injector
+    
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    
+    @Inject extension ValidationTestHelper
+    
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
+    
+    @Test
+    def validateEnum() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model : GenModel) = {
-				GenModel(Model);
-				GenModel.runtimeVersion(Model, ::EMF23);
-			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
-	}
-	@Test
-	def validateQualifiedEnum() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/GenModel"
+            pattern resolutionTest(Model : GenModel) = {
+                GenModel(Model);
+                GenModel.runtimeVersion(Model, ::EMF23);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
+    @Test
+    def validateQualifiedEnum() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model : GenModel) = {
-				GenModel(Model);
-				GenModel.runtimeVersion(Model, GenRuntimeVersion::EMF23);
-			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
-	}
-	@Test
-	def validateQualifiedEnumWithEquality() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/GenModel"
+            pattern resolutionTest(Model : GenModel) = {
+                GenModel(Model);
+                GenModel.runtimeVersion(Model, GenRuntimeVersion::EMF23);
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
+    @Test
+    def validateQualifiedEnumWithEquality() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model: GenModel) = {
-				GenModel(Model);
-				GenModel.runtimeVersion(Model, Version);
-				Version == GenRuntimeVersion::EMF23;
-			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
-	}
+            pattern resolutionTest(Model: GenModel) = {
+                GenModel(Model);
+                GenModel.runtimeVersion(Model, Version);
+                Version == GenRuntimeVersion::EMF23;
+            }
+        ') as PatternModel
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
 
-	@Test
-	def validateIncorrectEnum() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/GenModel"
+    @Test
+    def validateIncorrectEnum() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model : GenModel) = {
-				GenModel(Model);
-				GenModel.runtimeVersion(Model, GenDelegationKind::None);
-			}
-		') as PatternModel
-		tester.validate(model).assertError(EMFIssueCodes::INVALID_ENUM_LITERAL)
-	}
-	@Test
-	def validateEnumConstraintPatternCall() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/GenModel"
+            pattern resolutionTest(Model : GenModel) = {
+                GenModel(Model);
+                GenModel.runtimeVersion(Model, GenDelegationKind::None);
+            }
+        ') as PatternModel
+        tester.validate(model).assertError(EMFIssueCodes::INVALID_ENUM_LITERAL)
+    }
+    @Test
+    def validateEnumConstraintPatternCall() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/GenModel"
 
 
-			pattern runtimeVersion(Version) = {
-				GenRuntimeVersion(Version);
-			}
+            pattern runtimeVersion(Version) = {
+                GenRuntimeVersion(Version);
+            }
 
-			pattern call(c : GenModel) = {
-				GenModel(c);
-				find runtimeVersion(GenRuntimeVersion::EMF24);
-			}
-		') as PatternModel
-		tester.validate(model).assertAll(
-		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
-	
+            pattern call(c : GenModel) = {
+                GenModel(c);
+                find runtimeVersion(GenRuntimeVersion::EMF24);
+            }
+        ') as PatternModel
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
+    
 }

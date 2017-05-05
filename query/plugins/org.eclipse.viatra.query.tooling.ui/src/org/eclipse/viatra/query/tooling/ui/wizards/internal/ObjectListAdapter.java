@@ -29,12 +29,12 @@ public class ObjectListAdapter implements IListAdapter<ObjectParameter> {
 
     private ListDialogField<String> importList;
     private NewVqlFileWizardPatternConfigurationPage page;
-	private ITargetPlatformMetamodelLoader metamodelLoader;
+    private ITargetPlatformMetamodelLoader metamodelLoader;
 
     public ObjectListAdapter(NewVqlFileWizardPatternConfigurationPage page, ListDialogField<String> importList, ITargetPlatformMetamodelLoader metamodelLoader) {
         this.importList = importList;
         this.page = page;
-		this.metamodelLoader = metamodelLoader;
+        this.metamodelLoader = metamodelLoader;
     }
 
     @Override

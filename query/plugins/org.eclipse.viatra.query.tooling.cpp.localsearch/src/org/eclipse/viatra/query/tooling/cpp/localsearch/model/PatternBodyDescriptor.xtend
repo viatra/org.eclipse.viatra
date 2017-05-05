@@ -20,35 +20,35 @@ import static com.google.common.base.Preconditions.*
  * @author Robert Doczi
  */
 class PatternBodyDescriptor {
-	
-	@Accessors val PBody pBody
-	@Accessors val MatchingFrameDescriptor matchingFrame
-	val List<ISearchOperationDescriptor> searchOperations
-	@Accessors val int index
-	
-	new(PBody pBody, int index, MatchingFrameDescriptor matchingFrame, List<ISearchOperationDescriptor> searchOperations) {
-		checkNotNull(pBody)
-		
-		this.pBody = pBody
-		this.matchingFrame = matchingFrame
-		this.searchOperations = searchOperations
-		this.index = index
-	}
-	
-	def void addSearchOperation(ISearchOperationDescriptor searchOperation) {
-		checkNotNull(searchOperation)
-		
-		searchOperations += searchOperation
-	}
+    
+    @Accessors val PBody pBody
+    @Accessors val MatchingFrameDescriptor matchingFrame
+    val List<ISearchOperationDescriptor> searchOperations
+    @Accessors val int index
+    
+    new(PBody pBody, int index, MatchingFrameDescriptor matchingFrame, List<ISearchOperationDescriptor> searchOperations) {
+        checkNotNull(pBody)
+        
+        this.pBody = pBody
+        this.matchingFrame = matchingFrame
+        this.searchOperations = searchOperations
+        this.index = index
+    }
+    
+    def void addSearchOperation(ISearchOperationDescriptor searchOperation) {
+        checkNotNull(searchOperation)
+        
+        searchOperations += searchOperation
+    }
 
-	def getSearchOperations() {
-		return searchOperations.unmodifiableView
-	}
-	
-	override toString() '''
-		«FOR so : searchOperations»
-			«so»
-		«ENDFOR»
-	'''
-	
+    def getSearchOperations() {
+        return searchOperations.unmodifiableView
+    }
+    
+    override toString() '''
+        «FOR so : searchOperations»
+            «so»
+        «ENDFOR»
+    '''
+    
 }

@@ -17,12 +17,12 @@ package org.eclipse.viatra.integration.mwe2.mwe2impl
  * @author Peter Lunk
  */
 class DoWhileLoop extends WhileLoop{
-		
-	override void execute() {
-		do{
-			step.forEach[
-				execute
-			]
-		}while(condition.apply());
-	}
+        
+    override void execute() {
+        do{
+            step.forEach[
+                execute
+            ]
+        }while(condition.apply());
+    }
 }

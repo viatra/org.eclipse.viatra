@@ -98,13 +98,13 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
 
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-    	if (deferringVariables != null) {
-    		// FAIL instead of hopeless attempt to fix
-    		// if (deferringVariables.remove(obsolete)) deferringVariables.add(replacement);
-    		throw new IllegalStateException("Cannot replace variables on " + this
-    				+ " when deferring variables have already been identified.");
-    	}
-    	actualParametersTuple = actualParametersTuple.replaceAll(obsolete, replacement);
+        if (deferringVariables != null) {
+            // FAIL instead of hopeless attempt to fix
+            // if (deferringVariables.remove(obsolete)) deferringVariables.add(replacement);
+            throw new IllegalStateException("Cannot replace variables on " + this
+                    + " when deferring variables have already been identified.");
+        }
+        actualParametersTuple = actualParametersTuple.replaceAll(obsolete, replacement);
         doDoReplaceVariables(obsolete, replacement);
     }
 

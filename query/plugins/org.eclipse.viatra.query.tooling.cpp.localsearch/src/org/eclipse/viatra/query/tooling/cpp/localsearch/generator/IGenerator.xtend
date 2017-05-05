@@ -14,11 +14,11 @@ package org.eclipse.viatra.query.tooling.cpp.localsearch.generator
  * @author Robert Doczi
  */
 interface IGenerator {
-	def void initialize()
+    def void initialize()
 
-	def CharSequence compile()
+    def CharSequence compile()
 
-	def CharSequence compile(StringBuilder setupCode)
-	
-	def String getFileName()
+    def CharSequence compile(StringBuilder setupCode)
+    
+    def String getFileName()
 }

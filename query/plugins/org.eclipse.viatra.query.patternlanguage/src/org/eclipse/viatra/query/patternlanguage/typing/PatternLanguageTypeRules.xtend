@@ -134,9 +134,9 @@ class PatternLanguageTypeRules {
             //Unresolved aggregator type, not a type error
             return
         }
-   		val values = AggregatorUtil.getAllAggregatorVariables(reference)
-   		if (values.size == 0) {
-   		    if (AggregatorUtil.mustHaveAggregatorVariables(reference)) {
+           val values = AggregatorUtil.getAllAggregatorVariables(reference)
+           if (values.size == 0) {
+               if (AggregatorUtil.mustHaveAggregatorVariables(reference)) {
                 //Incorrect aggregation; reported separately
                 return;
             }
@@ -151,7 +151,7 @@ class PatternLanguageTypeRules {
             } 
             val returnType = (returnTypes).get(0)
             information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(returnType.identifier)))
-   		} else {
+           } else {
             if (values.size != 1 || !AggregatorUtil.mustHaveAggregatorVariables(reference)) {
                 //Incorrect aggregation; reported separately
                 return;
@@ -173,7 +173,7 @@ class PatternLanguageTypeRules {
                     new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier)
                 ))
             }
-   		}    
+           }    
    }
    
    def dispatch void inferTypes(Expression reference, TypeInformation information) {

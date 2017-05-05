@@ -102,7 +102,7 @@ public abstract class ProjectGenerationHelper {
      * @param project
      */
     public static boolean isOpenPDEProject(IProject project){
-    	return project.exists() && project.isOpen() && (PDE.hasPluginNature(project));
+        return project.exists() && project.isOpen() && (PDE.hasPluginNature(project));
     }
     
     /**
@@ -111,8 +111,8 @@ public abstract class ProjectGenerationHelper {
      * @param project
      */
     public static void checkOpenPDEProject(IProject project){
-    	Preconditions.checkArgument(isOpenPDEProject(project),
-        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+        Preconditions.checkArgument(isOpenPDEProject(project),
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
     }
  
     /**
@@ -327,7 +327,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void ensureBundleDependenciesAndPackageImports(IProject project, final List<String> dependencies, final List<String> importPackages,
             IProgressMonitor monitor) throws CoreException {
-    	checkOpenPDEProject(project);
+        checkOpenPDEProject(project);
         if (dependencies.isEmpty() && importPackages.isEmpty()) {
             return;
         }
@@ -372,9 +372,9 @@ public abstract class ProjectGenerationHelper {
      * @since 1.5
      */
     public static void replaceBundleDependencies(IProject project, 
-    		final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions, IProgressMonitor monitor) throws CoreException{
-    	checkOpenPDEProject(project);
-    	BundleContext context = null;
+            final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions, IProgressMonitor monitor) throws CoreException{
+        checkOpenPDEProject(project);
+        BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
             context = ViatraQueryGeneratorPlugin.getContext();
@@ -401,39 +401,39 @@ public abstract class ProjectGenerationHelper {
      * @param replacedDependencies
      */
     public static void replaceBundleDependencies(IBundleProjectService service, IBundleProjectDescription bundleDesc, 
-    		final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions){
-    	
-    	IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
-    	
-    	Set<String> toRemove = new HashSet<String>();
-    	Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<IRequiredBundleDescription>();
-    	
-    	for(IRequiredBundleDescription r : existingDependencies){
-    		String id = r.getName();
-    		String replacedId = replacedDependencies.get(id); 
-    		if (replacedId != null){
-    			VersionRange v = r.getVersionRange();
-    			toRemove.add(id);
-    			if (v != null){
-    				v = versions.get(replacedId);
-    			}
-    			toAdd.add(service.newRequiredBundle(replacedId, v, r.isOptional(), r.isExported()));
-    		}
-    	}
-    	
-    	if (isBeforeKepler()){
-    		// We can't remove existing entries with this API. Just add new entries.
-    		bundleDesc.setRequiredBundles(toAdd.toArray(new IRequiredBundleDescription[toAdd.size()]));
-    	}else{
-    		List<IRequiredBundleDescription> dependencies = new LinkedList<IRequiredBundleDescription>();
-    		for(IRequiredBundleDescription r : existingDependencies){
-    			if (!toRemove.contains(r.getName())){
-    				dependencies.add(r);
-    			}
-    		}
-    		dependencies.addAll(toAdd);
-    		bundleDesc.setRequiredBundles(dependencies.toArray(new IRequiredBundleDescription[dependencies.size()]));
-    	}
+            final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions){
+        
+        IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
+        
+        Set<String> toRemove = new HashSet<String>();
+        Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<IRequiredBundleDescription>();
+        
+        for(IRequiredBundleDescription r : existingDependencies){
+            String id = r.getName();
+            String replacedId = replacedDependencies.get(id); 
+            if (replacedId != null){
+                VersionRange v = r.getVersionRange();
+                toRemove.add(id);
+                if (v != null){
+                    v = versions.get(replacedId);
+                }
+                toAdd.add(service.newRequiredBundle(replacedId, v, r.isOptional(), r.isExported()));
+            }
+        }
+        
+        if (isBeforeKepler()){
+            // We can't remove existing entries with this API. Just add new entries.
+            bundleDesc.setRequiredBundles(toAdd.toArray(new IRequiredBundleDescription[toAdd.size()]));
+        }else{
+            List<IRequiredBundleDescription> dependencies = new LinkedList<IRequiredBundleDescription>();
+            for(IRequiredBundleDescription r : existingDependencies){
+                if (!toRemove.contains(r.getName())){
+                    dependencies.add(r);
+                }
+            }
+            dependencies.addAll(toAdd);
+            bundleDesc.setRequiredBundles(dependencies.toArray(new IRequiredBundleDescription[dependencies.size()]));
+        }
     }
     
     
@@ -482,11 +482,11 @@ public abstract class ProjectGenerationHelper {
      * @return True if the actual runtime context is older than eclipse Kepler release
      */
     private static boolean isBeforeKepler(){
-    	if (isBeforeKeplerValue == null){
-    		final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
-    		isBeforeKeplerValue = pdeVersion.compareTo(new Version(3, 9, 0)) < 0;
-    	}
-    	return isBeforeKeplerValue;
+        if (isBeforeKeplerValue == null){
+            final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
+            isBeforeKeplerValue = pdeVersion.compareTo(new Version(3, 9, 0)) < 0;
+        }
+        return isBeforeKeplerValue;
     }
     
     /**
@@ -538,7 +538,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensurePackageExports(IProject project, final Collection<String> exports, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (exports.isEmpty()) {
             return;
         }
@@ -571,7 +571,7 @@ public abstract class ProjectGenerationHelper {
     public static void removePackageExports(IProject project, final List<String> dependencies, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (dependencies.isEmpty()) {
             return;
         }
@@ -670,7 +670,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensureExtensions(IProject project, Iterable<ExtensionData> contributedExtensions,
             Iterable<Pair<String, String>> removedExtensions, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
 
         if (StringExtensions.isNullOrEmpty(project.getName())) {
             return;
@@ -754,7 +754,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void ensureSourceFolders(IProject project, List<String> requiredSourceFolders, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {

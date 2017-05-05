@@ -33,60 +33,60 @@ import com.google.common.collect.ImmutableMap;
  *
  */
 public class QueryEvaluationHint {
-	
-	final IQueryBackendFactory queryBackendFactory; 
-	@SuppressWarnings("rawtypes")
+    
+    final IQueryBackendFactory queryBackendFactory; 
+    @SuppressWarnings("rawtypes")
     final Map<QueryHintOption, Object> backendHintSettings;
-	
+    
     /**
-	 * Specifies the suggested query backend, and value settings for additional backend-specific options. Both parameters are optional (can be null).
-	 * 
-	 * @param backendHintSettings each entry in the map overrides backend-specific options regarding query evaluation (null-valued map entries permitted to erase hints); passing null means default options associated with the query
+     * Specifies the suggested query backend, and value settings for additional backend-specific options. Both parameters are optional (can be null).
+     * 
+     * @param backendHintSettings each entry in the map overrides backend-specific options regarding query evaluation (null-valued map entries permitted to erase hints); passing null means default options associated with the query
      * @param queryBackendFactory overrides the query evaluator algorithm; passing null retains the default algorithm associated with the query
-	 * @since 1.5
-	 */
-	@SuppressWarnings("rawtypes") 
-	public QueryEvaluationHint(
-			Map<QueryHintOption, Object> backendHintSettings, 
-			IQueryBackendFactory queryBackendFactory) {
-		super();
-		this.queryBackendFactory = queryBackendFactory;
-		this.backendHintSettings = backendHintSettings == null ? 
-		        Collections.<QueryHintOption, Object>emptyMap() : 
-		            ImmutableMap.copyOf(backendHintSettings);
-	}
-	
-	/**
-	 * @deprecated As of 1.5, use {@link #QueryEvaluationHint(Map, IQueryBackendFactory)} instead. 
-	 * String-keyed hint setting map will be ignored.
-	 */
+     * @since 1.5
+     */
+    @SuppressWarnings("rawtypes") 
+    public QueryEvaluationHint(
+            Map<QueryHintOption, Object> backendHintSettings, 
+            IQueryBackendFactory queryBackendFactory) {
+        super();
+        this.queryBackendFactory = queryBackendFactory;
+        this.backendHintSettings = backendHintSettings == null ? 
+                Collections.<QueryHintOption, Object>emptyMap() : 
+                    ImmutableMap.copyOf(backendHintSettings);
+    }
+    
+    /**
+     * @deprecated As of 1.5, use {@link #QueryEvaluationHint(Map, IQueryBackendFactory)} instead. 
+     * String-keyed hint setting map will be ignored.
+     */
     public QueryEvaluationHint(
             IQueryBackendFactory queryBackendFactory, 
             Map<String, Object> backendHints) {
         this(null, queryBackendFactory);
     }
-	
-	/**
-	 * A suggestion for choosing the query evaluator algorithm. 
-	 * 
-	 * <p> Can be null.
-	 */
-	public IQueryBackendFactory getQueryBackendFactory() {
-		return queryBackendFactory;
-	}
+    
+    /**
+     * A suggestion for choosing the query evaluator algorithm. 
+     * 
+     * <p> Can be null.
+     */
+    public IQueryBackendFactory getQueryBackendFactory() {
+        return queryBackendFactory;
+    }
 
-	/**
-	 * Each entry in the map overrides backend-specific options regarding query evaluation. 
-	 * 
-	 * <p>The map can be null if empty. Null-valued map entries are also permitted to erase hints. 
-	 * 
-	 * @deprecated As of 1.5, string keys are no longer available. Use {@link QueryHintOption} instead
-	 */
-	public Map<String, Object> getBackendHints() {
-		return Collections.emptyMap();
-	}
-	
-	/**
+    /**
+     * Each entry in the map overrides backend-specific options regarding query evaluation. 
+     * 
+     * <p>The map can be null if empty. Null-valued map entries are also permitted to erase hints. 
+     * 
+     * @deprecated As of 1.5, string keys are no longer available. Use {@link QueryHintOption} instead
+     */
+    public Map<String, Object> getBackendHints() {
+        return Collections.emptyMap();
+    }
+    
+    /**
      * Each entry in the immutable map overrides backend-specific options regarding query evaluation. 
      * 
      * <p>The map is non-null, even if empty. 
@@ -100,13 +100,13 @@ public class QueryEvaluationHint {
     }
 
 
-	/**
-	 * Override values in this hint and return a consolidated instance.
-	 * 
-	 * @since 1.4
-	 */
-	public QueryEvaluationHint overrideBy(QueryEvaluationHint overridingHint){
-	    if (overridingHint == null)
+    /**
+     * Override values in this hint and return a consolidated instance.
+     * 
+     * @since 1.4
+     */
+    public QueryEvaluationHint overrideBy(QueryEvaluationHint overridingHint){
+        if (overridingHint == null)
             return this;
         
         IQueryBackendFactory factory = this.getQueryBackendFactory();
@@ -119,8 +119,8 @@ public class QueryEvaluationHint {
             hints.putAll(overridingHint.getBackendHintSettings());
         
         return new QueryEvaluationHint(hints, factory);
-	}
-	
+    }
+    
     /**
      * Returns whether the given hint option is overridden.
      * @since 1.5
@@ -148,20 +148,20 @@ public class QueryEvaluationHint {
     }
    
     
-	
-	/**
-	 * Extract the requested capabilities
+    
+    /**
+     * Extract the requested capabilities
      * @since 1.4
      */
-	public IMatcherCapability calculateRequiredCapability(PQuery query){
-	    return queryBackendFactory.calculateRequiredCapability(query, this);
-	}
+    public IMatcherCapability calculateRequiredCapability(PQuery query){
+        return queryBackendFactory.calculateRequiredCapability(query, this);
+    }
 
 
-	
-	@Override
+    
+    @Override
     public int hashCode() {
-	    return Objects.hash(backendHintSettings, queryBackendFactory);
+        return Objects.hash(backendHintSettings, queryBackendFactory);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class QueryEvaluationHint {
     }
 
     @Override
-	public String toString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         
         if (getQueryBackendFactory() != null)
@@ -199,5 +199,5 @@ public class QueryEvaluationHint {
         
         final String result = sb.toString();
         return result.isEmpty() ? "defaults" : result;
-	}
+    }
 }

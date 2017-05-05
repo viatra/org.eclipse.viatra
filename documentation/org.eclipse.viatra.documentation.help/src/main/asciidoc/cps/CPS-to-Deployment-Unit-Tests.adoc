@@ -28,9 +28,9 @@ All specification related tests extend the `CPS2DepTest` class, which defines so
 
 ```xtend
 class CPS2DepTest {
-	protected extension Logger logger = Logger.getLogger("cps.xform.CPS2DepTest")
-	protected extension CPSTransformationWrapper xform
-	protected extension CPSModelBuilderUtil modelBuilder
+    protected extension Logger logger = Logger.getLogger("cps.xform.CPS2DepTest")
+    protected extension CPSTransformationWrapper xform
+    protected extension CPSModelBuilderUtil modelBuilder
 ```
 
 A simple test case is structured as follows:
@@ -43,7 +43,7 @@ def hostIncremental() {
  
  // use model builder to create initial model
  val cps2dep = prepareEmptyModel(testId) 
- 		
+         
  // use transformation wrapper to initialize (e.g. create rules)
  cps2dep.initializeTransformation
  // use transformation wrapper to execute
@@ -56,7 +56,7 @@ def hostIncremental() {
  
  // check results
  cps2dep.assertHostMapping(instance)
-	
+    
  info("END TEST: " + testId)
 }
 ```
@@ -75,7 +75,7 @@ def specificInputModel(){
   val cpsUri = "file://my-cps-git-location/models/org.eclipse.viatra.query.examples.cps.instances/example.cyberphysicalsystem"
   
   val cps2dep = prepareCPSModel(cpsUri)
-  		
+          
   cps2dep.initializeTransformation
   executeTransformation
 

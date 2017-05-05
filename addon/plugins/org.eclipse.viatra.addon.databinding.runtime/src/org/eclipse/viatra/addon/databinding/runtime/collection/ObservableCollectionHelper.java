@@ -126,7 +126,7 @@ public final class ObservableCollectionHelper {
 
     protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(ViatraQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
         RuleEngine ruleEngine = getRuleEngine(engine);
-		ruleEngine.addRule(specification, filter);
+        ruleEngine.addRule(specification, filter);
         fireActivations(ruleEngine, specification, filter);
         return ruleEngine;
     }
@@ -157,12 +157,12 @@ public final class ObservableCollectionHelper {
      * @param filter
      */
     static <Match extends IPatternMatch> void fireActivations(final RuleEngine ruleEngine, final RuleSpecification<Match> specification, final EventFilter<Match> filter) {
-    	Set<Activation<Match>> activations = ruleEngine.getActivations(specification, filter);
-    	Context context = Context.create();
-    	
-    	for (Activation<Match> activation : activations) {
-    		activation.fire(context);
-    	}
+        Set<Activation<Match>> activations = ruleEngine.getActivations(specification, filter);
+        Context context = Context.create();
+        
+        for (Activation<Match> activation : activations) {
+            activation.fire(context);
+        }
     }
 
     /**

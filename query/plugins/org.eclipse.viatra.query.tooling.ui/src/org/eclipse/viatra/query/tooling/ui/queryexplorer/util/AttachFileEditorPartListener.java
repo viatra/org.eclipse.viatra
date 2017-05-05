@@ -37,7 +37,7 @@ public class AttachFileEditorPartListener extends BasePartListener {
     private AttachVqlEditorRegistrationHandler attachHandler;
     
     public AttachFileEditorPartListener(AttachVqlEditorRegistrationHandler h) {
-    	this.attachHandler = h;
+        this.attachHandler = h;
     }
     
     @Override
@@ -50,22 +50,22 @@ public class AttachFileEditorPartListener extends BasePartListener {
             if (editorInput instanceof FileEditorInput) {
                 IFile file = ((FileEditorInput) editorInput).getFile();
                 if (file != null && file.getFileExtension().matches("vql") 
-                		&& attachHandler.thereIsAnAttachedEditorForFile(file)
-                		&& QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
+                        && attachHandler.thereIsAnAttachedEditorForFile(file)
+                        && QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
 //                    String question = "There are patterns (from file named '" + file.getName()
 //                            + "') attached to the Query Explorer.\nWould you like to unregister them?";
 //                    boolean answer = MessageDialog.openQuestion(closedEditor.getSite().getShell(), dialogTitle,
 //                            question);
-                	boolean answer = false;
+                    boolean answer = false;
                     if (answer) {
-                    	// use PatternUnregistrationHandler
-                    	PatternUnregistrationHandler puh = new PatternUnregistrationHandler();
-                    	// collect registered patterns for file
-                    	for (IQuerySpecification<?> qs : QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file)) {
+                        // use PatternUnregistrationHandler
+                        PatternUnregistrationHandler puh = new PatternUnregistrationHandler();
+                        // collect registered patterns for file
+                        for (IQuerySpecification<?> qs : QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file)) {
                             puh.unregisterPattern(QueryExplorer.getInstance(activeWorkbenchWindow),
                                     qs.getFullyQualifiedName());
-                    	}
-                    	
+                        }
+                        
                     }
                     // remove from attached state regardless of answer
                     attachHandler.removeAttachmentRegistrationForFile(file);

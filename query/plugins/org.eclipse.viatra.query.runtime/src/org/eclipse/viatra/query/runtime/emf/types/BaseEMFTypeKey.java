@@ -19,18 +19,18 @@ import org.eclipse.viatra.query.runtime.matchers.context.common.BaseInputKeyWrap
  */
 public abstract class BaseEMFTypeKey<EMFKey> extends BaseInputKeyWrapper<EMFKey> {
 
-	public BaseEMFTypeKey(EMFKey emfKey) {
-		super(emfKey);
-	}
+    public BaseEMFTypeKey(EMFKey emfKey) {
+        super(emfKey);
+    }
 
-	public EMFKey getEmfKey() {
-		return getWrappedKey();
-	}
-	
-	@Override
-	public String toString() {
-		return this.getPrettyPrintableName();
-	}
-	
+    public EMFKey getEmfKey() {
+        return getWrappedKey();
+    }
+    
+    @Override
+    public String toString() {
+        return this.getPrettyPrintableName();
+    }
+    
 
 }

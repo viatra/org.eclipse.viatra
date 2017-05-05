@@ -32,44 +32,44 @@ import com.google.common.collect.Lists;
  */
 public class SearchOperationViewerNode {
 
-	private OperationKind operationKind;
-	private OperationStatus operationStatus;
-	private boolean breakpoint;
-	private List<SearchOperationViewerNode> children;
-	private SearchOperationViewerNode parent;
-	private String labelText;
-	private ISearchOperation searchOperation;
-	private SearchPlanExecutor planExecutor;
-	private boolean matcherBased;
+    private OperationKind operationKind;
+    private OperationStatus operationStatus;
+    private boolean breakpoint;
+    private List<SearchOperationViewerNode> children;
+    private SearchOperationViewerNode parent;
+    private String labelText;
+    private ISearchOperation searchOperation;
+    private SearchPlanExecutor planExecutor;
+    private boolean matcherBased;
 
-	public SearchOperationViewerNode(SearchPlanExecutor planExecutor) {
-		// Dummy operation for representing "match found"
-		this.planExecutor = planExecutor;
-		operationKind = OperationKind.MATCH;
-		setup();
-	}
+    public SearchOperationViewerNode(SearchPlanExecutor planExecutor) {
+        // Dummy operation for representing "match found"
+        this.planExecutor = planExecutor;
+        operationKind = OperationKind.MATCH;
+        setup();
+    }
 
-	public SearchOperationViewerNode(ISearchOperation searchOperation, SearchPlanExecutor planExecutor) {
-		this.searchOperation = searchOperation;
-		this.planExecutor = planExecutor;
-		if (searchOperation instanceof ExtendOperation<?>) {
-			operationKind = OperationKind.EXTEND;
-		} else if (searchOperation instanceof NACOperation) {
-			operationKind = OperationKind.NAC;
-		} else if (searchOperation instanceof CountOperation) {
-			operationKind = OperationKind.COUNT;
-		} else {
-			// This case there is a check operation
-			operationKind = OperationKind.CHECK;
-		}
-		// TODO For now toString() yields the obtainable type information, this might need some redesign work
-		setup();
-	}
+    public SearchOperationViewerNode(ISearchOperation searchOperation, SearchPlanExecutor planExecutor) {
+        this.searchOperation = searchOperation;
+        this.planExecutor = planExecutor;
+        if (searchOperation instanceof ExtendOperation<?>) {
+            operationKind = OperationKind.EXTEND;
+        } else if (searchOperation instanceof NACOperation) {
+            operationKind = OperationKind.NAC;
+        } else if (searchOperation instanceof CountOperation) {
+            operationKind = OperationKind.COUNT;
+        } else {
+            // This case there is a check operation
+            operationKind = OperationKind.CHECK;
+        }
+        // TODO For now toString() yields the obtainable type information, this might need some redesign work
+        setup();
+    }
 
-	private void setup() {
-		matcherBased = searchOperation == null ? false : searchOperation instanceof IMatcherBasedOperation;
-		operationStatus = OperationStatus.QUEUED;
-		children = Lists.newArrayList();
+    private void setup() {
+        matcherBased = searchOperation == null ? false : searchOperation instanceof IMatcherBasedOperation;
+        operationStatus = OperationStatus.QUEUED;
+        children = Lists.newArrayList();
 
         try {
             if (searchOperation != null) {
@@ -94,79 +94,79 @@ public class SearchOperationViewerNode {
             this.labelText = "Error while calculating label: " + e.getMessage() + "(" + e.getClass().getSimpleName() + ")";
         }
 
-	}
+    }
 
-	public OperationKind getOperationKind() {
-		return operationKind;
-	}
+    public OperationKind getOperationKind() {
+        return operationKind;
+    }
 
-	public OperationStatus getOperationStatus() {
-		return operationStatus;
-	}
+    public OperationStatus getOperationStatus() {
+        return operationStatus;
+    }
 
-	public void setOperationStatus(OperationStatus operationStatus) {
-		this.operationStatus = operationStatus;
-	}
+    public void setOperationStatus(OperationStatus operationStatus) {
+        this.operationStatus = operationStatus;
+    }
 
-	public boolean isBreakpoint() {
-		return breakpoint;
-	}
+    public boolean isBreakpoint() {
+        return breakpoint;
+    }
 
-	public void setBreakpoint(boolean breakpoint) {
-		this.breakpoint = breakpoint;
-	}
+    public void setBreakpoint(boolean breakpoint) {
+        this.breakpoint = breakpoint;
+    }
 
-	public ImmutableList<SearchOperationViewerNode> getChildren() {
-		return ImmutableList.copyOf(children);
-	}
+    public ImmutableList<SearchOperationViewerNode> getChildren() {
+        return ImmutableList.copyOf(children);
+    }
 
-	public void addChild(SearchOperationViewerNode child) {
-		children.add(child);
-		child.parent = this;
-	}
+    public void addChild(SearchOperationViewerNode child) {
+        children.add(child);
+        child.parent = this;
+    }
 
-	public void addChildren(List<SearchOperationViewerNode> children) {
-		this.children.addAll(children);
-		for (SearchOperationViewerNode child : children) {
-			child.parent = this;
-		}
-	}
+    public void addChildren(List<SearchOperationViewerNode> children) {
+        this.children.addAll(children);
+        for (SearchOperationViewerNode child : children) {
+            child.parent = this;
+        }
+    }
 
-	public void setChildren(List<SearchOperationViewerNode> children) {
-		this.children = children;
-		for (SearchOperationViewerNode child : children) {
-			child.parent = this;
-		}
-	}
+    public void setChildren(List<SearchOperationViewerNode> children) {
+        this.children = children;
+        for (SearchOperationViewerNode child : children) {
+            child.parent = this;
+        }
+    }
 
-	public SearchOperationViewerNode getParent() {
-		return parent;
-	}
+    public SearchOperationViewerNode getParent() {
+        return parent;
+    }
 
-	public void setParent(SearchOperationViewerNode parent) {
-		this.parent = parent;
-		parent.addChild(this);
-	}
+    public void setParent(SearchOperationViewerNode parent) {
+        this.parent = parent;
+        parent.addChild(this);
+    }
 
-	public String getLabelText() {
-		return labelText;
-	}
+    public String getLabelText() {
+        return labelText;
+    }
 
-	public void setLabelText(String labelText) {
-		this.labelText = labelText;
-	}
+    public void setLabelText(String labelText) {
+        this.labelText = labelText;
+    }
 
-	public ISearchOperation getSearchOperation() {
-		return searchOperation;
-	}
+    public ISearchOperation getSearchOperation() {
+        return searchOperation;
+    }
 
-	public SearchPlanExecutor getPlanExecutor() {
-		return planExecutor;
-	}
+    public SearchPlanExecutor getPlanExecutor() {
+        return planExecutor;
+    }
 
-	public boolean isMatcherBased() {
-		return matcherBased;
-	}
+    public boolean isMatcherBased() {
+        return matcherBased;
+    }
 
 
 }

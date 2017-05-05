@@ -34,22 +34,22 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  */
 public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implements ITypeConstraint {
     
-	private TypeJudgement equivalentJudgement;
-	
+    private TypeJudgement equivalentJudgement;
+    
     public TypeConstraint(PBody pBody, Tuple variablesTuple, IInputKey inputKey) {
         super(pBody, variablesTuple, inputKey);
         this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
         
         if (! inputKey.isEnumerable())
-        	throw new IllegalArgumentException(
-        			this.getClass().getSimpleName() + 
-        			" applicable for enumerable input keys only; received instead " + 
-        					inputKey);
+            throw new IllegalArgumentException(
+                    this.getClass().getSimpleName() + 
+                    " applicable for enumerable input keys only; received instead " + 
+                            inputKey);
         if (variablesTuple.getSize() != inputKey.getArity())
-        	throw new IllegalArgumentException(
-        			this.getClass().getSimpleName() + 
-        			" applied for variable tuple " + variablesTuple + " having wrong arity for input key " + 
-        					inputKey);
+            throw new IllegalArgumentException(
+                    this.getClass().getSimpleName() + 
+                    " applied for variable tuple " + variablesTuple + " having wrong arity for input key " + 
+                            inputKey);
     }
 
     @Override
@@ -58,24 +58,24 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
     }
     
     @Override
-	public TypeJudgement getEquivalentJudgement() {
-		return equivalentJudgement;
-	}
-
-	@Override
-	public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
-		return Collections.singleton(equivalentJudgement);
-		//return equivalentJudgement.getDirectlyImpliedJudgements(context);
-	}
-	
-	@Override
-    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-		return TypeConstraintUtil.getFunctionalDependencies(context, supplierKey, variablesTuple);
+    public TypeJudgement getEquivalentJudgement() {
+        return equivalentJudgement;
     }
 
-	@Override
-	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-		super.doReplaceVariable(obsolete, replacement);
+    @Override
+    public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
+        return Collections.singleton(equivalentJudgement);
+        //return equivalentJudgement.getDirectlyImpliedJudgements(context);
+    }
+    
+    @Override
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
+        return TypeConstraintUtil.getFunctionalDependencies(context, supplierKey, variablesTuple);
+    }
+
+    @Override
+    public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+        super.doReplaceVariable(obsolete, replacement);
         this.equivalentJudgement = new TypeJudgement(getSupplierKey(), variablesTuple);
-	}
+    }
 }

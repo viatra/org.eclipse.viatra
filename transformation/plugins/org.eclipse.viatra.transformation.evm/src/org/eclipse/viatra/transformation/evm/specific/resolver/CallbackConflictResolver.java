@@ -18,45 +18,45 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.specific.resolver.impl.HashSetBasedConflictSetImpl;
 
 public class CallbackConflictResolver implements ConflictResolver {
-	
-	public interface ActivationChoiceStrategy {
-		public Activation<?> selectNextActivation(Collection<Activation<?>> activations);
-	}
-	
-	ActivationChoiceStrategy chooser;
-	
-	public CallbackConflictResolver(ActivationChoiceStrategy chooser) {
-		super();
-		this.chooser = chooser;
-	}
+    
+    public interface ActivationChoiceStrategy {
+        public Activation<?> selectNextActivation(Collection<Activation<?>> activations);
+    }
+    
+    ActivationChoiceStrategy chooser;
+    
+    public CallbackConflictResolver(ActivationChoiceStrategy chooser) {
+        super();
+        this.chooser = chooser;
+    }
 
-	public ActivationChoiceStrategy getChooser() {
-		return chooser;
-	}	
-	protected void setChooser(ActivationChoiceStrategy chooser) {
-		this.chooser = chooser;
-	}
+    public ActivationChoiceStrategy getChooser() {
+        return chooser;
+    }	
+    protected void setChooser(ActivationChoiceStrategy chooser) {
+        this.chooser = chooser;
+    }
 
-	@Override
-	public ConflictSetImpl createConflictSet() {
-		return new ConflictSetImpl();
-	}
-	
-	final class ConflictSetImpl extends HashSetBasedConflictSetImpl {
-		
-		@Override
-		public ConflictResolver getConflictResolver() {
-			return CallbackConflictResolver.this;
-		}
+    @Override
+    public ConflictSetImpl createConflictSet() {
+        return new ConflictSetImpl();
+    }
+    
+    final class ConflictSetImpl extends HashSetBasedConflictSetImpl {
+        
+        @Override
+        public ConflictResolver getConflictResolver() {
+            return CallbackConflictResolver.this;
+        }
 
-		@Override
-		public Activation<?> getNextActivation() {
-			return container.isEmpty() ? 
-					null : 
-					chooser.selectNextActivation(Collections.unmodifiableSet(container));
-		}
-		
-	}
+        @Override
+        public Activation<?> getNextActivation() {
+            return container.isEmpty() ? 
+                    null : 
+                    chooser.selectNextActivation(Collections.unmodifiableSet(container));
+        }
+        
+    }
 
 
 }

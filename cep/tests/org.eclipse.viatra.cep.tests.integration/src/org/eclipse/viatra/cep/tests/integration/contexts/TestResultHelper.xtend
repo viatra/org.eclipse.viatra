@@ -14,42 +14,42 @@ import com.google.common.collect.Maps
 import java.util.Map
 
 class TestResultHelper {
-	var private static TestResultHelper _instance
+    var private static TestResultHelper _instance
 
-	def static instance() {
-		if (_instance == null) {
-			_instance = new TestResultHelper
-		}
-		return _instance
-	}
+    def static instance() {
+        if (_instance == null) {
+            _instance = new TestResultHelper
+        }
+        return _instance
+    }
 
-	var private Map<String, Integer> results = Maps.newHashMap();
+    var private Map<String, Integer> results = Maps.newHashMap();
 
-	private new() {
-	}
+    private new() {
+    }
 
-	def incrementById(String testType) {
-		val type = testType.split('\\.').last.replace("_pattern", "");
+    def incrementById(String testType) {
+        val type = testType.split('\\.').last.replace("_pattern", "");
 
-		var increment = 1;
-		if (results.containsKey(type)) {
-			increment = increment + results.get(type);
-		}
-		results.put(type, increment);
-	}
+        var increment = 1;
+        if (results.containsKey(type)) {
+            increment = increment + results.get(type);
+        }
+        results.put(type, increment);
+    }
 
-	def getResults(String testType) {
-		if (!results.containsKey(testType)) {
-			return 0
-		}
-		results.get(testType)
-	}
+    def getResults(String testType) {
+        if (!results.containsKey(testType)) {
+            return 0
+        }
+        results.get(testType)
+    }
 
-	def getResults() {
-		results
-	}
+    def getResults() {
+        results
+    }
 
-	def static dispose() {
-		_instance = null
-	}
+    def static dispose() {
+        _instance = null
+    }
 }

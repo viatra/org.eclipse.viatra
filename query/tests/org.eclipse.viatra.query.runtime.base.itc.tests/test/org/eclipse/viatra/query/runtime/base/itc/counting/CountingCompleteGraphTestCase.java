@@ -22,32 +22,32 @@ public class CountingCompleteGraphTestCase {
     
     @Test
     public void testResult() {
-		int nodeCount = 10;
-		Graph<Integer> g = new Graph<Integer>();
-		CountingAlg<Integer> ca = new CountingAlg<Integer>(g);
-		
-		for (int i = 0;i<nodeCount;i++) {
-			g.insertNode(i);
-		}
-		
-		//inserting edges
-		for (int i = 0;i<nodeCount;i++) {
-			for (int j = 0;j<nodeCount;j++) {
-				if (i < j) {
-					g.insertEdge(i, j);		
-					assertEquals(CountingTcRelation.createFrom(g), ca.getTcRelation());
-				}
-			}
-		}
-		
-		for (int i = 0;i<nodeCount;i++) {
-			for (int j = 0;j<nodeCount;j++) {
-				if (i < j) {
-					g.deleteEdge(i, j);								
-					assertEquals(CountingTcRelation.createFrom(g), ca.getTcRelation());
-				}
-			}
-		} 
+        int nodeCount = 10;
+        Graph<Integer> g = new Graph<Integer>();
+        CountingAlg<Integer> ca = new CountingAlg<Integer>(g);
+        
+        for (int i = 0;i<nodeCount;i++) {
+            g.insertNode(i);
+        }
+        
+        //inserting edges
+        for (int i = 0;i<nodeCount;i++) {
+            for (int j = 0;j<nodeCount;j++) {
+                if (i < j) {
+                    g.insertEdge(i, j);		
+                    assertEquals(CountingTcRelation.createFrom(g), ca.getTcRelation());
+                }
+            }
+        }
+        
+        for (int i = 0;i<nodeCount;i++) {
+            for (int j = 0;j<nodeCount;j++) {
+                if (i < j) {
+                    g.deleteEdge(i, j);								
+                    assertEquals(CountingTcRelation.createFrom(g), ca.getTcRelation());
+                }
+            }
+        } 
     }
 
 }

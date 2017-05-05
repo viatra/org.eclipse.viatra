@@ -19,31 +19,31 @@ import org.eclipse.viatra.query.testing.snapshot.MatchRecord
  * @author Grill Balázs
  */
 abstract class MatchRecordEquivalence extends Equivalence<MatchRecord> {
-	
-	protected extension SnapshotHelper helper
-	protected Map<String, JavaObjectAccess> accessMap
-	
-	new(Map<String, JavaObjectAccess> accessMap){
-	    this.accessMap = accessMap;
-	    helper = new SnapshotHelper(accessMap);
-	}
-	
-	
-	def wrap(Iterable<MatchRecord> matches){
-		Sets.newHashSet(matches.map[it.wrap])
-	}
-	
-	def unwrap(Iterable<Equivalence.Wrapper<MatchRecord>> wrapped){
-		Sets.newHashSet(wrapped.map[it.get])
-	}
-	
-	def toMap(MatchRecord record){
-		val result = newHashMap()
-		for(sub : record.substitutions){
-			result.put(sub.parameterName, sub.derivedValue)
-		}
-		return result
-	}
-	
-	
+    
+    protected extension SnapshotHelper helper
+    protected Map<String, JavaObjectAccess> accessMap
+    
+    new(Map<String, JavaObjectAccess> accessMap){
+        this.accessMap = accessMap;
+        helper = new SnapshotHelper(accessMap);
+    }
+    
+    
+    def wrap(Iterable<MatchRecord> matches){
+        Sets.newHashSet(matches.map[it.wrap])
+    }
+    
+    def unwrap(Iterable<Equivalence.Wrapper<MatchRecord>> wrapped){
+        Sets.newHashSet(wrapped.map[it.get])
+    }
+    
+    def toMap(MatchRecord record){
+        val result = newHashMap()
+        for(sub : record.substitutions){
+            result.put(sub.parameterName, sub.derivedValue)
+        }
+        return result
+    }
+    
+    
 }

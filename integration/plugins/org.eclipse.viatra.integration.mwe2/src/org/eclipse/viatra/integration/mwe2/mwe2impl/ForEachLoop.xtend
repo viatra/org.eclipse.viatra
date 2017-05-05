@@ -20,17 +20,17 @@ import org.eclipse.viatra.integration.mwe2.providers.IIterableProvider
  * @author Peter Lunk
  */
 class ForEachLoop extends Sequence {
-	var IIterableProvider provider;
+    var IIterableProvider provider;
 
-	def void setIterable(IIterableProvider iterable){
-		this.provider = iterable
-	}
+    def void setIterable(IIterableProvider iterable){
+        this.provider = iterable
+    }
 
-	override void execute() {
-		provider.iterable.forEach[
-			step.forEach [
-				execute
-			]
-		]	
-	}
+    override void execute() {
+        provider.iterable.forEach[
+            step.forEach [
+                execute
+            ]
+        ]	
+    }
 }

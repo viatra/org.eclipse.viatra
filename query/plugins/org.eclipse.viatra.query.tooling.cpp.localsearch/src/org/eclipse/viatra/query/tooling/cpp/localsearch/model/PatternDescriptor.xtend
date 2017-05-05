@@ -23,61 +23,61 @@ import static com.google.common.base.Preconditions.*
  */
 class PatternDescriptor {
 
-	val PQuery query
-	val Set<PParameter> boundParameters
-	
-	val Set<PatternBodyDescriptor> bodies
-	
-	new(PQuery query, Set<PatternBodyDescriptor> bodies) {
-		this(query, bodies, #{})
-	}
-	
-	new(PQuery query, Set<PatternBodyDescriptor> bodies, Set<PParameter> boundParameters) {
-		checkNotNull(query)
-		checkNotNull(bodies)
-		checkNotNull(boundParameters)	
-		checkArgument(!bodies.empty)	
-		
-		this.query = query
+    val PQuery query
+    val Set<PParameter> boundParameters
+    
+    val Set<PatternBodyDescriptor> bodies
+    
+    new(PQuery query, Set<PatternBodyDescriptor> bodies) {
+        this(query, bodies, #{})
+    }
+    
+    new(PQuery query, Set<PatternBodyDescriptor> bodies, Set<PParameter> boundParameters) {
+        checkNotNull(query)
+        checkNotNull(bodies)
+        checkNotNull(boundParameters)	
+        checkArgument(!bodies.empty)	
+        
+        this.query = query
 
-		this.bodies = bodies
-		this.boundParameters = boundParameters
-	}
+        this.bodies = bodies
+        this.boundParameters = boundParameters
+    }
 
-	def getPatternBodies() {
-		bodies.unmodifiableView
-	}
+    def getPatternBodies() {
+        bodies.unmodifiableView
+    }
 
-	def getName() {
-		query.fullyQualifiedName.substring(query.fullyQualifiedName.lastIndexOf('.')+1)
-	}
-	
-	def getBoundParameters() {
-		boundParameters.unmodifiableView
-	}
-	
-	def boolean isBound() {
-		!boundParameters.empty
-	}
-	
-	override toString() '''
-		pattern <«name»> («paramList») «FOR body : bodies SEPARATOR " or "» {
-			«body»
-		} «ENDFOR»
-		
-	'''
-	
-	private def paramList() {
-		val paramNames = newArrayList
-		for(i : 0..<query.parameters.size) {
-			val param = query.parameterNames.get(i)
-			if(boundParameters.map[name].findFirst[it == query.parameters.get(i).name] != null)
-				paramNames += param + " (B)"
-			else 
-				paramNames += param
-		}
-		
-		paramNames.join(", ")
-	}
-	
+    def getName() {
+        query.fullyQualifiedName.substring(query.fullyQualifiedName.lastIndexOf('.')+1)
+    }
+    
+    def getBoundParameters() {
+        boundParameters.unmodifiableView
+    }
+    
+    def boolean isBound() {
+        !boundParameters.empty
+    }
+    
+    override toString() '''
+        pattern <«name»> («paramList») «FOR body : bodies SEPARATOR " or "» {
+            «body»
+        } «ENDFOR»
+        
+    '''
+    
+    private def paramList() {
+        val paramNames = newArrayList
+        for(i : 0..<query.parameters.size) {
+            val param = query.parameterNames.get(i)
+            if(boundParameters.map[name].findFirst[it == query.parameters.get(i).name] != null)
+                paramNames += param + " (B)"
+            else 
+                paramNames += param
+        }
+        
+        paramNames.join(", ")
+    }
+    
 }

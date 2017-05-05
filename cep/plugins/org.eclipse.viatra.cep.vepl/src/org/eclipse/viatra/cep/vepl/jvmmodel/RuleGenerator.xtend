@@ -30,110 +30,110 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 @SuppressWarnings("discouraged", "restriction")
 class RuleGenerator {
 
-	@Inject extension JvmTypesBuilder jvmTypesBuilder
-	@Inject extension Utils
-	@Inject extension NamingProvider
-	private JvmTypeReferenceBuilder typeRefBuilder
+    @Inject extension JvmTypesBuilder jvmTypesBuilder
+    @Inject extension Utils
+    @Inject extension NamingProvider
+    private JvmTypeReferenceBuilder typeRefBuilder
 
-	def public generateRulesAndJobs(List<Rule> rules, IJvmDeclaredTypeAcceptor acceptor,
-		JvmTypeReferenceBuilder typeRefBuilder) {
-		this.typeRefBuilder = typeRefBuilder
+    def public generateRulesAndJobs(List<Rule> rules, IJvmDeclaredTypeAcceptor acceptor,
+        JvmTypeReferenceBuilder typeRefBuilder) {
+        this.typeRefBuilder = typeRefBuilder
 
-		var generatedRuleClassNames = Lists.newArrayList
+        var generatedRuleClassNames = Lists.newArrayList
 
-		for (r : rules) {
-			val rule = r as Rule
+        for (r : rules) {
+            val rule = r as Rule
 
-			//generate RULE class
-			rule.generateRuleClass(acceptor)
+            //generate RULE class
+            rule.generateRuleClass(acceptor)
 
-			//generate JOB class
-			rule.generateJobClass(acceptor)
+            //generate JOB class
+            rule.generateJobClass(acceptor)
 
-			generatedRuleClassNames.add(rule.fqn)
-		}
-	}
+            generatedRuleClassNames.add(rule.fqn)
+        }
+    }
 
-	def private generateRuleClass(Rule rule, IJvmDeclaredTypeAcceptor acceptor) {
-		acceptor.accept(rule.toClass(rule.fqn)) [
-			documentation = rule.documentation
-			superTypes += typeRefBuilder.typeRef(ICepRule)
-			val eventPatterns = rule.eventPatterns
-			members += rule.toField("eventPatterns", typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern))) [
-				initializer = [append('''«referClass(typeRefBuilder, rule, Lists)».newArrayList()''')]
-			]
-			members += rule.toField("job",
-				typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern))) [
-				initializer = [
-					append('''new ''').append('''«it.referClass(typeRefBuilder, rule.jobClassName, rule)»''').
-						append('''(''').append('''«referClass(typeRefBuilder, rule, CepActivationStates)».ACTIVE)''')]
-			]
-			members += rule.toConstructor [
-				body = [
-					append('''«enumerateAssignableEventPatterns(it, rule)»''')
-				]
-			]
-			var patternsGetter = rule.toGetter("eventPatterns",
-				typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern)))
-			var jobGetter = rule.toGetter("job",
-				typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern)))
-			patternsGetter.addOverrideAnnotation(rule)
-			jobGetter.addOverrideAnnotation(rule)
-			members += patternsGetter
-			members += jobGetter
-		]
-		FactoryManager.instance.add(rule.fqn)
-	}
+    def private generateRuleClass(Rule rule, IJvmDeclaredTypeAcceptor acceptor) {
+        acceptor.accept(rule.toClass(rule.fqn)) [
+            documentation = rule.documentation
+            superTypes += typeRefBuilder.typeRef(ICepRule)
+            val eventPatterns = rule.eventPatterns
+            members += rule.toField("eventPatterns", typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern))) [
+                initializer = [append('''«referClass(typeRefBuilder, rule, Lists)».newArrayList()''')]
+            ]
+            members += rule.toField("job",
+                typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern))) [
+                initializer = [
+                    append('''new ''').append('''«it.referClass(typeRefBuilder, rule.jobClassName, rule)»''').
+                        append('''(''').append('''«referClass(typeRefBuilder, rule, CepActivationStates)».ACTIVE)''')]
+            ]
+            members += rule.toConstructor [
+                body = [
+                    append('''«enumerateAssignableEventPatterns(it, rule)»''')
+                ]
+            ]
+            var patternsGetter = rule.toGetter("eventPatterns",
+                typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern)))
+            var jobGetter = rule.toGetter("job",
+                typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern)))
+            patternsGetter.addOverrideAnnotation(rule)
+            jobGetter.addOverrideAnnotation(rule)
+            members += patternsGetter
+            members += jobGetter
+        ]
+        FactoryManager.instance.add(rule.fqn)
+    }
 
-	def private generateJobClass(Rule appRule, IJvmDeclaredTypeAcceptor acceptor) {
-		acceptor.accept(appRule.toClass(appRule.jobClassName)) [
-			documentation = appRule.documentation
-			superTypes += typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern))
-			members += appRule.toConstructor [
-				parameters += appRule.toParameter("activationState", typeRefBuilder.typeRef(ActivationState))
-				body = [
-					append(
-						'''
-						super(activationState);''')]
-			]
-			var executeMethod = appRule.toMethod("execute", typeRefBuilder.typeRef("void")) [
-				parameters += appRule.toParameter("ruleInstance",
-					typeRefBuilder.typeRef(typeof(Activation),
-						cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
-				parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
-				if (appRule.action != null) {
-					body = appRule.action
-				}
-			]
-			executeMethod.addOverrideAnnotation(appRule)
-			var errorMethod = appRule.toMethod("handleError", typeRefBuilder.typeRef("void")) [
-				parameters += appRule.toParameter("ruleInstance",
-					typeRefBuilder.typeRef(typeof(Activation),
-						cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
-				parameters += appRule.toParameter("exception", typeRefBuilder.typeRef(Exception))
-				parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
-				body = [
-					append(
-						'''
-						//not gonna happen''')]
-			]
-			errorMethod.addOverrideAnnotation(appRule)
-			members += executeMethod
-			members += errorMethod
-		]
-	}
+    def private generateJobClass(Rule appRule, IJvmDeclaredTypeAcceptor acceptor) {
+        acceptor.accept(appRule.toClass(appRule.jobClassName)) [
+            documentation = appRule.documentation
+            superTypes += typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern))
+            members += appRule.toConstructor [
+                parameters += appRule.toParameter("activationState", typeRefBuilder.typeRef(ActivationState))
+                body = [
+                    append(
+                        '''
+                        super(activationState);''')]
+            ]
+            var executeMethod = appRule.toMethod("execute", typeRefBuilder.typeRef("void")) [
+                parameters += appRule.toParameter("ruleInstance",
+                    typeRefBuilder.typeRef(typeof(Activation),
+                        cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
+                parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
+                if (appRule.action != null) {
+                    body = appRule.action
+                }
+            ]
+            executeMethod.addOverrideAnnotation(appRule)
+            var errorMethod = appRule.toMethod("handleError", typeRefBuilder.typeRef("void")) [
+                parameters += appRule.toParameter("ruleInstance",
+                    typeRefBuilder.typeRef(typeof(Activation),
+                        cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
+                parameters += appRule.toParameter("exception", typeRefBuilder.typeRef(Exception))
+                parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
+                body = [
+                    append(
+                        '''
+                        //not gonna happen''')]
+            ]
+            errorMethod.addOverrideAnnotation(appRule)
+            members += executeMethod
+            members += errorMethod
+        ]
+    }
 
-	def enumerateAssignableEventPatterns(ITreeAppendable appendable, Rule rule) {
-		if (rule == null || rule.eventPatterns.empty) {
-			return ""
-		}
+    def enumerateAssignableEventPatterns(ITreeAppendable appendable, Rule rule) {
+        if (rule == null || rule.eventPatterns.empty) {
+            return ""
+        }
 
-		for (ep : rule.eventPatterns) {
-			appendable.append('''eventPatterns.add(new ''').append(
-				'''«appendable.referClass(typeRefBuilder, ep.eventPattern.patternFqn, rule)»''').append('''());''')
-			if (!ep.equals(rule.eventPatterns.last)) {
-				appendable.append('\n')
-			}
-		}
-	}
+        for (ep : rule.eventPatterns) {
+            appendable.append('''eventPatterns.add(new ''').append(
+                '''«appendable.referClass(typeRefBuilder, ep.eventPattern.patternFqn, rule)»''').append('''());''')
+            if (!ep.equals(rule.eventPatterns.last)) {
+                appendable.append('\n')
+            }
+        }
+    }
 }

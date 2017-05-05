@@ -27,23 +27,23 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  */
 public class DynamicEMFQueryRuntimeContext extends EMFQueryRuntimeContext {
 
-	public DynamicEMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger, EMFScope emfScope) {
-		super(baseIndex, logger, emfScope);
-	}	
-	
-	@Override
-	public Object wrapElement(Object externalElement) {
-		return baseIndex.toCanonicalValueRepresentation(externalElement);
-	}
-	
-	@Override
-	public Tuple wrapTuple(Tuple externalElements) {
-		Object[] elements = externalElements.getElements();
-		for (int i=0; i< elements.length; ++i)
-			elements[i] = wrapElement(elements[i]);
-		return new FlatTuple(elements);
-	}
-	
-	
-	
+    public DynamicEMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger, EMFScope emfScope) {
+        super(baseIndex, logger, emfScope);
+    }	
+    
+    @Override
+    public Object wrapElement(Object externalElement) {
+        return baseIndex.toCanonicalValueRepresentation(externalElement);
+    }
+    
+    @Override
+    public Tuple wrapTuple(Tuple externalElements) {
+        Object[] elements = externalElements.getElements();
+        for (int i=0; i< elements.length; ++i)
+            elements[i] = wrapElement(elements[i]);
+        return new FlatTuple(elements);
+    }
+    
+    
+    
 }

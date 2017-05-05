@@ -33,29 +33,29 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
  */
 public class InvertedDisappearancePriorityConflictResolver extends FixedPriorityConflictResolver {
 
-	public InvertedDisappearancePriorityConflictResolver() {
-		super();
-	}
+    public InvertedDisappearancePriorityConflictResolver() {
+        super();
+    }
 
-	@Override
-	protected FixedPriorityConflictSet createReconfigurableConflictSet() {
-		return new InvertedDisappearancePriorityConflictSet(this, priorities);
-	}
+    @Override
+    protected FixedPriorityConflictSet createReconfigurableConflictSet() {
+        return new InvertedDisappearancePriorityConflictSet(this, priorities);
+    }
 
-	public static class InvertedDisappearancePriorityConflictSet extends FixedPriorityConflictSet {
+    public static class InvertedDisappearancePriorityConflictSet extends FixedPriorityConflictSet {
 
-		public InvertedDisappearancePriorityConflictSet(FixedPriorityConflictResolver resolver,
-				Map<RuleSpecification<?>, Integer> priorities) {
-			super(resolver, priorities);
-		}
+        public InvertedDisappearancePriorityConflictSet(FixedPriorityConflictResolver resolver,
+                Map<RuleSpecification<?>, Integer> priorities) {
+            super(resolver, priorities);
+        }
 
-		@Override
-		protected Integer getRulePriority(Activation<?> activation) {
-			if (CRUDActivationStateEnum.DELETED.equals(activation.getState())) {
-				return (-1) * super.getRulePriority(activation);
-			}
-			return super.getRulePriority(activation);
-		}
+        @Override
+        protected Integer getRulePriority(Activation<?> activation) {
+            if (CRUDActivationStateEnum.DELETED.equals(activation.getState())) {
+                return (-1) * super.getRulePriority(activation);
+            }
+            return super.getRulePriority(activation);
+        }
 
         @Override
         public boolean addActivation(Activation<?> activation) {
@@ -65,16 +65,16 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
             priorityBuckets.remove((-1) * rulePriority, activation);
             return super.addActivation(activation);
         }
-		
-		@Override
-		public boolean removeActivation(Activation<?> activation) {
-			checkArgument(activation != null, "Activation cannot be null!");
-			Integer rulePriority = getRulePriority(activation);
-			// it is possible that the activation changed state before firing and is added to multiple buckets
-			boolean removedFromInverted = priorityBuckets.remove((-1) * rulePriority, activation);
-			boolean removed = super.removeActivation(activation);
+        
+        @Override
+        public boolean removeActivation(Activation<?> activation) {
+            checkArgument(activation != null, "Activation cannot be null!");
+            Integer rulePriority = getRulePriority(activation);
+            // it is possible that the activation changed state before firing and is added to multiple buckets
+            boolean removedFromInverted = priorityBuckets.remove((-1) * rulePriority, activation);
+            boolean removed = super.removeActivation(activation);
             return removed || removedFromInverted;
-		}
+        }
 
-	}
+    }
 }

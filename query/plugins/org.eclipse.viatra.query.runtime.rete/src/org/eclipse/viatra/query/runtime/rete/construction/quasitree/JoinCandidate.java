@@ -34,7 +34,7 @@ import com.google.common.collect.Sets;
  */
 class JoinCandidate {
     private QueryAnalyzer analyzer;
-	
+    
     SubPlan primary;
     SubPlan secondary;
     
@@ -89,8 +89,8 @@ class JoinCandidate {
                             
         
         // default case
-		return factory.createSubPlan(new PJoin(), primary, secondary);
-	}
+        return factory.createSubPlan(new PJoin(), primary, secondary);
+    }
 
     @Override
     public String toString() {
@@ -115,21 +115,21 @@ class JoinCandidate {
      * @return constraints of primary, sorted according to {@link TieBreaker#CONSTRAINT_COMPARATOR}.
      */
     public List<PConstraint> getConsPrimary() {
-		return consPrimary;
-	}
+        return consPrimary;
+    }
     /**
      * @return constraints of secondary, sorted according to {@link TieBreaker#CONSTRAINT_COMPARATOR}.
      */
-	public List<PConstraint> getConsSecondary() {
-		return consSecondary;
-	}
+    public List<PConstraint> getConsSecondary() {
+        return consSecondary;
+    }
 
 
 
-	public boolean isTrivial() {
+    public boolean isTrivial() {
         return getPrimary().equals(getSecondary());
     }
-	
+    
     public boolean isSubsumption() {
         return consPrimary.containsAll(consSecondary) || consSecondary.containsAll(consPrimary);
     }

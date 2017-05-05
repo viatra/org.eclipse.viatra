@@ -30,57 +30,57 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>>
-		implements ITransformationRule<Match, Matcher> {
-	private String name;
-	private IQuerySpecification<Matcher> precondition;
-	private RuleSpecification<Match> ruleSpecification;
-	private EventFilter<? super Match> filter;
+        implements ITransformationRule<Match, Matcher> {
+    private String name;
+    private IQuerySpecification<Matcher> precondition;
+    private RuleSpecification<Match> ruleSpecification;
+    private EventFilter<? super Match> filter;
 
-	public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-			Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
-			EventFilter<? super Match> filter) {
-		this.name = name;
-		Set<Job<Match>> jobs = Sets.newHashSet();
+    public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
+            Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+            EventFilter<? super Match> filter) {
+        this.name = name;
+        Set<Job<Match>> jobs = Sets.newHashSet();
 
-		for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
-			CRUDActivationStateEnum state = stateAction.getKey();
-			IMatchProcessor<Match> action = stateAction.getValue();
+        for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
+            CRUDActivationStateEnum state = stateAction.getKey();
+            IMatchProcessor<Match> action = stateAction.getValue();
 
-			jobs.add(Jobs.newStatelessJob(state, action));
-		}
+            jobs.add(Jobs.newStatelessJob(state, action));
+        }
 
-		ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs, name);
-		this.filter = filter;
-	}
+        ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs, name);
+        this.filter = filter;
+    }
 
-	public EventDrivenTransformationRule(EventDrivenTransformationRule<Match, Matcher> rule, EventFilter<? super Match> filter) {
-		this.name = rule.name;
-		this.precondition = rule.precondition;
-		this.ruleSpecification = rule.ruleSpecification;
-		this.filter = filter;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
-	}
+    public EventDrivenTransformationRule(EventDrivenTransformationRule<Match, Matcher> rule, EventFilter<? super Match> filter) {
+        this.name = rule.name;
+        this.precondition = rule.precondition;
+        this.ruleSpecification = rule.ruleSpecification;
+        this.filter = filter;
+    }
+    
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public RuleSpecification<Match> getRuleSpecification() {
-		return ruleSpecification;
-	}
+    @Override
+    public RuleSpecification<Match> getRuleSpecification() {
+        return ruleSpecification;
+    }
 
-	@Override
-	public IQuerySpecification<Matcher> getPrecondition() {
-		return precondition;
-	}
+    @Override
+    public IQuerySpecification<Matcher> getPrecondition() {
+        return precondition;
+    }
 
-	@Override
-	public EventFilter<? super Match> getFilter() {
-		if (filter == null) {
-			return ruleSpecification.createEmptyFilter();
-		} else {
-			return filter;
-		}
-	}
+    @Override
+    public EventFilter<? super Match> getFilter() {
+        if (filter == null) {
+            return ruleSpecification.createEmptyFilter();
+        } else {
+            return filter;
+        }
+    }
 }

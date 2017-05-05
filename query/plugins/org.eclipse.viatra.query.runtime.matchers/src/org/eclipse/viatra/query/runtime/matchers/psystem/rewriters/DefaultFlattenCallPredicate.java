@@ -17,9 +17,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
  */
 public class DefaultFlattenCallPredicate implements IFlattenCallPredicate {
 
-	@Override
-	public boolean shouldFlatten(PositivePatternCall positivePatternCall) {
-		return true;
-	}
+    @Override
+    public boolean shouldFlatten(PositivePatternCall positivePatternCall) {
+        return true;
+    }
 
 }

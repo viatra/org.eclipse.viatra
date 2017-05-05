@@ -54,13 +54,13 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     private Text parameterType;
     private List<String> currentPackages;
     private ObjectParameter result;
-	private ResourceSet set;
-	private ITargetPlatformMetamodelLoader metamodelLoader;
+    private ResourceSet set;
+    private ITargetPlatformMetamodelLoader metamodelLoader;
 
     protected ObjectParameterConfigurationDialog(Shell shell, ResourceSet set, List<String> currentPackages, ITargetPlatformMetamodelLoader metamodelLoader, ObjectParameter result) {
         super(shell);
-		this.set = set;
-		this.metamodelLoader = metamodelLoader;
+        this.set = set;
+        this.metamodelLoader = metamodelLoader;
         shell.setText(TITLE);
         this.currentPackages = currentPackages;
         this.result = result;
@@ -153,7 +153,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     private Object[] getElements() {
         List<EObject> result = new ArrayList<EObject>();
         for (String _nsURI : currentPackages) {
-        	EPackage _package = metamodelLoader.loadPackage(set, _nsURI);
+            EPackage _package = metamodelLoader.loadPackage(set, _nsURI);
             TreeIterator<EObject> iterator = _package.eAllContents();
 
             while (iterator.hasNext()) {

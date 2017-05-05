@@ -30,68 +30,68 @@ import com.google.common.base.Preconditions;
  *
  */
 public class PApply extends POperation {
-	
-	private PConstraint pConstraint;
+    
+    private PConstraint pConstraint;
 
-	public PApply(PConstraint pConstraint) {
-		super();
-		this.pConstraint = pConstraint;
-	}
-	public PConstraint getPConstraint() {
-		return pConstraint;
-	}
+    public PApply(PConstraint pConstraint) {
+        super();
+        this.pConstraint = pConstraint;
+    }
+    public PConstraint getPConstraint() {
+        return pConstraint;
+    }
 
-	@Override
-	public String getShortName() {
-		return String.format("APPLY_%s", pConstraint.toString());
-	}
-	
-	@Override
-	public Set<? extends PConstraint> getDeltaConstraints() {
-		return Collections.singleton(pConstraint);
-	}
-	
-	@Override
-	public int numParentSubPlans() {
-		return 1;
-	}
-	
-	@Override
-	public void checkConsistency(SubPlan subPlan) {
-		super.checkConsistency(subPlan);
-		for (SubPlan parentPlan : subPlan.getParentPlans())
-			Preconditions.checkArgument(!parentPlan.getAllEnforcedConstraints().contains(pConstraint),
-					"Double-checking constraint " + pConstraint);		
-		// TODO obtain context?
-		//if (pConstraint instanceof DeferredPConstraint)
-		//	Preconditions.checkArgument(((DeferredPConstraint) pConstraint).isReadyAt(subPlan, context))
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((pConstraint == null) ? 0 : pConstraint
-						.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PApply))
-			return false;
-		PApply other = (PApply) obj;
-		if (pConstraint == null) {
-			if (other.pConstraint != null)
-				return false;
-		} else if (!pConstraint.equals(other.pConstraint))
-			return false;
-		return true;
-	}
+    @Override
+    public String getShortName() {
+        return String.format("APPLY_%s", pConstraint.toString());
+    }
+    
+    @Override
+    public Set<? extends PConstraint> getDeltaConstraints() {
+        return Collections.singleton(pConstraint);
+    }
+    
+    @Override
+    public int numParentSubPlans() {
+        return 1;
+    }
+    
+    @Override
+    public void checkConsistency(SubPlan subPlan) {
+        super.checkConsistency(subPlan);
+        for (SubPlan parentPlan : subPlan.getParentPlans())
+            Preconditions.checkArgument(!parentPlan.getAllEnforcedConstraints().contains(pConstraint),
+                    "Double-checking constraint " + pConstraint);		
+        // TODO obtain context?
+        //if (pConstraint instanceof DeferredPConstraint)
+        //	Preconditions.checkArgument(((DeferredPConstraint) pConstraint).isReadyAt(subPlan, context))
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime
+                * result
+                + ((pConstraint == null) ? 0 : pConstraint
+                        .hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof PApply))
+            return false;
+        PApply other = (PApply) obj;
+        if (pConstraint == null) {
+            if (other.pConstraint != null)
+                return false;
+        } else if (!pConstraint.equals(other.pConstraint))
+            return false;
+        return true;
+    }
 
 }

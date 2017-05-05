@@ -20,41 +20,41 @@ import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
  * Difference descriptor for {@link MatchSetRecord} elements.
  */
 class MatchSetRecordDiff {
-	
-	new(Set<MatchRecord> additions, Set<MatchRecord> removals){
-		this.additions = additions;
-		this.removals = removals;
-	}
-	
-	private val Set<MatchRecord> additions
-	private val Set<MatchRecord> removals
+    
+    new(Set<MatchRecord> additions, Set<MatchRecord> removals){
+        this.additions = additions;
+        this.removals = removals;
+    }
+    
+    private val Set<MatchRecord> additions
+    private val Set<MatchRecord> removals
 
-	def Set<MatchRecord> getAdditions() {
-		return additions
-	}
+    def Set<MatchRecord> getAdditions() {
+        return additions
+    }
 
-	def Set<MatchRecord> getRemovals() {
-		return removals
-	}
-	
-	def boolean isEmpty(){
-		additions.empty && removals.empty
-	}
-	
-	def static compute(MatchSetRecord expected, MatchSetRecord actual) {
+    def Set<MatchRecord> getRemovals() {
+        return removals
+    }
+    
+    def boolean isEmpty(){
+        additions.empty && removals.empty
+    }
+    
+    def static compute(MatchSetRecord expected, MatchSetRecord actual) {
         compute(expected, actual, new DefaultMatchRecordEquivalence())
     }
 
-	def static compute(MatchSetRecord expected, MatchSetRecord actual, MatchRecordEquivalence equivalence) {
-		val expectedSet = equivalence.wrap(expected.matches)
-		val actualSet = equivalence.wrap(actual.matches)
-		
-		val unexpected = Sets::difference(actualSet, expectedSet)
-		val missing = Sets::difference(expectedSet, actualSet)
-		
-		new MatchSetRecordDiff(
-			equivalence.unwrap(unexpected),
-			equivalence.unwrap(missing)
-		)
-	}
+    def static compute(MatchSetRecord expected, MatchSetRecord actual, MatchRecordEquivalence equivalence) {
+        val expectedSet = equivalence.wrap(expected.matches)
+        val actualSet = equivalence.wrap(actual.matches)
+        
+        val unexpected = Sets::difference(actualSet, expectedSet)
+        val missing = Sets::difference(expectedSet, actualSet)
+        
+        new MatchSetRecordDiff(
+            equivalence.unwrap(unexpected),
+            equivalence.unwrap(missing)
+        )
+    }
 }

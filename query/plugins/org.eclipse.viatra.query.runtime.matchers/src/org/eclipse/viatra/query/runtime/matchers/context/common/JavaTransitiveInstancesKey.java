@@ -23,145 +23,145 @@ package org.eclipse.viatra.query.runtime.matchers.context.common;
  *
 */
 public class JavaTransitiveInstancesKey extends BaseInputKeyWrapper<String> {
-	
-	/**
-	 * The actual Class whose (transitive) instances this relation contains. Can be null at compile time, if only the name is available.
-	 * Can be a primitive.  
-	 */
-	private Class<?> cachedOriginalInstanceClass;
-	
-	/**
-	 * Same as {@link #cachedOriginalInstanceClass}, but primitive classes are replaced with their wrapper classes (e.g. int --> java.lang.Integer).
-	 */
-	private Class<?> cachedWrapperInstanceClass;
+    
+    /**
+     * The actual Class whose (transitive) instances this relation contains. Can be null at compile time, if only the name is available.
+     * Can be a primitive.  
+     */
+    private Class<?> cachedOriginalInstanceClass;
+    
+    /**
+     * Same as {@link #cachedOriginalInstanceClass}, but primitive classes are replaced with their wrapper classes (e.g. int --> java.lang.Integer).
+     */
+    private Class<?> cachedWrapperInstanceClass;
 
-	/**
-	 * Preferred constructor.
-	 */
-	public JavaTransitiveInstancesKey(Class<?> instanceClass) {
-		this(primitiveTypeToWrapperClass(instanceClass).getName());
-		this.cachedOriginalInstanceClass = instanceClass;
-	}
-	
-	/**
-	 * Call this constructor only in contexts where the class itself is not available for loading, e.g. it has not yet been compiled.
-	 */
-	public JavaTransitiveInstancesKey(String className) {
-		super(className);
-	}
-	
+    /**
+     * Preferred constructor.
+     */
+    public JavaTransitiveInstancesKey(Class<?> instanceClass) {
+        this(primitiveTypeToWrapperClass(instanceClass).getName());
+        this.cachedOriginalInstanceClass = instanceClass;
+    }
+    
+    /**
+     * Call this constructor only in contexts where the class itself is not available for loading, e.g. it has not yet been compiled.
+     */
+    public JavaTransitiveInstancesKey(String className) {
+        super(className);
+    }
+    
 
-	/**
-	 * Returns null if class cannot be loaded.
-	 */
-	private Class<?> getOriginalInstanceClass() {
-		if (cachedOriginalInstanceClass == null) {
-			try {
-				resolveClassInternal();
-			} catch (ClassNotFoundException e) {
-				// class not yet available at this point
-			}
-		}
-		return cachedOriginalInstanceClass;
-	}
+    /**
+     * Returns null if class cannot be loaded.
+     */
+    private Class<?> getOriginalInstanceClass() {
+        if (cachedOriginalInstanceClass == null) {
+            try {
+                resolveClassInternal();
+            } catch (ClassNotFoundException e) {
+                // class not yet available at this point
+            }
+        }
+        return cachedOriginalInstanceClass;
+    }
 
 
-	/**
-	 * @return non-null instance class
-	 * @throws ClassNotFoundException 
-	 */
-	private Class<?> forceGetOriginalInstanceClass() throws ClassNotFoundException {
-		if (cachedOriginalInstanceClass == null) {
-			resolveClassInternal();
-		}
-		return cachedOriginalInstanceClass;
-	}
-	
-	/**
-	 * @return non-null instance class, wrapped if primitive class
-	 * @throws ClassNotFoundException 
-	 */
-	public Class<?> forceGetWrapperInstanceClass() throws ClassNotFoundException {
-		forceGetOriginalInstanceClass();
-		return getWrapperInstanceClass();
-	}
-	/**
-	 * @return non-null instance class, wrapped if primitive class
-	 * @throws ClassNotFoundException 
-	 */
-	public Class<?> forceGetInstanceClass() throws ClassNotFoundException {
-		return forceGetWrapperInstanceClass();
-	}
-	
-	/**
-	 * @return instance class, wrapped if primitive class, null if class cannot be loaded
-	 */
-	public Class<?> getWrapperInstanceClass()  {
-		if (cachedWrapperInstanceClass == null) {
-			cachedWrapperInstanceClass = primitiveTypeToWrapperClass(getOriginalInstanceClass());
-		}
-		return cachedWrapperInstanceClass;
-	}
-	/**
-	 * @return instance class, wrapped if primitive class, null if class cannot be loaded
-	 */
-	public Class<?> getInstanceClass()  {
-		return getWrapperInstanceClass();
-	}
-	
-	private void resolveClassInternal() throws ClassNotFoundException {
-		cachedOriginalInstanceClass = Class.forName(wrappedKey);
-	}
-	
-	@Override
-	public String getPrettyPrintableName() {
-		getWrapperInstanceClass();
-		return cachedWrapperInstanceClass == null ? wrappedKey == null ? "<null>" : wrappedKey : cachedWrapperInstanceClass.getName();
-	}
+    /**
+     * @return non-null instance class
+     * @throws ClassNotFoundException 
+     */
+    private Class<?> forceGetOriginalInstanceClass() throws ClassNotFoundException {
+        if (cachedOriginalInstanceClass == null) {
+            resolveClassInternal();
+        }
+        return cachedOriginalInstanceClass;
+    }
+    
+    /**
+     * @return non-null instance class, wrapped if primitive class
+     * @throws ClassNotFoundException 
+     */
+    public Class<?> forceGetWrapperInstanceClass() throws ClassNotFoundException {
+        forceGetOriginalInstanceClass();
+        return getWrapperInstanceClass();
+    }
+    /**
+     * @return non-null instance class, wrapped if primitive class
+     * @throws ClassNotFoundException 
+     */
+    public Class<?> forceGetInstanceClass() throws ClassNotFoundException {
+        return forceGetWrapperInstanceClass();
+    }
+    
+    /**
+     * @return instance class, wrapped if primitive class, null if class cannot be loaded
+     */
+    public Class<?> getWrapperInstanceClass()  {
+        if (cachedWrapperInstanceClass == null) {
+            cachedWrapperInstanceClass = primitiveTypeToWrapperClass(getOriginalInstanceClass());
+        }
+        return cachedWrapperInstanceClass;
+    }
+    /**
+     * @return instance class, wrapped if primitive class, null if class cannot be loaded
+     */
+    public Class<?> getInstanceClass()  {
+        return getWrapperInstanceClass();
+    }
+    
+    private void resolveClassInternal() throws ClassNotFoundException {
+        cachedOriginalInstanceClass = Class.forName(wrappedKey);
+    }
+    
+    @Override
+    public String getPrettyPrintableName() {
+        getWrapperInstanceClass();
+        return cachedWrapperInstanceClass == null ? wrappedKey == null ? "<null>" : wrappedKey : cachedWrapperInstanceClass.getName();
+    }
 
-	@Override
-	public String getStringID() {
-		return "javaClass#"+ getPrettyPrintableName();
-	}
+    @Override
+    public String getStringID() {
+        return "javaClass#"+ getPrettyPrintableName();
+    }
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
-	
-	@Override
-	public boolean isEnumerable() {
-		return false;
-	}
-	
-	@Override
-	public String toString() {
-		return this.getPrettyPrintableName();
-	}
+    @Override
+    public int getArity() {
+        return 1;
+    }
+    
+    @Override
+    public boolean isEnumerable() {
+        return false;
+    }
+    
+    @Override
+    public String toString() {
+        return this.getPrettyPrintableName();
+    }
 
-	private static Class<?> primitiveTypeToWrapperClass(Class<?> instanceClass) {
-		if (instanceClass.isPrimitive()) {
-			if (Void.TYPE.equals(instanceClass))
-				return Void.class;
-			if (Boolean.TYPE.equals(instanceClass))
-				return Boolean.class;
-			if (Character.TYPE.equals(instanceClass))
-				return Character.class;
-			if (Byte.TYPE.equals(instanceClass))
-				return Byte.class;
-			if (Short.TYPE.equals(instanceClass))
-				return Short.class;
-			if (Integer.TYPE.equals(instanceClass))
-				return Integer.class;
-			if (Long.TYPE.equals(instanceClass))
-				return Long.class;
-			if (Float.TYPE.equals(instanceClass))
-				return Float.class;
-			if (Double.TYPE.equals(instanceClass))
-				return Double.class;
-		}
-		return instanceClass;
-	}
+    private static Class<?> primitiveTypeToWrapperClass(Class<?> instanceClass) {
+        if (instanceClass.isPrimitive()) {
+            if (Void.TYPE.equals(instanceClass))
+                return Void.class;
+            if (Boolean.TYPE.equals(instanceClass))
+                return Boolean.class;
+            if (Character.TYPE.equals(instanceClass))
+                return Character.class;
+            if (Byte.TYPE.equals(instanceClass))
+                return Byte.class;
+            if (Short.TYPE.equals(instanceClass))
+                return Short.class;
+            if (Integer.TYPE.equals(instanceClass))
+                return Integer.class;
+            if (Long.TYPE.equals(instanceClass))
+                return Long.class;
+            if (Float.TYPE.equals(instanceClass))
+                return Float.class;
+            if (Double.TYPE.equals(instanceClass))
+                return Double.class;
+        }
+        return instanceClass;
+    }
 
 
 }

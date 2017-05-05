@@ -69,7 +69,7 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
                 contribAttribute(it, "feature-name", parameters.feature.name)
                 contribAttribute(it, "query-fqn", pattern.fullyQualifiedName)
                 contribAttribute(it, "surrogate-query", 
-                	typeof(PQueryExtensionFactory).canonicalName + ":" + pattern.utilPackageName + "." + pattern.querySpecificationClassName
+                    typeof(PQueryExtensionFactory).canonicalName + ":" + pattern.utilPackageName + "." + pattern.querySpecificationClassName
                 )
               ]
             ]
@@ -99,14 +99,14 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
   
     override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
         pattern.gatherSurrogateParameters.forEach[ parameters |
-        	//TODO readd dynamic surrogate support 
+            //TODO readd dynamic surrogate support 
             //SurrogateQueryRegistry.instance.addDynamicSurrogateQueryForFeature(parameters.feature, pattern.fullyQualifiedName)
         ]
     }
     
     override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
         pattern.gatherSurrogateParameters.forEach[ parameters |
-        	//TODO readd dynamic surrogate support 
+            //TODO readd dynamic surrogate support 
 //            SurrogateQueryRegistry.instance.removeDynamicSurrogateQueryForFeature(parameters.feature)
         ]
     }

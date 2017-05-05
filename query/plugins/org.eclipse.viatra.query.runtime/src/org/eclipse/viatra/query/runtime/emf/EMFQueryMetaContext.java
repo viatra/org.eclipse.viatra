@@ -52,7 +52,7 @@ import com.google.common.collect.SetMultimap;
  *
  */
 public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
-	
+    
     /**
      * Default static instance that only makes conservative assumptions that are valid for any scope.
      * @since 1.6
@@ -98,55 +98,55 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     }
 
     
-	@Override
-	public boolean isEnumerable(IInputKey key) {		
-		ensureValidKey(key);
-		return key.isEnumerable();
+    @Override
+    public boolean isEnumerable(IInputKey key) {		
+        ensureValidKey(key);
+        return key.isEnumerable();
 //		if (key instanceof JavaTransitiveInstancesKey) 
 //			return false;
 //		else
 //			return true;
-	}
-	
-	@Override
-	public boolean canLeadOutOfScope(IInputKey key) {
-		ensureValidKey(key);
-		if (key instanceof EStructuralFeatureInstancesKey) {
-			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-			if (feature instanceof EReference){
-				return ((EReference) feature).isResolveProxies();
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean isStateless(IInputKey key) {
-		ensureValidKey(key);
-		if (key instanceof JavaTransitiveInstancesKey || key instanceof EClassUnscopedTransitiveInstancesKey) 
-			return true;
-		else
-			return false;
-	}
+    }
+    
+    @Override
+    public boolean canLeadOutOfScope(IInputKey key) {
+        ensureValidKey(key);
+        if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            if (feature instanceof EReference){
+                return ((EReference) feature).isResolveProxies();
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean isStateless(IInputKey key) {
+        ensureValidKey(key);
+        if (key instanceof JavaTransitiveInstancesKey || key instanceof EClassUnscopedTransitiveInstancesKey) 
+            return true;
+        else
+            return false;
+    }
 
-	@Override
-	public Map<Set<Integer>, Set<Integer>> getFunctionalDependencies(IInputKey key) {
-		ensureValidKey(key);
-		if (key instanceof EStructuralFeatureInstancesKey) {
-			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-	    	final Map<Set<Integer>, Set<Integer>> result = 
-	    			new HashMap<Set<Integer>, Set<Integer>>();
-	    	if (isFeatureMultiplicityToOne(feature))
-	    		result.put(Collections.singleton(0), Collections.singleton(1));
-	    	if (isFeatureMultiplicityOneTo(feature))
-	    		result.put(Collections.singleton(1), Collections.singleton(0));
-			return result;
-		} else {
-			return Collections.emptyMap();
-		}
-	}
-	
-	@Override
+    @Override
+    public Map<Set<Integer>, Set<Integer>> getFunctionalDependencies(IInputKey key) {
+        ensureValidKey(key);
+        if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            final Map<Set<Integer>, Set<Integer>> result = 
+                    new HashMap<Set<Integer>, Set<Integer>>();
+            if (isFeatureMultiplicityToOne(feature))
+                result.put(Collections.singleton(0), Collections.singleton(1));
+            if (isFeatureMultiplicityOneTo(feature))
+                result.put(Collections.singleton(1), Collections.singleton(0));
+            return result;
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+    
+    @Override
     public Collection<InputKeyImplication> getImplications(IInputKey implyingKey) {
         ensureValidKey(implyingKey);
         Collection<InputKeyImplication> result = new HashSet<InputKeyImplication>();
@@ -263,24 +263,24 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 
         return result;
     }
-	
-	@Override
-	public SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey) {
+    
+    @Override
+    public SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey) {
         ensureValidKey(implyingKey);
-	    if (implyingKey instanceof EClassUnscopedTransitiveInstancesKey) {
-	        EClass emfKey = ((EClassUnscopedTransitiveInstancesKey) implyingKey).getEmfKey();
-	        
-	        SetMultimap<InputKeyImplication, InputKeyImplication> result = HashMultimap.create(1,1);
+        if (implyingKey instanceof EClassUnscopedTransitiveInstancesKey) {
+            EClass emfKey = ((EClassUnscopedTransitiveInstancesKey) implyingKey).getEmfKey();
+            
+            SetMultimap<InputKeyImplication, InputKeyImplication> result = HashMultimap.create(1,1);
             result.put(
                     new InputKeyImplication(implyingKey, EOBJECT_SCOPED_KEY, Arrays.asList(0)),
                     new InputKeyImplication(implyingKey, new EClassTransitiveInstancesKey(emfKey), Arrays.asList(0))
             );
-	        return result;
-	    } else return super.getConditionalImplications(implyingKey);
-	}
-	
-	@Override
-	public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
+            return result;
+        } else return super.getConditionalImplications(implyingKey);
+    }
+    
+    @Override
+    public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
         ensureValidKey(implyingKey);
         if (implyingKey instanceof EClassTransitiveInstancesKey) {
             EClass emfKey = ((EClassTransitiveInstancesKey) implyingKey).getEmfKey();
@@ -292,27 +292,27 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
             );
             return result;
         } else return super.getWeakenedAlternatives(implyingKey);
-	}
+    }
 
-	public void ensureValidKey(IInputKey key) {
-		if (! (key instanceof BaseEMFTypeKey<?>) && ! (key instanceof JavaTransitiveInstancesKey))
-			illegalInputKey(key);
-	}
+    public void ensureValidKey(IInputKey key) {
+        if (! (key instanceof BaseEMFTypeKey<?>) && ! (key instanceof JavaTransitiveInstancesKey))
+            illegalInputKey(key);
+    }
 
-	public void illegalInputKey(IInputKey key) {
-		throw new IllegalArgumentException("The input key " + key + " is not a valid EMF input key.");
-	}
-	
+    public void illegalInputKey(IInputKey key) {
+        throw new IllegalArgumentException("The input key " + key + " is not a valid EMF input key.");
+    }
+    
     public boolean isFeatureMultiplicityToOne(EStructuralFeature feature) {
-		return !feature.isMany();
+        return !feature.isMany();
     }
 
     public boolean isFeatureMultiplicityOneTo(EStructuralFeature typeObject) {
-    	if (typeObject instanceof EReference) {
-	    	final EReference feature = (EReference)typeObject;
-	    	final EReference eOpposite = feature.getEOpposite();
-			return feature.isContainment() || (eOpposite != null && !eOpposite.isMany());
-    	} else return false;
+        if (typeObject instanceof EReference) {
+            final EReference feature = (EReference)typeObject;
+            final EReference eOpposite = feature.getEOpposite();
+            return feature.isContainment() || (eOpposite != null && !eOpposite.isMany());
+        } else return false;
     }
     
     public EClass featureSourceType(EStructuralFeature feature) {
@@ -363,5 +363,5 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
             return (o1 instanceof EClassTransitiveInstancesKey) ? -1 : 0;
         }
     };
-	
+    
 }

@@ -82,9 +82,9 @@ public class Equality extends DeferredPConstraint {
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
-    	result.put(Collections.singleton(who), Collections.singleton(withWhom));
-    	result.put(Collections.singleton(withWhom), Collections.singleton(who));
+        final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+        result.put(Collections.singleton(who), Collections.singleton(withWhom));
+        result.put(Collections.singleton(withWhom), Collections.singleton(who));
         return result;
     }
 

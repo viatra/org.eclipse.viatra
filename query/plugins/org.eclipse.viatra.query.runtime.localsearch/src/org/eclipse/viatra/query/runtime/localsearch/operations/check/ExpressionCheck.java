@@ -46,12 +46,12 @@ public class ExpressionCheck extends CheckOperation {
     }
 
     @Override
-	public List<Integer> getVariablePositions() {
-    	// XXX not sure if this is the correct implementation to get the affected variable indicies
-    	List<Integer> variables = Lists.newArrayList();
-    	variables.addAll(nameMap.values());
-		return variables;
-	}
+    public List<Integer> getVariablePositions() {
+        // XXX not sure if this is the correct implementation to get the affected variable indicies
+        List<Integer> variables = Lists.newArrayList();
+        variables.addAll(nameMap.values());
+        return variables;
+    }
     
     @Override
     public String toString() {

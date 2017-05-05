@@ -17,14 +17,14 @@ import org.eclipse.viatra.integration.mwe2.providers.impl.BaseProvider
  * 
  */
 public class TestLoopCondition extends BaseProvider implements IConditionProvider{
-	private int reference = 2;
-	private int actual = 0;
-	override apply() {
-		
-		if(reference > actual){
-			actual++
-			return true
-		}
-		false
-	}
+    private int reference = 2;
+    private int actual = 0;
+    override apply() {
+        
+        if(reference > actual){
+            actual++
+            return true
+        }
+        false
+    }
 }

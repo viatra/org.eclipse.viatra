@@ -40,65 +40,65 @@ import org.eclipse.xtext.resource.XtextResourceSet
  */
 class GeneratorHandler {
 
-	@Inject Injector injector
+    @Inject Injector injector
 
-	@Inject IContextualOutputConfigurationProvider outputConfigurationProvider
+    @Inject IContextualOutputConfigurationProvider outputConfigurationProvider
 
-	def generate(ExecutionEvent event, Class<? extends ILocalsearchGeneratorOutputProvider> generatorClass) {
-		val selection = HandlerUtil.getCurrentSelection(event)
+    def generate(ExecutionEvent event, Class<? extends ILocalsearchGeneratorOutputProvider> generatorClass) {
+        val selection = HandlerUtil.getCurrentSelection(event)
 
-		if (selection instanceof IStructuredSelection) {
-			val xtextResourceSet = new XtextResourceSet
-			val patternDefinitionResource = selection.getPatternDefinitionResource(xtextResourceSet)
-			patternDefinitionResource.contents.forEach[EcoreUtil::resolveAll(it)]
-			
-			val patternDefinitionResourceUri = patternDefinitionResource.getURI.toString
-			val extensionlessUri = patternDefinitionResourceUri.substring(0, patternDefinitionResourceUri.lastIndexOf('.'))
-			val fileName = extensionlessUri.substring(extensionlessUri.lastIndexOf('/') + 1)
-			
-			val ast = patternDefinitionResource.getContents().get(0) as PatternModel
+        if (selection instanceof IStructuredSelection) {
+            val xtextResourceSet = new XtextResourceSet
+            val patternDefinitionResource = selection.getPatternDefinitionResource(xtextResourceSet)
+            patternDefinitionResource.contents.forEach[EcoreUtil::resolveAll(it)]
+            
+            val patternDefinitionResourceUri = patternDefinitionResource.getURI.toString
+            val extensionlessUri = patternDefinitionResourceUri.substring(0, patternDefinitionResourceUri.lastIndexOf('.'))
+            val fileName = extensionlessUri.substring(extensionlessUri.lastIndexOf('/') + 1)
+            
+            val ast = patternDefinitionResource.getContents().get(0) as PatternModel
 
-			val fileSystemAccess = patternDefinitionResource.fileSystemAccess
+            val fileSystemAccess = patternDefinitionResource.fileSystemAccess
 
-			val generator = new LocalSearchCppGenerator(generatorClass)
-			val pQueries = ASTtoPQueriesHelper::astToPQueries(ast)
-			val outputProvider = generator.generate(fileName, patternDefinitionResource, pQueries)
+            val generator = new LocalSearchCppGenerator(generatorClass)
+            val pQueries = ASTtoPQueriesHelper::astToPQueries(ast)
+            val outputProvider = generator.generate(fileName, patternDefinitionResource, pQueries)
 
-			val serializer = new DefaultSerializer
-			serializer.serialize("", outputProvider, new XTextFileAccessor(fileSystemAccess))
-		}
+            val serializer = new DefaultSerializer
+            serializer.serialize("", outputProvider, new XTextFileAccessor(fileSystemAccess))
+        }
 
-		return null
-	}
+        return null
+    }
 
-	def getFileSystemAccess(Resource resource) {
-		val fileSystemAccess = new EclipseResourceFileSystemAccess2
+    def getFileSystemAccess(Resource resource) {
+        val fileSystemAccess = new EclipseResourceFileSystemAccess2
 
-		injector.injectMembers(fileSystemAccess)
+        injector.injectMembers(fileSystemAccess)
 
-		val workspaceRoot = ResourcesPlugin.workspace.root
+        val workspaceRoot = ResourcesPlugin.workspace.root
 
-		val project = workspaceRoot.getProject(resource.getURI.segment(1))
-		fileSystemAccess.project = project
-		fileSystemAccess.monitor = new NullProgressMonitor
+        val project = workspaceRoot.getProject(resource.getURI.segment(1))
+        fileSystemAccess.project = project
+        fileSystemAccess.monitor = new NullProgressMonitor
 
-		val outputConfigurations = outputConfigurationProvider.getOutputConfigurations(resource)
+        val outputConfigurations = outputConfigurationProvider.getOutputConfigurations(resource)
 
-		val outputConfigurationsMap = newHashMap
-		outputConfigurations.forEach[
-			it.outputDirectory = '''./cpp-gen'''
-			outputConfigurationsMap.put(name, it)
-		]
+        val outputConfigurationsMap = newHashMap
+        outputConfigurations.forEach[
+            it.outputDirectory = '''./cpp-gen'''
+            outputConfigurationsMap.put(name, it)
+        ]
 
-		fileSystemAccess.outputConfigurations = outputConfigurationsMap
+        fileSystemAccess.outputConfigurations = outputConfigurationsMap
 
-		return fileSystemAccess
-	}
+        return fileSystemAccess
+    }
 
-	def getPatternDefinitionResource(IStructuredSelection selection, ResourceSet loader) {
-		loader.getResource(
-			URI::createPlatformResourceURI((selection.getFirstElement() as IFile).getFullPath().toPortableString(), true),
-			true
-		)
-	}
+    def getPatternDefinitionResource(IStructuredSelection selection, ResourceSet loader) {
+        loader.getResource(
+            URI::createPlatformResourceURI((selection.getFirstElement() as IFile).getFullPath().toPortableString(), true),
+            true
+        )
+    }
 }

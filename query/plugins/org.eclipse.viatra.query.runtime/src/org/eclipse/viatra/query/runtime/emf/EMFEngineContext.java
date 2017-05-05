@@ -84,14 +84,14 @@ class EMFEngineContext implements IEngineContext {
 
     @Override
     public IQueryRuntimeContext getQueryRuntimeContext() throws ViatraQueryException {
-    	NavigationHelper nh = getNavHelper(false);
+        NavigationHelper nh = getNavHelper(false);
         if (runtimeContext == null) {
-     	   runtimeContext = 
-     	   		emfScope.getOptions().isDynamicEMFMode() ?
-     				new DynamicEMFQueryRuntimeContext(nh, logger, emfScope) :
-     				new EMFQueryRuntimeContext(nh, logger, emfScope);
-     				
-     		ensureIndexLoaded();
+            runtimeContext = 
+                    emfScope.getOptions().isDynamicEMFMode() ?
+                     new DynamicEMFQueryRuntimeContext(nh, logger, emfScope) :
+                     new EMFQueryRuntimeContext(nh, logger, emfScope);
+                     
+             ensureIndexLoaded();
         }
         
         return runtimeContext;

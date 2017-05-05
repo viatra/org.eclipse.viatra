@@ -57,25 +57,25 @@ public class ExtensionBasedSurrogateQueryLoader {
      */
     private static final class PQueryProvider implements IProvider<PQuery> {
 
-    	private final IConfigurationElement element;
-    	private PQuery query;
-    	
-		public PQueryProvider(IConfigurationElement element) {
-			this.element = element;
-			this.query = null;
-		}
+        private final IConfigurationElement element;
+        private PQuery query;
+        
+        public PQueryProvider(IConfigurationElement element) {
+            this.element = element;
+            this.query = null;
+        }
 
-		@Override
-		public PQuery get() {
-			try {
-				if (query == null) {
-					query = (PQuery) element.createExecutableExtension("surrogate-query");
-				}
-				return query;
-			} catch (CoreException e) {
-				throw new IllegalArgumentException("Error initializing surrogate query", e);
-			}
-		}
+        @Override
+        public PQuery get() {
+            try {
+                if (query == null) {
+                    query = (PQuery) element.createExecutableExtension("surrogate-query");
+                }
+                return query;
+            } catch (CoreException e) {
+                throw new IllegalArgumentException("Error initializing surrogate query", e);
+            }
+        }
     }
     
     public static ExtensionBasedSurrogateQueryLoader instance() {
@@ -85,7 +85,7 @@ public class ExtensionBasedSurrogateQueryLoader {
     public void loadKnownSurrogateQueriesIntoRegistry() {
         Map<EStructuralFeature, PQueryProvider> knownSurrogateQueryFQNs = getSurrogateQueryProviders();
         for (Entry<EStructuralFeature, PQueryProvider> entry : knownSurrogateQueryFQNs.entrySet()) {
-        	final IInputKey inputKey = new EStructuralFeatureInstancesKey(entry.getKey());
+            final IInputKey inputKey = new EStructuralFeatureInstancesKey(entry.getKey());
             SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(inputKey, entry.getValue());
         }
     }
@@ -101,9 +101,9 @@ public class ExtensionBasedSurrogateQueryLoader {
                 .add(Platform.getExtensionRegistry().getConfigurationElementsFor(ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID))
                 .build();
             for (IConfigurationElement e : config) {
-            	if (e.isValid()) {
-            		processExtension(e);
-            	}
+                if (e.isValid()) {
+                    processExtension(e);
+                }
             }
         }
         return contributedSurrogateQueries;
@@ -117,7 +117,7 @@ public class ExtensionBasedSurrogateQueryLoader {
             String featureName = el.getAttribute("feature-name");
             String queryFqn = el.getAttribute("query-fqn");
             if (queryFqn == null) {
-            	queryFqn = "";
+                queryFqn = "";
             }
             PQueryProvider surrogateQueryProvider = new PQueryProvider(el); 
             

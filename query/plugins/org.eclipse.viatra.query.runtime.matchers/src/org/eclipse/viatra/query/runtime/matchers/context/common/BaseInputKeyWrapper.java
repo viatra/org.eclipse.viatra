@@ -19,39 +19,39 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
  *
  */
 public abstract class BaseInputKeyWrapper<Wrapped> implements IInputKey {
-	protected Wrapped wrappedKey;
+    protected Wrapped wrappedKey;
 
-	public BaseInputKeyWrapper(Wrapped wrappedKey) {
-		super();
-		this.wrappedKey = wrappedKey;
-	}
+    public BaseInputKeyWrapper(Wrapped wrappedKey) {
+        super();
+        this.wrappedKey = wrappedKey;
+    }
 
-	public Wrapped getWrappedKey() {
-		return wrappedKey;
-	}
-	
-	
-	@Override
-	public int hashCode() {
-		return ((wrappedKey == null) ? 0 : wrappedKey.hashCode());
-	}
+    public Wrapped getWrappedKey() {
+        return wrappedKey;
+    }
+    
+    
+    @Override
+    public int hashCode() {
+        return ((wrappedKey == null) ? 0 : wrappedKey.hashCode());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(this.getClass().equals(obj.getClass())))
-			return false;
-		BaseInputKeyWrapper other = (BaseInputKeyWrapper) obj;
-		if (wrappedKey == null) {
-			if (other.wrappedKey != null)
-				return false;
-		} else if (!wrappedKey.equals(other.wrappedKey))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(this.getClass().equals(obj.getClass())))
+            return false;
+        BaseInputKeyWrapper other = (BaseInputKeyWrapper) obj;
+        if (wrappedKey == null) {
+            if (other.wrappedKey != null)
+                return false;
+        } else if (!wrappedKey.equals(other.wrappedKey))
+            return false;
+        return true;
+    }
 
 
 }

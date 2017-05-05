@@ -44,20 +44,20 @@ import com.google.common.collect.Table;
 public class LocalSearchBackend implements IQueryBackend {
 
     IQueryBackendContext context;
-	IPlanProvider planProvider;
-	private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
-	
-	// Cache
-	Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
+    IPlanProvider planProvider;
+    private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
     
-	private final Multimap<PQuery, LocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
-	
+    // Cache
+    Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
+    
+    private final Multimap<PQuery, LocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
+    
     /**
      * @since 1.5
      */
     public LocalSearchBackend(IQueryBackendContext context) {
         super();
-		this.context = context;
+        this.context = context;
         this.eAttributesByTypeForEClass = HashBasedTable.create();
         this.planProvider = new CachingPlanProvider(context.getLogger());
     }
@@ -98,22 +98,22 @@ public class LocalSearchBackend implements IQueryBackend {
         resultProviderCache.clear();
     }
 
-	@Override
-	public boolean isCaching() {
-		return false;
-	}
+    @Override
+    public boolean isCaching() {
+        return false;
+    }
 
-	@Override
-	public IQueryResultProvider peekExistingResultProvider(PQuery query) {
-		return null;
-	}
+    @Override
+    public IQueryResultProvider peekExistingResultProvider(PQuery query) {
+        return null;
+    }
 
-	public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {
-	    return eAttributesByTypeForEClass;
-	}
+    public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {
+        return eAttributesByTypeForEClass;
+    }
 
-	/**
-	 * @since 1.4
+    /**
+     * @since 1.4
      */
     public IQueryRuntimeContext getRuntimeContext() {
         return context.getRuntimeContext();
@@ -148,7 +148,7 @@ public class LocalSearchBackend implements IQueryBackend {
     public void removeAdapter(ILocalSearchAdapter adapter){
         adapters.remove(adapter);
     }
-	
+    
     /**
      * Return a copy of the current adapters
      */
