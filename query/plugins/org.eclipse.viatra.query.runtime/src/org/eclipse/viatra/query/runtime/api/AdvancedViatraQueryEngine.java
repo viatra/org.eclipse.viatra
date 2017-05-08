@@ -343,27 +343,28 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
     public abstract IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher);
     
     /**
-     * The given callable will be executed, and all update propagation will be delayed until the
-     * execution is done. 
+     * The given callable will be executed, and all update propagation in stateful query backends 
+     * will be delayed until the execution is done. Within the callback, these backends will provide stale results.
      * 
-     * It is optional to support the delaying of update propagation in a {@linkplain AdvancedViatraQueryEngine}. 
+     * <p> It is optional for a {@link IQueryBackend} to support the delaying of update propagation; stateless backends will display up-to-date results. 
      * In this case, the given callable shall be executed, and the update propagation shall happen just like in non-delayed execution. 
      * 
-     * Example: in the RETE network, no messages will be propagated until the given callable is executed. 
+     * <p> Example: in the Rete network, no messages will be propagated until the given callable is executed. 
      * After the execution of the callable, all accumulated messages will be delivered. 
+     * 
+     * <p> The purpose of this method is that stateful query backends may save work when multiple model modifications are performed within the callback that partially cancel each other out.
      * 
      * @param callable the callable to be executed
      * @return the result of the callable
+     * @since 1.6
      */
     public abstract <V> V delayUpdatePropagation(Callable<V> callable) throws InvocationTargetException;
     
     /**
      * Returns true if the update propagation in this engine is currently delayed, false otherwise. 
-     * The method must always return false for those engines that do not use mailbox-based communication.
      * 
-     * See method {@linkplain AdvancedViatraQueryEngine.delayUpdatePropagation}.
-     * 
-     * @see the other method
+     * @see {@link #delayUpdatePropagation(Callable)}
+     * @since 1.6
      */
     public abstract boolean isUpdatePropagationDelayed();
 

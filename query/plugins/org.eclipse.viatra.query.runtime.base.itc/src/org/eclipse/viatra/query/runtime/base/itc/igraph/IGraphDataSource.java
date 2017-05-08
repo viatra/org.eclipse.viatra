@@ -17,6 +17,8 @@ import java.util.Set;
 
 /**
  * The interface prescribes the set of operations that a graph data source must support. 
+ * <p> Note that the old version of the interface is broken at version 1.6; 
+ *  MultiSets are now presented as Maps instead of Lists.
  * 
  * @author Tamas Szabo
  * 
@@ -37,6 +39,7 @@ public interface IGraphDataSource<V> extends Serializable {
      * In the notification order this observer will be the first one as long as another call to this method happens.
      *
      * @param observer the graph observer
+     * @since 1.6
      */
     public void attachAsFirstObserver(IGraphObserver<V> observer);
 
@@ -56,13 +59,14 @@ public interface IGraphDataSource<V> extends Serializable {
 
     /**
      * Returns the target nodes for the given source node.  
-     * The returned data structure is a map because of potential parallel edges in the graph data source.
+     * The returned data structure is a map (essentially a MultiSet) because of potential parallel edges in the graph data source.
      * The values in the returned map represent the count of the given (source, target) edge. 
      * 
      * The method must not return null.
      * 
      * @param source the source node
      * @return the target nodes with their count values
+     * @since 1.6
      */
     public Map<V, Integer> getTargetNodes(V source);
 }

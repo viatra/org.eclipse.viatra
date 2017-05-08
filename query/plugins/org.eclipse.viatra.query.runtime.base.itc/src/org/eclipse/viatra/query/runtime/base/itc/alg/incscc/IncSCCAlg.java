@@ -542,6 +542,10 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
     }
 
+    /**
+     * Returns the node that is selected as the representative of the SCC containing the argument.
+     * @since 1.6
+     */
     public V getRepresentative(V node) {
         return sccs.find(node);
     }
@@ -585,6 +589,10 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         return new DFSPathFinder<V>(gds, this);
     }
 
+    /**
+     * The graph of SCCs; each SCC is represented by its representative node (see {@link #getRepresentative(Object)})
+     * @since 1.6
+     */
     public Graph<V> getReducedGraph() {
         return reducedGraph;
     }

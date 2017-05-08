@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
  * @author Bergmann Gabor
  *
  */
-public class RecursionCutoffPoint {
+class RecursionCutoffPoint {
     final RecipeTraceInfo.ParentTraceList futureTraceList;
     final CompiledQuery compiledQuery;
     final ProductionRecipe recipe;

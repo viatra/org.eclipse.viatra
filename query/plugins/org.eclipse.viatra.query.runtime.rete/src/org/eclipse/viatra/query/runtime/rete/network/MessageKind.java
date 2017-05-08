@@ -14,7 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
  * The enum represents the possible kinds of messages in the query backend. 
  * 
  * @author Tamas Szabo
- *
+ * @since 1.6
  */
 public enum MessageKind {
     

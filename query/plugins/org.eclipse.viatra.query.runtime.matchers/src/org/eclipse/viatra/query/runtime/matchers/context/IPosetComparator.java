@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * because they let the engine identify monotone change pairs.
  * 
  * @author Tamas Szabo
- *
+ * @since 1.6
  */
 public interface IPosetComparator {
 

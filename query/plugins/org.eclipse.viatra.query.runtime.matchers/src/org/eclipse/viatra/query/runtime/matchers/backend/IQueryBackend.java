@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  *
  * @author Bergmann Gábor
  * @since 0.9
- *
  */
 public interface IQueryBackend {
 	
@@ -51,7 +50,8 @@ public interface IQueryBackend {
 
 	/**
 	 * Propagates all pending updates in this query backend. The implementation of this method is optional, and it 
-	 * can be ignored entirely if the backend does not use mailbox-based communication.   
+	 * can be ignored entirely if the backend does not delay updates.   
+	 * @since 1.6
 	 */
 	public void flushUpdates();
 	

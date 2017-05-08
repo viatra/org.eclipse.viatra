@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * ALL METHODS: FOR INTERNAL USE ONLY; ONLY INVOKE FROM {@link ReteContainer}
  * 
  * @author Gabor Bergmann
+ * @noimplement This interface is not intended to be implemented by external clients.
  */
 public interface Receiver extends Node {
 
@@ -31,6 +32,7 @@ public interface Receiver extends Node {
      * Returns the {@link Mailbox} of this receiver.
      * 
      * @return the mailbox
+     * @since 1.6
      */
     public Mailbox getMailbox();
         
