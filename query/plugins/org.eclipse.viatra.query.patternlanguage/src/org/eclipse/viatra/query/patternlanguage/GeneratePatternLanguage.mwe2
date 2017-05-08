@@ -47,6 +47,7 @@ Workflow {
 //        pathTestProject = "../../tests/${projectName}.tests"
         projectNameRt = projectName
         projectNameUi = "${projectName}.ui"
+        mergeManifest = false
         
         language = {
             uri = grammarURI

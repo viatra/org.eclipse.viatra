@@ -19,16 +19,17 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.core.runtime;resolution:=optional,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.viatra.query.tooling.generator.model,
+Export-Package: org.eclipse.viatra.query.tooling.generator.model;
+  uses:="com.google.inject",
  org.eclipse.viatra.query.tooling.generator.model.formatting,
- org.eclipse.viatra.query.tooling.generator.model.scoping,
- org.eclipse.viatra.query.tooling.generator.model.validation,
- org.eclipse.viatra.query.tooling.generator.model.services,
  org.eclipse.viatra.query.tooling.generator.model.generatorModel,
  org.eclipse.viatra.query.tooling.generator.model.generatorModel.impl,
  org.eclipse.viatra.query.tooling.generator.model.generatorModel.util,
- org.eclipse.viatra.query.tooling.generator.model.serializer,
  org.eclipse.viatra.query.tooling.generator.model.parser.antlr,
- org.eclipse.viatra.query.tooling.generator.model.parser.antlr.internal
+ org.eclipse.viatra.query.tooling.generator.model.parser.antlr.internal,
+ org.eclipse.viatra.query.tooling.generator.model.scoping,
+ org.eclipse.viatra.query.tooling.generator.model.serializer,
+ org.eclipse.viatra.query.tooling.generator.model.services,
+ org.eclipse.viatra.query.tooling.generator.model.validation
 Import-Package: org.apache.log4j
 Bundle-Vendor: Eclipse VIATRA Project

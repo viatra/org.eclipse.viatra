@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.cep.core.engine.compiler.rules
 
-import com.google.common.base.Function
 import com.google.common.base.Preconditions
 import com.google.common.collect.Multimaps
 import java.util.Collection

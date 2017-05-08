@@ -78,7 +78,6 @@ public class ReteEngine implements IQueryBackend {
      * @param reteThreads
      *            the number of threads to operate the RETE network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
-     *            Must be 0 since version 1.6
      */
     public ReteEngine(IQueryBackendContext context, int reteThreads) {
         super();
@@ -94,9 +93,6 @@ public class ReteEngine implements IQueryBackend {
         this.compiler = null;
     }
     
-    /**
-     * @since 1.6
-     */
     public IQueryBackendContext getBackendContext() {
         return context;
     }

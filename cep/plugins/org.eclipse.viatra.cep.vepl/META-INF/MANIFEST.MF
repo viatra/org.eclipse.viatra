@@ -22,17 +22,16 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,2.13.0)";visibility:=re
  org.eclipse.viatra.transformation.runtime.emf,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
  org.eclipse.viatra.cep.core;bundle-version="[0.16.0,0.17.0)"
-Import-Package: org.apache.log4j,
- org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.viatra.cep.vepl,
- org.eclipse.viatra.cep.vepl.services,
- org.eclipse.viatra.cep.vepl.vepl,
- org.eclipse.viatra.cep.vepl.vepl.impl,
- org.eclipse.viatra.cep.vepl.vepl.util,
- org.eclipse.viatra.cep.vepl.serializer,
+Export-Package: org.eclipse.viatra.cep.vepl;uses:="com.google.inject",
+ org.eclipse.viatra.cep.vepl.formatting,
+ org.eclipse.viatra.cep.vepl.jvmmodel,
  org.eclipse.viatra.cep.vepl.parser.antlr,
  org.eclipse.viatra.cep.vepl.parser.antlr.internal,
+ org.eclipse.viatra.cep.vepl.serializer,
+ org.eclipse.viatra.cep.vepl.services,
  org.eclipse.viatra.cep.vepl.validation,
- org.eclipse.viatra.cep.vepl.formatting,
- org.eclipse.viatra.cep.vepl.jvmmodel
+ org.eclipse.viatra.cep.vepl.vepl,
+ org.eclipse.viatra.cep.vepl.vepl.impl,
+ org.eclipse.viatra.cep.vepl.vepl.util

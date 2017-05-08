@@ -18,7 +18,8 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j
 Bundle-Activator: org.eclipse.viatra.transformation.debug.activator.TransformationDebugActivator
 Export-Package: org.eclipse.viatra.transformation.debug.activator,
- org.eclipse.viatra.transformation.debug.communication,
+ org.eclipse.viatra.transformation.debug.communication;
+  uses:="javax.management",
  org.eclipse.viatra.transformation.debug.launch,
  org.eclipse.viatra.transformation.debug.model,
  org.eclipse.viatra.transformation.debug.model.breakpoint,

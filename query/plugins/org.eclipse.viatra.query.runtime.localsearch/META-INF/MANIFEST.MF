@@ -12,14 +12,19 @@ Require-Bundle: org.eclipse.viatra.query.runtime.base;bundle-version="[1.6.0,1.7
  org.eclipse.xtext.xbase.lib;bundle-version="2.9.0"
 Export-Package: org.eclipse.viatra.query.runtime.localsearch,
  org.eclipse.viatra.query.runtime.localsearch.exceptions,
- org.eclipse.viatra.query.runtime.localsearch.matcher,
- org.eclipse.viatra.query.runtime.localsearch.matcher.integration,
+ org.eclipse.viatra.query.runtime.localsearch.matcher;
+  uses:="com.google.common.collect",
+ org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
+  uses:="com.google.common.collect",
  org.eclipse.viatra.query.runtime.localsearch.operations,
  org.eclipse.viatra.query.runtime.localsearch.operations.check,
  org.eclipse.viatra.query.runtime.localsearch.operations.extend,
- org.eclipse.viatra.query.runtime.localsearch.plan,
- org.eclipse.viatra.query.runtime.localsearch.planner,
- org.eclipse.viatra.query.runtime.localsearch.planner.cost,
+ org.eclipse.viatra.query.runtime.localsearch.plan;
+  uses:="com.google.common.collect",
+ org.eclipse.viatra.query.runtime.localsearch.planner;
+  uses:="com.google.common.base",
+ org.eclipse.viatra.query.runtime.localsearch.planner.cost;
+  uses:="com.google.common.base",
  org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl,
  org.eclipse.viatra.query.runtime.localsearch.profiler
 Import-Package: org.apache.log4j;version="1.2.15"

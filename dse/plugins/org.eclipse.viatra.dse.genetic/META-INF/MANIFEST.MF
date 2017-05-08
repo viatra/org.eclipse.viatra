@@ -4,10 +4,10 @@ Bundle-Name: VIATRA DSE framework Genetic Algorithms (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.dse.genetic
 Bundle-Version: 0.16.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.viatra.dse,
- org.eclipse.emf.ecore,
- com.google.guava;bundle-version="10.0.0"
-Export-Package: org.eclipse.viatra.dse.evolutionary,
+Require-Bundle: org.eclipse.viatra.dse;bundle-version="[0.16.0,0.17.0)",
+ org.eclipse.emf.ecore
+Export-Package: org.eclipse.viatra.dse.evolutionary;
+  uses:="com.google.common.util.concurrent",
  org.eclipse.viatra.dse.evolutionary.crossovers,
  org.eclipse.viatra.dse.evolutionary.evaluation,
  org.eclipse.viatra.dse.evolutionary.initialselectors,
@@ -18,5 +18,8 @@ Export-Package: org.eclipse.viatra.dse.evolutionary,
  org.eclipse.viatra.dse.evolutionary.reproduction,
  org.eclipse.viatra.dse.evolutionary.stopconditions,
  org.eclipse.viatra.dse.evolutionary.survival
-Import-Package: org.apache.log4j;version="1.2.15"
+Import-Package: com.google.common.base;version="15.0.0",
+ com.google.common.collect;version="15.0.0",
+ com.google.common.util.concurrent;version="15.0.0",
+ org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Eclipse VIATRA Project

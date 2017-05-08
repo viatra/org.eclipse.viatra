@@ -8,7 +8,6 @@ Require-Bundle: org.eclipse.viatra.query.runtime.rete;bundle-version="[1.6.0,1.7
  org.eclipse.emf.ecore;bundle-version="2.6.0";visibility:=reexport,
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.viatra.query.runtime.base;bundle-version="[1.6.0,1.7.0)";visibility:=reexport,
- com.google.guava;bundle-version="10.0.0",
  org.eclipse.emf.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse VIATRA Project
@@ -16,14 +15,17 @@ Export-Package: org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.api,
  org.eclipse.viatra.query.runtime.api.impl,
  org.eclipse.viatra.query.runtime.api.scope,
- org.eclipse.viatra.query.runtime.emf,
- org.eclipse.viatra.query.runtime.emf.helper,
+ org.eclipse.viatra.query.runtime.emf;
+  uses:="com.google.common.collect",
+ org.eclipse.viatra.query.runtime.emf.helper;uses:="com.google.common.base",
  org.eclipse.viatra.query.runtime.emf.types,
  org.eclipse.viatra.query.runtime.exception,
  org.eclipse.viatra.query.runtime.extensibility,
  org.eclipse.viatra.query.runtime.registry,
  org.eclipse.viatra.query.runtime.registry.connector,
- org.eclipse.viatra.query.runtime.registry.view,
+ org.eclipse.viatra.query.runtime.registry.view;uses:="com.google.common.collect",
  org.eclipse.viatra.query.runtime.util
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.log4j;version="1.2.15"
+Import-Package: com.google.common.base;version="15.0.0",
+ com.google.common.collect;version="15.0.0",
+ org.apache.log4j;version="1.2.15"

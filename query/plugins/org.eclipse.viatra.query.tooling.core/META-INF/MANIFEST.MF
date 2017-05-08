@@ -4,30 +4,27 @@ Bundle-Name: VIATRA Query IDE
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.core;singleton:=true
 Bundle-Version: 1.6.0.qualifier
 Bundle-Activator: org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin
-Require-Bundle: org.eclipse.core.resources;bundle-version="3.7.0",
- org.eclipse.core.runtime,
- org.eclipse.viatra.query.runtime;bundle-version="0.8.0",
- org.eclipse.viatra.query.patternlanguage;bundle-version="0.8.0",
- org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8.0",
- org.eclipse.xtext.common.types;bundle-version="[2.9.0,2.13.0)",
+Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.6.0,1.7.0)",
  org.eclipse.xtext.xbase;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.xtext.builder;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.xtext.xbase.lib;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.pde.core;bundle-version="3.7.0",
  org.eclipse.xtext.common.types.ui;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.viatra.query.tooling.generator.model;bundle-version="0.8.0",
+ org.eclipse.viatra.query.tooling.generator.model;bundle-version="[1.6.0,1.7.0)",
  org.eclipse.jdt.core,
  org.eclipse.emf.codegen.ecore,
- org.eclipse.xtext.util;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.xtext.ui;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.ui.ide;bundle-version="3.7.0"
+ org.eclipse.xtext.ui;bundle-version="[2.9.0,2.13.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.viatra.query.tooling.core.generator,
+Export-Package: org.eclipse.viatra.query.tooling.core.generator;
+  uses:="org.w3c.dom",
  org.eclipse.viatra.query.tooling.core.generator.fragments,
  org.eclipse.viatra.query.tooling.core.generator.genmodel,
  org.eclipse.viatra.query.tooling.core.preferences,
- org.eclipse.viatra.query.tooling.core.project,
+ org.eclipse.viatra.query.tooling.core.project;
+  uses:="org.w3c.dom,,
+   com.google.common.collect,
+   javax.xml.parsers",
  org.eclipse.viatra.query.tooling.core.targetplatform
 Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Eclipse VIATRA Project

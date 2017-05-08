@@ -6,10 +6,10 @@ Bundle-Version: 1.6.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.jdt.ui,
- org.eclipse.viatra.query.tooling.core,
- org.eclipse.xtend.lib,
- org.eclipse.xtend.ide,
- org.eclipse.xtext.ui,
+ org.eclipse.viatra.query.tooling.core;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.xtend.lib;bundle-version="[2.9.0,2.13.0)",
+ org.eclipse.xtend.ide;bundle-version="[2.9.0,2.13.0)",
+ org.eclipse.xtext.ui;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.ui.ide,
  org.eclipse.jdt.core
 Export-Package: org.eclipse.viatra.transformation.ui.util

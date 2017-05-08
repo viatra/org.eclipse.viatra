@@ -10,19 +10,16 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0",
  org.eclipse.xtext.ui.shared;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.ui,
  org.eclipse.xtext.builder;bundle-version="[2.9.0,2.13.0)",
- org.antlr.runtime,
  org.eclipse.xtext.common.types.ui;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.xtext.xbase.ui;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.xtext.ui.codetemplates.ui;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.compare,
- org.eclipse.viatra.query.patternlanguage;bundle-version="0.8.0",
- org.eclipse.viatra.query.patternlanguage.ui;bundle-version="0.8.0",
- org.eclipse.viatra.query.tooling.core;bundle-version="0.8.0",
- org.eclipse.viatra.query.runtime;bundle-version="0.8.0",
- org.eclipse.xtext.xbase.lib;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.viatra.query.tooling.core;bundle-version="0.8.0",
+ org.eclipse.viatra.query.patternlanguage;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.viatra.query.patternlanguage.ui;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.viatra.query.tooling.core;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.viatra.query.runtime;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.viatra.query.tooling.core;bundle-version="[1.6.0,1.7.0)",
  org.eclipse.pde.core;bundle-version="3.7.1",
  org.eclipse.emf.codegen.ecore;bundle-version="2.7.0",
  org.eclipse.jdt.core;bundle-version="3.7.0",
@@ -30,15 +27,17 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8
  org.eclipse.jdt.launching,
  com.google.inject;bundle-version="3.0.0",
  org.eclipse.jdt.debug.ui,
- org.eclipse.viatra.documentation.help;bundle-version="1.6.0"
-Import-Package: org.apache.commons.logging,
- org.apache.log4j;version="1.2.15",
+ org.eclipse.viatra.documentation.help;bundle-version="[1.6.0,1.7.0)"
+Import-Package: org.apache.log4j;version="1.2.15",
  org.apache.log4j.spi;version="1.2.15"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui,
- org.eclipse.viatra.query.patternlanguage.emf.ui.builder,
+Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui;
+  uses:="com.google.inject",
+ org.eclipse.viatra.query.patternlanguage.emf.ui.builder;
+  uses:="com.google.common.base",
  org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist,
- org.eclipse.viatra.query.patternlanguage.emf.ui.internal,
- org.eclipse.viatra.query.patternlanguage.emf.ui.types,
+ org.eclipse.viatra.query.patternlanguage.emf.ui.internal;uses:="com.google.inject",
+ org.eclipse.viatra.query.patternlanguage.emf.ui.types;
+  uses:="com.google.common.base",
  org.eclipse.viatra.query.patternlanguage.emf.ui.util
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.emf.ui.util.internal.EMFPatternLanguageUIPlugin
