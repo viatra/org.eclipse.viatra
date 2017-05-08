@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
 public class ReteBackendFactory implements IQueryBackendFactory {
     /**
      * EXPERIMENTAL
+     * <p> Must remain 0 in version 1.6 due to the introduction of mailboxes
      */
     private final static int reteThreads = 0;
     

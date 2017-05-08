@@ -63,7 +63,8 @@ public final class ReteContainer {
 
     /**
      * @param threaded
-     *            false if operating in a single-threaded environment
+     *            false if operating in a single-threaded environment;
+     *            must be true as of version 1.6
      */
     public ReteContainer(Network network, boolean threaded) {
         super();
@@ -406,7 +407,9 @@ public final class ReteContainer {
 
     /**
      * Continually consumes update messages. Should be run on a dedicated thread.
+     * @deprecated no longer usable after the introduction of mailboxes in version 1.6
      */
+    @Deprecated
     void messageConsumptionCycle() {
         while (!killed) // deliver messages on and on and on....
         {
@@ -480,28 +483,26 @@ public final class ReteContainer {
             
             while (!tracker.isEmpty()) {
                 final CommunicationGroup group = tracker.getAndRemoveFirstGroup();
-                final Node representative = group.getRepresentative();
                 
                 /**
-                 * The current group does not violate the communication schema iff
-                 * (1) it was not seen before
+                 * The current group complies with the topological ordering of the communication schema iff
+                 * (1) it was never seen before
                  * OR
                  * (2) the last one that was seen is exactly the same as the current one 
                  *     this can happen if the group was added back because of in-group message passing
                  */
-                boolean okGroup = (group == lastGroup) || !seenInThisCycle.contains(group);
+                boolean okGroup = (group == lastGroup) || seenInThisCycle.add(group);
                 
                 if (!okGroup) {
                     logger.error(
                             "[INTERNAL ERROR] Violation of communication schema! The communication component with representative "
-                                    + representative + " has already been processed!");
+                                    + group.getRepresentative() + " has already been processed!");
                 }
-                seenInThisCycle.add(group);
 
-                while (!group.getNonMonotoneMailboxes().isEmpty() || !group.getDefaultMailboxes().isEmpty()) {
-                    while (!group.getNonMonotoneMailboxes().isEmpty()) {
-                        Mailbox mailbox = group.getNonMonotoneMailboxes().iterator().next();
-                        group.getNonMonotoneMailboxes().remove(mailbox);
+                while (!group.getAntiMonotoneMailboxes().isEmpty() || !group.getDefaultMailboxes().isEmpty()) {
+                    while (!group.getAntiMonotoneMailboxes().isEmpty()) {
+                        Mailbox mailbox = group.getAntiMonotoneMailboxes().iterator().next();
+                        group.getAntiMonotoneMailboxes().remove(mailbox);
                         mailbox.deliverAll(MessageKind.ANTI_MONOTONE);
                     }
                     while (!group.getDefaultMailboxes().isEmpty()) {

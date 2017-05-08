@@ -85,6 +85,7 @@ public class Network {
      * @param threads
      *            the number of threads to operate the network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
+     *            Must be 0 since version 1.6 
      */
     public Network(int threads, ReteEngine engine) {
         super();

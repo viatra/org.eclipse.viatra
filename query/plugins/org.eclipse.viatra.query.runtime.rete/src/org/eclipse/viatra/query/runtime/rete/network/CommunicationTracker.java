@@ -36,7 +36,7 @@ import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
  * those mailboxes will be emptied first whose owner nodes' do not depend on other undelivered messages.
  * 
  * @author Tamas Szabo
- *
+ * @since 1.6
  */
 public final class CommunicationTracker {
 
@@ -101,9 +101,9 @@ public final class CommunicationTracker {
                     newGroup.defaultMailboxes.add(mailbox);
                     immediatelyActiveGroups.add(newGroup);
                 }
-                for (final Mailbox mailbox : oldGroup.nonMonotoneMailboxes) {
+                for (final Mailbox mailbox : oldGroup.antiMonotoneMailboxes) {
                     final CommunicationGroup newGroup = getGroup(mailbox.getReceiver());
-                    newGroup.nonMonotoneMailboxes.add(mailbox);
+                    newGroup.antiMonotoneMailboxes.add(mailbox);
                     immediatelyActiveGroups.add(newGroup);
                 }
                 for (final Mailbox mailbox : oldGroup.monotoneMailboxes) {
@@ -174,7 +174,7 @@ public final class CommunicationTracker {
         } else if (kind == MessageKind.MONOTONE) {
             group.monotoneMailboxes.add(mailbox);
         } else if (kind == MessageKind.ANTI_MONOTONE) {
-            group.nonMonotoneMailboxes.add(mailbox);
+            group.antiMonotoneMailboxes.add(mailbox);
         } else {
             throw new IllegalArgumentException();
         }
@@ -195,7 +195,7 @@ public final class CommunicationTracker {
         } else if (kind == MessageKind.MONOTONE) {
             group.monotoneMailboxes.remove(mailbox);
         } else if (kind == MessageKind.ANTI_MONOTONE) {
-            group.nonMonotoneMailboxes.remove(mailbox);
+            group.antiMonotoneMailboxes.remove(mailbox);
         } else {
             throw new IllegalArgumentException();
         }
@@ -264,7 +264,7 @@ public final class CommunicationTracker {
 
         private final Node representative;
         private final int identifier;
-        private final Set<Mailbox> nonMonotoneMailboxes;
+        private final Set<Mailbox> antiMonotoneMailboxes;
         private final Set<Mailbox> monotoneMailboxes;
         private final Set<Mailbox> defaultMailboxes;
         private final Set<RederivableNode> rederivables;
@@ -272,7 +272,7 @@ public final class CommunicationTracker {
         public CommunicationGroup(final Node representative, final int identifier) {
             this.representative = representative;
             this.identifier = identifier;
-            this.nonMonotoneMailboxes = new LinkedHashSet<Mailbox>();
+            this.antiMonotoneMailboxes = new LinkedHashSet<Mailbox>();
             this.monotoneMailboxes = new LinkedHashSet<Mailbox>();
             this.defaultMailboxes = new LinkedHashSet<Mailbox>();
             this.rederivables = new LinkedHashSet<RederivableNode>();
@@ -294,8 +294,8 @@ public final class CommunicationTracker {
             return monotoneMailboxes;
         }
 
-        public Set<Mailbox> getNonMonotoneMailboxes() {
-            return nonMonotoneMailboxes;
+        public Set<Mailbox> getAntiMonotoneMailboxes() {
+            return antiMonotoneMailboxes;
         }
 
         public Set<Mailbox> getDefaultMailboxes() {
@@ -303,7 +303,7 @@ public final class CommunicationTracker {
         }
 
         public boolean isEmpty() {
-            return monotoneMailboxes.isEmpty() && nonMonotoneMailboxes.isEmpty() && rederivables.isEmpty()
+            return monotoneMailboxes.isEmpty() && antiMonotoneMailboxes.isEmpty() && rederivables.isEmpty()
                     && defaultMailboxes.isEmpty();
         }
 
