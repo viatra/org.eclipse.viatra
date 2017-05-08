@@ -160,5 +160,9 @@ class PlanCompiler implements IQueryBackendContext {
     override getRuntimeContext() {
         runtimeContext
     }
+    
+    override areUpdatesDelayed() {
+        throw new UnsupportedOperationException("PlanCompiler is never used in runtime!")
+    }
 
 }
