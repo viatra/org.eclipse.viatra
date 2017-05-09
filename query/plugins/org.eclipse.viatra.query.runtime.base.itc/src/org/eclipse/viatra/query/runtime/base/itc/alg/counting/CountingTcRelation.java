@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.ITcRelation;
-import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopSort;
+import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopologicalSorting;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 
 /**
@@ -273,9 +273,8 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         return hash;
     }
 
-    @SuppressWarnings("unchecked")
     public static <V> CountingTcRelation<V> createFrom(IBiDirectionalGraphDataSource<V> gds) {
-        List<V> topologicalSorting = (List<V>) TopSort.getTopologicalSorting(gds);
+        List<V> topologicalSorting = TopologicalSorting.compute(gds);
         CountingTcRelation<V> tc = new CountingTcRelation<V>(true);
         Collections.reverse(topologicalSorting);
         for (V n : topologicalSorting) {

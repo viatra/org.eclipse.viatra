@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -23,6 +20,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopologicalSorting;
 import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 
 /**
@@ -81,9 +79,7 @@ public final class CommunicationTracker {
 
         // reconstruct group map from dependency graph
         final Graph<Node> reducedGraph = sccInformationProvider.getReducedGraph();
-        final List<Node> representatives = new ArrayList<Node>(reducedGraph.getAllNodes());
-
-        Collections.sort(representatives, COMPARATOR);
+        final List<Node> representatives = TopologicalSorting.compute(reducedGraph);
 
         for (int i = 0; i < representatives.size(); i++) {
             final Node representative = representatives.get(i);
@@ -117,10 +113,10 @@ public final class CommunicationTracker {
                     immediatelyActiveGroups.add(newGroup);
                 }
             }
-            
+
             groupQueue.clear();
             activeGroups.clear();
-            
+
             for (final CommunicationGroup group : immediatelyActiveGroups) {
                 activate(group);
             }
@@ -148,14 +144,14 @@ public final class CommunicationTracker {
     public void addRederivable(final RederivableNode node) {
         final CommunicationGroup group = getGroup(node);
         group.rederivables.add(node);
-        
+
         activate(group);
     }
 
     public void removeRederivable(final RederivableNode node) {
         final CommunicationGroup group = getGroup(node);
         group.rederivables.remove(node);
-        
+
         if (group.isEmpty()) {
             deactivate(group);
         }
@@ -335,22 +331,5 @@ public final class CommunicationTracker {
         }
 
     }
-
-    private final Comparator<Node> COMPARATOR = new Comparator<Node>() {
-
-        @Override
-        public int compare(final Node left, final Node right) {
-            if (left == right) {
-                return 0;
-            } else if (sccInformationProvider.isReachable(left, right)) {
-                return -1;
-            } else if (sccInformationProvider.isReachable(right, left)) {
-                return 1;
-            } else {
-                return (int) (left.getNodeId() - right.getNodeId());
-            }
-        }
-
-    };
 
 }

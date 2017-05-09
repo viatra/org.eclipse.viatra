@@ -13,6 +13,7 @@ Export-Package: org.eclipse.viatra.query.runtime.base.itc.alg.counting,
  org.eclipse.viatra.query.runtime.base.itc.alg.misc,
  org.eclipse.viatra.query.runtime.base.itc.alg.misc.dfs,
  org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc,
+ org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort,
  org.eclipse.viatra.query.runtime.base.itc.graphimpl,
  org.eclipse.viatra.query.runtime.base.itc.igraph
 Bundle-ClassPath: .
