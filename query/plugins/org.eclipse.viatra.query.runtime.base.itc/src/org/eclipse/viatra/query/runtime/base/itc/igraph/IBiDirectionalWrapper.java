@@ -95,7 +95,7 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
             incoming = new HashMap<V, Integer>();
             incomingEdges.put(target, incoming);
         }
-        Integer count = incoming.get(incoming);
+        Integer count = incoming.get(source);
         if (count == null) {
             count = 0;
         }
