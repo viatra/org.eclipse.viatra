@@ -722,7 +722,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
                     ValueReference leftValueReference = compareConstraint.getLeftOperand();
                     ValueReference rightValueReference = compareConstraint.getRightOperand();
-                    if ((leftValueReference instanceof LiteralValueReference || leftValueReference instanceof EnumValue)
+                    if (isConstantExpression(patternBody, leftValueReference)
                             && rightValueReference instanceof VariableValue) {
                         VariableValue variableValue = (VariableValue) rightValueReference;
                         Variable variableToRemove = variableValue.getValue().getVariable();
@@ -730,8 +730,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables,
                                 variableToRemove);
                     } else if (leftValueReference instanceof VariableValue
-                            && (rightValueReference instanceof LiteralValueReference
-                                    || rightValueReference instanceof EnumValue)) {
+                            && isConstantExpression(patternBody, rightValueReference)) {
                         VariableValue variableValue = (VariableValue) leftValueReference;
                         Variable variableToRemove = variableValue.getValue().getVariable();
                         generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
@@ -755,6 +754,17 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    /**
+     * A value reference is constant, if it represents either (1) a literal value, (2) an enum or (3) a eval with no
+     * incoming parameters.
+     */
+    private boolean isConstantExpression(PatternBody body, ValueReference reference) {
+        return (reference instanceof LiteralValueReference)
+            || (reference instanceof EnumValue)
+            || (reference instanceof FunctionEvaluationValue 
+               && CorePatternLanguageHelper.getUsedVariables(((FunctionEvaluationValue)reference).getExpression(), body.getVariables()).isEmpty());
+    }
+    
     private void addPositiveVariablesFromValueReference(List<Variable> unnamedRunningVariables,
             UnionFind<Variable> justPositiveUnionFindForVariables, Set<Variable> positiveVariables,
             ValueReference valueReference) {

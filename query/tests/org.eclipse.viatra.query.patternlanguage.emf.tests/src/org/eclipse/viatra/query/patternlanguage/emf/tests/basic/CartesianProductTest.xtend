@@ -58,7 +58,7 @@ class CartesianProductTest extends AbstractValidatorTest{
 
     @Test
     def testGoodEquality() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -67,14 +67,87 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Y);
                 X == Y;
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOk
+    }
+    
+    @Test
+    def testConstantGoodEquality1() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern Equality(X : EClass, name : java String) {
+                EClass.name(X, _);
+                name == eval("abc".toLowerCase);
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOk
+    }
+    
+    @Test
+    def testConstantGoodEquality2() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern Equality(X : EClass, name : java String) {
+                EClass.name(X, _);
+                eval("abc".toLowerCase) == name;
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOk
+    }
+    @Test
+    def testConstantGoodEquality3() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern Equality(X : EClass, name : java String) {
+                EClass.name(X, _);
+                name == "abc";
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOk
+    }
+    
+    @Test
+    def testConstantGoodEquality4() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern Equality(X : EClass) {
+                EClass.name(X, n);
+                "abc" == n;
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOk
+    }
+    
+    @Test
+    def testNonConstantEvalEquality() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern Equality(X : EClass, i : EString, n : java String) {
+                EClass.name(X, _);
+                eval(i.toLowerCase) == n;
+            }
+        ''')
+        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
     }
 
     @Test
     def testGoodFind() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -89,14 +162,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Y);
                 find Equality(X,Y);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOk
     }
 
     @Test
     def testGoodCountFind() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -113,14 +186,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 Z == count find Equality(X,Y);
                 check(Z > 10);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOk
     }
 
     @Test
     def testGoodFindPathExpressionWithCountFind() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -143,7 +216,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Z);
                 find PathExpression(count find Equality(X,Y), Z);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
@@ -152,7 +225,7 @@ class CartesianProductTest extends AbstractValidatorTest{
 
     @Test
     def testGoodPathExpressionWithCountFind() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -169,14 +242,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Z);
                 EClass.eStructuralFeatures.upperBound(Z,count find Equality(X,Y));
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOk
     }
 
     @Test
     def testGoodNegFindWithRunningVariable() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -190,14 +263,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(X);
                 neg find Equality(X,_A);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOk
     }
     
     @Test
     def testGoodNegFindUnrelatedRunningVariables() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -211,14 +284,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(X);
                 neg find Equality(_A,_B);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertWarning(IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES)
     }
 
     @Test
     def testGoodPathExpressionInequality() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -226,7 +299,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass.eStructuralFeatures.upperBound(X, Y);
                 Y != 1;
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
@@ -235,7 +308,7 @@ class CartesianProductTest extends AbstractValidatorTest{
 
     @Test
     def testGoodCountFindWithRunningVariable() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -250,14 +323,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 M == count find Equality(X,_A);
                 check(M>10);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOk
     }
 
     @Test
     def testGoodUnconnectedButSingleton() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -266,7 +339,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EInt(Y);
                 Y == 10;
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
@@ -275,7 +348,7 @@ class CartesianProductTest extends AbstractValidatorTest{
 
     @Test
     def testSoftCheck() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -284,7 +357,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EInt(Y);
                 check(X == Y);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
             getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
@@ -295,7 +368,7 @@ class CartesianProductTest extends AbstractValidatorTest{
 
     @Test
     def testSoftCountFindRunningVariableResult() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -310,14 +383,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Y);
                 _A == count find Equality(X,Y);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
     }
 
     @Test
     def testSoftNegFind() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -332,14 +405,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Y);
                 neg find Equality(X,Y);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
     }
 
     @Test
     def testSoftInequality() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -348,14 +421,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(Y);
                 X != Y;
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
     }
 
     @Test
     def testStrictUnconnected() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -363,14 +436,14 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(X);
                 EClass(Y);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
     }
 
     @Test
     def testStrictUnconnectedRunningVariable() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -378,7 +451,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 EClass(X);
                 EClass(_Y);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
     }
