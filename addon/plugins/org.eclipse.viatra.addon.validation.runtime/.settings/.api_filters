@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.addon.validation.runtime" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter id="926941240">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.addon.validation.runtime.annotation.ConstraintAnnotationValidator">
+        <filter comment="Internal API moved to fragment" id="305324134">
             <message_arguments>
-                <message_argument value="1.5.0"/>
-                <message_argument value="1.4.0"/>
+                <message_argument value="org.eclipse.viatra.addon.validation.runtime.annotation.ConstraintAnnotationValidator"/>
+                <message_argument value="org.eclipse.viatra.addon.validation.runtime_1.6.0"/>
             </message_arguments>
         </filter>
     </resource>

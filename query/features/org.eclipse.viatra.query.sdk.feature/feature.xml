@@ -133,4 +133,36 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.eclipse.viatra.addon.databinding.runtime.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.addon.querybasedfeatures.runtime.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.addon.validation.runtime.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.addon.viewers.runtime.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
 </feature>

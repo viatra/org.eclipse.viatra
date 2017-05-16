@@ -11,15 +11,13 @@ Require-Bundle: org.eclipse.core.databinding;visibility:=reexport,
  org.eclipse.core.databinding.property;visibility:=reexport,
  org.eclipse.viatra.transformation.evm;bundle-version="[1.6.0,1.7.0)",
  org.eclipse.core.runtime;bundle-version="3.7.0",
- org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.6.0,1.7.0)";resolution:=optional,
  com.google.inject;bundle-version="[3.0.0,4.0.0)"
 Export-Package: org.eclipse.viatra.addon.databinding.runtime.adapter,
  org.eclipse.viatra.addon.databinding.runtime.api,
- org.eclipse.viatra.addon.databinding.runtime.collection;
-  uses:="com.google.common.base",
+ org.eclipse.viatra.addon.databinding.runtime.collection;uses:="com.google.common.base",
  org.eclipse.viatra.addon.databinding.runtime.observables,
- org.eclipse.viatra.addon.databinding.runtime.util,
- org.eclipse.viatra.addon.databinding.runtime.util.validation
+ org.eclipse.viatra.addon.databinding.runtime.util
 Bundle-Vendor: Eclipse VIATRA Project
 Import-Package: com.google.common.base;version="15.0.0",
  com.google.common.collect;version="15.0.0"
+Eclipse-ExtensibleAPI: true

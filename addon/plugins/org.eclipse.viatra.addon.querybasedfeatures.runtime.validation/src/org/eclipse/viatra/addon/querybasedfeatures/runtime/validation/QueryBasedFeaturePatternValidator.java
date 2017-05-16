@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation;
+package org.eclipse.viatra.addon.querybasedfeatures.runtime.validation;
 
 import java.util.Collection;
 

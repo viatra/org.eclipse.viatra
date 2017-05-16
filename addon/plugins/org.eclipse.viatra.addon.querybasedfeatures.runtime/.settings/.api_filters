@@ -3,8 +3,24 @@
     <resource path="META-INF/MANIFEST.MF">
         <filter id="926941240">
             <message_arguments>
+                <message_argument value="1.6.0"/>
                 <message_argument value="1.5.0"/>
-                <message_argument value="1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator">
+        <filter comment="Internal API moved to fragment" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator"/>
+                <message_argument value="org.eclipse.viatra.addon.querybasedfeatures.runtime_1.6.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.SurrogatePatternValidator">
+        <filter comment="Internal API moved to fragment" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.SurrogatePatternValidator"/>
+                <message_argument value="org.eclipse.viatra.addon.querybasedfeatures.runtime_1.6.0"/>
             </message_arguments>
         </filter>
     </resource>

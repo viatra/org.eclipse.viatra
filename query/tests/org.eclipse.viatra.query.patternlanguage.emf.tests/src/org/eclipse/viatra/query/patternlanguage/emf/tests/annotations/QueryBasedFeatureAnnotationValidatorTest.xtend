@@ -16,7 +16,7 @@ import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
-import org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator
+import org.eclipse.viatra.addon.querybasedfeatures.runtime.validation.QueryBasedFeaturePatternValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper

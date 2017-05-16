@@ -1,61 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-  <extension
-         point="org.eclipse.viatra.query.patternlanguage.annotation">
-      <annotation
-            additionalValidator="org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator"
-            description="This annotation is used to mark a pattern as a query definition for a query-based feature."
-            name="QueryBasedFeature">
-         <annotationparameter
-               description="The name of the EStructuralFeature that the query will serve (default: pattern name)."
-               mandatory="false"
-               multiple="false"
-               name="feature"
-               type="string">
-         </annotationparameter>
-         <annotationparameter
-               description="The name of the parameter that is the source of the derived feature (default: type of first parameter)."
-               mandatory="false"
-               multiple="false"
-               name="source"
-               type="variablereference">
-         </annotationparameter>
-         <annotationparameter
-               description="The name of the parameter that is the target of the derived feature (default: type of second parameter)."
-               mandatory="false"
-               multiple="false"
-               name="target"
-               type="variablereference">
-         </annotationparameter>
-         <annotationparameter
-               description="Possible values: single, many, sum, iteration (default: feature.isMany?many:single)"
-               mandatory="false"
-               multiple="false"
-               name="kind"
-               type="string">
-         </annotationparameter>
-         <annotationparameter
-               description="If true, the old behavior is used, where the getter of the derived feature is overridden in the generated model code. Do not use, unless you really know what you are doing!"
-               mandatory="false"
-               multiple="false"
-               name="generateIntoModelCode"
-               type="boolean">
-         </annotationparameter>
-      </annotation>
-      <annotation
-            additionalValidator="org.eclipse.viatra.addon.querybasedfeatures.runtime.util.validation.SurrogatePatternValidator"
-            description="This annotation is used to mark a pattern as a surrogate query definition for a feature."
-            name="Surrogate">
-         <annotationparameter
-               description="The name of the EStructuralFeature that the query will serve (default: pattern name)."
-               mandatory="false"
-               multiple="false"
-               name="feature"
-               type="string">
-         </annotationparameter>
-      </annotation>
-   </extension>
    <extension
          point="org.eclipse.emf.ecore.setting_delegate">
       <factory

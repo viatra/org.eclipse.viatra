@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.addon.databinding.runtime.util.validation;
+package org.eclipse.viatra.addon.databinding.runtime.validation;
 
 import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;

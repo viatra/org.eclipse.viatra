@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin>
-   <extension
+<fragment>
+      <extension
          point="org.eclipse.viatra.query.patternlanguage.annotation">
       <annotation
-            additionalValidator="org.eclipse.viatra.addon.databinding.runtime.util.validation.ObservableValuePatternValidator"
+            additionalValidator="org.eclipse.viatra.addon.databinding.runtime.validation.ObservableValuePatternValidator"
             description="Defines observable values for the pattern&apos;s parameters; the code generator will create accessors for such values to use in databinding contexts."
             name="ObservableValue">
          <annotationparameter
@@ -30,5 +30,4 @@
          </annotationparameter>
       </annotation>
    </extension>
-
-</plugin>
+</fragment>

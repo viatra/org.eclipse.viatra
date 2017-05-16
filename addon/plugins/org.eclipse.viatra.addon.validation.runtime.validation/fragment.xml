@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin>
-<extension-point id="constraint" name="constraint" schema="schema/constraint.exsd"/>
-   <extension
+<fragment>
+<extension
          point="org.eclipse.viatra.query.patternlanguage.annotation">
       <annotation
             additionalValidator="org.eclipse.viatra.addon.validation.runtime.annotation.ConstraintAnnotationValidator"
@@ -46,4 +45,5 @@
          </annotationparameter>
       </annotation>
    </extension>
-</plugin>
+
+</fragment>

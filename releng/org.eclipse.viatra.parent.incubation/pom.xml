@@ -48,6 +48,7 @@
         <module>../../addon/plugins/org.eclipse.viatra.addon.querybyexample</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.querybyexample.ui</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime.validation</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime.zest</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui.zest</module>
