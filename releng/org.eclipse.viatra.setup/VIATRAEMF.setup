@@ -6,7 +6,7 @@
     xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
     xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
     xmlns:launching="http://www.eclipse.org/oomph/setup/launching/1.0"
-    xmlns:mylyn_1.0="http://www.eclipse.org/oomph/setup/mylyn/1.0"
+    xmlns:mylyn="http://www.eclipse.org/oomph/setup/mylyn/1.0"
     xmlns:pde="http://www.eclipse.org/oomph/setup/pde/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
@@ -14,7 +14,7 @@
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/setup/mylyn/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Mylyn.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
     name="viatra"
     label="VIATRA">
   <setupTask
@@ -279,7 +279,7 @@
           activeRepositoryList="${eclipse.target.platform}">
         <requirement
             name="org.eclipse.modisco.infrastructure.feature.feature.group"
-            versionRange="[0.13.0,0.14.0)"/>
+            versionRange="[0.13.0,2.0.0)"/>
         <requirement
             name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
         <requirement
@@ -306,6 +306,23 @@
               url="http://download.eclipse.org/viatra/dependency"/>
           <repository
               url="http://download.eclipse.org/releases/neon"/>
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+        </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.eclipse.org/viatra/dependency"/>
+          <repository
+              url="http://download.eclipse.org/releases/oxygen"/>
           <repository
               url="http://download.itemis.com/updates/releases"/>
           <repository
@@ -858,87 +875,8 @@
           key="/instance/org.eclipse.mylyn.team.ui/org.eclipse.mylyn.team.commit.template"
           value="[$${task.key}]"/>
     </setupTask>
-    <stream
-        name="master">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="bugzilla.version"
-          value="1.6"/>
-      <setupTask
-          xsi:type="mylyn_1.0:MylynBuildsTask"
-          serverURL="https://hudson.eclipse.org/viatra"
-          userID="${bugzilla.id}"
-          password="${eclipse.user.password}">
-        <buildPlan
-            name="viatra-master"/>
-        <buildPlan
-            name="viatra-master-gerrit"/>
-        <buildPlan
-            name="viatra-master-maven"/>
-      </setupTask>
-    </stream>
-    <stream
-        name="1.2-maintenance">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="bugzilla.version"
-          value="1.2"/>
-      <setupTask
-          xsi:type="mylyn_1.0:MylynBuildsTask"
-          serverURL="https://hudson.eclipse.org/viatra"
-          userID="${bugzilla.id}"
-          password="${eclipse.user.password}">
-        <buildPlan
-            name="viatra-maintenance-1.2"/>
-      </setupTask>
-    </stream>
-    <stream
-        name="1.3-maintenance">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="bugzilla.version"
-          value="1.3"/>
-      <setupTask
-          xsi:type="mylyn_1.0:MylynBuildsTask"
-          serverURL="https://hudson.eclipse.org/viatra"
-          userID="${bugzilla.id}"
-          password="${eclipse.user.password}">
-        <buildPlan
-            name="viatra-maintenance-1.3"/>
-      </setupTask>
-    </stream>
-    <stream
-        name="1.4-maintenance">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="bugzilla.version"
-          value="1.4"/>
-      <setupTask
-          xsi:type="mylyn_1.0:MylynBuildsTask"
-          serverURL="https://hudson.eclipse.org/viatra"
-          userID="${bugzilla.id}"
-          password="${eclipse.user.password}">
-        <buildPlan
-            name="viatra-maintenance-1.4"/>
-      </setupTask>
-    </stream>
-    <stream
-        name="1.5-maintenance">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="bugzilla.version"
-          value="1.5"/>
-      <setupTask
-          xsi:type="mylyn_1.0:MylynBuildsTask"
-          serverURL="https://hudson.eclipse.org/viatra"
-          userID="${bugzilla.id}"
-          password="${eclipse.user.password}">
-        <buildPlan
-            name="viatra-maintenance-1.5"/>
-      </setupTask>
-    </stream>
     <setupTask
-        xsi:type="mylyn_1.0:MylynQueriesTask"
+        xsi:type="mylyn:MylynQueriesTask"
         repositoryURL="https://bugs.eclipse.org/bugs"
         userID="${bugzilla.id}"
         password="${eclipse.user.password}">
@@ -953,7 +891,7 @@
           url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Viatra&amp;emailassigned_to1=1&amp;emailreporter1=1&amp;emailcc1=1&amp;emailtype1=exact&amp;email1=${bugzilla.id}"/>
     </setupTask>
     <setupTask
-        xsi:type="mylyn_1.0:MylynQueriesTask"
+        xsi:type="mylyn:MylynQueriesTask"
         connectorKind="org.eclipse.mylyn.gerrit"
         repositoryURL="https://git.eclipse.org/r"
         userID="${bugzilla.id}"
@@ -972,6 +910,85 @@
             value="project:viatra/org.eclipse.viatra status:open branch:${scope.project.stream.name}"/>
       </query>
     </setupTask>
+    <stream
+        name="master">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.6"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-master"/>
+        <buildPlan
+            name="viatra-master-gerrit"/>
+        <buildPlan
+            name="viatra-master-maven"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="1.2-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.2"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-maintenance-1.2"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="1.3-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.3"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-maintenance-1.3"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="1.4-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.4"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-maintenance-1.4"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="1.5-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.5"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-maintenance-1.5"/>
+      </setupTask>
+    </stream>
   </project>
   <project href="https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/plain/cps/releng/org.eclipse.viatra.examples.cps.setup/CPSExample.setup#/"/>
   <stream name="master">
