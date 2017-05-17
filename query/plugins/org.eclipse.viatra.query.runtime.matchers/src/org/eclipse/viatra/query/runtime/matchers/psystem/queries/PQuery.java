@@ -37,7 +37,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
  */
 public interface PQuery extends PQueryHeader {
 
-    // TODO add "published as" back-trace to IQuerySpecification
     // TODO rewritten as / rewritten from traceability to PDisjunction?
     
     /**
