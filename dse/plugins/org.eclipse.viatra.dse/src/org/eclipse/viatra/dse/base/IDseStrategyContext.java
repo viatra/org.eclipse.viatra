@@ -91,16 +91,21 @@ public interface IDseStrategyContext {
     boolean tryExecuteAcitvationId(Object activationId);
     boolean executeRandomActivationId();
     void executeTrajectory(Object[] activationIds);
-    void executeTrajectory(Object[] activationIds, int excludedIndex);
+    void executeTrajectory(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex);
     int executeTrajectoryByTrying(Object[] activationIds);
-    int executeTrajectoryByTrying(Object[] activationIds, int excludedIndex);
+    int executeTrajectoryByTrying(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex);
     int executeTrajectoryWithoutStateCoding(Object[] activationIds);
-    int executeTrajectoryWithoutStateCoding(Object[] activationIds, int excludedIndex);
+    int executeTrajectoryWithoutStateCoding(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex);
     int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds);
-    int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds, int excludedIndex);
+    int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex);
+    void executeTrajectoryWithMinimalBacktrack(Object[] trajectory);
+    void executeTrajectoryWithMinimalBacktrack(Object[] trajectory, int toExcludedIndex);
+    void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory);
+    void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory, int toExcludedIndex);
 
     boolean backtrack();
  // TODO int backtrack(int times);
+    void backtrackUntilLastCommonActivation(Object[] trajectory);
     void backtrackUntilRoot();
 
     Fitness calculateFitness();

@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -52,20 +51,18 @@ public class SwapTransitionCrossover implements ICrossover {
         index1 = random.nextInt(p1Size);
         index2 = random.nextInt(p2Size);
 
-        dsm.executeTrajectoryWithoutStateCoding(parent1t, index1);
+        dsm.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent1t, index1);
         dsm.tryFireActivation(parent2t[index2]);
-        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent1t, index1 + 1, p1Size);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd1);
+        context.executeTrajectoryByTryingWithoutStateCoding(parent1t, index1 + 1, p1Size);
 
         return true;
     }
 
     @Override
     public boolean mutateAlternate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
-        dsm.executeTrajectoryWithoutStateCoding(parent2t, index2);
+        dsm.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent2t, index2);
         dsm.tryFireActivation(parent1t[index1]);
-        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent2t, index2 + 1, p2Size);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd2);
+        context.executeTrajectoryByTryingWithoutStateCoding(parent2t, index2 + 1, p2Size);
         return true;
     }
 

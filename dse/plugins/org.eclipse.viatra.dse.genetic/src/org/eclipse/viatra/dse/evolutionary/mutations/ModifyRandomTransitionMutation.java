@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.mutations;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -33,14 +32,11 @@ public class ModifyRandomTransitionMutation implements IMutation {
 
         int index = rnd.nextInt(trajectorySize);
 
-        context.executeTrajectoryWithoutStateCoding(trajectory, index);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(trajectory, index);
 
         boolean succesful = context.executeRandomActivationId();
-        if (!succesful) {
-            context.backtrackUntilRoot();
-        } else {
-            Object[] trajectoryEnd = Arrays.copyOfRange(trajectory, index + 1, trajectory.length);
-            context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
+        if (succesful) {
+            context.executeTrajectoryByTryingWithoutStateCoding(trajectory, index + 1, trajectory.length);
         }
 
         return succesful;

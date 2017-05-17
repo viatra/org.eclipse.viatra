@@ -9,10 +9,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
-import java.util.Arrays;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -36,8 +34,6 @@ public class OnePointCrossover implements ICrossover {
     @Override
     public boolean mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
 
-        DesignSpaceManager dsm = context.getDesignSpaceManager();
-
         parent1ts = parent1.trajectory;
         parent2ts = parent2.trajectory;
         p1Size = parent1ts.length;
@@ -50,18 +46,16 @@ public class OnePointCrossover implements ICrossover {
         int minSize = Math.min(p1Size, p2Size);
         index = random.nextInt(minSize - 1) + 1;
 
-        dsm.executeTrajectoryWithoutStateCoding(parent1ts, index);
-        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent2ts, index, p2Size);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd1);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent1ts, index);
+        context.executeTrajectoryByTryingWithoutStateCoding(parent2ts, index, p2Size);
 
         return true;
     }
 
     @Override
     public boolean mutateAlternate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
-        context.getDesignSpaceManager().executeTrajectory(parent2ts, index);
-        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent1ts, index, p1Size);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd2);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent2ts, index);
+        context.executeTrajectoryByTryingWithoutStateCoding(parent1ts, index, p1Size);
         return true;
     }
 

@@ -452,8 +452,8 @@ public class ThreadContext implements IDseStrategyContext{
     }
 
     @Override
-    public void executeTrajectory(Object[] activationIds, int excludedIndex) {
-        designSpaceManager.executeTrajectory(activationIds, excludedIndex);
+    public void executeTrajectory(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex) {
+        designSpaceManager.executeTrajectory(activationIds, fromIncludedIndex, toExcludedIndex);
     }
 
     @Override
@@ -462,8 +462,8 @@ public class ThreadContext implements IDseStrategyContext{
     }
 
     @Override
-    public int executeTrajectoryByTrying(Object[] activationIds, int excludedIndex) {
-        return designSpaceManager.executeTrajectoryByTrying(activationIds, excludedIndex);
+    public int executeTrajectoryByTrying(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex) {
+        return designSpaceManager.executeTrajectoryByTrying(activationIds, fromIncludedIndex, toExcludedIndex);
     }
 
     @Override
@@ -472,8 +472,8 @@ public class ThreadContext implements IDseStrategyContext{
     }
 
     @Override
-    public int executeTrajectoryWithoutStateCoding(Object[] activationIds, int excludedIndex) {
-        return designSpaceManager.executeTrajectoryWithoutStateCoding(activationIds, excludedIndex);
+    public int executeTrajectoryWithoutStateCoding(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex) {
+        return designSpaceManager.executeTrajectoryWithoutStateCoding(activationIds, fromIncludedIndex, toExcludedIndex);
     }
 
     @Override
@@ -482,13 +482,38 @@ public class ThreadContext implements IDseStrategyContext{
     }
 
     @Override
-    public int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds, int excludedIndex) {
-        return designSpaceManager.executeTrajectoryByTryingWithoutStateCoding(activationIds, excludedIndex);
+    public int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds, int fromIncludedIndex, int toExcludedIndex) {
+        return designSpaceManager.executeTrajectoryByTryingWithoutStateCoding(activationIds, fromIncludedIndex, toExcludedIndex);
     }
 
     @Override
+    public void executeTrajectoryWithMinimalBacktrack(Object[] trajectory) {
+        designSpaceManager.executeTrajectoryWithMinimalBacktrack(trajectory);
+    }
+
+    @Override
+    public void executeTrajectoryWithMinimalBacktrack(Object[] trajectory, int toExcludedIndex) {
+        designSpaceManager.executeTrajectoryWithMinimalBacktrack(trajectory, toExcludedIndex);
+    }
+
+    @Override
+    public void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory) {
+        designSpaceManager.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(trajectory);
+    }
+
+    @Override
+    public void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory, int toExcludedIndex) {
+        designSpaceManager.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(trajectory, toExcludedIndex);
+    }
+    
+    @Override
     public boolean backtrack() {
         return designSpaceManager.undoLastTransformation();
+    }
+
+    @Override
+    public void backtrackUntilLastCommonActivation(Object[] trajectory) {
+        designSpaceManager.backtrackUntilLastCommonActivation(trajectory);
     }
 
     @Override

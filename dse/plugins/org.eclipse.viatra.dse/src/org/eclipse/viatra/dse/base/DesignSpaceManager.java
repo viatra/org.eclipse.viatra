@@ -190,41 +190,41 @@ public class DesignSpaceManager {
         return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, false, true);
     }
 
-    public int executeTrajectory(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, false, true);
+    public int executeTrajectory(Object[] trajectoryToExecute, int fromIncludedIndex, int toExcludedIndex) {
+        return executeTrajectory(trajectoryToExecute, fromIncludedIndex, toExcludedIndex, false, true);
     }
 
     public int executeTrajectoryByTrying(Object[] trajectoryToExecute) {
         return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, true, true);
     }
 
-    public int executeTrajectoryByTrying(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, true, true);
+    public int executeTrajectoryByTrying(Object[] trajectoryToExecute, int fromIncludedIndex, int toExcludedIndex) {
+        return executeTrajectory(trajectoryToExecute, fromIncludedIndex, toExcludedIndex, true, true);
     }
 
     public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute) {
         return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, false, false);
     }
 
-    public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, false, false);
+    public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute, int fromIncludedIndex, int toExcludedIndex) {
+        return executeTrajectory(trajectoryToExecute, fromIncludedIndex, toExcludedIndex, false, false);
     }
 
     public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute) {
         return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, true, false);
     }
 
-    public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, true, false);
+    public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute, int fromIncludedIndex, int toExcludedIndex) {
+        return executeTrajectory(trajectoryToExecute, fromIncludedIndex, toExcludedIndex, true, false);
     }
 
-    private int executeTrajectory(Object[] trajectoryToExecute, int includedFromIndex, int excludedToIndex, boolean tryAllActivations, boolean createStateCode) {
+    private int executeTrajectory(Object[] trajectoryToExecute, int fromIncludedIndex, int toExcludedIndex, boolean tryAllActivations, boolean createStateCode) {
         logger.debug("Executing trajectory.");
         int unsuccesfulIndex = -1;
         if (tryAllActivations) {
             unsuccesfulIndex = 0;
         }
-        for (int i = includedFromIndex; i < excludedToIndex; i++) {
+        for (int i = fromIncludedIndex; i < toExcludedIndex; i++) {
             Object activationId = trajectoryToExecute[i];
             final Activation<?> activation = getActivationById(activationId);
 
@@ -393,13 +393,21 @@ public class DesignSpaceManager {
     }
 
     public void executeTrajectoryWithMinimalBacktrack(Object[] trajectory) {
+        executeTrajectoryWithMinimalBacktrack(trajectory, trajectory.length);
+    }
+
+    public void executeTrajectoryWithMinimalBacktrack(Object[] trajectory, int toExcludedIndex) {
         int fromIndex = backtrackUntilLastCommonActivation(trajectory);
-        executeTrajectory(trajectory, fromIndex, trajectory.length, false, true);
+        executeTrajectory(trajectory, fromIndex, toExcludedIndex, false, true);
     }
 
     public void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory) {
+        executeTrajectoryWithMinimalBacktrackWithoutStateCoding(trajectory, trajectory.length);
+    }
+
+    public void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory, int toExcludedIndex) {
         int fromIndex = backtrackUntilLastCommonActivation(trajectory);
-        executeTrajectory(trajectory, fromIndex, trajectory.length, false, false);
+        executeTrajectory(trajectory, fromIndex, toExcludedIndex, false, false);
         Object stateCode = stateCoder.createStateCode();
         this.trajectory.modifyLastStateCode(stateCode);
     }

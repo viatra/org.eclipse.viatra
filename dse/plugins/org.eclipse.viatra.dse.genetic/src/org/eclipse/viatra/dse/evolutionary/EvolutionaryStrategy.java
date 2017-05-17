@@ -242,7 +242,6 @@ public class EvolutionaryStrategy implements IStrategy {
                     Fitness calculateFitness = context.calculateFitness();
                     TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
                     TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-                    context.backtrackUntilRoot();
                     // TODO fitness calc after duplication check
                     boolean shouldBreak = addToChildren(child);
                     if (shouldBreak) {
@@ -259,7 +258,6 @@ public class EvolutionaryStrategy implements IStrategy {
                     Fitness calculateFitness = context.calculateFitness();
                     TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
                     TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-                    context.backtrackUntilRoot();
                     // TODO fitness calc after duplication check
                     boolean shouldBreak = addToChildren(child);
                     if (shouldBreak) {
@@ -269,7 +267,6 @@ public class EvolutionaryStrategy implements IStrategy {
                     calculateFitness = context.calculateFitness();
                     trajectoryInfo = context.getTrajectoryInfo();
                     child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-                    context.backtrackUntilRoot();
                     // TODO fitness calc after duplication check
                     shouldBreak = addToChildren(child);
                     if (shouldBreak) {

@@ -35,12 +35,11 @@ public class AddTransitionByPriorityMutation implements IMutation {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
-        dsm.executeTrajectoryWithoutStateCoding(parent.trajectory);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent.trajectory);
 
         Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int size = transitions.size();
         if (size == 0) {
-            dsm.undoUntilRoot();
             return false;
         }
 

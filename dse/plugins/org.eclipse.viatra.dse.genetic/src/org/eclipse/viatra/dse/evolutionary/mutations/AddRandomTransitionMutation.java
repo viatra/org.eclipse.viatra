@@ -18,14 +18,9 @@ public class AddRandomTransitionMutation implements IMutation {
     @Override
     public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
-        context.executeTrajectoryWithoutStateCoding(parent.trajectory);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent.trajectory);
 
-        boolean succesful = context.executeRandomActivationId();
-        if (!succesful) {
-            context.backtrackUntilRoot();
-        }
-
-        return succesful;
+        return context.executeRandomActivationId();
     }
 
     @Override

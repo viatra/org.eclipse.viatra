@@ -9,10 +9,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
-import java.util.Arrays;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -37,8 +35,6 @@ public class CutAndSpliceCrossover implements ICrossover {
     @Override
     public boolean mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
 
-        DesignSpaceManager dsm = context.getDesignSpaceManager();
-
         parent1ts = parent1.trajectory;
         parent2ts = parent2.trajectory;
         p1Size = parent1ts.length;
@@ -51,19 +47,16 @@ public class CutAndSpliceCrossover implements ICrossover {
         index1 = random.nextInt(p1Size - 1) + 1;
         index2 = random.nextInt(p2Size - 1) + 1;
 
-        dsm.executeTrajectoryWithoutStateCoding(parent1ts, index1);
-        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent2ts, index2, p2Size);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd1);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent1ts, index1);
+        context.executeTrajectoryByTryingWithoutStateCoding(parent2ts, index2, p2Size);
 
         return true;
     }
 
     @Override
     public boolean mutateAlternate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
-        // TODO Auto-generated method stub
-        context.getDesignSpaceManager().executeTrajectory(parent2ts, index2);
-        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent1ts, index1, p1Size);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd2);
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(parent2ts, index2);
+        context.executeTrajectoryByTryingWithoutStateCoding(parent1ts, index1, p1Size);
         return true;
     }
 

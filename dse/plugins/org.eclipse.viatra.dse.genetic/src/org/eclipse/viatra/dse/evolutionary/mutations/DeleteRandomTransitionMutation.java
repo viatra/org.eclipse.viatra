@@ -9,10 +9,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.mutations;
 
-import java.util.Arrays;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -24,21 +22,18 @@ public class DeleteRandomTransitionMutation implements IMutation {
     @Override
     public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
-        DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
         if (trajectorySize < 1) {
             return false;
         }
-        
-        int index = rnd.nextInt(trajectorySize);
-        
-        dsm.executeTrajectoryWithoutStateCoding(trajectory, index);
 
-        Object[] trajectoryEnd = Arrays.copyOfRange(trajectory, index + 1, trajectory.length);
-        
-        dsm.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
+        int index = rnd.nextInt(trajectorySize);
+
+        context.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(trajectory, index);
+
+        context.executeTrajectoryByTryingWithoutStateCoding(trajectory, index + 1, trajectory.length);
 
         return true;
     }

@@ -17,7 +17,6 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
@@ -43,12 +42,11 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
         }
         int index = rnd.nextInt(trajectorySize);
 
-        dsm.executeTrajectoryWithoutStateCoding(trajectory, index);
+        dsm.executeTrajectoryWithMinimalBacktrackWithoutStateCoding(trajectory, index);
 
         Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int transitionsSize = transitions.size();
         if (transitionsSize < 1) {
-            dsm.undoUntilRoot();
             return false;
         }
 
@@ -70,9 +68,7 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
 
         dsm.fireActivation(transition);
 
-        for (int i = index + 1; i < trajectorySize; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
-        }
+        dsm.executeTrajectoryByTryingWithoutStateCoding(trajectory, index + 1, trajectorySize);
 
         return true;
     }
