@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.integration.mwe2.feature"
-      label="VIATRA EMF MWE2 Integration"
+      label="VIATRA MWE2 Integration (Incubation)"
       version="0.16.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"

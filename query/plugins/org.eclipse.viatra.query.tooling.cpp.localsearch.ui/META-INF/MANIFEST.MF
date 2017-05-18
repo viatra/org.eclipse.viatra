@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA Localsearch C++ Codegenerator UI (Incubation)
+Bundle-Name: VIATRA C++ Local Search Generator UI (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.cpp.localsearch.ui;singleton:=true
 Bundle-Version: 0.16.0.qualifier
 Require-Bundle: org.eclipse.ui,

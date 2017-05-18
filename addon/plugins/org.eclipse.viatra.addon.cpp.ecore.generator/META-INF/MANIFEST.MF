@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECore Generator API (Incubation)
+Bundle-Name: VIATRA C++ Ecore Generator API (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.addon.cpp.ecore.generator;singleton:=true
 Bundle-Version: 0.16.0.qualifier
 Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,2.13.0)",

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA Matchers - Common
+Bundle-Name: VIATRA Query Matchers - Common
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime.matchers;singleton:=true
 Bundle-Version: 1.6.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project

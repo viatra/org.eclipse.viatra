@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA Query by Example - UI
+Bundle-Name: VIATRA Query-by-Example - UI (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.addon.querybyexample.ui;singleton:=true
 Bundle-Version: 0.16.0.qualifier
 Require-Bundle: org.eclipse.ui,

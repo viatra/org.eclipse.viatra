@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: DSE Tests
+Bundle-Name: VIATRA-DSE Tests (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.dse.tests
 Bundle-Version: 0.16.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.viatra.dse,
  org.junit
+Bundle-Vendor: Eclipse VIATRA Project

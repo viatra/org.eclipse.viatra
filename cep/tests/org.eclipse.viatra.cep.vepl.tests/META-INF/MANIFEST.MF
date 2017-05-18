@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VEPL Language Tests (Incubation)
+Bundle-Name: VIATRA-CEP VEPL Language Tests (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.cep.vepl.tests;singleton:=true
 Bundle-Version: 0.16.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
