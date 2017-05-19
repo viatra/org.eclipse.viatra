@@ -49,7 +49,7 @@ public final class CommunicationTracker {
     private final IncSCCAlg<Node> sccInformationProvider;
 
     /**
-     * Precomputed representative -> communication group map
+     * Precomputed node -> communication group map
      */
     private final Map<Node, CommunicationGroup> groupMap;
 
@@ -81,10 +81,17 @@ public final class CommunicationTracker {
         final Graph<Node> reducedGraph = sccInformationProvider.getReducedGraph();
         final List<Node> representatives = TopologicalSorting.compute(reducedGraph);
 
-        for (int i = 0; i < representatives.size(); i++) {
+        for (int i = 0; i < representatives.size(); i++) { // groups for SCC representatives
             final Node representative = representatives.get(i);
             final CommunicationGroup group = new CommunicationGroup(representative, i);
             groupMap.put(representative, group);
+        }
+        
+        for (Node node : dependencyGraph.getAllNodes()) { // extend group map to the rest of nodes
+            Node representative = sccInformationProvider.getRepresentative(node);
+            if (representative != node) {
+                groupMap.put(node, groupMap.get(representative));
+            }
         }
 
         // reconstruct new queue contents based on new group map
@@ -136,8 +143,8 @@ public final class CommunicationTracker {
     }
 
     private CommunicationGroup getGroup(final Node node) {
-        final Node representative = sccInformationProvider.getRepresentative(node);
-        final CommunicationGroup group = groupMap.get(representative);
+        //final Node representative = sccInformationProvider.getRepresentative(node);
+        final CommunicationGroup group = groupMap.get(node);
         return group;
     }
 
