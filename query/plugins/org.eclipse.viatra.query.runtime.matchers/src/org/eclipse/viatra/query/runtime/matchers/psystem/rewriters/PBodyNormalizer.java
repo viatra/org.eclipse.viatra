@@ -37,7 +37,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
@@ -249,27 +251,33 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      */
     void expandWeakenedAlternativeConstraints(PBody body) {
         Set<TypeJudgement> allJudgements = new HashSet<TypeJudgement>();
-        Set<TypeJudgement> newConstraintsToAdd = new HashSet<TypeJudgement>();
+        Set<TypeJudgement> newJudgementsToAdd = new HashSet<TypeJudgement>();
         Queue<TypeJudgement> judgementsToProcess = new LinkedList<TypeJudgement>();
+        Multimap<TypeJudgement, PConstraint> traceability = HashMultimap.create();
         
         for (ITypeConstraint typeConstraint : body.getConstraintsOfType(ITypeConstraint.class)) {
             TypeJudgement equivalentJudgement = typeConstraint.getEquivalentJudgement();
             judgementsToProcess.add(equivalentJudgement);
             allJudgements.add(equivalentJudgement);
+            traceability.put(equivalentJudgement, typeConstraint);
         }
         
         while (!judgementsToProcess.isEmpty()) {
             TypeJudgement judgement = judgementsToProcess.poll();
             for (TypeJudgement alternativeJudgement : judgement.getWeakenedAlternativeJudgements(context)) {
                 if (allJudgements.add(alternativeJudgement)) {
-                    newConstraintsToAdd.add(alternativeJudgement);
+                    newJudgementsToAdd.add(alternativeJudgement);
                     judgementsToProcess.add(alternativeJudgement);
+                    traceability.putAll(alternativeJudgement, traceability.get(judgement));
                 }
             }
         }
         
-        for (TypeJudgement typeJudgement : newConstraintsToAdd) {
-            typeJudgement.createConstraintFor(body);
+        for (TypeJudgement typeJudgement : newJudgementsToAdd) {
+            PConstraint newConstraint = typeJudgement.createConstraintFor(body);
+            for (PConstraint source : traceability.get(typeJudgement)) {
+                addTrace(source, newConstraint);
+            }
         }        
     }
     

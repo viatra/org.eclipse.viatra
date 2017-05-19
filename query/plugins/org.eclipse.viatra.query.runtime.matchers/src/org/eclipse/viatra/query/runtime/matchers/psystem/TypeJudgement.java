@@ -155,11 +155,11 @@ public class TypeJudgement {
      * <p> pre: the variables tuple must be formed of variables of that PBody.
      * @since 1.6
      */
-    public void createConstraintFor(PBody pBody) {
+    public PConstraint createConstraintFor(PBody pBody) {
         if (inputKey.isEnumerable()) {
-            new TypeConstraint(pBody, variablesTuple, inputKey);
+            return new TypeConstraint(pBody, variablesTuple, inputKey);
         } else {
-            new TypeFilterConstraint(pBody, variablesTuple, inputKey);
+            return new TypeFilterConstraint(pBody, variablesTuple, inputKey);
         }
     }
 }
