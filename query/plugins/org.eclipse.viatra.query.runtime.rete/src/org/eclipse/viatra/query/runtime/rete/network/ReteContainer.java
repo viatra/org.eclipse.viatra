@@ -24,7 +24,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
-import org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
@@ -498,37 +497,7 @@ public final class ReteContainer {
                 }
                 seenInThisCycle.add(group);
 
-                while (!group.getNonMonotoneMailboxes().isEmpty() || !group.getDefaultMailboxes().isEmpty()) {
-                    while (!group.getNonMonotoneMailboxes().isEmpty()) {
-                        Mailbox mailbox = group.getNonMonotoneMailboxes().iterator().next();
-                        group.getNonMonotoneMailboxes().remove(mailbox);
-                        mailbox.deliverAll(MessageKind.ANTI_MONOTONE);
-                    }
-                    while (!group.getDefaultMailboxes().isEmpty()) {
-                        Mailbox mailbox = group.getDefaultMailboxes().iterator().next();
-                        group.getDefaultMailboxes().remove(mailbox);
-                        mailbox.deliverAll(null);
-                    }
-                }
-
-                while (!group.getRederivables().isEmpty()) {
-                    // re-derivable nodes take care of their unregistration!!
-                    RederivableNode node = group.getRederivables().iterator().next();
-                    node.rederiveOne();
-                }
-
-                while (!group.getMonotoneMailboxes().isEmpty() || !group.getDefaultMailboxes().isEmpty()) {
-                    while (!group.getMonotoneMailboxes().isEmpty()) {
-                        Mailbox mailbox = group.getMonotoneMailboxes().iterator().next();
-                        group.getMonotoneMailboxes().remove(mailbox);
-                        mailbox.deliverAll(MessageKind.MONOTONE);
-                    }
-                    while (!group.getDefaultMailboxes().isEmpty()) {
-                        Mailbox mailbox = group.getDefaultMailboxes().iterator().next();
-                        group.getDefaultMailboxes().remove(mailbox);
-                        mailbox.deliverAll(null);
-                    }
-                }
+                group.deliverMessages();
                 
                 lastGroup = group;
             }

@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -71,7 +72,7 @@ public final class CommunicationTracker {
         this.sccInformationProvider = new IncSCCAlg<Node>(this.dependencyGraph);
         this.groupQueue = new PriorityQueue<CommunicationGroup>();
         this.activeGroups = new HashSet<CommunicationGroup>();
-        this.groupMap = new HashMap<Node, CommunicationTracker.CommunicationGroup>();
+        this.groupMap = new HashMap<Node, CommunicationGroup>();
     }
 
     private void precomputeGroups() {
@@ -83,10 +84,17 @@ public final class CommunicationTracker {
 
         for (int i = 0; i < representatives.size(); i++) { // groups for SCC representatives
             final Node representative = representatives.get(i);
-            final CommunicationGroup group = new CommunicationGroup(representative, i);
+            boolean singleton = sccInformationProvider.sccs.getPartition(representative).size() == 1;
+
+            CommunicationGroup group = null;
+            if (singleton) {
+                group = new CommunicationGroup.Singleton(representative, i);
+            } else {
+                group = new CommunicationGroup.Recursive(representative, i);
+            }
             groupMap.put(representative, group);
         }
-        
+
         for (Node node : dependencyGraph.getAllNodes()) { // extend group map to the rest of nodes
             Node representative = sccInformationProvider.getRepresentative(node);
             if (representative != node) {
@@ -99,24 +107,17 @@ public final class CommunicationTracker {
             final Set<CommunicationGroup> immediatelyActiveGroups = new HashSet<CommunicationGroup>();
 
             for (final CommunicationGroup oldGroup : groupQueue) {
-                for (final Mailbox mailbox : oldGroup.defaultMailboxes) {
-                    final CommunicationGroup newGroup = getGroup(mailbox.getReceiver());
-                    newGroup.defaultMailboxes.add(mailbox);
-                    immediatelyActiveGroups.add(newGroup);
+                for (final Entry<MessageKind, Collection<Mailbox>> entry : oldGroup.getMailboxes().entrySet()) {
+                    for (final Mailbox mailbox : entry.getValue()) {
+                        final CommunicationGroup newGroup = this.groupMap.get(mailbox.getReceiver());
+                        newGroup.notifyHasMessage(mailbox, entry.getKey());
+                        immediatelyActiveGroups.add(newGroup);                        
+                    }
                 }
-                for (final Mailbox mailbox : oldGroup.nonMonotoneMailboxes) {
-                    final CommunicationGroup newGroup = getGroup(mailbox.getReceiver());
-                    newGroup.nonMonotoneMailboxes.add(mailbox);
-                    immediatelyActiveGroups.add(newGroup);
-                }
-                for (final Mailbox mailbox : oldGroup.monotoneMailboxes) {
-                    final CommunicationGroup newGroup = getGroup(mailbox.getReceiver());
-                    newGroup.monotoneMailboxes.add(mailbox);
-                    immediatelyActiveGroups.add(newGroup);
-                }
-                for (final RederivableNode node : oldGroup.rederivables) {
-                    final CommunicationGroup newGroup = getGroup(node);
-                    newGroup.rederivables.add(node);
+                
+                for (final RederivableNode node : oldGroup.getRederivables()) {
+                    final CommunicationGroup newGroup = this.groupMap.get(node);
+                    newGroup.addRederivable(node);
                     immediatelyActiveGroups.add(newGroup);
                 }
             }
@@ -142,66 +143,34 @@ public final class CommunicationTracker {
         activeGroups.remove(group);
     }
 
-    private CommunicationGroup getGroup(final Node node) {
-        //final Node representative = sccInformationProvider.getRepresentative(node);
-        final CommunicationGroup group = groupMap.get(node);
-        return group;
-    }
-
     public void addRederivable(final RederivableNode node) {
-        final CommunicationGroup group = getGroup(node);
-        group.rederivables.add(node);
-
+        final CommunicationGroup group = this.groupMap.get(node);
+        group.addRederivable(node);
         activate(group);
     }
 
     public void removeRederivable(final RederivableNode node) {
-        final CommunicationGroup group = getGroup(node);
-        group.rederivables.remove(node);
-
+        final CommunicationGroup group = this.groupMap.get(node);
+        group.removeRederivable(node);
         if (group.isEmpty()) {
             deactivate(group);
         }
     }
 
-    public void notifyHasMessage(final Mailbox mailbox) {
-        notifyHasMessage(mailbox, null);
-    }
-
     public void notifyHasMessage(final Mailbox mailbox, final MessageKind kind) {
         final Receiver receiver = mailbox.getReceiver();
-        final CommunicationGroup group = getGroup(receiver);
+        final CommunicationGroup group = this.groupMap.get(receiver);
 
-        if (kind == null) {
-            group.defaultMailboxes.add(mailbox);
-        } else if (kind == MessageKind.MONOTONE) {
-            group.monotoneMailboxes.add(mailbox);
-        } else if (kind == MessageKind.ANTI_MONOTONE) {
-            group.nonMonotoneMailboxes.add(mailbox);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        group.notifyHasMessage(mailbox, kind);
 
         activate(group);
     }
 
-    public void notifyLostAllMessages(final Mailbox mailbox) {
-        notifyLostAllMessages(mailbox, null);
-    }
-
     public void notifyLostAllMessages(final Mailbox mailbox, final MessageKind kind) {
         final Receiver receiver = mailbox.getReceiver();
-        final CommunicationGroup group = getGroup(receiver);
+        final CommunicationGroup group = this.groupMap.get(receiver);
 
-        if (kind == null) {
-            group.defaultMailboxes.remove(mailbox);
-        } else if (kind == MessageKind.MONOTONE) {
-            group.monotoneMailboxes.remove(mailbox);
-        } else if (kind == MessageKind.ANTI_MONOTONE) {
-            group.nonMonotoneMailboxes.remove(mailbox);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        group.notifyLostAllMessages(mailbox, kind);
 
         if (group.isEmpty()) {
             deactivate(group);
@@ -262,81 +231,5 @@ public final class CommunicationTracker {
             precomputeGroups();
         }
     }
-
-    public final class CommunicationGroup implements Comparable<CommunicationGroup> {
-
-        private final Node representative;
-        private final int identifier;
-        private final Set<Mailbox> nonMonotoneMailboxes;
-        private final Set<Mailbox> monotoneMailboxes;
-        private final Set<Mailbox> defaultMailboxes;
-        private final Set<RederivableNode> rederivables;
-
-        public CommunicationGroup(final Node representative, final int identifier) {
-            this.representative = representative;
-            this.identifier = identifier;
-            this.nonMonotoneMailboxes = new LinkedHashSet<Mailbox>();
-            this.monotoneMailboxes = new LinkedHashSet<Mailbox>();
-            this.defaultMailboxes = new LinkedHashSet<Mailbox>();
-            this.rederivables = new LinkedHashSet<RederivableNode>();
-        }
-
-        public int getIdentifier() {
-            return identifier;
-        }
-
-        public Node getRepresentative() {
-            return representative;
-        }
-
-        public Set<RederivableNode> getRederivables() {
-            return rederivables;
-        }
-
-        public Set<Mailbox> getMonotoneMailboxes() {
-            return monotoneMailboxes;
-        }
-
-        public Set<Mailbox> getNonMonotoneMailboxes() {
-            return nonMonotoneMailboxes;
-        }
-
-        public Set<Mailbox> getDefaultMailboxes() {
-            return defaultMailboxes;
-        }
-
-        public boolean isEmpty() {
-            return monotoneMailboxes.isEmpty() && nonMonotoneMailboxes.isEmpty() && rederivables.isEmpty()
-                    && defaultMailboxes.isEmpty();
-        }
-
-        @Override
-        public int hashCode() {
-            return identifier;
-        }
-
-        @Override
-        public String toString() {
-            return "Group " + identifier + " - representative: " + representative + " - isEmpty: " + isEmpty();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || this.getClass() != obj.getClass()) {
-                return false;
-            } else if (this == obj) {
-                return true;
-            } else {
-                final CommunicationGroup that = (CommunicationGroup) obj;
-                return identifier == that.identifier;
-            }
-        }
-
-        @Override
-        public int compareTo(final CommunicationGroup that) {
-            return this.identifier - that.identifier;
-        }
-
-    }
-
+   
 }

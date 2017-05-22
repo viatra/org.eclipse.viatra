@@ -19,6 +19,11 @@ package org.eclipse.viatra.query.runtime.rete.network;
 public enum MessageKind {
     
     /**
+     * No special distinguishing feature
+     */
+    DEFAULT,
+    
+    /**
      * Inserts and delete-insert monotone change pairs
      */
     MONOTONE,

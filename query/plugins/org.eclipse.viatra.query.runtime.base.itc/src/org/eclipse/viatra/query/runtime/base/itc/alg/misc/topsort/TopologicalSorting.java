@@ -33,7 +33,7 @@ public class TopologicalSorting {
 
     /**
      * Returns a topological ordering for the given graph data source. 
-     * Output format: if there is an a -> b (transitive) reachability, then a will come before b in the resulting list.  
+     * Output format: if there is an a -> b (transitive) reachability, then node <code>a</code> will come before node <code>b</code> in the resulting list.  
      * 
      * @param gds the graph data source
      * @return a topological ordering

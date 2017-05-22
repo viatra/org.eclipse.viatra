@@ -85,9 +85,9 @@ public class DefaultMailbox implements Mailbox {
 
         if (container != null) {
             if (activeQueue.isEmpty()) {
-                tracker.notifyLostAllMessages(this);
+                tracker.notifyLostAllMessages(this, MessageKind.DEFAULT);
             } else {
-                tracker.notifyHasMessage(this);
+                tracker.notifyHasMessage(this, MessageKind.DEFAULT);
             }
         }
     }
