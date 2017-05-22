@@ -35,7 +35,7 @@ public enum CoverageState {
     /**
      * Element was removed for an unknown reason
      */
-    UNDEFINED,
+    NOT_REPRESENTED_UNKNOWN_REASON,
     
     ;
     

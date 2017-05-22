@@ -61,14 +61,11 @@ class RewriterTraceTest {
             getOrCreateSpecification(model.getPatterns().get(0))
         val ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(specification)
                         
-        val originalTraceables = PQueries.getTraceables(matcher.specification.internalQueryRepresentation)
-        Assert.assertFalse("Empty trace", traceCollector.knownDerivatives.empty)
-        traceCollector.knownDerivatives.forEach[traceable |
-            val traceableTraces = traceCollector.getPTraceableTraces(traceable)
+        val canonicalTraceables = PQueries.getTraceables(matcher.specification.internalQueryRepresentation)
+        canonicalTraceables.forEach[canonicalTraceable |
+            val rewrittenTraceables = traceCollector.getRewrittenTraceables(canonicalTraceable)
             // Assert that every element has a valid trace
-            Assert.assertFalse("Trace form constraint "+traceable+" not found!", traceableTraces.empty)
-            // Each element needs to be traced to the original PQuery
-            Assert.assertTrue("This constraint cannot be traced to the original query: "+traceable, traceableTraces.exists[originalTraceables.contains(it)])
+            Assert.assertTrue("No rewritten/removed version of "+canonicalTraceable+" found!", !rewrittenTraceables.empty || traceCollector.isRemoved(canonicalTraceable))
         ]
     }
 }

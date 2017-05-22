@@ -21,9 +21,12 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -37,23 +40,54 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
     /**
      * Traces from derivative to original
      */
-    private Multimap<PTraceable, PTraceable> traces = HashMultimap.create();
-    private Map<PTraceable, IDerivativeModificationReason> removals = new HashMap<>();
+    private final Multimap<PTraceable, PTraceable> traces = HashMultimap.create();
+
+    /**
+     * Traces from original to derivative
+     */
+    private final Multimap<PTraceable, PTraceable> inverseTraces = HashMultimap.create();
+    
+    /**
+     * Reasons for removing {@link PTraceable}s
+     */
+    private final Map<PTraceable, IDerivativeModificationReason> removals = new HashMap<>();
+    
+    /**
+     * Decides whether {@link PTraceable} is removed
+     */
+    private final Predicate<PTraceable> removed = new Predicate<PTraceable>() {
+        @Override
+        public boolean apply(PTraceable input) {
+            return removals.containsKey(input);
+        }
+    };
 
     @Override
-    public Iterable<PTraceable> getPTraceableTraces(PTraceable derivative) {
-        if (derivative instanceof PQuery) { // PQueries are preserved
-            return ImmutableList.of(derivative);
+    public Iterable<PTraceable> getCanonicalTraceables(PTraceable derivative) {
+        return findTraceEnds(derivative, traces);
+    }
+
+    @Override
+    public Iterable<PTraceable> getRewrittenTraceables(PTraceable source) {
+        return findTraceEnds(source, inverseTraces);
+    }
+
+    /**
+     * Returns the end of trace chains starting from the given {@link PTraceable} along the given trace edges. 
+     */
+    private Set<PTraceable> findTraceEnds(PTraceable traceable, Multimap<PTraceable, PTraceable> traceRecords) {
+        if (traceable instanceof PQuery) { // PQueries are preserved
+            return ImmutableSet.of(traceable);
         }
         Set<PTraceable> visited = new HashSet<>();
         Set<PTraceable> result = new HashSet<>();
         Queue<PTraceable> queue = new LinkedList<>();
-        queue.add(derivative);
+        queue.add(traceable);
         while(!queue.isEmpty()){
             PTraceable aDerivative = queue.poll();
             // Track visited elements to avoid infinite loop via directed cycles in traces
             visited.add(aDerivative);
-            Collection<PTraceable> nextOrigins = traces.get(aDerivative);
+            Collection<PTraceable> nextOrigins = traceRecords.get(aDerivative);
             if (nextOrigins.isEmpty()){
                 // End of trace chain
                 result.add(aDerivative);
@@ -72,18 +106,36 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
     @Override
     public void addTrace(PTraceable original, PTraceable derivative){
         traces.put(derivative, original);
+        inverseTraces.put(original, derivative);
+        // Even if this element was marked as removed earlier, now we replace it with another constraint!
+        removals.remove(original);
     }
     
     @Override
     public void derivativeRemoved(PTraceable derivative, IDerivativeModificationReason reason){
         Preconditions.checkState(!removals.containsKey(derivative), "Traceable %s removed multiple times", derivative);
-        removals.put(derivative, reason);
         // XXX the derivative must not be removed from the trace chain, as some rewriters, e.g. the normalizer keeps trace links to deleted elements 
+        if (!inverseTraces.containsKey(derivative)) {
+            // If there already exists a trace link, this removal means an update
+            removals.put(derivative, reason);
+        }
     }
-    
+
     @Override
-    public Iterable<PTraceable> getKnownDerivatives() {
-        return traces.keySet();
+    public boolean isRemoved(PTraceable traceable) {
+        return Iterables.all(getRewrittenTraceables(traceable), removed);
+    }
+
+    @Override
+    public Iterable<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
+        Iterable<PTraceable> removedTraceEnds = Iterables.filter(getRewrittenTraceables(traceable), removed);
+        return Iterables.transform(removedTraceEnds, new Function<PTraceable, IDerivativeModificationReason>() {
+
+            @Override
+            public IDerivativeModificationReason apply(PTraceable input) {
+                return removals.get(input);
+            }
+        });
     }
 
 }

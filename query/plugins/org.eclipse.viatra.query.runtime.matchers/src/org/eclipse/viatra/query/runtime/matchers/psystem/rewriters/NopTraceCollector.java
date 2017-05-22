@@ -28,14 +28,15 @@ public class NopTraceCollector implements IRewriterTraceCollector {
     }
     
     @Override
-    public Iterable<PTraceable> getPTraceableTraces(PTraceable derivative) {
+    public Iterable<PTraceable> getCanonicalTraceables(PTraceable derivative) {
         return Collections.emptyList();
     }
 
     @Override
-    public Iterable<PTraceable> getKnownDerivatives() {
+    public Iterable<PTraceable> getRewrittenTraceables(PTraceable source) {
         return Collections.emptyList();
     }
+
 
     @Override
     public void addTrace(PTraceable origin, PTraceable derivative) {
@@ -46,5 +47,15 @@ public class NopTraceCollector implements IRewriterTraceCollector {
     public void derivativeRemoved(PTraceable derivative, IDerivativeModificationReason reason) {
         // ignored
     }
- 
+
+    @Override
+    public boolean isRemoved(PTraceable traceable) {
+        return false;
+    }
+
+    @Override
+    public Iterable<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
+        return Collections.emptyList();
+    }
+
 }

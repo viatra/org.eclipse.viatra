@@ -24,16 +24,29 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 public interface IPTraceableTraceProvider {
 
     /**
-     * Find and return the {@link PTraceable}s in the origin query which are the source of the given derivative
+     * Find and return the canonical {@link PTraceable}s in the original query which are the sources of the given derivative
      * {@link PTraceable} according to the transformation.
      * 
      * @param derivative a {@link PTraceable} which is contained by the {@link PQuery} produced by the associated rewriter
      */
-    public Iterable<PTraceable> getPTraceableTraces(PTraceable derivative);
+    public Iterable<PTraceable> getCanonicalTraceables(PTraceable derivative);
     
     /**
-     * Return the {@link PTraceable}s in the derivative query which have a known origin in the source query.
+     * Find and return the {@link PTraceable}s in the rewritten query which are the destinations of the given source
+     * {@link PTraceable} according to the transformation.
+     * 
+     * @param source a {@link PTraceable} which is contained by a {@link PQuery} before rewriting
      */
-    public Iterable<PTraceable> getKnownDerivatives();
+    public Iterable<PTraceable> getRewrittenTraceables(PTraceable source);
+    
+    /**
+     * Returns whether the given traceable element has been removed by every rewriter for a reason.
+     */
+    public boolean isRemoved(PTraceable traceable);
 
+    /**
+     * Returns the reasons for which the traceable element has been removed by the rewriters.
+     * @return the reasons of removal during rewriting
+     */
+    public Iterable<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable);
 }

@@ -57,7 +57,7 @@ class CoverageReporter {
 		«FOR query : coverage.keySet.filter(PQuery).sortBy[fullyQualifiedName]»
 			<details>
 				<summary>
-					«val queryState = coverage.get(query)?:CoverageState.UNDEFINED»
+					«val queryState = coverage.get(query)?:CoverageState.NOT_REPRESENTED_UNKNOWN_REASON»
 					<span style="«queryState.style»" title="«queryState.info»">
 						«IF !query.publishedAs.filter(BaseGeneratedPrivateEMFQuerySpecification).empty /* XXX */»private«ENDIF»
 						pattern «query.fullyQualifiedName»</span>
@@ -65,10 +65,10 @@ class CoverageReporter {
 				</summary>
 				«var bodyIndex = 0»
 				«FOR body: query.disjunctBodies.bodies SEPARATOR " or "»
-					«val bodyState = coverage.get(body)?:CoverageState.UNDEFINED»
+					«val bodyState = coverage.get(body)?:CoverageState.NOT_REPRESENTED_UNKNOWN_REASON»
 					<div><span style="«bodyState.style»" title="«bodyState.info»">Body #«bodyIndex++» {</span>
 					«FOR constraint: body.constraints»
-						«val constraintState = coverage.get(constraint)?:CoverageState.UNDEFINED»
+						«val constraintState = coverage.get(constraint)?:CoverageState.NOT_REPRESENTED_UNKNOWN_REASON»
 						<div style="«constraintState.style»" title="«constraintState.info»">
 						«constraint»
 						</div>
@@ -82,7 +82,7 @@ class CoverageReporter {
 			<span style="«CoverageState.COVERED.style»">Covered</span><br/>
 			<span style="«CoverageState.NOT_COVERED.style»">Not covered</span><br/>
 			<span style="«CoverageState.NOT_REPRESENTED.style»">Not represented (optimized out)</span><br/>
-			<span style="«CoverageState.UNDEFINED.style»">Coverage cannot be determined</span><br/>
+			<span style="«CoverageState.NOT_REPRESENTED_UNKNOWN_REASON.style»">Not represented by error - please report</span><br/>
 		</p>
 		</body></html>'''
 		Files.write(content, file, Charsets.UTF_8)
@@ -93,7 +93,7 @@ class CoverageReporter {
 		case COVERED: "background:springgreen"
 		case NOT_COVERED: "background:tomato"
 		case NOT_REPRESENTED: "color:lightgray"
-		case UNDEFINED: "color:red"
+		case NOT_REPRESENTED_UNKNOWN_REASON: "color:red"
 		}
 	}
 	
@@ -102,7 +102,7 @@ class CoverageReporter {
 		case COVERED: "Covered"
 		case NOT_COVERED: "Not covered"
 		case NOT_REPRESENTED: "Not represented"
-		case UNDEFINED: "N/A"
+		case NOT_REPRESENTED_UNKNOWN_REASON: "Internal error"
 		}
 	}
 
