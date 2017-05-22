@@ -13,10 +13,12 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Lists;
 
@@ -31,9 +33,6 @@ public class ExpressionEvalCheck extends CheckOperation {
     private final IExpressionEvaluator evaluator;
     private final Map<String, Integer> nameMap;
     
-    /**
-     * 
-     */
     public ExpressionEvalCheck(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, int position) {
         this.evaluator = evaluator;
         this.nameMap = nameMap;
@@ -52,15 +51,15 @@ public class ExpressionEvalCheck extends CheckOperation {
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         try {
             Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
-            if (result != null){
+            if (result != null) {
                 Object currentValue = frame.get(outputPosition);
                 return result.equals(currentValue);
-            }else{
-                return false;
             }
         } catch (Exception e) {
-            throw new LocalSearchException("Error while evaluating expression", e);
+            Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
+            logger.warn("Error while evaluating expression", e);
         }
+        return false;
     }
 
     @Override

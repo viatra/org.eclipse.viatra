@@ -13,11 +13,13 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -45,12 +47,12 @@ public class ExpressionEval extends ExtendOperation<Object> {
             Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
             if (result != null){
                 it = Iterators.singletonIterator(result);
-            }else{
-                it = Iterators.emptyIterator();
             }
         } catch (Exception e) {
-            throw new LocalSearchException("Error while evaluating expression", e);
+            Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
+            logger.warn("Error while evaluating expression", e);
         }
+        it = Iterators.emptyIterator();
     }
     
     @Override

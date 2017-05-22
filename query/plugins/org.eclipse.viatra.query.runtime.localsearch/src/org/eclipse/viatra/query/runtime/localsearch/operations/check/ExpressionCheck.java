@@ -13,10 +13,12 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Lists;
 
@@ -41,7 +43,9 @@ public class ExpressionCheck extends CheckOperation {
             boolean result = (Boolean) evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
             return result;
         } catch (Exception e) {
-            throw new LocalSearchException("Error while evaluating expression", e);
+            Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
+            logger.warn("Error while evaluating expression", e);
+            return false;
         }
     }
 
