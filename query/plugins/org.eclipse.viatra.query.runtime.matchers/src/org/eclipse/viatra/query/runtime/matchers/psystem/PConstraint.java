@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
  * @author Gabor Bergmann
  * 
  */
-public interface PConstraint {
+public interface PConstraint extends PTraceable {
 
     /**
      * All variables affected by this constraint.

@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.MappingTraceCollector
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
@@ -67,7 +67,7 @@ import org.junit.runner.RunWith
         val tracer = new ReteNetworkTrace(matcher, traceCollector)
         val emptyCoverage = new ReteCoverage(matcher).reteCoverage
         val matcherCoverage = tracer.traceCoverage(matcher, emptyCoverage);
-        for (Entry<PConstraint, CoverageState> entry : matcherCoverage.constraintCoverage.entrySet()) {
+        for (Entry<PTraceable, CoverageState> entry : matcherCoverage.entrySet()) {
             System.out.println('''«entry.getKey()» -> «entry.getValue()»''')
         }
         Assert.assertEquals(0f, matcherCoverage.aggregatedCoveragePercent, 0)
@@ -77,7 +77,7 @@ import org.junit.runner.RunWith
         
         val fullCoverage = new ReteCoverage(matcher).reteCoverage
         val fullmatcherCoverage = tracer.traceCoverage(matcher, fullCoverage);
-        for (Entry<PConstraint, CoverageState> entry : fullmatcherCoverage.constraintCoverage.entrySet()) {
+        for (Entry<PTraceable, CoverageState> entry : fullmatcherCoverage.entrySet()) {
             System.out.println('''«entry.getKey()» -> «entry.getValue()»''')
         }
         Assert.assertEquals(100f, fullmatcherCoverage.aggregatedCoveragePercent, 0)

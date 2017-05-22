@@ -245,7 +245,7 @@ public class CompilerHelper {
      * Creates a recipe for a production node and the corresponding trace.
      * @since 1.6
      */
-    public static CompiledQuery makeQueryTrace(PQuery query, Collection<RecipeTraceInfo> bodyFinalTraces,
+    public static CompiledQuery makeQueryTrace(PQuery query, Map<PBody, RecipeTraceInfo> bodyFinalTraces,
             Collection<ReteNodeRecipe> bodyFinalRecipes, QueryEvaluationHint hint, IQueryMetaContext context) {
         ProductionRecipe recipe = ReteRecipeCompiler.FACTORY.createProductionRecipe();
 

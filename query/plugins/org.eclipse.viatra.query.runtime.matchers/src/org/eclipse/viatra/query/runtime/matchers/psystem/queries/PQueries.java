@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
+import java.util.Set;
+
 import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -100,4 +105,21 @@ public final class PQueries {
             }
         };
     }
+
+    /**
+     * Returns all {@link PTraceable}s contained in the given {@link PQuery}: itself, its bodies and their constraints.
+     * 
+     * @since 1.6
+     */
+    public static Set<PTraceable> getTraceables(PQuery query) {
+        Set<PBody> bodies = query.getDisjunctBodies().getBodies();
+        Iterable<PConstraint> constraints = Iterables.concat(Iterables.transform(bodies, new Function<PBody, Iterable<PConstraint>>() {
+            @Override
+            public Iterable<PConstraint> apply(PBody body) {
+                return body.getConstraints();
+            }
+        }));
+        return ImmutableSet.<PTraceable>builder().add(query).addAll(bodies).addAll(constraints).build();
+    }
+
 }

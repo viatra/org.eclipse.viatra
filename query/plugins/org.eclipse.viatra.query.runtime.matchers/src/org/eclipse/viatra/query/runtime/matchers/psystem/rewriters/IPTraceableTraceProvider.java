@@ -10,30 +10,30 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * This interface provides methods to trace the constraints of a transformed {@link PQuery} produced by
+ * This interface provides methods to trace the {@link PTraceable}s of a transformed {@link PQuery} produced by
  * a {@link PDisjunctionRewriter}. In case the associated rewriter is a composite (a.k.a. {@link PDisjunctionRewriterCacher}),
  * this trace provider handles traces end-to-end, hiding all the intermediate transformation steps.
  * 
  * @since 1.6
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IPConstraintTraceProvider {
+public interface IPTraceableTraceProvider {
 
     /**
-     * Find and return the constraints in the origin query which are the source of the given derivative
-     * constraint according to the transformation.
+     * Find and return the {@link PTraceable}s in the origin query which are the source of the given derivative
+     * {@link PTraceable} according to the transformation.
      * 
-     * @param derivative a constraint which is contained by the {@link PQuery} produced by the associated rewriter
+     * @param derivative a {@link PTraceable} which is contained by the {@link PQuery} produced by the associated rewriter
      */
-    public Iterable<PConstraint> getPConstraintTraces(PConstraint derivative);
+    public Iterable<PTraceable> getPTraceableTraces(PTraceable derivative);
     
     /**
-     * Return the constraints in the derivative query which have a known origin in the source query.
+     * Return the {@link PTraceable}s in the derivative query which have a known origin in the source query.
      */
-    public Iterable<PConstraint> getKnownDerivatives();
-    
+    public Iterable<PTraceable> getKnownDerivatives();
+
 }

@@ -11,14 +11,19 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 /**
@@ -32,25 +37,29 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
     /**
      * Traces from derivative to original
      */
-    private Multimap<PConstraint, PConstraint> traces = HashMultimap.create();
+    private Multimap<PTraceable, PTraceable> traces = HashMultimap.create();
+    private Map<PTraceable, IDerivativeModificationReason> removals = new HashMap<>();
 
     @Override
-    public Iterable<PConstraint> getPConstraintTraces(PConstraint derivative) {
-        Set<PConstraint> visited = new HashSet<>();
-        Set<PConstraint> result = new HashSet<>();
-        Queue<PConstraint> queue = new LinkedList<>();
+    public Iterable<PTraceable> getPTraceableTraces(PTraceable derivative) {
+        if (derivative instanceof PQuery) { // PQueries are preserved
+            return ImmutableList.of(derivative);
+        }
+        Set<PTraceable> visited = new HashSet<>();
+        Set<PTraceable> result = new HashSet<>();
+        Queue<PTraceable> queue = new LinkedList<>();
         queue.add(derivative);
         while(!queue.isEmpty()){
-            PConstraint aDerivative = queue.poll();
+            PTraceable aDerivative = queue.poll();
             // Track visited elements to avoid infinite loop via directed cycles in traces
             visited.add(aDerivative);
-            Collection<PConstraint> nextOrigins = traces.get(aDerivative);
+            Collection<PTraceable> nextOrigins = traces.get(aDerivative);
             if (nextOrigins.isEmpty()){
                 // End of trace chain
                 result.add(aDerivative);
             } else {
                 // Follow traces
-                for(PConstraint nextOrigin : nextOrigins){
+                for(PTraceable nextOrigin : nextOrigins){
                     if (!visited.contains(nextOrigin)){
                         queue.add(nextOrigin);
                     }
@@ -61,18 +70,19 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
     }
 
     @Override
-    public void addTrace(PConstraint original, PConstraint derivative){
+    public void addTrace(PTraceable original, PTraceable derivative){
         traces.put(derivative, original);
     }
     
     @Override
-    public void derivativeRemoved(PConstraint derivative, IDerivativeModificationReason reason){
-        // This implementation ignores the provided reason
-        traces.removeAll(derivative);
+    public void derivativeRemoved(PTraceable derivative, IDerivativeModificationReason reason){
+        Preconditions.checkState(!removals.containsKey(derivative), "Traceable %s removed multiple times", derivative);
+        removals.put(derivative, reason);
+        // XXX the derivative must not be removed from the trace chain, as some rewriters, e.g. the normalizer keeps trace links to deleted elements 
     }
     
     @Override
-    public Iterable<PConstraint> getKnownDerivatives() {
+    public Iterable<PTraceable> getKnownDerivatives() {
         return traces.keySet();
     }
 

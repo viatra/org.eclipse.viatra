@@ -26,17 +26,16 @@ public enum CoverageState {
      * Element is not covered
      */
     NOT_COVERED,
+
+    /**
+     * Element was removed during rewriting for some reason (e.g. an optimization)
+     */
+    NOT_REPRESENTED,
     
     /**
-     * Coverage cannot be determined for Element
+     * Element was removed for an unknown reason
      */
     UNDEFINED,
-    
-    /**
-     * Element is not represented by the underlying engine, usually meaning it was
-     * removed by an optimization.
-     */
-    NOT_REPRESENTED
     
     ;
     

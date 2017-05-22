@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.traceability;
 
-import java.util.Collection;
+import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 
@@ -24,11 +25,13 @@ public class CompiledQuery extends RecipeTraceInfo implements
         PatternTraceInfo {
     
     private PQuery query;
+    private final Map<PBody, ? extends RecipeTraceInfo> parentRecipeTracesPerBody;
     
     public CompiledQuery(ReteNodeRecipe recipe,
-            Collection<? extends RecipeTraceInfo> parentRecipeTraces,
+            Map<PBody, ? extends RecipeTraceInfo> parentRecipeTraces,
             PQuery query) {
-        super(recipe, parentRecipeTraces);
+        super(recipe, parentRecipeTraces.values());
+        parentRecipeTracesPerBody = parentRecipeTraces;
         this.query = query;
     }
     public PQuery getQuery() {
@@ -38,6 +41,10 @@ public class CompiledQuery extends RecipeTraceInfo implements
     @Override
     public String getPatternName() {
         return query.getFullyQualifiedName();
+    }
+
+    public Map<PBody, ? extends RecipeTraceInfo> getParentRecipeTracesPerBody() {
+        return parentRecipeTracesPerBody;
     }
 
 }

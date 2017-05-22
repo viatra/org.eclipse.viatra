@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 
 /**
@@ -35,7 +36,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
  * @since 0.8.0
  * @noimplement This interface is not intended to be implemented by clients. Use {@link BasePQuery} as a base class instead.
  */
-public interface PQuery extends PQueryHeader {
+public interface PQuery extends PQueryHeader, PTraceable {
 
     // TODO rewritten as / rewritten from traceability to PDisjunction?
     
@@ -150,5 +151,5 @@ public interface PQuery extends PQueryHeader {
      * @return a non-null, but possibly empty list of query specification objects;
      */
     List<Object> publishedAs();
-    
+
 }

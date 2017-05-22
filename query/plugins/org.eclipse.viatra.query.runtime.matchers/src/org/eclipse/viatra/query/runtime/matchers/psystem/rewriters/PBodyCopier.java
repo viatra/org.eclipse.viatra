@@ -132,6 +132,9 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
                 copyConstraint(pConstraint);
             }
         }
+        
+        // Add trace between original and copied body
+        addTrace(sourceBody, body);
     }
     
     protected void copyVariable(PVariable variable, String newName) {

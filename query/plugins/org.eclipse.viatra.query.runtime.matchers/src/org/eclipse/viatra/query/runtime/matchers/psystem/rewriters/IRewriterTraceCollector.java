@@ -10,26 +10,26 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 
 /**
- * This is the internal API of {@link IPConstraintTraceProvider} expected to be used by
+ * This is the internal API of {@link IPTraceableTraceProvider} expected to be used by
  * copier and rewriter implementations.
  * 
  * @since 1.6
  * @noreference This interface is not intended to be referenced by clients.
  */
-public interface IRewriterTraceCollector extends IPConstraintTraceProvider{
+public interface IRewriterTraceCollector extends IPTraceableTraceProvider {
 
     /**
      * Mark the given derivative to be originated from the given original constraint.
      */
-    public void addTrace(PConstraint origin, PConstraint derivative);
+    public void addTrace(PTraceable origin, PTraceable derivative);
     
     /**
      * Indicate that the given derivative is removed from the resulting query, thus its trace
      * information should be removed also.
      */
-    public void derivativeRemoved(PConstraint derivative, IDerivativeModificationReason reason);
+    public void derivativeRemoved(PTraceable derivative, IDerivativeModificationReason reason);
     
 }

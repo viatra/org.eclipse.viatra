@@ -34,6 +34,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries
 
 @RunWith(XtextRunner) 
 @InjectWith(EMFPatternLanguageInjectorProvider) 
@@ -60,14 +61,14 @@ class RewriterTraceTest {
             getOrCreateSpecification(model.getPatterns().get(0))
         val ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(specification)
                         
-        val originalConstraints = matcher.specification.internalQueryRepresentation.disjunctBodies.bodies.head.constraints
+        val originalTraceables = PQueries.getTraceables(matcher.specification.internalQueryRepresentation)
         Assert.assertFalse("Empty trace", traceCollector.knownDerivatives.empty)
-        traceCollector.knownDerivatives.forEach[constraint |
-            val pConstraintTraces = traceCollector.getPConstraintTraces(constraint)
+        traceCollector.knownDerivatives.forEach[traceable |
+            val traceableTraces = traceCollector.getPTraceableTraces(traceable)
             // Assert that every element has a valid trace
-            Assert.assertFalse("Trace form constraint "+constraint+" not found!", pConstraintTraces.empty)
-            // Each element needs to be traced to the origin PQuery
-            Assert.assertTrue("This constraint cannot be traced to the original query: "+constraint, pConstraintTraces.exists[originalConstraints.contains(it)])
+            Assert.assertFalse("Trace form constraint "+traceable+" not found!", traceableTraces.empty)
+            // Each element needs to be traced to the original PQuery
+            Assert.assertTrue("This constraint cannot be traced to the original query: "+traceable, traceableTraces.exists[originalTraceables.contains(it)])
         ]
     }
 }

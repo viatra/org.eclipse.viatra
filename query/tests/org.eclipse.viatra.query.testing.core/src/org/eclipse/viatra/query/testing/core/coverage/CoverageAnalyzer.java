@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.MappingTraceCollector;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
@@ -36,7 +37,7 @@ import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest;
 public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
 
     IRewriterTraceCollector traceCollector = new MappingTraceCollector();
-    private PSystemCoverage coverage;
+    private CoverageInfo<PTraceable> coverage = new CoverageInfo<>();
 
     @Override
     public QueryEvaluationHint configure(QueryEvaluationHint hints) {
@@ -52,7 +53,7 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
     /**
      * Returns the coverage information of every analyzed pattern.
      */
-    public PSystemCoverage getCoverage() {
+    public CoverageInfo<PTraceable> getCoverage() {
 		return coverage;
 	}
 
@@ -60,12 +61,8 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
     public void processMatcher(ViatraQueryMatcher<?> matcher) throws ViatraQueryException, QueryProcessingException {
         ReteNetworkTrace trace = new ReteNetworkTrace(matcher, traceCollector);
         CoverageInfo<Node> reteCoverage = new ReteCoverage(matcher).reteCoverage();
-        PSystemCoverage newCoverage = trace.traceCoverage(matcher, reteCoverage);
-        if (coverage == null){
-            coverage = newCoverage;
-        }else{
-        	coverage = coverage.mergeWith(newCoverage);
-        }
+        CoverageInfo<PTraceable> newCoverage = trace.traceCoverage(matcher, reteCoverage);
+       	coverage = coverage.mergeWith(newCoverage);
     }
 
 }

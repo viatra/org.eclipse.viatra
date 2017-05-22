@@ -60,6 +60,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Consta
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionRewriterCacher;
@@ -181,6 +182,12 @@ public class ReteRecipeCompiler {
     public CompiledQuery getCompiledForm(PQuery query) throws QueryProcessingException {
         CompiledQuery compiled = queryCompilerCache.get(query);
         if (compiled == null) {
+            
+            IRewriterTraceCollector traceCollector = CommonQueryHintOptions.normalizationTraceCollector.getValueOrDefault(hintProvider.getQueryEvaluationHint(query));
+            if (traceCollector != null) {
+                traceCollector.addTrace(query, query);
+            }
+            
             boolean reentrant = !compilationInProgress.add(query);
             if (reentrant) { // oops, recursion into body in progress
                 RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext);
@@ -256,7 +263,7 @@ public class ReteRecipeCompiler {
     private CompiledQuery doCompileProduction(PQuery query, Collection<SubPlan> bodies)
             throws QueryProcessingException {
         // TODO skip production node if there is just one body and no projection needed?
-        Collection<RecipeTraceInfo> bodyFinalTraces = new HashSet<RecipeTraceInfo>();
+        Map<PBody, RecipeTraceInfo> bodyFinalTraces = new HashMap<PBody, RecipeTraceInfo>();
         Collection<ReteNodeRecipe> bodyFinalRecipes = new HashSet<ReteNodeRecipe>();
 
         for (SubPlan bodyFinalPlan : bodies) {
@@ -274,12 +281,12 @@ public class ReteRecipeCompiler {
             final PBody body = bodyFinalPlan.getBody();
             final List<PVariable> parameterList = body.getSymbolicParameterVariables();
             if (parameterList.equals(compiledBody.getVariablesTuple())) { // no projection needed
-                bodyFinalTraces.add(compiledBody);
+                bodyFinalTraces.put(body, compiledBody);
                 bodyFinalRecipes.add(compiledBody.getRecipe());
             } else {
                 TrimmerRecipe trimmerRecipe = CompilerHelper.makeTrimmerRecipe(compiledBody, parameterList);
                 RecipeTraceInfo trimmerTrace = new ParameterProjectionTrace(body, trimmerRecipe, compiledBody);
-                bodyFinalTraces.add(trimmerTrace);
+                bodyFinalTraces.put(body, trimmerTrace);
                 bodyFinalRecipes.add(trimmerRecipe);
             }
         }

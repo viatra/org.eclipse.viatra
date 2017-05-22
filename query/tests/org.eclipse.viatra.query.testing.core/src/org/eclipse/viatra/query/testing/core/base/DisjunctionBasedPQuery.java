@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;

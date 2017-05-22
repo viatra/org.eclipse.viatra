@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.Collections;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 
 /**
  * This implementation does not store any traces and scales to NOP for every traceability feature.
@@ -28,23 +28,23 @@ public class NopTraceCollector implements IRewriterTraceCollector {
     }
     
     @Override
-    public Iterable<PConstraint> getPConstraintTraces(PConstraint derivative) {
+    public Iterable<PTraceable> getPTraceableTraces(PTraceable derivative) {
         return Collections.emptyList();
     }
 
     @Override
-    public Iterable<PConstraint> getKnownDerivatives() {
+    public Iterable<PTraceable> getKnownDerivatives() {
         return Collections.emptyList();
     }
 
     @Override
-    public void addTrace(PConstraint origin, PConstraint derivative) {
+    public void addTrace(PTraceable origin, PTraceable derivative) {
         // ignored
     }
 
     @Override
-    public void derivativeRemoved(PConstraint derivative, IDerivativeModificationReason reason) {
+    public void derivativeRemoved(PTraceable derivative, IDerivativeModificationReason reason) {
         // ignored
     }
-   
+ 
 }

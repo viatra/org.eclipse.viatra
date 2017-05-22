@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 
 import com.google.common.base.Preconditions;
 
@@ -27,7 +28,7 @@ public class AbstractRewriterTraceSource {
         this.traceCollector = traceCollector;
     }
     
-    public IPConstraintTraceProvider getTraces() {
+    public IPTraceableTraceProvider getTraces() {
         return traceCollector;
     }
     
@@ -39,7 +40,7 @@ public class AbstractRewriterTraceSource {
      * Mark the given derivative to be originated from the given original constraint.
      * @since 1.6
      */
-    protected void addTrace(PConstraint original, PConstraint derivative){
+    protected void addTrace(PTraceable original, PTraceable derivative){
         traceCollector.addTrace(original, derivative);
     }
     

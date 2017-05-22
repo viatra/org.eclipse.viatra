@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
  * @author Gabor Bergmann
  * 
  */
-public class PBody {
+public class PBody implements PTraceable {
     
     public final static String VIRTUAL_VARIABLE_PREFIX = ".virtual";
     private final static String VIRTUAL_VARIABLE_PATTERN = VIRTUAL_VARIABLE_PREFIX + "{%d}";
