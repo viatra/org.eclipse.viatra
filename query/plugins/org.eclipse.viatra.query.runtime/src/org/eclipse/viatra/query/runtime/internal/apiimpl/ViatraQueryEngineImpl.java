@@ -395,7 +395,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
             engineContext.dispose();
         } catch (IllegalStateException ex) {
             getLogger().warn(
-                    "The base index could not be disposed along with the InQuery engine, as there are still active listeners on it.");
+                    "The base index could not be disposed along with the VIATRA Query engine, as there are still active listeners on it.");
         }
     }
 
