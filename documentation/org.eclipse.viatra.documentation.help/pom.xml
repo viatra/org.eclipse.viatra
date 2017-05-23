@@ -19,18 +19,41 @@
                 <version>1.5.5</version>
                 <executions>
                     <execution>
+                        <id>generate-help-contents</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                                <toc>false</toc>
+                            </attributes>
+                            <!-- <headerFooter>false</headerFooter>  -->			
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>generate-tutorial</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <!-- <sourceDocumentName>ViatraDocs.asciidoc</sourceDocumentName> -->
+                            <sourceDocumentName>tutorial/tutorial.adoc</sourceDocumentName>
                             <backend>html5</backend>	
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
-                            <headerFooter>false</headerFooter>			
+                            <headerFooter>false</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
                         </configuration>
                     </execution>
                 </executions>

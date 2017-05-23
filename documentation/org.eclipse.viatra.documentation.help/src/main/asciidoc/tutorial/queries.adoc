@@ -4,45 +4,67 @@ ifndef::rootdir[:rootdir: ./]
 :imagesdir: {rootdir}
 :experimental:
 
-== Define your First Query
+Constraints and conditions in the VIATRA framework are expressed using a graph pattern-based language. This declarative formalism allows very compact definitions of complex conditions, while it is still possible to provide live query evaluation based on the Rete algorithm.
 
-. Create a new VIATRA Query project in the host Eclipse with the following name: `com.incquerylabs.cps.queries`.
+In the following we get an overview of the query development environment, starting with the definition of queries, followed by query evaluation support. Then we gain an understanding of the various language elements by creating more and more complex queries.
+
+A graph pattern encodes a _named_ query with some _parameters_ defined as a _disjunction_ of pattern _bodies_, while each body consists of a _set_ of constraints.  The result of a graph pattern, called _match set_, is a _set_ of (model element) tuples where the elements fulfill all constraints defined in at least one of the pattern bodies.
+
+NOTE: The pattern language always works on sets: neither the constraints nor the match set is ordered; and match set includes never includes multiple tuples with exactly the same model elements.
+
+== Define your First Query
+To define queries, first a  _VIATRA Query Project_ has to be created with the standard _New Project Wizard_ of Eclipse. Such projects are specialized Eclipse plug-in projects with preconfigured VIATRA dependencies and the query generator initialized. Query specifications have to be added to the Java classpath of the projects, more specifically into Java packages. Based on these observations the creation of the first query consists of the following steps:
+
+. Create a new VIATRA Query project in the host Eclipse with the following name: `org.eclipse.viatra.examples.cps.queries`.
 . Add `org.eclipse.viatra.examples.cps.model` to the Plug-in dependencies
-. Create a new query definition in a package named `com.incquerylabs.cps.queries` and a file named `queries.vql`. In the wizard create an empty query. Fill the first query:
+. Create a new query definition in a package named `org.eclipse.viatra.examples.cps.queries` and a file named `queries.vql`. In the wizard create an empty query. Fill the first query:
 +
 [[app-listing]]
 [source,vql]
 .queries.vql
 ----
-package com.incquerylabs.cps.queries
+// Java package declaration, must match the container of the file
+package org.eclipse.viatra.examples.cps.queries
 
+// EPackage import
 import "http://org.eclipse.viatra/model/cps"
 
-pattern hostIpAddress(host: HostInstance, ip) {
+// Pattern declaration
+pattern hostIpAddress(host: HostInstance, ip : java String) {
+    // Type constraint stating that variables 'host' and 'ip' are connected via a 'nodeIp' attribute
     HostInstance.nodeIp(host,ip);
 }
 ----
+
+Looking at the pattern header, we see that this pattern has two parameters, meaning its results will be a pair of values, the first selecting a `HostInstance` from the model, while the second one a `String` literal. The connection between these elements is described by a single constraint ensuring that `ip` variable stores the `nodeIp` attribute of a corresponding `HostInstance`.
+
+== Evaluate Queries in the Query Results View
+
+VIATRA includes a view to evaluate the results of queries over various editors, and reacts on changes in the editor.
+
+The *Query Results* view is the primary tool for debugging graph patterns. Open the view by selecting _Window/Show View/Query Results_ or you can simply press the kbd:[CTRL+3] shortcut and start to type the name of the view. The view allows loading models and queries, and display (and update) the results of queries automatically.
+
 . Import instances project ```models\org.eclipse.viatra.examples.cps.instances``` from the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/[CPS Git repository]. Note that this is **not** a Git repository URL, but a web interface; a repository url can be found in the bottom of the page.
-
-
-== Query Explorer
-
-*Query Explorer* is the primary debug tool for debugging VIATRA Query patterns runtime. Open the view by selecting _Window/Show View/Others/VIATRA/Query Explorer_ or you can simply press the kbd:[CTRL+3] shortcut and start to type the name of the view. On the left side of the view, there will be patterns inherited from  the host eclipse. The middle part will show you the matches of the patterns. To achieve this, we have to load a model into the view:
-
 . Open our example instance model (/org.eclipse.viatra.examples.cps.instances/example.cyberphysicalsystem)
-. Make sure "ReteEngine" is selected in the Query Explorer (next to the green arrow button)
-. then press the green arrow button on the view.
+. Make sure "ReteEngine" is selected in the toolbar of the Query Results view
+. then press the 'Load model from active editor' (first button on the toolbar)
 . Open the query specification (vql file)
-. then press the green arrow button again
+. then press the 'Load queries from the active editor' button
 
-.Query Explorer
-image::screenshots/query_explorer.png[Query Explorer]
+At this point the _Query Results_ view should contain the matches of the freshly created pattern. Using the example model, you can see that there are 6 matches for the pattern, each consisting of a HostInstance-IP address pair. Note that the _Query Results_ view provides live results: by updating the model in the model editor file, e.g. adding a new host instance or changing its IP address, the results update automatically.
 
-== Pattern Language
+.Query Results View
+image::screenshots/queryresultview.png[Query Results View in Action]
 
-Every pattern has a unique name and several parameters. Inside the body of the patterns, there are different constraints. Our first example describes a feature constraint. It states that `entity` variable is of class `Entity` and its `name` attribute is the value of `name` variable.
+NOTE: If the 'Load model from active editor' button is not enabled, it either means, the current editor does not contain a model, or VIATRA does not understand the editor type. By default, EMF tree editors are supported; other editor types, such as graphical editors are supported by additional integration plug-ins, such as the GMF or Graphiti integration available from the VIATRA repository.
 
-. Create a validation query that checks if the IP address of a `HostInstance` is only an empty string:
+== Define Additional Queries
+
+In the following, we define a set of patterns that illustrate additional capabilities of the query language. Each pattern will come with a short definition, followed by the code itself and some remarks about how the pattern works.
+
+. List all `HostInstance` elements whose IP address is an empty string
+* This pattern, similar to the first pattern, still consists of a single constraint. The pattern constraints can refer to Java literals, like empty strings or numbers directly. This pattern should have no matches in the example model, as by default all instances have a non-empty IP address set up.
+* Notice that if you create a new `HostInstance` element, it will not appear in the match results. This happens because in EMF unset an empty attributes are different. You can write a pattern that finds missing attribute values using the `neg find` construct (see later).
 +
 [[app-listing]]
 [source,vql]
@@ -52,28 +74,29 @@ pattern emptyIpAddress(host: HostInstance) {
 }
 ----
 +
-This pattern shows that the parameters can be typed immediately in the parameters list.
 
-. Create a validation query that checks if two hosts have the same IP:
+. List are `HostInstance`-`HostInstance` pairs that share a common IP address
+* This pattern is more complex, as it has three parameters and three constraints. The first two describe similar type constraints we have seen. The pattern also compares the values of variables `host1` and `host2` with each other using the `!=` (_not equal_) operator (The `==` operator is also available).
 +
 [[app-listing]]
 [source,vql]
 ----
-pattern sameIpAddress(host1, host2, commonIp) {
+pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : java String) {
     HostInstance.nodeIp(host1, commonIp);
     HostInstance.nodeIp(host2, commonIp);
     host1!=host2;
 }
 ----
 +
-This pattern shows the `!=` (_not equal_) operator to select two different entities from the instance model. (Use the `==` operator to equality)
 
-. Create a validation query that checks if the ip address contains only numbers and dots:
+. List all `HostInstance` elements that have non well-formed IPv4 addresses (e.g. not four numbers separated with dots)
+* The well-formedness validation of the IP address strings requires specific validation blocks called `check` expressions where  you can write a wide range of _Xbase_ expressions, behaaving similarly to Java and accessing Java classes from the classpath of the project. In this case, the well-formedness of the address values are inde.
+* It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables.
 +
 [[app-listing]]
 [source,vql]
 ----
-pattern ipFormatInvalid(host) {
+pattern ipFormatInvalid(host : HostInstance, ip : java String) {
     HostInstance.nodeIp(host,ip);
     check (
         !ip.matches("^[\\d\\.]+")
@@ -81,30 +104,31 @@ pattern ipFormatInvalid(host) {
 }
 ----
 +
-This pattern shows the `check` block where you can write a wide range of _Xbase_ expressions (similar to Java). In this case, we define a regular expression. It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables
 
-. Create a query that gets the other ending of a relation ending:
+. List `State` elements connected through `Transition` elements
+* A pattern body might use variables other than the pattern parameters, such as the variable `transition` in this example. These variables are called local variables.
+* It is important to note that if there are multiple transitions between two states, the match set will still include only a single pair of the states, because local variables are not included in the match tuples. If all edges are required, the corresponding transition variable should also be declared as a parameter.
 +
 [[app-listing]]
 [source,vql]
 ----
 pattern connectedTo(state: State, other: State){
+    // There exists a transition from `state` to `other`
     State.outgoingTransitions(state, transition);
     Transition.targetState(transition, other);
-} or {
-    State.outgoingTransitions(other, transition);
-    Transition.targetState(transition, state);
 }
 ----
 +
-This pattern shows how to connect independent bodies in a pattern by using the `or` keyword that states the pattern has a match if the first _or_ the second _or_ the third _or_ etc body has a match.
 
-. Create a query that summarizes this three validation condition:
+. List bad host instances that fail either of the previous conditions.
+* Disjunctions can be expressed by using the `or` keyword between pattern bodies. A model element tuple is included in the match set of a pattern, if at least one of the bodies have a match. Note that if multiple bodies would match the same tuple, the match set of the pattern will still only include the tuple once (_set semantics_).
+* Patterns can be reused using `find` constraints meaning all conditions expressed by the called pattern must be matched from the source.
+* This pattern also includes _single-use_ (or don't care) variables, starting with the character '_'. Such a declaration describes a variable where we are only interested in its existence but not its value.
 +
 [[app-listing]]
 [source,vql]
 ----
-pattern badHost(host, ip) {
+pattern badHost(host : HostInstance, ip : java String) {
     find sameIpAddress(host, _other, ip);
 } or {
     HostInstance.nodeIp(host, ip);
@@ -115,27 +139,29 @@ pattern badHost(host, ip) {
 }
 ----
 +
-This pattern shows how to reuse previously defined patterns as sub patterns. To do this, we use the `find` keyword then write the id of the sub pattern and finally add the variables. (Variables starting with `___` define _don't care_ variables, hence you cannot use them in other lines of the pattern)
 
-. Create a query that matches to the valid hosts:
+. List all good host instances (that meet neither of the incorrect conditions)
+* The negative pattern composition, expressed by the `neg find` keyword is used to define negative conditions. This works similar to the `find` constraints, with the notable exception that if there are any matches to the badHost with the selected parameters, the host pattern fails to match.
+* Those actual parameters of the negative pattern call that are not used elsewhere in the calling body are _universally quantified_, meaning that the calling pattern only matches if variables of the calling pattern cannot be bound to matching elements.
 +
 [[app-listing]]
 [source,vql]
 ----
-pattern goodEntity(host, ip) {
+pattern goodHost(host : HostInstance, ip : java String) {
     HostInstance.nodeIp(host, ip);
     neg find badHost(host, _);
 }
 ----
 +
-This pattern shows `neg find` expression to express negation. Those actual parameters of the negative pattern call that are not used elsewhere in the calling body are universally quantified, meaning that the calling pattern only matches if variables of the calling pattern cannot be bound to matching elements.
 
-. Create a query that counts the number of attributes of an entity:
+. List the number of applications for each HostInstance
+* Patterns can be marked as private, making the pattern itself only visible inside the source file it is defined. The generated code for these patterns is reduced (e.g. does not include generated Match and Matcher classes for easier access).
+* It is possible to calculate the matches of a pattern using the `count find` expressions. The value of such an expression is the number of matches found with the selected number of matches.
 +
 [[app-listing]]
 [source,vql]
 ----
-pattern applications(host, app) {
+private pattern applications(host, app) {
     HostInstance.applications(host, app);
 }
 
@@ -143,8 +169,23 @@ pattern countApplications(host : HostInstance, M) {
     M == count find applications(host, _);
 }
 ----
+
+. List all states of a state machine that are reachable from its initial state (either directly or indirectly)
+* The reachable states are calculated using the transitive closure of the previously introduced connectedTo pattern.
 +
-This pattern shows `count find` expression that aggregates multiple matches of a called pattern into a single value.
+[[app-listing]]
+[source,vql]
+----
+pattern reachableState(sm :StateMachine, state: State){
+    // The initial state of the statemachine is reachable
+    StateMachine.initial(sm, state);
+} or {
+    StateMachine.initial(sm, initial);
+    StateMachine.states(sm, state);
+    // The + symbol after the pattern name represents transitive closure
+    find connectedTo+(initial, state);
+}
+----
 
 == Validation
 
@@ -174,37 +215,6 @@ pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp) {
     HostInstance.nodeIp(host1, commonIp);
     HostInstance.nodeIp(host2, commonIp);
     host1!=host2;
-}
-----
-
-== Advanced Queries
-
-. Create *Support* pattern:
-+
-[[app-listing]]
-[source,vql]
-----
-private pattern directReachable(state: State, other: State){
-    State.outgoingTransitions(state, transition);
-    Transition.targetState(transition, other);
-}
-----
-
-. Create a pattern that determines the transitive closure of reachable states:
-+
-[[app-listing]]
-[source,vql]
-----
-private pattern reachable(state: State, other: State){
-    find directReachable+(state, other);
-}
-
-pattern reachableState(sm :StateMachine, state: State){
-    StateMachine.initial(sm, state);
-} or {
-    StateMachine.initial(sm, initial);
-    StateMachine.states(sm, state);
-    find reachable(initial, state);
 }
 ----
 
