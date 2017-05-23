@@ -47,12 +47,14 @@ public class ExpressionEval extends ExtendOperation<Object> {
             Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
             if (result != null){
                 it = Iterators.singletonIterator(result);
+            } else {
+                it = Iterators.emptyIterator();
             }
         } catch (Exception e) {
             Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
             logger.warn("Error while evaluating expression", e);
+            it = Iterators.emptyIterator();
         }
-        it = Iterators.emptyIterator();
     }
     
     @Override
