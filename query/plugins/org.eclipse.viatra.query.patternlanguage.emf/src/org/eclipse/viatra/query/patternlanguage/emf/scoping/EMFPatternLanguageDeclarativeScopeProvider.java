@@ -33,12 +33,15 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageIm
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra.query.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
@@ -102,6 +105,17 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         return createUnqualifiedClassifierScope(ctx);
     }
 
+    /**
+     * @since 1.6
+     */
+    public IScope scope_Variable(AnnotationParameter ctx, EReference ref) {
+        Pattern pattern = EcoreUtil2.getContainerOfType(ctx, Pattern.class);
+        if (pattern != null) {
+            return Scopes.scopeFor(pattern.getParameters());
+        }
+        return IScope.NULLSCOPE;
+    }
+    
     public IScope scope_Variable(PatternBody ctx, EReference ref) {
         if (ctx != null && !ctx.eIsProxy()) {
             return Scopes.scopeFor(ctx.getVariables());
