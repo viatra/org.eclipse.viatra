@@ -21,7 +21,7 @@ location "http://download.eclipse.org/releases/luna/201502271000/" {
 location "http://download.eclipse.org/efxclipse/updates-released/2.0.0/site" {
     org.eclipse.fx.runtime.min.feature.feature.group [2.0.0,3.0.0) 
 }
-location "http://download.eclipse.org/tools/gef/updates/milestones/5.0.0M6_gef-master_4201" {
+location "http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC1_gef-master_4353" {
     org.eclipse.gef.graph.sdk.feature.group [5.0.0,6.0.0)
     org.eclipse.gef.zest.sdk.feature.group [5.0.0,6.0.0)
     org.eclipse.gef.layout.sdk.feature.group [5.0.0,6.0.0)
