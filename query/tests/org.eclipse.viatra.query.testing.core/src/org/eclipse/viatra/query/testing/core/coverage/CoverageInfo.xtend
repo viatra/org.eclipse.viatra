@@ -50,7 +50,11 @@ class CoverageInfo<T> extends HashMap<T, CoverageState> {
         val traceables = PQueries.getTraceables(query)
         val coveredCount = traceables.filter[get(it) == CoverageState.COVERED].size as double
         val representedCount = traceables.filter[#{CoverageState.COVERED, CoverageState.NOT_COVERED}.contains(get(it))].size;
-        coveredCount / representedCount * 100
+        if (representedCount == 0) {
+            0            
+        } else {
+            coveredCount / representedCount * 100
+        }
     }
     
 }
