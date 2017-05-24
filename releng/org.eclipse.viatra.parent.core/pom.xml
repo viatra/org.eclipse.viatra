@@ -19,14 +19,10 @@
         <module>../../query/plugins/org.eclipse.viatra.query.runtime.localsearch</module>
         <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete</module>
         <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete.recipes</module>
-        <module>../../query/features/org.eclipse.viatra.query.runtime.feature</module>
-        <module>../../query/features/org.eclipse.viatra.query.language.feature</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.evm</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
-        <module>../../transformation/features/org.eclipse.viatra.transformation.runtime.emf.feature</module>
         <module>../../releng/org.eclipse.viatra.target.core</module>
         <module>../../releng/org.eclipse.viatra.target.all</module>
-        <module>../../releng/org.eclipse.viatra.update.core</module>
         <module>../../releng/org.eclipse.viatra.parent</module>
         <module>../../maven/viatra-query-runtime</module>
         <module>../../maven/viatra-query-language</module>

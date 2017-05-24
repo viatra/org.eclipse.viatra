@@ -25,11 +25,6 @@
     </parent>
     <repositories>
         <repository>
-            <id>viatra.core</id>
-            <url>${core.repository.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
             <id>viatra.nexus</id>
             <url>https://repo.eclipse.org/content/groups/viatra/</url>
             <releases>
