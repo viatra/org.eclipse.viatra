@@ -7,6 +7,10 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
+   <license url="%licenseURL">
+      %license
+   </license>
+
    <description url="http://www.example.com/description">
       VIATRA Validation framework runtime
    </description>

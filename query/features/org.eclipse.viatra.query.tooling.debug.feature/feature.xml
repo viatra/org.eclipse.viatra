@@ -7,6 +7,10 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
+   <license url="%licenseURL">
+      %license
+   </license>
+
    <description>
       Extends the Java debugger to display the contents of a ViatraQueryEngine in another JVM using the Java Debug API.
    </description>

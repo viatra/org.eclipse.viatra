@@ -7,6 +7,10 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
+   <license url="%licenseURL">
+      %license
+   </license>
+
    <description>
       VIATRA GMF extensions. Validation framework and query browser support for various GMF editors.
    </description>

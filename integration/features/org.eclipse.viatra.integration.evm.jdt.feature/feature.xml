@@ -7,6 +7,10 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
+   <license url="%licenseURL">
+      %license
+   </license>
+
    <description>
       Support for EVM event realm based on Java Development Tools incremental builder.
    </description>

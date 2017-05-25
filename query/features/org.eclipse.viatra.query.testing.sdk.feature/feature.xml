@@ -10,7 +10,11 @@
    <description url="http://www.example.com/description">
       VIATRA Query test framework components
    </description>
-
+   
+   <license url="%licenseURL">
+      %license
+   </license>
+   
    <url>
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>

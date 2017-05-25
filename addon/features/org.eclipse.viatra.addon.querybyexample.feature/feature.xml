@@ -7,6 +7,10 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
+   <license url="%licenseURL">
+      %license
+   </license>
+
    <description>
       Allows the derivation of VIATRA queries based on the current selection in editors.
    </description>
