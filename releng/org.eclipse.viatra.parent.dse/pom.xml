@@ -35,4 +35,18 @@
             </snapshots>
         </repository>
     </repositories>
+    <profiles>
+        <profile>
+            <id>sign_milestone</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>standalone</name>
+                </property>
+            </activation>
+            <modules>
+                <module>../org.eclipse.viatra.parent.core</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
