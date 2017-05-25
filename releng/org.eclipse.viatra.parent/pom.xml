@@ -342,7 +342,7 @@
                     <plugin>
                         <groupId>org.eclipse.tycho</groupId>
                         <artifactId>tycho-p2-plugin</artifactId>
-                        <version>${tychoVersion}</version>
+                        <version>${tycho.version}</version>
                         <executions>
                             <execution>
                                 <id>p2-metadata</id>
@@ -429,7 +429,7 @@
                     <plugin>
                         <groupId>org.eclipse.tycho</groupId>
                         <artifactId>tycho-p2-plugin</artifactId>
-                        <version>${tychoVersion}</version>
+                        <version>${tycho.version}</version>
                         <executions>
                             <execution>
                                 <id>p2-metadata</id>
@@ -516,7 +516,7 @@
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-p2-plugin</artifactId>
-						<version>${tychoVersion}</version>
+						<version>${tycho.version}</version>
 						<executions>
 							<execution>
 								<id>p2-metadata</id>
