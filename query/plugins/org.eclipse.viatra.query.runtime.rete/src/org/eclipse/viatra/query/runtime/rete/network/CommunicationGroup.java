@@ -82,6 +82,9 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         return this.identifier - that.identifier;
     }
 
+    /**
+     * A communication group containing only a single node with a single default mailbox.
+     */
     public static final class Singleton extends CommunicationGroup {
 
         private Mailbox mailbox;
@@ -145,6 +148,11 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 
     }
 
+    /**
+     * A communication group representing either 
+     * (1) a single node where the node is a monotonicity aware one
+     * (2) a set of nodes that form an SCC
+     */
     public static final class Recursive extends CommunicationGroup {
 
         private final Set<Mailbox> antiMonotoneMailboxes;

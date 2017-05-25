@@ -84,10 +84,11 @@ public final class CommunicationTracker {
 
         for (int i = 0; i < representatives.size(); i++) { // groups for SCC representatives
             final Node representative = representatives.get(i);
-            boolean singleton = sccInformationProvider.sccs.getPartition(representative).size() == 1;
-
+            final boolean isSingleton = sccInformationProvider.sccs.getPartition(representative).size() == 1;
+            final boolean isDefault = representative instanceof Receiver && ((Receiver) representative).getMailbox() instanceof DefaultMailbox;
+            
             CommunicationGroup group = null;
-            if (singleton) {
+            if (isSingleton && isDefault) {
                 group = new CommunicationGroup.Singleton(representative, i);
             } else {
                 group = new CommunicationGroup.Recursive(representative, i);
@@ -95,8 +96,8 @@ public final class CommunicationTracker {
             groupMap.put(representative, group);
         }
 
-        for (Node node : dependencyGraph.getAllNodes()) { // extend group map to the rest of nodes
-            Node representative = sccInformationProvider.getRepresentative(node);
+        for (final Node node : dependencyGraph.getAllNodes()) { // extend group map to the rest of nodes
+            final Node representative = sccInformationProvider.getRepresentative(node);
             if (representative != node) {
                 groupMap.put(node, groupMap.get(representative));
             }
