@@ -93,7 +93,6 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
     protected void unbindModel() {
         if (jfaceViewer != null && !jfaceViewer.getControl().isDisposed() && jfaceViewer.getInput() !=null) {
             jfaceViewer.setInput(null);
-            jfaceViewer = null;
         }
         if (state != null && !state.isDisposed()) {
             state.dispose();
