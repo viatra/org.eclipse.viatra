@@ -55,6 +55,13 @@ public class Options {
                                                     // bodies, 1 otherwise
 
     /**
+     * Enable for internal debugging of Rete communication scheme; 
+     *  catches cases where the topological sort is violated by a message sent "backwards"
+     * @since 1.6
+     */
+    public static final boolean MONITOR_VIOLATION_OF_RETE_NODEGROUP_TOPOLOGICAL_SORTING = false;
+    
+    /**
      * 
      * @author Gabor Bergmann
      * @noreference

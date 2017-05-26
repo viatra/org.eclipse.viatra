@@ -59,11 +59,6 @@ public final class CommunicationTracker {
      */
     private final Queue<CommunicationGroup> groupQueue;
 
-    /**
-     * Companion set of the priority queue to avoid duplicates
-     */
-    private final Set<CommunicationGroup> activeGroups;
-
     // groups should have a simple integer flag which represents its position in a priority queue
     // priority queue only contains the ACTIVE groups
 
@@ -71,7 +66,6 @@ public final class CommunicationTracker {
         this.dependencyGraph = new Graph<Node>();
         this.sccInformationProvider = new IncSCCAlg<Node>(this.dependencyGraph);
         this.groupQueue = new PriorityQueue<CommunicationGroup>();
-        this.activeGroups = new HashSet<CommunicationGroup>();
         this.groupMap = new HashMap<Node, CommunicationGroup>();
     }
 
@@ -121,10 +115,10 @@ public final class CommunicationTracker {
                     newGroup.addRederivable(node);
                     immediatelyActiveGroups.add(newGroup);
                 }
+                oldGroup.isEnqueued = false;
             }
 
             groupQueue.clear();
-            activeGroups.clear();
 
             for (final CommunicationGroup group : immediatelyActiveGroups) {
                 activate(group);
@@ -133,15 +127,15 @@ public final class CommunicationTracker {
     }
 
     private void activate(final CommunicationGroup group) {
-        if (!activeGroups.contains(group)) {
+        if (!group.isEnqueued) {
             groupQueue.add(group);
-            activeGroups.add(group);
+            group.isEnqueued = true;
         }
     }
 
     private void deactivate(final CommunicationGroup group) {
         groupQueue.remove(group);
-        activeGroups.remove(group);
+        group.isEnqueued = false;
     }
 
     public void addRederivable(final RederivableNode node) {
@@ -180,7 +174,7 @@ public final class CommunicationTracker {
 
     public CommunicationGroup getAndRemoveFirstGroup() {
         final CommunicationGroup group = groupQueue.poll();
-        activeGroups.remove(group);
+        group.isEnqueued = false;
         return group;
     }
 

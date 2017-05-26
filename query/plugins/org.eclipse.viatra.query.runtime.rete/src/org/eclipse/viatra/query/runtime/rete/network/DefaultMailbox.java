@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -20,6 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * Default mailbox implementation. The mailbox performs counting of messages so that they can cancel each other out.
  * 
  * @author Tamas Szabo
+ * @since 1.6
  */
 public class DefaultMailbox implements Mailbox {
 
@@ -97,20 +99,28 @@ public class DefaultMailbox implements Mailbox {
         // use the buffer during delivering so that there is a clear separation between the stages
         this.delivering = true;
 
-        for (Tuple update : this.queue.keySet()) {
-            int count = this.queue.get(update);
-            Direction direction = count < 0 ? Direction.REVOKE : Direction.INSERT;
-            for (int i = 0; i < Math.abs(count); i++) {
-                this.receiver.update(direction, update);
+        for (Entry<Tuple, Integer> entry : this.queue.entrySet()) {
+            int count = entry.getValue();
+            
+            Direction direction;
+            if (count < 0) {
+                direction = Direction.REVOKE;
+                count = -count;
+            } else {
+                direction = Direction.INSERT;
+            }
+            
+            for (int i = 0; i < count; i++) {
+                this.receiver.update(direction, entry.getKey());
             }
         }
-
+        
         this.delivering = false;
 
         Map<Tuple, Integer> tmpQueue = this.queue;
         this.queue = this.buffer;
         this.buffer = tmpQueue;
-        this.buffer.clear();
+        this.buffer = new LinkedHashMap<>();
     }
 
     @Override

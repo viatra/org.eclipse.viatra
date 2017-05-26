@@ -27,6 +27,11 @@ import com.google.common.collect.ImmutableSet;
  */
 public abstract class CommunicationGroup implements Comparable<CommunicationGroup> {
 
+    /**
+     * Marker for the {@link CommunicationTracker}
+     */
+    public boolean isEnqueued = false;
+    
     protected final Node representative;
     protected final int identifier;
 

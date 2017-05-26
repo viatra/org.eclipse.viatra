@@ -14,7 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
+import org.eclipse.viatra.query.runtime.rete.util.Options;
 
 import com.google.common.base.Function;
 
@@ -88,6 +89,10 @@ public final class ReteContainer {
         }
     }
 
+    /**
+     * @since 1.6
+     * @return the communication graph of the nodes, incl. messgae scheduling
+     */
     public CommunicationTracker getTracker() {
         return tracker;
     }
@@ -462,6 +467,9 @@ public final class ReteContainer {
         }
     }
 
+    /**
+     * @since 1.6
+     */
     public static final Function<Node, String> NAME_MAPPER = new Function<Node, String>() {
         @Override
         public String apply(Node input) {
@@ -469,38 +477,50 @@ public final class ReteContainer {
         }
     };
 
+    
     /**
      * Sends out all pending messages to their receivers. The delivery is governed by the communication tracker.
+     * @since 1.6
      */
     public void deliverMessagesSingleThreaded() {
         if (!backendContext.areUpdatesDelayed()) {
-            final Set<CommunicationGroup> seenInThisCycle = new LinkedHashSet<CommunicationGroup>();
-            CommunicationGroup lastGroup = null;
-            
-            while (!tracker.isEmpty()) {
-                final CommunicationGroup group = tracker.getAndRemoveFirstGroup();
-                final Node representative = group.getRepresentative();
+            if (Options.MONITOR_VIOLATION_OF_RETE_NODEGROUP_TOPOLOGICAL_SORTING) { 
+                // known unreachable; enable for debugging only
                 
-                /**
-                 * The current group does not violate the communication schema iff
-                 * (1) it was not seen before
-                 * OR
-                 * (2) the last one that was seen is exactly the same as the current one 
-                 *     this can happen if the group was added back because of in-group message passing
-                 */
-                boolean okGroup = (group == lastGroup) || !seenInThisCycle.contains(group);
+                CommunicationGroup lastGroup = null;
+                Set<CommunicationGroup> seenInThisCycle = new HashSet<>();
                 
-                if (!okGroup) {
-                    logger.error(
-                            "[INTERNAL ERROR] Violation of communication schema! The communication component with representative "
-                                    + representative + " has already been processed!");
+                while (!tracker.isEmpty()) {
+                    final CommunicationGroup group = tracker.getAndRemoveFirstGroup();
+                    
+                    /**
+                     * The current group does not violate the communication schema iff
+                     * (1) it was not seen before
+                     * OR
+                     * (2) the last one that was seen is exactly the same as the current one 
+                     *     this can happen if the group was added back because of in-group message passing
+                     */
+                    boolean okGroup = (group == lastGroup) || seenInThisCycle.add(group);
+                    
+                    if (!okGroup) {
+                        logger.error(
+                                "[INTERNAL ERROR] Violation of communication schema! The communication component with representative "
+                                        + group.getRepresentative() + " has already been processed!");
+                    }
+                    
+                    group.deliverMessages();
+                    
+                    lastGroup = group;
                 }
-                seenInThisCycle.add(group);
-
-                group.deliverMessages();
                 
-                lastGroup = group;
+            } else {
+                while (!tracker.isEmpty()) {
+                    final CommunicationGroup group = tracker.getAndRemoveFirstGroup();
+                    group.deliverMessages();
+                }
             }
+            
+            
         }
     }
 
