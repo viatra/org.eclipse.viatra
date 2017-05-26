@@ -18,7 +18,10 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
- * Default mailbox implementation. The mailbox performs counting of messages so that they can cancel each other out.
+ * Default mailbox implementation. 
+ * <p> Usually, the mailbox performs counting of messages so that they can cancel each other out.
+ * However, if marked as a fall-through mailbox, than update messages are delivered directly to the receiver node to reduce overhead. 
+ * 
  * 
  * @author Tamas Szabo
  * @since 1.6
@@ -31,6 +34,7 @@ public class DefaultMailbox implements Mailbox {
     protected final ReteContainer container;
     protected boolean delivering;
     protected final CommunicationTracker tracker;
+    protected boolean fallThrough = false;
 
     public DefaultMailbox() {
         this(null, null);
@@ -66,30 +70,34 @@ public class DefaultMailbox implements Mailbox {
 
     @Override
     public void postMessage(Direction direction, Tuple update) {
-        Map<Tuple, Integer> activeQueue = getActiveQueue();
-
-        Integer count = activeQueue.get(update);
-        if (count == null) {
-            count = 0;
-        }
-
-        if (direction == Direction.REVOKE) {
-            count--;
+        if (fallThrough) {
+            receiver.update(direction, update);
         } else {
-            count++;
-        }
-
-        if (count == 0) {
-            activeQueue.remove(update);
-        } else {
-            activeQueue.put(update, count);
-        }
-
-        if (container != null) {
-            if (activeQueue.isEmpty()) {
-                tracker.notifyLostAllMessages(this, MessageKind.DEFAULT);
+            Map<Tuple, Integer> activeQueue = getActiveQueue();
+            
+            Integer count = activeQueue.get(update);
+            if (count == null) {
+                count = 0;
+            }
+            
+            if (direction == Direction.REVOKE) {
+                count--;
             } else {
-                tracker.notifyHasMessage(this, MessageKind.DEFAULT);
+                count++;
+            }
+            
+            if (count == 0) {
+                activeQueue.remove(update);
+            } else {
+                activeQueue.put(update, count);
+            }
+            
+            if (container != null) {
+                if (activeQueue.isEmpty()) {
+                    tracker.notifyLostAllMessages(this, MessageKind.DEFAULT);
+                } else {
+                    tracker.notifyHasMessage(this, MessageKind.DEFAULT);
+                }
             }
         }
     }
@@ -139,4 +147,17 @@ public class DefaultMailbox implements Mailbox {
         this.buffer.clear();
     }
 
+    public boolean isFallThrough() {
+        return fallThrough;
+    }
+
+    /**
+     * Controlled by the {@link CommunicationTracker} which can determine 
+     * based on node type and network topology whether fall-through is allowed.
+     */
+    public void setFallThrough(boolean fallThrough) {
+        this.fallThrough = fallThrough;
+    }
+
+    
 }

@@ -23,6 +23,14 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopologicalSorting;
 import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
+import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
+import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
+import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
+import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Recursive;
+import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Singleton;
+import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
+import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 
 /**
  * An instance of this class is associated with every {@link ReteContainer}. The tracker serves two purposes: <br>
@@ -35,6 +43,7 @@ import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
  * those mailboxes will be emptied first whose owner nodes' do not depend on other undelivered messages.
  * 
  * @author Tamas Szabo
+ * @since 1.6
  *
  */
 public final class CommunicationTracker {
@@ -92,10 +101,15 @@ public final class CommunicationTracker {
 
         for (final Node node : dependencyGraph.getAllNodes()) { // extend group map to the rest of nodes
             final Node representative = sccInformationProvider.getRepresentative(node);
+            CommunicationGroup group = groupMap.get(representative);
             if (representative != node) {
-                groupMap.put(node, groupMap.get(representative));
+                groupMap.put(node, group);
             }
         }
+        
+        for (final Node node : dependencyGraph.getAllNodes()) { // set fall-through flags of default mailboxes
+            precomputeFallThroughFlag(node);
+         }
 
         // reconstruct new queue contents based on new group map
         if (!groupQueue.isEmpty()) {
@@ -124,6 +138,61 @@ public final class CommunicationTracker {
                 activate(group);
             }
         }
+    }
+
+    /**
+     * Depends on the groups, as well as the parent nodes of the argument, so recomputation is needed if these change 
+     */
+    private void precomputeFallThroughFlag(final Node node) {
+        CommunicationGroup group = groupMap.get(node); 
+            if (node instanceof Receiver) {
+                Mailbox mailbox = ((Receiver) node).getMailbox();
+                if (mailbox instanceof DefaultMailbox) {
+                    // decide between using quick&cheap fall-through, or allowing for update cancellation
+                    boolean fallThrough = 
+                            // allow trimmed or disjunctive tuple updates to cancel each other
+                            (!(node instanceof UniquenessEnforcerNode)) &&  
+                            // allow external updates to cancel (if delayed)
+                            (!(node instanceof ExternalInputEnumeratorNode)); 
+                    // do additional checks
+                    if (fallThrough) {
+                        // recursive parent groups generate excess updates that should be cancelled after delete&rederive phases
+                        // aggregator and transitive closure parent nodes also generate excess updates that should be cancelled 
+                        directParentLoop: for (Node directParent : dependencyGraph.getSourceNodes(node).keySet()) {
+                            Set<Node> parentsToCheck = new HashSet<>();
+                            // check the case where a direct parent is the reason for mailbox usage
+                            parentsToCheck.add(directParent);
+                            // check the case where an indirect parent (join slot) is the reason for mailbox usage
+                            if (directParent instanceof DualInputNode) {
+                                // in case of existence join (typically antijoin), a mailbox should allow
+                                // an insertion and deletion (at the secondary slot) to cancel each other out
+                                if (directParent instanceof ExistenceNode) {
+                                    fallThrough = false;
+                                    break directParentLoop;
+                                }
+                                // in beta nodes, indexer slots (or their active nodes) are considered indirect parents
+                                DualInputNode dualInput = (DualInputNode) directParent;
+                                parentsToCheck.add(dualInput.getPrimarySlot().getActiveNode());
+                                parentsToCheck.add(dualInput.getSecondarySlot().getActiveNode());
+                            }
+                            for (Node parent : parentsToCheck) {
+                                CommunicationGroup parentGroup = groupMap.get(parent);
+                                if (    // parent is in a different, recursive group
+                                        (group != parentGroup && parentGroup instanceof Recursive) || 
+                                        // parent is a transitive closure or aggregator node
+                                        (parent instanceof TransitiveClosureNode) ||
+                                        (parent instanceof IAggregatorNode)) 
+                                {
+                                  fallThrough = false;
+                                  break directParentLoop;
+                                }
+                            }
+                        }
+                    }
+                    // overwrite fallthrough flag with newly computed value
+                    ((DefaultMailbox) mailbox).setFallThrough(fallThrough);
+                }
+            }
     }
 
     private void activate(final CommunicationGroup group) {
@@ -199,9 +268,13 @@ public final class CommunicationTracker {
         dependencyGraph.insertNode(target);
         dependencyGraph.insertEdge(source, target);
 
-        // if they were already in the same SCC, then this insertion did not affect the SCCs
+        // if they were already in the same SCC, 
+        //  then this insertion did not affect the SCCs,
+        //  and it is sufficient to recompute affected fall-through flags;
         // otherwise, we need a new precomputation for the groupMap and groupQueue
-        if (!(rs != null && rs.equals(rt))) {
+        if (rs != null && rs.equals(rt)) {
+            refreshFallThroughFlag(target);
+        } else {
             precomputeGroups();
         }
     }
@@ -220,11 +293,26 @@ public final class CommunicationTracker {
         final Node rs = sccInformationProvider.getRepresentative(source);
         final Node rt = sccInformationProvider.getRepresentative(target);
 
-        // if they are still in the same SCC, then this deletion did not affect the SCCs
+        // if they are still in the same SCC, 
+        //  then this insertion did not affect the SCCs,
+        //  and it is sufficient to recompute affected fall-through flags;
         // otherwise, we need a new precomputation for the groupMap and groupQueue
         if (!(rs != null && rs.equals(rt))) {
+            refreshFallThroughFlag(target);
+        } else {
             precomputeGroups();
         }
     }
-   
+    
+    /**
+     * Refresh fall-through flags if dependencies change for given target, but no SCC change
+     */
+    private void refreshFallThroughFlag(final Node target) {
+        precomputeFallThroughFlag(target);
+        if (target instanceof DualInputNode) {
+            for (Node indirectTarget : dependencyGraph.getTargetNodes(target).keySet()) {
+                precomputeFallThroughFlag(indirectTarget);
+            }
+        }
+    }  
 }
