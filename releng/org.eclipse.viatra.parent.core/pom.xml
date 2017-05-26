@@ -54,6 +54,7 @@
                         </artifact>
                         <dependency-resolution>
                         <extraRequirements>
+                            <includePackedArtifacts>true</includePackedArtifacts>
                             <requirement>
                                 <type>eclipse-plugin</type>
                                 <id>com.google.inject.multibindings</id>
