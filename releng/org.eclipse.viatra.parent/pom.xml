@@ -330,6 +330,7 @@
                                 <goals>
                                     <goal>pack</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <supportedProjectTypes>
                                         <supportedProjectType>eclipse-plugin</supportedProjectType>
@@ -380,6 +381,7 @@
                                 <goals>
                                     <goal>normalize</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <supportedProjectTypes>
                                         <supportedProjectType>eclipse-plugin</supportedProjectType>
@@ -417,6 +419,7 @@
                                 <goals>
                                     <goal>pack</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <supportedProjectTypes>
                                         <supportedProjectType>eclipse-plugin</supportedProjectType>
@@ -436,7 +439,7 @@
                                 <goals>
                                     <goal>p2-metadata</goal>
                                 </goals>
-                                <phase>package</phase>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                         <configuration>
@@ -467,6 +470,7 @@
                                 <goals>
                                     <goal>normalize</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <supportedProjectTypes>
                                         <supportedProjectType>eclipse-plugin</supportedProjectType>
@@ -504,6 +508,7 @@
                                 <goals>
                                     <goal>pack</goal>
                                 </goals>
+                                <phase>verify</phase>
                                 <configuration>
                                     <supportedProjectTypes>
                                         <supportedProjectType>eclipse-plugin</supportedProjectType>
@@ -523,7 +528,7 @@
 								<goals>
 									<goal>p2-metadata</goal>
 								</goals>
-								<phase>package</phase>
+								<phase>verify</phase>
 							</execution>
 						</executions>
 						<configuration>
