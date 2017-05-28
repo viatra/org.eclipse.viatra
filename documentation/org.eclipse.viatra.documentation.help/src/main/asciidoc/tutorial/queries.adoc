@@ -1,7 +1,7 @@
-= Query Development
+= Using the Query Development Environment
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}
+:imagesdir: {rootdir}/images
 :experimental:
 
 Constraints and conditions in the VIATRA framework are expressed using a graph pattern-based language. This declarative formalism allows very compact definitions of complex conditions, while it is still possible to provide live query evaluation based on the Rete algorithm.
@@ -10,7 +10,7 @@ In the following we get an overview of the query development environment, starti
 
 A graph pattern encodes a _named_ query with some _parameters_ defined as a _disjunction_ of pattern _bodies_, while each body consists of a _set_ of constraints.  The result of a graph pattern, called _match set_, is a _set_ of (model element) tuples where the elements fulfill all constraints defined in at least one of the pattern bodies.
 
-NOTE: The pattern language always works on sets: neither the constraints nor the match set is ordered; and match set includes never includes multiple tuples with exactly the same model elements.
+NOTE: The pattern language always works on sets: neither the constraints nor the match set is ordered; and match set never includes multiple tuples with exactly the same model elements.
 
 == Define your First Query
 To define queries, first a  _VIATRA Query Project_ has to be created with the standard _New Project Wizard_ of Eclipse. Such projects are specialized Eclipse plug-in projects with preconfigured VIATRA dependencies and the query generator initialized. Query specifications have to be added to the Java classpath of the projects, more specifically into Java packages. Based on these observations the creation of the first query consists of the following steps:
@@ -44,7 +44,7 @@ VIATRA includes a view to evaluate the results of queries over various editors, 
 
 The *Query Results* view is the primary tool for debugging graph patterns. Open the view by selecting _Window/Show View/Query Results_ or you can simply press the kbd:[CTRL+3] shortcut and start to type the name of the view. The view allows loading models and queries, and display (and update) the results of queries automatically.
 
-. Import instances project ```models\org.eclipse.viatra.examples.cps.instances``` from the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/[CPS Git repository]. Note that this is **not** a Git repository URL, but a web interface; a repository url can be found in the bottom of the page.
+. Initialize the example CPS demonstrator project (installed with the metamodels)
 . Open our example instance model (/org.eclipse.viatra.examples.cps.instances/example.cyberphysicalsystem)
 . Make sure "ReteEngine" is selected in the toolbar of the Query Results view
 . then press the 'Load model from active editor' (first button on the toolbar)
@@ -54,7 +54,7 @@ The *Query Results* view is the primary tool for debugging graph patterns. Open 
 At this point the _Query Results_ view should contain the matches of the freshly created pattern. Using the example model, you can see that there are 6 matches for the pattern, each consisting of a HostInstance-IP address pair. Note that the _Query Results_ view provides live results: by updating the model in the model editor file, e.g. adding a new host instance or changing its IP address, the results update automatically.
 
 .Query Results View
-image::screenshots/queryresultview.png[Query Results View in Action]
+image::queryresultview.png[Query Results View in Action]
 
 NOTE: If the 'Load model from active editor' button is not enabled, it either means, the current editor does not contain a model, or VIATRA does not understand the editor type. By default, EMF tree editors are supported; other editor types, such as graphical editors are supported by additional integration plug-ins, such as the GMF or Graphiti integration available from the VIATRA repository.
 
@@ -75,7 +75,7 @@ pattern emptyIpAddress(host: HostInstance) {
 ----
 +
 
-. List are `HostInstance`-`HostInstance` pairs that share a common IP address
+. List all `HostInstance`-`HostInstance` pairs that share a common IP address
 * This pattern is more complex, as it has three parameters and three constraints. The first two describe similar type constraints we have seen. The pattern also compares the values of variables `host1` and `host2` with each other using the `!=` (_not equal_) operator (The `==` operator is also available).
 +
 [[app-listing]]

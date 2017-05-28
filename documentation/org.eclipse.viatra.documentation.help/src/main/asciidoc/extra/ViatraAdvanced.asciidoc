@@ -30,7 +30,4 @@ include::{chapterdir}/VIATRA-debugger.adoc[leveloffset=+1]
 include::{chapterdir}/VIATRA-EVM-barebone.adoc[leveloffset=+1]
 
 <<<
-include::{chapterdir}/VIATRA-Query-API.adoc[leveloffset=+1]
-
-<<<
 include::{chapterdir}/VIATRA-visualization.adoc[leveloffset=+1]

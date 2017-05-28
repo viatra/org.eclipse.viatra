@@ -2,19 +2,19 @@
 = Setting up the tutorial
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}
+:imagesdir: {rootdir}/images
 
 This tutorial was written for version 1.6 (released on 28th June 2017).
 
-Starting with version 1.6 VIATRA is available from the Simultaneous Release Train (Oxygen version); otherwise it can be downloaded from the p2 repository at http://download.eclipse.org/viatra/updates/release/
+Starting with version 1.6 VIATRA is available from the Simultaneous Release Train (Oxygen version: http://download.eclipse.org/releases/oxygen); for older releases or for older version use the release p2 repository at http://download.eclipse.org/viatra/updates/release/
 
 .Install window
-image::screenshots/install.png[Install window]
+image::install.png[Install window]
 
 For a faster installation, you may deselect the _Contact all update sites during install\..._ field, but then it might be necessary to install the required _Xtext Runtime_ manually.
 
 This tutorial relies on the CPS demonstrator example from https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps (for a description of the example please consult https://github.com/viatra/viatra-docs/blob/master/cps/Home.adoc).
 
-This document assumes that the metamodels themselves are installed into the Eclipse instance. They are available from the p2 repository https://build.incquerylabs.com/jenkins/job/CPS-Demonstrator/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.update/target/repository/
+This document assumes that the metamodels themselves are installed into the Eclipse instance. They are available from the p2 repository https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.update/target/repository/
 
 VIATRA defines a custom perspective called `Transformation Development` that includes a few views and shortcuts that make it easier to develop queries and transformations. The remainder of the tutorial expects that this perspective is selected; in case a different perspective is used, the corresponding views and wizards are still available in their standard respective locations.

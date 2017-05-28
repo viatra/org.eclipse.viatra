@@ -1,7 +1,7 @@
 = Event-driven Transformations
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}
+:imagesdir: {rootdir}/images
 
 This exercise heps the audience to create a simple event-driven transformation using the VIATRA Transformation API. The transformation will create (and then incrementally update while active) a deployment model based on a CPS model. The exercise also covers registering a menu command which initializes the transformation.
 
@@ -42,17 +42,17 @@ pattern cps2depTrace(cps2dep, trace, cpsElement, depElement) {
 ** Create new _Model Transformation_ with the wizard
 +
 .Model Transformation Wizard - Create new transformation
-image::screenshots/transformation_wizard.png[]
+image::transformation_wizard.png[]
 
 *** Setup the name of the transformation and click Next
 +
 .Model Transformation Wizard - Name of the new batch transformation
-image::screenshots/eventdriven_transformation_wizard_name.png[]
+image::eventdriven_transformation_wizard_name.png[]
 
 *** Setup the type of the transformation to _BatchTransformation_ and click Finish
 +
 .Model Transformation Wizard - Type of the new transformation
-image::screenshots/eventdriven_transformation_wizard_type.png[]
+image::eventdriven_transformation_wizard_type.png[]
 
 * Register used, domain-specific APIs as extensions, common APIs are already generated
 +
@@ -336,34 +336,34 @@ public class ToggleTransformationHandler extends AbstractHandler implements IHan
 * Copy a `.cyberphysicalsystem` resource in it
 +
 .Project with a .cyberphysicalsystem resource
-image::screenshots/viatraIncr_example1.png[]
+image::viatraIncr_example1.png[]
 
 * Create an empty Deployment model
 ** Root element shall be Deployment
 +
 .New Deployment Model
-image::screenshots/viatraIncr_example2.png[]
+image::viatraIncr_example2.png[]
 
 * Create a Traceability model
 ** Root element shall be "CPS To Deployment"
 +
 .New Traceability Model
-image::screenshots/viatraIncr_example3.png[]
+image::viatraIncr_example3.png[]
 
 * In the Traceability editor, load both CPS and Deployment models with "Load Resources.." in the context menu
 +
 .Load necessary resources into the Traceability Model
-image::screenshots/viatraIncr_example4.png[]
+image::viatraIncr_example4.png[]
 
 * Set CPS and Deployment references of traceability model in the properties view
 +
 .Set the references of the Traceability Model
-image::screenshots/viatraIncr_example5.png[]
+image::viatraIncr_example5.png[]
 
 * Toggle transformation using the created command (on the context menu of the Traceability model root)
 +
 .Toggle transformation in the context menu
-image::screenshots/viatraIncr_example6.png[]
+image::viatraIncr_example6.png[]
 
 * Initial activation done on first modification of the input model, e.g. create a new HostType
 

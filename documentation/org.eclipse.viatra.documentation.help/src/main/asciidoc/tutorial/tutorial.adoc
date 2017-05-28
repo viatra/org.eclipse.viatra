@@ -30,8 +30,12 @@ toc::[]
 <<<
 include::tutorial/environment.adoc[leveloffset=+1]
 
+== Query Development
 <<<
-include::tutorial/queries.adoc[leveloffset=+1]
+include::tutorial/queries.adoc[leveloffset=+2]
+
+// <<<
+// include::tutorial/query-api.adoc[leveloffset=+2]
 
 <<<
 == Model Transformation Development
