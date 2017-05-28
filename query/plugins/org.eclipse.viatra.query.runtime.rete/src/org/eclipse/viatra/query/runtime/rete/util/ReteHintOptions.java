@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
  * @author Gabor Bergmann
  * @since 1.5
  */
-public class ReteHintOptions {
+public final class ReteHintOptions {
 
     public static final QueryHintOption<Boolean> useDiscriminatorDispatchersForConstantFiltering = 
             hintOption("useDiscriminatorDispatchersForConstantFiltering", true);

@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
  * @author Gabor Bergmann
  * @since 1.5
  */
-public class LocalSearchHintOptions {
+public final class LocalSearchHintOptions {
     
     public static final QueryHintOption<Boolean> USE_BASE_INDEX = 
             hintOption("USE_BASE_INDEX", true);
