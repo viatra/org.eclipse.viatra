@@ -74,7 +74,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -188,17 +190,24 @@ public class POperationCompiler {
 
     }
     
-    private boolean isCheck(PConstraint pConstraint, Map<PVariable, Integer> variableMapping){
+    private boolean isCheck(PConstraint pConstraint, final Map<PVariable, Integer> variableMapping){
         if (pConstraint instanceof NegativePatternCall){
             return true;
         }else if (pConstraint instanceof PositivePatternCall){
             // Positive pattern call is check if all non-single used variables are bound
-            return variableBindings.get(pConstraint).containsAll(Sets.filter(pConstraint.getAffectedVariables(), new Predicate<PVariable>() {
+            return variableBindings.get(pConstraint).containsAll(Collections2.transform(Sets.filter(pConstraint.getAffectedVariables(), new Predicate<PVariable>() {
 
                 @Override
                 public boolean apply(PVariable input) {
                     return input.getReferringConstraints().size() > 1;
                 }
+            }), new Function<PVariable, Integer>() {
+
+                @Override
+                public Integer apply(PVariable input) {
+                    return variableMapping.get(input);
+                }
+                
             }));
         }else if (pConstraint instanceof AggregatorConstraint){
             PVariable outputvar = ((AggregatorConstraint) pConstraint).getResultVariable();
