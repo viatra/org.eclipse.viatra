@@ -35,7 +35,7 @@ import com.google.common.base.Objects;
  * </p>
  * 
  * @author Abel Hegedus
- * 
+ * @noimplement This class is not intended to be subclasses outside of VIATRA runtime
  * 
  */
 public class BaseIndexOptions {
