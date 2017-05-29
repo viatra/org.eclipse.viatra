@@ -28,6 +28,8 @@ import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
+import org.eclipse.viatra.query.runtime.rete.index.Indexer;
+import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Recursive;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Singleton;
 import org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode;
@@ -181,8 +183,10 @@ public final class CommunicationTracker {
                                 }
                                 // in beta nodes, indexer slots (or their active nodes) are considered indirect parents
                                 DualInputNode dualInput = (DualInputNode) directParent;
-                                parentsToCheck.add(dualInput.getPrimarySlot().getActiveNode());
-                                parentsToCheck.add(dualInput.getSecondarySlot().getActiveNode());
+                                IterableIndexer primarySlot = dualInput.getPrimarySlot();
+                                if (primarySlot != null) parentsToCheck.add(primarySlot.getActiveNode());
+                                Indexer secondarySlot = dualInput.getSecondarySlot();
+                                if (secondarySlot != null) parentsToCheck.add(secondarySlot.getActiveNode());
                             }
                             for (Node parent : parentsToCheck) {
                                 CommunicationGroup parentGroup = groupMap.get(parent);
