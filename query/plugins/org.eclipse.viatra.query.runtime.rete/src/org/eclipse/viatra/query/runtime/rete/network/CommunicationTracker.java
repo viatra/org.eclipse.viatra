@@ -23,13 +23,16 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopologicalSorting;
 import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Recursive;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Singleton;
+import org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
+import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
 import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 
 /**
@@ -148,17 +151,23 @@ public final class CommunicationTracker {
             if (node instanceof Receiver) {
                 Mailbox mailbox = ((Receiver) node).getMailbox();
                 if (mailbox instanceof DefaultMailbox) {
+                    Set<Node> directParents = dependencyGraph.getSourceNodes(node).keySet();
                     // decide between using quick&cheap fall-through, or allowing for update cancellation
                     boolean fallThrough = 
-                            // allow trimmed or disjunctive tuple updates to cancel each other
-                            (!(node instanceof UniquenessEnforcerNode)) &&  
-                            // allow external updates to cancel (if delayed)
+                            // disallow fallthrough: updates at production nodes should cancel, if they can be trimmed or disjunctive 
+                            (!(node instanceof DefaultProductionNode && ( // it is a production node...
+                                    // with more than one parent
+                                    directParents.size() > 0 || 
+                                    // or true trimming in its sole parent
+                                    directParents.size() == 1 && trueTrimming(directParents.iterator().next()) 
+                               ))) &&  
+                            // disallow fallthrough: external updates should be stored (if updates are delayed)
                             (!(node instanceof ExternalInputEnumeratorNode)); 
                     // do additional checks
                     if (fallThrough) {
                         // recursive parent groups generate excess updates that should be cancelled after delete&rederive phases
                         // aggregator and transitive closure parent nodes also generate excess updates that should be cancelled 
-                        directParentLoop: for (Node directParent : dependencyGraph.getSourceNodes(node).keySet()) {
+                        directParentLoop: for (Node directParent : directParents) {
                             Set<Node> parentsToCheck = new HashSet<>();
                             // check the case where a direct parent is the reason for mailbox usage
                             parentsToCheck.add(directParent);
@@ -178,10 +187,16 @@ public final class CommunicationTracker {
                             for (Node parent : parentsToCheck) {
                                 CommunicationGroup parentGroup = groupMap.get(parent);
                                 if (    // parent is in a different, recursive group
-                                        (group != parentGroup && parentGroup instanceof Recursive) || 
-                                        // parent is a transitive closure or aggregator node
-                                        (parent instanceof TransitiveClosureNode) ||
-                                        (parent instanceof IAggregatorNode)) 
+                                        (group != parentGroup && parentGroup instanceof Recursive) ||
+                                        // node and parent within the same recursive group, and...
+                                        (group == parentGroup && group instanceof Recursive && (
+                                                // parent is a transitive closure or aggregator node, or a trimmer
+                                                // allow trimmed or disjunctive tuple updates to cancel each other
+                                                (parent instanceof TransitiveClosureNode) ||
+                                                (parent instanceof IAggregatorNode) ||
+                                                trueTrimming(parent)
+                                         ))
+                                   ) 
                                 {
                                   fallThrough = false;
                                   break directParentLoop;
@@ -193,6 +208,17 @@ public final class CommunicationTracker {
                     ((DefaultMailbox) mailbox).setFallThrough(fallThrough);
                 }
             }
+    }
+
+    /**
+     * A trimmer node that actually eliminates some columns (not just reorders)
+     */
+    private boolean trueTrimming(Node node) {
+        if (node instanceof TrimmerNode) {
+            TupleMask mask = ((TrimmerNode) node).getMask();
+            return (mask.indices.length != mask.sourceWidth);
+        } 
+        return false;
     }
 
     private void activate(final CommunicationGroup group) {

@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -45,13 +46,18 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
     private Network network;
     private Address<? extends Receiver> myAddress;
     private boolean parallelExecutionEnabled;
+    /**
+     * @since 1.6
+     */
     protected final Mailbox mailbox;
+    private final IQueryBackendContext qBackendContext;
 
     public ExternalInputEnumeratorNode(ReteContainer reteContainer) {
         super(reteContainer);
         myAddress = Address.of(this);
         network = reteContainer.getNetwork();
         inputConnector = network.getInputConnector();
+        qBackendContext = network.getEngine().getBackendContext();
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
     }
@@ -61,6 +67,7 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
      * Subclasses may override this method to provide their own mailbox implementation.
      * 
      * @return the mailbox
+     * @since 1.6
      */
     protected Mailbox instantiateMailbox() {
         return new DefaultMailbox(this, this.reteContainer);
@@ -114,8 +121,13 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
             // send back to myself as an official external update, and then propagate it transparently
             network.sendExternalUpdate(myAddress, direction(isInsertion), update);			
         } else {
-            // just propagate the input
-            mailbox.postMessage(direction(isInsertion), update);
+            if (qBackendContext.areUpdatesDelayed()) {
+                // post the update into the mailbox of the node
+                mailbox.postMessage(direction(isInsertion), update);                
+            } else {
+                // just propagate the input
+                update(direction(isInsertion), update);                
+            }
             // if the the update method is called from within a delayed execution, the following invocation will be a no-op
             network.waitForReteTermination();
         }
