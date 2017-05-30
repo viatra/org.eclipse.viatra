@@ -15,20 +15,15 @@ ifndef::highlightjs-theme[:highlightjs-theme: foundation]
 :experimental:
 :sectlinks:
 
-link:http://www.eclipse.org/viatra/[VIATRA] is an open source model transformation framework, focusing on efficient evaluation of model queries and supports various transformation workflows. This document contains a tutorial for getting started with the query and transformation development.
-
-The tutorial relies on the link:https://github.com/viatra/viatra-docs/blob/master/cps/Home.adoc[CPS Demonstrator application]. The CPS Demonstrator is specified to cover a usual workflow in Model-driven Engineering, where a system is (1) first described in a source model, then (2) automated model-to-model transformations are used to derive a target model. Finally, (3) model-to-text transformation is performed to generate code from the target domain. In addition, a model generator that can automatically create source domain models can support the correctness testing and performance evaluation of the components. This tutorial uses only a subset of the transformation problem, as its main goal is to illustrate the basics of the VIATRA environment. Consult the original demonstrator for a more complex transformation example.
-
-We expect readers to be familiar with the basics of Eclipse plug-in development, more specifically creating plug-in projects and defining basic UI extensions such as commands. Additionally, we expect a basic understanding of EMF-based modeling. If required, look at the Plug-in development tutorial at link:http://www.vogella.com/tutorials/EclipsePlugin/article.html[] or the EMF tutorial at link:http://www.vogella.com/tutorials/EclipseEMF/article.html[] for a short presentation on these subjects.
-
-This document starts with a <<environment,quick setup guide>>, then describes model <<_query_development,query development>>. Both <<_batch_transformations,batch>> and <<_event_driven_transformations,event-driven transformations>> are covered later.
-
-This document is intended only as a short tutorial for the usage of the Query and Transformation capabilities of VIATRA. A more detailed documentation is maintained at link:http://wiki.eclipse.org/VIATRA[].
+include::tutorial/intro.adoc[leveloffset=+1]
 
 toc::[]
 
 <<<
 include::tutorial/environment.adoc[leveloffset=+1]
+
+<<<
+include::cps/Domains.adoc[leveloffset=+1]
 
 == Query Development
 <<<

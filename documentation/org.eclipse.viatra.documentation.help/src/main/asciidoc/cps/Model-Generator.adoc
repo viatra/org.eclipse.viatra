@@ -2,6 +2,23 @@ ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
 :imagesdir: {rootdir}/images
 
+Since manually creating large instance models requires a lot of effort, we developed a <<Model-Generator#,CPS Model Generator>> that executes a number of generation phases defined in a <<Plan-Executor#,plan>> and based on simple configuration can output **arbitrarily large CPS models**. The model generator is built in Xtend and uses VIATRA Query patterns for gathering elements for complex operations.
+
+The model generator aims to output models that are similar in **fine structure** but have different number of elements (to generate scaled-up models) and allow some **randomization** (e.g. to create state machines with different number of states for different application types).
+
+Randomization is controlled by min-max and percentage type parameters and ratio maps:
+
+* A **min-max** parameter specifies a range with a minimum and maximum value, while operations depending on the given parameter can obtain a random number that is part of the range (e.g. create statemachine with 5 to 10 states).
+* A **percentage** parameter specifies the fraction of a total, while operations may use it to decide how to distribute the choices for the possible elements (e.g. 35% of transitions in a state machine should have actions).
+* A **ratio map** parameter assigns integer values to classes, while operations may use it to distribute choices (e.g. how application instances are allocated to different host class instances).
+
+The fine structure is specified with host and application classes:
+
+* A **host class** determines how many host types are created (min-max), how many instances are created for each type in the class (min-max), how many other host instance each host instance communicates with (min-max) and how the communications are distributed among instances of different host classes (ratio map).
+* An **application class** determines how many application types are created (min-max), how many instances are created for each type in the class (min-max), how many states and transitions should the state machine of each type contain (both min-max), how many of the instances are allocated (percentage), how is the allocation distributed among instances of different host classes (ratio map), how many of the transitions should define actions (percentage) and of those what is the ratio of sends (percentage).
+
+Based on a list of host and application classes as input, the CPS model generator outputs an instance model that satisfies the constraints of the classes. While min-max parameters are always satisfied, percentage and ratio map parameters may not be precisely followed (e.g. allocating 35% of 10 applications may be 3 or 4). However, for larger sizes and in general, the generated model will have the structure specified in the classes.
+
 The model generator component is able to generate `CyberPhysicalSystem` models with the specified properties.
 The generator is built on top of the <<Plan-Executor#,PlanExecutor>> and implements specific plans, phases, operations, initializer and fragment objects. The generation process is based on pseudo-random actions which means the output is deterministic according to the input parameters.
 

@@ -9,6 +9,12 @@ This component tracks changes in the deployment model and informs the code gener
 
 The code generator produces simulation code for a DeploymentElement given to it. To decide whether a source file for a model element needs to be generated or not is beyond its responsibility. For this reason a DeploymentChangeMonitor is introduced and should be used during the behavior code generation process. This monitor tracks the changes of the model and is able to feed the generator with the DeploymentElements for which source code generation or re-generation is required. This solution will make overall time spent on code generation shorter, because only the changed model parts are considered.
 
+The change monitor aggregates modifications into a delta between checkpoints. The API allows creating a new checkpoint and will provide the delta between the previous and newly created checkpoints, while it also starts to record the delta starting from the new checkpoint. The delta contains a boolean value to signify that the top-level configuration has to be re-generated and three sets of elements:
+
+* **Appeared** since the last checkpoint: source code related to these elements has to be generated, clean up not required
+* **Disappeared** since the last checkpoint: source code related to these elements should be cleaned up
+* **Updated** since the last breakpoint: source code related to these elements has to be re-generated, clean up may be needed (e.g. file name will change)
+
 ## How does it work
 
 The implemetation relies on the VIATRA Event-driven Virtual Machine (EVM). There are rules defined for the Deployment, DeploymentHost, DeploymentApplication and DeploymentBehavior types using VIATRA Query patterns. These rules describe the connections and properties of model elements that are to be monitored, and the DeploymentChangeMonitor keeps track of these changes. This is done by separate registered jobs for appear, update and disappear events.

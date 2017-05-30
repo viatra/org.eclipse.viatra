@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc label="CPS Demonstrator" link_to="viatra.toc.xml#org.eclipse.viatra">
+  <topic href="html/cps/Home.html" label="CPS Demonstrator">
+       <topic href="html/cps/Domains.html" label="Domain Models">
+       </topic>
+       <topic href="html/cps/CPS-to-Deployment-Transformation.html" label="CPS-to-Deployment Transformation Specification">
+       </topic>
+       <topic href="html/cps/Alternative-transformation-methods.html" label="CPS-to-Deployment Transformation Alternatives">
+           <topic href="html/cps/Simple-and-optimized-Xtend-batch-M2M-transformation.html" label="Simple and Optimized Batch">
+           </topic>
+           <topic href="html/cps/Simple-Xtend-and-Query-M2M-transformation.html" label="Simple Xtend + Viatra Query">
+           </topic>
+           <topic href="html/cps/VIATRA-transformation-API-based-batch-M2M-transformation.html" label="VIATRA Batch Transformation API">
+           </topic>
+           <topic href="html/cps/Query-result-traceability-M2M-transformation.html" label="Query Result Traceability">
+           </topic>
+           <topic href="html/cps/Partial-batch-M2M-transformation.html" label="Partial Batch">
+           </topic>
+           <topic href="html/cps/VIATRA-Transformation-API-based-QRT-MTM-Transformation.html" label="VIATRA Event-driven API with Query Result Traceability">
+           </topic>
+           <topic href="html/cps/CPS-to-Deployment-Unit-Tests.html" label="Unit Tests">
+           </topic>
+       </topic>
+       <topic href="html/cps/Code-Generator-Distributed-realization-Xtend-templates.html" label="Code Generation">
+           <topic href="html/cps/Deployment-change-monitor.html" label="Change Monitor for Deployment">
+           </topic>
+       </topic>
+       <topic href="html/cps/Model-Generator.html" label="CPS Model Generator">
+           <topic href="html/cps/Plan-Executor.html" label="Plan Executor">
+           </topic>
+       </topic>
+       <topic href="html/cps/Live-Validation.html" label="Validation Example">
+       </topic>
+       <topic href="html/cps/Incremental-Viewers.html" label="Viewers Example">
+       </topic>
+       <topic href="html/cps/Generate-CPS-models.html" label="CPS Model Generator">
+       </topic>
+   </topic>
+</toc>

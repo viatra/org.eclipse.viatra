@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<toc label="Tutorial">
-   <topic href="html/tutorial/queries.html" label="Getting started with Query Development">
-   </topic>
-   <topic href="html/tutorial/query-api.html" label="Using the Runtime API of VIATRA Query">
-   </topic>
-   <topic href="html/tutorial/batch-transformations.html" label="Getting Started with Batch Transformation Development">
-   </topic>
-   <topic href="html/tutorial/incremental-transformations.html" label="Getting Started with Event-driven Transformation">
-   </topic>
-   <topic href="html/cps/Home.html" label="CPS Demonstrator">
+<toc label="Tutorial" link_to="viatra.toc.xml#org.eclipse.viatra">
+  <topic href="html/tutorial/intro.html" label="Getting Started Tutorial">
+       <topic href="html/tutorial/queries.html" label="Getting started with Query Development">
+       </topic>
+       <topic href="html/tutorial/query-api.html" label="Using the Runtime API of VIATRA Query">
+       </topic>
+       <topic href="html/tutorial/batch-transformations.html" label="Getting Started with Batch Transformation Development">
+       </topic>
+       <topic href="html/tutorial/incremental-transformations.html" label="Getting Started with Event-driven Transformation">
+       </topic>
    </topic>
 </toc>
