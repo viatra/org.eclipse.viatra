@@ -42,9 +42,11 @@ Looking at the pattern header, we see that this pattern has two parameters, mean
 
 VIATRA includes a view to evaluate the results of queries over various editors, and reacts on changes in the editor.
 
-The *Query Results* view is the primary tool for debugging graph patterns. Open the view by selecting _Window/Show View/Query Results_ or you can simply press the kbd:[CTRL+3] shortcut and start to type the name of the view. The view allows loading models and queries, and display (and update) the results of queries automatically.
+The *Query Results* view is the primary tool for debugging graph patterns. Open the view by selecting _Window/Show View/Query Results_ or you can simply press the kbd:[CTRL+3] shortcut and start to type the name of the view. The view allows loading models and queries, and display (and update) the results of queries automatically. Together with the installed metamodels there is also an example instance model included that will be used in this tutorial as an example.
 
-. Initialize the example CPS demonstrator project (installed with the metamodels)
+.Initialize the example CPS demonstrator project
+image::generate_cps_example.png[Generate CPS example]
+
 . Open our example instance model (/org.eclipse.viatra.examples.cps.instances/example.cyberphysicalsystem)
 . Make sure "ReteEngine" is selected in the toolbar of the Query Results view
 . then press the 'Load model from active editor' (first button on the toolbar)

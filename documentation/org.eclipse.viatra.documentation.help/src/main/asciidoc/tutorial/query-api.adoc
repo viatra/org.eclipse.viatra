@@ -10,135 +10,299 @@ image::query_runtime.png[]
 
 To start working with the VIATRA Query API, we have to provide (1) a Scope representing the model and a (2) set of query specifications. The easiest way to initialize a scope, is to simply wrap an EMF ResourceSet inside a new EMFScope instace. For query specifications, the generated matcher classes can be used as an example, see as follows.
 
-[[app-listing]]
-[source,java]
-----
-// Load model as usual
-ResourceSet resourceSet = ...;
-// Initialize scope
-EMFScope scope = new EMFScope(resourceSet);
-// Initialize a managed query engine (will be disposed when the model is unloaded)
-ViatraQueryEngine queryEngine = ViatraQueryEngineManager.getInstance().getQueryEngine(scope);
-// Create a pattern matcher
-HostIpAddressMatcher matcher = HostIpAddressMatcher.on(queryEngine);
-// Collect all matches
-Collection<HostIpAddressMatch> matches = matcher.getAllMatches();
-// Process the found matches
-for (HostIpAddressMatch match : matches) {
-	System.out.println(match); // Application-specific
-}
-----
-
 In general, the generated code in a VIATRA Query project consists of a (1) query specification classes that represents the original VQL specifications for the runtime API, (2) a Match and Matcher class for each pattern definition (recommended for general usage) and (3) a group class for each file that can be used to initialize all queries together.
 
 .Structure of the query generated code
 image::query_generated_code.png[]
 
-== Managed Engine
+== Initialize a headless Application
 
- . Create an instance of ExampleQueries
- . Create the EMFScope for the resource (or resourceSet)
- . Use `AdvancedViatraQueryEngine.on` for creation of the managed engine
- . Prepare the engine
- . Usage of the `hostInstancesForIP` pattern
- .. Get HostInstance of the only one match from the matcher for the fixed IP parameter in one line
- . Usage of the `hostTypesConnectedToApplicationTypes` pattern
- .. Use forEachMatch and the generated match processor for iterating all matches.
+To illustrate the usage of the VIATRA Query API, we will create a headless Eclipse application, and execute it over one of the queries written in the previous part. Such an application is a Java class registered using the extension point ```org.eclipse.core.runtime.applications``` (requiring the ```org.eclipse.core.runtime``` bundle as a dependency).
 
-Code:
+[[app-listing]]
+[source,xml]
+----
+  <extension id="queryrunner" point="org.eclipse.core.runtime.applications">
+    <application cardinality="singleton-global" thread="main" visible="true">
+      <run class="org.eclipse.viatra.examples.cps.queries.runner.QueryRunner"/>
+    </application>
+  </extension>
+----
+
+The ```IApplication``` interface requires two methods to be implemented, called ```start``` and ```stop```. In our case, we will only use start (and returning 0 to mark successful execution), stop is unnecessary.
+
 [[app-listing]]
 [source,java]
 ----
-extension val exampleQueries = ExampleQueries.instance
+public class QueryRunner implements IApplication {
+	
+	@Override
+	public Object start(IApplicationContext context) throws Exception {
+        // Return value 0 is considered as a successful execution on Unix systems
+		return 0;
+	}
+	
+	@Override
+	public void stop() {
+        // Headless applications do not require specific stop steps
+	}
 
-val scope = new EMFScope(resource)
-val engine = AdvancedViatraQueryEngine.on(scope)
-engine.prepare
+}
+----
 
-val searchedHost = engine.hostInstancesForIP
-                            .getOneArbitraryMatch(null, SEARCHED_IP)
-                            .hostInstance
+The created application can be started as an Eclipse application by specifically selecting the previously created extension.
 
-engine.hostTypesConnectedToApplicationTypes.forEachMatch(new HostTypesConnectedToApplicationTypesProcessor() {
-    override process(HostType pHostType, ApplicationType pAppType) {
-        '''«pHostType.identifier»«IF pHostType.identifier.length<8»	«ENDIF»	| «pAppType.identifier»'''.log
+.Running the Query Runner application
+image::run_headless_application.png[]
+
+== Initializing a Query Engine
+
+To initialize a query engine, as first step an EMF scope has to be loaded. This can be done using the following code segment (expecting the model file was copied into the root of the queries project):
+
+[[app-listing]]
+[source,java]
+----
+private EMFScope initializeModelScope() throws IOException, ViatraQueryException {
+	ResourceSet rs = new ResourceSetImpl();
+	Resource res = rs.createResource(URI.createPlatformPluginURI("org.eclipse.viatra.examples.cps.queries/example.cyberphysicalsystem", false));
+	res.load(new HashMap<>());
+    return new EMFScope(rs);
+}
+----
+
+If we have a model scope, it can be used to initialize a managed query engine. The internal implementation of the ```ViatraQueryEngine.on``` method ensure that only a single query engine will be created for each scope, and the query engine will be disposed together with the backing model, making this the preferred implementation for common cases.
+
+Additionally, it is recommended to prepare the engine with all queries that will be used. For this, the generated query groups (one per query file) include a ```prepare``` method that creates all indexes required for the pattern matchers, with only a single round of model traversal required.
+
+[[app-listing]]
+[source,java]
+----
+private ViatraQueryEngine prepareQueryEngine(EMFScope scope) throws ViatraQueryException {
+	// Access managed query engine
+    ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+	
+    // Initialize all queries on engine
+	CPSQueries.instance().prepare(engine);
+		
+	return engine;
+}
+----
+
+NOTE: If multiple query groups are to be loaded, either create a generic pattern group that holds all the patterns, or create a coalesce traversal block where you can execute multiple prepare statements together using the ```engine.getBaseIndex().coalesceTraversals()``` method.
+
+== The pattern matcher API
+
+The easiest way to use all the query engine is to ask for all matches of a query. The ```getAllMatches``` method of a pattern matcher returns a *set* of match objects that allow named references to its parameters
+
+[[app-listing]]
+[source,java]
+----
+private void printAllMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+    // Access pattern matcher
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    // Get and iterate over all matches
+    for (HostIpAddressMatch match : matcher.getAllMatches()) {
+        // Print all the matches to the standard output
+        System.out.println(match.getHost());
     }
-})
+}
 ----
 
-== Unmanaged Engine
+NOTE: It is safe to ask for the same matcher multiple times using the ```on``` method. Although the returned matcher instances may be different, but internally they reuse the same indexes. Given the matchers themselves are stateless, they are safe to use and forget, and at a later point ask for it again.
 
- . Create an instance of ExampleQueries
- . Create the EMFScope for the resource (or resourceSet)
- . Use `AdvancedViatraQueryEngine.createUnmanagedEngine` for creation of the unmanaged engine
- . Usage of the `hostInstancesForIP` pattern
- .. Get matcher from instance of queries (this needs an engine)
- .. Get the only one match from the matcher for the fixed IP parameter
- .. Get the HostInstance of the match
- . Usage of the `hostTypesConnectedToApplicationTypes` pattern
- .. Get all matches in a one line expression (thanks for Xtend extension)
- .. Pretty print use the default forEach of Xtend for iterating matches
- . Dispose the engine
+It is also possible to use a more functional style processing of matches using match processors.
 
-Code:
 [[app-listing]]
 [source,java]
 ----
-extension val exampleQueries = ExampleQueries.instance
-
-val scope = new EMFScope(resource)
-val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope)
-
-val hostInstancesMatcher = exampleQueries.getHostInstancesForIP(engine)
-val hostInstanceMatch =
-        hostInstancesMatcher.getOneArbitraryMatch(null, SEARCHED_IP)
-val searchedHost = hostInstanceMatch.hostInstance
-
-val hostTypesConnectedToApplicationTypesMatches =
-        engine.hostTypesConnectedToApplicationTypes.allMatches
-hostTypesConnectedToApplicationTypesMatches.prettyPrintMatches
-
-engine.dispose
+private void printAllMatches2(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    matcher.forEachMatch(new HostIpAddressProcessor() {
+        
+        @Override
+        public void process(HostInstance pHost, String pIp) {
+            System.out.println(pHost);
+        }
+    });
+}
 ----
 
-== Unmanaged Engine with Local Search
+When using Java 8, the same functionality can be accessed using lambda functions, however in this case only the match can be used as a parameter.
 
- . Create an instance of ExampleQueries
- . Create the EMFScope for the resource (or resourceSet)
- . Use `AdvancedViatraQueryEngine.createUnmanagedEngine` for creation of the unmanaged engine
- . Create a query evaluation hint for LocalSearchBackend (`USE_BASE_INDEX` is false)
- . Usage of the `hostInstancesForIP` pattern
- .. Get matcher from the engine for the pattern and the hint
- .. Get the host instance of the only match from the matcher for the partial match
- . Usage of the `hostTypesConnectedToApplicationTypes` pattern
- .. Get matcher from the engine for the pattern and the hint and get all values of host types
- .. Print host types
- . Dispose the engine
-
-Code:
 [[app-listing]]
 [source,java]
 ----
-extension val exampleQueries = ExampleQueries.instance
-val scope = new EMFScope(resource)
-val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope)
-val hint = new QueryEvaluationHint(
-                LocalSearchBackendFactory.INSTANCE,
-                #{LocalSearchHintKeys.USE_BASE_INDEX -> false}
-)
-
-val hostInstancesForIPMatcher = engine.getMatcher(hostInstancesForIP, hint)
-val searchedHost =
-        hostInstancesForIPMatcher
-            .getOneArbitraryMatch(
-                HostInstancesForIPMatch.newMatch(null, SEARCHED_IP))
-            .hostInstance
-
-val hostTypesConnectedToApplicationTypesMatches =
-        engine.getMatcher(hostTypesConnectedToApplicationTypes, hint)
-            .allValuesOfhostType
-'''HostTypes:'''.log
-hostTypesConnectedToApplicationTypes.forEach['''	«it.identifier»'''.log]
-
-engine.dispose
+private void printAllMatches3(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    // The lambda method implements IMatchProcessor<HostIpAddressMatch>
+    matcher.forEachMatch((match) -> {
+            System.out.println(match.getHost());
+        });
+}
 ----
+
+Often it is beneficial to check for and process only a single match. For this reason it is possible to ask for a single match using the ```getOneArbitraryMatch``` method.
+
+[[app-listing]]
+[source,java]
+----
+private void printOneMatch(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    System.out.println(matcher.getOneArbitraryMatch());
+}
+----
+
+NOTE: The match returned by the ```getOneArbitraryMatch``` is neither random nor deterministic, but unspecified. _Usually_ repeatedly calling it on the same model (without any model updates) returns the same match, but this is also not guaranteed. On the other hand, restarting the application on the same model _usually_ changes the match returned.
+
+The generated matchers also include a few methods to access values of the parameters. For example, in case of the ```hostIpAddress``` pattern there is a ```getAllValuesOfip``` method that returns all values the parameter ```ip``` finds.
+
+[[app-listing]]
+[source,java]
+----
+private void printAllAddresses(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    for (String ip : matcher.getAllValuesOfip()) {
+        System.out.println(ip);
+    }
+}
+----
+
+CAUTION: If there are multiple hosts that have the same IP address, the ```getAllValuesOfip()``` call will return each IP address only once. This is consistent with all other APIs that always return sets. If duplicates are required, you have to process all matches manually.
+
+
+All matcher methods allow to filter the matches with constants. By setting some filter parameters with a non-null value we state that we are interesting in only matches 
+
+[[app-listing]]
+[source,java]
+----
+private void printFilteredMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    for (HostIpAddressMatch match : matcher.getAllMatches(null, "152.66.102.2")) {
+        System.out.println(match.prettyPrint());
+    }
+}
+----
+
+NOTE: Regardless of input values receiving null values, the query engine will never return matches with null values. If no matches fulfill all the set parameters, the returned set will be empty.
+
+If a filter condition has to be reused, it is possible to create mutable matches where the filtered values are set accordingly. This approach is also useful to use named setters (e.g. if multiple String parameters are to be set) or one does not want to write ```null``` literals.
+
+[[app-listing]]
+[source,java]
+----
+private void printFilteredMatches2(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    HostIpAddressMatch filterMatch = HostIpAddressMatch.newEmptyMatch();
+	filterMatch.setIp("152.66.102.3");
+    for (HostIpAddressMatch match : matcher.getAllMatches(filterMatch)) {
+        System.out.println(match.prettyPrint());
+    }
+}
+----
+
+Finally, if we are only interested in whether there exist any match fulfilling the query, or we want to know how many matches there are, the matcher has methods that calculate these. Both of these methods can be combined with filter matches.
+
+[[app-listing]]
+[source,java]
+----
+private void countMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    System.out.printf("Count matches: %d %n", matcher.countMatches());
+    System.out.printf("Has matches: %b %n", matcher.hasMatch(HostIpAddressMatch.newEmptyMatch()));
+    System.out.printf("Count matches with ip 152.66.102.3: %d %n", matcher.countMatches(null, "152.66.102.3"));
+    System.out.printf("Has matches with ip 152.66.102.13: %b %n", matcher.hasMatch(null, "152.66.102.13"));
+}
+----
+
+TIP: If asking for the has/count calls is followed by the processing of the said matches, it is usually better to call ```getAllMatches``` or ```getOneArbitraryMatch``` directly, and calculate the count/existence using them.
+
+== Advanced query engine features
+
+There are cases where the standard engine lifecycle is inappropriate, e.g. the models will not be unloaded but we want to spare memory by freeing up indexes. Furthermore, there are some functionality, like hint handling or match update listener support that was not added the the base implementation to keep its API clean.
+
+[[app-listing]]
+[source,java]
+----
+private AdvancedViatraQueryEngine prepareAdvancedQueryEngine(EMFScope scope) throws ViatraQueryException {
+    AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
+    
+    // Initialize all queries on engine
+    CPSQueries.instance().prepare(engine);
+    
+    return engine;
+}
+----
+
+CAUTION: Do not forget to dispose unmanaged engine manually using the ```AdvancedQueryEngine.dispose()``` method. If you want to use managed query engines but use the advanced features, you might use the ```AdvancedQueryEngine.from(engine)``` call; however, do *NOT* dispose such engines.
+
+=== React to match updates
+
+One feature of the advanced query engine is to allow listening to changes, e.g. registering a match update listener for a pattern matcher. Such a listener is triggered when the match set for a pattern matcher changes, together with the direction of the changes.
+
+[[app-listing]]
+[source,java]
+----
+IMatchUpdateListener<HostIpAddressMatch> listener = new IMatchUpdateListener<HostIpAddressMatch>() {
+
+    @Override
+    public void notifyAppearance(HostIpAddressMatch match) {
+        System.out.printf("[ADD] %s %n", match.prettyPrint());
+    }
+
+    @Override
+    public void notifyDisappearance(HostIpAddressMatch match) {
+        System.out.printf("[REM] %s %n", match.prettyPrint());
+        
+    }
+};
+
+private void addChangeListener(AdvancedViatraQueryEngine engine) throws ViatraQueryException {
+    HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
+    
+    try {
+        // fireNow = true parameter means all current matches are sent to the listener
+        engine.addMatchUpdateListener(matcher, listener, true);
+        // execute model manipulations
+        matcher.getOneArbitraryMatch().getHost().setNodeIp("123.123.123.123");
+    } finally {
+        // Don't forget to remove listeners if not required anymore
+        engine.removeMatchUpdateListener(matcher, listener);
+    }
+}
+----
+
+NOTE: By registering the match update listener with a ```true``` value for the ```fireNow``` parameter, we ensure that all existing matches are sent to the listener. If we only want to consider future updates, set that parameter to false.
+
+When looking at the output, the setNodeIp call will result in two changes: the first one represents the removal of the old match (host - old IP pair), while the second one represents an addition of a new one (host - new IP pair). In general, model updates often are often represented by two changes.
+
+CAUTION: Be very careful when using match update listeners, as sometimes they are called while the model indexes are in an inconsistent state. For this reason, do not update the underlying model and do not execute further model queries. If such cases are required, delay the execution for a later phase. Better still, you can rely on the transformation API of VIATRA that ensure that rules are only executed when the indexes are in a consistent state.
+
+=== Local Search backends and hints
+
+The advanced query engine also allows to initialize patterns with non-default settings called *hints*. The most important feature of these hints allow setting the pattern matcher backend, and other backend-specific settings could be changed.
+
+In addition to Rete-based incremental query evaluation VIATRA also includes a local search-based approach. By default, Rete is used, but by adding the ```org.eclipse.viatra.query.runtime.localsearch``` bundle as a dependency of the project, it is possible to set up query evaluation hints.
+
+[[app-listing]]
+[source,java]
+----
+private void queryWithLocalSearch(AdvancedViatraQueryEngine engine) throws ViatraQueryException {
+    QueryEvaluationHint hint = LocalSearchHints.getDefault().build();
+    HostIpAddressMatcher matcher = engine.getMatcher(HostIpAddressQuerySpecification.instance(), hint);
+    
+    for (HostIpAddressMatch match : matcher.getAllMatches()) {
+        System.out.println(match.prettyPrint());
+    }
+}
+----
+
+As you can see, after the initialization the local search based backend can be queried with the same backend as the Rete-based one, however, it calculates the results when queried instead of relying on previously cached results. This means, usually it is cheaper (in memory and prepare time) to initialize a local search based matcher, but gathering the results is more expensive.
+
+NOTE: As the name suggests, *hints* might be ignored by the query engine, e.g. if an incorrect configuration was set, or the engine knows of a functionally equivalent way that has a better performance. For details about the hints, consult the LocalSearchHints and ReteHintOptions classes.
+
+There are a few aspects where the current local search backend behaves differently to the original, Rete-based algorithm:
+
+ * Recursive queries are not supported. Trying to initialize a query with recursion results in a runtime error.
+ * The algorithm cannot provide change notifications, so registering a MatchUpdateListener over local search-based queries is prohibited.
+
+WARNING: The local search backend of VIATRA is almost functionally compatible with the Rete-based backend, but has very different performance characterics. If performance is critical, make sure to understand both algorithms to choose the appropriate one for the problem at hand.

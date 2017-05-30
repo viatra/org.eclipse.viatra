@@ -2,6 +2,8 @@
 <toc label="Tutorial">
    <topic href="html/tutorial/queries.html" label="Getting started with Query Development">
    </topic>
+   <topic href="html/tutorial/query-api.html" label="Using the Runtime API of VIATRA Query">
+   </topic>
    <topic href="html/tutorial/batch-transformations.html" label="Getting Started with Batch Transformation Development">
    </topic>
    <topic href="html/tutorial/incremental-transformations.html" label="Getting Started with Event-driven Transformation">
