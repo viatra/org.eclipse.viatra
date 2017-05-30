@@ -31,11 +31,9 @@ import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Recursive;
-import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Singleton;
 import org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
-import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 
 /**
  * An instance of this class is associated with every {@link ReteContainer}. The tracker serves two purposes: <br>
@@ -53,6 +51,16 @@ import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
  */
 public final class CommunicationTracker {
 
+    /**
+     * The minimum group id assigned so far
+     */
+    private int minGroupId;
+    
+    /**
+     * The maximum group id assigned so far
+     */
+    private int maxGroupId;
+    
     /**
      * The dependency graph of the communications in the RETE network
      */
@@ -85,7 +93,7 @@ public final class CommunicationTracker {
 
     private void precomputeGroups() {
         groupMap.clear();
-
+        
         // reconstruct group map from dependency graph
         final Graph<Node> reducedGraph = sccInformationProvider.getReducedGraph();
         final List<Node> representatives = TopologicalSorting.compute(reducedGraph);
@@ -103,10 +111,13 @@ public final class CommunicationTracker {
             }
             groupMap.put(representative, group);
         }
+        
+        minGroupId = 0;
+        maxGroupId = representatives.size() - 1;
 
         for (final Node node : dependencyGraph.getAllNodes()) { // extend group map to the rest of nodes
             final Node representative = sccInformationProvider.getRepresentative(node);
-            CommunicationGroup group = groupMap.get(representative);
+            final CommunicationGroup group = groupMap.get(representative);
             if (representative != node) {
                 groupMap.put(node, group);
             }
@@ -291,21 +302,51 @@ public final class CommunicationTracker {
      *            the target node
      */
     public void registerDependency(final Node source, final Node target) {
-        final Node rs = sccInformationProvider.getRepresentative(source);
-        final Node rt = sccInformationProvider.getRepresentative(target);
-
         dependencyGraph.insertNode(source);
         dependencyGraph.insertNode(target);
+        
+        // query all these information before the actual edge insertion
+        // because SCCs may be unified during the process
+        final Node sourceRepresentative = sccInformationProvider.getRepresentative(source);
+        final Node targetRepresentative = sccInformationProvider.getRepresentative(target);
+        final boolean hadOutgoingEdges = sccInformationProvider.hasOutgoingEdges(targetRepresentative);
+        
         dependencyGraph.insertEdge(source, target);
-
-        // if they were already in the same SCC, 
-        //  then this insertion did not affect the SCCs,
-        //  and it is sufficient to recompute affected fall-through flags;
-        // otherwise, we need a new precomputation for the groupMap and groupQueue
-        if (rs != null && rs.equals(rt)) {
+        
+        // create groups if they do not yet exist
+        CommunicationGroup sourceGroup = groupMap.get(sourceRepresentative);
+        if (sourceGroup == null) {
+            sourceGroup = new CommunicationGroup.Singleton(sourceRepresentative, --minGroupId);
+            groupMap.put(sourceRepresentative, sourceGroup);
+        }
+        final int sourceIndex = sourceGroup.identifier; 
+        
+        CommunicationGroup targetGroup = groupMap.get(targetRepresentative);
+        if (targetGroup == null) {
+            targetGroup = new CommunicationGroup.Singleton(targetRepresentative, ++maxGroupId);
+            groupMap.put(targetRepresentative, targetGroup);
+        }
+        final int targetIndex = targetGroup.identifier;
+        
+        if (sourceIndex <= targetIndex) {
+            // indices obey current topological ordering
+            refreshFallThroughFlag(target);
+        } else if (sourceIndex > targetIndex && !hadOutgoingEdges) {
+            // indices violate current topological ordering, but we can simply bump the target index
+            // bump index of target
+            final boolean wasEnqueued = targetGroup.isEnqueued;
+            if (wasEnqueued) {
+                groupQueue.remove(targetGroup);
+            }
+            targetGroup.identifier = ++maxGroupId;
+            if (wasEnqueued) {
+                groupQueue.add(targetGroup);
+            }
+            
             refreshFallThroughFlag(target);
         } else {
-            precomputeGroups();
+            // needs a full re-computation because of more complex change 
+            precomputeGroups(); 
         }
     }
 
@@ -318,16 +359,17 @@ public final class CommunicationTracker {
      *            the target node
      */
     public void unregisterDependency(final Node source, final Node target) {
+        // delete the edge first, and then query the SCC info provider
         this.dependencyGraph.deleteEdge(source, target);
 
-        final Node rs = sccInformationProvider.getRepresentative(source);
-        final Node rt = sccInformationProvider.getRepresentative(target);
+        final Node sourceRepresentative = sccInformationProvider.getRepresentative(source);
+        final Node targetRepresentative = sccInformationProvider.getRepresentative(target);
 
         // if they are still in the same SCC, 
-        //  then this insertion did not affect the SCCs,
+        //  then this deletion did not affect the SCCs,
         //  and it is sufficient to recompute affected fall-through flags;
-        // otherwise, we need a new precomputation for the groupMap and groupQueue
-        if (!(rs != null && rs.equals(rt))) {
+        // otherwise, we need a new pre-computation for the groupMap and groupQueue
+        if (sourceRepresentative.equals(targetRepresentative)) {
             refreshFallThroughFlag(target);
         } else {
             precomputeGroups();

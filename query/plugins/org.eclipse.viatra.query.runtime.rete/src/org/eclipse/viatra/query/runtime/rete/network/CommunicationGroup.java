@@ -33,7 +33,11 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
     public boolean isEnqueued = false;
     
     protected final Node representative;
-    protected final int identifier;
+    
+    /**
+     * May be changed during bumping in {@link CommunicationTracker.registerDependency}
+     */
+    protected int identifier;
 
     public CommunicationGroup(final Node representative, final int identifier) {
         this.representative = representative;

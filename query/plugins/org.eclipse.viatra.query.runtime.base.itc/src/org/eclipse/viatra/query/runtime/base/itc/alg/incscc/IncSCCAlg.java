@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.counting.CountingAlg;
@@ -486,7 +487,28 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
         return sourceSCCs;
     }
-
+    
+    /**
+     * Returns true if the SCC represented by the given root node has incoming edges in the reduced graph, 
+     * false otherwise (if this SCC is a source in the reduced graph). 
+     * 
+     * @param root the root node of an SCC
+     * @return true if it has incoming edges, false otherwise
+     * @since 1.6
+     */
+    public boolean hasIncomingEdges(final V root) {
+        for (final V containedNode : this.sccs.getPartition(root)) {
+            final Map<V, Integer> sourceNodes = this.gds.getSourceNodes(containedNode);
+            for (final V source : sourceNodes.keySet()) {
+                final V otherRoot = this.sccs.find(source);
+                if (!Objects.equals(root, otherRoot)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     /**
      * Return the SCCs which are reachable from the SCC represented by the root node. Note that an SCC can be present
      * multiple times in the returned list (multiple edges between the two SCCs).
@@ -505,6 +527,27 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
 
         return targetSCCs;
+    }
+    
+    /**
+     * Returns true if the SCC represented by the given root node has outgoing edges in the reduced graph, 
+     * false otherwise (if this SCC is a sink in the reduced graph). 
+     * 
+     * @param root the root node of an SCC
+     * @return true if it has outgoing edges, false otherwise
+     * @since 1.6
+     */
+    public boolean hasOutgoingEdges(V root) {
+        for (final V containedNode : this.sccs.getPartition(root)) {
+            final Map<V, Integer> targetNodes = this.gds.getTargetNodes(containedNode);
+            for (final V target : targetNodes.keySet()) {
+                final V otherRoot = this.sccs.find(target);
+                if (!Objects.equals(root, otherRoot)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
