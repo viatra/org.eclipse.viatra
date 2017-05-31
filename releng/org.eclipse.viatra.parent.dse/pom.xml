@@ -16,6 +16,19 @@
         <module>../../maven/viatra-dse-runtime</module>
 
     </modules>
+    <build>
+        <plugins>
+           <plugin>
+               <groupId>org.eclipse.tycho</groupId>
+               <artifactId>tycho-versions-plugin</artifactId>
+               <version>${tycho.version}</version>
+               <configuration>
+                 <artifacts>${project.artifactId}</artifacts>
+                 <properties>viatra.incubation.version</properties>
+               </configuration>
+           </plugin>
+        </plugins>
+    </build>
     <parent>
         <groupId>org.eclipse.viatra</groupId>
         <!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
@@ -35,18 +48,4 @@
             </snapshots>
         </repository>
     </repositories>
-    <profiles>
-        <profile>
-            <id>sign_milestone</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>standalone</name>
-                </property>
-            </activation>
-            <modules>
-                <module>../org.eclipse.viatra.parent.core</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
