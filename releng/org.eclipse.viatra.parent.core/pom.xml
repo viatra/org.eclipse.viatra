@@ -66,19 +66,15 @@
                     <ignoreTychoRepositories>true</ignoreTychoRepositories>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-versions-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                  <artifacts>org.eclipse.viatra.parent,org.eclipse.viatra.parent.core</artifacts>
+                  <properties>viatra.main.version</properties>
+                </configuration>
+            </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-               <plugin>
-                   <groupId>org.eclipse.tycho</groupId>
-                   <artifactId>tycho-versions-plugin</artifactId>
-                   <version>${tycho.version}</version>
-                   <configuration>
-                     <artifacts>org.eclipse.viatra.parent,org.eclipse.viatra.parent.core</artifacts>
-                     <properties>viatra.main.version</properties>
-                   </configuration>
-               </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>
