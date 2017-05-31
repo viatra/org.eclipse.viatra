@@ -136,7 +136,7 @@
 	               <artifactId>tycho-versions-plugin</artifactId>
 	               <version>${tycho.version}</version>
 	               <configuration>
-	                 <artifacts>${project.artifactId},org.eclipse.viatra.parent.core</artifacts>
+	                 <artifacts>${project.artifactId},org.eclipse.viatra.parent.core,org.eclipse.viatra.parent</artifacts>
 	                 <properties>viatra.main.version</properties>
 	               </configuration>
 	           </plugin>
