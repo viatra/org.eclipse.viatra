@@ -43,7 +43,7 @@ import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
  * something to send to other nodes in the network. The tracker is then responsible for ordering these messages (more
  * precisely, the mailboxes that contain the messages) for the associated {@link ReteContainer}. The ordering is
  * governed by the strongly connected components in the dependency network and follows a topological sorting scheme;
- * those mailboxes will be emptied first whose owner nodes' do not depend on other undelivered messages.
+ * those mailboxes will be emptied first whose owner nodes do not depend on other undelivered messages.
  * 
  * @author Tamas Szabo
  * @since 1.6
@@ -101,10 +101,12 @@ public final class CommunicationTracker {
         for (int i = 0; i < representatives.size(); i++) { // groups for SCC representatives
             final Node representative = representatives.get(i);
             final boolean isSingleton = sccInformationProvider.sccs.getPartition(representative).size() == 1;
-            final boolean isDefault = representative instanceof Receiver && ((Receiver) representative).getMailbox() instanceof DefaultMailbox;
+            final boolean isReceiver = representative instanceof Receiver;
+            final boolean isDefault = isReceiver && ((Receiver) representative).getMailbox() instanceof DefaultMailbox;
+            
             
             CommunicationGroup group = null;
-            if (isSingleton && isDefault) {
+            if (isSingleton && (isDefault || !isReceiver)) {
                 group = new CommunicationGroup.Singleton(representative, i);
             } else {
                 group = new CommunicationGroup.Recursive(representative, i);
