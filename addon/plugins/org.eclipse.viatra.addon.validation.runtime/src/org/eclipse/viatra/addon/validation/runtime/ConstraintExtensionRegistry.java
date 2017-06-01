@@ -41,7 +41,8 @@ import com.google.common.collect.Sets;
  *
  */
 public class ConstraintExtensionRegistry {
-    
+
+    private static final String WILDCARD_EDITOR_ID = "*";
     private static final String CONSTRAINT_ATTRIBUTE_NAME = "constraint";
     private static final String VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID = "org.eclipse.viatra.addon.validation.runtime.constraint";
     private static final String EDITOR_ID_ATTRIBUTE_NAME = "editorId";
@@ -81,7 +82,11 @@ public class ConstraintExtensionRegistry {
      * @return <code>true</code> if there are registered constraint specifications
      */
     public static synchronized boolean isConstraintSpecificationsRegisteredForEditorId(String editorId) {
-        return getEditorConstraintSpecificationMap().containsKey(editorId);
+        Multimap<String, IProvider<IConstraintSpecification>> specificationMap = getEditorConstraintSpecificationMap();
+        if(specificationMap.containsKey(WILDCARD_EDITOR_ID)) {
+            return true;
+        }
+        return specificationMap.containsKey(editorId);
     }
 
     /**
@@ -98,7 +103,7 @@ public class ConstraintExtensionRegistry {
         }
         Set<IConstraintSpecification> set = Sets.newHashSet(unwrapConstraintSpecifications(getEditorConstraintSpecificationMap()
                 .get(editorId)));
-        Iterables.addAll(set, unwrapConstraintSpecifications(getEditorConstraintSpecificationMap().get("*")));
+        Iterables.addAll(set, unwrapConstraintSpecifications(getEditorConstraintSpecificationMap().get(WILDCARD_EDITOR_ID)));
         return set;
     }
 
@@ -159,7 +164,7 @@ public class ConstraintExtensionRegistry {
 
         ConstraintSpecificationProvider constraintSpecificationProvider = new ConstraintSpecificationProvider(ce);
         if (ids.isEmpty()) {
-            ids.add("*");
+            ids.add(WILDCARD_EDITOR_ID);
         }
         for (String id : ids) {
             result.put(id, constraintSpecificationProvider);
