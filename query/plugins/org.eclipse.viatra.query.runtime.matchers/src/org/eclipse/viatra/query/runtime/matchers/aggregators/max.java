@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.BoundAggre
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 
 /**
- * This aggregator calculates the minimum value of a selected aggregate parameter of a called pattern. The aggregate
+ * This aggregator calculates the maximum value of a selected aggregate parameter of a called pattern. The aggregate
  * parameter is selected with the '#' symbol; the aggregate parameter must not be used outside the aggregator call. The
  * other parameters of the call might be bound or unbound; bound parameters limit the matches to consider for the
  * minimum calculation.
