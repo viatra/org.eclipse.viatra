@@ -80,6 +80,9 @@
     </parent>
     <properties>
         <target.classifier>indigo</target.classifier>
+        <!-- Sonar -->
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
     <repositories>
         <repository>
