@@ -35,6 +35,9 @@ public interface IQueryBackendContext {
     
     QueryAnalyzer getQueryAnalyzer();
     
+    /**
+     * @since 1.6
+     */
     boolean areUpdatesDelayed();
     
 }

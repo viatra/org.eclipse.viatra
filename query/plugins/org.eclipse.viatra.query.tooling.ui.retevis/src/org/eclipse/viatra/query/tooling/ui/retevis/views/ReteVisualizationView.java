@@ -21,11 +21,11 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization;
 
 
-public class ReteVisualizationView extends ViewPart /*implements IZoomableWorkbenchPart */{
+public class ReteVisualizationView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        graphViewer =  new ModifiableZestContentViewer();
+        ModifiableZestContentViewer graphViewer =  new ModifiableZestContentViewer();
         graphViewer.createControl(parent, SWT.BORDER);
         
         try {
@@ -40,8 +40,6 @@ public class ReteVisualizationView extends ViewPart /*implements IZoomableWorkbe
             throw new RuntimeException("Failed to get Rete Visualization query specifications", e);
         }
     }
-
-    private ModifiableZestContentViewer graphViewer;
 
     private ReteVisualizationViewSupport viewSupport;
 

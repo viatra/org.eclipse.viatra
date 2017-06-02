@@ -32,6 +32,7 @@ public interface IBiDirectionalGraphDataSource<V> extends IGraphDataSource<V> {
      * 
      * @param target the target node
      * @return the source nodes with their count values
+     * @since 1.6
      */
     public Map<V, Integer> getSourceNodes(V target);
     

@@ -110,6 +110,22 @@
           key="/instance/org.eclipse.jdt.ui/org.eclipse.jdt.ui.text.custom_code_templates"
           value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?>&lt;templates>&lt;template autoinsert=&quot;false&quot; context=&quot;filecomment_context&quot; deleted=&quot;false&quot; description=&quot;Comment for created Java files&quot; enabled=&quot;true&quot; id=&quot;org.eclipse.jdt.ui.text.codetemplates.filecomment&quot; name=&quot;filecomment&quot;>/*******************************************************************************&#xA; * Copyright (c) 2010-$${year}, $${user}, ${viatra.copyright.holder}&#xA; * All rights reserved. This program and the accompanying materials&#xA; * are made available under the terms of the Eclipse Public License v1.0&#xA; * which accompanies this distribution, and is available at&#xA; * http://www.eclipse.org/legal/epl-v10.html&#xA; *&#xA; * Contributors:&#xA; *   $${user} - initial API and implementation&#xA; *******************************************************************************/&lt;/template>&lt;/templates>"/>
     </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.pde.api.tools">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.pde.api.tools/CLASS_ELEMENT_TYPE_ADDED_FIELD"
+          value="Ignore"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.pde.api.tools/incompatible_api_component_version_report_major_without_breaking_change"
+          value="Ignore"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.pde.api.tools/incompatible_api_component_version_report_minor_without_api_change"
+          value="Ignore"/>
+    </setupTask>
   </setupTask>
   <setupTask
       xsi:type="setup:ResourceCreationTask"

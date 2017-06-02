@@ -28,6 +28,9 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 public abstract class SimpleReceiver extends BaseNode implements Receiver {
 
     protected Supplier parent = null;
+    /**
+     * @since 1.6
+     */
     protected final Mailbox mailbox;
     
     /**
@@ -44,6 +47,7 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
      * Subclasses may override this method to provide their own mailbox implementation.
      * 
      * @return the mailbox
+     * @since 1.6
      */
     protected Mailbox instantiateMailbox() {
         return new DefaultMailbox(this, this.reteContainer);

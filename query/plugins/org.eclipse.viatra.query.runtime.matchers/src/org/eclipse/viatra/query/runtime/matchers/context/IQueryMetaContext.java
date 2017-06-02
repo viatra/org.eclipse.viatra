@@ -86,6 +86,7 @@ public interface IQueryMetaContext {
 
 	/**
 	 * Returns true if the given {@link IInputKey} represents a poset type.    
+	 * @since 1.6
 	 */
 	boolean isPosetKey(IInputKey key);
 	
@@ -94,6 +95,7 @@ public interface IQueryMetaContext {
 	 * 
 	 * @param keys an iterable collection of input keys
 	 * @return the poset comparator
+	 * @since 1.6
 	 */
 	IPosetComparator getPosetComparator(Iterable<IInputKey> keys);
 	

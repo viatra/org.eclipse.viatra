@@ -26,16 +26,23 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
  * Default implementation of the Production node, based on UniquenessEnforcerNode
  *
  * @author Gabor Bergmann
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DefaultProductionNode extends UniquenessEnforcerNode implements Production {
 
     protected Map<String, Integer> posMapping;
 
+    /**
+     * @since 1.6
+     */
     public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping,
             boolean deleteRederiveEvaluation) {
         this(reteContainer, posMapping, deleteRederiveEvaluation, null, null, null);
     }
 
+    /**
+     * @since 1.6
+     */
     public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping,
             boolean deleteRederiveEvaluation, TupleMask coreMask, TupleMask posetMask,
             IPosetComparator posetComparator) {

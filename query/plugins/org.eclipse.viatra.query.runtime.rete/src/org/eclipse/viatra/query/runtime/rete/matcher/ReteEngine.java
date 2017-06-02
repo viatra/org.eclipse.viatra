@@ -93,6 +93,9 @@ public class ReteEngine implements IQueryBackend {
         this.compiler = null;
     }
     
+    /**
+     * @since 1.6
+     */
     public IQueryBackendContext getBackendContext() {
         return context;
     }

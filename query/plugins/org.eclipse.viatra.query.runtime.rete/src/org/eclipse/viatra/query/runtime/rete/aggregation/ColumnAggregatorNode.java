@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.rete.aggregation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
@@ -50,16 +51,43 @@ import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
 public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends SingleInputNode
         implements Clearable, IAggregatorNode, RederivableNode, MonotonicityAwareReceiver {
 
+    /**
+     * @since 1.6
+     */
     final protected IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator;
+    /**
+     * @since 1.6
+     */
     final protected TupleMask groupMask;
+    /**
+     * @since 1.6
+     */
     final protected TupleMask columnMask;
+    /**
+     * @since 1.6
+     */
     final protected IPosetComparator posetComparator;
+    /**
+     * @since 1.6
+     */
     final protected int sourceWidth;
+    /**
+     * @since 1.6
+     */
     final protected IQueryRuntimeContext runtimeContext;
+    /**
+     * @since 1.6
+     */
     final protected boolean deleteRederiveEvaluation;
 
     // invariant: neutral values are not stored
+    /**
+     * @since 1.6
+     */
     final protected Map<Tuple, Accumulator> memory;
+    /**
+     * @since 1.6
+     */
     final protected Map<Tuple, Accumulator> rederivableMemory;
 
     final private AggregateResult NEUTRAL;
@@ -83,6 +111,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
      *            the mask that masks a tuple to obtain the tuple element(s) that we are aggregating over
      * @param posetComparator
      *            the poset comparator for the column, if known, otherwise it can be null
+     * @since 1.6
      */
     public ColumnAggregatorNode(ReteContainer reteContainer,
             IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator,
@@ -181,8 +210,9 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
 
     @Override
     public void rederiveOne() {
-        Tuple group = rederivableMemory.keySet().iterator().next();
-        Accumulator accumulator = rederivableMemory.get(group);
+        Entry<Tuple, Accumulator> entry = rederivableMemory.entrySet().iterator().next();
+        Tuple group = entry.getKey();
+        Accumulator accumulator = entry.getValue();
         rederivableMemory.remove(group);
         memory.put(group, accumulator);
         // unregister the node if there is nothing left to be re-derived
@@ -207,6 +237,9 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         update(direction, update, false);
     }
 
+    /**
+     * @since 1.6
+     */
     protected void updateDefault(Direction direction, Tuple update) {
         final Tuple key = groupMask.transform(update);
         final Tuple value = columnMask.transform(update);
@@ -224,6 +257,9 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         propagate(key, oldValue, newValue);
     }
 
+    /**
+     * @since 1.6
+     */
     protected void updateWithDeleteAndRederive(Direction direction, Tuple update, boolean monotone) {
         final Tuple group = groupMask.transform(update);
         final Tuple value = columnMask.transform(update);
@@ -310,6 +346,9 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         }
     }
 
+    /**
+     * @since 1.6
+     */
     @SuppressWarnings("unchecked")
     public void propagate(Tuple group, AggregateResult oldValue, AggregateResult newValue) {
         if (!Objects.equals(oldValue, newValue)) {
@@ -337,6 +376,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
 
     /**
      * Returns true if the accumulator was stored, false otherwise.
+     * @since 1.6
      */
     protected boolean storeIfNotNeutral(Tuple key, Accumulator accumulator, Map<Tuple, Accumulator> memory) {
         if (operator.isNeutral(accumulator)) {
@@ -359,14 +399,23 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         return operator.getAggregate(accumulator);
     }
 
+    /**
+     * @since 1.6
+     */
     protected Accumulator getMainAccumulator(Tuple key) {
         return getAccumulator(key, memory);
     }
 
+    /**
+     * @since 1.6
+     */
     protected Accumulator getRederivableAccumulator(Tuple key) {
         return getAccumulator(key, rederivableMemory);
     }
 
+    /**
+     * @since 1.6
+     */
     protected Accumulator getAccumulator(Tuple key, Map<Tuple, Accumulator> memory) {
         Accumulator accumulator = memory.get(key);
         if (accumulator == null) {

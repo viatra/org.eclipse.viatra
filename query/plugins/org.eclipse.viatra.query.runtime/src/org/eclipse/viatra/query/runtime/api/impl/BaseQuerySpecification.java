@@ -100,7 +100,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
 
                     }));
 
-            throw new ViatraQueryException(String.format("Erroneous query specification: %s \n %s", getFullyQualifiedName(), errorMessages),
+            throw new ViatraQueryException(String.format("Erroneous query specification: %s %n %s", getFullyQualifiedName(), errorMessages),
                     "Cannot initialize matchers on erroneous query specifications.");
         } else if (!engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass())) {
             throw new ViatraQueryException(

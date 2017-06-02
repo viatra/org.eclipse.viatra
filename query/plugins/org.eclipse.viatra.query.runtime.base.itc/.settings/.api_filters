@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.runtime.base.itc" version="2">
+    <resource path="src/org/eclipse/viatra/query/runtime/base/itc/graphimpl/Graph.java" type="org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph">
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph"/>
+                <message_argument value="getSourceNodes(V)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph"/>
+                <message_argument value="getTargetNodes(V)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/base/itc/igraph/IBiDirectionalGraphDataSource.java" type="org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource">
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource"/>
+                <message_argument value="getSourceNodes(V)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource"/>
+                <message_argument value="getSourceNodes(V)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/base/itc/igraph/IBiDirectionalWrapper.java" type="org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalWrapper">
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalWrapper"/>
+                <message_argument value="getSourceNodes(V)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalWrapper"/>
+                <message_argument value="getTargetNodes(V)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/base/itc/igraph/IGraphDataSource.java" type="org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource">
+        <filter comment="Required for DRed" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource"/>
+                <message_argument value="attachAsFirstObserver(IGraphObserver&lt;V&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource"/>
+                <message_argument value="getTargetNodes(V)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Return value changed from collection to map; cannot provide efficient fallback." id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource"/>
+                <message_argument value="getTargetNodes(V)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

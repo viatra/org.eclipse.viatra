@@ -174,12 +174,18 @@ public class CompilerHelper {
         return projectionMask;
     }
 
+    /**
+     * @since 1.6
+     */
     public static final class PosetTriplet {
         public Mask coreMask;
         public Mask posetMask;
         public IPosetComparator comparator;
     }
 
+    /**
+     * @since 1.6
+     */
     public static PosetTriplet computePosetInfo(List<PVariable> variables, PBody body, IQueryMetaContext context) {
         Map<PVariable, Set<IInputKey>> typeMap = TypeHelper.inferUnaryTypesFor(variables, body.getConstraints(),
                 context);
@@ -192,6 +198,9 @@ public class CompilerHelper {
         return computePosetInfo(keys, context);
     }
 
+    /**
+     * @since 1.6
+     */
     public static PosetTriplet computePosetInfo(List<PParameter> parameters, IQueryMetaContext context) {
         List<Set<IInputKey>> keys = new LinkedList<Set<IInputKey>>();
         for (int i = 0; i < parameters.size(); i++) {
@@ -207,6 +216,9 @@ public class CompilerHelper {
     
     
 
+    /**
+     * @since 1.6
+     */
     public static PosetTriplet computePosetInfo(Iterable<Set<IInputKey>> keys, IQueryMetaContext context) {
         PosetTriplet result = new PosetTriplet();
         List<Integer> coreIndices = new ArrayList<Integer>();

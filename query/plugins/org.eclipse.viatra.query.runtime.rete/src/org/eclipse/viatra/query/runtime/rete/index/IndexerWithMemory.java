@@ -31,6 +31,9 @@ import org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory;
 public abstract class IndexerWithMemory extends StandardIndexer implements Receiver {
 
     protected MaskedTupleMemory memory;
+    /**
+     * @since 1.6
+     */
     protected final Mailbox mailbox;
 
     /**
@@ -50,6 +53,7 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
      * mailbox implementation.
      * 
      * @return the mailbox
+     * @since 1.6
      */
     protected Mailbox instantiateMailbox() {
         return new DefaultMailbox(this, this.reteContainer);

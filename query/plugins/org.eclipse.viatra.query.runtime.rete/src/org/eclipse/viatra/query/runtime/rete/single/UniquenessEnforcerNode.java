@@ -45,6 +45,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * 
  * @author Gabor Bergmann
  * @author Tamas Szabo
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UniquenessEnforcerNode extends StandardNode
         implements Tunnel, RederivableNode, MonotonicityAwareReceiver {
@@ -62,6 +63,9 @@ public class UniquenessEnforcerNode extends StandardNode
     protected MemoryNullIndexer memoryNullIndexer;
     protected MemoryIdentityIndexer memoryIdentityIndexer;
     protected final int tupleWidth;
+    /**
+     * @since 1.6
+     */
     protected final Mailbox mailbox;
     private final TupleMask nullMask;
     private final TupleMask identityMask;
@@ -71,17 +75,31 @@ public class UniquenessEnforcerNode extends StandardNode
     }
     
     /**
+     * OPTIONAL ELEMENT - ONLY PRESENT IF MONOTONICITY INFO WAS AVAILABLE
      * @since 1.6
      */
-    // OPTIONAL ELEMENTS - ONLY PRESENT IF MONOTONICITY INFO WAS AVAILABLE
     protected final TupleMask coreMask;
+    /**
+     * OPTIONAL ELEMENTS - ONLY PRESENT IF MONOTONICITY INFO WAS AVAILABLE
+     * @since 1.6
+     */
     protected final TupleMask posetMask;
+    /**
+     * OPTIONAL ELEMENTS - ONLY PRESENT IF MONOTONICITY INFO WAS AVAILABLE
+     * @since 1.6
+     */
     protected final IPosetComparator posetComparator;
 
+    /**
+     * @since 1.6
+     */
     public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth, boolean deleteRederiveEvaluation) {
         this(reteContainer, tupleWidth, deleteRederiveEvaluation, null, null, null);
     }
 
+    /**
+     * @since 1.6
+     */
     public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth, boolean deleteRederiveEvaluation,
             TupleMask coreMask, TupleMask posetMask, IPosetComparator posetComparator) {
         super(reteContainer);
@@ -116,6 +134,9 @@ public class UniquenessEnforcerNode extends StandardNode
         return posetComparator;
     }
 
+    /**
+     * @since 1.6
+     */
     protected Mailbox instantiateMailbox() {
         if (coreMask != null && posetMask != null && posetComparator != null) {
             return new MonotonicityAwareMailbox(this, this.reteContainer);
@@ -151,6 +172,9 @@ public class UniquenessEnforcerNode extends StandardNode
         }
     }
 
+    /**
+     * @since 1.6
+     */
     protected boolean updateWithDeleteAndRederive(Direction direction, Tuple update, boolean monotone) {
         boolean propagate = false;
 
@@ -215,6 +239,9 @@ public class UniquenessEnforcerNode extends StandardNode
         return propagate;
     }
 
+    /**
+     * @since 1.6
+     */
     protected boolean updateDefault(Direction direction, Tuple update) {
         boolean propagate = false;
         if (direction == Direction.INSERT) {

@@ -203,15 +203,17 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         StringBuilder sb = new StringBuilder();
         sb.append("nodes = ");
         for (V n : outgoingEdges.keySet()) {
-            sb.append(n.toString() + " ");
+            sb.append(n.toString());
+            sb.append(" ");
         }
         sb.append(" edges = ");
-        for (V source : outgoingEdges.keySet()) {
-            Map<V, Integer> targets = outgoingEdges.get(source);
+        for (Entry<V, Map<V, Integer>> outgoingEntry: outgoingEdges.entrySet()) {
+            V source = outgoingEntry.getKey();
+            Map<V, Integer> targets = outgoingEntry.getValue();
             if (targets != null) {
-                for (Entry<V, Integer> entry : targets.entrySet()) {
-                    for (int i = 0; i < entry.getValue(); i++) {
-                        sb.append("(" + source + "," + entry.getKey() + ") ");
+                for (Entry<V, Integer> targetEntry : targets.entrySet()) {
+                    for (int i = 0; i < targetEntry.getValue(); i++) {
+                        sb.append("(" + source + "," + targetEntry.getKey() + ") ");
                     }
                 }
             }
@@ -221,6 +223,9 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 
     private static final String[] colors = new String[] { "yellow", "blue", "red", "green", "gray", "cyan" };
 
+    /**
+     * @since 1.6
+     */
     public String generateDot(boolean colorSCCs, Function<V, String> nameMapper, Function<V, String> colorMapper) {
         Map<V, String> colorMap = new HashMap<V, String>();
 
@@ -271,8 +276,9 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             builder.append(";\n");
         }
 
-        for (V source : outgoingEdges.keySet()) {
-            Map<V, Integer> targets = outgoingEdges.get(source);
+        for (Entry<V, Map<V, Integer>> outgoingEntry : outgoingEdges.entrySet()) {
+            V source = outgoingEntry.getKey();
+            Map<V, Integer> targets = outgoingEntry.getValue();
             if (targets != null) {
                 for (Entry<V, Integer> entry : targets.entrySet()) {
                     for (int i = 0; i < entry.getValue(); i++) {
@@ -289,6 +295,9 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         return builder.toString();
     }
 
+    /**
+     * @since 1.6
+     */
     public String generateDot() {
         return generateDot(false, null, null);
     }

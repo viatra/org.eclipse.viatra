@@ -71,6 +71,9 @@ public abstract class StandardNode extends BaseNode implements Supplier {
         return indexer;
     }
     
+    /**
+     * @since 1.6
+     */
     protected void issueError(String message, Exception ex) {
         if (ex == null) {
             this.reteContainer.getNetwork().getEngine().getLogger().error(message);

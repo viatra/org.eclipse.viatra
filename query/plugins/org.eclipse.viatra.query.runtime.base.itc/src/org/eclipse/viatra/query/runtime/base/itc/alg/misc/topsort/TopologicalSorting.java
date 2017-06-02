@@ -19,6 +19,9 @@ import java.util.Stack;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 
+/**
+ * @since 1.6
+ */
 public class TopologicalSorting {
 
     private static final class Pair<T> {

@@ -48,6 +48,7 @@ public class TypeHelper {
      * @param context
      *            the query meta context
      * @return the mapping from variable to set of type constraints
+     * @since 1.6
      */
     public static Map<PVariable, Set<IInputKey>> inferUnaryTypesFor(Iterable<PVariable> variables,
             Set<PConstraint> constraints, IQueryMetaContext context) {
@@ -69,6 +70,7 @@ public class TypeHelper {
      * @param typeMap
      *            the type map of inference results
      * @return the mapping from variable to set of type constraints
+     * @since 1.6
      */
     public static Map<PVariable, Set<IInputKey>> inferUnaryTypesFor(Iterable<PVariable> variables,
             Map<PVariable, Set<TypeJudgement>> typeMap) {

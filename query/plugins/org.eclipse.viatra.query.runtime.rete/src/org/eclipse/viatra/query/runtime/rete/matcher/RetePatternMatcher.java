@@ -67,9 +67,9 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         this.reteContainer.getTracker().registerDependency(this.productionNode, this);
     }
 
-    // /**
-    // * @return the productionNode
-    // */
+    /**
+     * @since 1.6
+     */
     public Production getProductionNode() {
         return productionNode;
     }

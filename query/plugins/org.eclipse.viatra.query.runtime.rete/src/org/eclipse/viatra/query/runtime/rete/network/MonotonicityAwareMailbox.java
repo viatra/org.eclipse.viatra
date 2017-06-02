@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
  * REVOKE - INSERT updates represent a monotone change pair. The mailbox is used by {@link MonotonicityAwareReceiver}s.
  * 
  * @author Tamas Szabo
+ * @since 1.6
  */
 public class MonotonicityAwareMailbox implements Mailbox {
 

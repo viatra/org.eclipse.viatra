@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 /**
  * Indicates that recipe expresses the finished match set of a query.
  * @author Bergmann Gabor
- *
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CompiledQuery extends RecipeTraceInfo implements
         PatternTraceInfo {
@@ -27,6 +27,9 @@ public class CompiledQuery extends RecipeTraceInfo implements
     private PQuery query;
     private final Map<PBody, ? extends RecipeTraceInfo> parentRecipeTracesPerBody;
     
+    /**
+     * @since 1.6
+     */
     public CompiledQuery(ReteNodeRecipe recipe,
             Map<PBody, ? extends RecipeTraceInfo> parentRecipeTraces,
             PQuery query) {
@@ -43,6 +46,9 @@ public class CompiledQuery extends RecipeTraceInfo implements
         return query.getFullyQualifiedName();
     }
 
+    /**
+     * @since 1.6
+     */
     public Map<PBody, ? extends RecipeTraceInfo> getParentRecipeTracesPerBody() {
         return parentRecipeTracesPerBody;
     }

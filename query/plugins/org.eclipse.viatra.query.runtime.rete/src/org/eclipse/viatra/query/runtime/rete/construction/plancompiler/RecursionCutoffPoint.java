@@ -33,9 +33,10 @@ import com.google.common.base.Preconditions;
  *   the {@link RecursionCutoffPoint} has to be signaled to update parent traces and recipes of the recursive call.
  *  
  * @author Bergmann Gabor
+ * @noreference This class is not intended to be referenced by clients 
  *
  */
-class RecursionCutoffPoint {
+public class RecursionCutoffPoint {
     final RecipeTraceInfo.ParentTraceList futureTraceList;
     final Map<PBody, RecipeTraceInfo> futureTraceMap;
     final CompiledQuery compiledQuery;

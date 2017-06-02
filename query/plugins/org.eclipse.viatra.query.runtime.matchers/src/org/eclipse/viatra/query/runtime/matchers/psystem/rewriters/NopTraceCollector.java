@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
  */
 public class NopTraceCollector implements IRewriterTraceCollector {
 
-    public static IRewriterTraceCollector INSTANCE = new NopTraceCollector();
+    public static final IRewriterTraceCollector INSTANCE = new NopTraceCollector();
     
     private NopTraceCollector() {
         // Private constructor to force using the common instance

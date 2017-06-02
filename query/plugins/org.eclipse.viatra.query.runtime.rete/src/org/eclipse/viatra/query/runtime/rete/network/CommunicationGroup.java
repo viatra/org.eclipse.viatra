@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableSet;
  * A communication group represents a set of nodes in the communication graph that form a strongly connected component.
  * 
  * @author Tamas Szabo
+ * @since 1.6
  */
 public abstract class CommunicationGroup implements Comparable<CommunicationGroup> {
 

@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
  * them into the mailbox. Different mailbox implementations may differ in the way how they deliver the posted messages.
  * 
  * @author Tamas Szabo
+ * @since 1.6
  *
  */
 public interface Mailbox extends Clearable {

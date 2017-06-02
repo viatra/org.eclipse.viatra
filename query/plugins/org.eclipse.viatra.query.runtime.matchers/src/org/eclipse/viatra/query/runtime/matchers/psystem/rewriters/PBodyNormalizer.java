@@ -305,7 +305,6 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         while(iterator.hasNext()){
             PConstraint next = iterator.next();
             if (!toRetain.contains(next)){
-                Object key = getConstraintKey(next);
                 derivativeRemoved(next, ConstraintRemovalReason.DUPLICATE);
                 iterator.remove();
             }
