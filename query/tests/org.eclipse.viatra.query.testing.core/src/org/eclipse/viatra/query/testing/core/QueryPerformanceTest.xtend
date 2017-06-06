@@ -29,6 +29,7 @@ import org.eclipse.xtend.lib.annotations.Data
 import org.junit.Test
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
 import com.google.common.base.Function
+import org.eclipse.viatra.query.testing.core.QueryPerformanceTest.QueryPerformanceData
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
@@ -57,20 +58,29 @@ abstract class QueryPerformanceTest {
      * @since 1.3
      */
     @Data
-    protected static class QueryPerformanceData {
+    protected static class QueryPerformanceData implements Comparable<QueryPerformanceData> {
         int sequence
         int countMatches
         long usedHeapBefore
         long usedHeapAfter
         long usedHeap
         long elapsed
+        
+        override compareTo(QueryPerformanceData o) {
+            if (o === null) {
+                return -1
+            } else {
+                return Integer.compare(this.sequence, o.sequence)
+            }
+        }
+        
     }
 
     /**
      * @since 1.3
      */
     protected AdvancedViatraQueryEngine queryEngine
-    protected Map<String, QueryPerformanceData> results = Maps.newTreeMap()
+    protected Map<String, QueryPerformanceData> results = Maps.newTreeMap
 
     /**
      * This method shall return a scope that identifies the input artifact used for performance testing the queries.
