@@ -187,7 +187,7 @@ class JavadocInferrer {
 
     def javadocGetAllValuesOfMethod(Variable parameter) '''
         Retrieve the set of values that occur in matches for «parameter.name».
-        @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+        @return the Set of all values or empty set if there are no matches
     '''
 
     def javadocQuerySpecificationMethod(Pattern pattern) '''

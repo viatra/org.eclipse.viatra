@@ -12,7 +12,7 @@
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
 /**
- * Interface ITcObserver is used to observ the changes in a transitive closure relation; tuple insertion/deleteion.
+ * Interface ITcObserver is used to observe the changes in a transitive closure relation; tuple insertion/deletion.
  * 
  * @author Szabo Tamas
  * 
