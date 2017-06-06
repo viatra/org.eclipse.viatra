@@ -10,7 +10,7 @@ image::query_runtime.png[]
 
 To start working with the VIATRA Query API, we have to provide (1) a Scope representing the model and a (2) set of query specifications. The easiest way to initialize a scope, is to simply wrap an EMF ResourceSet inside a new EMFScope instace. For query specifications, the generated matcher classes can be used as an example, see as follows.
 
-In general, the generated code in a VIATRA Query project consists of a (1) query specification classes that represents the original VQL specifications for the runtime API, (2) a Match and Matcher class for each pattern definition (recommended for general usage) and (3) a group class for each file that can be used to initialize all queries together.
+In general, the generated code in a VIATRA Query project consists of a (1) query specification classes that represents the original VQL specifications for the runtime API, (2) a Match and Matcher class for each pattern definition (recommended for general usage) together with (3) a match processor class to execute some actions on pattern matches in a Java stream-like API. Finally, (4) a group class for each file that can be used to initialize all queries together.
 
 .Structure of the query generated code
 image::query_generated_code.png[]
@@ -170,7 +170,7 @@ private void printAllAddresses(ViatraQueryEngine engine) throws ViatraQueryExcep
 CAUTION: If there are multiple hosts that have the same IP address, the ```getAllValuesOfip()``` call will return each IP address only once. This is consistent with all other APIs that always return sets. If duplicates are required, you have to process all matches manually.
 
 
-All matcher methods allow to filter the matches with constants. By setting some filter parameters with a non-null value we state that we are interesting in only matches 
+All matcher functionality supports filtering the matches with constants. By setting some filter parameters with a non-null value we state that we are interested in only matches where the selected parameters equal to the given value.
 
 [[app-listing]]
 [source,java]
@@ -183,7 +183,7 @@ private void printFilteredMatches(ViatraQueryEngine engine) throws ViatraQueryEx
 }
 ----
 
-NOTE: Regardless of input values receiving null values, the query engine will never return matches with null values. If no matches fulfill all the set parameters, the returned set will be empty.
+NOTE: Regardless of input values receiving null values, the ```getAllmatches``` (and similar operations) will never return matches with ```null``` values. If no matches fulfill all the set parameters, the returned set will be empty.
 
 If a filter condition has to be reused, it is possible to create mutable matches where the filtered values are set accordingly. This approach is also useful to use named setters (e.g. if multiple String parameters are to be set) or one does not want to write ```null``` literals.
 
@@ -214,7 +214,7 @@ private void countMatches(ViatraQueryEngine engine) throws ViatraQueryException 
 }
 ----
 
-TIP: If asking for the has/count calls is followed by the processing of the said matches, it is usually better to call ```getAllMatches``` or ```getOneArbitraryMatch``` directly, and calculate the count/existence using them.
+TIP: If asking for the has/count calls is immediately followed by the processing of the said matches, it is usually better to call ```getAllMatches``` or ```getOneArbitraryMatch``` directly, and calculate the count/existence using them.
 
 == Advanced query engine features
 
@@ -273,15 +273,15 @@ private void addChangeListener(AdvancedViatraQueryEngine engine) throws ViatraQu
 
 NOTE: By registering the match update listener with a ```true``` value for the ```fireNow``` parameter, we ensure that all existing matches are sent to the listener. If we only want to consider future updates, set that parameter to false.
 
-When looking at the output, the setNodeIp call will result in two changes: the first one represents the removal of the old match (host - old IP pair), while the second one represents an addition of a new one (host - new IP pair). In general, model updates often are often represented by two changes.
+When looking at the output, the setNodeIp call will result in two changes: the first one represents the removal of the old match (host - old IP pair), while the second one represents an addition of a new one (host - new IP pair). In general, a model update can often often result in multiple match changes (even on a single pattern).
 
 CAUTION: Be very careful when using match update listeners, as sometimes they are called while the model indexes are in an inconsistent state. For this reason, do not update the underlying model and do not execute further model queries. If such cases are required, delay the execution for a later phase. Better still, you can rely on the transformation API of VIATRA that ensure that rules are only executed when the indexes are in a consistent state.
 
-=== Local Search backends and hints
+=== Query backends and hints
 
 The advanced query engine also allows to initialize patterns with non-default settings called *hints*. The most important feature of these hints allow setting the pattern matcher backend, and other backend-specific settings could be changed.
 
-In addition to Rete-based incremental query evaluation VIATRA also includes a local search-based approach. By default, Rete is used, but by adding the ```org.eclipse.viatra.query.runtime.localsearch``` bundle as a dependency of the project, it is possible to set up query evaluation hints.
+In addition to Rete-based incremental query evaluation VIATRA also includes a local search-based approach. By default, Rete is used, but by adding the ```org.eclipse.viatra.query.runtime.localsearch``` bundle as a dependency of the project, it is possible to generate local-search specific evaluation hints using the ```LocalSearchHints``` class. Similar, Rete-specific hints are available in the ```ReteHintOptions``` class. The backend-specific hints are beyond the scope of this tutorial, for more details see the corresponding VIATRA documentation or Javadoc.
 
 [[app-listing]]
 [source,java]
@@ -300,7 +300,7 @@ As you can see, after the initialization the local search based backend can be q
 
 NOTE: As the name suggests, *hints* might be ignored by the query engine, e.g. if an incorrect configuration was set, or the engine knows of a functionally equivalent way that has a better performance. For details about the hints, consult the LocalSearchHints and ReteHintOptions classes.
 
-There are a few aspects where the current local search backend behaves differently to the original, Rete-based algorithm:
+There are a few aspects where the current (version 1.6) local search backend behaves differently to the original, Rete-based algorithm:
 
  * Recursive queries are not supported. Trying to initialize a query with recursion results in a runtime error.
  * The algorithm cannot provide change notifications, so registering a MatchUpdateListener over local search-based queries is prohibited.

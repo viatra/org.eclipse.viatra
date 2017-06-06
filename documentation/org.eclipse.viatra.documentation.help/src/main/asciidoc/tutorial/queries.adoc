@@ -17,7 +17,7 @@ To define queries, first a  _VIATRA Query Project_ has to be created with the st
 
 . Create a new VIATRA Query project in the host Eclipse with the following name: `org.eclipse.viatra.examples.cps.queries`.
 . Add `org.eclipse.viatra.examples.cps.model` to the Plug-in dependencies
-. Create a new query definition in a package named `org.eclipse.viatra.examples.cps.queries` and a file named `queries.vql`. In the wizard create an empty query. Fill the first query:
+. Create a new query definition in a package named `org.eclipse.viatra.examples.cps.queries` and a file named `CPSQueries.vql`. In the wizard create an empty query. Fill the first query:
 +
 [[app-listing]]
 [source,vql]
@@ -92,7 +92,7 @@ pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : jav
 +
 
 . List all `HostInstance` elements that have non well-formed IPv4 addresses (e.g. not four numbers separated with dots)
-* The well-formedness validation of the IP address strings requires specific validation blocks called `check` expressions where  you can write a wide range of _Xbase_ expressions, behaaving similarly to Java and accessing Java classes from the classpath of the project. In this case, the well-formedness of the address values are inde.
+* The well-formedness validation of the IP address strings requires specific validation blocks called `check` expressions where  you can write a wide range of _Xbase_ expressions, behaving similarly to Java and accessing Java classes from the classpath of the project. In this case, the well-formedness of the address values is represented with a regular expression evaluation.
 * It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables.
 +
 [[app-listing]]
@@ -136,8 +136,7 @@ pattern badHost(host : HostInstance, ip : java String) {
     HostInstance.nodeIp(host, ip);
     find emptyIpAddress(host);
 } or {
-    HostInstance.nodeIp(host, ip);
-    find ipFormatInvalid(host);
+    find ipFormatInvalid(host, ip);
 }
 ----
 +
@@ -163,12 +162,12 @@ pattern goodHost(host : HostInstance, ip : java String) {
 [[app-listing]]
 [source,vql]
 ----
-private pattern applications(host, app) {
+private pattern applications(host : HostInstance, app : ApplicationInstance) {
     HostInstance.applications(host, app);
 }
 
-pattern countApplications(host : HostInstance, M) {
-    M == count find applications(host, _);
+pattern countApplications(host : HostInstance, m : java Integer) {
+    m == count find applications(host, _);
 }
 ----
 
@@ -183,6 +182,7 @@ pattern reachableState(sm :StateMachine, state: State){
     StateMachine.initial(sm, state);
 } or {
     StateMachine.initial(sm, initial);
+    // Ensure the state is indeed included in the state machine; unnecessary in a well-formed model
     StateMachine.states(sm, state);
     // The + symbol after the pattern name represents transitive closure
     find connectedTo+(initial, state);
@@ -212,8 +212,8 @@ For example:
 @Constraint(targetEditorId = "org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID",
             severity = "error",
             message = "The ip address is not unique",
-            key = {"host1"})
-pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp) {
+            key = {host1})
+pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp : java String) {
     HostInstance.nodeIp(host1, commonIp);
     HostInstance.nodeIp(host2, commonIp);
     host1!=host2;
