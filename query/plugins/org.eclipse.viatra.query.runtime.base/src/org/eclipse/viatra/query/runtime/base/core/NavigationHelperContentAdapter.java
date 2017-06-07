@@ -158,11 +158,13 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
             break;
         case Notification.RESOLVE:
             if (navigationHelper.isFeatureResolveIgnored(feature))
-                break; // otherwise same as SET
+                break;
             if (!feature.isMany()) { // if single-valued, can be removed from delayed resolutions
                 navigationHelper.delayedProxyResolutions.remove(notifier, feature);
             }
-            // fall-through
+            featureUpdate(false, notifier, feature, oldValue, position);
+            featureUpdate(true, notifier, feature, newValue, position);
+            break;
         case Notification.UNSET:
         case Notification.SET:
             if(!feature.isMany()){
