@@ -156,7 +156,6 @@
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
-      predecessor="//@setupTasks.12"
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
@@ -182,11 +181,7 @@
         <repository
             url="http://download.eclipse.org/releases/mars"/>
         <repository
-            url="http://download.itemis.com/updates/releases"/>
-        <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
       </repositoryList>
@@ -195,11 +190,7 @@
         <repository
             url="http://download.eclipse.org/releases/neon"/>
         <repository
-            url="http://download.itemis.com/updates/releases"/>
-        <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         <repository
@@ -208,15 +199,9 @@
       <repositoryList
           name="Oxygen">
         <repository
-            url="http://download.eclipse.org/viatra/dependency"/>
-        <repository
             url="http://download.eclipse.org/releases/oxygen"/>
         <repository
-            url="http://download.itemis.com/updates/releases"/>
-        <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         <repository
@@ -228,6 +213,7 @@
       xsi:type="git:GitCloneTask"
       id="git.clone.viatra"
       remoteURI="viatra/org.eclipse.viatra"
+      pushURI=""
       checkoutBranch="${viatra.git.branch}">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
@@ -245,13 +231,6 @@
       </detail>
     </annotation>
     <description>${scope.project.label}</description>
-  </setupTask>
-  <setupTask
-      xsi:type="projects:ProjectsImportTask"
-      predecessor="git.clone.viatra">
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/releng"
-        locateNestedProjects="true"/>
   </setupTask>
   <project name="core"
       label="VIATRA Core">
@@ -279,10 +258,12 @@
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/documentation"
           locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/releng"
+          locateNestedProjects="true"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -302,8 +283,6 @@
         <repositoryList
             name="Mars">
           <repository
-              url="http://download.eclipse.org/viatra/dependency"/>
-          <repository
               url="http://download.eclipse.org/releases/mars"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
@@ -312,8 +291,6 @@
         </repositoryList>
         <repositoryList
             name="Neon">
-          <repository
-              url="http://download.eclipse.org/viatra/dependency"/>
           <repository
               url="http://download.eclipse.org/releases/neon"/>
           <repository
@@ -329,8 +306,6 @@
         </repositoryList>
         <repositoryList
             name="Oxygen">
-          <repository
-              url="http://download.eclipse.org/viatra/dependency"/>
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
           <repository
@@ -353,7 +328,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.12 //@setupTasks.10"
+          predecessor="//@setupTasks.10"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -577,7 +552,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}">
@@ -629,9 +603,13 @@
   <project name="dse"
       label="DSE">
     <setupTask
-        xsi:type="projects:ProjectsImportTask">
+        xsi:type="projects:ProjectsImportTask"
+        predecessor="git.clone.viatra">
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/dse"
+          locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/releng"
           locateNestedProjects="true"/>
     </setupTask>
     <setupTask
@@ -669,9 +647,13 @@
   <project name="cep"
       label="CEP">
     <setupTask
-        xsi:type="projects:ProjectsImportTask">
+        xsi:type="projects:ProjectsImportTask"
+        predecessor="git.clone.viatra">
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/cep"
+          locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/releng"
           locateNestedProjects="true"/>
     </setupTask>
     <setupTask
@@ -778,7 +760,6 @@
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -832,6 +813,9 @@
           locateNestedProjects="true"/>
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/integration/features/org.eclipse.viatra.integration.xcore.feature"
+          locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/releng"
           locateNestedProjects="true"/>
     </setupTask>
     <stream
@@ -1056,7 +1040,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -1070,23 +1053,23 @@
         <repositoryList
             name="Mars">
           <repository
-              url="http://download.itemis.com/updates/releases"/>
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.2"/>
         </repositoryList>
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.itemis.com/updates/releases"/>
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
         </repositoryList>
         <repositoryList
             name="Oxygen">
           <repository
-              url="http://download.itemis.com/updates/releases"/>
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.11.0"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0"/>
         </repositoryList>
       </targlet>
       <targlet
@@ -1105,12 +1088,12 @@
           <repository
               url="http://download.eclipse.org/releases/mars"/>
           <repository
-              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC1_gef-master_4353"/>
+              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
         </repositoryList>
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC1_gef-master_4353"/>
+              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
           <repository
               url="http://download.eclipse.org/releases/neon"/>
         </repositoryList>
@@ -1172,7 +1155,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -1256,7 +1238,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -1334,7 +1315,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -1409,7 +1389,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="VIATRA-Luna" sequenceNumber="1495528700">
+<target name="VIATRA-Luna" sequenceNumber="1496826765">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.8.2.v201511170833"/>
@@ -74,10 +74,10 @@
       <repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.0.0.201705230202"/>
-      <unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.0.0.201705230202"/>
-      <unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201705230202"/>
-      <repository location="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC1_gef-master_4353"/>
+      <unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.0.0.201706070723"/>
+      <unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.0.0.201706070723"/>
+      <unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201706070723"/>
+      <repository location="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
     </location>
   </locations>
   <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
