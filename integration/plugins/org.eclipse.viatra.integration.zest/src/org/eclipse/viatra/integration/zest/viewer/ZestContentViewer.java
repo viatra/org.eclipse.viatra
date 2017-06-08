@@ -201,6 +201,7 @@ public class ZestContentViewer extends ContentViewer {
     protected Edge createEdge(ILabelProvider labelProvider, Object contentEdgeNode, Node sourceNode,
             Node targetNode) {
         Edge edge = new Edge(sourceNode, targetNode);
+        ZestProperties.setLabel(edge, () -> labelProvider.getText(contentEdgeNode));
         if (labelProvider instanceof IGraphAttributesProvider2) {
             IGraphAttributesProvider2 graphNodeLabelProvider = (IGraphAttributesProvider2) labelProvider;
             Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentEdgeNode);
@@ -486,7 +487,7 @@ public class ZestContentViewer extends ContentViewer {
             Object contentTargetNode = graphContentProvider.getTarget(contentSourceEdge);
             Node targetNode = getContentNodeMap().get(contentTargetNode); 
             
-            Edge edge = createEdge(labelProvider, contentSourceNode, sourceNode, contentTargetNode, targetNode);
+            Edge edge = createEdge(labelProvider, contentSourceEdge, sourceNode, targetNode);
             contentEdgeMap.put(contentSourceEdge, edge);
             graph.getEdges().add(edge);
         }

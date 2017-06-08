@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.gef.zest.fx.ZestProperties;
-import org.eclipse.gef.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -25,6 +24,7 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.FormattableElement;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
+import org.eclipse.viatra.integration.zest.viewer.IGraphAttributesProvider2;
 
 import com.google.common.collect.Maps;
 
@@ -37,7 +37,7 @@ import javafx.scene.shape.Polygon;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestLabelProvider extends QueryLabelProvider implements IColorProvider, IGraphAttributesProvider {
+public class ZestLabelProvider extends QueryLabelProvider implements IColorProvider, IGraphAttributesProvider2 {
 
     static class DiamondHead extends Polygon {
         public DiamondHead() {
@@ -100,6 +100,13 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
 
     @Override
     public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
+        Map<String, Object> attributes = Maps.newHashMap();
+        attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
+        return attributes;
+    }
+    
+    @Override
+    public Map<String, Object> getEdgeAttributes(Object edge) {
         Map<String, Object> attributes = Maps.newHashMap();
         attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
         return attributes;
