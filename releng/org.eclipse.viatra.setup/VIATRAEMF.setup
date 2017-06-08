@@ -294,11 +294,7 @@
           <repository
               url="http://download.eclipse.org/releases/neon"/>
           <repository
-              url="http://download.itemis.com/updates/releases"/>
-          <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
           <repository
@@ -309,11 +305,7 @@
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
           <repository
-              url="http://download.itemis.com/updates/releases"/>
-          <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
           <repository
