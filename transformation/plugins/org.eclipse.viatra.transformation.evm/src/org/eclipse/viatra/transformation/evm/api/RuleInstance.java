@@ -24,7 +24,6 @@ import org.eclipse.viatra.transformation.evm.notification.ActivationNotification
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationProvider;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -261,6 +260,6 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("spec",specification).add("activations",activations).toString();
+        return String.format("%s{spec=%s, activations=%s}", getClass().getName(), specification, activations);
     }
 }

@@ -9,7 +9,6 @@
  */
 package org.eclipse.viatra.query.testing.core.coverage
 
-import com.google.common.base.Objects
 import com.google.common.collect.Sets
 import com.google.common.math.DoubleMath
 import java.util.HashMap
@@ -35,7 +34,8 @@ class CoverageInfo<T> extends HashMap<T, CoverageState> {
             if ((state !== null) && (otherState !== null)) {
                 result.put(key, state.best(otherState))
             } else {
-                result.put(key, Objects.firstNonNull(state, otherState))
+                
+                result.put(key, if (state != null) state else otherState)
             }
         }
         return result

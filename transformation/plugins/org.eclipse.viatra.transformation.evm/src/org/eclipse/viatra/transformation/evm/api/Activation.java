@@ -111,8 +111,6 @@ public class Activation<EventAtom> {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).
-                add("atom",atom).
-                add("state",state).toString();
+        return String.format("%s{atom=%s, state=%s}", getClass().getName(), atom, state);
     }
 }

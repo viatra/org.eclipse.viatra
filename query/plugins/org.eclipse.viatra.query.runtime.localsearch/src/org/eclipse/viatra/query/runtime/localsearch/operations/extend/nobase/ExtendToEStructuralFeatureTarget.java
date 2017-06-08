@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -46,7 +47,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
             // This is to ensure that the feature exists for the given type
             if(! feature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
                 // TODO planner should ensure the proper supertype relation
-                it = Iterators.emptyIterator();
+                it = Collections.emptyIterator();
                 return;
             }
             final Object featureValue = value.eGet(feature);
@@ -55,13 +56,13 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
                     final Collection<Object> objectCollection = (Collection<Object>) featureValue;
                     it = objectCollection.iterator();
                 } else {
-                    it = Iterators.emptyIterator();
+                    it = Collections.emptyIterator();
                 }
             } else {
                 if (featureValue != null) {
                     it = Iterators.singletonIterator(featureValue);
                 } else {
-                    it = Iterators.emptyIterator();
+                    it = Collections.emptyIterator();
                 }
             }
         } catch (ClassCastException e) {

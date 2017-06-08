@@ -22,7 +22,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -145,6 +144,6 @@ public class RuleSpecification<EventAtom> {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("lifecycle", lifeCycle).add("jobs", jobs).toString();
+        return String.format("%s{lifecycle=%s, jobs=%s}", getClass().getName(), lifeCycle, jobs);
     }
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class AggregatorExtend extends ExtendOperation<Object> {
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         call = helper.createCall(frame, context);
         Object aggregate = call.aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn(), frame);
-        it = aggregate == null ? Iterators.emptyIterator() : Iterators.<Object>singletonIterator(aggregate);
+        it = aggregate == null ? Collections.emptyIterator() : Iterators.<Object>singletonIterator(aggregate);
         
     }
 

@@ -16,7 +16,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -144,6 +143,6 @@ public class ActivationLifeCycle {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("table", stateTransitionTable).toString();
+        return String.format("%s{table=%s}", getClass().getName(), stateTransitionTable);
     }
 }

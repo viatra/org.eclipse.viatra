@@ -338,9 +338,11 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             for (Pattern pattern : model.getPatterns()) {
                 for (IEObjectDescription shadowingPatternDescription : duplicateChecker.findDuplicates(pattern)) {
                     QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
-                    URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); 
-                    String otherResourcePath = Objects.firstNonNull(otherResourceUri.toPlatformString(true),
-                            otherResourceUri.toFileString());
+                    URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment();
+                    String otherResourcePath = otherResourceUri.toPlatformString(true);
+                    if (otherResourcePath == null) {
+                        otherResourcePath = otherResourceUri.toFileString();
+                    }
                     error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName,
                             otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
                             IssueCodes.DUPLICATE_PATTERN_DEFINITION);

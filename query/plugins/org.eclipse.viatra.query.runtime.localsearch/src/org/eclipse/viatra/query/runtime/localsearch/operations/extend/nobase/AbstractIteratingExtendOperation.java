@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -52,7 +53,7 @@ public abstract class AbstractIteratingExtendOperation<T> extends ExtendOperatio
                 if (input instanceof EObject){
                     return ((EObject) input).eAllContents();
                 }
-                return Iterators.emptyIterator();
+                return Collections.emptyIterator();
             }
         }));
     }

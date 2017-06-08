@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,12 +49,12 @@ public class ExpressionEval extends ExtendOperation<Object> {
             if (result != null){
                 it = Iterators.singletonIterator(result);
             } else {
-                it = Iterators.emptyIterator();
+                it = Collections.emptyIterator();
             }
         } catch (Exception e) {
             Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
             logger.warn("Error while evaluating expression", e);
-            it = Iterators.emptyIterator();
+            it = Collections.emptyIterator();
         }
     }
     

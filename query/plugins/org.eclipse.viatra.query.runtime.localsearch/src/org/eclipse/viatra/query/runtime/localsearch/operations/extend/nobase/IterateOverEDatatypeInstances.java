@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,7 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
                                     return ((List<?>)input.eGet(attribute)).iterator();
                                 }else{
                                     Object o = input.eGet(attribute);
-                                    return o == null ? Iterators.emptyIterator() : Iterators.singletonIterator(o);
+                                    return o == null ? Collections.emptyIterator() : Iterators.singletonIterator(o);
                                 }
                             }
                         })
