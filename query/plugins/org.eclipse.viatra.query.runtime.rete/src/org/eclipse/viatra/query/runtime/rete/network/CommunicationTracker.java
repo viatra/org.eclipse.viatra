@@ -100,18 +100,7 @@ public final class CommunicationTracker {
 
         for (int i = 0; i < representatives.size(); i++) { // groups for SCC representatives
             final Node representative = representatives.get(i);
-            final boolean isSingleton = sccInformationProvider.sccs.getPartition(representative).size() == 1;
-            final boolean isReceiver = representative instanceof Receiver;
-            final boolean isDefault = isReceiver && ((Receiver) representative).getMailbox() instanceof DefaultMailbox;
-            
-            
-            CommunicationGroup group = null;
-            if (isSingleton && (isDefault || !isReceiver)) {
-                group = new CommunicationGroup.Singleton(representative, i);
-            } else {
-                group = new CommunicationGroup.Recursive(representative, i);
-            }
-            groupMap.put(representative, group);
+            createAndStoreGroup(representative, i);
         }
         
         minGroupId = 0;
@@ -293,6 +282,22 @@ public final class CommunicationTracker {
     public boolean isEmpty() {
         return groupQueue.isEmpty();
     }
+    
+    protected CommunicationGroup createAndStoreGroup(final Node representative, final int index) {
+        final boolean isSingleton = sccInformationProvider.sccs.getPartition(representative).size() == 1;
+        final boolean isReceiver = representative instanceof Receiver;
+        final boolean isDefault = isReceiver && ((Receiver) representative).getMailbox() instanceof DefaultMailbox;
+        
+        CommunicationGroup group = null;
+        if (isSingleton && (isDefault || !isReceiver)) {
+            group = new CommunicationGroup.Singleton(representative, index);
+        } else {
+            group = new CommunicationGroup.Recursive(representative, index);
+        }
+        groupMap.put(representative, group);
+        
+        return group;
+    }
 
     /**
      * Registers the dependency that the target {@link Node} depends on the source {@link Node}. In other words, source
@@ -318,15 +323,13 @@ public final class CommunicationTracker {
         // create groups if they do not yet exist
         CommunicationGroup sourceGroup = groupMap.get(sourceRepresentative);
         if (sourceGroup == null) {
-            sourceGroup = new CommunicationGroup.Singleton(sourceRepresentative, --minGroupId);
-            groupMap.put(sourceRepresentative, sourceGroup);
+            sourceGroup = createAndStoreGroup(sourceRepresentative, --minGroupId);
         }
         final int sourceIndex = sourceGroup.identifier; 
         
         CommunicationGroup targetGroup = groupMap.get(targetRepresentative);
         if (targetGroup == null) {
-            targetGroup = new CommunicationGroup.Singleton(targetRepresentative, ++maxGroupId);
-            groupMap.put(targetRepresentative, targetGroup);
+            targetGroup = createAndStoreGroup(targetRepresentative, ++maxGroupId);
         }
         final int targetIndex = targetGroup.identifier;
         
