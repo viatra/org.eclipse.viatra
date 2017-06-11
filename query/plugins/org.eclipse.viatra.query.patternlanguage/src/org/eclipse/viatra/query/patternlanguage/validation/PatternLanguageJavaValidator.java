@@ -83,7 +83,6 @@ import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
-import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
