@@ -157,8 +157,13 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
     protected EObject doCreate(EObject container, EReference reference, EClass clazz)
             throws ModelManipulationException {
         EObject obj = EcoreUtil.create(clazz);
-        Command createCommand = AddCommand.create(domain, container, reference, obj);
-        executeCommand(createCommand);
+        Command command;
+        if(reference.isMany()) {
+            command = AddCommand.create(domain, container, reference, obj);
+        } else {
+            command = SetCommand.create(domain, container, reference, obj);
+        }
+        executeCommand(command);
         return obj;
     }
 
