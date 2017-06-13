@@ -25,13 +25,15 @@ public class ViatraQueryGeneratorPlugin extends AbstractUIPlugin {
     }
 
     @Override
-    public void start(BundleContext bundleContext) {
+    public void start(BundleContext bundleContext) throws Exception {
         INSTANCE = this;
         ViatraQueryGeneratorPlugin.context = bundleContext;
+        super.start(bundleContext);
     }
 
     @Override
-    public void stop(BundleContext bundleContext) {
+    public void stop(BundleContext bundleContext) throws Exception {
+        super.stop(bundleContext);
         ViatraQueryGeneratorPlugin.context = null;
         INSTANCE = null;
     }
