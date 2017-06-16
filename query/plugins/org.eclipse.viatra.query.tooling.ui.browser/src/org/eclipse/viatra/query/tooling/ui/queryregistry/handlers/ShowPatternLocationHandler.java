@@ -37,6 +37,8 @@ import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -74,19 +76,28 @@ public abstract class ShowPatternLocationHandler extends AbstractHandler {
             uriOpener.open(patternBasedProvider.getSpecificationSourceURI(), true);            
         } else {
             List<String> list = Lists.newArrayList(Splitter.on(".").split(provider.getFullyQualifiedName()));
-            Pattern p = PatternLanguageFactory.eINSTANCE.createPattern();
-            p.setName(list.get(list.size() - 1));
-            list.set(list.size() - 1, new EMFPatternLanguageJvmModelInferrerUtil().matcherClassName(p)); 
             
-            String fqn = Joiner.on(".").join(list);
-            SearchPattern pattern = SearchPattern.createPattern(fqn, IJavaSearchConstants.CLASS, IJavaSearchConstants.ALL_OCCURRENCES, SearchPattern.R_EXACT_MATCH);
+            Pattern p = PatternLanguageFactory.eINSTANCE.createPattern();
+            String patternName = list.remove(list.size() - 1);
+            p.setName(patternName);
+            EMFPatternLanguageJvmModelInferrerUtil inferrerUtil = new EMFPatternLanguageJvmModelInferrerUtil();
+            String querySpecificationClassName = inferrerUtil.querySpecificationClassName(p); 
+            
+            String publicFqn = Joiner.on(".").join(Iterables.concat(list, ImmutableList.of("util", querySpecificationClassName)));
+            String privateFqn = Joiner.on(".").join(Iterables.concat(list, ImmutableList.of("internal", querySpecificationClassName)));
+            SearchPattern publicPattern = SearchPattern.createPattern(publicFqn, IJavaSearchConstants.CLASS, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH);
+            SearchPattern privatePattern = SearchPattern.createPattern(privateFqn, IJavaSearchConstants.CLASS, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH);
             IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
             LocationSearchRequestor requestor = new LocationSearchRequestor();
             
             try {
-                new SearchEngine().search(pattern, new SearchParticipant[]{SearchEngine.getDefaultSearchParticipant()}, scope, requestor, new NullProgressMonitor());
+                // Try to find first public, then private query specification definition
+                new SearchEngine().search(publicPattern, new SearchParticipant[]{SearchEngine.getDefaultSearchParticipant()}, scope, requestor, new NullProgressMonitor());
                 if (!requestor.opened) {
-                    MessageDialog.openWarning(HandlerUtil.getActiveShellChecked(event), "Show Location", String.format("Cannot open event source. Is contributing project %s indexed by JDT?", provider.getSourceProjectName()));
+                    new SearchEngine().search(privatePattern, new SearchParticipant[]{SearchEngine.getDefaultSearchParticipant()}, scope, requestor, new NullProgressMonitor());
+                    if (!requestor.opened) {
+                        MessageDialog.openWarning(HandlerUtil.getActiveShellChecked(event), "Show Location", String.format("Cannot open source pattern %s. Is contributing project %s indexed by JDT?", provider.getFullyQualifiedName(), provider.getSourceProjectName()));
+                    }
                 }
             } catch (CoreException e) {
                 throw new ExecutionException("Error while opening editor", e);
