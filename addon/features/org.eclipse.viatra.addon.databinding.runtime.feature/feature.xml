@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.databinding.runtime.feature"
       label="VIATRA Data Binding Integration"
-      version="1.6.0.qualifier"
+      version="1.7.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -21,8 +21,8 @@
 
    <requires>
       <import feature="org.eclipse.emf.databinding"/>
-      <import feature="org.eclipse.viatra.query.runtime.feature" version="1.6.0" match="equivalent"/>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.runtime.feature" version="1.7.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.7.0" match="equivalent"/>
    </requires>
 
    <plugin

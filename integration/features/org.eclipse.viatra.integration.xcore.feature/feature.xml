@@ -21,7 +21,7 @@
 
    <requires>
       <import feature="org.eclipse.emf.ecore.xcore.sdk"/>
-      <import feature="org.eclipse.viatra.query.language.feature" version="1.6.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.language.feature" version="1.7.0" match="equivalent"/>
    </requires>
 
    <plugin

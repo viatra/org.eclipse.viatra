@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.cep.feature"
       label="VIATRA-CEP framework (Incubation)"
-      version="0.16.0.qualifier"
+      version="0.17.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -16,7 +16,7 @@
    </description>
 
    <requires>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.7.0" match="equivalent"/>
    </requires>
 
    <plugin
