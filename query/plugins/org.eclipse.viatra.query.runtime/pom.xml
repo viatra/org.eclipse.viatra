@@ -5,7 +5,7 @@
     <parent>
         <artifactId>org.eclipse.viatra.parent.core</artifactId>
         <groupId>org.eclipse.viatra</groupId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.1-SNAPSHOT</version>
         <relativePath>../../../releng/org.eclipse.viatra.parent.core/pom.xml</relativePath>
     </parent>
   <artifactId>org.eclipse.viatra.query.runtime</artifactId>

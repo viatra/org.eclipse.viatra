@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graphiti Integration for VIATRA (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.integration.graphiti;singleton:=true
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.16.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.graphiti.ui;bundle-version="0.8.2",
  org.eclipse.core.commands;bundle-version="3.6.0",
  org.eclipse.ui;bundle-version="3.7.0",
- org.eclipse.viatra.query.tooling.ui;bundle-version="[1.6.0,1.7.0)",
+ org.eclipse.viatra.query.tooling.ui;bundle-version="[1.6.1,1.7.0)",
  org.eclipse.emf.edit;bundle-version="2.7.2",
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.200",
  org.eclipse.graphiti;bundle-version="0.8.2",
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.graphiti.ui;bundle-version="0.8.2",
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.emf.transaction;bundle-version="1.4.0",
  org.eclipse.core.expressions,
- org.eclipse.viatra.query.runtime;bundle-version="[1.6.0,1.7.0)"
+ org.eclipse.viatra.query.runtime;bundle-version="[1.6.1,1.7.0)"
 Bundle-Vendor: Eclipse VIATRA Project
 Import-Package: com.google.common.base;version="15.0.0",
  com.google.common.collect;version="15.0.0"

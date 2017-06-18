@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.tooling.ui.visualization.feature"
       label="VIATRA Query Visualization (Incubation)"
-      version="0.16.0.qualifier"
+      version="0.16.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -20,8 +20,8 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.6.0" match="compatible"/>
-      <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="0.16.0" match="compatible"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.6.1" match="compatible"/>
+      <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="0.16.1" match="compatible"/>
       <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.fx.jface" version="5.0.0" match="compatible"/>

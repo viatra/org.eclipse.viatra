@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query Generator Model Editor
-Bundle-Version: 1.6.0.qualifier
+Bundle-Version: 1.6.1.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.generator.model.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version="[1.6.0,1.7.0)";visibility:=reexport,
+Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version="[1.6.1,1.7.0)";visibility:=reexport,
  org.eclipse.xtext.ui;bundle-version="[2.9.0,2.13.0)",
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0",
@@ -16,11 +16,12 @@ Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version=
  org.eclipse.compare,
  org.eclipse.jdt.core,
  org.eclipse.emf.codegen.ecore,
- org.eclipse.viatra.query.tooling.core;bundle-version="[1.6.0,1.7.0)"
+ org.eclipse.viatra.query.tooling.core;bundle-version="[1.6.1,1.7.0)"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.viatra.query.tooling.generator.model.ui.contentassist,
  org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr,
- org.eclipse.viatra.query.tooling.generator.model.ui.quickfix
+ org.eclipse.viatra.query.tooling.generator.model.ui.quickfix,
+ org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr.internal
 Bundle-Activator: org.eclipse.viatra.query.tooling.generator.model.ui.internal.GeneratorModelActivator
 Bundle-Vendor: Eclipse VIATRA Project

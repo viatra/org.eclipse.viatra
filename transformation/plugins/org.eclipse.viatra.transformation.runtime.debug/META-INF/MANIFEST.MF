@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Model Transformation Debugger Runtime (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.transformation.runtime.debug;singleton:=true
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.16.1.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.6.0,1.7.0)",
- org.eclipse.viatra.transformation.evm;bundle-version="[1.6.0,1.7.0)",
+Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.6.1,1.7.0)",
+ org.eclipse.viatra.transformation.evm;bundle-version="[1.6.1,1.7.0)",
  org.eclipse.xtend.lib;bundle-version="[2.9.0,3.0.0)",
- org.eclipse.viatra.transformation.runtime.transformationtrace;bundle-version="[0.16.0,0.17.0)",
- org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.6.0,1.7.0)"
+ org.eclipse.viatra.transformation.runtime.transformationtrace;bundle-version="[0.16.1,0.17.0)",
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.6.1,1.7.0)"
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j
 Export-Package: org.eclipse.viatra.transformation.debug.activationcoder,
