@@ -212,6 +212,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     }
 
     @Override
+    public boolean hasMatch() {
+        return rawHasMatch(emptyArray());
+    }
+    
+    @Override
     public boolean hasMatch(Match partialMatch) {
         return rawHasMatch(partialMatch.toArray());
     }

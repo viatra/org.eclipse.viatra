@@ -21,6 +21,7 @@ import java.util.Set;
  * @param <Match>
  *            the IPatternMatch type representing a single match of this pattern.
  * @author Bergmann Gábor
+ * @noimplement This interface is not intended to be implemented by clients. Implement BaseMatcher instead.
  */
 public interface ViatraQueryMatcher<Match extends IPatternMatch> {
     // REFLECTION
@@ -78,6 +79,14 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
     // MATCH CHECKING
+    /**
+     * Indicates whether the query has any kind of matches.
+     * 
+     * @return true if there exists a valid match of the pattern.
+     * @since 1.7
+     */
+    public abstract boolean hasMatch();
+    
     /**
      * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match, under
      * any possible substitution of the unspecified parameters (if any).
