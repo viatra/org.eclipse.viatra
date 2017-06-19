@@ -12,8 +12,10 @@
 package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -24,6 +26,9 @@ import org.eclipse.viatra.query.runtime.rete.network.Supplier;
  * directly!
  * 
  * @author Gabor Bergmann
+ * @noimplement Rely on the provided implementations
+ * @noreference Use only via standard Node and Indexer interfaces
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MemoryNullIndexer extends NullIndexer {
 
@@ -39,8 +44,8 @@ public class MemoryNullIndexer extends NullIndexer {
      *            the parent node that owns the memory
      */
     public MemoryNullIndexer(ReteContainer reteContainer, int tupleWidth, Collection<Tuple> memory, Supplier parent,
-            Receiver activeNode) {
-        super(reteContainer, tupleWidth, parent, activeNode);
+            Receiver activeNode, List<ListenerSubscription> sharedSubscriptionList) {
+        super(reteContainer, tupleWidth, parent, activeNode, sharedSubscriptionList);
         this.memory = memory;
     }
 
