@@ -14,10 +14,12 @@ package org.eclipse.viatra.query.runtime.rete.index;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -29,6 +31,9 @@ import org.eclipse.viatra.query.runtime.rete.network.Supplier;
  * active node). Do not attach parents directly!
  * 
  * @author Gabor Bergmann
+ * @noimplement Rely on the provided implementations
+ * @noreference Use only via standard Node and Indexer interfaces
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class NullIndexer extends SpecializedProjectionIndexer {
 
@@ -39,8 +44,9 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
     static Collection<Tuple> nullSingleton = Collections.singleton(nullSignature);
     static Collection<Tuple> emptySet = Collections.emptySet();
 
-    public NullIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, Node activeNode) {
-        super(reteContainer, TupleMask.linear(0, tupleWidth), parent, activeNode);
+    public NullIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, 
+            Node activeNode, List<ListenerSubscription> sharedSubscriptionList) {
+        super(reteContainer, TupleMask.linear(0, tupleWidth), parent, activeNode, sharedSubscriptionList);
     }
 
     public Collection<Tuple> get(Tuple signature) {
@@ -69,10 +75,11 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
         return getTuples().iterator();
     }
 
-    public void propagate(Direction direction, Tuple updateElement) {
+    @Override
+    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement) {
         boolean radical = (direction == Direction.REVOKE && isEmpty())
                 || (direction == Direction.INSERT && isSingleElement());
-        propagate(direction, updateElement, nullSignature, radical);
+        listener.notifyIndexerUpdate(direction, updateElement, nullSignature, radical);
     }
 
 }

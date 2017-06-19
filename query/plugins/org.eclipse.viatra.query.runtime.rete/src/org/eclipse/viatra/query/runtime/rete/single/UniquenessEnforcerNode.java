@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -21,6 +22,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
@@ -69,6 +72,11 @@ public class UniquenessEnforcerNode extends StandardNode
     protected final Mailbox mailbox;
     private final TupleMask nullMask;
     private final TupleMask identityMask;
+    
+    /**
+     * @since 1.7
+     */
+    protected final List<ListenerSubscription> specializedListeners;
 
     public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth) {
         this(reteContainer, tupleWidth, false);
@@ -104,6 +112,7 @@ public class UniquenessEnforcerNode extends StandardNode
             TupleMask coreMask, TupleMask posetMask, IPosetComparator posetComparator) {
         super(reteContainer);
         this.parents = new ArrayList<Supplier>();
+        this.specializedListeners = new ArrayList<ListenerSubscription>();
         this.memory = new TupleMemory();
         this.rederivableMemory = new TupleMemory();
         this.tupleWidth = tupleWidth;
@@ -280,14 +289,16 @@ public class UniquenessEnforcerNode extends StandardNode
      * @since 1.6
      */
     protected void propagate(Direction direction, Tuple update) {
+        // See Bug 518434
+        // trivial (non-active) indexers must be updated before other listeners
+        // so that if they are joined against each other, trivial indexers lookups 
+        // will be consistent with their notifications;
+        // also, their subscriptions must share a single order
+        for (ListenerSubscription subscription : specializedListeners) {
+            subscription.propagate(direction, update);
+        }
+        
         propagateUpdate(direction, update);
-
-        if (memoryIdentityIndexer != null) {
-            memoryIdentityIndexer.propagate(direction, update);
-        }
-        if (memoryNullIndexer != null) {
-            memoryNullIndexer.propagate(direction, update);
-        }
     }
 
     @Override
@@ -316,7 +327,7 @@ public class UniquenessEnforcerNode extends StandardNode
 
     public MemoryNullIndexer getNullIndexer() {
         if (memoryNullIndexer == null) {
-            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory, this, this);
+            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory, this, this, specializedListeners);
             reteContainer.getTracker().registerDependency(this, memoryNullIndexer);
         }
         return memoryNullIndexer;
@@ -324,7 +335,7 @@ public class UniquenessEnforcerNode extends StandardNode
 
     public MemoryIdentityIndexer getIdentityIndexer() {
         if (memoryIdentityIndexer == null) {
-            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory, this, this);
+            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory, this, this, specializedListeners);
             reteContainer.getTracker().registerDependency(this, memoryIdentityIndexer);
         }
         return memoryIdentityIndexer;

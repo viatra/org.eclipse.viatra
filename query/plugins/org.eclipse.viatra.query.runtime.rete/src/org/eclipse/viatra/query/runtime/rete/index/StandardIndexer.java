@@ -60,7 +60,12 @@ public abstract class StandardIndexer extends BaseNode implements Indexer {
     }
 
     public void attachListener(IndexerListener listener) {
-        listeners.add(listener);
+        // See Bug 518434
+        // Must add to the first position, so that the later listeners are notified earlier.
+        // Thus if the beta node added as listener is also an indirect descendant of the same indexer on its opposite slot, 
+        // then the beta node is connected later than its ancestor's listener, therefore it will be notified earlier,
+        // eliminating duplicate insertions and lost deletions that would result from fall-through update propagation
+        listeners.add(0, listener);
         reteContainer.getTracker().registerDependency(this, listener.getOwner());
     }
 
