@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.rete.network.Node;
 
 /**
  * @author Gabor Bergmann
@@ -39,12 +40,28 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     protected TupleMask mask;
 
     /**
+     * The node owning this memory. May be null.
+     * @since 1.7
+     */
+    protected Node owner;
+
+    /**
      * @param mask
      *            The mask used to index the matchings
      */
     public MaskedTupleMemory(TupleMask mask) {
-        super();
+        this(mask, null);
+    }
+
+    /**
+     * @param mask
+     *            The mask used to index the matchings
+     * @param owner the node that owns this memory
+     * @since 1.7
+     */
+    public MaskedTupleMemory(TupleMask mask, Node owner) {
         this.mask = mask;
+        this.owner = owner;
         matchings = CollectionsFactory.getMap();//new HashMap<Tuple, Collection<Tuple>>();
     }
 
@@ -77,7 +94,10 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
             matchings.put(signature, coll);
         }
         if (!coll.add(ps)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                    String.format(
+                            "Duplicate insertion of tuple %s into node %s", 
+                            ps, owner));
         }
 
         return change;
@@ -101,7 +121,10 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     public boolean remove(Tuple ps, Tuple signature) {
         Collection<Tuple> coll = matchings.get(signature);
         if (!coll.remove(ps)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                    String.format(
+                            "Duplicate deletion of tuple %s from node %s", 
+                            ps, owner));
         }
 
         boolean change = coll.isEmpty();
@@ -191,4 +214,13 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
         return matchings.keySet().size();
     }
 
+    /**
+     * The node owning this memory. May be null.
+     * @since 1.7
+     */
+    public Node getOwner() {
+        return owner;
+    }
+
+    
 }

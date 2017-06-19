@@ -42,7 +42,7 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
      */
     public IndexerWithMemory(ReteContainer reteContainer, TupleMask mask) {
         super(reteContainer, mask);
-        memory = new MaskedTupleMemory(mask);
+        memory = new MaskedTupleMemory(mask, this);
         reteContainer.registerClearable(memory);
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);

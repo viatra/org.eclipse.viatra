@@ -70,13 +70,19 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
             case INSERT:
                 final Tuple insertedOutput = core.performEvaluation(updateElement);
                 if (insertedOutput != null) {
-                    outputCache.put(updateElement, insertedOutput);
+                    Tuple previous = outputCache.put(updateElement, insertedOutput);
+                    if (previous != null) {
+                        throw new IllegalStateException(
+                                String.format(
+                                        "Duplicate insertion of tuple %s into node %s", 
+                                        updateElement, this));
+                    }
                     propagateUpdate(direction, insertedOutput);
                 }
                 break;
             case REVOKE:
                 final Tuple revokedOutput = outputCache.remove(updateElement);
-                if (revokedOutput != null) {
+                if (revokedOutput != null) { // may be null if no result was yielded
                     propagateUpdate(direction, revokedOutput);
                 }				
         }

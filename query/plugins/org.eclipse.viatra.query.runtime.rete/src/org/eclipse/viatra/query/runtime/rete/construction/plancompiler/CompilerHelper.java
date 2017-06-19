@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -307,8 +308,8 @@ public class CompilerHelper {
         public JoinHelper(SubPlan planToCompile, PlanningTrace primaryCompiled, PlanningTrace callTrace) {
             super();
 
-            Set<PVariable> primaryVariables = new HashSet<PVariable>(primaryCompiled.getVariablesTuple());
-            Set<PVariable> secondaryVariables = new HashSet<PVariable>(callTrace.getVariablesTuple());
+            Set<PVariable> primaryVariables = new LinkedHashSet<PVariable>(primaryCompiled.getVariablesTuple());
+            Set<PVariable> secondaryVariables = new LinkedHashSet<PVariable>(callTrace.getVariablesTuple());
             int oldNodes = 0;
             Set<Integer> introducingSecondaryIndices = new TreeSet<Integer>();
             for (PVariable var : secondaryVariables) {
