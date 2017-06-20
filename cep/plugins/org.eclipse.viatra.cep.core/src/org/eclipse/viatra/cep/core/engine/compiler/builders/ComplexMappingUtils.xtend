@@ -66,7 +66,7 @@ class ComplexMappingUtils {
                     it
                 } else {
                     val renamed = renamings.get(it)
-                    if (renamed == null)
+                    if (renamed === null)
                         '''«relabelingUniqueID»|«it»'''
                     else
                         renamed
@@ -99,7 +99,7 @@ class ComplexMappingUtils {
         var State nextState = null
 
         for (eventPatternReference : eventPatternReferences) {
-            if (nextState == null) {
+            if (nextState === null) {
                 nextState = mapWithMultiplicity(eventPatternReference, automaton, preState)
                 firstCreatedState = nextState
             } else {

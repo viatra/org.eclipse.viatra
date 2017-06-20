@@ -52,7 +52,7 @@ class JDTEventHandler implements EventHandler<JDTEventAtom>{
         val activations = instance.allActivations
         val activation = activations.findFirst[it.atom == eventAtom]
 
-        if(activation == null){
+        if(activation === null){
             return instance.createActivation(eventAtom)
         } else {
             val atom = activation.atom

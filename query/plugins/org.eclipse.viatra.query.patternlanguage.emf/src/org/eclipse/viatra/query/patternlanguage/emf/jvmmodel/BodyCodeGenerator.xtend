@@ -290,7 +290,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.newLine
 
 
-                target.append('''}, «IF outputVariableName != null » «outputVariableName.escape» «ELSE» null«ENDIF»); ''')
+                target.append('''}, «IF outputVariableName !== null » «outputVariableName.escape» «ELSE» null«ENDIF»); ''')
                 target.newLine
             }
             
@@ -321,7 +321,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append('''new ''')
                 target.append(aggregatorFactoryType)
                 target.append('''().getAggregatorLogic(''')
-                if (aggregatorParameterType == null) {
+                if (aggregatorParameterType === null) {
                     target.append(Void)
                 } else {
                     target.append(aggregatorParameterType)

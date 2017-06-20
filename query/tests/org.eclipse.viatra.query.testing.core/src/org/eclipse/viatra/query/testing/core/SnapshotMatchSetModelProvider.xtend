@@ -72,7 +72,7 @@ class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
                 Iterable<QuerySnapshot> snapshot, String FQN) {
                 if(snapshot.empty) throw new IllegalArgumentException(snapshotModel + " is not a Snapshot model")
                 val record = (snapshot).head?.matchSetRecords.findFirst[FQN == it.patternQualifiedName]
-                if (record == null)
+                if (record === null)
                     throw new IllegalArgumentException("Could not find snapshot for " + FQN + " in " + snapshotModel)
                 record
             }

@@ -12,7 +12,6 @@ package org.eclipse.viatra.cep.vepl.validation
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.Lists
-import org.eclipse.viatra.cep.vepl.vepl.AbstractAtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression
@@ -75,7 +74,7 @@ class VeplValidator extends AbstractVeplValidator {
 
     @Check
     def validPatternCallArguments(ParameterizedPatternCall patternCall) {
-        if(!patternCall.hasParameterList || patternCall.eventPattern == null) return
+        if(!patternCall.hasParameterList || patternCall.eventPattern === null) return
 
         var parameterList = patternCall.parameterList
         var eventPatternParameter = patternCall.eventPattern
@@ -106,13 +105,13 @@ class VeplValidator extends AbstractVeplValidator {
     }
 
     def private int getTypedParameterListSize(TypedParameterList parameterList) {
-        if(parameterList == null) return 0
+        if(parameterList === null) return 0
         if(parameterList.parameters.nullOrEmpty) return 0
         return parameterList.parameters.size
     }
 
     def private int getTraitParameterListSize(TraitList traitList) {
-        if (traitList == null) {
+        if (traitList === null) {
             return 0
         } else {
             traitList.traits.fold(0)[count, trait|count + trait.parameters.parameters.size]
@@ -164,7 +163,7 @@ class VeplValidator extends AbstractVeplValidator {
     def complexEventPatternWithPlainAtomExpression(ComplexEventPattern eventPattern) {
         val expression = eventPattern.complexEventExpression
 
-        if (expression != null && expression.right.empty && (expression.left instanceof Atom)) {
+        if (expression !== null && expression.right.empty && (expression.left instanceof Atom)) {
             val atom = expression.left as Atom
 
             if (!atom.hasMultiplicity) {
@@ -235,7 +234,7 @@ class VeplValidator extends AbstractVeplValidator {
 
     @Check
     def negativeOperatorAndOtherOperatorCombinations(ComplexEventExpression complexEventExpression) {
-        if (complexEventExpression.negOperator == null) {
+        if (complexEventExpression.negOperator === null) {
             return
         }
 
@@ -282,7 +281,7 @@ class VeplValidator extends AbstractVeplValidator {
     @Check
     def duplicateTraitParameterNamesInDiamondInheritance(AtomicEventPattern atomicEventPattern) {
         val traitList = atomicEventPattern.traits
-        if (traitList == null) {
+        if (traitList === null) {
             return
         }
 
@@ -312,13 +311,13 @@ class VeplValidator extends AbstractVeplValidator {
     @Check
     def traitParameterShadowing(AtomicEventPattern atomicEventPattern) {
         val traitList = atomicEventPattern.traits
-        if (traitList == null) {
+        if (traitList === null) {
             return
         }
 
         val shadowedParameters = Lists::newArrayList
 
-        if (atomicEventPattern.parameters != null) { // defensive
+        if (atomicEventPattern.parameters !== null) { // defensive
             for (parameter : atomicEventPattern.parameters.parameters) {
                 for (trait : traitList.traits) {
                     for (traitParam : trait.parameters.parameters) {

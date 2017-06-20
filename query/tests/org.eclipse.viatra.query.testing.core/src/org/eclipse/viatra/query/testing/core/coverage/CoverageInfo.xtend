@@ -34,8 +34,7 @@ class CoverageInfo<T> extends HashMap<T, CoverageState> {
             if ((state !== null) && (otherState !== null)) {
                 result.put(key, state.best(otherState))
             } else {
-                
-                result.put(key, if (state != null) state else otherState)
+                result.put(key, state ?: otherState)
             }
         }
         return result

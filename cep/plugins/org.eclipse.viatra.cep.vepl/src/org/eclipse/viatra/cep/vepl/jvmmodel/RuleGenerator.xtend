@@ -101,7 +101,7 @@ class RuleGenerator {
                     typeRefBuilder.typeRef(typeof(Activation),
                         cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
                 parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
-                if (appRule.action != null) {
+                if (appRule.action !== null) {
                     body = appRule.action
                 }
             ]
@@ -124,7 +124,7 @@ class RuleGenerator {
     }
 
     def enumerateAssignableEventPatterns(ITreeAppendable appendable, Rule rule) {
-        if (rule == null || rule.eventPatterns.empty) {
+        if (rule === null || rule.eventPatterns.empty) {
             return ""
         }
 

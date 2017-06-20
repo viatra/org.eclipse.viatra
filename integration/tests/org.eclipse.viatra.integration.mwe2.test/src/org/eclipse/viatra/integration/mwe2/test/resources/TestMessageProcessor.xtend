@@ -36,7 +36,7 @@ class TestMessageProcessor implements IMessageProcessor<String, StringMessage> {
         if(message instanceof StringMessage){
             val castparent = parent as TransformationStep
             val list = castparent.context.get("TestOutput")as BlockingQueue<String>
-            if(list!=null){
+            if(list !== null){
                 list.put(message.parameter)
             }
         }else{

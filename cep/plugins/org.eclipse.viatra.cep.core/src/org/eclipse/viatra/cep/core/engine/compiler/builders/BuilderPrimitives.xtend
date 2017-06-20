@@ -146,7 +146,7 @@ class BuilderPrimitives {
         State postState) {
         val lastState = mapWithMultiplicity(eventPatternReference, automaton, preState)
 
-        if (lastState == null) {
+        if (lastState === null) {
             createEpsilon(preState, postState)
         } else {
             createEpsilon(lastState, postState)
@@ -158,15 +158,15 @@ class BuilderPrimitives {
      */
     def mapWithMultiplicity(EventPatternReference eventPatternReference, Automaton automaton, State preState) {
         var State nextState = null
-        if (eventPatternReference.multiplicity == null) {
-            if (nextState == null) {
+        if (eventPatternReference.multiplicity === null) {
+            if (nextState === null) {
                 nextState = transitionToNewState(automaton, eventPatternReference, preState)
             } else {
                 nextState = transitionToNewState(automaton, eventPatternReference, nextState)
             }
         } else if (eventPatternReference.multiplicity instanceof Multiplicity) {
             for (var i = 0; i < (eventPatternReference.multiplicity as Multiplicity).value; i++) {
-                if (nextState == null) {
+                if (nextState === null) {
                     nextState = transitionToNewState(automaton, eventPatternReference, preState)
                 } else {
                     nextState = transitionToNewState(automaton, eventPatternReference, nextState)
@@ -176,13 +176,13 @@ class BuilderPrimitives {
             eventPatternReference.multiplicity instanceof Infinite) {
 
             if (eventPatternReference.multiplicity instanceof AtLeastOne) {
-                if (nextState == null) {
+                if (nextState === null) {
                     nextState = transitionToNewState(automaton, eventPatternReference, preState)
                 } else {
                     nextState = transitionToNewState(automaton, eventPatternReference, nextState)
                 }
             }
-            if (nextState == null) {
+            if (nextState === null) {
                 nextState = selfTransition(eventPatternReference, preState)
             } else {
                 nextState = selfTransition(eventPatternReference, nextState)
@@ -213,7 +213,7 @@ class BuilderPrimitives {
      * Creates an Epsilon-transition between two states.
      */
     def createEpsilon(State preState, State postState) {
-        Preconditions::checkArgument(preState != null && postState != null)
+        Preconditions::checkArgument(preState !== null && postState !== null)
         var epsilon = createEpsilonTransition
         epsilon.preState = preState
         epsilon.postState = postState
@@ -256,7 +256,7 @@ class BuilderPrimitives {
         val timedZoneTrace = traceModel.timedZoneTraces.findFirst [ tzTrace |
             tzTrace.transition.equals(transition)
         ]
-        if (timedZoneTrace == null) {
+        if (timedZoneTrace === null) {
             return
         }
 
@@ -292,7 +292,7 @@ class BuilderPrimitives {
             tzTrace.transition.equals(transition)
         ]
 
-        if (timedZoneTrace != null) {
+        if (timedZoneTrace !== null) {
             newlyCreatedState.inStateOf += timedZoneTrace.timedZone
             traceModel.timedZoneTraces.remove(timedZoneTrace)
         }
@@ -303,7 +303,7 @@ class BuilderPrimitives {
             return
         }
 
-        if ((eventPattern as ComplexEventPattern).timewindow == null) {
+        if ((eventPattern as ComplexEventPattern).timewindow === null) {
             return
         }
 

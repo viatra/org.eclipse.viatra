@@ -40,7 +40,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     }
 
     dispatch def Image getImageInternal(QueryResultTreeMatcher element) {
-        if(element.exception != null){
+        if(element.exception !== null){
             imageRegistry.get(ViatraQueryGUIPlugin.ICON_ERROR)
         } else {
             imageRegistry.get(ViatraQueryGUIPlugin.ICON_MATCHER)
@@ -64,7 +64,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     }
     
     dispatch def String getTextInternal(QueryResultTreeMatcher element) {
-        if(element.exception != null) {
+        if(element.exception !== null) {
             return '''«element.entry?.fullyQualifiedName» - «element.exception.message»'''
         }
         val matcher = element.matcher
@@ -84,7 +84,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     
     dispatch def String getTextInternal(IPatternMatch element) {
         val message = DisplayUtil.getMessage(element)
-        if(message != null) {
+        if(message !== null) {
             return ViatraQueryRuntimeHelper.getMessage(element, message, [adapterFactoryLabelProvider.getText(it)])
         }
         return element.prettyPrint

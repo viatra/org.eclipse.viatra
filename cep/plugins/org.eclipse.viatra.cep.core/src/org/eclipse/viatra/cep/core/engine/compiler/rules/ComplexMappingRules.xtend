@@ -64,7 +64,7 @@ class ComplexMappingRules extends MappingRules {
      */
     val followsPattern2AutomatonRule = createRule.precondition(FollowsPatternMatcher::querySpecification).action [
         val mappedAutomaton = checkForMappedAutomaton(eventPattern)
-        if (mappedAutomaton != null) {
+        if (mappedAutomaton !== null) {
             createTrace(eventPattern, mappedAutomaton)
             return
         }
@@ -95,7 +95,7 @@ class ComplexMappingRules extends MappingRules {
      */
     val orPattern2AutomatonRule = createRule.precondition(OrPatternMatcher::querySpecification).action [
         val mappedAutomaton = checkForMappedAutomaton(eventPattern)
-        if (mappedAutomaton != null) {
+        if (mappedAutomaton !== null) {
             createTrace(eventPattern, mappedAutomaton)
             return
         }
@@ -126,7 +126,7 @@ class ComplexMappingRules extends MappingRules {
      */
     val andPattern2AutomatonRule = createRule.precondition(AndPatternMatcher::querySpecification).action [
         val mappedAutomaton = checkForMappedAutomaton(eventPattern)
-        if (mappedAutomaton != null) {
+        if (mappedAutomaton !== null) {
             createTrace(eventPattern, mappedAutomaton)
             return
         }
@@ -157,7 +157,7 @@ class ComplexMappingRules extends MappingRules {
      */
     val notPattern2AutomatonRule = createRule.precondition(NotPatternMatcher::querySpecification).action [
         val mappedAutomaton = checkForMappedAutomaton(eventPattern)
-        if (mappedAutomaton != null) {
+        if (mappedAutomaton !== null) {
             createTrace(eventPattern, mappedAutomaton)
             return
         }

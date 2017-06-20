@@ -146,7 +146,7 @@ class AssociationHelper {
 
     def CharSequence set(String instanceName, String targetInstanceName, boolean recurse) '''
         «instanceName».«IF multiple»«association.name».push_back(&«targetInstanceName»)«ELSE»«association.name»=&«targetInstanceName»«ENDIF»;
-        «IF association.getEOpposite != null && recurse»
+        «IF association.getEOpposite !== null && recurse»
             «val ah = CppHelper::getAssociationHelper(association.getEOpposite)»
             «ah.set(targetInstanceName, instanceName, false)»
         «ENDIF»

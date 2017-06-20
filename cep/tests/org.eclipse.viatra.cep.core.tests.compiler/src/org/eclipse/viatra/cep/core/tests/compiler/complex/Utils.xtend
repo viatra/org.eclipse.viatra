@@ -33,11 +33,11 @@ class Utils {
     def public static boolean noOrphanTransitions(Automaton automaton) {
         automaton.states.forall [ s |
             s.outTransitions.forall [ t |
-                t.postState != null
+                t.postState !== null
             ]
         ] && automaton.states.forall [ s |
             s.inTransitions.forall [ t |
-                t.preState != null
+                t.preState !== null
             ]
         ]
     }

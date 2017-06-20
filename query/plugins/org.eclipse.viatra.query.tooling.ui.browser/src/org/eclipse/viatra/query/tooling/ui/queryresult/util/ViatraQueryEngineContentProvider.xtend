@@ -121,7 +121,7 @@ class ViatraQueryEngineContentProvider implements ITreeContentProvider {
     }
     
     override hasChildren(Object element) {
-        return element.children != null && !element.children.empty
+        return element.children !== null && !element.children.empty
     }
     
     /**

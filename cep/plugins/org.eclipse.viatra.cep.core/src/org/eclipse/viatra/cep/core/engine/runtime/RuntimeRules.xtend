@@ -82,7 +82,7 @@ class RuntimeRules {
                     binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
                 ]
 
-                if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
+                if (existingBinding === null) { // if there was no parameter binding yet, it will be recorded now
                     val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
                     newBinding.symbolicName = parameter.symbolicName
                     newBinding.value = parameterValueToBind
@@ -118,7 +118,7 @@ class RuntimeRules {
                     binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
                 ]
 
-                if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
+                if (existingBinding === null) { // if there was no parameter binding yet, it will be recorded now
                     val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
                     newBinding.symbolicName = parameter.symbolicName
                     newBinding.value = parameterValueToBind

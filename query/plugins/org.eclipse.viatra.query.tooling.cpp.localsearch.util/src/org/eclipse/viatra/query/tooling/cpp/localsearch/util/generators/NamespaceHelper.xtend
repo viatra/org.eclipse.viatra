@@ -108,7 +108,7 @@ class NamespaceHelper implements Iterable<String> {
     }
 
     override equals(Object other) {
-        if (other == null)
+        if (other === null)
             false
         else if (!(other instanceof NamespaceHelper))
             false

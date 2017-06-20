@@ -33,7 +33,7 @@ class EMFPatternLanguageTypeRules extends PatternLanguageTypeRules {
     }
    
    def dispatch void inferTypes(EnumValue reference, TypeInformation information) {
-       if (reference.enumeration == null) {
+       if (reference.enumeration === null) {
            // A previous resolution error will prevent type inference to work - it will be reported elsewhere
            return
        }

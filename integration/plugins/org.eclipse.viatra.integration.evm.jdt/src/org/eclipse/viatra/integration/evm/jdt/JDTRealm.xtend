@@ -54,7 +54,7 @@ class JDTRealm implements EventRealm {
     }
 
     static def JDTRealm getInstance() {
-        if (instance == null) {
+        if (instance === null) {
             instance = new JDTRealm
         }
         return instance

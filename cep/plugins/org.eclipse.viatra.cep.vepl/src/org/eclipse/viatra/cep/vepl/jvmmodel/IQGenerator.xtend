@@ -124,7 +124,7 @@ class IQGenerator {
             val patternsNamespace = model.imports.filter[e|(e instanceof QueryImport)].head.importedNamespace.
                 replace('*', '')
             for (p : groupedPatterns.keySet) {
-                if (p != null) {
+                if (p !== null) {
                     val matcher = patternsNamespace + p.name.toFirstUpper + "Matcher"
                     val match = patternsNamespace + p.name.toFirstUpper + "Match"
 
@@ -215,7 +215,7 @@ class IQGenerator {
 
     def requiresAppearAction(QueryResultChangeEventPattern pattern) {
         val changeType = pattern.resultChangeType
-        return (changeType == null || changeType.equals(QueryResultChangeType.FOUND))
+        return (changeType === null || changeType.equals(QueryResultChangeType.FOUND))
     }
 
     def patternsRequiringAppearAction(List<QueryResultChangeEventPattern> patterns) {
@@ -280,7 +280,7 @@ class IQGenerator {
         var Multimap<Pattern, QueryResultChangeEventPattern> groupedPatterns = ArrayListMultimap.create();
 
         for (p : eventPatterns) {
-            if (p.queryReference != null) {
+            if (p.queryReference !== null) {
                 var query = p.queryReference.query
                 groupedPatterns.put(query, (p as QueryResultChangeEventPattern))
             }
@@ -305,7 +305,7 @@ class IQGenerator {
 
     def private getParameterMapping(ITreeAppendable appendable, EObject ctx) {
         var params = (ctx as QueryResultChangeEventPattern).parameters
-        if (params == null) {
+        if (params === null) {
             return
         }
         var eventPatternParams = params.parameters

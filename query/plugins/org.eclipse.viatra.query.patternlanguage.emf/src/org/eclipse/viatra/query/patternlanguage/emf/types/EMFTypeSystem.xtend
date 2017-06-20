@@ -140,19 +140,19 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             } else if (actualType instanceof JavaTransitiveInstancesKey) {
                 val expectedJavaClass = expectedType.javaClass
                 val actualJavaClass = actualType.javaClass
-                return expectedJavaClass != null && actualJavaClass != null
+                return expectedJavaClass !== null && actualJavaClass !== null
                      && expectedJavaClass.isAssignableFrom(actualJavaClass)
             }
         } else if (expectedType instanceof JavaTransitiveInstancesKey) {
             if (actualType instanceof JavaTransitiveInstancesKey) {
                 val expectedJavaClass = expectedType.instanceClass
                 val actualJavaClass = actualType.instanceClass
-                return expectedJavaClass != null && actualJavaClass != null
+                return expectedJavaClass !== null && actualJavaClass !== null
                     && expectedJavaClass.isAssignableFrom(actualJavaClass)
             } else if (actualType instanceof EDataTypeInSlotsKey) {
                 val expectedJavaClass = expectedType.javaClass
                 val actualJavaClass = actualType.javaClass
-                return expectedJavaClass != null && actualJavaClass != null
+                return expectedJavaClass !== null && actualJavaClass !== null
                     && expectedJavaClass.isAssignableFrom(actualJavaClass)
             }
         }
@@ -228,14 +228,14 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     }
 
     private def JvmTypeReference getJvmType(EClassifier classifier, EObject context) {
-        if (classifier != null) {
+        if (classifier !== null) {
             val className = metamodelProvider.getQualifiedClassName(classifier, context);
             if (!Strings.isNullOrEmpty(className)) {
                 return getTypeReferenceForTypeName(className, context);
             }
         }
         // Return Object or EObject if no classifier can be found 
-        val clazz = if(classifier instanceof EClass) typeof(EObject) else typeof(Object)
+        val clazz = if (classifier instanceof EClass) typeof(EObject) else typeof(Object)
         typeReferences.getTypeForName(clazz, context);
     }
 
@@ -243,7 +243,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         val typeRef = typeReferences.getTypeForName(typeName, context);
         val typeReference = primitives.asWrapperTypeIfPrimitive(typeRef);
 
-        if (typeReference == null) {
+        if (typeReference === null) {
             var errorContext = context;
             var contextName = context.toString();
             if (context instanceof Variable && (context as Variable).eContainer() instanceof PatternBody &&
@@ -322,7 +322,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         }
 
         def private Iterable<JavaTransitiveInstancesKey> minimizeJavaTypeList(Iterable<JavaTransitiveInstancesKey> types) {
-            val nonTopTypes = types.filter[instanceClass != null && instanceClass != Object].map[instanceClass].
+            val nonTopTypes = types.filter[instanceClass !== null && instanceClass != Object].map[instanceClass].
                 filterNull
             val javaTypes = <Class<?>>newHashSet(nonTopTypes)
             nonTopTypes.forEach [ key |
@@ -368,7 +368,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
         override typeString(IInputKey type) {
             switch(type) {
-                case type == null : "«null»"
+                case type === null : "«null»"
                 case type instanceof EClassTransitiveInstancesKey && !(type as EClassTransitiveInstancesKey).emfKey.eIsProxy: 
                     '''«(type as EClassTransitiveInstancesKey).emfKey.EPackage.nsURI»::«(type as EClassTransitiveInstancesKey).emfKey.name»''' 
                 EClassTransitiveInstancesKey : '''«type.emfKey.toString»''' 
@@ -408,10 +408,10 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         override isValidType(Type type) {
             if (type instanceof ClassType) {
                 val classifier = type.classname
-                return classifier != null && !classifier.eIsProxy
+                return classifier !== null && !classifier.eIsProxy
             } else if (type instanceof ReferenceType) {
                 val feature = type.refname
-                return feature != null && !feature.eIsProxy
+                return feature !== null && !feature.eIsProxy
             }
             super.isValidType(type)
         }

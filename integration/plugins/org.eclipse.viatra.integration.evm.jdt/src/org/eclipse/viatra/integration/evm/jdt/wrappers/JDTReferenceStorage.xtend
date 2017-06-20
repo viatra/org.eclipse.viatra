@@ -25,7 +25,7 @@ class JDTReferenceStorage implements ReferenceStorage{
     new(ReferenceCollection referenceCollection) {
         this.logger = Logger.getLogger(this.class)
         
-        if(referenceCollection == null) {
+        if(referenceCollection === null) {
             throw new IllegalArgumentException("Reference collection cannot be null")
         }
         try {

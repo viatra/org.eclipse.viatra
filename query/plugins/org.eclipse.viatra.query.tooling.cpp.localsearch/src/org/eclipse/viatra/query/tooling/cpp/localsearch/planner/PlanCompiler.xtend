@@ -94,7 +94,7 @@ class PlanCompiler implements IQueryBackendContext {
     
     private def flattenAndNormalize(PQuery pQuery) {
         val cachedBody = compiledBodies.get(pQuery)
-        if(cachedBody != null)
+        if(cachedBody !== null)
             return cachedBody
         val flatDisjunction = flattener.rewrite(pQuery.disjunctBodies)
         val normalizedDisjunction = normalizer.rewrite(flatDisjunction)

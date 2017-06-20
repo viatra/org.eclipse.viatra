@@ -29,7 +29,7 @@ class JDTBuildState implements BuildState {
         val Field field = state.class.getDeclaredField("structurallyChangedTypes")
         field.accessible = true
         val structurallyChangedTypes = field.get(state) as StringSet
-        if(structurallyChangedTypes == null) {
+        if(structurallyChangedTypes === null) {
             return #[]
         }
         return structurallyChangedTypes.toList
@@ -44,7 +44,7 @@ class JDTBuildState implements BuildState {
         for(i : 0..<keySet.length) {
             val currentKey = keySet.get(i) as String
             val currentValue = valueSet.get(i) as ReferenceCollection
-            if(currentKey != null && currentValue != null) {
+            if(currentKey !== null && currentValue !== null) {
                 val referenceStorage = new JDTReferenceStorage(currentValue)
                 references.put(currentKey, referenceStorage)
             }
@@ -71,6 +71,6 @@ class JDTBuildState implements BuildState {
     }
     
     private def List<String> toList(StringSet stringSet) {
-        stringSet.values.filter[it!=null].toList
+        stringSet.values.filterNull.toList
     }
 }

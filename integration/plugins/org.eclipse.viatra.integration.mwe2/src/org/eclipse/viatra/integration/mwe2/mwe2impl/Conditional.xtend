@@ -44,7 +44,7 @@ class Conditional implements ITransformationStep {
 
     override void initialize(IWorkflowContext ctx) {
         this.ctx = ctx
-        if(condition!=null){
+        if(condition !== null){
             condition.context = ctx
         }
         ifTrue.initialize(ctx)

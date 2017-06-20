@@ -93,7 +93,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends Viatra
      * Returns a RuleSpecification that can be added to a rule engine.
      */
     override getRuleSpecification(){
-        if(ruleSpec == null){
+        if(ruleSpec === null){
             val querySpec = precondition
             val Job<Match> job = Jobs::newStatelessJob(CRUDActivationStateEnum::CREATED, action)
             

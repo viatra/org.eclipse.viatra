@@ -28,7 +28,7 @@ class ShowMatcherLocationHandler extends ShowPatternLocationHandler {
     override execute(ExecutionEvent event) throws ExecutionException {
         val selection = HandlerUtil.getCurrentSelection(event) as IStructuredSelection;
         val matcher = selection.getFirstElement() as QueryResultTreeMatcher;
-        if(matcher.entry != null) {
+        if(matcher.entry !== null) {
             showPatternLocation(event, matcher.entry);
         } else {
             val fqn = matcher.matcher.specification.fullyQualifiedName

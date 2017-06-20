@@ -64,7 +64,7 @@ class MatchParameterPropertyDescriptor implements IPropertyDescriptor {
     override createPropertyEditor(Composite parent) {
         val typeKey = parameter.declaredUnaryType
         
-        if(typeKey != null){
+        if(typeKey !== null){
             val result = parent.prepareEditorForDeclaredType(typeKey)
             return result
         } else {

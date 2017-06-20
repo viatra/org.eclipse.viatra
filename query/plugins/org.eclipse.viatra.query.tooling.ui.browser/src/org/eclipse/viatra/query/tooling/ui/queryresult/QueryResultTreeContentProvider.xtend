@@ -49,9 +49,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
 
     override void dispose() {
-        if(this.input != null) {
-            this.input.removeListener(this)
-        }
+        this.input?.removeListener(this)
     }
 
     override Object[] getElements(Object inputElement) {
@@ -67,10 +65,10 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
     
     def dispatch Object[] getChildrenInternal(QueryResultTreeMatcher inputElement) {
-        if(inputElement.exception != null) {
+        if(inputElement.exception !== null) {
             return null
         }
-        inputElement.matcher.getAllMatches(inputElement.filterMatch)
+        return inputElement.matcher.getAllMatches(inputElement.filterMatch)
     }
     
     def dispatch Object[] getChildrenInternal(IPatternMatch inputElement) {
@@ -113,7 +111,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
     
     def dispatch boolean hasChildrenInternal(QueryResultTreeMatcher inputElement) {
-        if(inputElement.exception != null) {
+        if(inputElement.exception !== null) {
             return false
         }
         return inputElement.matcher.countMatches(inputElement.filterMatch) > 0

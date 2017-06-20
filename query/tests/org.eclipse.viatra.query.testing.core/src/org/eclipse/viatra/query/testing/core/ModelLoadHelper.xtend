@@ -72,7 +72,7 @@ class ModelLoadHelper {
      */
     def loadAdditionalResourceFromUri(ResourceSet resourceSet, String platformUri) {
         val modelURI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum::BOTH, platformUri)
-        if (modelURI != null) {
+        if (modelURI !== null) {
             resourceSet.getResource(modelURI, true)
         }
     }
@@ -89,7 +89,7 @@ class ModelLoadHelper {
      */
     def loadPatternModelFromUri(String platformUri, Injector injector, String... additionalDependencyPlatformUris) {
         val resourceSet = XmiModelUtil.prepareXtextResource(injector)
-        if (additionalDependencyPlatformUris != null && additionalDependencyPlatformUris.size > 0) {
+        if (additionalDependencyPlatformUris !== null && additionalDependencyPlatformUris.size > 0) {
             for (additionalUri : additionalDependencyPlatformUris)
                 resourceSet.loadAdditionalResourceFromUri(additionalUri)
         }
@@ -140,7 +140,7 @@ class ModelLoadHelper {
      */
     def loadExpectedResultsFromUri(ResourceSet resourceSet, String platformUri) {
         val resource = resourceSet.loadAdditionalResourceFromUri(platformUri);
-        if (resource != null) {
+        if (resource !== null) {
             if (resource.contents.size > 0) {
                 if (resource.contents.get(0) instanceof QuerySnapshot) {
                     resource.contents.get(0) as QuerySnapshot
@@ -161,7 +161,7 @@ class ModelLoadHelper {
      */
     def loadExpectedResultsFromUri(String platformUri) {
         val resource = loadModelFromUri(platformUri);
-        if (resource != null) {
+        if (resource !== null) {
             if (resource.contents.size > 0) {
                 if (resource.contents.get(0) instanceof QuerySnapshot) {
                     resource.contents.get(0) as QuerySnapshot

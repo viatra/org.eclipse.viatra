@@ -77,7 +77,7 @@ class XtextIndexBasedRegistryUpdater {
     }
     
     def connectIndexToRegistry(IQuerySpecificationRegistry registry) {
-        if(connectedRegistry == null){
+        if(connectedRegistry === null){
             connectedRegistry = registry
             descriptions.allResourceDescriptions.forEach[resourceDesc |
                 if (!resourceDesc.URI.isPlatformResource) {
@@ -100,7 +100,7 @@ class XtextIndexBasedRegistryUpdater {
                 }
                 val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
                 var connector = connectorMap.get(connectorId)
-                if(connector == null) {
+                if(connector === null) {
                     connector = new PatternDescriptionBasedSourceConnector(connectorId)
                     connectorMap.put(connectorId, connector)
                 }
@@ -121,7 +121,7 @@ class XtextIndexBasedRegistryUpdater {
     }
     
     def disconnectIndexFromRegistry() {
-        if(connectedRegistry != null){
+        if(connectedRegistry !== null){
             connectorMap.values.forEach[
                 connectedRegistry.removeSource(it)
             ]
@@ -162,11 +162,11 @@ class XtextIndexBasedRegistryUpdater {
                 val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
                 
                 try {
-                    if (oldDesc != null) {
-                        if(newDesc == null || !project.open) {
+                    if (oldDesc !== null) {
+                        if(newDesc === null || !project.open) {
                             // delete
                             val connector = updater.connectorMap.get(connectorId)
-                            if(connector != null){
+                            if(connector !== null){
                                 connector.clearProviders(uri)
                                 if(connector.descriptionToProvider.empty){
                                     // remove source connector
@@ -178,7 +178,7 @@ class XtextIndexBasedRegistryUpdater {
                             // update
                             delta.processResourceDescription(newDesc, connectorId, projectName)
                         }
-                    } else if(newDesc != null && !newDesc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).empty) {
+                    } else if(newDesc !== null && !newDesc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).empty) {
                         // create connector based on URI or update if project connector already exists
                         delta.processResourceDescription(newDesc, connectorId, projectName)
                     }
@@ -225,7 +225,7 @@ class XtextIndexBasedRegistryUpdater {
         }
         
         override get() {
-            if(specification == null){
+            if(specification === null){
                 val pattern = findPatternForDescription
                 val builder = new SpecificationBuilder();
                 specification = builder.getOrCreateSpecification(pattern)

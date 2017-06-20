@@ -51,10 +51,7 @@ abstract class MappingRules {
             return null
         } else {
             val existingMapping = traceModel.traces.findFirst[trace|trace.eventPattern.id.equals(eventPattern.id)]
-            if (existingMapping == null) {
-                return null
-            }
-            return existingMapping.automaton
+            return existingMapping?.automaton
         }
     }
 

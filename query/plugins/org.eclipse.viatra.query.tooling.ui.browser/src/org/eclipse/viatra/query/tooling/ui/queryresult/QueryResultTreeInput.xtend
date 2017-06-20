@@ -111,7 +111,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         )
         
         engine.currentMatchers.forEach[
-            val treeMatcher = createMatcher(it)
+            createMatcher(it)
         ]
         this.schema.startUnscheduledExecution
         
@@ -184,7 +184,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     
     def removeMatcher(IQuerySpecificationRegistryEntry entry) {
         val treeMatcher = matchers.get(entry.fullyQualifiedName)
-        if(treeMatcher != null && treeMatcher.entry.sourceIdentifier == entry.sourceIdentifier) {
+        if(treeMatcher !== null && treeMatcher.entry.sourceIdentifier == entry.sourceIdentifier) {
             return treeMatcher.removeMatcher
         }
         return null
@@ -195,15 +195,15 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         listeners.forEach[
             it.matcherRemoved(matcher)
         ]
-        if(matcher.ruleSpec != null){
+        if(matcher.ruleSpec !== null){
             schema.removeRule(matcher.ruleSpec)
         }
-        if(matcher.matcher != null){
+        if(matcher.matcher !== null){
             // TODO deal with duplicates and dependencies
             builder.forgetSpecificationTransitively(matcher.matcher.specification)
         } else {
             val spec = builder.getSpecification(matcher.entry.fullyQualifiedName)
-            if(spec != null) {
+            if(spec !== null) {
                 builder.forgetSpecificationTransitively(spec)
             }
         }
@@ -217,7 +217,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         builder = new SpecificationBuilder
         entries.forEach[ entry |
             if(matchers.containsKey(entry.fullyQualifiedName)){
-                val removedTreeMatcher = entry.removeMatcher
+                entry.removeMatcher
             }
             entry.loadQuery
             loadedEntries.put(entry.sourceIdentifier, entry.fullyQualifiedName, entry)
@@ -301,7 +301,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     
     protected def void resetInput() {
         matchers.values.forEach[
-            if(ruleSpec != null){
+            if(ruleSpec !== null){
                 schema.removeRule(ruleSpec)
             }
         ]
@@ -405,7 +405,7 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
     Exception exception;
     
     override def getFilterMatch() {
-        if(filterMatch == null) {
+        if(filterMatch === null) {
             filterMatch = matcher.newEmptyMatch
         }
         return filterMatch
@@ -424,7 +424,7 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
     }
     
     def isFiltered() {
-        return getFilterMatch.toArray.exists[it != null]
+        return getFilterMatch.toArray.exists[it !== null]
     }
     
     def remove() {

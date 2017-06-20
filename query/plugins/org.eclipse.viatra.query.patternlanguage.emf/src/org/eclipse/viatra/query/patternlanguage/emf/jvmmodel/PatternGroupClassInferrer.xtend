@@ -113,7 +113,7 @@ class PatternGroupClassInferrer {
     }
 
     def JvmOperation inferSpecificationGetter(Pattern model, JvmType groupClass, JvmType specificationClass) {
-        val classRef = if (specificationClass == null) {
+        val classRef = if (specificationClass === null) {
             typeRef(typeof(Object))
         } else {
             specificationClass.typeRef
@@ -127,7 +127,7 @@ class PatternGroupClassInferrer {
     }
     
     def JvmOperation inferMatcherGetter(Pattern model, JvmType groupClass, JvmType matcherClass) {
-        val classRef = if (matcherClass == null) {
+        val classRef = if (matcherClass === null) {
             typeRef(typeof(Object))
         } else {
             matcherClass.typeRef

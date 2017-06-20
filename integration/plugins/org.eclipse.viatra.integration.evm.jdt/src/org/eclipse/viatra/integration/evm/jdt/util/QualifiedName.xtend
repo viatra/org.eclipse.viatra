@@ -54,7 +54,7 @@ abstract class QualifiedName implements Iterable<String> {
         }
         
         override hasNext() {
-            return current != null
+            return current !== null
         }
         
         override next() {

@@ -59,7 +59,7 @@ class ComplexGenerator {
     }
 
     def public generateComplexEventPattern(ComplexEventPattern pattern, IJvmDeclaredTypeAcceptor acceptor) {
-        if (pattern.complexEventExpression == null || pattern.complexEventExpression.left == null) {
+        if (pattern.complexEventExpression === null || pattern.complexEventExpression.left === null) {
             return
         }
 
@@ -69,7 +69,7 @@ class ComplexGenerator {
     }
 
     def isRoot(Node node) {
-        return node.parentNode == null
+        return node.parentNode === null
     }
 
     def public QualifiedName generateComplexEventPattern(
@@ -97,7 +97,7 @@ class ComplexGenerator {
     
                     var parameters = new ArrayList<String>
                     val paramList = (leaf.expression as Atom).patternCall.parameterList
-                    if (paramList != null && !paramList.parameters.empty) {
+                    if (paramList !== null && !paramList.parameters.empty) {
                         for (parameter : paramList.parameters) {
                             parameters.add(parameter.name)
                         }
@@ -163,7 +163,7 @@ class ComplexGenerator {
                             append(
                                 '''1''')
                         }
-                        if (p.second != null && !p.second.empty) {
+                        if (p.second !== null && !p.second.empty) {
                             append(''', ''').append('''«referClass(typeRefBuilder, pattern, Lists)»''').
                                 append('''.newArrayList(''')
                             append('''"«p.second.head»"''')
@@ -175,7 +175,7 @@ class ComplexGenerator {
                         append(''');
                         ''')
                     }
-                    if (node.timewindow != null) {
+                    if (node.timewindow !== null) {
                         it.append(
                             '''
                         
@@ -190,7 +190,7 @@ class ComplexGenerator {
                                     
                             ''')
                     }
-                    if (pattern.parameters != null) it.append(
+                    if (pattern.parameters !== null) it.append(
                         '''«FOR parameter : pattern.parameters.parameters»
                     getParameterNames().add("«parameter.name»");
                     «ENDFOR»

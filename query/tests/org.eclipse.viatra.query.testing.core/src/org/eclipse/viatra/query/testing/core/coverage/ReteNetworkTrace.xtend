@@ -24,7 +24,6 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine
 import org.eclipse.viatra.query.runtime.rete.network.Node
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan
-import com.google.common.collect.ImmutableSet
 
 /** 
  * This utility class can determine trace connection between Nodes in a Rete network and elements in a PQuery model.

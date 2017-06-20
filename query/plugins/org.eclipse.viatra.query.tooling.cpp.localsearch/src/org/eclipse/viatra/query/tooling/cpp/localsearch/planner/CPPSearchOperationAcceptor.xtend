@@ -133,7 +133,7 @@ class CPPSearchOperationAcceptor implements ISearchOperationAcceptor {
             // don't pass this to anything else or evaluate it! (Lazy evaluation!!)
             val variableInfos = pBody.uniqueVariables.map[
                 val type = typeMapping.get(it)
-                if(type == null)
+                if(type === null)
                     return null
                 return new VariableInfo(Optional::fromNullable(variableToParameterMap.get(it)), it, type, variableMapping.get(it))
             ].filterNull.toList

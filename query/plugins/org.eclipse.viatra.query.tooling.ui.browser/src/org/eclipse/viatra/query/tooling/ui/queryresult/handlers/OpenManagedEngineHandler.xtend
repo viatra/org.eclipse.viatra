@@ -36,7 +36,7 @@ class OpenManagedEngineHandler extends AbstractHandler {
             var queryResultView = (resultView as QueryResultView)
             // open dialog with list of managed engines
             val engine = openDialog(queryResultView.site.shell) as AdvancedViatraQueryEngine
-            if(engine != null){
+            if(engine !== null){
                 queryResultView.loadExistingEngine(engine)
             }
         }
@@ -64,9 +64,6 @@ class OpenManagedEngineHandler extends AbstractHandler {
         }
         engineSelectionDialog.open()
         val result = engineSelectionDialog.getResult()
-        if (result != null) {
-            return result.filter(AdvancedViatraQueryEngine).head
-        }
-        return null;
+        return result?.filter(AdvancedViatraQueryEngine).head
     }
 }

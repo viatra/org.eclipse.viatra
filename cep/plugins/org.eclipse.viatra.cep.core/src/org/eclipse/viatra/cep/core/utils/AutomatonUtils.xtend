@@ -28,7 +28,7 @@ class AutomatonUtils {
     }
 
     def public static enablesStrictInitTokenCreation(State state) {
-        state == null || state instanceof FinalState || state instanceof TrapState
+        state === null || state instanceof FinalState || state instanceof TrapState
     }
 
     def public static notEmpty(State state) {

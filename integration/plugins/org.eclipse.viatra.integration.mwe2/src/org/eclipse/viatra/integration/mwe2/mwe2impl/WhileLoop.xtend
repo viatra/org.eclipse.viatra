@@ -32,7 +32,7 @@ class WhileLoop extends Sequence{
     
     override initialize(IWorkflowContext ctx) {
         super.initialize(ctx)
-        if(condition!=null){
+        if(condition !== null){
             condition.context = ctx
         }
     }

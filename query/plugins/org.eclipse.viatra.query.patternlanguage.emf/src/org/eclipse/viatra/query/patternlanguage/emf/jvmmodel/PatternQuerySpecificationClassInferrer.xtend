@@ -246,7 +246,7 @@ class PatternQuerySpecificationClassInferrer {
     
     def ExecutionType getRequestedExecutionType(Pattern pattern){
         val modifier = pattern.modifiers
-        if(modifier != null){
+        if(modifier !== null){
             modifier.execution
         } else{
             ExecutionType::UNSPECIFIED
@@ -359,13 +359,13 @@ class PatternQuerySpecificationClassInferrer {
     def StringConcatenationClient parameterInstantiation(Variable variable) {
         val ref = getJvmType(variable, variable);
         // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-        val clazz = if (ref == null || ref instanceof JvmUnknownTypeReference) {
+        val clazz = if (ref === null || ref instanceof JvmUnknownTypeReference) {
             ""
         } else {
             ref.getType().getQualifiedName()
         }
         val type = variable.type
-        if (type == null || !typeSystem.isValidType(type)) {
+        if (type === null || !typeSystem.isValidType(type)) {
             '''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
         } else {
             val declaredInputKey = typeSystem.extractTypeDescriptor(type)

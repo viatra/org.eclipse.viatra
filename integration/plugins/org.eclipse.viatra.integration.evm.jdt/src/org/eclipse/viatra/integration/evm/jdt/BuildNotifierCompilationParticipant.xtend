@@ -37,7 +37,7 @@ class BuildNotifierCompilationParticipant extends CompilationParticipant {
             val iproject = project.project
             val lastState = JavaModelManager.getJavaModelManager().getLastBuiltState(iproject,
                 new NullProgressMonitor()) as State
-            if (lastState != null) {
+            if (lastState !== null) {
                 val buildState = new JDTBuildState(lastState)
                 val affectedFiles = buildState.getAffectedCompilationUnitsInProject
                 debug('''Affected files are «FOR file : affectedFiles SEPARATOR ", "»«file»«ENDFOR»''')

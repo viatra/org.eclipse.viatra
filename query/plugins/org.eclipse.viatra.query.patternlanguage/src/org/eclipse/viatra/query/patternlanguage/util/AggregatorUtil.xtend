@@ -52,7 +52,7 @@ class AggregatorUtil {
      */
     static def boolean mustHaveAggregatorVariables(AggregatedValue value) {
         val types = getParameterTypes(value.aggregator)
-        types != null && (types.size > 1 || (types.size == 1 && !JavaTypesHelper.is(types.get(0), Void)))
+        types !== null && (types.size > 1 || (types.size == 1 && !JavaTypesHelper.is(types.get(0), Void)))
     }
 
     static def int getAggregateVariableIndex(AggregatedValue value) {

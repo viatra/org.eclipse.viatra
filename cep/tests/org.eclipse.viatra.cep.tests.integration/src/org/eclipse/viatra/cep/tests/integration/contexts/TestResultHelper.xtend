@@ -17,7 +17,7 @@ class TestResultHelper {
     var private static TestResultHelper _instance
 
     def static instance() {
-        if (_instance == null) {
+        if (_instance === null) {
             _instance = new TestResultHelper
         }
         return _instance

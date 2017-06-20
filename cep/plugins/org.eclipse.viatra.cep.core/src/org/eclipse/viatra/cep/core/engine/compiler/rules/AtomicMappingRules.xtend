@@ -32,7 +32,7 @@ class AtomicMappingRules extends MappingRules {
      */
     val atomicPattern2AutomatonRule = createRule.precondition(AtomicEventPatternMatcher::querySpecification).action [
         val mappedAutomaton = checkForMappedAutomaton(eventPattern)
-        if (mappedAutomaton != null) {
+        if (mappedAutomaton !== null) {
             createTrace(eventPattern, mappedAutomaton)
             return
         }

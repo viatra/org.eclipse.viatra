@@ -43,13 +43,13 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
     }
 
     override public fireTransition(Transition transition, EventToken eventTokenToMove) {
-        Preconditions.checkArgument(transition != null)
-        Preconditions.checkArgument(eventTokenToMove != null)
+        Preconditions.checkArgument(transition !== null)
+        Preconditions.checkArgument(eventTokenToMove !== null)
 
         //we only allow one transition to be fired per observed matching event on the stream and thus,
         //each token in a given state is marked as processed once a transition is fired,
         //but this might be overridden in other strategies
-        eventTokenToMove.currentState.eventTokens.filter[et|et.lastProcessed == null].forEach [ eventToken |
+        eventTokenToMove.currentState.eventTokens.filter[et|et.lastProcessed === null].forEach [ eventToken |
             eventToken.addProcessedEvent(eventModelManager.model.latestEvent)
         ]
 

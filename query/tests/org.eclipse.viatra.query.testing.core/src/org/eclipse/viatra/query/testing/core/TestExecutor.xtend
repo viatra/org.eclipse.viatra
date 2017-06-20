@@ -194,9 +194,9 @@ class TestExecutor {
         engine.registerLogger
         snapshot.matchSetRecords.forEach() [matchSet |
             val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)
-            if(matcher != null){
+            if(matcher !== null){
                 val result = matcher.compareResultSets(matchSet)
-                if(!(result == null
+                if(!(result === null
                     || newHashSet(CORRECT_EMPTY).equals(result)
                     || newHashSet(CORRECT_SINGLE).equals(result)
                 )){

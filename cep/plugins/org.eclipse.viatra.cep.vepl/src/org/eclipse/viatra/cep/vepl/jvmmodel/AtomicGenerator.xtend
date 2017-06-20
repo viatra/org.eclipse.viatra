@@ -36,7 +36,7 @@ class AtomicGenerator {
                     superTypes += typeRefBuilder.typeRef(ParameterizableViatraQueryPatternEventInstance)
                 } else if (pattern instanceof AtomicEventPattern) {
                     superTypes += typeRefBuilder.typeRef(ParameterizableEventInstance)
-                    if((pattern as AtomicEventPattern).traits!=null){
+                    if((pattern as AtomicEventPattern).traits!==null){
                         if(!(pattern as AtomicEventPattern).traits.traits.empty){
                             for(trait : (pattern as AtomicEventPattern).traits.traits){
                                 superTypes += typeRefBuilder.typeRef(trait.traitInterfaceFqn.toString)
@@ -45,19 +45,19 @@ class AtomicGenerator {
                     }
                 }
                 val paramList = getParamList(pattern)
-                if (paramList != null) {
+                if (paramList !== null) {
                     for (parameter : paramList.parameters) {
                         members += pattern.toField(parameter.name, parameter.type)
                     }
                 }
                 if (pattern instanceof AtomicEventPattern) {
                     val traitList = (pattern as AtomicEventPattern).traits
-                    if (traitList != null) {
+                    if (traitList !== null) {
                         for (trait : traitList.traits) {
                             for (param : trait.parameters.parameters) {
                                 val parameter = param.typedParameter
                                 members += pattern.toField(parameter.name, parameter.type) [
-                                    if (param.value != null) {
+                                    if (param.value !== null) {
                                         initializer = param.value
                                     }
                                 ]
@@ -73,7 +73,7 @@ class AtomicGenerator {
                         super(eventSource);''').append(
                             '''
                             
-                            «IF paramList != null»
+                            «IF paramList !== null»
                                 «FOR parameter : paramList.parameters»
                                         getParameters().add(«parameter.name»);
                                 «ENDFOR»
@@ -81,7 +81,7 @@ class AtomicGenerator {
                         ''').append(
                             '''
                             «IF pattern instanceof AtomicEventPattern»
-                                «IF (pattern as AtomicEventPattern).traits!=null»
+                                «IF (pattern as AtomicEventPattern).traits!==null»
                                     «FOR trait : (pattern as AtomicEventPattern).traits.traits»
                                         «FOR param : trait.parameters.parameters»				
                                                 getParameters().add(«param.typedParameter.name»);
@@ -93,7 +93,7 @@ class AtomicGenerator {
                     ]
                 ]
                 var i = 0
-                if (paramList != null) {
+                if (paramList !== null) {
                     for (parameter : paramList.parameters) {
                         members += pattern.toGetter(parameter.name, parameter.type)
                         members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
@@ -102,7 +102,7 @@ class AtomicGenerator {
                 }
                 if (pattern instanceof AtomicEventPattern) {
                     val traitList = (pattern as AtomicEventPattern).traits
-                    if (traitList != null) {
+                    if (traitList !== null) {
                         for (trait : traitList.traits) {
                             for (param : trait.parameters.parameters) {
                                 val parameter = param.typedParameter
@@ -122,7 +122,7 @@ class AtomicGenerator {
 
                 members += pattern.toMethod("evaluateCheckExpression", typeRefBuilder.typeRef("boolean")) [
                     addOverrideAnnotation(it, pattern)
-                    if (pattern.checkExpression == null) {
+                    if (pattern.checkExpression === null) {
                         body = [
                             append('''return true;''')
                         ]
@@ -142,7 +142,7 @@ class AtomicGenerator {
                 documentation = pattern.documentation
                 superTypes += typeRefBuilder.typeRef(AtomicEventPatternImpl)
                 val paramList = getParamList(pattern)
-                if (paramList != null) {
+                if (paramList !== null) {
                     for (parameter : paramList.parameters) {
                         members += pattern.toField(parameter.name, parameter.type)
                     }
@@ -155,17 +155,17 @@ class AtomicGenerator {
                         setType(''').append('''«it.referClass(typeRefBuilder, pattern.classFqn, pattern)»''').append(
                             '''.class.getCanonicalName());
                         ''')
-                        if (paramList != null) 
+                        if (paramList !== null) 
                           for (parameter : paramList.parameters) 
                               appendable = appendable.append('''
                                 getParameterNames().add("«parameter.name»");
                         ''')
                         if (pattern instanceof AtomicEventPattern) 
-                            if(pattern.traits != null) 
+                            if(pattern.traits !== null) 
                                 for (trait : pattern.traits.traits) 
-                                    if (trait.parameters != null)
+                                    if (trait.parameters !== null)
                                         for(traitParameter : trait.parameters.parameters)
-                                            if (traitParameter.typedParameter != null) 
+                                            if (traitParameter.typedParameter !== null) 
                                             appendable = appendable.append('''
                             getParameterNames().add("«traitParameter.typedParameter.name»");
                         ''')

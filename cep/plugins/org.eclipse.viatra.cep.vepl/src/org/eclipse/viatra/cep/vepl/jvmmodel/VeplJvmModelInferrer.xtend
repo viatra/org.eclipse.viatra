@@ -20,7 +20,6 @@ import org.eclipse.viatra.cep.vepl.vepl.Trait
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -53,9 +52,7 @@ class VeplJvmModelInferrer extends AbstractModelInferrer {
      *            {@link IJvmDeclaredTypeAcceptor#accept(org.eclipse.xtext.common.types.JvmDeclaredType)
      *            accept(..)} method takes the constructed empty type for the
      *            pre-indexing phase. This one is further initialized in the
-     *            indexing phase using the closure you pass to the returned
-     *            {@link IPostIndexingInitializing#initializeLater(org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
-     *            initializeLater(..)}.
+     *            indexing phase using the closure you pass to the acceptor.
      * @param isPreIndexingPhase
      *            whether the method is called in a pre-indexing phase, i.e.
      *            when the global index is not yet fully updated. You must not
@@ -63,7 +60,7 @@ class VeplJvmModelInferrer extends AbstractModelInferrer {
      *            <code>true</code>.
      */
     def dispatch void infer(EventModel element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
-        if (element == null || element.modelElements.empty) {
+        if (element === null || element.modelElements.empty) {
             return
         }
 

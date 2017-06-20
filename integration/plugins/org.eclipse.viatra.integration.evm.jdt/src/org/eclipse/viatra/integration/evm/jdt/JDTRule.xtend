@@ -50,7 +50,7 @@ abstract class JDTRule {
     }
     
     def RuleSpecification<JDTEventAtom> getRuleSpecification() {
-        if(ruleSpecification == null) {
+        if(ruleSpecification === null) {
             ruleSpecification = new RuleSpecification(eventSourceSpecification, activationLifeCycle, jobs)
         }
         return ruleSpecification

@@ -194,7 +194,7 @@ abstract class QueryPerformanceTest {
         val watch = Stopwatch.createStarted
         val matcher = measuredAction.apply(queryEngine)
         watch.stop()
-        val countMatches = if (matcher == null) -1 else matcher.countMatches
+        val countMatches = if (matcher === null) -1 else matcher.countMatches
         val elapsed = watch.elapsed(TimeUnit.MILLISECONDS)
         
         return concludeMeasurement(queryName, sequence, countMatches, elapsed, usedHeapBefore)

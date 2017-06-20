@@ -91,7 +91,7 @@ class QueryRegistryTreeInput {
     
     def QueryRegistryTreeInputChange getOrCreateSource(String sourceIdentifier) {
         val existingSource = sources.get(sourceIdentifier)
-        if(existingSource == null) {
+        if(existingSource === null) {
             val newSource = new QueryRegistryTreeSource(this, sourceIdentifier)
             sources.put(sourceIdentifier, newSource)
             return new QueryRegistryTreeInputChange(false, null, false, null, true, newSource)
@@ -102,7 +102,7 @@ class QueryRegistryTreeInput {
     
     def QueryRegistryTreeInputChange getOrCreatePackage(QueryRegistryTreeSource source, String packageName) {
         val existingPackage = source.packages.get(packageName)
-        if(existingPackage == null) {
+        if(existingPackage === null) {
             val newPackage = new QueryRegistryTreePackage(source, packageName)
             source.packages.put(packageName, newPackage)
             return new QueryRegistryTreeInputChange(false, null, true, newPackage, false, null)
@@ -164,7 +164,7 @@ class QueryRegistryTreeEntry {
             try{
                 // load specification class
                 val specification = entry.get
-                if(specification != null){
+                if(specification !== null){
                     isLoaded = true
                 }
                 return true
@@ -215,7 +215,7 @@ class QueryRegistryTreeViewListener implements IQuerySpecificationRegistryChange
     
     override entryAdded(IQuerySpecificationRegistryEntry entry) {
         val newEntry = input.addEntryToInput(entry)
-        if(provider != null){
+        if(provider !== null){
             provider.viewer.tree.display.asyncExec[
                 if(newEntry.sourceAffected){
                     provider.viewer.add(input, newEntry.source)
@@ -230,7 +230,7 @@ class QueryRegistryTreeViewListener implements IQuerySpecificationRegistryChange
     
     override entryRemoved(IQuerySpecificationRegistryEntry entry) {
         val oldEntry = input.removeEntry(entry)
-        if(oldEntry != null && provider != null) {
+        if(oldEntry !== null && provider !== null) {
             provider.viewer.tree.display.asyncExec[
                 provider.viewer.remove(oldEntry.entry)
                 if(oldEntry.pckgAffected){

@@ -18,8 +18,8 @@ class TestTransformationStepA extends TransformationStep {
     override void dispose() {}
 
     override void doExecute() {
-        val list = context.get("TestOutput")as BlockingQueue<String>
-        if(list!=null){
+        val list = context.get("TestOutput") as BlockingQueue<String>
+        if(list !== null){
             list.put("exec_A")
         }
     }

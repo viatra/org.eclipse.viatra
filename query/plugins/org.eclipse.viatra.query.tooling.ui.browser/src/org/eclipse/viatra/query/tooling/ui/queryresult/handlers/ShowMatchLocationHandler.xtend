@@ -34,7 +34,7 @@ class ShowMatchLocationHandler extends AbstractHandler {
             
             if (active && selection instanceof IStructuredSelection) {
                 val connector = queryResultView.modelConnector
-                if(connector != null) {
+                if(connector !== null) {
                     val eObjectsInSelection = newHashSet()
                     (selection as IStructuredSelection).iterator.forEach[
                         switch it {

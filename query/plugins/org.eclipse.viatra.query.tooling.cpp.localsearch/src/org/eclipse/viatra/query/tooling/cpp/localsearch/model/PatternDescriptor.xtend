@@ -71,7 +71,7 @@ class PatternDescriptor {
         val paramNames = newArrayList
         for(i : 0..<query.parameters.size) {
             val param = query.parameterNames.get(i)
-            if(boundParameters.map[name].findFirst[it == query.parameters.get(i).name] != null)
+            if(boundParameters.map[name].exists[it == query.parameters.get(i).name])
                 paramNames += param + " (B)"
             else 
                 paramNames += param

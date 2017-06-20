@@ -82,7 +82,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
     def modelFileName(EObject object) {
         val eResource = object.eResource
-        if (eResource != null) {
+        if (eResource !== null) {
             val name = eResource.URI.trimFileExtension.lastSegment
             if (!(name.validClassName)) {
                 feedback.reportErrorNoLocation(object,
@@ -264,7 +264,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
       def getFileComment(PatternModel patternModel) {
           val patternNode = NodeModelUtils.getNode(patternModel)
           val possibleFileComment = patternNode?.firstChild?.nextSibling
-          if (possibleFileComment != null) {
+          if (possibleFileComment !== null) {
             val grammarElement = possibleFileComment.grammarElement
             if (grammarElement == grammar.getML_COMMENTRule) {
                 val multiLineCommentText = possibleFileComment.text.escape
@@ -314,13 +314,13 @@ class EMFPatternLanguageJvmModelInferrerUtil {
             // Another way to serialize the eObject, uses the current node model
             // simple getText returns the currently text, that parsed by the editor
             val eObjectNode = NodeModelUtils::getNode(eObject)
-            if (eObjectNode != null) {
+            if (eObjectNode !== null) {
                 return escape(eObjectNode.text)
             }
             // getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
         } catch (Exception e) {
-            if (logger != null) {
+            if (logger !== null) {
                 logger.error("Error when serializing " + eObject.eClass.name, e)
             }
         }
@@ -328,7 +328,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
       }
 
       def private escape(String escapable) {
-          if (escapable == null) return null
+          if (escapable === null) return null
           // escape double quotes
           var escapedString = escapable.replaceAll("\"", "\\\\\"")
         escapedString = escapedString.replaceAll("\\*+/", "")
@@ -440,7 +440,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
     private static def getExpressionPostfix(XExpression xExpression) {
         val pattern = EcoreUtil2.getContainerOfType(xExpression, typeof(Pattern))
-        Preconditions.checkArgument(pattern != null, "Expression is not inside a pattern")
+        Preconditions.checkArgument(pattern !== null, "Expression is not inside a pattern")
         var bodyNo = 0
         for (patternBody : pattern.getBodies()) {
             bodyNo = bodyNo + 1

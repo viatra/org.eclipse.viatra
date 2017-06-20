@@ -24,6 +24,7 @@ EMFPatternModel returns core::PatternModel:
 	importPackages=XImportSection
 	patterns+=Pattern*;
 	
+//@Override is only available after Xtext 2.11
 XImportSection:
 	{XImportSection}
 	(
@@ -41,13 +42,15 @@ PatternImport:
 	'import' 'pattern'? pattern = [core::Pattern|QualifiedName] ';'?
 ;
 
+//@Override is only available after Xtext 2.11
 XImportDeclaration returns xtype::XImportDeclaration:
 	'import' 'java' (
 		(static?='static' extension?='extension'? importedType=[types::JvmDeclaredType|QualifiedName] '.' '*') 
 		| importedType=[types::JvmDeclaredType|QualifiedName] 
 		| importedNamespace=QualifiedNameWithWildcard) ';'?
 ;
-	
+
+//@Override is only available after Xtext 2.11
 Constraint returns core::Constraint:
 	CheckConstraint	| TypeCheckConstraint |
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
@@ -58,16 +61,19 @@ EClassifierConstraint:
 	type = Type  '(' var = VariableReference ')'
 ;
 
+//@Override is only available after Xtext 2.11
 Type returns core::EntityType:
 	{ClassType}
 	(metamodel=[PackageImport] '::' )? classname=[ecore::EClassifier]
 ;
 
+//@Override is only available after Xtext 2.11
 RefType returns core::RelationType:
 	{ReferenceType}
 	refname=[ecore::EStructuralFeature]
 ;
 
+//@Override is only available after Xtext 2.11
 LiteralValueReference returns core::ValueReference:
 	NumberValue | StringValue | BoolValue 			//Copied from PatternLanguage 
 	| EnumValue							//Additions

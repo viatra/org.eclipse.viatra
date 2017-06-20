@@ -226,13 +226,13 @@ class ViatraQueryTestCase {
         var Match filter = null;
 
         var expected = expectedProvider.getMatchSetRecord(scope, querySpecification, filter)
-        if (expected.filter != null) {
+        if (expected.filter !== null) {
             filter = createMatchForMatchRecord(querySpecification, expected.filter)
         }
 
         val actual = actualProvider.getMatchSetRecord(scope, querySpecification, filter)
-        if (actual.filter != null) {
-            if (filter != null) {
+        if (actual.filter !== null) {
+            if (filter !== null) {
                 throw new IllegalArgumentException(
                     "Filter is provided by more than one sources: " + expectedProvider + ", " + actualProvider)
             } else {

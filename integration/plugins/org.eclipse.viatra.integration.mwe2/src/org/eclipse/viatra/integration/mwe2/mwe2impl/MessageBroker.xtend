@@ -32,7 +32,7 @@ class MessageBroker implements IMessageBroker{
     }
     
     public static def getInstance(){
-        if(broker == null){
+        if(broker === null){
             broker = new MessageBroker
         }
         return broker

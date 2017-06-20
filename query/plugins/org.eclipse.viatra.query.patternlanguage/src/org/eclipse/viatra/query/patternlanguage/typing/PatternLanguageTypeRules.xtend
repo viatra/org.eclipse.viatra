@@ -76,7 +76,7 @@ class PatternLanguageTypeRules {
    }
    
    def dispatch void inferTypes(CompareConstraint constraint, TypeInformation information) {
-       if (constraint.feature == CompareFeature.EQUALITY && constraint.leftOperand != null && constraint.rightOperand != null) {
+       if (constraint.feature === CompareFeature.EQUALITY && constraint.leftOperand !== null && constraint.rightOperand !== null) {
            information.provideType(new TypeConformJudgement(constraint.leftOperand, constraint.rightOperand))
            information.provideType(new TypeConformJudgement(constraint.rightOperand, constraint.leftOperand))
        }
@@ -101,7 +101,7 @@ class PatternLanguageTypeRules {
         val constraintType = constraint.type
         if (constraintType instanceof JavaType && typeSystem.isValidType(constraintType)) {
             val sourceType = typeSystem.extractTypeDescriptor(constraintType)
-            if (sourceType != null) {
+            if (sourceType !== null) {
                 information.provideType(new TypeJudgement(constraint.^var, sourceType))
             }
         }
@@ -113,7 +113,7 @@ class PatternLanguageTypeRules {
        }
        val sourceType = typeSystem.extractTypeDescriptor(constraint.head.type)
        var tail = constraint.head.tail
-       while (tail.tail != null) {
+       while (tail.tail !== null) {
            tail = tail.tail
        }
        
@@ -122,7 +122,7 @@ class PatternLanguageTypeRules {
        }
         
        val targetType = typeSystem.extractTypeDescriptor(tail.type)
-       if (sourceType != null && targetType != null) {
+       if (sourceType !== null && targetType !== null) {
            information.provideType(new TypeJudgement(constraint.head.src, sourceType))
            information.provideType(new TypeJudgement(constraint.head.dst, targetType))
        }
@@ -130,18 +130,18 @@ class PatternLanguageTypeRules {
    
    def dispatch void inferTypes(AggregatedValue reference, TypeInformation information) {
        inferCallTypes(reference.call, information)
-        if (reference == null || reference.aggregator == null) {
+        if (reference === null || reference.aggregator === null) {
             //Unresolved aggregator type, not a type error
             return
         }
            val values = AggregatorUtil.getAllAggregatorVariables(reference)
-           if (values.size == 0) {
+           if (values.size === 0) {
                if (AggregatorUtil.mustHaveAggregatorVariables(reference)) {
                 //Incorrect aggregation; reported separately
                 return;
             }
             val returnTypes = AggregatorUtil.getReturnTypes(reference.aggregator)
-            if (returnTypes == null || returnTypes.size != 1) {
+            if (returnTypes === null || returnTypes.size !== 1) {
                 logger.warning(
                     String.format("Return type for aggregator %s is non uniquely specified.",
                         reference.aggregator.simpleName
@@ -152,13 +152,13 @@ class PatternLanguageTypeRules {
             val returnType = (returnTypes).get(0)
             information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(returnType.identifier)))
            } else {
-            if (values.size != 1 || !AggregatorUtil.mustHaveAggregatorVariables(reference)) {
+            if (values.size !== 1 || !AggregatorUtil.mustHaveAggregatorVariables(reference)) {
                 //Incorrect aggregation; reported separately
                 return;
             }
             val parameterTypes = AggregatorUtil.getParameterTypes(reference.aggregator)
             val returnTypes = AggregatorUtil.getReturnTypes(reference.aggregator)
-            if (returnTypes == null || returnTypes.size != parameterTypes.size) {
+            if (returnTypes === null || returnTypes.size !== parameterTypes.size) {
                 logger.warning(String.format(
                     "Incorrect aggregator type annotation for aggregator %s: Different number of parameters and return types",
                     reference.aggregator.identifier
@@ -192,7 +192,7 @@ class PatternLanguageTypeRules {
     * @since 1.5
     */
    def dispatch void inferTypes(NumberValue reference, TypeInformation information) {
-       if (reference.value != null && !reference.value.eIsProxy) {
+       if (reference.value !== null && !reference.value.eIsProxy) {
            val type = literals.getJavaType(reference.value)
            information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(type)))
        }

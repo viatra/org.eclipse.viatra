@@ -348,7 +348,7 @@ class PatternMatcherClassInferrer {
        *
        */
       def inferErrorLogging(String message, String exceptionName) {
-          if(exceptionName == null){
+          if(exceptionName === null){
               '''LOGGER.error("«message»");'''
           } else {
               '''LOGGER.error("«message»",«exceptionName»);'''

@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.IJavaElementDelta
 
 import static extension org.eclipse.viatra.integration.evm.jdt.util.JDTChangeFlagDecoder.toChangeFlags
 import org.eclipse.viatra.integration.evm.jdt.util.ChangeFlag
-import org.apache.log4j.Logger
 import org.apache.log4j.Level
 import org.eclipse.viatra.transformation.evm.api.event.EventHandler
 import org.eclipse.jdt.core.IJavaElement

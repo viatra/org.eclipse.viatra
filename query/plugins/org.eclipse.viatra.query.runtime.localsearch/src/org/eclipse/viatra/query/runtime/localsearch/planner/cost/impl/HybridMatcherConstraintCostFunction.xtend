@@ -64,7 +64,7 @@ class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintCostFunc
             }else{
                 1
             }
-            if (currentMax.key == null || count > currentMax.value){
+            if (currentMax.key === null || count > currentMax.value){
                 extracted -> count
             }else{
                 currentMax

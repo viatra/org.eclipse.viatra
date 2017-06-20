@@ -19,8 +19,8 @@ class TestTransformationStepB extends TransformationStep {
 
     override void doExecute() {
         // The transformation is executed 
-        val list = context.get("TestOutput")as BlockingQueue<String>
-        if(list!=null){
+        val list = context.get("TestOutput") as BlockingQueue<String>
+        if(list !== null){
             list.put("exec_B")
         }
     }

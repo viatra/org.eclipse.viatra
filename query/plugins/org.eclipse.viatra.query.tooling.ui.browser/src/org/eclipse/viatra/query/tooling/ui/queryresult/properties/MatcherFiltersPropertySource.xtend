@@ -64,7 +64,7 @@ class MatcherFiltersPropertySource implements IPropertySource {
 
     override boolean isPropertySet(Object id) {
         val PParameter param = id as PParameter
-        return matcher.filterMatch.get(param.name) != null
+        return matcher.filterMatch.get(param.name) !== null
     }
 
     override void resetPropertyValue(Object id) {

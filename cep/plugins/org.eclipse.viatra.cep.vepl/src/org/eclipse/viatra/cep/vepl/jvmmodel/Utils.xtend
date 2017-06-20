@@ -67,7 +67,7 @@ class Utils {
 
     def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, String fqn, EObject ctx) {
         val ref = typeRefBuilder.typeRef(fqn)
-        if (ref != null) {
+        if (ref !== null) {
             appendable.serialize(ref, ctx)
         } else {
 
@@ -80,7 +80,7 @@ class Utils {
     def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, EObject ctx, Class<?> clazz,
         JvmTypeReference... typeArgs) {
         val ref = typeRefBuilder.typeRef(clazz, typeArgs)
-        if (ref != null) {
+        if (ref !== null) {
             appendable.serialize(ref, ctx)
         } else {
 

@@ -29,19 +29,19 @@ import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
  */
 class ValidationHelper {
     def static dispatch hasTimewindow(ComplexEventExpression expression) {
-        return expression.timewindow != null
+        return expression.timewindow !== null
     }
 
     def static dispatch hasTimewindow(Atom atom) {
-        return atom.timewindow != null
+        return atom.timewindow !== null
     }
 
     def static dispatch hasMultiplicity(ComplexEventExpression expression) {
-        return expression.multiplicity != null
+        return expression.multiplicity !== null
     }
 
     def static dispatch hasMultiplicity(Atom atom) {
-        return atom.multiplicity != null
+        return atom.multiplicity !== null
     }
 
     def static hasInfiniteMultiplicity(ComplexEventExpression complexEventExpression) {
@@ -49,7 +49,7 @@ class ValidationHelper {
     }
 
     def static nullOrOneMultiplicity(AbstractMultiplicity multiplicity) {
-        if (multiplicity == null) {
+        if (multiplicity === null) {
             return true
         }
         if (!(multiplicity instanceof Multiplicity)) {
@@ -59,7 +59,7 @@ class ValidationHelper {
     }
 
     def static hasParameterList(ParameterizedPatternCall patternCall) {
-        return patternCall.parameterList != null
+        return patternCall.parameterList !== null
     }
 
     def static qualifiesAsFollowingOperator(ComplexEventOperator operator) {
@@ -76,7 +76,7 @@ class ValidationHelper {
         var ComplexEventPattern complexEventPattern = null
         var EObject tmp = parameterizedPatternCall.eContainer
 
-        while (complexEventPattern == null) {
+        while (complexEventPattern === null) {
             if (tmp instanceof ComplexEventPattern) {
                 complexEventPattern = tmp as ComplexEventPattern
             } else {

@@ -169,6 +169,7 @@ NumberValue returns LiteralValueReference:
     {NumberValue} value=XNumberLiteral
 ;
 
+//@Override is only available after Xtext 2.11
 XNumberLiteral returns xbase::XNumberLiteral :
     {XNumberLiteral} value=Number;
 
@@ -177,6 +178,7 @@ BoolValue returns LiteralValueReference:
     {BoolValue} value = XBooleanLiteral
 ;
 
+//@Override is only available after Xtext 2.11
 XBooleanLiteral returns xbase::XBooleanLiteral:
 	{XBooleanLiteral} ('false' | 'FALSE' | isTrue?='true' | isTrue?="TRUE")
 ;

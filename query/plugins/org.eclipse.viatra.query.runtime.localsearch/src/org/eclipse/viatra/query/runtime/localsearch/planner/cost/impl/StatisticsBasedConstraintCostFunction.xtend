@@ -130,7 +130,7 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
                 val Map<Set<PVariable>, Set<PVariable>> functionalDependencies = 
                     queryAnalyzer.getFunctionalDependencies(#{constraint}, false);
                 val impliedVariables = FunctionalDependencyHelper.closureOf(boundMaskVariables, functionalDependencies)
-                if(impliedVariables != null && impliedVariables.containsAll(freeMaskVariables)){
+                if(impliedVariables !== null && impliedVariables.containsAll(freeMaskVariables)){
                     return 1.0;
                 } else {
                     return DEFAULT_COST
@@ -169,7 +169,7 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
                     0.9
                 } else {
                     val type = parameters.get(i).declaredUnaryType
-                    if (type == null){
+                    if (type === null){
                         DEFAULT_COST
                     } else {
                         countTuples(input, type)
