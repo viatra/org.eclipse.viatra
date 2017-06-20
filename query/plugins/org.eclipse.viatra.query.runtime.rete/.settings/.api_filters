@@ -16,22 +16,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/CompilerHelper.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper"/>
-                <message_argument value="makeQueryTrace(PQuery, Collection&lt;RecipeTraceInfo&gt;, Collection&lt;ReteNodeRecipe&gt;)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/RecursionCutoffPoint.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.RecursionCutoffPoint">
-        <filter comment="Internal API update" id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.RecursionCutoffPoint"/>
-                <message_argument value="RecursionCutoffPoint(PQuery)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/ReteRecipeCompiler.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecipeCompiler">
         <filter id="572522506">
             <message_arguments>
@@ -45,42 +29,6 @@
             <message_arguments>
                 <message_argument value="IQueryBackendHintProvider"/>
                 <message_argument value="HintConfigurator"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/DefaultProductionNode.java" type="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode">
-        <filter comment="Internal API update" id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode"/>
-                <message_argument value="DefaultProductionNode(ReteContainer, Map&lt;String,Integer&gt;)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/traceability/CompiledQuery.java" type="org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery">
-        <filter comment="Internal Rete API updates" id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery"/>
-                <message_argument value="CompiledQuery(ReteNodeRecipe, Collection&lt;? extends RecipeTraceInfo&gt;, PQuery)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/tuple/TupleMemory.java" type="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory">
-        <filter id="338755678">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory"/>
-                <message_argument value="occurences"/>
-            </message_arguments>
-        </filter>
-        <filter id="1143996420">
-            <message_arguments>
-                <message_argument value="occurrences"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/util/ReteHintOptions.java" type="org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions">
-        <filter id="337768515">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions"/>
             </message_arguments>
         </filter>
     </resource>
