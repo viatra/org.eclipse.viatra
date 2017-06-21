@@ -542,5 +542,26 @@ class AggregationTest extends AbstractValidatorTest {
             getErrorCode(IssueCodes.INVALID_AGGREGATE_CONTEXT)
         )
     }
+    
+    @Test
+    def void mistypedAggregator() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            
+            private pattern bodiesOfPattern(p : Pattern, b : PatternBody) {
+                Pattern.bodies(p, b);
+            }
+            
+            pattern mistypedAggregator(number : java Integer) {
+                number == max find bodiesOfPattern(_, #count);
+            }
+            '''
+        )
+        tester.validate(parsed).assertAll(
+            getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR)
+        )
+    }
 
 }

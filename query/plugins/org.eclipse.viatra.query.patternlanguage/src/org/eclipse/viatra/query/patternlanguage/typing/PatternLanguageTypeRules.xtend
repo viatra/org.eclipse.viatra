@@ -172,6 +172,12 @@ class PatternLanguageTypeRules {
                     reference.call.parameters.get(AggregatorUtil.getAggregateVariableIndex(reference)), 
                     new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier)
                 ))
+                information.provideType(new ConditionalJudgement(
+                    reference.call.parameters.get(AggregatorUtil.getAggregateVariableIndex(reference)), 
+                    new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier),
+                    reference, 
+                    new JavaTransitiveInstancesKey(returnTypes.get(i).identifier)
+                ))
             }
            }    
    }
