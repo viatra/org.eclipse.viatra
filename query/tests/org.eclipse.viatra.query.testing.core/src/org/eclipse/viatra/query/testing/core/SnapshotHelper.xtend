@@ -166,8 +166,10 @@ class SnapshotHelper {
      */
     def createMatchRecordForMatch(IPatternMatch match){
         val matchRecord = SnapshotFactory::eINSTANCE.createMatchRecord
-        match.parameterNames.filterNull.forEach()[param |
-            matchRecord.substitutions.add(param.createSubstitution(match.get(param)))
+        match.parameterNames.forEach()[param |
+            if (match.get(param) !== null) {
+                matchRecord.substitutions.add(param.createSubstitution(match.get(param)))
+            }
         ]
         return matchRecord
     }
