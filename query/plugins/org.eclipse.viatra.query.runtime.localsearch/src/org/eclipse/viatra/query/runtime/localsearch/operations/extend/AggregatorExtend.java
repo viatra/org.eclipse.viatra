@@ -51,7 +51,7 @@ public class AggregatorExtend extends ExtendOperation<Object> {
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        call = helper.createCall(frame, context);
+        call = helper.createCall(context);
         Object aggregate = call.aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn(), frame);
         it = aggregate == null ? Collections.emptyIterator() : Iterators.<Object>singletonIterator(aggregate);
         

@@ -44,7 +44,7 @@ public class CountOperation extends ExtendOperation<Integer>{
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        call = helper.createCall(frame, context);
+        call = helper.createCall(context);
         it = Iterators.singletonIterator(call.count(frame));
         
     }

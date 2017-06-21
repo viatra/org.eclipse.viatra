@@ -29,7 +29,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -105,29 +104,9 @@ public class CallOperationHelper {
             }
         }
         
-        private PatternCall(Set<Integer> adornment, ISearchContext context) throws LocalSearchException{
-            this.adornment = Sets.newHashSet();
-            for(Entry<PParameter, Integer> entry: parameterMapping.entrySet()){
-                if (adornment.contains(entry.getValue())){
-                    this.adornment.add(entry.getKey());
-                }
-            }
-            // TODO adornment calculation here is unnecessary as it's available upon creation. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=509266
+        private PatternCall(Set<PParameter> adornment, ISearchContext context) throws LocalSearchException{
+            this.adornment = adornment;
             matcher = context.getMatcher(new MatcherReference(calledQuery, this.adornment));
-        }
-        
-        private PatternCall(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-            adornment = Sets.newHashSet();
-            for (Entry<PParameter, Integer> mapping : parameterMapping.entrySet()) {
-                Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
-                Preconditions.checkNotNull(mapping.getValue(), "Mapping frame must not contain null values");
-                Integer source = mapping.getValue();
-                if (frame.get(source) != null) {
-                    adornment.add(mapping.getKey());
-                }
-            }
-            // TODO adornment calculation here is unnecessary as it's available upon creation. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=509266
-            matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         }
         
         private Object[] mapFrame(MatchingFrame frameInCaller){
@@ -182,16 +161,29 @@ public class CallOperationHelper {
      * Create a call object. The adornment is calculated from the given frame, considering
      * a variable bound if it's value is not null.
      * @since 1.5
+     * @deprecated use {@link #createCall(ISearchContext)} instead
      */
-    public PatternCall createCall(MatchingFrame frame, ISearchContext context) throws LocalSearchException{
-        return new PatternCall(frame, context);
+    @Deprecated
+    public PatternCall createCall(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+        return new PatternCall(adornment, context);
     }
     
     /**
      * @since 1.5
+     * @deprecated use {@link #createCall(ISearchContext)} instead
      */
-    public PatternCall createCall(Set<Integer> adornment, ISearchContext context) throws LocalSearchException{
-        return new PatternCall(adornment, context);
+    @Deprecated
+    public PatternCall createCall(Set<Integer> adornment, ISearchContext context) throws LocalSearchException {
+        return new PatternCall(this.adornment, context);
+    }
+    
+    /**
+     * Create a call object based on the adornment calculated from the matcher reference
+     * 
+     * @since 1.7
+     */
+    public PatternCall createCall(ISearchContext context) throws LocalSearchException {
+        return new PatternCall(this.adornment, context);
     }
     
     /**

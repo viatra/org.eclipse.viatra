@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelp
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -61,8 +60,8 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        // Second parameter is NOT bound during execution, but the first is
-        call = helper.createCall(ImmutableSet.of(0), context);
+        // Note: second parameter is NOT bound during execution, but the first is
+        call = helper.createCall(context);
     }
     
     @Override

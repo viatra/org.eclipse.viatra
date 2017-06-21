@@ -41,7 +41,7 @@ public class NACOperation extends CheckOperation {
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        call = helper.createCall(frame, context);
+        call = helper.createCall(context);
     }
 
     @Override
