@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -67,12 +68,12 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
 
     /**
      * 
-     * @param position the position of the variable storing the found parent elements
+     * @param containerPosition the position of the variable storing the found parent elements
      * @param sourcePosition the position of the variable storing the selected element; must be bound
      * @param transitive if false, only the direct container is returned; otherwise all containers
      */
-    public IterateOverContainers(int position, int sourcePosition, boolean transitive) {
-        super(position);
+    public IterateOverContainers(int containerPosition, int sourcePosition, boolean transitive) {
+        super(containerPosition);
         this.sourcePosition = sourcePosition;
         this.transitive = transitive;
     }
@@ -81,10 +82,13 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
         EObject source = (EObject) frame.get(sourcePosition);
-        if(transitive) {
+        EObject container = source.eContainer();
+        if (container == null) {
+            it = Collections.emptyIterator();
+        } else if (transitive) {
             it = new ParentIterator(source);
-        } else {
-            it = Iterators.singletonIterator(source.eContainer());
+        } else { 
+            it = Iterators.singletonIterator(container);
         }
     }
 

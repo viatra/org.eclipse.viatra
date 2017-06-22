@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -44,6 +45,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendCons
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureTarget;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverContainers;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEDatatypeInstances;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.CompilerHelper;
@@ -466,11 +468,14 @@ public class POperationCompiler {
                 }
             }
             else if(!fromBound && toBound){
-                if(baseIndexAvailable){
+                if (feature instanceof EReference && ((EReference)feature).isContainment()) {
+                    // The iterate is also used to traverse a single container (third parameter)
+                    operations.add(new IterateOverContainers(sourcePosition, targetPosition, false));
+                    operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
+                } else if(baseIndexAvailable){
                     operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
                 } else {
-                    operations
-                            .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(
+                    operations.add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(
                                     sourcePosition, targetPosition, feature));
                     operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
                 }
