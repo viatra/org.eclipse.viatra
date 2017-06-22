@@ -24,6 +24,8 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine
 import org.eclipse.viatra.query.runtime.rete.network.Node
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 /** 
  * This utility class can determine trace connection between Nodes in a Rete network and elements in a PQuery model.
@@ -32,6 +34,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan
 class ReteNetworkTrace {
 
 	final ReteEngine reteEngine
+	val EMFScope scope
     final val Multimap<PTraceable, Node> traceableToNodeMap = Multimaps.newSetMultimap(newHashMap(), [newHashSet()])
     final IPTraceableTraceProvider traceProvider
     
@@ -41,13 +44,10 @@ class ReteNetworkTrace {
         ]
      }
 
-    new(ViatraQueryMatcher<?> matcher, IPTraceableTraceProvider trace) throws ViatraQueryException, QueryProcessingException {
-        this(((matcher.getEngine() as AdvancedViatraQueryEngine)).getQueryBackend(
-            new ReteBackendFactory()) as ReteEngine, trace)
-    }
-
-    new(ReteEngine reteEngine, IPTraceableTraceProvider traceProvider) throws ViatraQueryException, QueryProcessingException {
-    	this.reteEngine = reteEngine
+    new(ViatraQueryMatcher<?> matcher, IPTraceableTraceProvider traceProvider) throws ViatraQueryException, QueryProcessingException {
+    	this.reteEngine = (matcher.getEngine() as AdvancedViatraQueryEngine).getQueryBackend(
+            new ReteBackendFactory()) as ReteEngine
+        this.scope = matcher.engine.scope as EMFScope
     	this.traceProvider = traceProvider
         reteEngine.getReteNet().getRecipeTraces().forEach[recipeTrace |
             val Node node = recipeTrace.node
@@ -82,12 +82,12 @@ class ReteNetworkTrace {
     def CoverageInfo<PTraceable> traceCoverage(PQuery pQuery, CoverageInfo<Node> reteCoverage){
         val coverage = new CoverageInfo<PTraceable>();
         PQueries.getTraceables(pQuery).forEach[traceable |
-            val coverageBasedOnTracedReteNodes = traceable.findNodes.map[reteCoverage.get(it)].fold(CoverageState::NOT_REPRESENTED_UNKNOWN_REASON, [r, t | r.best(t)])
+            val coverageBasedOnTracedReteNodes = traceable.findNodes.map[reteCoverage.get(CoverageContext.create(it, scope))].fold(CoverageState::NOT_REPRESENTED_UNKNOWN_REASON, [r, t | r.best(t)])
             val amendedCoverage =
                 if ((coverageBasedOnTracedReteNodes == CoverageState.NOT_REPRESENTED_UNKNOWN_REASON) && hasRemovalReason(traceable)) {
                     CoverageState.NOT_REPRESENTED
                 } else coverageBasedOnTracedReteNodes
-            coverage.put(traceable, amendedCoverage)
+            coverage.put(CoverageContext.create(traceable, scope), amendedCoverage)
         ]
         coverage
     }

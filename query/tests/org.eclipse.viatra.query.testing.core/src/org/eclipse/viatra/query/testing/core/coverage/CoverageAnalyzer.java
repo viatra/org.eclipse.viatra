@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -22,6 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.MappingTraceCollector;
+import org.eclipse.viatra.query.runtime.rete.matcher.IncrementalMatcherCapability;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.testing.core.api.IPatternExecutionAnalyzer;
@@ -36,7 +38,7 @@ import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest;
  */
 public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
 
-    IRewriterTraceCollector traceCollector = new MappingTraceCollector();
+    private final IRewriterTraceCollector traceCollector = new MappingTraceCollector();
     private CoverageInfo<PTraceable> coverage = new CoverageInfo<>();
 
     @Override
@@ -59,10 +61,16 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
 
     @Override
     public void processMatcher(ViatraQueryMatcher<?> matcher) throws ViatraQueryException, QueryProcessingException {
-        ReteNetworkTrace trace = new ReteNetworkTrace(matcher, traceCollector);
-        CoverageInfo<Node> reteCoverage = new ReteCoverage(matcher).reteCoverage();
-        CoverageInfo<PTraceable> newCoverage = trace.traceCoverage(matcher, reteCoverage);
-       	coverage = coverage.mergeWith(newCoverage);
+        // Only Rete backend is supported
+        if (matcher instanceof BaseMatcher) {
+            BaseMatcher<?> baseMatcher = (BaseMatcher<?>) matcher;
+            if (baseMatcher.getCapabilities() instanceof IncrementalMatcherCapability) {
+                ReteNetworkTrace trace = new ReteNetworkTrace(matcher, traceCollector);
+                CoverageInfo<Node> reteCoverage = new ReteCoverage(matcher).reteCoverage();
+                CoverageInfo<PTraceable> newCoverage = trace.traceCoverage(matcher, reteCoverage);
+                coverage = coverage.mergeWith(newCoverage);
+            }
+        }
     }
 
 }

@@ -66,20 +66,22 @@ import org.junit.runner.RunWith
         
         val tracer = new ReteNetworkTrace(matcher, traceCollector)
         val emptyCoverage = new ReteCoverage(matcher).reteCoverage
-        val matcherCoverage = tracer.traceCoverage(matcher, emptyCoverage);
-        for (Entry<PTraceable, CoverageState> entry : matcherCoverage.entrySet()) {
+        val matcherCoverage = tracer.traceCoverage(matcher, emptyCoverage)
+        for (Entry<PTraceable, CoverageState> entry : matcherCoverage.elementCoverage.entrySet()) {
             System.out.println('''«entry.getKey()» -> «entry.getValue()»''')
         }
+        Assert.assertTrue(matcherCoverage.elementCoverage.values.forall[it == CoverageState.NOT_COVERED])
         Assert.assertEquals(0f, matcherCoverage.aggregatedCoveragePercent, 0)
-        
+
         val Resource resource = rs.createResource(URI.createURI("dummy.xmi"))
         resource.contents.add(model)
         
         val fullCoverage = new ReteCoverage(matcher).reteCoverage
         val fullmatcherCoverage = tracer.traceCoverage(matcher, fullCoverage);
-        for (Entry<PTraceable, CoverageState> entry : fullmatcherCoverage.entrySet()) {
+        for (Entry<PTraceable, CoverageState> entry : fullmatcherCoverage.elementCoverage.entrySet()) {
             System.out.println('''«entry.getKey()» -> «entry.getValue()»''')
         }
+        Assert.assertTrue(fullmatcherCoverage.elementCoverage.values.forall[it == CoverageState.COVERED])
         Assert.assertEquals(100f, fullmatcherCoverage.aggregatedCoveragePercent, 0)
     }
 }
