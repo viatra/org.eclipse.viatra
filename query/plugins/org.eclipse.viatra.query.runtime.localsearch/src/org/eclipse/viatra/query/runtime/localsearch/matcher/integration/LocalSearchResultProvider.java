@@ -164,8 +164,9 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this.planProvider = planProvider;
         this.userHints = userHints;
         this.runtimeContext = context.getRuntimeContext();
+        
         try {
-            searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints);
+            searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints, backend.getCache());
         } catch (ViatraQueryException e) {
             throw new QueryProcessingException("Could not create search context for {1}", new String[]{query.getFullyQualifiedName()}, e.getMessage(), query, e);
         }
@@ -273,9 +274,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {
         try {
             return newLocalSearchMatcher(parameters);
-        } catch (QueryProcessingException e) {
-            throw new RuntimeException(e);
-        } catch (ViatraQueryException e) {
+        } catch (QueryProcessingException | ViatraQueryException e) {
             throw new RuntimeException(e);
         }
 

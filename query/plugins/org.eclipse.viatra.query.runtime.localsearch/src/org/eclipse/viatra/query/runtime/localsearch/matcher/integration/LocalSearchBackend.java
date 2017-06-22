@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.util.ICache;
+import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
@@ -48,7 +50,8 @@ public class LocalSearchBackend implements IQueryBackend {
     private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
     
     // Cache
-    Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
+    private final Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
+    private final PurgableCache generalCache;
     
     private final Multimap<PQuery, LocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
     
@@ -59,6 +62,7 @@ public class LocalSearchBackend implements IQueryBackend {
         super();
         this.context = context;
         this.eAttributesByTypeForEClass = HashBasedTable.create();
+        this.generalCache = new PurgableCache();
         this.planProvider = new CachingPlanProvider(context.getLogger());
     }
 
@@ -96,6 +100,7 @@ public class LocalSearchBackend implements IQueryBackend {
     public void dispose() {  
         eAttributesByTypeForEClass.clear();
         resultProviderCache.clear();
+        generalCache.purge();
     }
 
     @Override
@@ -163,4 +168,12 @@ public class LocalSearchBackend implements IQueryBackend {
         return context;
     }
     
+    /**
+     * Returns the internal cache of the backend
+     * @since 1.7
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    public ICache getCache() {
+        return generalCache;
+    }
 }

@@ -32,15 +32,24 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAcc
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
+import org.eclipse.viatra.query.runtime.matchers.util.ICache;
+import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
 /**
  * The {@link ISearchContext} interface allows search operations to reuse platform services such as the indexer.
  * 
  * @author Zoltan Ujhelyi
+ * @noreference This interface is not intended to be referenced by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  *
  */
 public interface ISearchContext{
     
+    /**
+     * Provides access to the EMF-specific base index for search operation; do not use if not on EMF Scope
+     */
     NavigationHelper getBaseIndex();
     
     /**
@@ -59,22 +68,36 @@ public interface ISearchContext{
      */
     IQueryResultProvider getMatcher(MatcherReference reference) throws LocalSearchException;
     
+    /**
+     * Allows search operations to cache values through the entire lifecycle of the local search backend. The values are
+     * calculated if not cached before using the given provider, or returned from the cache accordingly.
+     * 
+     * @since 1.7
+     */
+    <T> T accessBackendLevelCache(Object key, Class<? extends T> clazz, IProvider<T> valueProvider);
+    
+    /**
+     * @noreference This class is not intended to be referenced by clients.
+     * @noimplement This interface is not intended to be implemented by clients.
+     * @noextend This interface is not intended to be extended by clients.
+     */
     public class SearchContext implements ISearchContext {
 
         final NavigationHelper navigationHelper;
         final IQueryResultProviderAccess resultProviderAccess;
         final QueryEvaluationHint overrideHints;
         
+        final ICache backendLevelCache;
+        
         final Logger logger = Logger.getLogger(getClass());
         
-        /**
-         * @since 1.5
-         */
-        public SearchContext(IBaseIndex baseIndex, IQueryResultProviderAccess resultProviderAccess, QueryEvaluationHint overrideHints) throws ViatraQueryException {
             //XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
+        public SearchContext(IBaseIndex baseIndex, IQueryResultProviderAccess resultProviderAccess, QueryEvaluationHint overrideHints, ICache backendLevelCache) throws ViatraQueryException {
             this.navigationHelper = ((EMFBaseIndexWrapper)baseIndex).getNavigationHelper();
             this.resultProviderAccess = resultProviderAccess;
             this.overrideHints = overrideHints;
+            
+            this.backendLevelCache = backendLevelCache;
         }
 
         public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
@@ -118,6 +141,11 @@ public interface ISearchContext{
             } catch (QueryProcessingException e) {
                 throw new LocalSearchException("Could not access referenced query: "+reference, e);
             }
+        }
+
+        @Override
+        public <T> T accessBackendLevelCache(Object key, Class<? extends T> clazz, IProvider<T> valueProvider) {
+            return backendLevelCache.getValue(key, clazz, valueProvider);
         }
         
     }
