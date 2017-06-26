@@ -1,20 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2010-2017, Gabor Bergmann, IncQueryLabs Ltd.
+ * Copyright (c) 2004-2008 Gabor Bergmann and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Gabor Bergmann - initial API and implementation
+ *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.rete.tuple;
+
+package org.eclipse.viatra.query.runtime.matchers.util;
 
 /**
  * @author Gabor Bergmann
- * @deprecated moved to {@link org.eclipse.viatra.query.runtime.matchers.util.Clearable}
+ * @since 1.7
+ *         An instance of clearable pattern memory.
  */
-@Deprecated
-public interface Clearable extends org.eclipse.viatra.query.runtime.matchers.util.Clearable {
-
+public interface Clearable {
+    /**
+     * Clear all partial matchings stored in memory
+     * 
+     */
+    void clear();
 }

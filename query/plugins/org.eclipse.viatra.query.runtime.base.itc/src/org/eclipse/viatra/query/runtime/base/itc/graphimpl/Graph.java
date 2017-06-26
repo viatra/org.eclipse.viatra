@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCCResult;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 import com.google.common.base.Function;
 
@@ -38,15 +39,15 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
     private List<IGraphObserver<V>> observers;
 
     public Graph() {
-        outgoingEdges = new HashMap<V, Map<V, Integer>>();
-        incomingEdges = new HashMap<V, Map<V, Integer>>();
-        observers = new LinkedList<IGraphObserver<V>>();
+        outgoingEdges = CollectionsFactory.createMap();
+        incomingEdges = CollectionsFactory.createMap();
+        observers = CollectionsFactory.createObserverList();
     }
 
     public void insertEdge(V source, V target) {
         Map<V, Integer> outgoing = outgoingEdges.get(source);
         if (outgoing == null) {
-            outgoing = new HashMap<V, Integer>();
+            outgoing = CollectionsFactory.createMap();
             outgoingEdges.put(source, outgoing);
         }
         Integer count = outgoing.get(target);
@@ -58,7 +59,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 
         Map<V, Integer> incoming = incomingEdges.get(target);
         if (incoming == null) {
-            incoming = new HashMap<V, Integer>();
+            incoming = CollectionsFactory.createMap();
             incomingEdges.put(target, incoming);
         }
         count = incoming.get(source);
@@ -132,7 +133,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         Map<V, Integer> outgoing = outgoingEdges.get(node);
 
         if (incoming != null) {
-            Map<V, Integer> _incoming = new HashMap<V, Integer>(incoming);
+            Map<V, Integer> _incoming = CollectionsFactory.createMap(incoming);
 
             for (Entry<V, Integer> entry : _incoming.entrySet()) {
                 for (int i = 0; i < entry.getValue(); i++) {
@@ -142,7 +143,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         }
 
         if (outgoing != null) {
-            Map<V, Integer> _outgoing = new HashMap<V, Integer>(outgoing);
+            Map<V, Integer> _outgoing = CollectionsFactory.createMap(outgoing);
 
             for (Entry<V, Integer> entry : _outgoing.entrySet()) {
                 for (int i = 0; i < entry.getValue(); i++) {

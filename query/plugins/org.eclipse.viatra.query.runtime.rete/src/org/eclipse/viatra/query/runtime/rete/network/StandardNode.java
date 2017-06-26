@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
@@ -30,7 +31,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
  * 
  */
 public abstract class StandardNode extends BaseNode implements Supplier {
-    protected List<Receiver> children = new LinkedList<Receiver>();
+    protected List<Receiver> children = CollectionsFactory.createObserverList();
 
     public StandardNode(ReteContainer reteContainer) {
         super(reteContainer);

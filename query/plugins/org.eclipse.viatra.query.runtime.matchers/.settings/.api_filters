@@ -154,4 +154,11 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/util/CollectionsFactory.java" type="org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory">
+        <filter id="337768515">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

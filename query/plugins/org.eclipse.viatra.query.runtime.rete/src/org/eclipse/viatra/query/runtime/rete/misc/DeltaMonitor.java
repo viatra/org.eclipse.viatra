@@ -15,9 +15,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
 
 /**
  * A monitoring object that connects to the rete network as a receiver to reflect changes since an arbitrary state

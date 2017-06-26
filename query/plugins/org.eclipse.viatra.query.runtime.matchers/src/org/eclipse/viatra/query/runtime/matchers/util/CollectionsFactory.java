@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
+import java.util.ArrayList;
+
 //import gnu.trove.map.hash.THashMap;
 //import gnu.trove.set.hash.THashSet;
 //import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
@@ -18,27 +20,151 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//import javolution.util.FastMap;
-//import javolution.util.FastSet;
-
-//import org.apache.commons.collections.map.HashedMap;
-//import org.apache.commons.collections.set.MapBackedSet;
-//import org.eclipse.incquery.runtime.rete.collections.hppc.HPPCHashMap;
-//import org.eclipse.incquery.runtime.rete.collections.hppc.HPPCHashSet;
-
-//import com.gs.collections.impl.map.mutable.UnifiedMap;
-//import com.gs.collections.impl.set.mutable.UnifiedSet;
-
 /**
+ * Factory class used as an accessor to Collections implementations. 
  * @author istvanrath
- * Factory class used as an accessor to Collections implementations.
  */
-public class CollectionsFactory
+public final class CollectionsFactory
 {
+    
+    /**
+     * Instantiates a new empty map.
+     * @since 1.7
+     */
+    public static <K, V> Map<K, V> createMap() {
+        return FRAMEWORK.createMap();
+    }
 
+    /**
+     * Instantiates a new map with the given initial contents.
+     * @since 1.7
+     */
+    public static <K, V> Map<K, V> createMap(Map<K, V> initial) {
+        return FRAMEWORK.createMap(initial);
+    }
+
+    /**
+     * Instantiates a new empty set.
+     * @since 1.7
+     */
+    public static <E> Set<E> createSet() {
+        return FRAMEWORK.createSet();
+    }
+
+    /**
+     * Instantiates a new set with the given initial contents.
+     * @since 1.7
+     */
+    public static <E> Set<E> createSet(Collection<E> initial) {
+        return FRAMEWORK.createSet(initial);
+    }
+
+    /**
+     * Instantiates a new empty multiset.
+     * @since 1.7
+     */
+    public static <T> IMultiset<T> createMultiset() {
+        return FRAMEWORK.createMultiset();
+    }
+
+    /**
+     * Instantiates a new list that is optimized for registering observers / callbacks.
+     * @since 1.7
+     */
+    public static <O> List<O> createObserverList() {
+        return FRAMEWORK.createObserverList();
+    }
+    
+    /**
+     * The collections framework of the current configuration.
+     * @since 1.7
+     */
+    private static final ICollectionsFramework FRAMEWORK = new EclipseCollectionsFactory();
+    
+    /**
+     * Interface abstracting over a collections technology that provides custom collection implementations.
+     * @since 1.7
+     */
+    public static interface ICollectionsFramework {
+        
+        public abstract <K,V> Map<K,V> createMap();
+        public abstract <K,V> Map<K,V> createMap(Map<K,V> initial);
+        public abstract <E> Set<E> createSet();
+        public abstract <E> Set<E> createSet(Collection<E> initial);
+        public abstract <T> IMultiset<T> createMultiset();
+        public abstract <O> List<O> createObserverList();
+    }
+    
+    
+    /**
+     * Fall-back implementation with Java Collections.
+     * @since 1.7
+     */
+    public static class JavaCollectionsFactory implements ICollectionsFramework {
+
+        @Override
+        public <K, V> Map<K, V> createMap() {
+            return new HashMap<K, V>();
+        }
+        
+        @Override
+        public <K, V> Map<K, V> createMap(Map<K, V> initial) {
+            return new HashMap<K, V>(initial);
+        }
+
+        @Override
+        public <E> Set<E> createSet() {
+            return new HashSet<E>();
+        }
+
+        @Override
+        public <E> Set<E> createSet(Collection<E> initial) {
+            return new HashSet<E>(initial);
+        }
+
+        @Override
+        public <T> IMultiset<T> createMultiset() {
+            return new JavaBagMemory<T>();
+        }
+        
+        @Override
+        public <O> List<O> createObserverList() {
+            return new ArrayList<O>(1);
+        }
+        
+    }
+    
+    // OBSOLETE CODE FOLLOWS BELOW
+    
+    /**
+     * @deprecated use {@link #FRAMEWORK}
+     */
+    @Deprecated
+    public static <K,V> Map<K,V> getMap() {
+        return FRAMEWORK.createMap();
+    }
+    
+    /**
+     * @deprecated use {@link #FRAMEWORK}
+     */
+    @Deprecated    
+    public static <E> Set<E> getSet() {
+        return FRAMEWORK.createSet();
+    }
+ 
+    /**
+     * @deprecated use {@link #FRAMEWORK}
+     */
+    @Deprecated
+    public static <E> Set<E> getSet(Collection<E> initial) {
+        return FRAMEWORK.createSet(initial);
+    }
+
+    @Deprecated
     public enum CollectionsFramework {
         Java,
         HPPC,
@@ -48,41 +174,7 @@ public class CollectionsFactory
         Apache,
         Javolution
     }
-    
+    @Deprecated
     public static CollectionsFramework mode = CollectionsFramework.Java;
-    
-    public static <K,V> Map<K,V> getMap() {
-        switch (mode) {
-        default:
-        case Java: return new HashMap<K, V>();
-//        case HPPC: return new HPPCHashMap<K, V>(); // non-thread-safe
-//        case GS: return new UnifiedMap<K,V>();
-//        case FastUtil: return new Object2ReferenceOpenHashMap<K,V>();
-//        case Trove: return new THashMap<K, V>();
-//        case Apache: 
-//            return new HashedMap(); // non-thread-safe
-//            //return new StaticBucketMap(100000); // non-thread-safe
-//        case Javolution: return new FastMap<K, V>();
-        }
-    }
-    
-    public static <E> Set<E> getSet() {
-        switch (mode) {
-        default:
-        case Java: return new HashSet<E>();
-//        case GS: return new UnifiedSet<E>();
-//        case FastUtil: return new ObjectOpenHashSet<E>();
-//        case Trove: return new THashSet<E>();
-//        case Apache: return MapBackedSet.decorate(getMap());
-//        case Javolution: return new FastSet<E>();
-        //  case HPPC: return new HPPCHashSet<E>();
-        }
-    }
- 
-    public static <E> Set<E> getSet(Collection<E> initial) {
-        Set<E> r = getSet();
-        r.addAll(initial);
-        return r;
-    }
     
 }

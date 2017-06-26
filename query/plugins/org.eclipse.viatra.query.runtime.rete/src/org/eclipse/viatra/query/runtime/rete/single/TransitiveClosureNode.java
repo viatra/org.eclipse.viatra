@@ -18,9 +18,9 @@ import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
 
 // TODO egyelore (i,j) elek, majd helyette mask megoldas
 // TODO bemeneti index

@@ -8,16 +8,15 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.rete.tuple;
+package org.eclipse.viatra.query.runtime.matchers.tuple;
 
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @since 1.7
  */
 public class TupleValueProvider implements IValueProvider {
 

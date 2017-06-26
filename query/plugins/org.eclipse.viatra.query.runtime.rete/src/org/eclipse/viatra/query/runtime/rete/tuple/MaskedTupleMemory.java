@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 
@@ -91,7 +92,7 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
         boolean change = (coll == null);
 
         if (change) {
-            coll = new TupleMemory();
+            coll = CollectionsFactory.getSet();
             matchings.put(signature, coll);
         }
         if (!coll.add(ps)) {

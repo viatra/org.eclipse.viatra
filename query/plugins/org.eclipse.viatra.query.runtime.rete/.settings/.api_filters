@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.rete" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="1.7.0"/>
+                <message_argument value="1.6.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.6.0"/>
+            </message_arguments>
+        </filter>
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/ColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
+            </message_arguments>
+        </filter>
         <filter comment="Use of aggregator api" id="643850349">
             <message_arguments>
                 <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
@@ -21,6 +56,27 @@
             <message_arguments>
                 <message_argument value="QueryAnalyzer"/>
                 <message_argument value="ReteRecipeCompiler"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/CachedFunctionEvaluatorNode.java" type="org.eclipse.viatra.query.runtime.rete.eval.CachedFunctionEvaluatorNode">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.CachedFunctionEvaluatorNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/CachedPredicateEvaluatorNode.java" type="org.eclipse.viatra.query.runtime.rete.eval.CachedPredicateEvaluatorNode">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.CachedPredicateEvaluatorNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/OutputCachingEvaluatorNode.java" type="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode"/>
             </message_arguments>
         </filter>
     </resource>
@@ -87,6 +143,87 @@
             <message_arguments>
                 <message_argument value="IQueryBackendHintProvider"/>
                 <message_argument value="HintConfigurator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/misc/DefaultDeltaMonitor.java" type="org.eclipse.viatra.query.runtime.rete.misc.DefaultDeltaMonitor">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.misc.DefaultDeltaMonitor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/misc/DeltaMonitor.java" type="org.eclipse.viatra.query.runtime.rete.misc.DeltaMonitor">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.misc.DeltaMonitor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/DefaultMailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/Mailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.Mailbox">
+        <filter id="404791350">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Mailbox"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/MonotonicityAwareMailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/MonotonicityAwareMailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox$MessageIndexer">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox.MessageIndexer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/ReteContainer.java" type="org.eclipse.viatra.query.runtime.rete.network.ReteContainer">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.ReteContainer"/>
+                <message_argument value="registerClearable(Clearable)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.ReteContainer"/>
+                <message_argument value="unregisterClearable(Clearable)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="registerClearable(Clearable)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="unregisterClearable(Clearable)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/UniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="getMemory()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/tuple/MaskedTupleMemory.java" type="org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory"/>
             </message_arguments>
         </filter>
     </resource>

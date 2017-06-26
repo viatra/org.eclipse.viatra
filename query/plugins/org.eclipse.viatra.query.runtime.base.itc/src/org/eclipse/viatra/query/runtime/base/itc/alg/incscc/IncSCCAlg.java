@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.base.itc.alg.incscc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 /**
@@ -67,7 +67,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         } else {
             gds = new IBiDirectionalWrapper<V>(graphDataSource);
         }
-        observers = new ArrayList<ITcObserver<V>>();
+        observers = CollectionsFactory.createObserverList();
         sccs = new UnionFind<V>();
         reducedGraph = new Graph<V>();
         reducedGraphIndexer = new IBiDirectionalWrapper<V>(reducedGraph);
@@ -122,24 +122,22 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                 Set<V> successorRoots = counting.getAllReachableTargets(targetRoot);
 
                 // 1. intersection of source and target roots, these will be in the merged SCC
-                Set<V> isectRoots = CollectionHelper.intersection(predecessorRoots, successorRoots);
+                Set<V> isectRoots = CollectionHelper.intersectionMutable(predecessorRoots, successorRoots);
                 isectRoots.add(sourceRoot);
                 isectRoots.add(targetRoot);
 
                 // notifications must be issued before Union-Find modifications
                 if (observers.size() > 0) {
-                    Set<V> sourceSCCs = new HashSet<V>();
-                    Set<V> targetSCCs = new HashSet<V>();
-
+                    Set<V> sourceSCCs = createSetNullTolerant(predecessorRoots);
                     sourceSCCs.add(sourceRoot);
-                    sourceSCCs.addAll(predecessorRoots);
+                    Set<V> targetSCCs = createSetNullTolerant(successorRoots);
                     targetSCCs.add(targetRoot);
-                    targetSCCs.addAll(successorRoots);
 
                     // tracing back to actual nodes
                     for (V sourceSCC : sourceSCCs) {
-                        for (V targetSCC : CollectionHelper.difference(targetSCCs,
-                                counting.getAllReachableTargets(sourceSCC))) {
+                        targetLoop: for (V targetSCC : targetSCCs) {
+                            if (counting.isReachable(sourceSCC, targetSCC)) continue targetLoop;
+                            
                             boolean needsNotification = false;
 
                             // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
@@ -227,7 +225,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             }
         }
     }
-
+    
     @Override
     public void edgeDeleted(V source, V target) {
         V sourceRoot = sccs.find(source);
@@ -245,9 +243,9 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
             // if source is not reachable from target anymore
             if (!BFS.isReachable(source, target, g)) {
-                Map<V, Integer> reachableSources = new HashMap<V, Integer>(
+                Map<V, Integer> reachableSources = CollectionsFactory.createMap(
                         reducedGraphIndexer.getSourceNodes(sourceRoot));
-                Map<V, Integer> reachableTargets = new HashMap<V, Integer>(
+                Map<V, Integer> reachableTargets = CollectionsFactory.createMap(
                         reducedGraphIndexer.getTargetNodes(sourceRoot));
 
                 SCCResult<V> _newSccs = SCC.computeSCC(g);
@@ -271,7 +269,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                 reducedGraph.deleteNode(sourceRoot);
 
                 Set<Set<V>> newSCCs = _newSccs.getSccs();
-                Set<V> newSCCRoots = new HashSet<V>();
+                Set<V> newSCCRoots = CollectionsFactory.createSet();
 
                 // add new nodes and edges to the reduced graph
                 for (Set<V> newSCC : newSCCs) {
@@ -299,15 +297,16 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                     V newSourceRoot = sccs.find(source);
                     V newTargetRoot = sccs.find(target);
 
-                    Set<V> sourceSCCs = counting.getAllReachableSources(newSourceRoot);
+                    Set<V> sourceSCCs = createSetNullTolerant(counting.getAllReachableSources(newSourceRoot));
                     sourceSCCs.add(newSourceRoot);
 
-                    Set<V> targetSCCs = counting.getAllReachableTargets(newTargetRoot);
+                    Set<V> targetSCCs = createSetNullTolerant(counting.getAllReachableTargets(newTargetRoot));
                     targetSCCs.add(newTargetRoot);
-
+                    
                     for (V sourceSCC : sourceSCCs) {
-                        for (V targetSCC : CollectionHelper.difference(targetSCCs,
-                                counting.getAllReachableTargets(sourceSCC))) {
+                        targetLoop: for (V targetSCC : targetSCCs) {
+                            if (counting.isReachable(sourceSCC, targetSCC)) continue targetLoop;
+                            
                             boolean needsNotification = false;
 
                             // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
@@ -380,7 +379,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     public Set<V> getAllReachableTargets(V source) {
         V sourceRoot = sccs.find(source);
         Set<V> containedNodes = sccs.getPartition(sourceRoot);
-        Set<V> targets = new HashSet<V>();
+        Set<V> targets = CollectionsFactory.createSet();
 
         if (containedNodes.size() > 1 || GraphHelper.getEdgeCount(source, gds) == 1) {
             targets.addAll(containedNodes);
@@ -400,7 +399,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     public Set<V> getAllReachableSources(V target) {
         V targetRoot = sccs.find(target);
         Set<V> containedNodes = sccs.getPartition(targetRoot);
-        Set<V> sources = new HashSet<V>();
+        Set<V> sources = CollectionsFactory.createSet();
 
         if (containedNodes.size() > 1 || GraphHelper.getEdgeCount(target, gds) == 1) {
             sources.addAll(containedNodes);
@@ -430,11 +429,11 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         if (!isReachable(source, target)) {
             return null;
         } else {
-            Set<V> sccsInSubGraph = CollectionHelper.intersection(counting.getAllReachableTargets(source),
+            Set<V> sccsInSubGraph = CollectionHelper.intersectionMutable(counting.getAllReachableTargets(source),
                     counting.getAllReachableSources(target));
             sccsInSubGraph.add(sccs.find(source));
             sccsInSubGraph.add(sccs.find(target));
-            Set<V> nodesInSubGraph = new HashSet<V>();
+            Set<V> nodesInSubGraph = CollectionsFactory.createSet();
 
             for (V sccRoot : sccsInSubGraph) {
                 nodesInSubGraph.addAll(sccs.getPartition(sccRoot));
@@ -639,5 +638,13 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     public Graph<V> getReducedGraph() {
         return reducedGraph;
     }
+    
+    private static <V> Set<V> createSetNullTolerant(Set<V> initial) {
+        if (initial != null)
+            return CollectionsFactory.createSet(initial);
+        else 
+            return CollectionsFactory.createSet();
+    }
+
 
 }

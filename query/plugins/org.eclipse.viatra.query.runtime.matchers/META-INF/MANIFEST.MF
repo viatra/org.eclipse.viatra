@@ -9,15 +9,13 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.query.runtime.matchers.aggregators;uses:="org.eclipse.viatra.query.runtime.matchers.psystem.aggregations,com.google.common.collect",
  org.eclipse.viatra.query.runtime.matchers.algorithms,
  org.eclipse.viatra.query.runtime.matchers.backend,
- org.eclipse.viatra.query.runtime.matchers.context;
-  uses:="com.google.common.collect",
+ org.eclipse.viatra.query.runtime.matchers.context;uses:="com.google.common.collect",
  org.eclipse.viatra.query.runtime.matchers.context.common,
  org.eclipse.viatra.query.runtime.matchers.context.surrogate,
  org.eclipse.viatra.query.runtime.matchers.planning,
  org.eclipse.viatra.query.runtime.matchers.planning.helpers,
  org.eclipse.viatra.query.runtime.matchers.planning.operations,
- org.eclipse.viatra.query.runtime.matchers.psystem;
-  uses:="com.google.common.collect",
+ org.eclipse.viatra.query.runtime.matchers.psystem;uses:="com.google.common.collect",
  org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
   x-friends:="org.eclipse.viatra.query.patternlanguage,
    org.eclipse.viatra.query.runtime,
@@ -31,12 +29,18 @@ Export-Package: org.eclipse.viatra.query.runtime.matchers.aggregators;uses:="org
  org.eclipse.viatra.query.runtime.matchers.psystem.annotations,
  org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred,
  org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables,
- org.eclipse.viatra.query.runtime.matchers.psystem.queries;
-  uses:="com.google.common.base",
+ org.eclipse.viatra.query.runtime.matchers.psystem.queries;uses:="com.google.common.base",
  org.eclipse.viatra.query.runtime.matchers.psystem.rewriters,
  org.eclipse.viatra.query.runtime.matchers.tuple,
  org.eclipse.viatra.query.runtime.matchers.util;uses:="com.google.common.base,org.eclipse.viatra.query.runtime.matchers.psystem.queries"
 Bundle-ClassPath: .
 Import-Package: com.google.common.base;version="15.0.0",
  com.google.common.collect;version="15.0.0",
- org.apache.log4j;version="1.2.15"
+ org.apache.log4j;version="1.2.15",
+ org.eclipse.collections.api.block.procedure.primitive,
+ org.eclipse.collections.api.factory.map,
+ org.eclipse.collections.api.factory.set,
+ org.eclipse.collections.api.map,
+ org.eclipse.collections.impl.factory,
+ org.eclipse.collections.impl.map.mutable.primitive,
+ org.eclipse.collections.impl.map.primitive

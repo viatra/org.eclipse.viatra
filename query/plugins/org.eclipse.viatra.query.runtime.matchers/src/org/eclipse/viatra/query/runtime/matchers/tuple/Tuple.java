@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Immutable tuple.
+ * Immutable tuple. Obtain instances via utility class {@link Tuples}.
  * @author Gabor Bergmann
  * 
  */

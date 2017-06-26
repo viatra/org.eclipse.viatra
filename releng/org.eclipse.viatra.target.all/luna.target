@@ -37,6 +37,11 @@
       <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
       <repository location="http://download.eclipse.org/cbi/updates/license/"/>
     </location>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.collections" version="7.1.1"/>
+      <unit id="org.eclipse.collections.api" version="7.1.1"/>
+      <repository location="http://download.eclipse.org/viatra/dependency/collections-71"/>
+    </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.emf.facet.sdk.feature.feature.group" version="1.0.1.201508190910"/>
       <repository location="http://archive.eclipse.org/facet/updates/release/1.0.1/"/>

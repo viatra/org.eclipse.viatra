@@ -91,6 +91,16 @@
             <artifactId>guava</artifactId>
             <version>[14.0,19.0)</version>
         </dependency>
+        <dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections</artifactId>
+			<version>7.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections-api</artifactId>
+			<version>7.1.1</version>
+		</dependency>
     </dependencies>
     <parent>
         <artifactId>org.eclipse.viatra.parent.core</artifactId>

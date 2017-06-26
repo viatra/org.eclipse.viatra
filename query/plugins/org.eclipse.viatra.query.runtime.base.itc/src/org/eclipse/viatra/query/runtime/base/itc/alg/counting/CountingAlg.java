@@ -11,8 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.alg.counting;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +25,7 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * This class is the optimized implementation of the Counting algorithm.
@@ -40,7 +39,6 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
     private static final long serialVersionUID = -2383210800242398869L;
     private CountingTcRelation<V> tc = null;
-    private CountingTcRelation<V> dtc = null;
     private IBiDirectionalGraphDataSource<V> gds = null;
     private List<ITcObserver<V>> observers;
 
@@ -59,9 +57,8 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             this.gds = new IBiDirectionalWrapper<V>(gds);
         }
 
-        observers = new LinkedList<ITcObserver<V>>();
+        observers = CollectionsFactory.<ITcObserver<V>>createObserverList();
         tc = new CountingTcRelation<V>(true);
-        dtc = new CountingTcRelation<V>(false);
 
         initTc();
         gds.attachObserver(this);
@@ -77,14 +74,14 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     @Override
     public void edgeInserted(V source, V target) {
         if (!source.equals(target)) {
-            deriveTc(source, target, 1);
+            deriveTc(source, target, true);
         }
     }
 
     @Override
     public void edgeDeleted(V source, V target) {
         if (!source.equals(target)) {
-            deriveTc(source, target, -1);
+            deriveTc(source, target, false);
         }
     }
 
@@ -108,19 +105,19 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
      * @param dCount
      *            the value is -1 if an edge was deleted and +1 if an edge was inserted
      */
-    private void deriveTc(V source, V target, int dCount) {
+    private void deriveTc(V source, V target, boolean isInsertion) {
 
         // if (dCount == 1 && isReachable(target, source)) {
         // System.out.println("The graph contains cycle with (" + source + ","+ target + ") edge!");
         // }
 
-        dtc.clear();
+        CountingTcRelation<V> dtc = new CountingTcRelation<V>(false);
         Set<V> tupEnds = null;
 
         // 1. d(tc(x,y)) :- d(l(x,y))
-        if (tc.addTuple(source, target, dCount)) {
-            dtc.addTuple(source, target, dCount);
-            notifyTcObservers(source, target, dCount);
+        if (tc.updateTuple(source, target, isInsertion)) {
+            dtc.updateTuple(source, target, true /* deltas implicitly have the same sign as isInsertion*/);
+            notifyTcObservers(source, target, isInsertion);
         }
 
         // 2. d(tc(x,y)) :- d(l(x,z)) & tc(z,y)
@@ -128,19 +125,20 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         if (tupEnds != null) {
             for (V tupEnd : tupEnds) {
                 if (!tupEnd.equals(source)) {
-                    if (tc.addTuple(source, tupEnd, dCount)) {
-                        dtc.addTuple(source, tupEnd, dCount);
-                        notifyTcObservers(source, tupEnd, dCount);
+                    if (tc.updateTuple(source, tupEnd, isInsertion)) {
+                        dtc.updateTuple(source, tupEnd, true /* deltas implicitly have the same sign as isInsertion*/);
+                        notifyTcObservers(source, tupEnd, isInsertion);
                     }
                 }
             }
         }
 
         // 3. d(tc(x,y)) :- lv(x,z) & d(tc(z,y))
-        CountingTcRelation<V> newTuples = new CountingTcRelation<V>(false);
+        CountingTcRelation<V> newTuples = dtc;
         CountingTcRelation<V> tmp = null;
+        dtc = new CountingTcRelation<V>(false);
+        
         Map<V, Integer> nodes = null;
-        newTuples.union(dtc);
 
         while (!newTuples.isEmpty()) {
 
@@ -158,9 +156,9 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                         if (tupEnds != null) {
                             for (V tT : tupEnds) {
                                 if (!nS.equals(tT)) {
-                                    if (tc.addTuple(nS, tT, dCount)) {
-                                        newTuples.addTuple(nS, tT, dCount);
-                                        notifyTcObservers(nS, tT, dCount);
+                                    if (tc.updateTuple(nS, tT, isInsertion)) {
+                                        newTuples.updateTuple(nS, tT, true /* deltas implicitly have the same sign as isInsertion*/);
+                                        notifyTcObservers(nS, tT, isInsertion);
                                     }
                                 }
                             }
@@ -199,35 +197,29 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
     @Override
     public Set<V> getAllReachableTargets(V source) {
-        Set<V> targets = new HashSet<V>();
-        if (tc.getTupleEnds(source) != null) {
-            targets.addAll(tc.getTupleEnds(source));
-        }
-        return targets;
+        return tc.getTupleEnds(source);
     }
 
     @Override
     public Set<V> getAllReachableSources(V target) {
-        Set<V> sources = new HashSet<V>();
-        if (tc.getTupleStarts(target) != null) {
-            sources.addAll(tc.getTupleStarts(target));
-        }
-        return sources;
+        return tc.getTupleStarts(target);
     }
 
-    private void notifyTcObservers(V source, V target, int dir) {
-        for (ITcObserver<V> o : observers) {
-            if (dir == 1)
+    private void notifyTcObservers(V source, V target, boolean isInsertion) {
+        if (isInsertion) {
+            for (ITcObserver<V> o : observers) {
                 o.tupleInserted(source, target);
-            if (dir == -1)
+            }
+        } else {
+            for (ITcObserver<V> o : observers) {
                 o.tupleDeleted(source, target);
+            }
         }
     }
 
     @Override
     public void dispose() {
         tc.clear();
-        dtc.clear();
         this.gds.detachObserver(this);
     }
 

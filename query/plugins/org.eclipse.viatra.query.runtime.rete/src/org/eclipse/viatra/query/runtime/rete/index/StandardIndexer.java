@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.network.BaseNode;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -39,7 +40,7 @@ public abstract class StandardIndexer extends BaseNode implements Indexer {
         super(reteContainer);
         this.parent = null;
         this.mask = mask;
-        this.listeners = new ArrayList<IndexerListener>();
+        this.listeners = CollectionsFactory.createObserverList();
     }
 
     protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {

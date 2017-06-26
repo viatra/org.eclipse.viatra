@@ -19,6 +19,8 @@ import java.util.List;
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
@@ -34,7 +36,6 @@ import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.Tunnel;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
-import org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
 
 /**
@@ -54,11 +55,11 @@ public class UniquenessEnforcerNode extends StandardNode
         implements Tunnel, RederivableNode, MonotonicityAwareReceiver {
 
     protected Collection<Supplier> parents;
-    protected TupleMemory memory;
+    protected IMultiset<Tuple> memory;
     /**
      * @since 1.6
      */
-    protected TupleMemory rederivableMemory;
+    protected IMultiset<Tuple> rederivableMemory;
     /**
      * @since 1.6
      */
@@ -113,8 +114,8 @@ public class UniquenessEnforcerNode extends StandardNode
         super(reteContainer);
         this.parents = new ArrayList<Supplier>();
         this.specializedListeners = new ArrayList<ListenerSubscription>();
-        this.memory = new TupleMemory();
-        this.rederivableMemory = new TupleMemory();
+        this.memory = CollectionsFactory.createMultiset();
+        this.rederivableMemory = CollectionsFactory.createMultiset();
         this.tupleWidth = tupleWidth;
         reteContainer.registerClearable(this.memory);
         reteContainer.registerClearable(this.rederivableMemory);
@@ -154,7 +155,10 @@ public class UniquenessEnforcerNode extends StandardNode
         }
     }
 
-    public TupleMemory getMemory() {
+    /**
+     * @since 1.7
+     */
+    public IMultiset<Tuple> getMemory() {
         return memory;
     }
 
@@ -187,14 +191,14 @@ public class UniquenessEnforcerNode extends StandardNode
     protected boolean updateWithDeleteAndRederive(Direction direction, Tuple update, boolean monotone) {
         boolean propagate = false;
 
-        int memoryCount = memory.get(update);
-        int rederivableCount = rederivableMemory.get(update);
+        int memoryCount = memory.getCount(update);
+        int rederivableCount = rederivableMemory.getCount(update);
 
         if (direction == Direction.INSERT) {
             // INSERT
             if (rederivableCount != 0) {
                 // the tuple is in the re-derivable memory
-                rederivableMemory.add(update);
+                rederivableMemory.addOne(update);
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
                     // this can happen if the INSERT cancelled out a DELETE
@@ -202,7 +206,7 @@ public class UniquenessEnforcerNode extends StandardNode
                 }
             } else {
                 // the tuple is in the main memory
-                propagate = memory.add(update);
+                propagate = memory.addOne(update);
             }
         } else {
             // DELETE
@@ -215,8 +219,8 @@ public class UniquenessEnforcerNode extends StandardNode
                 }
 
                 try {
-                    rederivableMemory.remove(update);
-                } catch (NullPointerException ex) {
+                    rederivableMemory.removeOne(update);
+                } catch (IllegalStateException ex) {
                     issueError(
                             "[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in UniquenessEnforcer "
                                     + this + " for pattern(s) " + getTraceInfoPatternsEnumerated(),
@@ -229,7 +233,7 @@ public class UniquenessEnforcerNode extends StandardNode
             } else {
                 // the tuple is in the main memory
                 if (monotone) {
-                    propagate = memory.remove(update);
+                    propagate = memory.removeOne(update);
                 } else {
                     int count = memoryCount - 1;
                     if (count > 0) {
@@ -237,9 +241,9 @@ public class UniquenessEnforcerNode extends StandardNode
                             // there is now something to be re-derived
                             reteContainer.getTracker().addRederivable(this);
                         }
-                        rederivableMemory.add(update, count);
+                        rederivableMemory.addPositive(update, count);
                     }
-                    memory.clear(update);
+                    memory.clearAllOf(update);
                     propagate = true;
                 }
             }
@@ -255,12 +259,12 @@ public class UniquenessEnforcerNode extends StandardNode
         boolean propagate = false;
         if (direction == Direction.INSERT) {
             // INSERT
-            propagate = memory.add(update);
+            propagate = memory.addOne(update);
         } else {
             // DELETE
             try {
-                propagate = memory.remove(update);
-            } catch (NullPointerException ex) {
+                propagate = memory.removeOne(update);
+            } catch (IllegalStateException ex) {
                 propagate = false;
                 issueError("[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in UniquenessEnforcer "
                         + this + " for pattern(s) " + getTraceInfoPatternsEnumerated(), ex);
@@ -275,9 +279,9 @@ public class UniquenessEnforcerNode extends StandardNode
     @Override
     public void rederiveOne() {
         Tuple update = rederivableMemory.iterator().next();
-        int count = rederivableMemory.get(update);
-        rederivableMemory.clear(update);
-        memory.add(update, count);
+        int count = rederivableMemory.getCount(update);
+        rederivableMemory.clearAllOf(update);
+        memory.addPositive(update, count);
         // if there is no other re-derivable tuple, then unregister the node itself
         if (this.rederivableMemory.isEmpty()) {
             reteContainer.getTracker().removeRederivable(this);
@@ -322,12 +326,13 @@ public class UniquenessEnforcerNode extends StandardNode
 
     @Override
     public void pullInto(Collection<Tuple> collector) {
-        collector.addAll(memory);
+        for (Tuple t : memory) 
+            collector.add(t);
     }
 
     public MemoryNullIndexer getNullIndexer() {
         if (memoryNullIndexer == null) {
-            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory, this, this, specializedListeners);
+            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory.keySet(), this, this, specializedListeners);
             reteContainer.getTracker().registerDependency(this, memoryNullIndexer);
         }
         return memoryNullIndexer;
@@ -335,7 +340,7 @@ public class UniquenessEnforcerNode extends StandardNode
 
     public MemoryIdentityIndexer getIdentityIndexer() {
         if (memoryIdentityIndexer == null) {
-            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory, this, this, specializedListeners);
+            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory.keySet(), this, this, specializedListeners);
             reteContainer.getTracker().registerDependency(this, memoryIdentityIndexer);
         }
         return memoryIdentityIndexer;

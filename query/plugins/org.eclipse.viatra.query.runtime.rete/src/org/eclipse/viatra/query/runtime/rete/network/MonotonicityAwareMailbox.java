@@ -21,7 +21,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
+import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 
 /**
  * A monotonicity aware mailbox implementation. The mailbox uses an {@link IPosetComparator} to identify if a pair of

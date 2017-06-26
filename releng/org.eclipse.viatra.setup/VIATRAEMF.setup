@@ -1186,6 +1186,25 @@
               url="http://download.eclipse.org/releases/oxygen"/>
         </repositoryList>
       </targlet>
+      <targlet
+          name="Eclipse Collections"
+          activeRepositoryList="7.1.1">
+        <requirement
+            name="org.eclipse.collections"/>
+        <requirement
+            name="org.eclipse.collections.api"
+            optional="true"/>
+        <repositoryList
+            name="8.2.0">
+          <repository
+              url="http://download.eclipse.org/collections/8.2.0/repository"/>
+        </repositoryList>
+        <repositoryList
+            name="7.1.1">
+          <repository
+              url="http://download.eclipse.org/viatra/dependency/collections-71"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <stream name="1.2-maintenance">
