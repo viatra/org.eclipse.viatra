@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
+ * An operation that can be used to enumerate all possible values for a single position based on a constraint
  * @author Zoltan Ujhelyi, Akos Horvath
  * 
  */
@@ -26,7 +27,7 @@ public abstract class ExtendOperation<T> implements ISearchOperation {
     protected Iterator<T> it;
 
     /**
-     * @param position
+     * @param position the frame position all values are to be added
      */
     public ExtendOperation(int position) {
         super();

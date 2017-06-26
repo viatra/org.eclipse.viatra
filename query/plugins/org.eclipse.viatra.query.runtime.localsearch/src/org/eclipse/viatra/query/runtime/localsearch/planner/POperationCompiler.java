@@ -41,6 +41,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase.Scop
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.AggregatorExtend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExpressionEval;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendBinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendConstant;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource;
@@ -406,6 +407,8 @@ public class POperationCompiler {
             createExtend((ConstantValue) pConstraint, variableMapping);
         } else if (pConstraint instanceof TypeConstraint) {
             createExtend((TypeConstraint) pConstraint, variableMapping);
+        } else if (pConstraint instanceof BinaryTransitiveClosure) {
+            createExtend((BinaryTransitiveClosure)pConstraint, variableMapping);
         } else {
             String msg = "Unsupported Extend constraint: "+pConstraint.toString();
             throw new QueryProcessingException(msg, null, msg, null);
@@ -419,6 +422,29 @@ public class POperationCompiler {
         dependencies.add(matcherReference);
     }
 
+    private void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+        int sourcePosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(0));
+        int targetPosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(1));
+        
+        PQuery referredQuery = binaryTransitiveClosure.getReferredQuery();
+        
+        boolean sourceBound = variableBindings.get(binaryTransitiveClosure).contains(sourcePosition);
+        boolean targetBound = variableBindings.get(binaryTransitiveClosure).contains(targetPosition);
+        
+        if (sourceBound && !targetBound) {
+            Set<PParameter> adornment = ImmutableSet.of(referredQuery.getParameters().get(0));
+            operations.add(new ExtendBinaryTransitiveClosure.Forward(new MatcherReference(referredQuery, adornment), sourcePosition, targetPosition));
+            dependencies.add(new MatcherReference(referredQuery, adornment));            
+        } else if (!sourceBound && targetBound) {
+            Set<PParameter> adornment = ImmutableSet.of(referredQuery.getParameters().get(1));
+            operations.add(new ExtendBinaryTransitiveClosure.Backward(new MatcherReference(referredQuery, adornment), sourcePosition, targetPosition));
+            dependencies.add(new MatcherReference(referredQuery, adornment));                        
+        } else {
+            String msg = "Binary transitive closure not supported with two unbound parameters";
+            throw new QueryProcessingException(msg, null, msg, binaryTransitiveClosure.getPSystem().getPattern());
+        }
+    }
+    
     private void createExtend(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
         int position = variableMapping.get(constant.getVariablesTuple().get(0));
         operations.add(new ExtendConstant(position, constant.getSupplierKey()));        

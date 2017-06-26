@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -31,10 +32,12 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Expressio
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
@@ -48,13 +51,15 @@ import com.google.common.collect.Sets;
  * @noreference This class is not intended to be referenced by clients.
  */
 class PConstraintInfoInferrer {
-
-    private static final class VariableNotDeducablePredicate implements Predicate<PVariable> {
+    
+    private static final class SingleUseVariablePredicate implements Predicate<PVariable> {
         @Override
         public boolean apply(PVariable input) {
-            return input != null && !input.isDeducable();
+            return input != null && input.getReferringConstraints().size() == 1;
         }
     }
+    
+    private static final SingleUseVariablePredicate SINGLE_USE_VARIABLE = new SingleUseVariablePredicate();
 
     private final boolean useIndex;
     private final Function<IConstraintEvaluationContext, Double> costFunction;
@@ -106,6 +111,8 @@ class PConstraintInfoInferrer {
             createConstraintInfoAggregatorConstraint(resultList, pConstraint, ((PatternMatchCounter) pConstraint).getResultVariable());   
         } else if (pConstraint instanceof PositivePatternCall){
             createConstraintInfoPositivePatternCall(resultList, (PositivePatternCall) pConstraint);
+        } else if (pConstraint instanceof BinaryTransitiveClosure) {
+            createConstraintInfoBinaryTransitiveClosure(resultList, (BinaryTransitiveClosure) pConstraint);
         } else{
             createConstraintInfoGeneric(resultList, pConstraint);
         }
@@ -156,6 +163,30 @@ class PConstraintInfoInferrer {
         doCreateConstraintInfos(resultList, pCall, affectedVariables, bindings);
     }
     
+    private void createConstraintInfoBinaryTransitiveClosure(List<PConstraintInfo> resultList, 
+            BinaryTransitiveClosure closure) {
+        // A pattern call can have any of its variables unbound
+        
+        List<PParameter> parameters = closure.getReferredQuery().getParameters();
+        Tuple variables = closure.getVariablesTuple();
+        
+        Set<Set<PVariable>> bindings = new HashSet<>();
+        PVariable firstVariable = (PVariable) variables.get(0);
+        PVariable secondVariable = (PVariable) variables.get(1);
+        // Check is always supported
+        bindings.add(Sets.newHashSet(firstVariable, secondVariable));
+        // If first parameter is not bound mandatorily, it can be left out
+        if (parameters.get(0).getDirection() != PParameterDirection.IN) {
+            bindings.add(Sets.newHashSet(secondVariable));
+        }
+        // If second parameter is not bound mandatorily, it can be left out
+        if (parameters.get(1).getDirection() != PParameterDirection.IN) {
+            bindings.add(Sets.newHashSet(firstVariable));
+        }
+        
+        doCreateConstraintInfos(resultList, closure, closure.getAffectedVariables(), bindings);
+    }
+    
     
 
     private void createConstraintInfoExportedParameter(List<PConstraintInfo> resultList, 
@@ -196,8 +227,8 @@ class PConstraintInfoInferrer {
             PConstraint pConstraint, PVariable resultVariable){
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
-        // The only variables which can be unbound are the ones which cannot be deduced by any constraint and the result variable
-        Set<PVariable> canBeUnboundVariables = Sets.union(Collections.singleton(resultVariable), Sets.filter(affectedVariables, new VariableNotDeducablePredicate()));
+        // The only variables which can be unbound are single-use
+        Set<PVariable> canBeUnboundVariables = Sets.union(Collections.singleton(resultVariable), Sets.filter(affectedVariables, SINGLE_USE_VARIABLE));
        
         Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
@@ -225,8 +256,8 @@ class PConstraintInfoInferrer {
     private void createConstraintInfoGeneric(List<PConstraintInfo> resultList, PConstraint pConstraint){
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
-        // The only variables which can be unbound are the ones which cannot be deduced by any constraint
-        Set<PVariable> canBeUnboundVariables = Sets.filter(affectedVariables, new VariableNotDeducablePredicate());
+        // The only variables which can be unbound are single use variables
+        Set<PVariable> canBeUnboundVariables = Sets.filter(affectedVariables, SINGLE_USE_VARIABLE);
        
         Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         

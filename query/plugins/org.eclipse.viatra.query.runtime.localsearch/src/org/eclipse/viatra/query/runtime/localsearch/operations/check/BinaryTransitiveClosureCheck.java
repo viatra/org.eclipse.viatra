@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -23,7 +26,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Checking for a transitive closure expressed as a local search pattern matcher. The matched pattern must have two
@@ -67,12 +69,11 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         Object targetValue = frame.get(targetPosition);
-        Set<Object> sourcesToEvaluate = Sets.newLinkedHashSet();
+        Queue<Object> sourcesToEvaluate = new LinkedList<>();
         sourcesToEvaluate.add(frame.get(sourcePosition));
-        Set<Object> sourceEvaluated = Sets.newHashSet();
-        do {
-            Object currentValue = sourcesToEvaluate.iterator().next();
-            sourcesToEvaluate.remove(currentValue);
+        Set<Object> sourceEvaluated = new HashSet<>();
+        while (!sourcesToEvaluate.isEmpty()) {
+            Object currentValue = sourcesToEvaluate.poll();
             sourceEvaluated.add(currentValue);
             final Object[] mappedFrame = new Object[]{currentValue, null};
             for (Tuple match : call.getAllMatches(mappedFrame)) {
@@ -83,7 +84,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
                     sourcesToEvaluate.add(foundTarget);
                 }
             }
-        } while (!sourcesToEvaluate.isEmpty());
+        };
         return false;
     }
     
