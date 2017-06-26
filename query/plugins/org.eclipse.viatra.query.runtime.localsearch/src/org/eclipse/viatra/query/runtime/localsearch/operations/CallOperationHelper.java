@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -144,6 +145,19 @@ public class CallOperationHelper {
             return matcher.getAllMatches(mapFrame(frameInCaller));
         }
         
+        /**
+         * @since 1.7
+         */
+        public void registerChangeListener(IUpdateable listener) {
+            matcher.addUpdateListener(listener, listener, true);
+        }
+        
+        /**
+         * @since 1.7
+         */
+        public void removeChangeListener(IUpdateable listener) {
+            matcher.removeUpdateListener(listener);
+        }
     }
     
     /**
@@ -197,6 +211,13 @@ public class CallOperationHelper {
         return variables;
     }
     
+    /**
+     * @since 1.7
+     */
+    public PQuery getCalledQuery() {
+        return calledQuery;
+    }
+
     @Override
     public String toString() {
         return calledQuery.getFullyQualifiedName()+"("+Joiner.on(",").join(
