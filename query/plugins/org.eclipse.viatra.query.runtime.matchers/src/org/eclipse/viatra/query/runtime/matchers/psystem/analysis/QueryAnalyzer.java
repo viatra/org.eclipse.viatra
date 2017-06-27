@@ -154,7 +154,7 @@ public final class QueryAnalyzer {
      *  use true if superfluous dependencies may taint the correctness of a computation, false if they would merely impact performance
      * @since 1.5
      */
-   public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(Set<PConstraint> constraints, boolean strict) {
+   public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(Set<? extends PConstraint> constraints, boolean strict) {
         Map<Set<PVariable>, Set<PVariable>> accumulator = new HashMap<Set<PVariable>, Set<PVariable>>();
         for (PConstraint pConstraint : constraints){
             if (pConstraint instanceof PositivePatternCall) {

@@ -38,8 +38,8 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="xtend-gen/org/eclipse/viatra/query/runtime/localsearch/planner/PConstraintInfo.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo">
-        <filter id="576725006">
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PConstraintInfo.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo">
+        <filter comment="Internal API implementation" id="576725006">
             <message_arguments>
                 <message_argument value="IConstraintEvaluationContext"/>
                 <message_argument value="PConstraintInfo"/>
