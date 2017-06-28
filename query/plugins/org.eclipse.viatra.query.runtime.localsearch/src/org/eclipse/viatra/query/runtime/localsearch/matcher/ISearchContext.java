@@ -32,7 +32,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAcc
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 

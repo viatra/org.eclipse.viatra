@@ -84,7 +84,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
                     sourcesToEvaluate.add(foundTarget);
                 }
             }
-        };
+        }
         return false;
     }
     

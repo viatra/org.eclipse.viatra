@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.rete.construction.plancompiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;

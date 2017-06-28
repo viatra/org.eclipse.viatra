@@ -80,7 +80,6 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
     }
 
     private final CallOperationHelper helper;
-    private PatternCall call;
     private final int seedPosition;
 
     /**
@@ -101,7 +100,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         // Note: second parameter is NOT bound during execution, but the first is
-        call = helper.createCall(context);
+        PatternCall call = helper.createCall(context);
 
         Queue<Object> seedsToEvaluate = new LinkedList<>();
         seedsToEvaluate.add(frame.get(seedPosition));

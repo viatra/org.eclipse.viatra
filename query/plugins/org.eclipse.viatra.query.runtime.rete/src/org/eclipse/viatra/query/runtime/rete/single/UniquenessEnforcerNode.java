@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
-import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
