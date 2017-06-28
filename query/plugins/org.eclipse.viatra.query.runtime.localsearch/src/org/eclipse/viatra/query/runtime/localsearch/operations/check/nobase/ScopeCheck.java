@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
+import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation;
 
 import com.google.common.base.Preconditions;
@@ -39,8 +41,16 @@ public class ScopeCheck extends CheckOperation {
 
     }
 
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
+    protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
     @Override
-    protected boolean check(MatchingFrame frame) {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
         Object value = frame.getValue(position);
         if(value instanceof EObject){

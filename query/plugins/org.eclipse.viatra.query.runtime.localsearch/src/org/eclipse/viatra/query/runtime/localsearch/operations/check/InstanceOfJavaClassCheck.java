@@ -13,6 +13,8 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
+import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -20,6 +22,7 @@ import com.google.common.collect.Lists;
 /**
  * @author Zoltan Ujhelyi
  * @since 1.4
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class InstanceOfJavaClassCheck extends CheckOperation {
 
@@ -32,8 +35,16 @@ public class InstanceOfJavaClassCheck extends CheckOperation {
 
     }
 
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
+    protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
     @Override
-    protected boolean check(MatchingFrame frame) {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
         return clazz.isInstance(frame.getValue(position));
     }

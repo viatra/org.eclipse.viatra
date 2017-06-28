@@ -16,6 +16,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
@@ -24,7 +25,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExpressionCheck extends CheckOperation {
 
@@ -37,8 +38,16 @@ public class ExpressionCheck extends CheckOperation {
         this.nameMap = nameMap;
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         try {
             boolean result = (Boolean) evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
             return result;

@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
  * Calculates the count of matches for a called matcher
  * 
  * @author Zoltan Ujhelyi
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CountCheck extends CheckOperation{
 
@@ -49,8 +50,16 @@ public class CountCheck extends CheckOperation{
         call = helper.createCall(context);
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         int count = call.count(frame);
         return ((Integer)frame.getValue(position)) == count;
     }

@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class NACOperation extends CheckOperation {
 
@@ -44,8 +44,15 @@ public class NACOperation extends CheckOperation {
         call = helper.createCall(context);
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame,ISearchContext)} instead
+     */
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         return !call.has(frame);
     }
     

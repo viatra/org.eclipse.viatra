@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Lists;
 
@@ -22,7 +23,7 @@ import com.google.common.collect.Lists;
  * operations should be executed as early as possible during plan execution.
  * 
  * @author Marton Bur
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CheckConstant extends CheckOperation {
 
@@ -34,8 +35,16 @@ public class CheckConstant extends CheckOperation {
         this.value = value;
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         return frame.get(position).equals(value);
     }
 

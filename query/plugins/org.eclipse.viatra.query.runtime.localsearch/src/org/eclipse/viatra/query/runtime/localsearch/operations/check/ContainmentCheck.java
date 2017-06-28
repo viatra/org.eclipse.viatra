@@ -17,11 +17,13 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Lists;
 
 /**
  * A simple operation that checks whether a {@link EStructuralFeature} connects two selected variables.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainmentCheck extends CheckOperation {
 
@@ -35,8 +37,16 @@ public class ContainmentCheck extends CheckOperation {
         this.transitive = transitive;
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         try {
             EObject child = (EObject) frame.getValue(childPosition);
             EObject container = (EObject)frame.getValue(containerPosition);

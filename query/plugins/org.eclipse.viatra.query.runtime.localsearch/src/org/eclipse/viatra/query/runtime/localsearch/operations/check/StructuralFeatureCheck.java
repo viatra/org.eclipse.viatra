@@ -17,12 +17,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
  * A simple operation that checks whether a {@link EStructuralFeature} connects two selected variables.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class StructuralFeatureCheck extends CheckOperation {
 
@@ -36,8 +38,16 @@ public class StructuralFeatureCheck extends CheckOperation {
         this.feature = feature;
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+    
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         Preconditions.checkNotNull(frame.getValue(sourcePosition), "Invalid plan, variable %s unbound", sourcePosition);
         Preconditions.checkNotNull(frame.getValue(targetPosition), "Invalid plan, variable %s unbound", targetPosition);
         try {

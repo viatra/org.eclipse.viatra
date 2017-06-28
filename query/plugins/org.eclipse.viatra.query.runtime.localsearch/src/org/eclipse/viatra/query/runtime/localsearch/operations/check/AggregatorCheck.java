@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Balázs Grill
  * @since 1.4
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AggregatorCheck extends CheckOperation{
 
@@ -55,8 +56,16 @@ public class AggregatorCheck extends CheckOperation{
         call = helper.createCall(context);
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         Object result = call.aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn(), frame);
         return result == null ? false : Objects.equals(frame.getValue(position), result);
     }

@@ -14,12 +14,13 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class InequalityCheck extends CheckOperation {
 
@@ -31,8 +32,16 @@ public class InequalityCheck extends CheckOperation {
         this.targetLocation = targetLocation;
     }
 
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         Object source = frame.getValue(sourceLocation);
         Object target = frame.getValue(targetLocation);
         if (source == null) {

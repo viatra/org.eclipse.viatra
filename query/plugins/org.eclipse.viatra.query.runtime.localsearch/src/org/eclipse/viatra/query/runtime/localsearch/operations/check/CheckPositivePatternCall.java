@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 /**
  * @author Grill Balázs
  * @since 1.4
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CheckPositivePatternCall extends CheckOperation {
 
@@ -38,9 +38,17 @@ public class CheckPositivePatternCall extends CheckOperation {
     }
     
     /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
+    public boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    /**
      * @since 1.5
      */
-    public boolean check(MatchingFrame frame) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         return call.has(frame);
     }
 

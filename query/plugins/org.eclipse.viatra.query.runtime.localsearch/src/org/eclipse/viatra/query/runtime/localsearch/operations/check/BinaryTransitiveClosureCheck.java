@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
  * parameters of the same model type.
  * 
  * @author Zoltan Ujhelyi
+ * @noextend This class is not intended to be subclassed by clients.
  * 
  */
 public class BinaryTransitiveClosureCheck extends CheckOperation{
@@ -66,8 +67,16 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
         call = helper.createCall(context);
     }
     
-    @Override
+    /**
+     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
+     */
+    @Deprecated
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        return check(frame, null);
+    }
+
+    @Override
+    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         Object targetValue = frame.get(targetPosition);
         Queue<Object> sourcesToEvaluate = new LinkedList<>();
         sourcesToEvaluate.add(frame.get(sourcePosition));

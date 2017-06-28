@@ -17,6 +17,8 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * Abstract base class for search operations that check only the already set variables.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class CheckOperation implements ISearchOperation {
 
@@ -37,16 +39,14 @@ public abstract class CheckOperation implements ISearchOperation {
 
     @Override
     public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        executed = executed ? false : check(frame);
+        executed = executed ? false : check(frame, context);
         return executed;
     }
 
     /**
      * Executes the checking operation
-     * 
-     * @param frame
-     * @return
+     * @since 1.7
      */
-    protected abstract boolean check(MatchingFrame frame) throws LocalSearchException;
+    protected abstract boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
 
 }
