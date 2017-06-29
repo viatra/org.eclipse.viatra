@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
@@ -18,11 +23,14 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.collect.Table;
+
 /**
  * @author Marton Bur, Zoltan Ujhelyi
+ * @since 1.7
  *
  */
-public enum LocalSearchBackendFactory implements IQueryBackendFactory {
+public enum LocalSearchGenericBackendFactory implements IQueryBackendFactory {
     
     INSTANCE;
     
@@ -35,8 +43,15 @@ public enum LocalSearchBackendFactory implements IQueryBackendFactory {
             
             @Override
             protected AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints) throws QueryProcessingException {
-                return new LocalSearchResultProvider(this, context, query, planProvider, hints);
+                return new GenericLocalSearchResultProvider(this, context, query, planProvider, hints);
             }
+
+            @Override
+            public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {
+                throw new UnsupportedOperationException("geteAttributesByTypeForEClass() is a legacy call not supported by the generic LS backend.");
+            }
+            
+            
         };
     }
     

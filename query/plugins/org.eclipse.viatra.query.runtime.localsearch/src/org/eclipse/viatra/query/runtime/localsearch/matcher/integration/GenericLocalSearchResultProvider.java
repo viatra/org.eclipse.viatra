@@ -11,34 +11,25 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
-import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.EMFOperationCompiler;
+import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.GenericOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * @author Marton Bur, Zoltan Ujhelyi
+ * @author Zoltan Ujhelyi
+ * @since 1.7
  *
  */
-public class LocalSearchResultProvider extends AbstractLocalSearchResultProvider {
+public class GenericLocalSearchResultProvider extends AbstractLocalSearchResultProvider {
 
-    /**
-     * @throws QueryProcessingException
-     * @since 1.5
-     */
-    public LocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
-            IPlanProvider planProvider) throws QueryProcessingException {
-        this(backend, context, query, planProvider, null);
-    }
-
-    /**
-     * @throws QueryProcessingException
-     * @since 1.5
-     */
-    public LocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
+    public GenericLocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
             IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
         super(backend, context, query, planProvider, userHints);
     }
@@ -46,12 +37,20 @@ public class LocalSearchResultProvider extends AbstractLocalSearchResultProvider
     @Override
     protected void indexInitializationBeforePlanning() throws QueryProcessingException {
         super.indexInitializationBeforePlanning();
-        runtimeContext.ensureWildcardIndexing(IndexingService.STATISTICS);
+        
+        for (PBody body : query.getDisjunctBodies().getBodies()) {
+            for (PConstraint constraint : body.getConstraints()) {
+                if (constraint instanceof TypeConstraint) {
+                    runtimeContext.ensureIndexed(((TypeConstraint) constraint).getSupplierKey(), IndexingService.INSTANCES);
+                }
+            }
+        }
     }
 
     @Override
     protected IOperationCompiler getOperationCompiler(IQueryBackendContext backendContext,
             LocalSearchHints configuration) {
-        return new EMFOperationCompiler(runtimeContext, configuration.isUseBase());
+        return new GenericOperationCompiler(runtimeContext);
     }
+
 }

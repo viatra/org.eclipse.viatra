@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostFunction;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
@@ -55,6 +56,8 @@ public final class LocalSearchHints implements IMatcherCapability {
     
     private IRewriterTraceCollector traceCollector = NopTraceCollector.INSTANCE;
     
+    private IQueryBackendFactory backendFactory = null;
+    
     private LocalSearchHints() {}
 
     /**
@@ -74,6 +77,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = PLANNER_COST_FUNCTION.getDefaultValue();
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
+        result.backendFactory = LocalSearchBackendFactory.INSTANCE;
         return result;
     }
     
@@ -88,6 +92,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = new DefaultFlattenCallPredicate();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
+        result.backendFactory = LocalSearchBackendFactory.INSTANCE;
         return result;
     }
     
@@ -101,6 +106,22 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = new VariableBindingBasedCostFunction();
         result.flattenCallPredicate = new NeverFlattenCallPredicate();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
+        result.backendFactory = LocalSearchBackendFactory.INSTANCE;
+        return result;
+    }
+    
+    /**
+     * Initializes the generic (not EMF specific) search backend with the default settings
+     * @since 1.7
+     */
+    public static LocalSearchHints getDefaultGeneric(){
+        LocalSearchHints result = new LocalSearchHints();
+        result.useBase = false;
+        result.rowCount = 4;
+        result.costFunction = new VariableBindingBasedCostFunction();
+        result.flattenCallPredicate = new NeverFlattenCallPredicate();
+        result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
+        result.backendFactory = LocalSearchGenericBackendFactory.INSTANCE;
         return result;
     }
     
@@ -138,7 +159,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         if (traceCollector != null){
             normalizationTraceCollector.insertOverridingValue(map, traceCollector);
         }
-        return new QueryEvaluationHint(map, LocalSearchBackendFactory.INSTANCE);
+        return new QueryEvaluationHint(map, backendFactory);
     }
     
     public boolean isUseBase() {

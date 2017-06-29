@@ -17,6 +17,8 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
+import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.EMFOperationCompiler;
+import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -47,11 +49,12 @@ public class CachingPlanProvider implements IPlanProvider {
     @Deprecated
     public IPlanDescriptor getPlan(LocalSearchBackend backend, final LocalSearchHints configuration, MatcherReference key)
             throws QueryProcessingException {
-        return getPlan(backend.getBackendContext(), configuration, key);
+        IOperationCompiler compiler = new EMFOperationCompiler(backend.getRuntimeContext(), configuration.isUseBase());
+        return getPlan(backend.getBackendContext(), compiler, configuration, key);
     }
     
     @Override
-    public IPlanDescriptor getPlan(IQueryBackendContext backend, final LocalSearchHints configuration, MatcherReference key)
+    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, final LocalSearchHints configuration, MatcherReference key)
             throws QueryProcessingException {
         
         if (cache.containsKey(key)){
@@ -59,7 +62,7 @@ public class CachingPlanProvider implements IPlanProvider {
             return cache.get(key).iterator().next();
             
         }else{
-            LocalSearchPlanner planner = new LocalSearchPlanner(backend, logger, configuration);
+            LocalSearchPlanner planner = new LocalSearchPlanner(backend, compiler, logger, configuration);
             
             Collection<SearchPlanForBody> plansForBodies = planner.plan(key.getQuery(), key.getAdornment());
           

@@ -19,6 +19,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.EMFOperationCompiler;
+import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -43,13 +45,14 @@ import com.google.common.collect.Sets;
  * @author Marton Bur
  * @noreference This class is not intended to be referenced by clients.
  */
-public class LocalSearchPlanner {
+public class LocalSearchPlanner implements ILocalSearchPlanner {
 
     // Externally set tools for planning
     private final PDisjunctionRewriter preprocessor;
     private final LocalSearchRuntimeBasedStrategy plannerStrategy;
     private final IQueryRuntimeContext runtimeContext;
     private final LocalSearchHints configuration;
+    private final IOperationCompiler operationCompiler;
     private final IQueryBackendContext context;
 //    private final LocalSearchBackend backend;
 
@@ -59,16 +62,19 @@ public class LocalSearchPlanner {
      */
     @Deprecated
     public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
-        this(backend.getBackendContext(), logger, configuration);
+        this(backend.getBackendContext(),
+                new EMFOperationCompiler(backend.getRuntimeContext(), configuration.isUseBase()), logger,
+                configuration);
     }
     
     /**
      * @since 1.7
      */
-    public LocalSearchPlanner(IQueryBackendContext backendContext, Logger logger, final LocalSearchHints configuration) {
+    public LocalSearchPlanner(IQueryBackendContext backendContext, IOperationCompiler compiler, Logger logger, final LocalSearchHints configuration) {
 
         this.runtimeContext = backendContext.getRuntimeContext();
         this.configuration = configuration;
+        this.operationCompiler = compiler;
         PQueryFlattener flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         /*
          * TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=439358: The normalizer is initialized with the false
@@ -102,6 +108,7 @@ public class LocalSearchPlanner {
      *         list of ISearchOperations
      * @throws QueryProcessingException
      */
+    @Override
     public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters)
             throws QueryProcessingException {
         // 1. Preparation
@@ -117,7 +124,6 @@ public class LocalSearchPlanner {
             SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context, configuration);
             // 3. PConstraint -> POperation compilation step
             // * Pay extra caution to extend operations, when more than one variables are unbound
-            POperationCompiler operationCompiler = new POperationCompiler(runtimeContext, configuration.isUseBase());
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);
             // Store the variable mappings for the plans for debug purposes (traceability information)
             SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody,

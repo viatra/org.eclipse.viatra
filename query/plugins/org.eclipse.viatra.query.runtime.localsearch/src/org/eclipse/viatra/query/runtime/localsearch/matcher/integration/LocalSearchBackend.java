@@ -41,19 +41,23 @@ import com.google.common.collect.Table;
 
 /**
  * @author Marton Bur, Zoltan Ujhelyi
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public class LocalSearchBackend implements IQueryBackend {
+public abstract class LocalSearchBackend implements IQueryBackend {
 
     IQueryBackendContext context;
     IPlanProvider planProvider;
     private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
     
     // Cache
-    private final Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
+    /*
+     * @deprecated Use generalCache instead
+     */
+    @Deprecated
+    private final Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass = HashBasedTable.create();
     private final PurgableCache generalCache;
     
-    private final Multimap<PQuery, LocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
+    private final Multimap<PQuery, AbstractLocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
     
     /**
      * @since 1.5
@@ -61,7 +65,6 @@ public class LocalSearchBackend implements IQueryBackend {
     public LocalSearchBackend(IQueryBackendContext context) {
         super();
         this.context = context;
-        this.eAttributesByTypeForEClass = HashBasedTable.create();
         this.generalCache = new PurgableCache();
         this.planProvider = new CachingPlanProvider(context.getLogger());
     }
@@ -84,17 +87,23 @@ public class LocalSearchBackend implements IQueryBackend {
             throws QueryProcessingException {
         
         IMatcherCapability requestedCapability = getHintProvider().getQueryEvaluationHint(query).overrideBy(hints).calculateRequiredCapability(query);
-        for(LocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
+        for(AbstractLocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
             if (requestedCapability.canBeSubstitute(existingResultProvider.getCapabilites())){
                 return existingResultProvider;
             }
         }
         
-        LocalSearchResultProvider resultProvider = new LocalSearchResultProvider(this, context, query, planProvider, hints);
+        AbstractLocalSearchResultProvider resultProvider = initializeResultProvider(query, hints);
         resultProviderCache.put(query, resultProvider);
         resultProvider.prepare();
         return resultProvider;
     }
+    
+    /**
+     * @throws QueryProcessingException 
+     * @since 1.7
+     */
+    protected abstract AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints) throws QueryProcessingException;
     
     @Override
     public void dispose() {  
@@ -113,6 +122,11 @@ public class LocalSearchBackend implements IQueryBackend {
         return null;
     }
 
+    /**
+     * 
+     * @deprecated use the general caching mechanism instead
+     */
+    @Deprecated
     public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {
         return eAttributesByTypeForEClass;
     }
