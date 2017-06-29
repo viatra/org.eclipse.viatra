@@ -166,7 +166,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this.runtimeContext = context.getRuntimeContext();
         
         try {
-            searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints, backend.getCache());
+            searchContext = new ISearchContext.SearchContext(context, engine.getBaseIndex(), userHints, backend.getCache());
         } catch (ViatraQueryException e) {
             throw new QueryProcessingException("Could not create search context for {1}", new String[]{query.getFullyQualifiedName()}, e.getMessage(), query, e);
         }

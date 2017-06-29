@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -21,6 +20,7 @@ import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFBaseIndexWrapper;
+import org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.IAdornmentProvider;
@@ -28,12 +28,16 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
+
+import com.google.common.base.Preconditions;
 
 /**
  * The {@link ISearchContext} interface allows search operations to reuse platform services such as the indexer.
@@ -44,12 +48,19 @@ import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
  * @noextend This interface is not intended to be extended by clients.
  *
  */
-public interface ISearchContext{
+public interface ISearchContext {
     
     /**
      * Provides access to the EMF-specific base index for search operation; do not use if not on EMF Scope
+     * @throws IllegalStateException if called on a non-EMF backend
      */
     NavigationHelper getBaseIndex();
+    
+    /**
+     * Provides access to the generic query runtime context of the current engine
+     * @since 1.7
+     */
+    IQueryRuntimeContext getRuntimeContext();
     
     /**
      * @param classes
@@ -82,18 +93,34 @@ public interface ISearchContext{
      */
     public class SearchContext implements ISearchContext {
 
-        final NavigationHelper navigationHelper;
-        final IQueryResultProviderAccess resultProviderAccess;
-        final QueryEvaluationHint overrideHints;
+        private final NavigationHelper navigationHelper;
+        private final IQueryResultProviderAccess resultProviderAccess;
+        private final QueryEvaluationHint overrideHints;
+        private final IQueryRuntimeContext runtimeContext;
         
-        final ICache backendLevelCache;
+        private final ICache backendLevelCache;
         
-        final Logger logger = Logger.getLogger(getClass());
-        
+        /**
+         * Initializes a search context using an EMF context
+         */
+        public SearchContext(IQueryBackendContext backendContext, IBaseIndex baseIndex, QueryEvaluationHint overrideHints, ICache backendLevelCache) throws ViatraQueryException {
+            this.runtimeContext = backendContext.getRuntimeContext();
+            Preconditions.checkArgument(runtimeContext instanceof EMFQueryRuntimeContext, "EMF-specific context only works with EMF runtime context");
             //XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
-        public SearchContext(IBaseIndex baseIndex, IQueryResultProviderAccess resultProviderAccess, QueryEvaluationHint overrideHints, ICache backendLevelCache) throws ViatraQueryException {
             this.navigationHelper = ((EMFBaseIndexWrapper)baseIndex).getNavigationHelper();
-            this.resultProviderAccess = resultProviderAccess;
+            this.resultProviderAccess = backendContext.getResultProviderAccess();
+            this.overrideHints = overrideHints;
+            
+            this.backendLevelCache = backendLevelCache;
+        }
+        
+        /**
+         * Initializes a search context using an arbitrary backend context
+         */
+        public SearchContext(IQueryBackendContext backendContext, QueryEvaluationHint overrideHints, ICache backendLevelCache) throws ViatraQueryException {
+            this.runtimeContext = backendContext.getRuntimeContext();
+            this.navigationHelper = null;
+            this.resultProviderAccess = backendContext.getResultProviderAccess();
             this.overrideHints = overrideHints;
             
             this.backendLevelCache = backendLevelCache;
@@ -109,6 +136,9 @@ public interface ISearchContext{
         
         @Override
         public NavigationHelper getBaseIndex() {
+            if (navigationHelper == null) {
+                throw new IllegalStateException("The EMF API of the Base index is not available");
+            }
             return navigationHelper;
         }
 
@@ -145,6 +175,10 @@ public interface ISearchContext{
         @Override
         public <T> T accessBackendLevelCache(Object key, Class<? extends T> clazz, IProvider<T> valueProvider) {
             return backendLevelCache.getValue(key, clazz, valueProvider);
+        }
+
+        public IQueryRuntimeContext getRuntimeContext() {
+            return runtimeContext;
         }
         
     }
