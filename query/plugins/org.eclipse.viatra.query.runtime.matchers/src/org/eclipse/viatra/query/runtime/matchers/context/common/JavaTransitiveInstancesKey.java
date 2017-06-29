@@ -140,7 +140,7 @@ public class JavaTransitiveInstancesKey extends BaseInputKeyWrapper<String> {
     }
 
     private static Class<?> primitiveTypeToWrapperClass(Class<?> instanceClass) {
-        if (instanceClass.isPrimitive()) {
+        if (instanceClass != null && instanceClass.isPrimitive()) {
             if (Void.TYPE.equals(instanceClass))
                 return Void.class;
             if (Boolean.TYPE.equals(instanceClass))
