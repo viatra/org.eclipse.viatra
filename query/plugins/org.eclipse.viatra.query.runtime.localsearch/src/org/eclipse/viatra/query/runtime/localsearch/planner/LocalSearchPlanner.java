@@ -51,14 +51,23 @@ public class LocalSearchPlanner {
     private final IQueryRuntimeContext runtimeContext;
     private final LocalSearchHints configuration;
     private final IQueryBackendContext context;
-    private final LocalSearchBackend backend;
+//    private final LocalSearchBackend backend;
 
     /**
      * @since 1.4
+     * @deprecated
      */
+    @Deprecated
     public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
+        this(backend.getBackendContext(), logger, configuration);
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public LocalSearchPlanner(IQueryBackendContext backendContext, Logger logger, final LocalSearchHints configuration) {
 
-        this.runtimeContext = backend.getRuntimeContext();
+        this.runtimeContext = backendContext.getRuntimeContext();
         this.configuration = configuration;
         PQueryFlattener flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         /*
@@ -78,9 +87,8 @@ public class LocalSearchPlanner {
         preprocessor = new PDisjunctionRewriterCacher(flattener, normalizer);
 
         plannerStrategy = new LocalSearchRuntimeBasedStrategy();
-        this.backend = backend;
 
-        context = backend.getBackendContext();
+        context = backendContext;
     }
 
     /**
@@ -109,8 +117,7 @@ public class LocalSearchPlanner {
             SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context, configuration);
             // 3. PConstraint -> POperation compilation step
             // * Pay extra caution to extend operations, when more than one variables are unbound
-            POperationCompiler operationCompiler = new POperationCompiler(runtimeContext, backend,
-                    configuration.isUseBase());
+            POperationCompiler operationCompiler = new POperationCompiler(runtimeContext, configuration.isUseBase());
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);
             // Store the variable mappings for the plans for debug purposes (traceability information)
             SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody,

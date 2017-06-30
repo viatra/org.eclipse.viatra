@@ -111,7 +111,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     
     private IPlanDescriptor createPlan(MatcherReference key, IPlanProvider planProvider) throws QueryProcessingException {
         LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
-        IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, configuration, key);
+        IPlanDescriptor plan = planProvider.getPlan(backend.getBackendContext(), configuration, key);
         return plan;
     }
 
@@ -208,7 +208,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
      // Plan for possible adornments
         Iterator<MatcherReference> iterator = computeExpectedAdornments();
         while(iterator.hasNext()){
-            IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
+            IPlanDescriptor plan = planProvider.getPlan(backend.getBackendContext(), overrideDefaultHints(query), iterator.next());
             // Index keys
             try {
                 indexKeys(plan.getIteratedKeys());

@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstan
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.AggregatorCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
@@ -50,7 +49,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOve
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEDatatypeInstances;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.CompilerHelper;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
@@ -103,7 +101,6 @@ public class POperationCompiler {
     private Map<PVariable, Integer> variableMappings;
     private final boolean baseIndexAvailable;
     private final EMFQueryRuntimeContext runtimeContext;
-    private final IQueryBackend backend;
 
     private class FrameMapping{
         final Map<PParameter, Integer> mapping = Maps.newHashMap();
@@ -136,12 +133,11 @@ public class POperationCompiler {
         }
     }
     
-    public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend) {
-        this(runtimeContext, backend, false);
+    public POperationCompiler(IQueryRuntimeContext runtimeContext) {
+        this(runtimeContext, false);
     }
 
-    public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend, boolean baseIndexAvailable) {
-        this.backend = backend;
+    public POperationCompiler(IQueryRuntimeContext runtimeContext, boolean baseIndexAvailable) {
         this.runtimeContext = (EMFQueryRuntimeContext) runtimeContext;
         this.baseIndexAvailable = baseIndexAvailable;
     }
@@ -459,7 +455,7 @@ public class POperationCompiler {
                 int position = variableMapping.get(typeConstraint.getVariableInTuple(0));
                 operations
                         .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.IterateOverEDatatypeInstances(position,
-                                ((EDataTypeInSlotsKey) inputKey).getEmfKey(), runtimeContext.getEmfScope(), (LocalSearchBackend) backend));
+                                ((EDataTypeInSlotsKey) inputKey).getEmfKey(), runtimeContext.getEmfScope()));
                 operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
         } else if (inputKey instanceof EClassTransitiveInstancesKey) {

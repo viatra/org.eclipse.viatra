@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -40,8 +41,17 @@ public class CachingPlanProvider implements IPlanProvider {
         this.logger = logger;
     }
     
-    @Override
+    /**
+     * @deprecated use {@link #getPlan(IQueryBackendContext, LocalSearchHints, MatcherReference)} instead
+     */
+    @Deprecated
     public IPlanDescriptor getPlan(LocalSearchBackend backend, final LocalSearchHints configuration, MatcherReference key)
+            throws QueryProcessingException {
+        return getPlan(backend.getBackendContext(), configuration, key);
+    }
+    
+    @Override
+    public IPlanDescriptor getPlan(IQueryBackendContext backend, final LocalSearchHints configuration, MatcherReference key)
             throws QueryProcessingException {
         
         if (cache.containsKey(key)){

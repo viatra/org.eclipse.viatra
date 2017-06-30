@@ -25,12 +25,13 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -43,16 +44,21 @@ import com.google.common.collect.Table;
 public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> implements IIteratingSearchOperation {
 
     private EDataType dataType;
-    private final LocalSearchBackend backend;
     
-    public IterateOverEDatatypeInstances(int position, EDataType dataType, EMFScope scope, LocalSearchBackend backend) {
+    public IterateOverEDatatypeInstances(int position, EDataType dataType, EMFScope scope) {
         super(position, scope);
         this.dataType = dataType;
-        this.backend = backend;
     }
     
-    protected Iterator<EAttribute> doGetEAttributes(EClass eclass){
-        Table<EDataType, EClass, Set<EAttribute>> cache = backend.geteAttributesByTypeForEClass();
+    protected Iterator<EAttribute> doGetEAttributes(EClass eclass, ISearchContext context){
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Table<EDataType, EClass, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Table.class, new IProvider<Table>() {
+
+            @Override
+            public Table<EDataType, EClass, Set<EAttribute>> get() {
+                return HashBasedTable.create();
+            }
+        });
         if(!cache.contains(dataType, eclass)){
             EList<EAttribute> eAllAttributes = eclass.getEAllAttributes();
             cache.put(dataType, eclass, Sets.filter(Sets.newHashSet(eAllAttributes), new Predicate<EAttribute>() {
@@ -70,12 +76,12 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public void onInitialize(MatchingFrame frame, final ISearchContext context) {
         it = Iterators.concat(Iterators.transform(Iterators.filter(getModelContents(), EObject.class), new Function<EObject, Iterator<Object>>(){
 
             @Override
             public Iterator<Object> apply(final EObject input) {
-                Iterator<EAttribute> features = doGetEAttributes(input.eClass());
+                Iterator<EAttribute> features = doGetEAttributes(input.eClass(), context);
                 return Iterators.concat(
                         Iterators.transform(features, new Function<EAttribute, Iterator<?>>() {
 

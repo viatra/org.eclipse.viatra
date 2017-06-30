@@ -38,11 +38,39 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/IPlanProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider">
+        <filter comment="Internal API modification" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider"/>
+                <message_argument value="getPlan(IQueryBackendContext, LocalSearchHints, MatcherReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API modification" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider"/>
+                <message_argument value="getPlan(LocalSearchBackend, LocalSearchHints, MatcherReference)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PConstraintInfo.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo">
         <filter comment="Internal API implementation" id="576725006">
             <message_arguments>
                 <message_argument value="IConstraintEvaluationContext"/>
                 <message_argument value="PConstraintInfo"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/POperationCompiler.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.POperationCompiler">
+        <filter comment="Internal API modification" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.POperationCompiler"/>
+                <message_argument value="POperationCompiler(IQueryRuntimeContext, IQueryBackend)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API modification" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.POperationCompiler"/>
+                <message_argument value="POperationCompiler(IQueryRuntimeContext, IQueryBackend, boolean)"/>
             </message_arguments>
         </filter>
     </resource>
