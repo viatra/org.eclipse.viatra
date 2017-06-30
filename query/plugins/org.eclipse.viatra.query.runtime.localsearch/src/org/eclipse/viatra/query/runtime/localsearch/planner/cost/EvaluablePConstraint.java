@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.planner.cost;
 
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlannerStrategy;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -29,8 +30,9 @@ import com.google.common.collect.Sets;
  * A predicate that filters out constraints that cannot be evaluated at a selected search plan state.
  * 
  * @author Marton Bur, Zoltan Ujhelyi
- *
+ * @deprecated Only used in the deprecated {@link LocalSearchPlannerStrategy} class
  */
+@Deprecated
 public final class EvaluablePConstraint implements Predicate<PConstraint> {
     private final SubPlan plan;
     private boolean allowInverseNavigation;

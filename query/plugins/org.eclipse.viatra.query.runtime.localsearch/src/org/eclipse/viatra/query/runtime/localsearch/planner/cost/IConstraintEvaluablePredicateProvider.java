@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.cost;
 
+import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlannerStrategy;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 
@@ -17,8 +18,9 @@ import com.google.common.base.Predicate;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @deprecated Only used in the also deprecated {@link LocalSearchPlannerStrategy}
  */
+@Deprecated
 public interface IConstraintEvaluablePredicateProvider {
 
     Predicate<PConstraint> getConstraint(SubPlan plan);
