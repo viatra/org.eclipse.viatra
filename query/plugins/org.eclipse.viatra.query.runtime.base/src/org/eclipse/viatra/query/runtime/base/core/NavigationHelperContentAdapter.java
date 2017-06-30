@@ -168,11 +168,12 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
             break;
         case Notification.UNSET:
         case Notification.SET:
-            if(!feature.isMany()){
+            if(feature.isMany() && position == null){
+                // spurious UNSET notification of entire collection
+                notifyLightweightObservers = false;
+            } else {
                 featureUpdate(false, notifier, feature, oldValue, position);
                 featureUpdate(true, notifier, feature, newValue, position);
-            } else {
-                notifyLightweightObservers = false;
             }
             break;
         default:
