@@ -1164,12 +1164,12 @@
           <repository
               url="http://download.eclipse.org/releases/mars"/>
           <repository
-              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
+              url="http://download.eclipse.org/tools/gef/updates/releases/5.0.0_gef-master_4403"/>
         </repositoryList>
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
+              url="http://download.eclipse.org/tools/gef/updates/releases/5.0.0_gef-master_4403"/>
           <repository
               url="http://download.eclipse.org/releases/neon"/>
         </repositoryList>
@@ -1583,12 +1583,12 @@
           <repository
               url="http://download.eclipse.org/releases/mars"/>
           <repository
-              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
+              url="http://download.eclipse.org/tools/gef/updates/releases/5.0.0_gef-master_4403"/>
         </repositoryList>
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.eclipse.org/tools/gef/updates/milestones/5.0.0RC3_gef-master_4393"/>
+              url="http://download.eclipse.org/tools/gef/updates/releases/5.0.0_gef-master_4403"/>
           <repository
               url="http://download.eclipse.org/releases/neon"/>
         </repositoryList>
