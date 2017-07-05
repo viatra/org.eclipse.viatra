@@ -1294,7 +1294,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                             IndexingLevel merged = requested.merge(old);
                             if (merged == old){
                                 delayedDataTypes.remove(entry.getKey());
-                            }else{
+                            } else {
                                 delayedDataTypes.put(entry.getKey(), merged);
                             }
                         }
@@ -1319,6 +1319,20 @@ public class NavigationHelperImpl implements NavigationHelper {
                                 delayedFeatures);
                         final Map<Object, IndexingLevel> toGatherDataTypes = new HashMap<Object, IndexingLevel>(
                                 delayedDataTypes);
+                        
+                        // Instance indexing would add extra entries to the statistics store, so we have to clean the
+                        // appropriate entries. If no re-traversal is required, it is detected earlier; at this point we
+                        // only have to consider the target indexing level. See bug
+                        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=518356 for more details.
+                        
+                        // Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
+                        // works as expected, but it seems a better idea to do the cleanup for all types in the same way
+                        for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
+                                toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
+                            if (entry.getValue().hasInstances()) {
+                                statsStore.removeType(entry.getKey());
+                            }
+                        }
 
                         if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
                             // repeat the cycle with this visit
