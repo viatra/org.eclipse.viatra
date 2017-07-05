@@ -29,8 +29,8 @@ public class ViatraQueryNature implements IProjectNature {
     public static final String NATURE_ID = "org.eclipse.viatra.query.projectnature"; //$NON-NLS-1$
     public static final String XTEXT_NATURE_ID = XtextProjectHelper.NATURE_ID;
     public static final String BUILDER_ID = "org.eclipse.viatra.query.tooling.ui.projectbuilder";//$NON-NLS-1$
-    public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
-    public static final String SRC_DIR = "src/"; //$NON-NLS-1$
+    public static final String SRCGEN_DIR = "src-gen"; //$NON-NLS-1$
+    public static final String SRC_DIR = "src"; //$NON-NLS-1$
     public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.7"; // $NON_NLS-1$
     public static final String VQGENMODEL = "generator.vqgen";
 
