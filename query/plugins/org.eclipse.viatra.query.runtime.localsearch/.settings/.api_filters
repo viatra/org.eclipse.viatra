@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.localsearch" version="2">
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/ISearchContext.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext">
+        <filter comment="Internal API update" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext"/>
+                <message_argument value="getBaseIndex()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/ISearchContext.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext$SearchContext">
         <filter id="338722907">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext.SearchContext"/>
                 <message_argument value="SearchContext(IBaseIndex, IQueryResultProviderAccess, QueryEvaluationHint)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext.SearchContext"/>
+                <message_argument value="getBaseIndex()"/>
             </message_arguments>
         </filter>
         <filter comment="Internal API implementation" id="576725006">
@@ -35,6 +49,26 @@
                 <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
                 <message_argument value="PatternCall"/>
                 <message_argument value="aggregate(IMultisetAggregationOperator&lt;Domain,Accumulator,AggregateResult&gt;, int, MatchingFrame)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/extend/IterateOverEStructuralFeatureInstances.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances">
+        <filter comment="Internal API update" id="388018290">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances"/>
+                <message_argument value="it"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="389300331">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances.it"/>
+                <message_argument value="java.lang.Object"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="389300331">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances.it"/>
+                <message_argument value="org.eclipse.emf.ecore.EObject"/>
             </message_arguments>
         </filter>
     </resource>

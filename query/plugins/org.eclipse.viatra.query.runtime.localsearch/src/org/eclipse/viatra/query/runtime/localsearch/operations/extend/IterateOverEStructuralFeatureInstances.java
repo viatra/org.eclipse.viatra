@@ -12,12 +12,8 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -25,9 +21,9 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Iterates all available {@link EStructuralFeature} elements using an {@link NavigationHelper VIATRA Base
@@ -36,14 +32,16 @@ import com.google.common.collect.Maps;
  */
 public class IterateOverEStructuralFeatureInstances implements IIteratingSearchOperation{
 
-    private EStructuralFeature feature;
-    private int sourcePosition, targetPosition;
-    protected Iterator<Entry<EObject, Object>> it;
+    private final EStructuralFeature feature;
+    private final int sourcePosition, targetPosition;
+    private final EStructuralFeatureInstancesKey type;
+    private Iterator<Tuple> it;
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
         this.feature = feature;
+        type = new EStructuralFeatureInstancesKey(feature);
     }
     
     public EStructuralFeature getFeature() {
@@ -59,24 +57,17 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        final Map<EObject, Object> instances = Maps.newHashMap();
-        context.getBaseIndex().processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
+        Iterable<Tuple> tuples = context.getRuntimeContext().enumerateTuples(type, null);
 
-            @Override
-            public void process(EStructuralFeature feature, EObject source, Object target) {
-                instances.put(source, target);
-            }
-        });
-
-        it = instances.entrySet().iterator();
+        it = tuples.iterator();
     }
 
     @Override
     public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (it.hasNext()) {
-            final Entry<EObject, Object> next = it.next();
-            frame.setValue(sourcePosition, next.getKey());
-            frame.setValue(targetPosition, next.getValue());
+            final Tuple next = it.next();
+            frame.setValue(sourcePosition, next.get(0));
+            frame.setValue(targetPosition, next.get(1));
             return true;
         } else {
             return false;
@@ -98,7 +89,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
      */
     @Override
     public IInputKey getIteratedInputKey() {
-        return new EStructuralFeatureInstancesKey(feature);
+        return type;
     }
     
 }

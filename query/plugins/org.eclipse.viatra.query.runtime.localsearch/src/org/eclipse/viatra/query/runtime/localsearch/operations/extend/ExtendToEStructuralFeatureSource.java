@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -21,7 +20,9 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -33,11 +34,13 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
 
     private int targetPosition;
     private EStructuralFeature feature;
+    private final IInputKey type;
 
     public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         super(sourcePosition);
         this.targetPosition = targetPosition;
         this.feature = feature;
+        type = new EStructuralFeatureInstancesKey(feature);
     }
 
     public EStructuralFeature getFeature() {
@@ -46,11 +49,9 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        final Collection<EObject> values = context.getBaseIndex().findByFeatureValue(frame.getValue(targetPosition), feature);
-        // System.out.println("**FeatureSource " + feature.getContainerClass().getName() + "." + feature.getName() + " "
-        // + values.size());
-        it = values
-                .iterator();
+        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type,
+                new FlatTuple(null, frame.getValue(targetPosition)));
+        it = Iterables.filter(values, EObject.class).iterator();
     }
     
     @Override
@@ -68,7 +69,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
      */
     @Override
     public IInputKey getIteratedInputKey() {
-        return new EStructuralFeatureInstancesKey(feature);
+        return type;
     }
     
 }

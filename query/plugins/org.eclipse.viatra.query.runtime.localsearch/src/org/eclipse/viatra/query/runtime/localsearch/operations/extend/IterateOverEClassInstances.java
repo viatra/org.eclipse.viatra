@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
@@ -32,20 +33,25 @@ import com.google.common.collect.Lists;
  */
 public class IterateOverEClassInstances extends ExtendOperation<EObject> implements IIteratingSearchOperation{
 
-    private EClass clazz;
+    private final EClass clazz;
+    private final EClassTransitiveInstancesKey type;
 
     public IterateOverEClassInstances(int position, EClass clazz) {
         super(position);
         this.clazz = clazz;
+        type = new EClassTransitiveInstancesKey(clazz);
     }
 
     public EClass getClazz() {
         return clazz;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = context.getBaseIndex().getAllInstances(clazz).iterator();
+        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, null);
+        // XXX This casting is only required for API backwards compatibility
+        it = (Iterator<EObject>) values.iterator();
     }
     
     @Override
@@ -63,7 +69,7 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
      */
     @Override
     public IInputKey getIteratedInputKey() {
-        return new EClassTransitiveInstancesKey(clazz);
+        return type;
     }
 
 }

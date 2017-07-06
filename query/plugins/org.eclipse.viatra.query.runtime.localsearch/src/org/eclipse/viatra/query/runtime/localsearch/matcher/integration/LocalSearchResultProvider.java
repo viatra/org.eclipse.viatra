@@ -20,7 +20,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -66,7 +65,6 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     private final LocalSearchBackend backend;
     private final IQueryBackendHintProvider hintProvider;
-    private final AdvancedViatraQueryEngine engine;
     private final IQueryRuntimeContext runtimeContext;
     private final PQuery query;
     private final IQueryResultProviderAccess resultProviderAccess;
@@ -157,19 +155,13 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this.backend = backend;
         this.resultProviderAccess = context.getResultProviderAccess();
         this.hintProvider = context.getHintProvider();
-        // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
-        engine = (AdvancedViatraQueryEngine) hintProvider;
         this.query = query;
 
         this.planProvider = planProvider;
         this.userHints = userHints;
         this.runtimeContext = context.getRuntimeContext();
         
-        try {
-            searchContext = new ISearchContext.SearchContext(context, engine.getBaseIndex(), userHints, backend.getCache());
-        } catch (ViatraQueryException e) {
-            throw new QueryProcessingException("Could not create search context for {1}", new String[]{query.getFullyQualifiedName()}, e.getMessage(), query, e);
-        }
+        this.searchContext = new ISearchContext.SearchContext(context, userHints, backend.getCache());
     }
     
     /**

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EDataType;
@@ -29,24 +30,25 @@ import com.google.common.collect.Lists;
  */
 public class IterateOverEDatatypeInstances extends ExtendOperation<Object> implements IIteratingSearchOperation{
 
-    private EDataType dataType;
+    private final EDataType dataType;
+    private final EDataTypeInSlotsKey type;
 
-    /**
-     * @param position
-     * @param dataType
-     */
     public IterateOverEDatatypeInstances(int position, EDataType dataType) {
         super(position);
         this.dataType = dataType;
+        type = new EDataTypeInSlotsKey(dataType);
     }
 
     public EDataType getDataType() {
         return dataType;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = context.getBaseIndex().getDataTypeInstances(dataType).iterator();
+        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, null);
+        // XXX This casting is only required for API backwards compatibility
+        it = (Iterator<Object>) values.iterator();
     }
     
     
@@ -65,7 +67,7 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
      */
     @Override
     public IInputKey getIteratedInputKey() {
-        return new EDataTypeInSlotsKey(dataType);
+        return type;
     }
     
 
