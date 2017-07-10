@@ -37,6 +37,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IConstraintFilter.AllowAllFilter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -208,13 +210,13 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
     
     protected void copyTypeConstraint(TypeConstraint typeConstraint) {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables); 	
         addTrace(typeConstraint, new TypeConstraint(body, variablesTuple, typeConstraint.getSupplierKey()));
     }
     
     protected void copyTypeFilterConstraint(TypeFilterConstraint typeConstraint) {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables); 	
         addTrace(typeConstraint, new TypeFilterConstraint(body, variablesTuple, typeConstraint.getInputKey()));
     }
 
@@ -225,27 +227,27 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
 
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(positivePatternCall);
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
         addTrace(positivePatternCall, new PositivePatternCall(body, variablesTuple, positivePatternCall.getReferredQuery()));
     }
 
 
     protected void copyNegativePatternCallConstraint(NegativePatternCall negativePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(negativePatternCall);
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
         addTrace(negativePatternCall, new NegativePatternCall(body, variablesTuple, negativePatternCall.getReferredQuery()));
     }
 
     protected void copyBinaryTransitiveClosureConstraint(BinaryTransitiveClosure binaryTransitiveClosure) {
         PVariable[] mappedVariables = extractMappedVariables(binaryTransitiveClosure);
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
         addTrace(binaryTransitiveClosure, new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery()));
     }
 
     protected void copyPatternMatchCounterConstraint(PatternMatchCounter patternMatchCounter) {
         PVariable[] mappedVariables = extractMappedVariables(patternMatchCounter);
         PVariable mappedResultVariable = variableMapping.get(patternMatchCounter.getResultVariable());
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
         addTrace(patternMatchCounter, new PatternMatchCounter(body, variablesTuple, patternMatchCounter.getReferredQuery(), mappedResultVariable));
     }
     
@@ -255,7 +257,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
     protected void copyAggregatorConstraint(AggregatorConstraint constraint) {
         PVariable[] mappedVariables = extractMappedVariables(constraint);
         PVariable mappedResultVariable = variableMapping.get(constraint.getResultVariable());
-        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
         addTrace(constraint, new AggregatorConstraint(constraint.getAggregator(), body, variablesTuple, constraint.getReferredQuery(), mappedResultVariable, constraint.getAggregatedColumn()));
     }
 

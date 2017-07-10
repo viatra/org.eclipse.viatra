@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
@@ -85,7 +86,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     public ArrayList<Tuple> matchAll(Object[] inputMapping, boolean[] fixed) {
         // retrieving the projection
         TupleMask mask = new TupleMask(fixed);
-        Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
+        Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
         AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
                 context.wrapTuple(inputSignature));
@@ -103,7 +104,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     public Tuple matchOne(Object[] inputMapping, boolean[] fixed) {
         // retrieving the projection
         TupleMask mask = new TupleMask(fixed);
-        Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
+        Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
         SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
                 context.wrapTuple(inputSignature));
@@ -118,7 +119,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
      */
     public int count(Object[] inputMapping, boolean[] fixed) {
         TupleMask mask = new TupleMask(fixed);
-        Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
+        Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
         CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNodeTrace, mask),
                 context.wrapTuple(inputSignature));

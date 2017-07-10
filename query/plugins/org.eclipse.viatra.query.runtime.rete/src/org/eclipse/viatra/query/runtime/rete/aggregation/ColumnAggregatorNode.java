@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetA
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.StandardIndexer;
@@ -427,8 +428,9 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     protected Tuple tupleFromAggregateResult(Tuple groupTuple, AggregateResult aggregateResult) {
         if (aggregateResult == null)
             return null;
-        Object[] resultArray = { runtimeContext.wrapElement(aggregateResult) };
-        return new LeftInheritanceTuple(groupTuple, resultArray);
+        return Tuples.staticArityLeftInheritanceTupleOf(
+                groupTuple, 
+                runtimeContext.wrapElement(aggregateResult));
     }
 
     /**

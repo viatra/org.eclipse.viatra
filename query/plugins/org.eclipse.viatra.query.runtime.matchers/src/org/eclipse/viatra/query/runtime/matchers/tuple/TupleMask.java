@@ -163,7 +163,7 @@ public class TupleMask {
         Object signature[] = new Object[indices.length];
         for (int i = 0; i < indices.length; ++i)
             signature[i] = original.get(indices[i]);
-        return new FlatTuple(signature);
+        return Tuples.flatTupleOf(signature);
     }
 
     /**
@@ -255,7 +255,7 @@ public class TupleMask {
                     combined[cPos++] = masked.get(i);
         }
 
-        return useInheritance ? new LeftInheritanceTuple(unmasked, combined) : new FlatTuple(combined);
+        return useInheritance ? Tuples.leftInheritanceTupleOf(unmasked, combined) : Tuples.flatTupleOf(combined);
     }
 
     @Override

@@ -17,8 +17,10 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple2;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
@@ -51,7 +53,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
                 if (mask.indices[0] == 0) {
                     Object source = signature.get(0);
                     for (Object target : tcAlg.getAllReachableTargets(source)) {
-                        retSet.add(new FlatTuple(source, target));
+                        retSet.add(Tuples.staticArityFlatTupleOf(source, target));
                     }
                     return retSet;
                 }
@@ -59,7 +61,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
                 if (mask.indices[0] == 1) {
                     Object target = signature.get(1);
                     for (Object source : tcAlg.getAllReachableSources(target)) {
-                        retSet.add(new FlatTuple(source, target));
+                        retSet.add(Tuples.staticArityFlatTupleOf(source, target));
                     }
                     return retSet;
                 }
@@ -68,14 +70,14 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
                 if (mask.indices[0] == 0 && mask.indices[1] == 1) {
                     Object source = signature.get(0);
                     Object target = signature.get(1);
-                    Tuple singleton = new FlatTuple(new FlatTuple(source, target));
+                    Tuple singleton = Tuples.staticArityFlatTupleOf(source, target);
                     return (tcAlg.isReachable(source, target) ? Collections.singleton(singleton) : emptySet);
                 }
                 // mask (1,0)/2
                 if (mask.indices[0] == 1 && mask.indices[1] == 0) {
                     Object source = signature.get(1);
                     Object target = signature.get(0);
-                    Tuple singleton = new FlatTuple(new FlatTuple(source, target));
+                    Tuple singleton = Tuples.staticArityFlatTupleOf(source, target);
                     return (tcAlg.isReachable(source, target) ? Collections.singleton(singleton) : emptySet);
                 }
             }
@@ -95,7 +97,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
             Collection<org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple<Object>> tuples) {
         Set<Tuple> retSet = CollectionsFactory.getSet();//new HashSet<Tuple>();
         for (org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple<Object> tuple : tuples) {
-            retSet.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
+            retSet.add(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()));
         }
         return retSet;
     }

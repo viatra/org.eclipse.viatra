@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputFilterRecipe;
@@ -202,7 +203,7 @@ public final class InputConnector {
 
 
     Tuple nopSeed(IInputKey inputKey) {
-        return new FlatTuple(new Object[inputKey.getArity()]);
+        return Tuples.flatTupleOf(new Object[inputKey.getArity()]);
     }
     
     

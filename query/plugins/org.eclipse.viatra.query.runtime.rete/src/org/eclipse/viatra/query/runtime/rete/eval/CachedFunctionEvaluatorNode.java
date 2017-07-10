@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 
 /**
@@ -39,7 +40,8 @@ public class CachedFunctionEvaluatorNode extends OutputCachingEvaluatorNode {
     @Override
     protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
         if (evaluationresult == null) return null;
-        return new LeftInheritanceTuple(incoming, new Object[]{runtimeContext.wrapElement(evaluationresult)});
+        return Tuples.staticArityLeftInheritanceTupleOf(incoming, 
+                runtimeContext.wrapElement(evaluationresult));
     }
 
     /**

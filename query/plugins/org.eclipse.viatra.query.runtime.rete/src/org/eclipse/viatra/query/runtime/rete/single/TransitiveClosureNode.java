@@ -18,6 +18,8 @@ import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple2;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
@@ -71,7 +73,7 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
     @Override
     public void pullInto(Collection<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple> collector) {
         for (Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
-            collector.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
+            collector.add(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()));
         }
     }
 
@@ -108,13 +110,13 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
 
     @Override
     public void tupleInserted(Object source, Object target) {
-        org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = new FlatTuple(source, target);
+        org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
         propagateUpdate(Direction.INSERT, tuple);
     }
 
     @Override
     public void tupleDeleted(Object source, Object target) {
-        org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = new FlatTuple(source, target);
+        org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
         propagateUpdate(Direction.REVOKE, tuple);
     }
 

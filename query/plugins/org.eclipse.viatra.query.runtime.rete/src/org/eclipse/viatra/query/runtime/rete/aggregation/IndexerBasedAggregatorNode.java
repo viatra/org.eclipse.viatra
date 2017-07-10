@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.DefaultIndexerListener;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
@@ -126,8 +127,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     }
 
     protected Tuple packResult(Tuple signature, Object result) {
-        Object[] resultArray = { result };
-        return new LeftInheritanceTuple(signature, resultArray);
+        return Tuples.staticArityLeftInheritanceTupleOf(signature, result);
     }
 
     protected void aggregateUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {

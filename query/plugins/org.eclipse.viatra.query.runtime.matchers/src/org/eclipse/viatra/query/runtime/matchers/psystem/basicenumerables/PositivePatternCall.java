@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
  * @author Gabor Bergmann
@@ -70,7 +71,7 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> impl
             for (int i=0; i<judgementVariables.length; ++i)
                 judgementVariables[i] = actualParametersTuple.get((int) judgementIndexTuple.get(i));
             
-            result.add(new TypeJudgement(inputKey, new FlatTuple(judgementVariables))); 
+            result.add(new TypeJudgement(inputKey, Tuples.flatTupleOf(judgementVariables))); 
         }
         return result;
     }

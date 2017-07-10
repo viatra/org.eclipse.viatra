@@ -21,7 +21,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.collect.Sets;
 
@@ -40,7 +41,7 @@ public class SurrogateQueryRewriter extends PDisjunctionRewriter {
             	@Override
             	protected void copyTypeConstraint(TypeConstraint typeConstraint) {
                     PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
-                    FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
+                    Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables); 	
                     final IInputKey supplierKey = typeConstraint.getSupplierKey();
                     if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(supplierKey)) {
                         PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(supplierKey);

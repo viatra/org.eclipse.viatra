@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilte
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -142,7 +143,7 @@ public class TypeJudgement {
         Object[] elements = new Object[indices.size()];
         for (int i = 0; i < indices.size(); ++i)
             elements[i] = variablesTuple.get(indices.get(i));
-        return new FlatTuple(elements);
+        return Tuples.flatTupleOf(elements);
     }
 
     @Override

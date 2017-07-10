@@ -140,4 +140,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/FlatTuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple">
+        <filter id="337768515">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/LeftInheritanceTuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple">
+        <filter id="337768515">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -40,7 +41,7 @@ public class MatchingTable extends AbstractCollection<Tuple> {
 
             @Override
             public Tuple apply(MatchingKey input) {
-                return new FlatTuple(input.keys);
+                return Tuples.flatTupleOf(input.keys);
             }
         }).iterator();
     }

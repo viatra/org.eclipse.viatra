@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
  * In dynamic EMF mode, we need to make sure that EEnum literal constants and values returned by eval() expressions 
@@ -41,7 +42,7 @@ public class DynamicEMFQueryRuntimeContext extends EMFQueryRuntimeContext {
         Object[] elements = externalElements.getElements();
         for (int i=0; i< elements.length; ++i)
             elements[i] = wrapElement(elements[i]);
-        return new FlatTuple(elements);
+        return Tuples.flatTupleOf(elements);
     }
     
     

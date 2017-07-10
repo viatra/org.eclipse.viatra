@@ -192,7 +192,18 @@ public abstract class Tuple {
         for (int i = 0; i < oldElements.length; ++i) {
             newElements[i] = obsolete.equals(oldElements[i]) ? replacement : oldElements[i];
         }
-        return new FlatTuple(newElements);
+        return Tuples.flatTupleOf(newElements);
+    }
+
+    /**
+     * @since 1.7
+     */
+    protected IndexOutOfBoundsException raiseIndexingError(int index) {
+        return new IndexOutOfBoundsException(
+                String.format("No value at position %d for %s instance %s", 
+                        index,
+                        getClass().getSimpleName(),
+                        this));
     }
 
 }

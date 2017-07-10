@@ -42,6 +42,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
 
@@ -127,14 +128,14 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         new TypeFilterConstraint(pBody, getPVariableTuple(variableNames), inputKey);
     }
 
-    private FlatTuple getPVariableTuple(List<String> variableNames) {
+    private Tuple getPVariableTuple(List<String> variableNames) {
         List<PVariable> pVariables = Lists.transform(variableNames, new Function<String, PVariable>() {
             @Override
             public PVariable apply(String variableName) {
                 return findPVariable(variableName);
             }
         });
-        return new FlatTuple(pVariables.toArray());
+        return Tuples.flatTupleOf(pVariables.toArray());
     }
 
     @Override

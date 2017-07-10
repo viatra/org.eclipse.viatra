@@ -25,7 +25,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.BoundAggregator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple1;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
  * The PSystem representation of an aggregation.
@@ -93,7 +95,7 @@ public class AggregatorConstraint extends PatternCallBasedDeferred implements IT
         Set<TypeJudgement> result = new HashSet<TypeJudgement>();
         IInputKey aggregateResultType = aggregator.getAggregateResultTypeAsInputKey();
         if (aggregateResultType != null) {
-            result.add(new TypeJudgement(aggregateResultType, new FlatTuple(resultVariable)));
+            result.add(new TypeJudgement(aggregateResultType, Tuples.staticArityFlatTupleOf(resultVariable)));
         }
         return result;
     }

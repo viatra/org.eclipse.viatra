@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * 
@@ -20,17 +21,7 @@ import java.util.Arrays;
  * @author Gabor Bergmann
  * 
  */
-public class LeftInheritanceTuple extends Tuple {
-    /**
-     * The number of elements that aren't stored locally, but inherited from an ancestor Tuple instead.
-     */
-    private final int inheritedIndex;
-
-    /**
-     * This object contains the same elements as the ancestor on the first inheritedIndex positions
-     */
-    private final Tuple ancestor;
-
+public final class LeftInheritanceTuple extends BaseLeftInheritanceTuple {
     /**
      * Array of substituted values above inheritedIndex. DO NOT MODIFY! Use Constructor to build a new instance instead.
      */
@@ -58,11 +49,12 @@ public class LeftInheritanceTuple extends Tuple {
      * 
      * @param localElements
      *            array of substitution values
+     * @deprecated obtain instances from {@link Tuples} instead 
      */
+    @Deprecated
     public LeftInheritanceTuple(Tuple ancestor, Object[] localElements) {
+        super(ancestor);
         this.localElements = localElements;
-        this.ancestor = ancestor;
-        this.inheritedIndex = ancestor.getSize();
         calcHash();
     }
 
@@ -117,6 +109,11 @@ public class LeftInheritanceTuple extends Tuple {
     public int getSize() {
         return inheritedIndex + localElements.length;
     }
+    
+    @Override
+    public int getLocalSize() {
+        return localElements.length;
+    }
 
     /**
      * @pre: 0 <= index < getSize()
@@ -144,15 +141,22 @@ public class LeftInheritanceTuple extends Tuple {
 
     /**
      * Optimized equals calculation (prediction: true, since hash values match)
-     */
+     */    
     @Override
-    protected boolean internalEquals(Tuple other) {
+    protected boolean localEquals(BaseLeftInheritanceTuple other) {
         if (other instanceof LeftInheritanceTuple) {
-            LeftInheritanceTuple lit = (LeftInheritanceTuple) other;
-            if (lit.inheritedIndex == this.inheritedIndex && this.ancestor.equals(lit.ancestor))
-                return Arrays.equals(this.localElements, lit.localElements);
+            LeftInheritanceTuple lit = (LeftInheritanceTuple)other;
+            return Arrays.equals(this.localElements, lit.localElements);
+        } else {
+            if (localElements.length != other.getLocalSize())
+                return false;
+            int index = inheritedIndex;
+            for (int i = 0; i<localElements.length; ++i) {
+                if (! Objects.equals(localElements[i], other.get(index++))) 
+                    return false;
+            }
+            return true;
         }
-        return super.internalEquals(other);
     }
 
     // public int compareTo(Object arg0) {

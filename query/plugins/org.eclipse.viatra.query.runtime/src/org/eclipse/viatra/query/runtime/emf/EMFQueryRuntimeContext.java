@@ -41,7 +41,10 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextLis
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple1;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple2;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -243,7 +246,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
             } else { // fully seeded
                 if (containsTuple(key, seed)) 
-                    result.add(new FlatTuple(seedInstance));
+                    result.add(Tuples.staticArityFlatTupleOf(seedInstance));
             }
         } else if (key instanceof EDataTypeInSlotsKey) {
             EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
@@ -253,7 +256,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
             } else { // fully seeded
                 if (containsTuple(key, seed)) 
-                    result.add(new FlatTuple(seedInstance));
+                    result.add(Tuples.staticArityFlatTupleOf(seedInstance));
             }
         } else if (key instanceof EStructuralFeatureInstancesKey) {
             EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
@@ -265,23 +268,23 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 return Iterables.transform(results, new Function<Object, Tuple>() {
                     @Override
                     public Tuple apply(Object obj) {
-                        return new FlatTuple(obj, seedTarget);
+                        return Tuples.staticArityFlatTupleOf(obj, seedTarget);
                     }
                 });
             } else if (seedSource != null && seedTarget != null) { // fully seeded
                 if (containsTuple(key, seed)) 
-                    result.add(new FlatTuple(seedSource, seedTarget));
+                    result.add(Tuples.staticArityFlatTupleOf(seedSource, seedTarget));
             } else if (seedSource == null && seedTarget == null) { // fully unseeded
                 baseIndex.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
                     public void process(EStructuralFeature feature, EObject source, Object target) {
-                        result.add(new FlatTuple(source, target));
+                        result.add(Tuples.staticArityFlatTupleOf(source, target));
                     }
                 });
             } else if (seedSource != null && seedTarget == null) { 
                 final Set<Object> results = baseIndex.getFeatureTargets((EObject) seedSource, feature);
                 return Iterables.transform(results, new Function<Object, Tuple>() {
                     public Tuple apply(Object obj) {
-                        return new FlatTuple(seedSource, obj);
+                        return Tuples.staticArityFlatTupleOf(seedSource, obj);
                     }
                 });
             } 
@@ -296,7 +299,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     private static Function<Object, Tuple> wrapUnary = new Function<Object, Tuple>() {
         @Override
         public Tuple apply(Object obj) {
-            return new FlatTuple(obj);
+            return Tuples.staticArityFlatTupleOf(obj);
         }
     };
 
@@ -492,7 +495,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
          */
         public ListenerAdapter(IQueryRuntimeContextListener listener, Object... seed) {
             this.listener = listener;
-            this.seed = new FlatTuple(seed);
+            this.seed = Tuples.flatTupleOf(seed);
         }
                 
         @Override
@@ -545,13 +548,13 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         public void instanceInserted(EClass clazz, EObject instance) {
             if (seedInstance != null && !seedInstance.equals(instance)) return;
             listener.update(new EClassTransitiveInstancesKey(clazz), 
-                    new FlatTuple(instance), true);
+                    Tuples.staticArityFlatTupleOf(instance), true);
         }
         @Override
         public void instanceDeleted(EClass clazz, EObject instance) {
             if (seedInstance != null && !seedInstance.equals(instance)) return;
             listener.update(new EClassTransitiveInstancesKey(clazz), 
-                    new FlatTuple(instance), false);
+                    Tuples.staticArityFlatTupleOf(instance), false);
         }    	
     }
     private static class EDataTypeInSlotsAdapter extends ListenerAdapter implements DataTypeListener {
@@ -566,7 +569,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (firstOccurrence) {
                 if (seedValue != null && !seedValue.equals(instance)) return;
                 listener.update(new EDataTypeInSlotsKey(type), 
-                        new FlatTuple(instance), true);
+                        Tuples.staticArityFlatTupleOf(instance), true);
             }
         }
         @Override
@@ -575,7 +578,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (lastOccurrence) {
                 if (seedValue != null && !seedValue.equals(instance)) return;
                 listener.update(new EDataTypeInSlotsKey(type), 
-                        new FlatTuple(instance), false);
+                        Tuples.staticArityFlatTupleOf(instance), false);
             }
         }
     }
@@ -593,7 +596,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (seedHost != null && !seedHost.equals(host)) return;
             if (seedValue != null && !seedValue.equals(value)) return;
             listener.update(new EStructuralFeatureInstancesKey(feature), 
-                    new FlatTuple(host, value), true);
+                    Tuples.staticArityFlatTupleOf(host, value), true);
         }
         @Override
         public void featureDeleted(EObject host, EStructuralFeature feature,
@@ -601,7 +604,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (seedHost != null && !seedHost.equals(host)) return;
             if (seedValue != null && !seedValue.equals(value)) return;
             listener.update(new EStructuralFeatureInstancesKey(feature), 
-                    new FlatTuple(host, value), false);
+                    Tuples.staticArityFlatTupleOf(host, value), false);
         }    	
     }
     

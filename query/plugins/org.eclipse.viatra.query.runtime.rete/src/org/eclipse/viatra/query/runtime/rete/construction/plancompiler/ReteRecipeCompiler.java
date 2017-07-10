@@ -68,6 +68,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.SurrogateQuer
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.PosetTriplet;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
@@ -449,7 +450,7 @@ public class ReteRecipeCompiler {
         final List<PVariable> parentVariables = parentCompiled.getVariablesTuple();
 
         Mask mask; // select elements of the tuple to check against extensional relation
-        if (new FlatTuple(parentVariables.toArray()).equals(constraintVariables)) {
+        if (Tuples.flatTupleOf(parentVariables.toArray()).equals(constraintVariables)) {
             mask = null; // lucky case, parent signature equals that of input key
         } else {
             List<PVariable> variables = new ArrayList<PVariable>();

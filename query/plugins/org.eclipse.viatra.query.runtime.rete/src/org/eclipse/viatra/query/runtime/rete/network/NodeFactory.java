@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.CountNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
@@ -261,7 +262,7 @@ class NodeFactory {
     private Supplier instantiateNode(ReteContainer reteContainer, ConstantRecipe recipe) {
         final List<Object> constantValues = recipe.getConstantValues();
         final Object[] constantArray = constantValues.toArray(new Object[constantValues.size()]);
-        return new ConstantNode(reteContainer, new FlatTuple(constantArray));
+        return new ConstantNode(reteContainer, Tuples.flatTupleOf(constantArray));
     }
 
     private Supplier instantiateNode(ReteContainer reteContainer, DiscriminatorBucketRecipe recipe) {

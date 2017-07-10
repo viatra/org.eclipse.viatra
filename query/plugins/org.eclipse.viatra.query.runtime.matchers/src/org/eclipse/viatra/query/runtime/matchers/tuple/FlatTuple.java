@@ -14,10 +14,10 @@ package org.eclipse.viatra.query.runtime.matchers.tuple;
 import java.util.Arrays;
 
 /**
- * Default Tuple implementation
+ * Default Tuple implementation, with statically unknown arity.
  * @author Gabor Bergmann 
  */
-public class FlatTuple extends Tuple {
+public final class FlatTuple extends BaseFlatTuple {
 
     /**
      * Array of substituted values. DO NOT MODIFY! Use Constructor to build a new instance instead.
@@ -25,11 +25,14 @@ public class FlatTuple extends Tuple {
     private final Object[] elements;
 
     /**
-     * Creates a Tuple instance, fills it with the given array. @pre: no elements are null
+     * Creates a FlatTuple instance, fills it with the given array.
+     * <p> Users should consider calling {@link Tuples#flatTupleOf(Object...)} instead to save memory on low-arity tuples.
      * 
      * @param elements
      *            array of substitution values
+     * @deprecated obtain instances from {@link Tuples} instead 
      */
+    @Deprecated
     public FlatTuple(Object... elements) {
         this.elements = Arrays.copyOf(elements, elements.length);
         calcHash();

@@ -22,6 +22,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple1;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -165,7 +167,7 @@ public abstract class BasePQuery implements PQuery {
 			PParameter parameter = parameters.get(i);
 			IInputKey declaredUnaryType = parameter.getDeclaredUnaryType();
 			if (declaredUnaryType != null) {
-				result.add(new TypeJudgement(declaredUnaryType, new FlatTuple(i)));
+				result.add(new TypeJudgement(declaredUnaryType, Tuples.staticArityFlatTupleOf(i)));
 			}
 		}
 		

@@ -21,6 +21,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.KeyedEnumerablePConstra
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple1;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
  * @author Gabor Bergmann
@@ -29,7 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
 
     public ConstantValue(PBody pBody, PVariable variable, Object value) {
-        super(pBody, new FlatTuple(variable), value);
+        super(pBody, Tuples.staticArityFlatTupleOf(variable), value);
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Consta
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
@@ -101,7 +102,7 @@ public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintC
         for(Integer index : indices){
             list.add(tuple.get(index));
         }
-        return new FlatTuple(list.toArray());
+        return Tuples.flatTupleOf(list.toArray());
     }
     
 }

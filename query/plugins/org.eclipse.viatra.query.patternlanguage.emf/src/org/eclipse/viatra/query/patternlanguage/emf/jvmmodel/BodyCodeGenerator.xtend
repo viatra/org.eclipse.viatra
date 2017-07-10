@@ -34,23 +34,24 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtend2.lib.StringConcatenationClient.TargetStringConcatenation
+import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
 import org.eclipse.xtext.common.types.JvmType
+import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
-import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -152,9 +153,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override acceptTypeConstraint(List<String> variableNames, IInputKey key) {
                 target.append('''new ''')
                 target.append(TypeConstraint)
-                target.append('''(body, new ''')
-                target.append(FlatTuple)
-                target.append('''(«variableNames.output»), ''')
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«variableNames.output»), ''')
                 target.appendInputKey(key, false)
                 target.append(''');
                 ''')

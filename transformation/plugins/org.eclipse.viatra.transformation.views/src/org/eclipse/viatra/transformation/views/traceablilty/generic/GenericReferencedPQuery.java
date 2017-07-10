@@ -37,6 +37,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple1;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.traceability.patterns.util.TraceQuerySpecification;
 
@@ -117,7 +119,7 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         }
 
         body.setSymbolicParameters(symbolicParameters);
-        new PositivePatternCall(body, new FlatTuple(newVariables.toArray()), baseQuery);
+        new PositivePatternCall(body, Tuples.flatTupleOf(newVariables.toArray()), baseQuery);
         try {
             insertTraceCall(body);
         } catch (ViatraQueryException e) {
@@ -152,15 +154,15 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
             PVariable var_traceability = body.newConstantVariable(traceabilityId);
             
             
-            new PositivePatternCall(body, new FlatTuple(var_source, var_id, var_target, var_trace1, var_traceability),
+            new PositivePatternCall(body, Tuples.wideFlatTupleOf(var_source, var_id, var_target, var_trace1, var_traceability),
                     TraceQuerySpecification.instance().getInternalQueryRepresentation());
-            new NegativePatternCall(body, new FlatTuple(var_target, var_id, var_, var_trace2, var_traceability),
+            new NegativePatternCall(body, Tuples.wideFlatTupleOf(var_target, var_id, var_, var_trace2, var_traceability),
                     TraceQuerySpecification.instance().getInternalQueryRepresentation());
         }
         if (pTarget.getTypeName() != null) {
             //TODO: resolve hack
             String[] type = pTarget.getTypeName().split(Pattern.quote("||"));
-            new TypeConstraint(body, new FlatTuple(var_target), 
+            new TypeConstraint(body, Tuples.staticArityFlatTupleOf(var_target), 
                     toInputKey(getClassifierLiteral(type[0], type[1]))/*, 
                     String.format("{0}/{1}", type[0], type[1])*/);
         }

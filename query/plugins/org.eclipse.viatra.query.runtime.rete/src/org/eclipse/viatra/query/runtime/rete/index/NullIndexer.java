@@ -17,8 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple0;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
@@ -39,8 +41,7 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
 
     protected abstract Collection<Tuple> getTuples();
 
-    static Object[] empty = {};
-    static Tuple nullSignature = new FlatTuple(empty);
+    static Tuple nullSignature = Tuples.staticArityFlatTupleOf();
     static Collection<Tuple> nullSingleton = Collections.singleton(nullSignature);
     static Collection<Tuple> emptySet = Collections.emptySet();
 

@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider;
 
 /**
@@ -115,7 +116,8 @@ public abstract class EvaluatorCore {
         @Override
         public Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
             if (evaluationresult == null) return null;
-            return new LeftInheritanceTuple(incoming, new Object[]{runtimeContext.wrapElement(evaluationresult)});
+            return Tuples.staticArityLeftInheritanceTupleOf(incoming, 
+                    runtimeContext.wrapElement(evaluationresult));
         }
 
         @Override
