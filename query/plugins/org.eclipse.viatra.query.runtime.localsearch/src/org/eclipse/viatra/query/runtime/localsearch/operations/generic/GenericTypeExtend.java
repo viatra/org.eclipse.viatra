@@ -92,7 +92,7 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
     public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         if (it.hasNext()) {
             final Tuple next = it.next();
-            for (int i : unboundVariableIndex) {
+            for (int i = 0; i < positions.length; i++) {
                 frame.setValue(positions[i], next.get(i));
             }
             return true;
