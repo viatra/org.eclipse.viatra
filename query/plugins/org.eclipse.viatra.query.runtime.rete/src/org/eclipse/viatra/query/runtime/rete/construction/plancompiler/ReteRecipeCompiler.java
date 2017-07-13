@@ -33,7 +33,6 @@ import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.BuildHelper;
-import org.eclipse.viatra.query.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PApply;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PEnumerate;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PJoin;
@@ -59,6 +58,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Binary
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer;
@@ -182,12 +182,13 @@ public class ReteRecipeCompiler {
     public CompiledQuery getCompiledForm(PQuery query) throws QueryProcessingException {
         CompiledQuery compiled = queryCompilerCache.get(query);
         if (compiled == null) {
-            
-            IRewriterTraceCollector traceCollector = CommonQueryHintOptions.normalizationTraceCollector.getValueOrDefault(hintProvider.getQueryEvaluationHint(query));
+
+            IRewriterTraceCollector traceCollector = CommonQueryHintOptions.normalizationTraceCollector
+                    .getValueOrDefault(hintProvider.getQueryEvaluationHint(query));
             if (traceCollector != null) {
                 traceCollector.addTrace(query, query);
             }
-            
+
             boolean reentrant = !compilationInProgress.add(query);
             if (reentrant) { // oops, recursion into body in progress
                 RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext);
@@ -252,7 +253,8 @@ public class ReteRecipeCompiler {
 
     private CompiledQuery compileProduction(PQuery query) throws QueryProcessingException {
         Collection<SubPlan> bodyPlans = new ArrayList<SubPlan>();
-        normalizer.setTraceCollector(CommonQueryHintOptions.normalizationTraceCollector.getValueOrDefault(hintProvider.getQueryEvaluationHint(query)));
+        normalizer.setTraceCollector(CommonQueryHintOptions.normalizationTraceCollector
+                .getValueOrDefault(hintProvider.getQueryEvaluationHint(query)));
         for (PBody pBody : normalizer.rewrite(query).getBodies()) {
             SubPlan bodyPlan = getPlan(pBody);
             bodyPlans.add(bodyPlan);
@@ -560,21 +562,16 @@ public class ReteRecipeCompiler {
         columnAggregatorRecipe.setMultisetAggregationOperator(operator);
 
         int columnIndex = constraint.getAggregatedColumn();
-        PVariable aggregatedVariable = (PVariable) constraint.getActualParametersTuple().get(columnIndex);
         IPosetComparator posetComparator = null;
         boolean deleteRederiveEvaluation = ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(plan));
         Mask groupMask = CompilerHelper.toRecipeMask(callGroupMask);
 
         columnAggregatorRecipe.setDeleteRederiveEvaluation(deleteRederiveEvaluation);
         if (deleteRederiveEvaluation) {
-            Map<PVariable, Set<IInputKey>> typeMap = TypeHelper.inferUnaryTypesFor(
-                    Collections.singleton(aggregatedVariable), constraint.getPSystem().getConstraints(), metaContext);
-
-            for (IInputKey key : typeMap.get(aggregatedVariable)) {
-                if (key != null && metaContext.isPosetKey(key)) {
-                    posetComparator = metaContext.getPosetComparator(Collections.singleton(key));
-                    break;
-                }
+            List<PParameter> parameters = constraint.getReferredQuery().getParameters();
+            IInputKey key = parameters.get(columnIndex).getDeclaredUnaryType();
+            if (key != null && metaContext.isPosetKey(key)) {
+                posetComparator = metaContext.getPosetComparator(Collections.singleton(key));
             }
         }
 
