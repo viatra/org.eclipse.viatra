@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage;
 
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+
+import com.google.inject.Injector;
+
 /**
  * Initialization support for running Xtext languages without equinox extension registry
  */
@@ -18,4 +22,12 @@ public class PatternLanguageStandaloneSetup extends PatternLanguageStandaloneSet
     public static void doSetup() {
         new PatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
     }
+
+    @Override
+    public void register(Injector injector) {
+        super.register(injector);
+        // Instance access initializes EPackage
+        PatternLanguagePackage.eINSTANCE.getNsURI();
+    }
+    
 }

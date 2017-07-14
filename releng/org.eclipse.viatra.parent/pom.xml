@@ -576,6 +576,7 @@
                                 <exclude>**/target/**</exclude>
                                 <exclude>**/src-gen/**</exclude>
                                 <exclude>**/xtend-gen/**</exclude>
+                                <exclude>**/emf-gen/**</exclude>
                             </excludes>
                             <mapping>
                                 <xtend>JAVADOC_STYLE</xtend>

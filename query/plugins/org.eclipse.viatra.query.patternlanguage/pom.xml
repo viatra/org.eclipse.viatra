@@ -29,27 +29,27 @@
                         </fileset>
                         <fileset>
                             <directory>xtend-gen</directory>
-                                                        <excludes>
-                                                                <exclude>.gitignore</exclude>
-                                                        </excludes>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
                         </fileset>
                         <fileset>
                             <directory>model/generated</directory>
-                                                        <excludes>
-                                                                <exclude>.gitignore</exclude>
-                                                        </excludes>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
                         </fileset>
                         <fileset>
                             <directory>../${project.artifactId}.ui/src-gen</directory>
-                                                        <excludes>
-                                                                <exclude>.gitignore</exclude>
-                                                        </excludes>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
                         </fileset>
                         <fileset>
                             <directory>../../tests/${project.artifactId}.tests/src-gen</directory>
-                                                        <excludes>
-                                                                <exclude>.gitignore</exclude>
-                                                        </excludes>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>

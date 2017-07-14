@@ -159,7 +159,7 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
             pm.setPackageName(packageName.replace("/", "."));
         }
 
-        pm.setImportPackages(EMFPatternLanguageFactory.eINSTANCE.createXImportSection());
+        pm.setImportPackages(EMFPatternLanguageFactory.eINSTANCE.createVQLImportSection());
         // Setting imports
         for (EPackage importedPackage : imports) {
             PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();

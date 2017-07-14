@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage.emf" version="2">
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/EMFPatternLanguageFactory.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="createVQLImportSection()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/EMFPatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1209008130">
+            <message_arguments>
+                <message_argument value="2.7"/>
+                <message_argument value="2.0"/>
+                <message_argument value="VQL_IMPORT_SECTION__IMPORT_DECLARATIONS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION__PACKAGE_IMPORT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION__PATTERN_IMPORT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="getVQLImportSection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="getVQLImportSection_PackageImport()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="getVQLImportSection_PatternImport()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/EMFPatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage$Literals">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION__PACKAGE_IMPORT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="VQL_IMPORT_SECTION__PATTERN_IMPORT"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/PatternModel.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="getImportPackages()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1211105284">
+            <message_arguments>
+                <message_argument value="setImportPackages(VQLImportSection)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/VQLImportSection.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/impl/PatternModelImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.impl.PatternModelImpl">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="basicSetImportPackages(VQLImportSection, NotificationChain)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/impl/VQLImportSectionImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.impl.VQLImportSectionImpl">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.impl.VQLImportSectionImpl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/util/EMFPatternLanguageAdapterFactory.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.util.EMFPatternLanguageAdapterFactory">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="createVQLImportSectionAdapter()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/util/EMFPatternLanguageSwitch.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.util.EMFPatternLanguageSwitch">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="caseVQLImportSection(VQLImportSection)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/parser/antlr/internal/InternalEMFPatternLanguageParser.java" type="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="entryRuleVQLImportSection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleVQLImportSection()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/serializer/AbstractEMFPatternLanguageSemanticSequencer.java" type="org.eclipse.viatra.query.patternlanguage.emf.serializer.AbstractEMFPatternLanguageSemanticSequencer">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="sequence_VQLImportSection(ISerializationContext, VQLImportSection)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="getVQLImportSectionAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="getVQLImportSectionRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="getXImportSectionAccess()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$EMFPatternModelElements">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="getImportPackagesVQLImportSectionParserRuleCall_2_0()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$VQLImportSectionElements">
+        <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="VQLImportSectionElements"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

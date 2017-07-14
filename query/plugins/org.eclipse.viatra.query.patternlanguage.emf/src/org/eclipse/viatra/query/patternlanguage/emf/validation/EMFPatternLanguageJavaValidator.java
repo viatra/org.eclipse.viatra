@@ -43,7 +43,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageIm
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
@@ -1031,7 +1031,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @SuppressWarnings("restriction")
     @Check
-    public void checkPatternImports(XImportSection section) {
+    public void checkPatternImports(VQLImportSection section) {
         if (!isIgnored(IMPORT_UNUSED)) {
             final Set<Pattern> usedPatterns = Sets.newHashSet();
             final UnmodifiableIterator<PatternCall> it = Iterators.filter(section.eResource().getAllContents(),

@@ -11,26 +11,31 @@
 module org.eclipse.viatra.query.patternlanguage.PatternLanguage
 
 import org.eclipse.emf.mwe.utils.*
+import org.eclipse.emf.mwe2.ecore.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
-import org.eclipse.viatra.query.patternlanguage.*
 
 var grammarURI = "classpath:/org/eclipse/viatra/query/patternlanguage/PatternLanguage.xtext"
 var file.extensions = "pattern"
 var projectName = "org.eclipse.viatra.query.patternlanguage"
 var runtimeProject = "../${projectName}"
+var ecoreModel = "platform:/resource/${projectName}/model/PatternLanguage"
 
 Workflow {
     bean = StandaloneSetup {
         scanClassPath = true
         platformUri = "${runtimeProject}/.."
+        
         registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
-        registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
-		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
+        registerGeneratedEPackage = "org.eclipse.xtext.common.types.TypesPackage"
+
+		registerEcoreFile = "${ecoreModel}.ecore"
+		registerGenModelFile = "${ecoreModel}.genmodel"
     }
 
+
     component = DirectoryCleaner {
-        directory = "${runtimeProject}/model/generated"
+        directory = "${runtimeProject}/emf-gen"
     }
     
     component = DirectoryCleaner {
@@ -41,7 +46,12 @@ Workflow {
         directory = "${runtimeProject}.ui/src-gen"
     }
 
-    component = generator.ExtendedPatternLanguageGenerator {
+    component = EcoreGenerator {
+        genModel = "${ecoreModel}.genmodel"
+        srcPath = "${runtimeProject}/emf-gen"
+    }
+    
+    component = Generator {
         pathRtProject = runtimeProject
         pathUiProject = "${runtimeProject}.ui"
 //        pathTestProject = "../../tests/${projectName}.tests"
@@ -57,10 +67,10 @@ Workflow {
             fragment = grammarAccess.GrammarAccessFragment {}
 
             // generates Java API for the generated EPackages
-            fragment = ecore.EMFGeneratorFragment {
-                emfRuntimeVersion = "2.10"
-                jdkLevel = "JDK70"
-            }
+//            fragment = ecore.EMFGeneratorFragment {
+//                emfRuntimeVersion = "2.10"
+//                jdkLevel = "JDK70"
+//            }
 
             // Serializer 2.0
             fragment = serializer.SerializerFragment {}

@@ -10,7 +10,8 @@
  *******************************************************************************/
 grammar org.eclipse.viatra.query.patternlanguage.PatternLanguage with org.eclipse.xtext.xbase.Xbase
 
-generate patternLanguage "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+//import "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/PatternLanguage.ecore"
 import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
@@ -45,27 +46,8 @@ Modifiers:
 	execution=ExecutionTypeModifier?
 	);
 
-enum ExecutionType:
-    unspecified | search | incremental ;
-
 enum ExecutionTypeModifier returns ExecutionType:
     search | incremental
-;
-
-Variable returns Expression:
-	{Variable}
-	name=ID
-	(':' type=Type)?;
-
-ParameterRef returns Variable:
-	{ParameterRef}
-	name=ID
-	referredParam = [Variable]
-	(':' type=Type)?
-;
-
-enum ParameterDirection:
-    inout | in | out
 ;
 
 enum ParameterDirectionModifier returns ParameterDirection:
@@ -79,17 +61,7 @@ Parameter returns Variable:
 	(':' type=Type | ':' type=JavaType)?
 ;
 
-LocalVariable returns Variable:
-	{LocalVariable}
-	name=ID
-	(':' type=Type)?
-;
-
-Expression returns Expression:
-    VariableReference | ValueReference
-;
-
-VariableReference returns VariableReference:
+VariableReference:
 	aggregator?='#'? var = ID |
 	aggregator?='#';
 
@@ -109,22 +81,22 @@ RefType returns Type:
 	{RelationType}
 	typename=ID;
 
-PatternBody returns PatternBody:
+PatternBody:
 	{PatternBody}
 	(name=ID)?
 	'{'
 	((constraints+=Constraint ';'))*
 	'}';
 
-Constraint returns Constraint:
+Constraint:
     CheckConstraint | TypeCheckConstraint |
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint;
 
-TypeCheckConstraint returns Constraint:
+TypeCheckConstraint:
     {TypeCheckConstraint} type = JavaType  '(' var = VariableReference ')'
 ;
 
-PatternCompositionConstraint returns Constraint:
+PatternCompositionConstraint:
 	{PatternCompositionConstraint} negative?='neg'? call=PatternCall;
 	
 	//'count' 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
@@ -132,7 +104,7 @@ PatternCompositionConstraint returns Constraint:
 PatternCall:
 	'find' patternRef=[Pattern|QualifiedName] transitive?='+'? '(' (parameters+=ValueReference (',' parameters+=ValueReference)*)? ')';
 
-CompareConstraint returns Constraint:
+CompareConstraint:
 	{CompareConstraint} leftOperand = ValueReference feature=CompareFeature rightOperand = ValueReference 
 ;
 
@@ -140,16 +112,16 @@ enum CompareFeature:
 	equality = '==' | inequality = '!='
 ;
 
-CheckConstraint returns Constraint:
+CheckConstraint:
 	{CheckConstraint} 'check' '(' expression=XExpression ')';
 
-PathExpressionConstraint returns Constraint:
+PathExpressionConstraint:
 	{PathExpressionConstraint} head=PathExpressionHead;
 
-PathExpressionHead returns PathExpressionElement:
+PathExpressionHead:
 	{PathExpressionHead} type=Type '.' tail=PathExpressionTail '(' src=VariableReference ',' dst=ValueReference ')';
 
-PathExpressionTail returns PathExpressionElement:
+PathExpressionTail:
 	{PathExpressionTail} type=RefType ('.' tail=PathExpressionTail)?;
 
 ValueReference:
@@ -171,30 +143,30 @@ NumberValue returns LiteralValueReference:
 
 //@Override is only available after Xtext 2.11
 XNumberLiteral returns xbase::XNumberLiteral :
-    {XNumberLiteral} value=Number;
+     {xbase::XNumberLiteral} value=Number;
 
 
-BoolValue returns LiteralValueReference: 
-    {BoolValue} value = XBooleanLiteral
+BoolValue: 
+    value = XBooleanLiteral
 ;
 
 //@Override is only available after Xtext 2.11
 XBooleanLiteral returns xbase::XBooleanLiteral:
-	{XBooleanLiteral} ('false' | 'FALSE' | isTrue?='true' | isTrue?="TRUE")
+	{xbase::XBooleanLiteral} ('false' | 'FALSE' | isTrue?='true' | isTrue?="TRUE")
 ;
 
-VariableValue returns ValueReference:
+VariableValue:
 	{VariableValue} value=VariableReference;
 
-ListValue returns LiteralValueReference:
+ListValue:
 	{ListValue} '{' values+=ValueReference (',' values+=ValueReference)* '}';
 	
-ComputationValue returns ValueReference:
+ComputationValue:
 	AggregatedValue | FunctionEvaluationValue;
 	
-FunctionEvaluationValue returns ComputationValue:
+FunctionEvaluationValue:
 	{FunctionEvaluationValue} 'eval' '(' expression=XExpression ')';
 	
-AggregatedValue returns ComputationValue:
+AggregatedValue:
     // TODO aggregator should be QualifiedName
  	{AggregatedValue} aggregator=[types::JvmDeclaredType|ValidID] call=PatternCall;

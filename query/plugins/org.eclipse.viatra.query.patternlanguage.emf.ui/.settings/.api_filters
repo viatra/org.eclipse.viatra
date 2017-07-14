@@ -7,6 +7,28 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/ui/contentassist/AbstractEMFPatternLanguageProposalProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.AbstractEMFPatternLanguageProposalProvider">
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeVQLImportSection_ImportDeclarations(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeVQLImportSection_PackageImport(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeVQLImportSection_PatternImport(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_VQLImportSection(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/ui/util/JavaProjectClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider">
         <filter comment="Internal API update" id="338792546">
             <message_arguments>

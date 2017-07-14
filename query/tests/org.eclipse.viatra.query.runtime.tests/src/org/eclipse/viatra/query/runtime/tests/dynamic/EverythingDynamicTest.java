@@ -29,7 +29,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifi
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
@@ -100,7 +100,7 @@ public class EverythingDynamicTest {
         patternModel.setPackageName("TestPatternPackage");
         PackageImport packageImport = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
         packageImport.setEPackage(bookStoreEPackage);
-        XImportSection importSection = EMFPatternLanguageFactory.eINSTANCE.createXImportSection();
+        VQLImportSection importSection = EMFPatternLanguageFactory.eINSTANCE.createVQLImportSection();
         patternModel.setImportPackages(importSection);
         importSection.getPackageImport().add(packageImport);
 

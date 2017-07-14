@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/serializer/AbstractPatternLanguageSemanticSequencer.java" type="org.eclipse.viatra.query.patternlanguage.serializer.AbstractPatternLanguageSemanticSequencer">
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="sequence_XBooleanLiteral(ISerializationContext, XBooleanLiteral)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="sequence_XNumberLiteral(ISerializationContext, XNumberLiteral)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/services/PatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess$BoolValueElements">
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="getValueAssignment()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="getValueXBooleanLiteralParserRuleCall_0()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

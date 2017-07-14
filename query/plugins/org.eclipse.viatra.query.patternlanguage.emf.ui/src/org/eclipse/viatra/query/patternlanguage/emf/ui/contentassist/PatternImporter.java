@@ -16,7 +16,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.xtext.resource.XtextResource;
@@ -70,7 +70,7 @@ final class PatternImporter extends ReplacementTextApplier {
                     if (targetPackage.equals(model.getPackageName())) {
                         return ImportState.SAMEPACKAGE;
                     }
-                    final XImportSection importSection = model.getImportPackages();
+                    final VQLImportSection importSection = model.getImportPackages();
                     PatternImport relatedImport = Iterables.find(importSection.getPatternImport(),
                             new Predicate<PatternImport>() {
 
@@ -104,12 +104,12 @@ final class PatternImporter extends ReplacementTextApplier {
 
                     @Override
                     public void process(XtextResource state) throws Exception {
-                        XImportSection importSection = (XImportSection) Iterators.find(state.getAllContents(),
-                                Predicates.instanceOf(XImportSection.class), null);
+                        VQLImportSection importSection = (VQLImportSection) Iterators.find(state.getAllContents(),
+                                Predicates.instanceOf(VQLImportSection.class), null);
                         if (importSection.getImportDeclarations().size() + importSection.getPackageImport().size()
                                 + importSection.getPatternImport().size() == 0) {
                             //Empty import sections need to be replaced to generate white space after the package declaration
-                            XImportSection newSection = EMFPatternLanguageFactory.eINSTANCE.createXImportSection();
+                            VQLImportSection newSection = EMFPatternLanguageFactory.eINSTANCE.createVQLImportSection();
                             ((PatternModel) importSection.eContainer()).setImportPackages(newSection);
                             importSection = newSection;
                         }

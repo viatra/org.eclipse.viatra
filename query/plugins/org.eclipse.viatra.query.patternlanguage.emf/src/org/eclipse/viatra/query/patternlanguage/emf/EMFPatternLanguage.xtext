@@ -16,17 +16,17 @@ import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 import "http://www.eclipse.org/xtext/xbase/Xtype" as xtype
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
-generate eMFPatternLanguage "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage"
+import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage"
 
 EMFPatternModel returns core::PatternModel:
 	{PatternModel}
 	('package' packageName = QualifiedName ';'?)?
-	importPackages=XImportSection
+	importPackages=VQLImportSection
 	patterns+=Pattern*;
 	
 //@Override is only available after Xtext 2.11
-XImportSection:
-	{XImportSection}
+VQLImportSection :
+	{VQLImportSection}
 	(
 	packageImport+=PackageImport |
 	patternImport+=PatternImport |

@@ -6,7 +6,7 @@
     <package 
        uri = "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage" 
        class = "org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage"
-       genModel = "model/generated/EMFPatternLanguage.genmodel" /> 
+       genModel = "model/EMFPatternLanguage.genmodel" /> 
     
   </extension>
 

@@ -21,7 +21,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
@@ -146,8 +146,8 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
 
                     @Override
                     public Integer exec(XtextResource state) {
-                        final XImportSection importSection = (XImportSection) 
-                                Iterators.find(state.getAllContents(), Predicates.instanceOf(XImportSection.class), null);
+                        final VQLImportSection importSection = (VQLImportSection) 
+                                Iterators.find(state.getAllContents(), Predicates.instanceOf(VQLImportSection.class), null);
                         final ICompositeNode node = NodeModelUtils.getNode(importSection);
                         
                         return Integer.valueOf(node.getTotalEndOffset());

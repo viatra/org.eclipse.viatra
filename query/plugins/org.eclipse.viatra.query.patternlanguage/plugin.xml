@@ -9,7 +9,7 @@
     <package 
        uri = "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" 
        class = "org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"
-       genModel = "model/generated/PatternLanguage.genmodel" /> 
+       genModel = "model/PatternLanguage.genmodel" /> 
     
   </extension>
   <extension

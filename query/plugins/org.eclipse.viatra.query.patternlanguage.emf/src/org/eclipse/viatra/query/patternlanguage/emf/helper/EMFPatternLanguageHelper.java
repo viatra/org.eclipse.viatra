@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -47,7 +47,7 @@ public class EMFPatternLanguageHelper {
      * proxy, it is omitted.
      */
     public static Iterable<PackageImport> getPackageImportsIterable(PatternModel model) {
-        XImportSection imports = model.getImportPackages();
+        VQLImportSection imports = model.getImportPackages();
         if (imports == null) {
             return ImmutableList.of();
         }

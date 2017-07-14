@@ -11,6 +11,7 @@
 module org.eclipse.viatra.query.patternlanguage.emf.GenerateEMFPatternLanguage
 
 import org.eclipse.emf.mwe.utils.*
+import org.eclipse.emf.mwe2.ecore.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
@@ -18,20 +19,27 @@ var grammarURI = "classpath:/org/eclipse/viatra/query/patternlanguage/emf/EMFPat
 var file.extensions = "vql"
 var projectName = "org.eclipse.viatra.query.patternlanguage.emf"
 var runtimeProject = "../${projectName}"
+var ecoreModel = "platform:/resource/${projectName}/model/EMFPatternLanguage"
+var patternLanguageEcore = "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/PatternLanguage"
 
 Workflow {
     bean = StandaloneSetup {
         scanClassPath = true
         platformUri = "${runtimeProject}/.."
+        
         registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
-        registerGeneratedEPackage = "org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"
-		registerGenModelFile = "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/generated/PatternLanguage.genmodel"
-		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
-		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
+        registerGeneratedEPackage = "org.eclipse.xtext.common.types.TypesPackage"
+        registerGeneratedEPackage = "org.eclipse.xtext.xtype.XtypePackage"
+        registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
+
+        registerEcoreFile = "${ecoreModel}.ecore"
+        registerGenModelFile = "${ecoreModel}.genmodel"
+        registerEcoreFile = "${patternLanguageEcore}.ecore"
+        registerGenModelFile = "${patternLanguageEcore}.genmodel"
     }
 
     component = DirectoryCleaner {
-        directory = "${runtimeProject}/model/generated"
+        directory = "${runtimeProject}/emf-gen"
     }
     
     component = DirectoryCleaner {
@@ -40,6 +48,11 @@ Workflow {
 
     component = DirectoryCleaner {
         directory = "${runtimeProject}.ui/src-gen"
+    }
+
+    component = EcoreGenerator {
+        genModel = "${ecoreModel}.genmodel"
+        srcPath = "${runtimeProject}/emf-gen"
     }
 
     component = Generator {
