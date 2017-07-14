@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Node;
  * @author Gabor Bergmann
  * 
  *         Indexes a collection of Tuples according to their masks.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     /**

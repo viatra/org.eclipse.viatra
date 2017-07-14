@@ -48,6 +48,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * @author Gabor Bergmann
  * @author Tamas Szabo
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients. 
  */
 public class UniquenessEnforcerNode extends StandardNode
         implements Tunnel, RederivableNode, MonotonicityAwareReceiver {
