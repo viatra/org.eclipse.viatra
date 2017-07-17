@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.viatra.query.runtime.IExtensions
 import org.eclipse.viatra.query.tooling.core.project.PluginXmlModifier
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper
-import org.eclipse.xtext.junit4.ui.AbstractWorkbenchTest
-import org.eclipse.xtext.junit4.ui.util.IResourcesSetupUtil
+import org.eclipse.xtext.ui.testing.AbstractWorkbenchTest
+import org.eclipse.xtext.ui.testing.util.IResourcesSetupUtil
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

@@ -8,18 +8,23 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.patternlanguage.emf.ui.util.internal;
+package org.eclipse.viatra.query.patternlanguage.emf.ui;
 
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguagePlugin;
-import org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EmfActivator;
 import org.osgi.framework.BundleContext;
 
 /**
  * @author Zoltan Ujhelyi
+ * @since 2.0
  *
  */
-public class EMFPatternLanguageUIPlugin extends EMFPatternLanguageActivator {
+public class EMFPatternLanguageUIPlugin extends EmfActivator {
 
+    public static EMFPatternLanguageUIPlugin getInstance() {
+        return (EMFPatternLanguageUIPlugin) EmfActivator.getInstance();
+    }
+    
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);

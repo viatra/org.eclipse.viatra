@@ -115,6 +115,28 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/AbstractEMFPatternLanguageRuntimeModule.java" type="org.eclipse.viatra.query.patternlanguage.emf.AbstractEMFPatternLanguageRuntimeModule">
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="bindEMFPatternLanguageValidator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="bindIBatchScopeProvider()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="bindIJvmModelInferrer()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="configureRewritableImportSectionEnablement(Binder)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/parser/antlr/internal/InternalEMFPatternLanguageParser.java" type="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser">
         <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
@@ -162,6 +184,13 @@
         <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="VQLImportSectionElements"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/validation/AbstractEMFPatternLanguageValidator.java" type="org.eclipse.viatra.query.patternlanguage.emf.validation.AbstractEMFPatternLanguageValidator">
+        <filter comment="Xtext generated code, cannot touch" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.validation.AbstractEMFPatternLanguageValidator"/>
             </message_arguments>
         </filter>
     </resource>

@@ -17,8 +17,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidator
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Test
 import org.junit.runner.RunWith
 

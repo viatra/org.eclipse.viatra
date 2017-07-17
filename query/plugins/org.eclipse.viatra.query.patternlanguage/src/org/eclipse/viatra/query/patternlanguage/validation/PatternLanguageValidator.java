@@ -104,10 +104,11 @@ import com.google.inject.Provider;
  *
  * @author Mark Czotter
  * @author Tamas Szabo (itemis AG)
+ * @since 2.0
  */
 @SuppressWarnings("restriction")
 @ComposedChecks(validators = { VariableUsageCounter.class })
-public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator implements IIssueCallback {
+public class PatternLanguageValidator extends AbstractPatternLanguageValidator implements IIssueCallback {
     
     public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
     public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern %s (the shadowing pattern is in %s)";
@@ -252,7 +253,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         List<ValueReference> callVariables = expression.getCall().getParameters();
         List<Variable> patternParameters = expression.getCall().getPatternRef().getParameters();
         //maxIndex is used to avoid overindexing in case of incorrect number of parameters
-        int maxIndex = Math.max(callVariables.size(), patternParameters.size());
+        int maxIndex = Math.min(callVariables.size(), patternParameters.size());
         produceParameterTypeWarnings(callVariables, patternParameters, maxIndex);
     }
 

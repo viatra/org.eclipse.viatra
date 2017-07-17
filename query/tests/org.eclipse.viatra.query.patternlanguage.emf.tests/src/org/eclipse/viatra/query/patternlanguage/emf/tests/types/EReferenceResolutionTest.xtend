@@ -12,12 +12,12 @@
 package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 
 import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.XtextRunner
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import static org.junit.Assert.*
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic

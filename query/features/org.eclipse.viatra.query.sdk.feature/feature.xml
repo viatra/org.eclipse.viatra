@@ -7,13 +7,13 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
-   <license url="%licenseURL">
-      %license
-   </license>
-
    <description>
       VIATRA Query and Transformation IDE support: editor, code generation, etc.
    </description>
+
+   <license url="%licenseURL">
+      %license
+   </license>
 
    <url>
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
@@ -45,6 +45,10 @@
 
    <includes
          id="org.eclipse.viatra.addon.validation.runtime.feature"
+         version="2.0.0.qualifier"/>
+
+   <includes
+         id="org.eclipse.viatra.query.ide.feature"
          version="2.0.0.qualifier"/>
 
    <requires>

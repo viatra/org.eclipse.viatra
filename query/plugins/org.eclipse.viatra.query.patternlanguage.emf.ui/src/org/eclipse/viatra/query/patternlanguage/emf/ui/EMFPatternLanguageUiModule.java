@@ -41,7 +41,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectExpectedP
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.internal.SyntheticEditedResourceProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator;
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator;
@@ -142,7 +142,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     }
 
     @SingletonBinding(eager = true)
-    public Class<? extends EMFPatternLanguageJavaValidator> bindEMFPatternLanguageJavaValidator() {
+    public Class<? extends EMFPatternLanguageValidator> bindEMFPatternLanguageJavaValidator() {
         return GenmodelBasedEMFPatternLanguageJavaValidator.class;
     }
 

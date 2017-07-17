@@ -16,8 +16,8 @@ import java.util.Collection;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.xtext.junit4.AbstractXtextTests;
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
+import org.eclipse.xtext.testing.InjectWith;
+import org.eclipse.xtext.testing.XtextRunner;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableSet;

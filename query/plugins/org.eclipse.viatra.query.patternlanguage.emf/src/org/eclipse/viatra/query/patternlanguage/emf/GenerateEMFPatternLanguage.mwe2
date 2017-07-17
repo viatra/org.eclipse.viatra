@@ -14,13 +14,13 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.emf.mwe2.ecore.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.generator.model.project.*
 
-var grammarURI = "classpath:/org/eclipse/viatra/query/patternlanguage/emf/EMFPatternLanguage.xtext"
-var file.extensions = "vql"
 var projectName = "org.eclipse.viatra.query.patternlanguage.emf"
 var runtimeProject = "../${projectName}"
-var ecoreModel = "platform:/resource/${projectName}/model/EMFPatternLanguage"
-var patternLanguageEcore = "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/PatternLanguage"
+var metamodel = "platform:/resource/${projectName}/model/EMFPatternLanguage.genmodel"
+var parentMetamodel = "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/PatternLanguage.genmodel"
 
 Workflow {
     bean = StandaloneSetup {
@@ -32,134 +32,98 @@ Workflow {
         registerGeneratedEPackage = "org.eclipse.xtext.xtype.XtypePackage"
         registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
 
-        registerEcoreFile = "${ecoreModel}.ecore"
-        registerGenModelFile = "${ecoreModel}.genmodel"
-        registerEcoreFile = "${patternLanguageEcore}.ecore"
-        registerGenModelFile = "${patternLanguageEcore}.genmodel"
+        registerGenModelFile = parentMetamodel
     }
 
     component = DirectoryCleaner {
         directory = "${runtimeProject}/emf-gen"
     }
     
-    component = DirectoryCleaner {
-        directory = "${runtimeProject}/src-gen"
-    }
-
-    component = DirectoryCleaner {
-        directory = "${runtimeProject}.ui/src-gen"
-    }
-
     component = EcoreGenerator {
-        genModel = "${ecoreModel}.genmodel"
+        genModel = metamodel
         srcPath = "${runtimeProject}/emf-gen"
     }
 
-    component = Generator {
-        pathRtProject = runtimeProject
-        pathUiProject = "${runtimeProject}.ui"
-        pathTestProject = "../../tests/${projectName}.tests"
-        projectNameRt = projectName
-        projectNameUi = "${projectName}.ui"
-        mergeManifest = false
-        language = {
-            uri = grammarURI
-            fileExtensions = file.extensions
-
-            // Java API to access grammar elements (required by several other fragments)
-            fragment = grammarAccess.GrammarAccessFragment {}
-
-            // generates Java API for the generated EPackages
-            fragment = ecore.EMFGeneratorFragment {
-                emfRuntimeVersion = "2.10"
-                jdkLevel = "JDK70"
-            }
-
-            // Serializer 2.0
-            fragment = serializer.SerializerFragment {}
-
-            // a custom ResourceFactory for use with EMF
-            fragment = resourceFactory.ResourceFactoryFragment {
-                fileExtensions = file.extensions
-            }
-
-            // The antlr parser generator fragment.
-            fragment = parser.antlr.XtextAntlrGeneratorFragment {
-                antlrTool = parser.antlr.AntlrToolFacade {
-                    askBeforeDownload = false
+    component = XtextGenerator {
+        configuration = {
+            project = StandardProjectConfig {
+                baseName = projectName
+                rootPath = ".."
+                
+                runtimeTest = {
+                    root = "../../tests/${projectName}.tests"
+                    enabled = true
+                    pluginXml = {
+                        path = "plugin.xml_gen"
+                    }
+                    manifest = {
+                        path = "MANIFEST.MF_gen" 
+                    }
                 }
-            //  options = {
-            //      backtrack = true
-            //  }
+                genericIde = {
+                    enabled = true
+                    metaInf = "${runtimeProject}.ide/META-INF"
+                    pluginXml = {
+                        path = "plugin.xml_gen"
+                    }
+                    manifest = {
+                        path = "MANIFEST.MF_gen" 
+                    }
+                    
+                }
+                eclipsePlugin = {
+                    enabled = true
+                    pluginXml = {
+                        path = "plugin.xml_gen"
+                    }
+                    manifest = {
+                        path = "MANIFEST.MF_gen" 
+                    }
+                }
+                eclipsePluginTest = {
+                    enabled = true
+                    root = "../../tests/${projectName}.ui.tests"
+                    pluginXml = {
+                        path = "plugin.xml_gen"
+                    }
+                    manifest = {
+                        path = "MANIFEST.MF_gen"
+                    }
+                }
+
+                mavenLayout = false
+                createEclipseMetaData = false
             }
-
-            // java-based API for validation
-            fragment = validation.JavaValidatorFragment {
-                //composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-                //composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+            
+            code = {
+                encoding = "UTF-8"
+                // File header is copied from EMFPatternLanguage.xtext
+                fileHeader = "/*******************************************************************************
+ * Copyright (c) 2010-2017, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * This file was generated from EMFPatternLanguage.xtext
+ *******************************************************************************/"
+                preferXtendStubs = false
+                
             }
-
-            // scoping and exporting API
-            // fragment = scoping.ImportURIScopingFragment {}
-
-			fragment = exporting.QualifiedNamesFragment {}
-
-            // scoping and exporting API
-            fragment = scoping.ImportNamespacesScopingFragment {}
-            fragment = exporting.QualifiedNamesFragment {}
-            fragment = builder.BuilderIntegrationFragment {}
-
-            // formatter API
-            fragment = formatting.FormatterFragment {}
-
-            // labeling API
-            fragment = labeling.LabelProviderFragment {}
-
-            // outline API
-            fragment = outline.OutlineTreeProviderFragment {}
-            fragment = outline.QuickOutlineFragment {}
-
-            // quickfix API
-            fragment = quickfix.QuickfixProviderFragment {}
-
-            // content assist API
-            fragment = contentAssist.JavaBasedContentAssistFragment {}
-
-            // generates a more lightweight Antlr parser and lexer tailored for content assist
-            fragment = parser.antlr.XtextAntlrUiGeneratorFragment {}
-
-			//XXX Turning off JUnit 4 fragment to move generated injectors to a different package
-            // generates junit test support classes into Generator#pathTestProject
-            //fragment = junit.Junit4Fragment {}
-
-            // project wizard (optional)
-            // fragment = projectWizard.SimpleProjectWizardFragment {
-            //      generatorProjectName = "${projectName}"
-            //      modelFileExtension = file.extensions
-            // }
-
-			// rename refactoring
-			fragment = refactoring.RefactorElementNameFragment {}
-
-            // provides the necessary bindings for java types integration
-            fragment = types.TypesGeneratorFragment {}
-
-            // generates the required bindings only if the grammar inherits from Xbase
-            fragment = xbase.XbaseGeneratorFragment {
-            	generateXtendInferrer = false
-            }
-
-            // Code generator
-			fragment = generator.GeneratorFragment {
-			}
-
-            // provides a preference page for template proposals
-            fragment = templates.CodetemplatesGeneratorFragment {}
-
-
-            // provides a compare view
-            fragment = compare.CompareFragment {
-                 fileExtensions = file.extensions
+            
+            
+        }
+        
+        language = StandardLanguage {
+            name = "org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage"   
+            referencedResource = "http://www.eclipse.org/xtext/common/JavaVMTypes"
+            referencedResource = "http://www.eclipse.org/xtext/xbase/Xbase"
+            referencedResource = metamodel 
+            fileExtensions = "vql"
+            
+            scopeProvider = {
+                inheritImplementation = false
+                generateStub = false
             }
         }
     }

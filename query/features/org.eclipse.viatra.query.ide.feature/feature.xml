@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra.query.ide.feature"
+      label="VIATRA Query IDE Feature"
+      version="2.0.0.qualifier"
+      provider-name="Eclipse VIATRA Project"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
+
+   <description>
+      VIATRA Query runtime feature. This is the minimum dependency to execute VIATRA Query matchers.
+   </description>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
+   </url>
+
+   <includes
+         id="org.eclipse.viatra.query.runtime.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.eclipse.xtext.ide" version="2.13.0"/>
+      <import plugin="org.eclipse.xtext.xbase.ide" version="2.13.0"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.viatra.query.patternlanguage.emf.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.patternlanguage.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

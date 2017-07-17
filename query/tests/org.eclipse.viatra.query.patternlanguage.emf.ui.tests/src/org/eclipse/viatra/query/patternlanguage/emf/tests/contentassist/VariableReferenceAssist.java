@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.tests.contentassist;
 
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageUiInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.tests.EMFPatternLanguageUiInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.xbase.junit.ui.AbstractContentAssistTest;
+import org.eclipse.xtext.testing.InjectWith;
+import org.eclipse.xtext.testing.XtextRunner;
+import org.eclipse.xtext.ui.testing.AbstractContentAssistTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
 @InjectWith(EMFPatternLanguageUiInjectorProvider.class)
-@SuppressWarnings({ "restriction"})
 public class VariableReferenceAssist extends AbstractContentAssistTest {
 
     private static final String line1 = String.format("import \"%s\"%n", PatternLanguagePackage.eNS_URI);

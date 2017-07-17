@@ -1,14 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2017, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors:
- *   Zoltan Ujhelyi - initial API and implementation
+ * This file was generated from EMFPatternLanguage.xtext
  *******************************************************************************/
-package org.eclipse.viatra.query.patternlanguage.serializer;
+package org.eclipse.viatra.query.patternlanguage.emf.tests
 
-public class PatternLanguageSemanticSequencer extends AbstractPatternLanguageSemanticSequencer {
+import org.junit.Ignore
+
+@Ignore
+class EMFPatternLanguageParsingTest {
+	
 }

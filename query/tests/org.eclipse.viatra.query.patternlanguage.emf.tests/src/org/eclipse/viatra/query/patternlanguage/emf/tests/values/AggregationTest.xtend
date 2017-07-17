@@ -12,12 +12,12 @@
 package org.eclipse.viatra.query.patternlanguage.emf.tests.values
 
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.testing.InjectWith
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.junit.Test
@@ -26,12 +26,12 @@ import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.junit.Assert
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.junit.Before
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -45,9 +45,9 @@ class AggregationTest extends AbstractValidatorTest {
     @Inject
     ITypeInferrer typeInferrer
     @Inject
-    EMFPatternLanguageJavaValidator validator
+    EMFPatternLanguageValidator validator
 
-    ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    ValidatorTester<EMFPatternLanguageValidator> tester
     
     @Before
     def void initialize() {

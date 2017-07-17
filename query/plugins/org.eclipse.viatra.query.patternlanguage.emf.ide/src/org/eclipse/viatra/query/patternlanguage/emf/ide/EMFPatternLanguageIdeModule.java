@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2017, Zoltan Ujhelyi, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,11 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.patternlanguage.serializer;
+package org.eclipse.viatra.query.patternlanguage.emf.ide;
 
-public class PatternLanguageSyntacticSequencer extends AbstractPatternLanguageSyntacticSequencer {
+
+/**
+ * Use this class to register ide components.
+ */
+public class EMFPatternLanguageIdeModule extends AbstractEMFPatternLanguageIdeModule {
 }

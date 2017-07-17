@@ -33,6 +33,7 @@
 		<module>../../query/tests/org.eclipse.viatra.query.testing.core</module>
 		<module>../../query/tests/org.eclipse.viatra.query.testing.ui</module>
 		<module>../../query/features/org.eclipse.viatra.query.runtime.feature</module>
+        <module>../../query/features/org.eclipse.viatra.query.ide.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.language.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.testing.sdk.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.sdk.feature</module>

@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.tooling.ui.queryregistry.index;
 
 import java.util.Map;
 
-import org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 
@@ -42,7 +42,7 @@ public enum XtextIndexBasedRegistryUpdaterFactory {
         if(updaters.containsKey(registry)){
             return updaters.get(registry);
         } else {
-            Injector injector = EMFPatternLanguageActivator.getInstance().getInjector(EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
+            Injector injector = EMFPatternLanguageUIPlugin.getInstance().getInjector(EMFPatternLanguageUIPlugin.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
             XtextIndexBasedRegistryUpdater updater = injector.getInstance(XtextIndexBasedRegistryUpdater.class);
             updaters.put(registry, updater);
             updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());

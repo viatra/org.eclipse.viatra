@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA EMF Pattern Language - Generic IDE Support
+Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.emf.ide
+Bundle-Version: 2.0.0.qualifier
+Bundle-Vendor: Eclipse VIATRA Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.viatra.query.patternlanguage;bundle-version="[2.0.0,2.1.0)",
+ org.eclipse.xtext.ide;bundle-version="[2.13.0,3.0.0)",
+ org.eclipse.xtext.xbase.ide;bundle-version="[2.13.0,3.0.0)",
+ org.antlr.runtime,
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.0.0,2.1.0)",
+ org.eclipse.viatra.query.patternlanguage.ide;bundle-version="[2.0.0,2.1.0)"
+Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr,
+ org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr.internal,
+ org.eclipse.viatra.query.patternlanguage.emf.ide

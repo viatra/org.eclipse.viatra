@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.patternlanguage.emf.ui" version="2">
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/ui/AbstractEMFPatternLanguageUiModule.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.AbstractEMFPatternLanguageUiModule">
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="bindIPartialEditingContentAssistContextFactory()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="bindIPartialEditingContentAssistParser()"/>
+            </message_arguments>
+        </filter>
         <filter comment="Internal API; used only generically" id="1143996420">
             <message_arguments>
                 <message_argument value="configureCompareViewerTitle(Binder)"/>
@@ -26,6 +36,13 @@
         <filter comment="Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="complete_VQLImportSection(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/ui/internal/EmfActivator.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EmfActivator">
+        <filter comment="Xtext generated code, cannot touch" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EmfActivator"/>
             </message_arguments>
         </filter>
     </resource>

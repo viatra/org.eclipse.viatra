@@ -15,18 +15,18 @@ import com.google.inject.Injector
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.diagnostics.Diagnostic
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -36,12 +36,12 @@ class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPat
     private ParseHelper<EObject> parseHelper
 
     @Inject
-    private EMFPatternLanguageJavaValidator validator
+    private EMFPatternLanguageValidator validator
 
     @Inject
     private Injector injector
 
-    private ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    private ValidatorTester<EMFPatternLanguageValidator> tester
 
     @Before
     def void initialize() {

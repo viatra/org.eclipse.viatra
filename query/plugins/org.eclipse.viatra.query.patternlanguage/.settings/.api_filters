@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.patternlanguage" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/AbstractPatternLanguageRuntimeModule.java" type="org.eclipse.viatra.query.patternlanguage.AbstractPatternLanguageRuntimeModule">
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="bindPatternLanguageValidator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code, cannot touch" id="1143996420">
+            <message_arguments>
+                <message_argument value="configureRewritableImportSectionEnablement(Binder)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/serializer/AbstractPatternLanguageSemanticSequencer.java" type="org.eclipse.viatra.query.patternlanguage.serializer.AbstractPatternLanguageSemanticSequencer">
         <filter comment="Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
@@ -21,6 +33,13 @@
         <filter comment="Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="getValueXBooleanLiteralParserRuleCall_0()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/validation/AbstractPatternLanguageValidator.java" type="org.eclipse.viatra.query.patternlanguage.validation.AbstractPatternLanguageValidator">
+        <filter comment="Xtext generated code, cannot touch" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.validation.AbstractPatternLanguageValidator"/>
             </message_arguments>
         </filter>
     </resource>

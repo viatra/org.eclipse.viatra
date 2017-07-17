@@ -16,16 +16,16 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternMo
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -35,12 +35,12 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
     ParseHelper<PatternModel> parseHelper
 
     @Inject
-    EMFPatternLanguageJavaValidator validator
+    EMFPatternLanguageValidator validator
 
     @Inject
     Injector injector
 
-    ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    ValidatorTester<EMFPatternLanguageValidator> tester
 
     @Inject extension ValidationTestHelper
 

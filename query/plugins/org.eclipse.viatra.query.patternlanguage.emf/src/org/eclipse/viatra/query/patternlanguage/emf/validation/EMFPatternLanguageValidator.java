@@ -127,7 +127,7 @@ import com.google.inject.Inject;
  * 
  * @noreference
  */
-public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
+public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValidator {
 
     private static final class InputKeyToData implements Function<IInputKey, String> {
         
@@ -533,7 +533,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     private void reportMissingParameterTypeDeclaration(Variable parameter, Set<IInputKey> possibleTypes, IInputKey inferredType) {
-        if (possibleTypes.isEmpty()) {
+        if (possibleTypes.size() == 0) {
             return;
         } else if (possibleTypes.size() == 1 && !(possibleTypes.iterator().next() instanceof BottomTypeKey)) {
             String[] issueData = new String[]{new InputKeyToData(typeSystem).apply(inferredType)};

@@ -32,7 +32,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGener
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.viatra.query.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
@@ -133,7 +133,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     }
 
     public Class<? extends IIssueCallback> bindIIssueCallback() {
-        return EMFPatternLanguageJavaValidator.class;
+        return EMFPatternLanguageValidator.class;
     }
 
     public Class<? extends IClassLoaderProvider> bindIClassLoaderProvider() {
