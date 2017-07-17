@@ -1,0 +1,128 @@
+# CPS Application
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+////
+:toclevels: 3
+:toc:
+:toc2:
+:toc3:
+////
+:icons: font
+
+
+
+This application shows the capabilities of VIATRA transformations on <<Domains#,CPS domain models>>.
+
+## How to start
+
+Start a CPS Application Eclipse instance (download from https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.application.product/target/products[here^]).
+
+WARNING: Starting other instances of this application causes `Java was started but returned exit code=1` error message. link:https://static.incquerylabs.com/projects/viatra/viatra-docs/ViatraAdvanced.html#_setting_up_the_transformation_under_debugging[Modify the port number.]
+
+## Initializing CPS models
+
+Select __File/New/Other__ and in the __CPS Demonstrator__ category select __CPS Demonstrator Example__ and create an example project. +
+This project contains an example CPS model __(example.cyberphysicalsystem)__ as the source model of the transformation, an empty target model __(example.deployment)__ and an __example.traceability__, which connects the source and target models. 
+
+## Executing the transformation
+
+The CPS Transformations view allows starting or stopping <<CPS-to-Deployment-Transformation#,CPS-to-Deployment M2M transformations>> using <<Alternative-transformation-methods#,different strategies>> and displays the running transformations. +
+To open the view press CTRL+3 and type the name of the view.
+
+image::cps_transform_view.png[CPS Transformations view]
+
+The view shows the details of the currently running transformations:
+
+* the name of the resource which contains the model
+* the transformation strategy
+
+Double-click on a transformation to navigate to the model.
+
+**Transformation strategies:** +
+In a drop-down list you can select a <<Alternative-transformation-methods#,strategy>> for the transformation.
+There are two execution modes batch and incremental.
+
+* The batch mode clears the destination model and transforms the whole source model then stops.
+* The incremental transformations transform the model, then continue to run and apply changes of the source model to the destination model.
+
+**Operations:**
+
+* Run Transformation image:load_query_icon.png[] : Open the Traceability model and select a `CPS To Deployment` element. This button starts a new transformation with the selected strategy.
+* Run Transformation with Debugger image:load_xform_w_debugger_icon.png[] : This button starts a new transformation on a `CPS To Deployment` element with the selected strategy. The transformation does not start until a <<debug,VIATRA Transformation Remote Debugging>> is connected.
+* Stop Transformation image:unload_icon.gif[] : Stops a currently running incremental transformation (selected below) and releases its resources.
+
+## Advanced
+
+[[debug]]
+### Using the Transformation Debugger
+
+. Select a `CPS To Deployment` element and start a VIATRA transformation with debugger support. Now the transformation is waiting for a debugger to be attached.
+. Open Debug perspective
+. In __Run/Debug Configurations__ create a new VIATRA Transformations Remote Debugging
+. Set the Target Port to 10990 and press __Query Port__, then the transformation appears in the Target VIATRA Transformation list
+. The Java class which defines the transformation should be entered into the VIATRA Transformation Class field to associate the breakpoints with it. This time use a new dummy class in a new Java project.
+. Press Debug
+
+Use Step Over, set breakpoints and Resume the transformation. +
+The following views help the debugging:
+
+* Transformation Browser view shows which activation of the transformation rules can be executed. Here you can set breakpoints to suspend if a certain rule or activation is to be executed or a condition is true.
+* Transformation Model Instance Viewer shows the current state of the models during the transformation.
+
+image::cps_debug.png[CPS Debug Configuration]
+
+WARNING: Using the same Eclipse instance for debugging an incremental transformation and changing a model causes the program to freeze. Use a different Eclipse instance or run a new Eclipse Application instance from __Run/Run Configurations__ and run the debugger from it.
+
+Find more details on the debugger link:https://static.incquerylabs.com/projects/viatra/viatra-docs/ViatraAdvanced.html#_user_s_guide[here]. 
+
+### CPS Model Generator wizard
+
+In addition of initializing a prepared example or manually creating the CPS models, the demonstrator also includes a CPS Model Generator, which can create instances of predefined models and also supports generating arbitrarily large CPS models.
+
+Select __File/New/Other__ and in the __CPS Demonstrator__ category select __Generate CPS Model__. Select a folder and enter a name for the CPS model.
+
+NOTE: In contrast to __CPS Demonstrator Example__ project, which generates a source CPS model, a target Deployment model and a connector Traceability model, the CPS Model Generator only generates the CPS model, which must be connected to the other models to use it in a transformation. To do this manually refer <<init-models-manual,this section>>.
+
+image::cps_wizard_type_page.png[Types of Models in CPS Model Generator]
+
+To create a simple model you can choose from a few preset models under the __Simple Test Models__ option.
+
+TIP: Some generators use random numbers. The initial value of the seed is time-dependent, so models are very likely to be distinct on each generation. To produce the same models use the same arbitrary number as random seed each time.
+
+#### Scalable Models
+
+To create arbitrarily large CPS models, which are similar in structure, but have different number of elements, choose a __Scalable Model__ type. Enter a positive a scaling factor, which is proportional to the number of model elements. To generate a model with reasonable size which can be opened in the editor enter a scaling factor from the recommended range.
+
+WARNING: Opening large models can take a while. Switch off opening if it is not needed.
+
+#### Model by Detailed Constraints
+
+image::cps_wizard_details_page.png[Detailed Model Generator Constraints]
+
+CPS Model Generator uses a detailed configuration during generation phase. (<<Model-Generator#,Here> described in detail.) A simple version of this configuration can be used if you select Model by Detailed Constraints.
+
+Some of the parameters are specified with a min-max range, which is used to obtain a random number of the range to get the exact value of that parameter. +
+Other parameters are percentage parameters, which is used to decide how to distribute the choices for the possible elements.
+
+For the Hosts you can define how many HostTypes and how many HostInstances for each type exist. For each instance the number of communication lines will fall into the defined range.
+The number of generated signals can be specified too. +
+The number of ApplicationTypes and ApplicationInstances can be defined similarly. Also the number of states and transitions in the statemachine of an ApplicationInstance can be defined. The ratio how many ApplicationInstances are allocated to a HostInstance, the ratio of actions in the transitions and the ratio of send action in all the actions can be specified with percentage parameters.
+
+[[init-models-manual]]
+### Initializing CPS models manually
+
+* Create a __Deployment Model__ (__File/New/Other__ and __CPS Demonstrator__ category)
+** Root element shall be _Deployment_
+
+* Create a __Traceability Model__ (__File/New/Other__ and __CPS Demonstrator__ category)
+** Root element shall be _CPS To Deployment_
+
+* Open the Traceability file
+* In the Traceability editor, load both the existing CPS and the newly created Deployment models with _Load Resources\..._ in the context menu
+
+image::../../tutorial/images/viatraIncr_example4.png[Load necessary resources into the Tracebility Model]
+
+* Set CPS and Deployment references of Traceability model in the properties view
+
+image::../../tutorial/images/viatraIncr_example5.png[Set the references of the Traceability Model]
