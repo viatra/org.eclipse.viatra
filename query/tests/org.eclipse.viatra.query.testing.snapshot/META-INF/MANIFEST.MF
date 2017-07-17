@@ -10,5 +10,5 @@ Export-Package: org.eclipse.viatra.query.testing.snapshot,
  org.eclipse.viatra.query.testing.snapshot.impl,
  org.eclipse.viatra.query.testing.snapshot.util
 Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

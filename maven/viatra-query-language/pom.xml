@@ -3,10 +3,7 @@
   <artifactId>viatra-query-language</artifactId>
   <name>VIATRA Query Language</name>
   <description>Maven module for VIATRA Query Language and Generic API</description>
-  <properties>
-        <xtend.compiler.version>2.10.0</xtend.compiler.version>
-    </properties>
-    <dependencies>
+  <dependencies>
         <dependency>
             <groupId>org.eclipse.viatra</groupId>
             <artifactId>viatra-query-runtime</artifactId>
@@ -36,13 +33,31 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.xtext</groupId>
-            <artifactId>org.eclipse.xtext.xtext</artifactId>
+            <artifactId>org.eclipse.xtext</artifactId>
             <version>${xtend.compiler.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.xtext</groupId>
             <artifactId>org.eclipse.xtext.xbase</artifactId>
             <version>${xtend.compiler.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext.xtext.generator</artifactId>
+            <version>${xtend.compiler.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

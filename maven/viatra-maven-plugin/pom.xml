@@ -10,9 +10,6 @@
     <artifactId>viatra-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>VIATRA Maven Plug-in</name>
-    <properties>
-        <xtend.compiler.version>2.10.0</xtend.compiler.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -54,6 +51,12 @@
             <groupId>org.eclipse.xtext</groupId>
             <artifactId>xtext-maven-plugin</artifactId>
             <version>${xtend.compiler.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <repositories>
@@ -89,6 +92,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.5</version>
             </plugin>
         </plugins>
     </build>

@@ -5,6 +5,6 @@ Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.runtime.validation;singlet
 Bundle-Version: 0.20.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Fragment-Host: org.eclipse.viatra.addon.viewers.runtime;bundle-version="[0.20.0,0.21.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.0.0,2.1.0)"
 Export-Package: org.eclipse.viatra.addon.viewers.runtime.validators

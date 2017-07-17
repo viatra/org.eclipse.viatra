@@ -66,9 +66,9 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
      * @param querySpecification the query specification used for the evaluation of the setting delegate
      * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
      */
-    public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
+    public QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
             QueryBasedFeatureSettingDelegateFactory factory,
-            IQuerySpecification<Matcher> querySpecification, boolean dynamicEMFMode) {
+            IQuerySpecification<?> querySpecification, boolean dynamicEMFMode) {
         this(eStructuralFeature, factory, querySpecification, false, dynamicEMFMode);
     }
     
@@ -81,9 +81,9 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
      * @param isResourceScope indicates whether the {@link Resource} of the {@link InternalEObject} is enough as a scope during the evaluation of the setting delegate 
      * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
      */
-    public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
+    public QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
             QueryBasedFeatureSettingDelegateFactory factory,
-            IQuerySpecification<Matcher> querySpecification, 
+            IQuerySpecification<?> querySpecification, 
             boolean isResourceScope, boolean dynamicEMFMode) {
         super(eStructuralFeature);
         this.delegateFactory = factory;

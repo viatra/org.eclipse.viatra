@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.edit;bundle-version="2.7.0",
  org.eclipse.emf.edit.ui;bundle-version="2.7.0",
  org.eclipse.viatra.query.tooling.ui;bundle-version="[2.0.0,2.1.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs
 Bundle-Activator: org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin

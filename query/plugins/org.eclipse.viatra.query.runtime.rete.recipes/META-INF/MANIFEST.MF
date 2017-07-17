@@ -6,7 +6,7 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.viatra.query.runtime.rete.recipes,
  org.eclipse.viatra.query.runtime.rete.recipes.helper,
  org.eclipse.viatra.query.runtime.rete.recipes.impl,

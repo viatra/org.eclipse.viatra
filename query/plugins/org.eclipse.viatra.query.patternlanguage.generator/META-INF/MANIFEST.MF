@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Pattern Language Generator Extensions
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.generator
 Bundle-Version: 2.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,3.0.0)",
  org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
  org.eclipse.xtext.generator;bundle-version="[2.9.0,3.0.0)";resolution:=optional,

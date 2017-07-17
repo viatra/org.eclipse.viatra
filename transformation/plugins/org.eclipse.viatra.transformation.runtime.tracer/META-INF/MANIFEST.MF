@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.viatra.transformation.runtime.tracer;singleton:
 Bundle-Version: 0.20.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.xtend.lib;bundle-version="[2.9.0,3.0.0)",
  org.eclipse.emf.edit;bundle-version="2.9.0";resolution:=optional,
  org.eclipse.emf.ecore.xmi;bundle-version="2.11.0",

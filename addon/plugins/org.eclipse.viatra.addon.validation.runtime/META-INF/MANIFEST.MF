@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.viatra.transformation.evm;bundle-version="[2.0.0,2.1.0)",
  org.eclipse.ui,
  com.google.inject;bundle-version="[3.0.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.addon.validation.runtime;uses:="com.google.common.collect"
 Import-Package: com.google.common.base;version="15.0.0",

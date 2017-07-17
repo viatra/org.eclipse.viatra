@@ -11,8 +11,4 @@
     </parent>
     <artifactId>org.eclipse.viatra.query.tooling.localsearch.ui</artifactId>
     <packaging>eclipse-plugin</packaging>
-    <properties>
-       <target.classifier>luna</target.classifier>
-       <java.version>1.8</java.version>
-    </properties>
 </project>

@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version=
  org.eclipse.emf.codegen.ecore,
  org.eclipse.viatra.query.tooling.core;bundle-version="[2.0.0,2.1.0)"
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.viatra.query.tooling.generator.model.ui.contentassist,
  org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr,
  org.eclipse.viatra.query.tooling.generator.model.ui.quickfix,

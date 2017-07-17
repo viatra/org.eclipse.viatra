@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.viatra.query.runtime.rete;bundle-version="[2.0.0,2.1
  org.eclipse.viatra.query.runtime.base;bundle-version="[2.0.0,2.1.0)";visibility:=reexport,
  org.eclipse.viatra.query.runtime.matchers;bundle-version="[2.0.0,2.1.0)";visibility:=reexport,
  org.eclipse.emf.common
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.api,
