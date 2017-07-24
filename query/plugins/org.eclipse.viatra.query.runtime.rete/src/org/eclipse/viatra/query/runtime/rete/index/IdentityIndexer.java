@@ -14,9 +14,11 @@ package org.eclipse.viatra.query.runtime.rete.index;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -28,13 +30,17 @@ import org.eclipse.viatra.query.runtime.rete.network.Supplier;
  * node). Do not attach parents directly!
  * 
  * @author Gabor Bergmann
+ * @noimplement Rely on the provided implementations
+ * @noreference Use only via standard Node and Indexer interfaces
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
 
     protected abstract Collection<Tuple> getTuples();
 
-    public IdentityIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, Node activeNode) {
-        super(reteContainer, TupleMask.identity(tupleWidth), parent, activeNode);
+    public IdentityIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, 
+            Node activeNode, List<ListenerSubscription> sharedSubscriptionList) {
+        super(reteContainer, TupleMask.identity(tupleWidth), parent, activeNode, sharedSubscriptionList);
     }
 
     public Collection<Tuple> get(Tuple signature) {
@@ -60,8 +66,9 @@ public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
         return getTuples().iterator();
     }
 
-    public void propagate(Direction direction, Tuple updateElement) {
-        propagate(direction, updateElement, updateElement, true);
+    @Override
+    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement) {
+        listener.notifyIndexerUpdate(direction, updateElement, updateElement, true);
     }
 
 }
