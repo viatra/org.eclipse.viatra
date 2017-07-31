@@ -20,6 +20,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -44,7 +45,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
@@ -237,6 +240,20 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      */
     protected void indexInitializationBeforePlanning() throws QueryProcessingException {
         // By default, no indexing is necessary
+    }
+    
+    /**
+     * Collects and indexes all types _directly_ referred by the PQuery {@link #query}. Types indirect
+     * @param requiredIndexingServices
+     */
+    protected void indexReferredTypesOfQuery(PQuery query, IndexingService requiredIndexingServices) {
+        for (PBody body : query.getDisjunctBodies().getBodies()) {
+            for (PConstraint constraint : body.getConstraints()) {
+                if (constraint instanceof TypeConstraint) {
+                    runtimeContext.ensureIndexed(((TypeConstraint) constraint).getSupplierKey(), requiredIndexingServices);
+                }
+            }
+        }
     }
     
     private Set<PQuery> getDirectPositiveDependencies() {

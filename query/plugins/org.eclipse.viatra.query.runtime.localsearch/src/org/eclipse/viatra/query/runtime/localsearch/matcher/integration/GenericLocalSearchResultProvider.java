@@ -17,9 +17,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
-import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -38,13 +35,7 @@ public class GenericLocalSearchResultProvider extends AbstractLocalSearchResultP
     protected void indexInitializationBeforePlanning() throws QueryProcessingException {
         super.indexInitializationBeforePlanning();
         
-        for (PBody body : query.getDisjunctBodies().getBodies()) {
-            for (PConstraint constraint : body.getConstraints()) {
-                if (constraint instanceof TypeConstraint) {
-                    runtimeContext.ensureIndexed(((TypeConstraint) constraint).getSupplierKey(), IndexingService.INSTANCES);
-                }
-            }
-        }
+        indexReferredTypesOfQuery(query, IndexingService.INSTANCES);
     }
 
     @Override

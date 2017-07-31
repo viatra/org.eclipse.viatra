@@ -46,7 +46,8 @@ public class LocalSearchResultProvider extends AbstractLocalSearchResultProvider
     @Override
     protected void indexInitializationBeforePlanning() throws QueryProcessingException {
         super.indexInitializationBeforePlanning();
-        runtimeContext.ensureWildcardIndexing(IndexingService.STATISTICS);
+        
+        indexReferredTypesOfQuery(query, IndexingService.STATISTICS);
     }
 
     @Override
