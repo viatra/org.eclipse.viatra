@@ -105,6 +105,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
         Queue<Object> seedsToEvaluate = new LinkedList<>();
         seedsToEvaluate.add(frame.get(seedPosition));
         Set<Object> seedsEvaluated = new HashSet<>();
+        Set<Object> targetsFound = new HashSet<>();
 
         while(!seedsToEvaluate.isEmpty()) {
             Object currentValue = seedsToEvaluate.poll();
@@ -112,13 +113,14 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
             final Object[] mappedFrame = calculateCallFrame(currentValue);
             for (Tuple match : call.getAllMatches(mappedFrame)) {
                 Object foundTarget = getTarget(match);
+                targetsFound.add(foundTarget);
                 if (!seedsEvaluated.contains(foundTarget)) {
                     seedsToEvaluate.add(foundTarget);
                 }
             }
         }
 
-        it = seedsEvaluated.iterator();
+        it = targetsFound.iterator();
     }
 
     @Override
