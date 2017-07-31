@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -273,8 +274,13 @@ public class EMFModelComprehension {
                 if (!visitor.avoidTransientContainmentLink(source, reference, targetObject)) {
                     if (!visitorPrunes)
                         visitor.visitInternalContainment(source, reference, targetObject);
-                    if (!visitor.pruneSubtrees(source))
-                        traverseObjectIfUnfiltered(visitor, targetObject);
+                    if (!visitor.pruneSubtrees(source)) {
+                        // Recursively follow containment...
+                        // unless cross-resource containment (in which case we skip, as the 
+                        //  target object is traversed separately from the resource) 
+                        if (null == ((InternalEObject)targetObject).eDirectResource())
+                            traverseObjectIfUnfiltered(visitor, targetObject);
+                    }
                     
                     final EReference opposite = reference.getEOpposite();
                     if (opposite != null) { // emulated derived edge based on container opposite
