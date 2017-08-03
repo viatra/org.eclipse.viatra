@@ -67,9 +67,11 @@ public class PProject extends POperation {
     public void checkConsistency(SubPlan subPlan) {
         super.checkConsistency(subPlan);
         final SubPlan parentPlan = subPlan.getParentPlans().get(0);
-        Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(toVariables),
-                "Variables missing from project: "  + 
-                    Joiner.on(',').join(Sets.difference(new HashSet<PVariable>(toVariables), parentPlan.getVisibleVariables())));
+        
+        if (!parentPlan.getVisibleVariables().containsAll(toVariables)) {
+            throw new IllegalArgumentException(String.format("Variables missing from project: %s", 
+                    Joiner.on(',').join(Sets.difference(new HashSet<PVariable>(toVariables), parentPlan.getVisibleVariables()))));
+        }
     }
 
     @Override

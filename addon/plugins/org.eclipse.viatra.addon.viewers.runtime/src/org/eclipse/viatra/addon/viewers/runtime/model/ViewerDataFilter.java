@@ -34,6 +34,8 @@ import com.google.common.collect.Maps;
  */
 public class ViewerDataFilter {
 
+    private static final String FILTER_DEFINED_FOR_PATTERN_MSG = "Filter already defined for pattern %s";
+
     public static final ViewerDataFilter UNFILTERED = new ViewerDataFilter();
 
     private Map<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filterDefinitions;
@@ -68,8 +70,8 @@ public class ViewerDataFilter {
      * @param match
      */
     public void addSingleFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, IPatternMatch match) {
-        Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
-                + pattern.getFullyQualifiedName());
+        Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), FILTER_DEFINED_FOR_PATTERN_MSG,
+                pattern.getFullyQualifiedName());
         filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
                 ViatraQueryFilterSemantics.SINGLE, 
                 match, 
@@ -77,8 +79,8 @@ public class ViewerDataFilter {
     }
     
     public void addMultiFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, Collection<IPatternMatch> matches, ViatraQueryFilterSemantics semantics) {
-        Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
-                + pattern.getFullyQualifiedName());
+        Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), FILTER_DEFINED_FOR_PATTERN_MSG,
+                pattern.getFullyQualifiedName());
         filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
                 semantics, 
                 null, 
@@ -92,7 +94,7 @@ public class ViewerDataFilter {
      */
     public void removeFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
         Preconditions.checkArgument(filterDefinitions.containsKey(pattern),
-                "Filter undefined for pattern " + pattern.getFullyQualifiedName());
+                "Filter undefined for pattern %s", pattern.getFullyQualifiedName());
         filterDefinitions.remove(pattern);
     }
 

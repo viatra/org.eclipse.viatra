@@ -50,16 +50,16 @@ public class RecursionCutoffPoint {
         this.futureTraceMap = new HashMap<>();
         this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceMap, Collections.<ReteNodeRecipe>emptySet(), hint, context);
         this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
-        Preconditions.checkArgument(
-                compiledQuery.getParentRecipeTraces().isEmpty(), 
-                String.format("Recursion cut-off point of query %s has trace parents: %s", 
-                        compiledQuery.getQuery(),
-                        Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
-        Preconditions.checkArgument(
-                recipe.getParents().isEmpty(), 
-                String.format("Recursion cut-off point of query %s has recipe parents: %s", 
-                        compiledQuery.getQuery(),
-                        Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+        if (!compiledQuery.getParentRecipeTraces().isEmpty()) {
+            throw new IllegalArgumentException(String.format("Recursion cut-off point of query %s has trace parents: %s", 
+                    compiledQuery.getQuery(),
+                    Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+        }
+        if (!recipe.getParents().isEmpty()) {
+            throw new IllegalArgumentException(String.format("Recursion cut-off point of query %s has recipe parents: %s", 
+                    compiledQuery.getQuery(),
+                    Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+        }
     }
     
     /**

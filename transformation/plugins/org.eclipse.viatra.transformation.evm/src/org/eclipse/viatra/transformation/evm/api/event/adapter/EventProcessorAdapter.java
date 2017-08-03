@@ -50,7 +50,7 @@ public abstract class EventProcessorAdapter<EventAtom> {
         
         Map<ActivationState, Activation<EventAtom>> column = getInstance().getActivations().column(event.getEventAtom());
         if(column.size() > 0) {
-            checkArgument(column.size() == 1, String.format("%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple"));
+            checkArgument(column.size() == 1, "%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple");
             Activation<EventAtom> act = column.values().iterator().next();
             activationExists(event, act);
         } else {

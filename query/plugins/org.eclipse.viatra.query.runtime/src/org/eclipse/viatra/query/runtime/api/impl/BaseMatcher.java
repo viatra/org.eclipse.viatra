@@ -96,8 +96,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     // HELPERS
 
     private IQueryResultProvider accessMatcher(ViatraQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws ViatraQueryException {
-        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
-        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().isMutable(), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
+        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification %s", specification.getFullyQualifiedName());
+        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().isMutable(), "Cannot load uninitialized query specification %s", specification.getFullyQualifiedName());
         try {
             return engine.getResultProvider(specification);
         } catch (QueryProcessingException e) {

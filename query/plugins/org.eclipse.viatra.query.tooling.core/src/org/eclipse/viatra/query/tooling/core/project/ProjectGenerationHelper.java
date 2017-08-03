@@ -112,7 +112,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void checkOpenPDEProject(IProject project){
         Preconditions.checkArgument(isOpenPDEProject(project),
-                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                INVALID_PROJECT_MESSAGE, project.getName());
     }
  
     /**
@@ -538,7 +538,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensurePackageExports(IProject project, final Collection<String> exports, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                INVALID_PROJECT_MESSAGE, project.getName());
         if (exports.isEmpty()) {
             return;
         }
@@ -571,7 +571,7 @@ public abstract class ProjectGenerationHelper {
     public static void removePackageExports(IProject project, final List<String> dependencies, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                INVALID_PROJECT_MESSAGE, project.getName());
         if (dependencies.isEmpty()) {
             return;
         }
@@ -670,7 +670,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensureExtensions(IProject project, Iterable<ExtensionData> contributedExtensions,
             Iterable<Pair<String, String>> removedExtensions, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                INVALID_PROJECT_MESSAGE, project.getName());
 
         if (StringExtensions.isNullOrEmpty(project.getName())) {
             return;
@@ -754,7 +754,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void ensureSourceFolders(IProject project, List<String> requiredSourceFolders, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+                INVALID_PROJECT_MESSAGE, project.getName());
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {

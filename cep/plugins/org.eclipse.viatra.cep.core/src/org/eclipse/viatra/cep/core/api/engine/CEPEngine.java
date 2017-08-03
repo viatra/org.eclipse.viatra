@@ -141,8 +141,8 @@ public class CEPEngine {
             Preconditions.checkArgument(eventContext != null);
             Preconditions.checkArgument(
                     !ruleSpecifications.isEmpty(),
-                    String.format("No rule specifications added to the CEP engine \"%s\" (%s).", engineId,
-                            this.toString()));
+                    "No rule specifications added to the CEP engine \"%s\" (%s).", engineId,
+                            this.toString());
 
             List<ICepRule> ruleInstances = Lists.newArrayList();
             for (Class<? extends ICepRule> ruleSpecification : ruleSpecifications) {

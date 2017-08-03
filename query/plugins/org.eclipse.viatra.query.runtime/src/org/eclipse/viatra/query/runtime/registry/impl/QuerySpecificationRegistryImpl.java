@@ -40,6 +40,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  */
 public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegistry {
 
+    private static final String CONNECTOR_NULL_MSG = "Connector cannot be null";
     private final QuerySpecificationStore querySpecificationStore;
     private final IConnectorListener connectorListener;
     private final RegistryChangeMultiplexer multiplexer;
@@ -58,7 +59,7 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
     
     @Override
     public boolean addSource(IRegistrySourceConnector connector) {
-        checkArgument(connector != null, "Connector cannot be null");
+        checkArgument(connector != null, CONNECTOR_NULL_MSG);
         String identifier = connector.getIdentifier();
         Map<String, RegistrySourceImpl> sources = querySpecificationStore.getSources();
         if(sources.containsKey(identifier)){
@@ -73,7 +74,7 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
     
     @Override
     public boolean removeSource(IRegistrySourceConnector connector) {
-        checkArgument(connector != null, "Connector cannot be null");
+        checkArgument(connector != null, CONNECTOR_NULL_MSG);
         String identifier = connector.getIdentifier();
         Map<String, RegistrySourceImpl> sources = querySpecificationStore.getSources();
         if(!sources.containsKey(identifier)){

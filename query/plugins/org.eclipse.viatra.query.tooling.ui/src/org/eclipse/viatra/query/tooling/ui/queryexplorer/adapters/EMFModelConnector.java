@@ -55,6 +55,8 @@ import com.google.common.collect.Sets;
  */
 public class EMFModelConnector implements IModelConnector {
 
+    private static final String LISTENER_NULL_MSG = "Listener cannot be null!";
+
     protected IEditorPart editorPart;
 
     protected ILog logger;
@@ -218,13 +220,13 @@ public class EMFModelConnector implements IModelConnector {
     }
     
     public boolean addListener(IModelConnectorListener listener) {
-        Preconditions.checkArgument(listener != null, "Listener cannot be null!");
+        Preconditions.checkArgument(listener != null, LISTENER_NULL_MSG);
         boolean added = listeners.add(listener);
         return added;
     }
 
     public boolean removeListener(IModelConnectorListener listener) {
-        Preconditions.checkArgument(listener != null, "Listener cannot be null!");
+        Preconditions.checkArgument(listener != null, LISTENER_NULL_MSG);
         boolean removed = listeners.remove(listener);
         return removed;
     }

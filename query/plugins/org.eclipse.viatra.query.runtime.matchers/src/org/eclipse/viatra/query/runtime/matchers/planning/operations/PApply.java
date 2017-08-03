@@ -61,7 +61,7 @@ public class PApply extends POperation {
         super.checkConsistency(subPlan);
         for (SubPlan parentPlan : subPlan.getParentPlans())
             Preconditions.checkArgument(!parentPlan.getAllEnforcedConstraints().contains(pConstraint),
-                    "Double-checking constraint " + pConstraint);		
+                    "Double-checking constraint %s", pConstraint);		
         // TODO obtain context?
         //if (pConstraint instanceof DeferredPConstraint)
         //	Preconditions.checkArgument(((DeferredPConstraint) pConstraint).isReadyAt(subPlan, context))

@@ -90,7 +90,7 @@ public abstract class BasePQuery implements PQuery {
 
 	@Override
 	public void checkMutability() throws IllegalStateException {
-	    Preconditions.checkState(isMutable(), "Cannot edit query definition " + getFullyQualifiedName());
+	    Preconditions.checkState(isMutable(), "Cannot edit query definition %s", getFullyQualifiedName());
 	}
 
 	/**
@@ -182,7 +182,7 @@ public abstract class BasePQuery implements PQuery {
 	@Override
 	public PDisjunction getDisjunctBodies() {
 		ensureInitializedSneaky();
-	    Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
+	    Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query %s contains errors.", getFullyQualifiedName());
 	    return canonicalDisjunction;
 	}
 

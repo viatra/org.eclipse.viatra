@@ -109,7 +109,7 @@ class ModelLoadHelper {
         val patterns = model.patterns.filter [
             patternName == CorePatternLanguageHelper.getFullyQualifiedName(it)
         ]
-        Preconditions.checkState(patterns.size == 1, "No pattern found with name " + patternName)
+        Preconditions.checkState(patterns.size == 1, "No pattern found with name %s", patternName)
         val builder = new SpecificationBuilder(engine.registeredQuerySpecifications)
         engine.getMatcher(builder.getOrCreateSpecification(patterns.iterator.next))
     }

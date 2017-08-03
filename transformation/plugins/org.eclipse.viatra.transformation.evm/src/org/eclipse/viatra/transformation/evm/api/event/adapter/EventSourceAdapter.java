@@ -28,6 +28,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class EventSourceAdapter<EventAtom> implements EventSource<EventAtom> {
 
+    private static final String HANDLER_NULL_MSG = "Handler cannot be null!";
     private final EventSourceSpecification<EventAtom> specification;
     private final EventRealm realm;
     private final Set<EventHandler<EventAtom>> handlers;
@@ -52,7 +53,7 @@ public abstract class EventSourceAdapter<EventAtom> implements EventSource<Event
     }
 
     public boolean addHandler(EventHandler<EventAtom> handler) {
-        checkArgument(handler != null, "Handler cannot be null!");
+        checkArgument(handler != null, HANDLER_NULL_MSG);
         boolean empty = handlers.isEmpty();
         beforeHandlerAdded(handler, empty);
         boolean added = handlers.add(handler);
@@ -65,7 +66,7 @@ public abstract class EventSourceAdapter<EventAtom> implements EventSource<Event
 
 
     public boolean removeHandler(EventHandler<EventAtom> handler) {
-        checkArgument(handler != null, "Handler cannot be null!");
+        checkArgument(handler != null, HANDLER_NULL_MSG);
         beforeHandlerRemoved(handler, handlers.size() == 1);
         boolean removed = handlers.remove(handler);
         if(removed) {

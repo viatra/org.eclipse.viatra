@@ -97,7 +97,7 @@ public class ObservableLabelFeature extends ComputedValue {
             for (int i = 0; i < expressionTokens.size(); i++) {
                 String token = expressionTokens.get(i);
                 if ((i % 2) == 0) {
-                    Preconditions.checkState(expressionMap.containsKey(token), "Error while parsing expression " + token);
+                    Preconditions.checkState(expressionMap.containsKey(token), "Error while parsing expression %s", token);
                     IObservableValue value = expressionMap.get(token);
                     sb.append(value.getValue());
                 } else {

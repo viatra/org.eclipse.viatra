@@ -126,7 +126,7 @@ public class EMFBaseIndexMetaStore {
         String id = uniqueIDFromClassifier.get(classifier);
         if (id == null) {
             Preconditions.checkArgument(!classifier.eIsProxy(),
-                    String.format("Classifier %s is an unresolved proxy", classifier));
+                    "Classifier %s is an unresolved proxy", classifier);
             id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
             uniqueIDFromClassifier.put(classifier, id);
             uniqueIDToClassifier.put(id, classifier);
@@ -181,7 +181,7 @@ public class EMFBaseIndexMetaStore {
             String id = uniqueIDFromTypedElement.get(feature);
             if (id == null) {
                 Preconditions.checkArgument(!feature.eIsProxy(),
-                        String.format("Element %s is an unresolved proxy", feature));
+                        "Element %s is an unresolved proxy", feature);
                 id = toKeyDynamicInternal((EClassifier) feature.eContainer()) + "##" + feature.getEType().getName()
                         + "##" + feature.getName();
                 uniqueIDFromTypedElement.put(feature, id);

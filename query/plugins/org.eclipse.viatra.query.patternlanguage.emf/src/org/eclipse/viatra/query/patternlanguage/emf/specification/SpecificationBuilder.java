@@ -175,8 +175,8 @@ public class SpecificationBuilder {
     protected IQuerySpecification<?> buildSpecification(Pattern pattern, boolean skipPatternValidation, List<IQuerySpecification<?>> newSpecifications)
             throws QueryInitializationException {
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-        Preconditions.checkArgument(!patternMap.containsKey(fqn), "Builder already stores query with the name of "
-                + fqn);
+        Preconditions.checkArgument(!patternMap.containsKey(fqn), "Builder already stores query with the name of %s",
+                fqn);
         if (sanitizer.admit(pattern, skipPatternValidation)) {
             Set<Pattern> newPatterns = Sets.newHashSet(Sets.filter(sanitizer.getAdmittedPatterns(),
                     new Predicate<Pattern>() {
