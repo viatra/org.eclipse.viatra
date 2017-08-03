@@ -24,7 +24,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 
 /**
  * In a recursive query structure, query composition references can be cut off so that the remaining structure is DAG.
