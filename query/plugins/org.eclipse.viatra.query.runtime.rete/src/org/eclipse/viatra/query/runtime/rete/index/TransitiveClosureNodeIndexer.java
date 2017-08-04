@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.IncSCCAlg;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple2;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;

@@ -17,8 +17,6 @@ import org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple;
 import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple2;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;

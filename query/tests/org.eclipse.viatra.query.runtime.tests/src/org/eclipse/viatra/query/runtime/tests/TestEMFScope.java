@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -32,7 +31,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionCo
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;

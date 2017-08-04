@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
-import java.util.Arrays;
-
 /**
  * Flat tuple with statically known arity of 0.
  * 

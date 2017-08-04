@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
-import java.util.Objects;
-
 /**
  * Common functionality of left inheritance tuple implementations.
  * 
