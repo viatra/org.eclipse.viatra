@@ -134,4 +134,14 @@ public class EMFVisitor {
         return true;
     }
 
+    /**
+     * @return true if traversing visitors shall descend along cross-resource containments
+     * (this only makes sense for traversing visitors on an object scope)
+     * 
+     * @since 1.7
+     */
+    public boolean descendAlongCrossResourceContainments() {
+        return false;
+    }
+
 }

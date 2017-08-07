@@ -37,6 +37,12 @@ import com.google.common.collect.ImmutableSet;
  * <p> The scope is characterized by a root and some options (see {@link BaseIndexOptions}) such as dynamic EMF mode, subtree filtering etc.
  * <p>
  * The scope of pattern matching will be the given EMF model root(s) and below (see FAQ for more precise definition).
+ * 
+ * <p> Note on <i>cross-resource containment</i>: in case of {@link EObject} scopes, cross-resource containments will be considered part of the scope.
+ * The same goes for {@link ResourceSet} scopes, provided that the resource of the contained element is successfully loaded into the resource set. 
+ * In case of a {@link Resource} scope, containments pointing out from the resource will be excluded from the scope. 
+ * Thus the boundaries of {@link EObject} scopes conform to the notion of EMF logical containment, while {@link Resource} and {@link ResourceSet} scopes adhere to persistence boundaries.
+ * 
  * @author Bergmann Gabor
  *
  */

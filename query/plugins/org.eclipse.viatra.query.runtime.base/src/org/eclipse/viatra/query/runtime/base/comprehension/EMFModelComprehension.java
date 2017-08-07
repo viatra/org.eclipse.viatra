@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -273,8 +274,22 @@ public class EMFModelComprehension {
                 if (!visitor.avoidTransientContainmentLink(source, reference, targetObject)) {
                     if (!visitorPrunes)
                         visitor.visitInternalContainment(source, reference, targetObject);
-                    if (!visitor.pruneSubtrees(source))
-                        traverseObjectIfUnfiltered(visitor, targetObject);
+                    if (!visitor.pruneSubtrees(source)) {
+                        // Recursively follow containment...
+                        // unless cross-resource containment (in which case we may skip) 
+                        Resource targetResource = (targetObject instanceof InternalEObject)?
+                                ((InternalEObject)targetObject).eDirectResource() : null;
+                        boolean crossResourceContainment = targetResource != null;
+                        if (!crossResourceContainment || visitor.descendAlongCrossResourceContainments()) {
+                            // in-resource containment shall be followed
+                            // as well as cross-resource containment for an object scope
+                            traverseObjectIfUnfiltered(visitor, targetObject);
+                        } else {
+                            // do not follow
+                            // target will be traversed separately from its resource (resourceSet scope)
+                            // or left out of scope (resource scope)
+                        }
+                    }
                     
                     final EReference opposite = reference.getEOpposite();
                     if (opposite != null) { // emulated derived edge based on container opposite

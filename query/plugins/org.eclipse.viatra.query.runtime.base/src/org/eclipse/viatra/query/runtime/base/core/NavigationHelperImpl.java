@@ -83,6 +83,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected Notifier notifier;
     protected Set<Notifier> modelRoots;
     private boolean expansionAllowed;
+    private boolean traversalDescendsAlongCrossResourceContainment;
     // protected NavigationHelperVisitor visitor;
     protected NavigationHelperContentAdapter contentAdapter;
 
@@ -251,6 +252,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
         this.expansionAllowed = false;
+        this.traversalDescendsAlongCrossResourceContainment = false;
 
         if (emfRoot != null) {
             addRootInternal(emfRoot);
@@ -860,6 +862,8 @@ public class NavigationHelperImpl implements NavigationHelper {
             IBaseIndexResourceFilter resourceFilter = baseIndexOptions.getResourceFilterConfiguration();
             if (resourceFilter != null && resourceFilter.isResourceFiltered((Resource) root))
                 return;
+        } else { // root instanceof EObject
+            traversalDescendsAlongCrossResourceContainment = true;
         }
         final IBaseIndexObjectFilter objectFilter = baseIndexOptions.getObjectFilterConfiguration();
         if (objectFilter != null && objectFilter.isFiltered(root))
@@ -876,6 +880,10 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     public boolean isExpansionAllowed() {
         return expansionAllowed;
+    }
+
+    public boolean traversalDescendsAlongCrossResourceContainment() {
+        return traversalDescendsAlongCrossResourceContainment;
     }
 
     /**

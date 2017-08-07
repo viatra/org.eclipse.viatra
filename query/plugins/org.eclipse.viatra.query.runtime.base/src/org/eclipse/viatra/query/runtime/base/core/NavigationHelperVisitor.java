@@ -435,4 +435,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         }
         return false;
     }
+    
+    @Override
+    public boolean descendAlongCrossResourceContainments() {
+        return this.navigationHelper.traversalDescendsAlongCrossResourceContainment();
+    }
 }
