@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,11 +40,57 @@ public class TupleMask {
 
     /**
      * Creates a TupleMask instance with the given indices array
+     * @deprecated use {@link #fromSelectedIndices(int, List)}
      */
+    @Deprecated
     public TupleMask(int[] indices, int sourceWidth) {
         this.sourceWidth = sourceWidth;
         this.indices = indices;
         indicesSorted = null;
+    }
+    /**
+     * Creates a TupleMask instance that selects positions where keep is true
+     * @deprecated use {@link #fromKeepIndicators(boolean[])}
+     */
+    @Deprecated
+    public TupleMask(boolean[] keep) {
+        this.sourceWidth = keep.length;
+        int size = 0;
+        for (int k = 0; k < keep.length; ++k)
+            if (keep[k])
+                size++;
+        this.indices = new int[size];
+        int l = 0;
+        for (int k = 0; k < keep.length; ++k)
+            if (keep[k])
+                indices[l++] = k;
+        indicesSorted = null;
+    }
+    
+    /**
+     * Creates a TupleMask instance that selects given positions.
+     * The mask takes ownership of the array selectedIndices, the client must not modify it afterwards.
+     * @since 1.7
+     */
+    protected static TupleMask fromSelectedIndicesInternal(int[] selectedIndices, int sourceArity) {
+        if (selectedIndices.length == 0) // is it nullary?
+            return new TupleMask0(selectedIndices, sourceArity);
+        
+        // is it identity?
+        boolean identity = sourceArity == selectedIndices.length;
+        if (identity) {
+            for (int k=0; k < sourceArity; ++k) {
+                if (selectedIndices[k] != k) {
+                    identity = false;
+                    break;
+                }
+            }            
+        }
+        if (identity)
+            return new TupleMaskIdentity(selectedIndices, sourceArity);
+         
+        // generic case
+        return new TupleMask(selectedIndices, sourceArity);
     }
 
     /**
@@ -53,7 +100,7 @@ public class TupleMask {
         int[] indices = new int[size];
         for (int i = 0; i < size; i++)
             indices[i] = i;
-        return new TupleMask(indices, sourceWidth);
+        return fromSelectedIndicesInternal(indices, sourceWidth);
     }
 
     /**
@@ -81,25 +128,47 @@ public class TupleMask {
             indices[i] = i;
         for (int i = omission; i < size; i++)
             indices[i] = i + 1;
-        return new TupleMask(indices, sourceWidth);
+        return fromSelectedIndicesInternal(indices, sourceWidth);
     }
 
+    
     /**
-     * Creates a TupleMask instance that discards positions where keep is true
+     * Creates a TupleMask instance that selects positions where keep is true
+     * @since 1.7
      */
-    public TupleMask(boolean[] keep) {
-        this.sourceWidth = keep.length;
+    public static TupleMask fromKeepIndicators(boolean[] keep) {
         int size = 0;
         for (int k = 0; k < keep.length; ++k)
             if (keep[k])
                 size++;
-        this.indices = new int[size];
+        int[] indices = new int[size];
         int l = 0;
         for (int k = 0; k < keep.length; ++k)
             if (keep[k])
                 indices[l++] = k;
-        indicesSorted = null;
+        return fromSelectedIndicesInternal(indices, keep.length);
     }
+    
+    /**
+     * Creates a TupleMask instance that selects given positions.
+     * @since 1.7
+     */
+    public static TupleMask fromSelectedIndices(int sourceArity, Collection<Integer> selectedIndices) {
+        int[] selected = integersToIntArray(selectedIndices);
+        return fromSelectedIndicesInternal(selected, sourceArity);
+    }
+    /**
+     * @since 1.7
+     */
+    public static int[] integersToIntArray(Collection<Integer> selectedIndices) {
+        int[] selected = new int[selectedIndices.size()];
+        int k=0;
+        for (Integer integer : selectedIndices) {
+            selected[k++] = integer;
+        }
+        return selected;
+    }
+
 
     /**
      * Creates a TupleMask instance that moves an element from one index to other, shifting the others if neccessary.
@@ -115,7 +184,7 @@ public class TupleMask {
                 indices[i] = i - 1;
             else
                 indices[i] = i;
-        return new TupleMask(indices, sourceWidth);
+        return fromSelectedIndicesInternal(indices, sourceWidth);
     }
 
     /**
@@ -123,7 +192,7 @@ public class TupleMask {
      */
     public static TupleMask selectSingle(int selected, int sourceWidth) {
         int[] indices = { selected };
-        return new TupleMask(indices, sourceWidth);
+        return fromSelectedIndicesInternal(indices, sourceWidth);
     }
 
     /**
@@ -138,7 +207,7 @@ public class TupleMask {
             indices[i] = left.indices[i];
         for (int i = 0; i < rightLength; ++i)
             indices[i + leftLength] = right.indices[i];
-        return new TupleMask(indices, left.sourceWidth);
+        return fromSelectedIndicesInternal(indices, left.sourceWidth);
     }
 
     /**
@@ -185,7 +254,7 @@ public class TupleMask {
         int[] cascadeIndices = new int[indices.length];
         for (int i = 0; i < indices.length; ++i)
             cascadeIndices[i] = mask.indices[indices[i]];
-        return new TupleMask(cascadeIndices, mask.sourceWidth);
+        return fromSelectedIndicesInternal(cascadeIndices, mask.sourceWidth);
     }
 
     // /**
