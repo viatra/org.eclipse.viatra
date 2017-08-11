@@ -61,7 +61,6 @@ import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XNumberLiteral;
-import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -343,9 +342,8 @@ public class PatternBodyTransformer {
         } else if (reference instanceof FunctionEvaluationValue) {
             return eval((FunctionEvaluationValue) reference, acceptor);
         } else if (reference instanceof NumberValue) {
-            NumberLiterals literals = new NumberLiterals();
             XNumberLiteral literal = ((NumberValue) reference).getValue();
-            return acceptor.createConstantVariable(literals.numberValue(literal, literals.getJavaType(literal)));
+            return acceptor.createConstantVariable(literal);
         } else if (reference instanceof StringValue) {
             return acceptor.createConstantVariable(((StringValue) reference).getValue());
         } else if (reference instanceof EnumValue) {// EMF-specific

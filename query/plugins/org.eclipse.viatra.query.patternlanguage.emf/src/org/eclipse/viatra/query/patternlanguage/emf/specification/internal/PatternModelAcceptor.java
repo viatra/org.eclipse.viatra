@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XNumberLiteral;
 
 /**
  * Defines the mapping of {@link PatternModel} elements during the transformation of a {@link PatternBody}.
@@ -60,6 +61,12 @@ public interface PatternModelAcceptor<Result> {
      * Creates an internal virtual variable, a constant constraint which binds it to the given value, and returns its name.
      */
     String createConstantVariable(Object value);
+    
+    /**
+     * Creates an internal virtual variable, a constant constraint which binds it to the given value, and returns its name.
+     * @since 1.7
+     */
+    String createConstantVariable(XNumberLiteral numberLiteral);
 
     /**
      * Accepts the given parameters as exported parameter constraints.

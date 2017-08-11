@@ -44,6 +44,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XNumberLiteral;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -239,6 +241,12 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
                     "Cannot instantiate aggregator.", pattern);
         }                
         
+    }
+
+    @Override
+    public String createConstantVariable(XNumberLiteral numberLiteral) {
+        NumberLiterals literals = new NumberLiterals();
+        return createConstantVariable(literals.numberValue(numberLiteral, literals.getJavaType(numberLiteral)));
     }
 
 }

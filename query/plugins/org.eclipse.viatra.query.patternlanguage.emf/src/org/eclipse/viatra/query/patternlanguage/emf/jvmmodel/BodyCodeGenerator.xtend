@@ -52,6 +52,8 @@ import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
+import org.eclipse.xtext.xbase.XNumberLiteral
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -106,6 +108,11 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 ''')
                 virtualVariable
             }
+            
+            
+            override createConstantVariable(XNumberLiteral numberLiteral) {
+                createConstantVariable(numberLiteral as Object)
+            }
         
             private def StringConcatenationClient outputConstant(Object constant) {
                 switch constant {
@@ -116,6 +123,10 @@ class BodyCodeGenerator extends StringConcatenationClient {
                     }
                     Enumerator : {
                         '''«constant.class.canonicalName».get("«constant.literal»")'''
+                    }
+                    XNumberLiteral : {
+                        val literals = new NumberLiterals 
+                        '''«literals.toJavaLiteral(constant, true)»'''
                     }
                     String :
                         '''"«constant»"'''
@@ -334,6 +345,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(''', «resultVariableName.escape», «aggregatedColumn»);
                 ''')
             }
+            
                     
         } // PatternModelAcceptor
         new PatternBodyTransformer(pattern).transform(body, acceptor)
