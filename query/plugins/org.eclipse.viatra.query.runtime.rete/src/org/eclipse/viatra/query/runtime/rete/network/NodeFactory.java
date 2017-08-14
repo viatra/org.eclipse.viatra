@@ -277,14 +277,13 @@ class NodeFactory {
     }
 
     private Supplier instantiateNode(ReteContainer reteContainer, InequalityFilterRecipe recipe) {
-        final int[] inequalIndices = integersToIntArray(recipe.getInequals());
         Tunnel result = new InequalityFilterNode(reteContainer, recipe.getSubject(),
-                new TupleMask(inequalIndices, recipe.getParent().getArity()));
+                TupleMask.fromSelectedIndices(recipe.getParent().getArity(), recipe.getInequals()));
         return result;
     }
 
     private Supplier instantiateNode(ReteContainer reteContainer, EqualityFilterRecipe recipe) {
-        final int[] equalIndices = integersToIntArray(recipe.getIndices());
+        final int[] equalIndices = TupleMask.integersToIntArray(recipe.getIndices());
         return new EqualityFilterNode(reteContainer, equalIndices);
     }
 
@@ -328,15 +327,8 @@ class NodeFactory {
 
     /** Mask is non-null. */
     private TupleMask toMask(Mask mask) {
-        return new TupleMask(integersToIntArray(mask.getSourceIndices()), mask.getSourceArity());
+        return TupleMask.fromSelectedIndices(mask.getSourceArity(), mask.getSourceIndices());
     }
 
-    private int[] integersToIntArray(final List<Integer> integers) {
-        int[] result = new int[integers.size()];
-        int k = 0;
-        for (Integer index : integers)
-            result[k++] = index;
-        return result;
-    }
 
 }

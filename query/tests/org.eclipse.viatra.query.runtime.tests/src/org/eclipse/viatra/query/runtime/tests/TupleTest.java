@@ -15,11 +15,16 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.BaseLeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMaskIdentity;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests for tuples to ensure equivalence between implementations
@@ -30,6 +35,7 @@ public class TupleTest {
     
     public static final int SPECIALIZED_ARITY_LIMIT = 4;
     public static final Tuple ANCESTOR = Tuples.staticArityFlatTupleOf(-3, -2, -1);
+    public static final Tuple MASKABLE_TUPLE = Tuples.flatTupleOf(-100, -200, -300);
     
     @Test
     public void testFlatTuples() {
@@ -89,4 +95,62 @@ public class TupleTest {
             assertEquals("hashCode", flatTupleReference.hashCode(), liTuple.hashCode());
         }
     }
+    
+    @Test
+    public void testMasks() {
+        ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
+        recursiveBuildIndices(selectedIndices);
+    }
+
+    private void recursiveBuildIndices(ArrayList<Integer> selectedIndices) {
+        checkIndicesArray(selectedIndices);
+        
+        // grow
+        int startingSize = selectedIndices.size();
+        if (startingSize < MASKABLE_TUPLE.getSize()) {
+            for (int nextIndex=0; nextIndex < MASKABLE_TUPLE.getSize(); ++nextIndex) {
+                selectedIndices.add(nextIndex);
+                
+                recursiveBuildIndices(selectedIndices);
+                
+                // undo
+                selectedIndices.remove(startingSize);
+            }
+                
+        }
+    }
+
+    private void checkIndicesArray(List<Integer> selectedIndices) {
+        TupleMask mask = TupleMask.fromSelectedIndices(MASKABLE_TUPLE.getSize(), selectedIndices);
+        
+        Tuple maskedTuple = mask.transform(MASKABLE_TUPLE);
+        assertEquals("maskedResultWidth", selectedIndices.size(), maskedTuple.getSize());
+        for (int k=0; k < selectedIndices.size(); ++k) {
+            assertEquals("maskedResult["+k, MASKABLE_TUPLE.get(selectedIndices.get(k)), maskedTuple.get(k));
+        }
+        
+        if (!selectedIndices.isEmpty()) {
+            boolean isIdentity = selectedIndices.size() == MASKABLE_TUPLE.getSize();
+            int j = 0;
+            while (isIdentity && j < selectedIndices.size()) {
+                if (selectedIndices.get(j) != j) isIdentity = false;
+                ++j;
+            }
+            assertEquals("identity", isIdentity, mask instanceof TupleMaskIdentity);
+        }
+        
+        Tuple combinedTuple = mask.combine(ANCESTOR, MASKABLE_TUPLE, true, true);
+        assertEquals("combinedResultWidth", selectedIndices.size() + ANCESTOR.getSize(), combinedTuple.getSize());
+        for (int k=0; k < combinedTuple.getSize(); ++k) {
+            assertEquals("combinedResult["+k, 
+                    (k<ANCESTOR.getSize()) ?
+                            ANCESTOR.get(k) :
+                            MASKABLE_TUPLE.get(selectedIndices.get(k - ANCESTOR.getSize())), 
+                    combinedTuple.get(k));
+        }
+        assertEquals("nullary", selectedIndices.isEmpty(), combinedTuple == ANCESTOR);
+        
+    }
+        
+
 }

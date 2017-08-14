@@ -317,24 +317,19 @@ public class CompilerHelper {
                 else
                     introducingSecondaryIndices.add(callTrace.getPosMapping().get(var));
             }
-            int[] primaryIndices = new int[oldNodes];
-            final int[] secondaryIndices = new int[oldNodes];
-            int k = 0;
+            List<Integer> primaryIndices = new ArrayList<Integer>(oldNodes);
+            List<Integer> secondaryIndices = new ArrayList<Integer>(oldNodes);
             for (PVariable var : secondaryVariables) {
                 if (primaryVariables.contains(var)) {
-                    primaryIndices[k] = primaryCompiled.getPosMapping().get(var);
-                    secondaryIndices[k] = callTrace.getPosMapping().get(var);
-                    k++;
+                    primaryIndices.add(primaryCompiled.getPosMapping().get(var));
+                    secondaryIndices.add(callTrace.getPosMapping().get(var));
                 }
             }
-            int[] complementerIndices = new int[introducingSecondaryIndices.size()];
-            int l = 0;
-            for (Integer integer : introducingSecondaryIndices) {
-                complementerIndices[l++] = integer;
-            }
-            primaryMask = new TupleMask(primaryIndices, primaryCompiled.getVariablesTuple().size());
-            secondaryMask = new TupleMask(secondaryIndices, callTrace.getVariablesTuple().size());
-            complementerMask = new TupleMask(complementerIndices, callTrace.getVariablesTuple().size());
+            Collection<Integer> complementerIndices = introducingSecondaryIndices;
+
+            primaryMask = TupleMask.fromSelectedIndices(primaryCompiled.getVariablesTuple().size(), primaryIndices);
+            secondaryMask = TupleMask.fromSelectedIndices(callTrace.getVariablesTuple().size(), secondaryIndices);
+            complementerMask = TupleMask.fromSelectedIndices(callTrace.getVariablesTuple().size(), complementerIndices);
 
             primaryIndexer = makeIndexerTrace(planToCompile, primaryCompiled, primaryMask);
             secondaryIndexer = makeIndexerTrace(planToCompile, callTrace, secondaryMask);

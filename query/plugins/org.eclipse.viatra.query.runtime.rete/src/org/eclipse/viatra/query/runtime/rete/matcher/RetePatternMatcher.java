@@ -84,7 +84,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     public ArrayList<Tuple> matchAll(Object[] inputMapping, boolean[] fixed) {
         // retrieving the projection
-        TupleMask mask = new TupleMask(fixed);
+        TupleMask mask = TupleMask.fromKeepIndicators(fixed);
         Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
         AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
@@ -102,7 +102,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     public Tuple matchOne(Object[] inputMapping, boolean[] fixed) {
         // retrieving the projection
-        TupleMask mask = new TupleMask(fixed);
+        TupleMask mask = TupleMask.fromKeepIndicators(fixed);
         Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
         SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
@@ -117,7 +117,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
      * @return the number of occurrences
      */
     public int count(Object[] inputMapping, boolean[] fixed) {
-        TupleMask mask = new TupleMask(fixed);
+        TupleMask mask = TupleMask.fromKeepIndicators(fixed);
         Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
         CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNodeTrace, mask),
