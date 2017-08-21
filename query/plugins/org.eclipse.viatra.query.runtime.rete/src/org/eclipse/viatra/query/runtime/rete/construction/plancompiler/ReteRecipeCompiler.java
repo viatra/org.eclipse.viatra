@@ -490,8 +490,8 @@ public class ReteRecipeCompiler {
         final RecipeTraceInfo primaryIndexer = fakeJoinHelper.getPrimaryIndexer();
         final RecipeTraceInfo callProjectionIndexer = fakeJoinHelper.getSecondaryIndexer();
 
-        final List<PVariable> sideVariablesTuple = fakeJoinHelper.getSecondaryMask()
-                .transform(callTrace.getVariablesTuple());
+        final List<PVariable> sideVariablesTuple =  new ArrayList<PVariable>(
+                fakeJoinHelper.getSecondaryMask().transform(callTrace.getVariablesTuple()));
         /* if (!booleanCheck) */ sideVariablesTuple.add(constraint.getResultVariable());
 
         CountAggregatorRecipe aggregatorRecipe = FACTORY.createCountAggregatorRecipe();
@@ -552,7 +552,8 @@ public class ReteRecipeCompiler {
         final RecipeTraceInfo primaryIndexer = fakeJoinHelper.getPrimaryIndexer();
         TupleMask callGroupMask = fakeJoinHelper.getSecondaryMask();
 
-        final List<PVariable> sideVariablesTuple = callGroupMask.transform(callTrace.getVariablesTuple());
+        final List<PVariable> sideVariablesTuple = new ArrayList<PVariable>(
+                callGroupMask.transform(callTrace.getVariablesTuple()));
         /* if (!booleanCheck) */ sideVariablesTuple.add(constraint.getResultVariable());
 
         IMultisetAggregationOperator<?, ?, ?> operator = constraint.getAggregator().getOperator();
