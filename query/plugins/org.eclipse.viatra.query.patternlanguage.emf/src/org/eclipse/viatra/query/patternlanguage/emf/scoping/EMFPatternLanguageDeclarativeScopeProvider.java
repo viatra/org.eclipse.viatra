@@ -25,9 +25,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
@@ -38,9 +40,9 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHe
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch;
-import org.eclipse.viatra.query.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -48,6 +50,7 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 import org.eclipse.xtext.util.SimpleAttributeResolver;
+import org.eclipse.xtext.xbase.scoping.batch.XbaseBatchScopeProvider;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -55,31 +58,78 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
- * <p>
- * An extended abstract declarative scope provider to facilitate the reusing of abstract declarative scope providers
- * together with XBase scope provider.
- * </p>
- * <p>
- * See <a
- * href="http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521">http://www.eclipse.org/forums/index
- * .php/mv/msg/219841/699521/#msg_699521</a> for details.
- * </p>
+ * This scope provider extends the Xbase scope provider with EMF metamodel access.
  * 
  * @author Zoltan Ujhelyi
- * 
+ * @noreference This class is not intended to be referenced by clients.
  */
-public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclarativeScopeProvider {
+@SuppressWarnings("restriction")
+public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeProvider {
     @Inject
     private IQualifiedNameConverter qualifiedNameConverter;
     
     @Inject
     private IMetamodelProvider metamodelProvider;
+    
+    @Override
+    public IScope getScope(EObject ctx, EReference ref) {
+        EClassifier refEType = ref.getEType();
+        if (refEType instanceof EClass) {
+            EClass refType = (EClass) refEType;
 
-    public IScope scope_EPackage(PackageImport ctx, EReference ref) {
-        return metamodelProvider.getAllMetamodelObjects(this.delegateGetScope(ctx, ref), ctx);
+            if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EPACKAGE, refType)) {
+                PackageImport importDecl = EcoreUtil2.getContainerOfType(ctx, PackageImport.class);
+                if (importDecl == null) {
+                    return IScope.NULLSCOPE;
+                }
+                return scope_EPackage(importDecl, ref);
+            } else if (EcoreUtil2.isAssignableFrom(EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT, refType)) {
+                return scope_PackageImport(ctx, ref);
+            } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ECLASSIFIER, refType)) {
+                ClassType containingClassDeclaration = EcoreUtil2.getContainerOfType(ctx, ClassType.class);
+                if (containingClassDeclaration != null) {
+                    return scope_EClassifier(containingClassDeclaration, ref);
+                } else {
+                    return scope_EClassifier(ctx, ref);
+                }
+            } else if (EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.VARIABLE, refType)) {
+                PatternBody containingBody = EcoreUtil2.getContainerOfType(ctx, PatternBody.class);
+                if (containingBody != null) {
+                    return scope_Variable((PatternBody) ctx, ref);
+                }
+                AnnotationParameter containingAnnotationParameter = EcoreUtil2.getContainerOfType(ctx,
+                        AnnotationParameter.class);
+                if (containingAnnotationParameter != null) {
+                    return scope_Variable(containingAnnotationParameter, ref);
+                }
+            } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ESTRUCTURAL_FEATURE, refType)) {
+                PathExpressionTail tail = EcoreUtil2.getContainerOfType(ctx, PathExpressionTail.class);
+                if (tail != null) {
+                    return scope_EStructuralFeature(tail, ref);
+                } else {
+                    PathExpressionHead head = EcoreUtil2.getContainerOfType(ctx, PathExpressionHead.class);
+                    return scope_EStructuralFeature(head, ref);
+                }
+            } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM, refType)) {
+                EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
+                if (containingValue != null) {
+                    return scope_EEnum(containingValue, ref);
+                }
+            } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM_LITERAL, refType)) {
+                EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
+                if (containingValue != null) {
+                    return scope_EEnumLiteral(containingValue, ref);
+                }
+            }
+        }
+        return super.getScope(ctx, ref);
+    }
+
+    private IScope scope_EPackage(PackageImport ctx, EReference ref) {
+        return metamodelProvider.getAllMetamodelObjects(delegateGetScope(ctx, ref), ctx);
     }
     
-    public IScope scope_PackageImport(EObject ctx, EReference ref) {
+    private IScope scope_PackageImport(EObject ctx, EReference ref) {
         EObject root = getRootContainer(ctx);
         if (root instanceof PatternModel) {
             SimpleAttributeResolver<PackageImport, String> attributeResolver = SimpleAttributeResolver.<PackageImport, String>newResolver(String.class, "alias");
@@ -90,7 +140,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         }
     }
 
-    public IScope scope_EClassifier(EObject ctx, EReference ref) {
+    private IScope scope_EClassifier(EObject ctx, EReference ref) {
         // The context is general as content assist might ask for different context types
         if (ctx instanceof ClassType) {
             return scope_EClassifier((ClassType)ctx, ref);
@@ -98,7 +148,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         return createUnqualifiedClassifierScope(ctx);
     }
     
-    public IScope scope_EClassifier(ClassType ctx, EReference ref) {
+    private IScope scope_EClassifier(ClassType ctx, EReference ref) {
         if (ctx.getMetamodel() != null && !ctx.getMetamodel().eIsProxy()) {
             return createClassifierScope(ctx.getMetamodel().getEPackage(), IScope.NULLSCOPE);
         }
@@ -108,7 +158,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
     /**
      * @since 1.6
      */
-    public IScope scope_Variable(AnnotationParameter ctx, EReference ref) {
+    private IScope scope_Variable(AnnotationParameter ctx, EReference ref) {
         Pattern pattern = EcoreUtil2.getContainerOfType(ctx, Pattern.class);
         if (pattern != null) {
             return Scopes.scopeFor(pattern.getParameters());
@@ -116,7 +166,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         return IScope.NULLSCOPE;
     }
     
-    public IScope scope_Variable(PatternBody ctx, EReference ref) {
+    private IScope scope_Variable(PatternBody ctx, EReference ref) {
         if (ctx != null && !ctx.eIsProxy()) {
             return Scopes.scopeFor(ctx.getVariables());
         }
@@ -147,16 +197,16 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         return Scopes.scopeFor(ePackage.getEClassifiers(), outer);
     }
 
-    public IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
+    private IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
         // This is needed for content assist - in that case the ExpressionTail does not exists
         return expressionParentScopeProvider.doSwitch(ctx);
     }
 
-    public IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
+    private IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
         return expressionParentScopeProvider.doSwitch(ctx.eContainer());
     }
 
-    public IScope scope_EEnum(EnumValue ctx, EReference ref) {
+    private IScope scope_EEnum(EnumValue ctx, EReference ref) {
         PatternModel model = (PatternModel) getRootContainer(ctx);
         final Collection<EEnum> enums = Lists.newArrayList();
         for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
@@ -167,7 +217,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         return Scopes.scopeFor(enums);
     }
 
-    public IScope scope_EEnumLiteral(EnumValue ctx, EReference ref) {
+    private IScope scope_EEnumLiteral(EnumValue ctx, EReference ref) {
         EEnum type;
         try {
             type = ctx.getEnumeration();

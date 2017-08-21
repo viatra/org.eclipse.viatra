@@ -33,7 +33,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
-import org.eclipse.viatra.query.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.viatra.query.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
@@ -53,6 +52,7 @@ import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
+import org.eclipse.xtext.xbase.scoping.batch.IBatchScopeProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -77,8 +77,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     @Override
     public void configureIScopeProviderDelegate(Binder binder) {
         binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE))
-                .to(EMFPatternLanguageDeclarativeScopeProvider.class);
-        binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE))
                 .to(EMFPatternLanguageImportNamespaceProvider.class);
         // .to(XImportSectionNamespaceScopeProvider.class);
         Multibinder<IMetamodelProviderInstance> metamodelProviderBinder = Multibinder.newSetBinder(binder, IMetamodelProviderInstance.class);
@@ -86,6 +84,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         metamodelProviderBinder.addBinding().to(ResourceSetMetamodelProviderService.class);
     }
 
+    /**
+     * @since 1.7
+     */
+    public Class<? extends IBatchScopeProvider> bindIBatchScopeProvider() {
+        return EMFPatternLanguageDeclarativeScopeProvider.class;
+    }
+    
     @Override
     public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
         return PatternLanguageResourceDescriptionStrategy.class;
