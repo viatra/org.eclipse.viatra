@@ -127,16 +127,9 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
             boolean toBound = variableBindings.get(typeConstraint).contains(targetPosition);
 
             if (fromBound && !toBound) {
-                if (baseIndexAvailable) {
-                    operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
-                } else {
-                    operations
-                            .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(
-                                    sourcePosition, targetPosition, feature));
-                    operations.add(new ScopeCheck(targetPosition, runtimeContext.getEmfScope()));
-                }
-            }
-            else if(!fromBound && toBound){
+                operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
+                operations.add(new ScopeCheck(targetPosition, runtimeContext.getEmfScope()));
+            } else if(!fromBound && toBound){
                 if (feature instanceof EReference && ((EReference)feature).isContainment()) {
                     // The iterate is also used to traverse a single container (third parameter)
                     operations.add(new IterateOverContainers(sourcePosition, targetPosition, false));
@@ -159,9 +152,7 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
                             .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
                                     sourcePosition, feature.getEContainingClass(), runtimeContext.getEmfScope()));
                     operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
-                    operations
-                            .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(
-                                    sourcePosition, targetPosition, feature));
+                    operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
                     operations.add(new ScopeCheck(targetPosition, runtimeContext.getEmfScope()));
                 }
             }

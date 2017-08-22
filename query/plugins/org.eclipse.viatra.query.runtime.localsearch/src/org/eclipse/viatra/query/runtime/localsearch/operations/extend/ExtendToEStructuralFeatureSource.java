@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -50,7 +50,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type,
-                new FlatTuple(null, frame.getValue(targetPosition)));
+                Tuples.flatTupleOf(null, frame.getValue(targetPosition)));
         it = Iterables.filter(values, EObject.class).iterator();
     }
     

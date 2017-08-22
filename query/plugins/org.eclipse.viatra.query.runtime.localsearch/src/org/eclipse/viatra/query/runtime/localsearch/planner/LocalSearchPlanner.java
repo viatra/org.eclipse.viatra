@@ -54,7 +54,6 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
     private final LocalSearchHints configuration;
     private final IOperationCompiler operationCompiler;
     private final IQueryBackendContext context;
-//    private final LocalSearchBackend backend;
 
     /**
      * @since 1.4

@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.base.Preconditions;
@@ -39,7 +38,7 @@ public class InstanceOfJavaClassCheck extends CheckOperation {
      * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
      */
     @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame) {
         return check(frame, null);
     }
 

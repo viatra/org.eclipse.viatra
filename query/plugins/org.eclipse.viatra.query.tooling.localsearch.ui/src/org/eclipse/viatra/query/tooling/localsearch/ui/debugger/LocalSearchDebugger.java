@@ -248,7 +248,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         if (isDisposed) {
             return;
         }
-        MatchingFrame frameToStore = frame.clone();
+        MatchingFrame frameToStore = new MatchingFrame(frame);
         TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(runningMatchers.peek().getQuerySpecification());
         @SuppressWarnings("unchecked")
         List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);

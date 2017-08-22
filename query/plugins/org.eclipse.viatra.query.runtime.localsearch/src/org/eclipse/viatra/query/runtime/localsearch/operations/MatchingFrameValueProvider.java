@@ -35,7 +35,7 @@ public class MatchingFrameValueProvider implements IValueProvider {
     }
 
     @Override
-    public Object getValue(String variableName) throws IllegalArgumentException {
+    public Object getValue(String variableName) {
         Integer index = nameMap.get(variableName);
         Preconditions.checkArgument(index != null, "Unknown parameter variable name");
         return frame.get(index);

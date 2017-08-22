@@ -97,7 +97,7 @@ public class CallOperationHelper {
             return true;
         }
         
-        public void backtrack(MatchingFrame frame) throws LocalSearchException {
+        public void backtrack(MatchingFrame frame) {
             if (filledVariables != null){
                 for(Integer i : filledVariables){
                     frame.setValue(i, null);
@@ -126,7 +126,7 @@ public class CallOperationHelper {
             return matcher.countMatches(mapFrame(frame));
         }
         
-        public <Domain, Accumulator, AggregateResult> AggregateResult aggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn, MatchingFrame initialFrame) throws LocalSearchException{
+        public <Domain, Accumulator, AggregateResult> AggregateResult aggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn, MatchingFrame initialFrame) {
             Object[] frame = mapFrame(initialFrame);
             Accumulator accumulator = operator.createNeutral();
             for(Tuple match : matcher.getAllMatches(frame)){
@@ -204,7 +204,7 @@ public class CallOperationHelper {
      * @since 1.5
      */
     public List<Integer> getVariablePositions() {
-        List<Integer> variables = new ArrayList<Integer>(parameterMapping.size());
+        List<Integer> variables = new ArrayList<>(parameterMapping.size());
         for(PParameter p : calledQuery.getParameters()){
             variables.add(parameterMapping.get(p));
         }

@@ -34,8 +34,9 @@ import com.google.common.collect.Lists;
  */
 public class IterateOverEStructuralFeatureInstances implements ISearchOperation, IIteratingSearchOperation{
 
-    private EStructuralFeature feature;
-    private int sourcePosition, targetPosition;
+    private final EStructuralFeature feature;
+    private final int sourcePosition;
+    private final int targetPosition;
     protected Iterator<Entry<EObject, Object>> it;
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {

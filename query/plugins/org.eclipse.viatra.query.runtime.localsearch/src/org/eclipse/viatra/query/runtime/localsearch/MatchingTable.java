@@ -31,7 +31,7 @@ public class MatchingTable extends AbstractCollection<Tuple> {
     private Map<MatchingKey,Collection<MatchingFrame>> matchings;
 
     public MatchingTable() {
-        matchings = new HashMap<MatchingKey, Collection<MatchingFrame>>();
+        matchings = new HashMap<>();
     }
     
     @Override
@@ -53,7 +53,7 @@ public class MatchingTable extends AbstractCollection<Tuple> {
     public void put(MatchingKey key, MatchingFrame value) {
         Collection<MatchingFrame> coll = matchings.get(key);
         if (coll == null) {
-            coll = new HashSet<MatchingFrame>();
+            coll = new HashSet<>();
             matchings.put(key, coll);
         }
         coll.add(value);

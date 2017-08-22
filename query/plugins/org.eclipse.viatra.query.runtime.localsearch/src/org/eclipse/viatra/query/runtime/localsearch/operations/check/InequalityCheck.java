@@ -24,7 +24,8 @@ import com.google.common.collect.Lists;
  */
 public class InequalityCheck extends CheckOperation {
 
-    int sourceLocation, targetLocation;
+    int sourceLocation;
+    int targetLocation;
 
     public InequalityCheck(int sourceLocation, int targetLocation) {
         super();

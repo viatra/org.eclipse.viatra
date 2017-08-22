@@ -33,7 +33,8 @@ import com.google.common.collect.Lists;
 public class IterateOverEStructuralFeatureInstances implements IIteratingSearchOperation{
 
     private final EStructuralFeature feature;
-    private final int sourcePosition, targetPosition;
+    private final int sourcePosition;
+    private final int targetPosition;
     private final EStructuralFeatureInstancesKey type;
     private Iterator<Tuple> it;
     

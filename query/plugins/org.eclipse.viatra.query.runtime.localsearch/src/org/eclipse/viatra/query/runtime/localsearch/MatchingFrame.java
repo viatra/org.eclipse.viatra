@@ -30,7 +30,7 @@ import com.google.common.base.Preconditions;
  * <li>ValueType => AnyModelElement</li>
  * </ul>
  */
-public class MatchingFrame extends Tuple implements Cloneable {
+public class MatchingFrame extends Tuple {
 
     private static final String KEYS_ARRAY_SETUP_MISSING_MESSAGE = "A non-null key array has to be set up before getElements() is called.";
     private static final String KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE = "Argument keys must not be null.";
@@ -54,10 +54,20 @@ public class MatchingFrame extends Tuple implements Cloneable {
         this.frame = new Object[frameSize];
     }
     
-    private MatchingFrame(Object pattern, int[] keyMap, int frameSize) {
-        this(pattern, frameSize);        
-        Preconditions.checkArgument(keyMap != null, KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE);
-        this.keys = Arrays.copyOf(keyMap, keyMap.length);
+    /**
+     * Creates a copy of another matching frame; the two frames can be updated separately
+     * @param other
+     * @since 1.7
+     */
+    public MatchingFrame(MatchingFrame other) {
+        this.pattern = other.pattern;
+        this.frame = Arrays.copyOf(other.frame, other.frame.length);
+        if (other.keys == null) {
+            this.keys = null;
+        } else {
+            this.keys = Arrays.copyOf(other.keys, other.keys.length);
+        }
+        this.parameterValues = Arrays.copyOf(other.parameterValues, other.parameterValues.length);
     }
 
     /**
@@ -150,16 +160,8 @@ public class MatchingFrame extends Tuple implements Cloneable {
         }
         return new MatchingKey(key);
     }
-
-    public MatchingFrame clone() {
-        MatchingFrame clone = (keys == null) 
-                ? new MatchingFrame(pattern, frame.length)
-                : new MatchingFrame(pattern, keys, frame.length);
-        clone.frame = Arrays.copyOf(frame, frame.length);
-        clone.parameterValues = this.parameterValues;
-        return clone;
-    }
     
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < frame.length; i++) {

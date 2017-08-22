@@ -74,11 +74,10 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     protected final ISearchContext searchContext;
 
     /**
-     * @throws QueryProcessingException 
      * @since 1.5
      */
     public AbstractLocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
-            IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
+            IPlanProvider planProvider, QueryEvaluationHint userHints) {
         this.backend = backend;
         this.backendContext = context;
         this.query = query;
@@ -92,7 +91,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     protected abstract IOperationCompiler getOperationCompiler(IQueryBackendContext backendContext, LocalSearchHints configuration);
     
     private IQueryRuntimeContext getRuntimeContext() {
-        return ((LocalSearchBackend)backend).getRuntimeContext();
+        return backend.getRuntimeContext();
     }
 
     private LocalSearchMatcher createMatcher(IPlanDescriptor plan, final ISearchContext searchContext) {
@@ -257,9 +256,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     
     private Set<PQuery> getDirectPositiveDependencies() {
         IFlattenCallPredicate flattenPredicate = overrideDefaultHints(query).getFlattenCallPredicate();
-        Queue<PQuery> queue = new LinkedList<PQuery>();
-        Set<PQuery> visited = new HashSet<PQuery>();
-        Set<PQuery> result = new HashSet<PQuery>();
+        Queue<PQuery> queue = new LinkedList<>();
+        Set<PQuery> visited = new HashSet<>();
+        Set<PQuery> result = new HashSet<>();
         queue.add(query);
         
         while(!queue.isEmpty()){
@@ -331,38 +330,26 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
 
     @Override
     public Tuple getOneArbitraryMatch(Object[] parameters) {
-        try {
-            final LocalSearchMatcher matcher = initializeMatcher(parameters);
-            final MatchingFrame frame = matcher.editableMatchingFrame();
-            frame.setParameterValues(parameters);
-            return matcher.getOneArbitraryMatch(frame);
-        } catch (LocalSearchException e) {
-            throw new RuntimeException(e);
-        }
+        final LocalSearchMatcher matcher = initializeMatcher(parameters);
+        final MatchingFrame frame = matcher.editableMatchingFrame();
+        frame.setParameterValues(parameters);
+        return matcher.getOneArbitraryMatch(frame);
     }
 
     @Override
     public int countMatches(Object[] parameters) {
-        try {
-            final LocalSearchMatcher matcher = initializeMatcher(parameters);
-            final MatchingFrame frame = matcher.editableMatchingFrame();
-            frame.setParameterValues(parameters);
-            return matcher.countMatches(frame);
-        } catch (LocalSearchException e) {
-            throw new RuntimeException(e);
-        }
+        final LocalSearchMatcher matcher = initializeMatcher(parameters);
+        final MatchingFrame frame = matcher.editableMatchingFrame();
+        frame.setParameterValues(parameters);
+        return matcher.countMatches(frame);
     }
 
     @Override
     public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
-        try {
-            final LocalSearchMatcher matcher = initializeMatcher(parameters);
-            final MatchingFrame frame = matcher.editableMatchingFrame();
-            frame.setParameterValues(parameters);
-            return matcher.getAllMatches(frame);
-        } catch (LocalSearchException e) {
-            throw new RuntimeException(e);
-        }
+        final LocalSearchMatcher matcher = initializeMatcher(parameters);
+        final MatchingFrame frame = matcher.editableMatchingFrame();
+        frame.setParameterValues(parameters);
+        return matcher.getAllMatches(frame);
     }
 
     @Override

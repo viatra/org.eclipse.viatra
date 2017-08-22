@@ -22,8 +22,8 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -58,7 +58,7 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
         this.positions = positions;
         this.type = type;
 
-        this.unboundVariableIndex = new HashSet<Integer>();
+        this.unboundVariableIndex = new HashSet<>();
         for (Integer position : positions) {
             if (!adornment.contains(position)) {
                 unboundVariableIndex.add(position);
@@ -84,7 +84,7 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
         for (int i = 0; i < positions.length; i++) {
             seed[i] = frame.get(positions[i]);
         }
-        it = context.getRuntimeContext().enumerateTuples(type, new FlatTuple(seed)).iterator();
+        it = context.getRuntimeContext().enumerateTuples(type, Tuples.flatTupleOf(seed)).iterator();
 
     }
 

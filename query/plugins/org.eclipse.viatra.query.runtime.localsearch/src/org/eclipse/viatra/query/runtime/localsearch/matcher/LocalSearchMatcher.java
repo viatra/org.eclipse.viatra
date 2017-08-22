@@ -60,8 +60,8 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         private boolean frameReturned;
         
         public PlanExecutionIterator(final ImmutableList<SearchPlanExecutor> plan, MatchingFrame initialFrame) {
-            this.frame = initialFrame.clone();
-            Preconditions.checkArgument(plan.size() > 0);
+            this.frame = new MatchingFrame(initialFrame);
+            Preconditions.checkArgument(!plan.isEmpty());
             iterator = plan.iterator();
             getNextPlan();
             frameReturned = true;
@@ -108,7 +108,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
                 throw new NoSuchElementException("No more matches available.");
             }
             frameReturned = true;
-            return frame.clone();
+            return new MatchingFrame(frame);
         }
 
     }
@@ -196,12 +196,12 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return new MatchingFrame(null, frameSize);
     }
 
-    public boolean hasMatch() throws LocalSearchException {
+    public boolean hasMatch() {
         boolean hasMatch = hasMatch(editableMatchingFrame());
         return hasMatch;
     }
 
-    public boolean hasMatch(final MatchingFrame initialFrame) throws LocalSearchException {
+    public boolean hasMatch(final MatchingFrame initialFrame) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         boolean hasMatch = it.hasNext();
@@ -209,12 +209,12 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return hasMatch;
     }
 
-    public int countMatches() throws LocalSearchException {
+    public int countMatches() {
         int countMatches = countMatches(editableMatchingFrame());
         return countMatches;
     }
 
-    public int countMatches(MatchingFrame initialFrame) throws LocalSearchException {
+    public int countMatches(MatchingFrame initialFrame) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         
@@ -234,12 +234,12 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return planDescriptor.getQuery().getParameters().size();
     }
 
-    public MatchingFrame getOneArbitraryMatch() throws LocalSearchException {
+    public MatchingFrame getOneArbitraryMatch() {
         MatchingFrame oneArbitraryMatch = getOneArbitraryMatch(editableMatchingFrame());
         return oneArbitraryMatch;
     }
 
-    public MatchingFrame getOneArbitraryMatch(final MatchingFrame initialFrame) throws LocalSearchException {
+    public MatchingFrame getOneArbitraryMatch(final MatchingFrame initialFrame) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         MatchingFrame returnValue = null;
@@ -250,7 +250,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return returnValue;
     }
 
-    public Collection<Tuple> getAllMatches() throws LocalSearchException {
+    public Collection<Tuple> getAllMatches() {
         Collection<Tuple> allMatches = getAllMatches(editableMatchingFrame());
         return allMatches;
     }
@@ -267,7 +267,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         }		
     }
 
-    public Collection<Tuple> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
+    public Collection<Tuple> getAllMatches(final MatchingFrame initialFrame) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);        
         

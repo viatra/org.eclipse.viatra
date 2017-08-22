@@ -32,7 +32,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 public class TransitiveClosureGraph implements IUpdateable {
 
     private Graph<Object> graph = new Graph<>();
-    private IncSCCAlg<Object> tcAlg = new IncSCCAlg<Object>(graph);
+    private IncSCCAlg<Object> tcAlg = new IncSCCAlg<>(graph);
     private PatternCall call;
 
     private static final class TransitiveClosureGraphKey {

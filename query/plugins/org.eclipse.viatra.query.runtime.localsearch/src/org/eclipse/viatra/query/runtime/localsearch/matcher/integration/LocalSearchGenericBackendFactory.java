@@ -47,6 +47,7 @@ public enum LocalSearchGenericBackendFactory implements IQueryBackendFactory {
             }
 
             @Override
+            @Deprecated
             public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {
                 throw new UnsupportedOperationException("geteAttributesByTypeForEClass() is a legacy call not supported by the generic LS backend.");
             }

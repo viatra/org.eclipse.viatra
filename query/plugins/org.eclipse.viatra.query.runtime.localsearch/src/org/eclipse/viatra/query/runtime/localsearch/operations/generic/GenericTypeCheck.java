@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -56,7 +56,7 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
         for (int i = 0; i < positions.length; i++) {
             seed[i] = frame.get(positions[i]);
         }
-        return context.getRuntimeContext().containsTuple(type, new FlatTuple(seed));
+        return context.getRuntimeContext().containsTuple(type, Tuples.flatTupleOf(seed));
     }
 
     @Override

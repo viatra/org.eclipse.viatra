@@ -50,7 +50,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
     
     // Cache
-    /*
+    /**
      * @deprecated Use generalCache instead
      */
     @Deprecated

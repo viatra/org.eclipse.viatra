@@ -28,7 +28,8 @@ import com.google.common.collect.Lists;
  */
 public class StructuralFeatureCheck extends CheckOperation {
 
-    int sourcePosition, targetPosition;
+    int sourcePosition;
+    int targetPosition;
     EStructuralFeature feature;
 
     public StructuralFeatureCheck(int sourcePosition, int targetPosition, EStructuralFeature feature) {

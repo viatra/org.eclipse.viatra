@@ -248,8 +248,12 @@ public final class LocalSearchHints implements IMatcherCapability {
         return new LocalSearchHints().setUseBase(useBase);
     }
     
+    /**
+     * @deprecated This allowInverse hint is ignored by the runtime, do not use it
+     */
+    @Deprecated
     public static LocalSearchHints customizeAllowInverse(boolean allowInverse){
-        return new LocalSearchHints().setAllowInverse(allowInverse);
+        return new LocalSearchHints();
     }
     
     public static LocalSearchHints customizeRowCount(int rowCount){

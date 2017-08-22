@@ -19,8 +19,13 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
  * 
  * @author Gabor Bergmann
  * @since 1.5
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class LocalSearchHintOptions {
+    
+    private LocalSearchHintOptions() {
+        // Private constructor for utility class
+    }
     
     public static final QueryHintOption<Boolean> USE_BASE_INDEX = 
             hintOption("USE_BASE_INDEX", true);
@@ -50,6 +55,6 @@ public final class LocalSearchHintOptions {
     
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
-        return new QueryHintOption<T>(LocalSearchHintOptions.class, hintKeyLocalName, defaultValue);
+        return new QueryHintOption<>(LocalSearchHintOptions.class, hintKeyLocalName, defaultValue);
     }
 }

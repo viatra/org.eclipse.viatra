@@ -35,9 +35,9 @@ import com.google.common.collect.ImmutableList;
  */
 public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
 
-    private final Map<MatcherReference, PlanProfile> profile = new HashMap<MatcherReference, PlanProfile>();
+    private final Map<MatcherReference, PlanProfile> profile = new HashMap<>();
     
-    private final Map<SearchPlanExecutor, int[]> currentBodies = new HashMap<SearchPlanExecutor, int[]>();
+    private final Map<SearchPlanExecutor, int[]> currentBodies = new HashMap<>();
     
     private class PlanProfile{
         
@@ -47,7 +47,7 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
         public PlanProfile(LocalSearchMatcher lsMatcher) {
             ImmutableList<SearchPlanExecutor> plan = lsMatcher.getPlan();
             bodies = new int[plan.size()][];
-            operations = new ArrayList<List<ISearchOperation>>(plan.size());
+            operations = new ArrayList<>(plan.size());
             for(int i=0;i<bodies.length;i++){
                 List<ISearchOperation> ops = plan.get(i).getSearchPlan().getOperations();
                 operations.add(i,ops); 

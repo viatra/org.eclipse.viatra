@@ -27,7 +27,8 @@ import com.google.common.collect.Lists;
  */
 public class ContainmentCheck extends CheckOperation {
 
-    int childPosition, containerPosition;
+    int childPosition;
+    int containerPosition;
     private boolean transitive;
 
     public ContainmentCheck(int childPosition, int containerPosition, boolean transitive) {
