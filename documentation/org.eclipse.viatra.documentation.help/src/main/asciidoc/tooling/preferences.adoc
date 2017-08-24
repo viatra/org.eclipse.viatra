@@ -1,0 +1,11 @@
+= Eclipse Preferences
+
+== Query Explorer page
+
+=== [Experimental] Disable automatic update of target platform metamodels
+
+By default, VIATRA Query will always update the state of the target platform metamodel index automatically. This index is used by the query editor and code generator to load Ecore models and refer to their elements (such as EClasses or features).
+
+If you have large number of workspace plugins, setting this feature can improve editor and generator performance. If set, you can force an update by unsetting it, applying preference changes, then setting again. Note that you may have to reopen Query Editors after changes in this preference to remove all markers.
+
+*Default value:* false

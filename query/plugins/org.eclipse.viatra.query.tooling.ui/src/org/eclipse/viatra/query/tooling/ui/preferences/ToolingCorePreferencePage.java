@@ -38,6 +38,9 @@ public class ToolingCorePreferencePage
     extends FieldEditorPreferencePage
     implements IWorkbenchPreferencePage {
 
+    /**
+     * NOTE: update {@link org.eclipse.viatra.documentation.help\src\main\asciidoc\tooling\preferences.adoc} after any changes
+     */
     private static final String DISABLE_TARGET_PLATFORM_UPDATE_DESCRIPTION = "By default, VIATRA Query will always "
             + "update the state of the target platform metamodel index automatically. This index is used by the query "
             + "editor and code generator to load Ecore models and refer to their elements (such as EClasses or features). "

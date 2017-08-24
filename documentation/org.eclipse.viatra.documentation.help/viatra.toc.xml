@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<toc label="VIATRA" topic="html/tutorial/tutorial.html">
+<toc label="VIATRA" topic="html/tutorial/intro.html">
    <anchor id="org.eclipse.viatra"/>
+   <topic label="Reference">
+       <topic href="html/tooling/preferences.html" label="Preferences">
+       </topic>
+   </topic>
 </toc>
