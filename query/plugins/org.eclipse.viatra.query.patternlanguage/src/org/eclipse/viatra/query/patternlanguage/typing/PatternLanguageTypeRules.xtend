@@ -108,20 +108,22 @@ class PatternLanguageTypeRules {
     }
    
    def dispatch void inferTypes(PathExpressionConstraint constraint, TypeInformation information) {
-       if (!typeSystem.isValidType(constraint.head.type)) {
-           return
+       val sourceType = if (!typeSystem.isValidType(constraint.head.type)) {
+           BottomTypeKey.INSTANCE
+       } else {
+           typeSystem.extractTypeDescriptor(constraint.head.type)           
        }
-       val sourceType = typeSystem.extractTypeDescriptor(constraint.head.type)
        var tail = constraint.head.tail
        while (tail.tail !== null) {
            tail = tail.tail
        }
        
-       if (!typeSystem.isValidType(tail.type)) {
-           return
+       val targetType = if (!typeSystem.isValidType(tail.type)) {
+           BottomTypeKey.INSTANCE
+       } else {
+           typeSystem.extractTypeDescriptor(tail.type)
        }
         
-       val targetType = typeSystem.extractTypeDescriptor(tail.type)
        if (sourceType !== null && targetType !== null) {
            information.provideType(new TypeJudgement(constraint.head.src, sourceType))
            information.provideType(new TypeJudgement(constraint.head.dst, targetType))
@@ -165,6 +167,7 @@ class PatternLanguageTypeRules {
                 ))
                 return
             } 
+
             for (var i=0; i < returnTypes.size; i++) {
                 information.provideType(new ConditionalJudgement(
                     reference, 
@@ -179,6 +182,10 @@ class PatternLanguageTypeRules {
                     new JavaTransitiveInstancesKey(returnTypes.get(i).identifier)
                 ))
             }
+            
+            // Short circuit: in case we cannot select between the various conditionals, pick java Object as a base class
+            information.provideType(new TypeJudgement(values.get(0), new JavaTransitiveInstancesKey(Object)))
+            information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(Object)))
            }    
    }
    

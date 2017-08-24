@@ -68,6 +68,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
@@ -353,7 +354,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     }
                 }), Predicates.notNull()));
         // We only need to give warnings/errors if there are multiple possible types
-        if (allPossibleTypes.size() <= 1  ) {
+        if (allPossibleTypes.size() <= 1) {
             return;
         }
 
@@ -913,7 +914,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression,
                 associations)) {
             IInputKey classifier = typeInferrer.getType(variable);
-            if (classifier != null && !(classifier instanceof EDataTypeInSlotsKey)
+            if (classifier instanceof BottomTypeKey) {
+                error("Only simple EDataTypes are allowed in check() and eval() expressions. The variable "
+                        + variable.getName() + " has an unknown type.",
+                        expression.eContainer(), null, EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
+            } else if (classifier != null && !(classifier instanceof EDataTypeInSlotsKey)
                     && !(classifier instanceof JavaTransitiveInstancesKey)) {// null-check needed, otherwise code throws
                                                                              // NPE for classifier.getName()
                 error("Only simple EDataTypes are allowed in check() and eval() expressions. The variable "

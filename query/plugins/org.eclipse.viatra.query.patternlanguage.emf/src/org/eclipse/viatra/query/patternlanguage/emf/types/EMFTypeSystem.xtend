@@ -50,6 +50,7 @@ import org.eclipse.xtext.diagnostics.Severity
 import static com.google.common.base.Preconditions.checkArgument
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType
+import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
 
 /** 
  * @author Zoltan Ujhelyi
@@ -129,7 +130,11 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     }
 
     override boolean isConformant(IInputKey expectedType, IInputKey actualType) {
-        if (expectedType instanceof EClassTransitiveInstancesKey) {
+        if (expectedType instanceof BottomTypeKey) {
+            return false;
+        } else if (actualType instanceof BottomTypeKey) {
+            return false;
+        } else if (expectedType instanceof EClassTransitiveInstancesKey) {
             if (actualType instanceof EClassTransitiveInstancesKey)
                 return isConform((expectedType as EClassTransitiveInstancesKey).getEmfKey(),
                     (actualType as EClassTransitiveInstancesKey).getEmfKey())
