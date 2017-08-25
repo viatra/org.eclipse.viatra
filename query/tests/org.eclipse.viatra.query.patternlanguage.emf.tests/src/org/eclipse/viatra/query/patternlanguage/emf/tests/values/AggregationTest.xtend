@@ -287,12 +287,11 @@ class AggregationTest extends AbstractValidatorTest {
         parsed.assertNoErrors
     }
     @Test
-    def void testIntMinAggregator() {
+    def void testIntMinAggregatorUntyped() {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
             import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-            import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern parameterCount(c) {
                  c == min find helper(_call, #number);   
@@ -307,6 +306,27 @@ class AggregationTest extends AbstractValidatorTest {
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
+        val parameter_c = parsed.patterns.get(0).parameters.get(0)
+        val inferredType = typeInferrer.getType(parameter_c)
+        Assert.assertEquals("Parameter c is expected to have a type of Integers", Integer, (inferredType as JavaTransitiveInstancesKey).instanceClass)
+    }
+    @Test
+    def void testIntMinAggregatorTyped() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            
+            pattern parameterCount(c : java Integer) {
+                 c == min find helper(_call, #number);   
+            }
+
+            pattern helper(call : PatternCall, number : java Integer) {
+                 PatternCall.patternRef.name(call, name);
+                 number == eval(name.length);
+            }
+            ''')
+        tester.validate(parsed).assertOK
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
         Assert.assertEquals("Parameter c is expected to have a type of Integers", Integer, (inferredType as JavaTransitiveInstancesKey).instanceClass)
@@ -331,12 +351,40 @@ class AggregationTest extends AbstractValidatorTest {
             ''')
         tester.validate(parsed).assertAll(
             getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
-        val parameter_c = parsed.patterns.get(0).parameters.get(0)
-        val inferredType = typeInferrer.getType(parameter_c)
-        Assert.assertEquals("Parameter c is expected to have a calculated type of Object", Object, (inferredType as JavaTransitiveInstancesKey).instanceClass)
+    }    
+    @Test
+    def void testSumAggregatorMistyped() {
+        // Before the fix for bug 521361 is merged, this test fails with a stack overflow in the type inferrer
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            
+            pattern sumCPU(n) {
+                n == sum find helper(_, #c);
+            }
+            
+            
+            // HELPER PATTERNS
+            pattern availableCPU(host : HostInstance, value : EInt) {
+                HostInstance.availableCpu(host, value);
+            }
+            pattern parameterCount(c) {
+                 c == min find helper(_call, #n);  // No way to calculate min aggregator type
+            }
+
+            pattern helper(call : PatternCall, number) { // Type declaration missing and cannot be calculated
+                 PatternCall.name(call, name);  // Incorrect attribute access
+                 number == eval(name.length); // Error: Cannot calculate type of eval
+            }
+            ''')
+        tester.validate(parsed).assertAll(
+            getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }    
     @Test
     def void testIntMinAggregator2() {

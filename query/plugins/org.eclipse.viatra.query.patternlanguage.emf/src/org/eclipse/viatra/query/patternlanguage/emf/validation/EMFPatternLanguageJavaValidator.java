@@ -354,7 +354,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     }
                 }), Predicates.notNull()));
         // We only need to give warnings/errors if there are multiple possible types
-        if (allPossibleTypes.size() <= 1) {
+        if (allPossibleTypes.size() <= 1 || allPossibleTypes.contains(BottomTypeKey.INSTANCE)) {
             return;
         }
 
@@ -527,7 +527,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     private void reportMissingParameterTypeDeclaration(Variable parameter, Set<IInputKey> possibleTypes, IInputKey inferredType) {
         if (possibleTypes.size() == 0) {
             return;
-        } else if (possibleTypes.size() == 1) {
+        } else if (possibleTypes.size() == 1 && !(possibleTypes.iterator().next() instanceof BottomTypeKey)) {
             String[] issueData = new String[]{new InputKeyToData(typeSystem).apply(inferredType)};
             info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
                     PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,

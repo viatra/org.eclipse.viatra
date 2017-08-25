@@ -48,6 +48,7 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
+import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -524,6 +525,9 @@ class EMFPatternLanguageJvmModelInferrerUtil {
                 target.append('''new ''')
                 target.append(JavaTransitiveInstancesKey)
                 target.append('''(«clazz».class)''')
+            }
+            case BottomTypeKey: {
+                target.append('''unknown type''')
             }
             case null : {
                 target.append('''null''')

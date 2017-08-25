@@ -231,8 +231,10 @@ public class TypeInformation {
         final Set<IInputKey> allTypes = getMinimizedTypes(expression);
         if (allTypes.size() >= 1) {
             return allTypes.iterator().next();
-        } else {
+        } else if (allTypes.isEmpty()) {
             return null;
+        } else {
+            return BottomTypeKey.INSTANCE;
         }
     }
     

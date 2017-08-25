@@ -52,6 +52,13 @@ class PatternLanguageTypeRules {
    @Inject NumberLiterals literals
    @Inject Logger logger
    
+   def void loadParameterVariableTypes(Pattern pattern, TypeInformation information) {
+       pattern.parameters.forEach[parameter|
+            val typeKey = typeSystem.extractTypeDescriptor(parameter.type)
+            information.declareType(parameter, typeKey)
+        ]
+   }
+   
    def dispatch void inferTypes(Pattern pattern, TypeInformation information) {
        pattern.parameters.forEach[parameter|
             if (typeSystem.isValidType(parameter.type)) {
@@ -183,9 +190,6 @@ class PatternLanguageTypeRules {
                 ))
             }
             
-            // Short circuit: in case we cannot select between the various conditionals, pick java Object as a base class
-            information.provideType(new TypeJudgement(values.get(0), new JavaTransitiveInstancesKey(Object)))
-            information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(Object)))
            }    
    }
    

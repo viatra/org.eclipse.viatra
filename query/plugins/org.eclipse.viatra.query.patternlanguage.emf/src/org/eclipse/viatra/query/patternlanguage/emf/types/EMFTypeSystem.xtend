@@ -103,7 +103,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         switch (classifier) {
             EClass: new EClassTransitiveInstancesKey(classifier as EClass)
             EDataType: new EDataTypeInSlotsKey(classifier as EDataType)
-            default: null
+            default: BottomTypeKey.INSTANCE
         }
     }
 

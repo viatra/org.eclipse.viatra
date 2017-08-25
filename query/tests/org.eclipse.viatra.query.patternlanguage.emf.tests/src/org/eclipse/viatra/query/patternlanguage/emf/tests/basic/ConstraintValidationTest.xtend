@@ -87,31 +87,15 @@ class ConstraintValidationTest extends AbstractValidatorTest {
     }
     @Test
     def rightVariableCompareValidation() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-            pattern constantCompareTest(Name) = {
-                1 == Name;
-                IntValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
-                IntValue(Name2);				// Then this line can be deleted.
-            }
-        ') as PatternModel
-        tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-        )
-    }
-    @Test
-    def rightNewVariableCompareValidation() {
-        val model = parseHelper.parse('
-            package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-            pattern constantCompareTest(A : Pattern) = {
-                Pattern(A);
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            pattern constantCompareTest(A : EClass) = {
+                EClass(A);
                 1 == Name2;
-                IntValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
-                IntValue(Name3);				// Then this line can be deleted.
+                ETypedElement.lowerValue(_, Name2);
             }
-        ') as PatternModel
+        ''') as PatternModel
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
     }
     @Test

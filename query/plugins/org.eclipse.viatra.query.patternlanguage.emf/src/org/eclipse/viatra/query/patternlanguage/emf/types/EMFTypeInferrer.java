@@ -35,6 +35,7 @@ import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -74,6 +75,8 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
         }
         
     };
+    
+    private final static Predicate<Pattern> TYPED_PATTERN_PREDICATE = Predicates.not(UNTYPED_PATTERN_PREDICATE);
     
     /**
      * @since 1.3
@@ -137,6 +140,10 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
         patternsToCheck.add(pattern);
         
         for (Pattern patternToCheck : patternsToCheck) {
+            for (Pattern typedCall : Iterables.filter(CorePatternLanguageHelper.getReferencedPatterns(patternToCheck), TYPED_PATTERN_PREDICATE)) {
+                // Ensure called parameter types are loaded
+                rules.loadParameterVariableTypes(typedCall, types);
+            }
             if (!types.isProcessed(patternToCheck)) {
                 rules.inferTypes(patternToCheck, types);
                 for (PatternBody body : patternToCheck.getBodies()) {
