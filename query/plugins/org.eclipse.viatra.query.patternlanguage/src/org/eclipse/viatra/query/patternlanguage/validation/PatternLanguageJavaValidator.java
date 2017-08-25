@@ -560,7 +560,16 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private static final Comparator<PatternCall> patternCallComparator = new Comparator<PatternCall>() {
         @Override
         public int compare(PatternCall p1, PatternCall p2) {
-            return p1.getPatternRef().getName().compareTo(p2.getPatternRef().getName());
+            Pattern pr1 = p1.getPatternRef();
+            Pattern pr2 = p2.getPatternRef();
+            if (pr1.eIsProxy() && !pr2.eIsProxy()) {
+                return -1;
+            } else if (!pr1.eIsProxy() && pr2.eIsProxy()) {
+                return +1;
+            } else if (pr1.eIsProxy() && pr2.eIsProxy()) {
+                return 0;
+            }
+            return pr1.getName().compareTo(pr2.getName());
         }
     };
 
