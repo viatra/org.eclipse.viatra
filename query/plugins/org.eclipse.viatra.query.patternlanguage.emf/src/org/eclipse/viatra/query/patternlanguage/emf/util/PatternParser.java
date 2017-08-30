@@ -8,10 +8,11 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.query.patternlanguage.emf.util.patternparser;
+package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -30,14 +32,13 @@ import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.LazyStringInputStream;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
  * @since 1.5
  */
-public class PatternParser {
+class PatternParser {
     @Inject
     private Provider<XtextResourceSet> resourceSetProvider;
 
@@ -50,10 +51,12 @@ public class PatternParser {
     @Inject
     private PatternSetValidator validator;
     
-    private String fileExtension; 
+    private String fileExtension;
+
+    private SpecificationBuilder builder;
     
-    
-    public PatternParsingResults parse(String text) {
+    public PatternParsingResults parse(String text, SpecificationBuilder builder) {
+        this.builder = builder;
         fileExtension = extensionProvider.getPrimaryFileExtension();
         return parse(text, createResourceSet());
     }  
@@ -62,20 +65,16 @@ public class PatternParser {
         Resource resource = resource(in, uriToUse, options, resourceSet);
         EList<EObject> contents = resource.getContents();
         
+        List<Pattern> patterns = new ArrayList<>();
         PatternSetValidationDiagnostics diagnostics = validator.validate(resource);
-        if (contents.isEmpty()) {
-            return new PatternParsingResults(diagnostics);
-        } else {
-            List<Pattern> patterns = Lists.newArrayList();
-            for (EObject eObject : contents) {
-                if(eObject instanceof PatternModel){
-                    for(Pattern pattern :((PatternModel) eObject).getPatterns()){
-                        patterns.add(pattern);
-                    }
+        for (EObject eObject : contents) {
+            if(eObject instanceof PatternModel){
+                for(Pattern pattern :((PatternModel) eObject).getPatterns()){
+                    patterns.add(pattern);
                 }
             }
-            return new PatternParsingResults(patterns, diagnostics);
         }
+        return new PatternParsingResults(patterns, diagnostics, builder);
     }
 
 

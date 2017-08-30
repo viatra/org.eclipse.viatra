@@ -10,8 +10,6 @@
  */
 package org.eclipse.viatra.transformation.debug.model.breakpoint;
 
-import java.util.List;
-
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
@@ -70,7 +68,7 @@ public class ConditionalTransformationBreakpointHandler implements ITransformati
         
         ViatraQueryMatcher<? extends IPatternMatch> matcher;
         try {
-            List<IQuerySpecification<?>> parsePatterns = PatternParsingUtil.parsePatterns(patternString);
+            Iterable<IQuerySpecification<?>> parsePatterns = PatternParsingUtil.parseQueryDefinitions(patternString);
             for (IQuerySpecification<?> iQuerySpecification : parsePatterns) {
                 matcher = advancedEngine.getMatcher(iQuerySpecification);
                 advancedEngine.addMatchUpdateListener(matcher, this, false);

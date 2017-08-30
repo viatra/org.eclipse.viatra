@@ -15,21 +15,16 @@ import java.util.List;
 
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
-import org.eclipse.viatra.query.patternlanguage.emf.util.patternparser.PatternParser;
-import org.eclipse.viatra.query.patternlanguage.emf.util.patternparser.PatternParsingResults;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
 /**
- * Allows the caller to parse VIATRA query patterns provided in text format. IMPORTANT: This API class assumes that the Xtext parser infrastructure is already initialized. If its not,  {@link ViatraQueryException} is thrown.
+ * Allows the caller to parse VIATRA query patterns provided in text format. IMPORTANT: This API class assumes that the
+ * Xtext parser infrastructure is already initialized. If its not, {@link ViatraQueryException} is thrown.
  * 
  * @author Peter Lunk
  * @since 1.5
@@ -37,33 +32,40 @@ import com.google.inject.Injector;
 public class PatternParsingUtil {
     public static final String PPERROR = "The VIATRA query language parser infrastructure is not initialized, pattern parsing is not supported.";
 
-    public static List<IQuerySpecification<?>> parsePatterns(String patternString) throws ViatraQueryException {
-        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-        if (injector != null) {
-            PatternParser parser = injector.getInstance(PatternParser.class);
-            PatternParsingResults results = parser.parse(patternString);
-            if (!results.hasError()) {
-                SpecificationBuilder builder = new SpecificationBuilder();
-                List<Pattern> patterns = results.getPatterns();
-                List<IQuerySpecification<?>> specList = Lists.newArrayList();
-                for (Pattern pattern : patterns) {
-                    boolean isPrivate = CorePatternLanguageHelper.isPrivate(pattern);
-                    try {
-                        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> spec = builder
-                                .getOrCreateSpecification(pattern);
-                        if (!isPrivate) {
-                            specList.add(spec);
-                        }
-                    } catch (ViatraQueryException e) {
-                        ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-                    }
-                }
-                return specList;
-            }
-            return Lists.newArrayList();
-        } else {
-            throw new ViatraQueryException(PPERROR, "Error while parsing patterns.");
-        }
+    private PatternParsingUtil() {
+        // Empty utility constructor
+    }
 
+    /**
+     * @return A list of parsed query specifications; the contents of the list is undefined if the source file cannot be
+     *         parsed completely
+     * @deprecated Use {@link #parseQueryDefinitions(String)} or {@link #parsePatternDefinitions(String)} instead
+     */
+    public static List<IQuerySpecification<?>> parsePatterns(String patternString) throws ViatraQueryException {
+        PatternParsingResults results = parsePatternDefinitions(patternString);
+        return Lists.newArrayList(results.getQuerySpecifications());
+    }
+
+    /**
+     * Parses a set of patterns; the returned object can be used either to access the parsed patterns or query
+     * specifications as well; parse errors are also available.
+     * 
+     * @since 1.7
+     */
+    public static PatternParsingResults parsePatternDefinitions(String patternString) {
+        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+        Preconditions.checkState(injector != null, PPERROR);
+        PatternParser parser = injector.getInstance(PatternParser.class);
+        return parser.parse(patternString, new SpecificationBuilder());
+    }
+
+    /**
+     * @return A list of parsed query specifications; the contents of the list is undefined if the source file cannot be
+     *         parsed completely
+     * @since 1.7
+     */
+    public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString)
+            throws ViatraQueryException {
+        return parsePatternDefinitions(patternString).getQuerySpecifications();
     }
 }
