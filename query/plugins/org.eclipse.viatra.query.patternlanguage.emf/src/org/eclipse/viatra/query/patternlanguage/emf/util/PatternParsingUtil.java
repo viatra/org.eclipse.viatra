@@ -39,10 +39,12 @@ public class PatternParsingUtil {
     /**
      * @return A list of parsed query specifications; the contents of the list is undefined if the source file cannot be
      *         parsed completely
-     * @deprecated Use {@link #parseQueryDefinitions(String)} or {@link #parsePatternDefinitions(String)} instead
+     * @deprecated Use {@link #parseQueryDefinitions(String, Injector)} or
+     *             {@link #parsePatternDefinitions(String, Injector)} instead
      */
+    @Deprecated
     public static List<IQuerySpecification<?>> parsePatterns(String patternString) throws ViatraQueryException {
-        PatternParsingResults results = parsePatternDefinitions(patternString);
+        PatternParsingResults results = parsePatternDefinitions(patternString, null);
         return Lists.newArrayList(results.getQuerySpecifications());
     }
 
@@ -53,7 +55,16 @@ public class PatternParsingUtil {
      * @since 1.7
      */
     public static PatternParsingResults parsePatternDefinitions(String patternString) {
-        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+        return parsePatternDefinitions(patternString, XtextInjectorProvider.INSTANCE.getInjector());
+    }
+
+    /**
+     * Parses a set of patterns; the returned object can be used either to access the parsed patterns or query
+     * specifications as well; parse errors are also available.
+     * 
+     * @since 1.7
+     */
+    public static PatternParsingResults parsePatternDefinitions(String patternString, Injector injector) {
         Preconditions.checkState(injector != null, PPERROR);
         PatternParser parser = injector.getInstance(PatternParser.class);
         return parser.parse(patternString, new SpecificationBuilder());
@@ -67,5 +78,15 @@ public class PatternParsingUtil {
     public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString)
             throws ViatraQueryException {
         return parsePatternDefinitions(patternString).getQuerySpecifications();
+    }
+
+    /**
+     * @return A list of parsed query specifications; the contents of the list is undefined if the source file cannot be
+     *         parsed completely
+     * @since 1.7
+     */
+    public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString, Injector injector)
+            throws ViatraQueryException {
+        return parsePatternDefinitions(patternString, injector).getQuerySpecifications();
     }
 }
