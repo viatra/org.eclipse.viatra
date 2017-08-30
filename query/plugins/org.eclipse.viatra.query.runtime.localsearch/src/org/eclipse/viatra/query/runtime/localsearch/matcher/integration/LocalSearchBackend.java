@@ -170,8 +170,9 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     
     /**
      * Return a copy of the current adapters
+     * @since 1.7
      */
-    List<ILocalSearchAdapter> getAdapters() {
+    public List<ILocalSearchAdapter> getAdapters() {
         return Lists.newArrayList(adapters);
     }
     
