@@ -67,7 +67,7 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
     }
 
     private List<PatternComponent> getLeavesOrComponentsWithLeaves(PatternComposite composite) {
-        List<PatternComponent> components = new ArrayList<PatternComponent>();
+        List<PatternComponent> components = new ArrayList<>();
         for (PatternComponent pc : composite.getDirectChildren()) {
             if (pc instanceof PatternLeaf) {
                 components.add(pc);

@@ -76,7 +76,7 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
         if(element instanceof TransformationState){
                 List<RuleActivation> conflictingActivations = ((TransformationState) element).getConflictingActivations();
                 List<RuleActivation> nextActivations = ((TransformationState) element).getNextActivations();
-                return nextActivations.size()>0 | conflictingActivations.size()>0;
+                return nextActivations.size()>0 || conflictingActivations.size()>0;
         } else if(element instanceof CompositeItem){
             Object[] children = ((CompositeItem) element).getChildren();
             return children.length>0;

@@ -34,7 +34,7 @@ public class ContentChildren<E> extends AbstractObservableList {
     private List<E> elements;
 
     public ContentChildren() {
-        this.elements = new LinkedList<E>();
+        this.elements = new LinkedList<>();
     }
 
     @Override

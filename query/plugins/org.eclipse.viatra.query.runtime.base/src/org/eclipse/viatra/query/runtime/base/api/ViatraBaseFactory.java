@@ -41,7 +41,7 @@ public class ViatraBaseFactory {
      * 
      * @return the singleton instance
      */
-    public synchronized static ViatraBaseFactory getInstance() {
+    public static synchronized ViatraBaseFactory getInstance() {
         if (instance == null) {
             instance = new ViatraBaseFactory();
         }

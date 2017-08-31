@@ -40,7 +40,7 @@ public class StackFrameWrapper extends JDIStackFrame {
     protected JDIThread wrappedThread;
     protected JDIStackFrame wrappedStackFrame;
     protected StackFrame fStackFrame;
-    private static Map<JDIStackFrame, StackFrameWrapper> stackFrameMap = new WeakHashMap<JDIStackFrame, StackFrameWrapper>();
+    private static Map<JDIStackFrame, StackFrameWrapper> stackFrameMap = new WeakHashMap<>();
     protected VariablesFactory variablesFactory;
     
     /**

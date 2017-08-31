@@ -18,6 +18,10 @@ package org.eclipse.viatra.query.runtime.matchers.tuple;
  */
 public class Tuples {
 
+    private Tuples() {
+        // Empty utility class constructor
+    }
+    
     /**
      * Creates a flat tuple consisting of the given elements. 
      * For low-arity tuples, specialized implementations 

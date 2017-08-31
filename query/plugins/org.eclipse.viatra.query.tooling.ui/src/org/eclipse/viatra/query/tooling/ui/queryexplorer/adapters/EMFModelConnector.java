@@ -160,7 +160,7 @@ public class EMFModelConnector implements IModelConnector {
     }
 
     protected TreeSelection prepareSelection(Object[] locationObjects) {
-        List<TreePath> paths = new ArrayList<TreePath>();
+        List<TreePath> paths = new ArrayList<>();
         for (Object o : locationObjects) {
             if (o instanceof EObject) {
                 TreePath path = createTreePath(key.getEditorPart(), (EObject) o);
@@ -183,7 +183,7 @@ public class EMFModelConnector implements IModelConnector {
     }
 
     protected TreePath createTreePath(IEditorPart editorPart, EObject obj) {
-        List<Object> nodes = new LinkedList<Object>();
+        List<Object> nodes = new LinkedList<>();
         nodes.add(obj);
         EObject tmp = obj.eContainer();
 

@@ -148,7 +148,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return GenmodelBasedEMFPatternLanguageJavaValidator.class;
     }
 
-    // contributed by org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
+    @Override
     public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
         return EMFPatternLanguageEditorCallback.class;
     }
@@ -170,7 +170,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return ExtensionBasedGenerationFragmentProvider.class;
     }
 
-    // contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
+    @Override
     public IWorkspaceRoot bindIWorkspaceRootToInstance() {
         return ResourcesPlugin.getWorkspace().getRoot();
     }

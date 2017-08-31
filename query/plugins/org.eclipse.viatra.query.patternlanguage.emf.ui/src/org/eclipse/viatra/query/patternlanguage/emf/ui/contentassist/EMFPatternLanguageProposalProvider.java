@@ -290,6 +290,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
             this.ctx = ctx;
         }
  
+        @Override
         public void accept(ICompletionProposal proposal) {
             if (proposal instanceof ConfigurableCompletionProposal) {
                 ConfigurableCompletionProposal prop = (ConfigurableCompletionProposal) proposal;

@@ -38,7 +38,7 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
     private List<ILabelProviderListener> listeners;
 
     public QueryExplorerLabelProvider() {
-        listeners = new ArrayList<ILabelProviderListener>();
+        listeners = new ArrayList<>();
     }
 
     @Override

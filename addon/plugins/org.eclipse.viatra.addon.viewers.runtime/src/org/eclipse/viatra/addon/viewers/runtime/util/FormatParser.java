@@ -29,14 +29,14 @@ import com.google.common.collect.ImmutableMap;
 public class FormatParser {
 
     public static final String ANNOTATION_ID = "Format";
-    private final static String PREFIX = "org.eclipse.viatra.viewers.format.";
-    public final static String COLOR = PREFIX + "color";
-    public final static String LINE_COLOR = PREFIX + "linecolor";
-    public final static String TEXT_COLOR = PREFIX + "textcolor";
-    public final static String LINE_WIDTH = PREFIX + "linewidth";
-    public final static String LINE_STYLE = PREFIX + "linestyle";
-    public final static String ARROW_SOURCE_END = PREFIX + "arrowsourceend";
-    public final static String ARROW_TARGET_END = PREFIX + "arrowtargetend";
+    private static final String PREFIX = "org.eclipse.viatra.viewers.format.";
+    public static final String COLOR = PREFIX + "color";
+    public static final String LINE_COLOR = PREFIX + "linecolor";
+    public static final String TEXT_COLOR = PREFIX + "textcolor";
+    public static final String LINE_WIDTH = PREFIX + "linewidth";
+    public static final String LINE_STYLE = PREFIX + "linestyle";
+    public static final String ARROW_SOURCE_END = PREFIX + "arrowsourceend";
+    public static final String ARROW_TARGET_END = PREFIX + "arrowtargetend";
     
     private static final Map<String, String> parameterMapping = ImmutableMap.<String, String> builder()
             .put("color", COLOR)

@@ -59,7 +59,7 @@ public class MatchParameterValue extends ViatraQueryDebugValue {
         if (fVariables != null) {
             return fVariables;
         } else if (fValue.isReference()) {
-            fVariables = new ArrayList<IJavaVariable>();
+            fVariables = new ArrayList<>();
             if (fValue.isArray()) {
                 int length = fValue.getArrayLength();
                 for (int i = 0; i < length; i++) {

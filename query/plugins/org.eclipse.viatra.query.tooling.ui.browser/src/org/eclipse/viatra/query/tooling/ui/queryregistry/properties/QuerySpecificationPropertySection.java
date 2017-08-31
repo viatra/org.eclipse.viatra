@@ -93,6 +93,7 @@ public class QuerySpecificationPropertySection extends AbstractPropertySection {
         });
     }
     
+    @Override
     public void setInput(IWorkbenchPart part, ISelection selection) {
         super.setInput(part, selection);
         Assert.isTrue(selection instanceof IStructuredSelection);
@@ -101,6 +102,7 @@ public class QuerySpecificationPropertySection extends AbstractPropertySection {
         this.entry = (QueryRegistryTreeEntry) input;
     }
 
+    @Override
     public void refresh() {
         fqnText.setText(entry.getEntry().getFullyQualifiedName());
         sourceText.setText(entry.getEntry().getSourceIdentifier());

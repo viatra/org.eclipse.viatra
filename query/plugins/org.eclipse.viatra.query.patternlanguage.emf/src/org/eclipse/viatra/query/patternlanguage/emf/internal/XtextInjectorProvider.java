@@ -24,7 +24,7 @@ import com.google.inject.Injector;
  */
 public final class XtextInjectorProvider {
 
-    public final static XtextInjectorProvider INSTANCE = new XtextInjectorProvider();
+    public static final XtextInjectorProvider INSTANCE = new XtextInjectorProvider();
     private Injector injector;
 
     private XtextInjectorProvider() {

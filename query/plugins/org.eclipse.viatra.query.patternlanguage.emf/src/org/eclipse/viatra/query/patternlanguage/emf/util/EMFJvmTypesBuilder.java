@@ -32,6 +32,7 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
     /**
      * Overriding parent method to replace logging {@inheritDoc}
      */
+    @Override
     protected <T extends EObject> T initializeSafely(T targetElement, Procedure1<? super T> initializer) {
         if (targetElement != null && initializer != null) {
             try {

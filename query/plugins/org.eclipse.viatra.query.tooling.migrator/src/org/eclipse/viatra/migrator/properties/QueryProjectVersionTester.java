@@ -29,7 +29,7 @@ import org.eclipse.xtext.ui.XtextProjectHelper;
  */
 public class QueryProjectVersionTester extends PropertyTester {
 
-    private final static String VERSION_TESTER = "outdated";
+    private static final String VERSION_TESTER = "outdated";
 
     private boolean hasIncorrectBuildCommandOrdering(IProject project) throws CoreException {
         IProjectDescription desc = project.getDescription();

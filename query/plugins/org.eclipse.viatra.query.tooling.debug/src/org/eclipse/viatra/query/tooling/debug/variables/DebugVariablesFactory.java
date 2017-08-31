@@ -40,11 +40,11 @@ public class DebugVariablesFactory extends VariablesFactory {
 
     @Override
     public List<IJavaVariable> getVariables(JDIStackFrame wrappedStackFrame, ThreadReference threadReference) {
-        List<IJavaVariable> variables = new ArrayList<IJavaVariable>();
+        List<IJavaVariable> variables = new ArrayList<>();
         try {
             VirtualMachine vm = getVirtualMachine(wrappedStackFrame);
             if (vm != null) {
-                List<EngineValue> engines = new ArrayList<EngineValue>();
+                List<EngineValue> engines = new ArrayList<>();
 
                 for (ReferenceType rt : vm.allClasses()) {
                     if (rt.name().matches(NameConstants.VIATRA_QUERY_ENGINE_IMPL_NAME)) {

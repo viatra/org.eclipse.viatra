@@ -72,7 +72,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
         IProject project = projectPage.getSelectedProject();
 
         WorkspaceModifyOperation op = null;
-        List<String> genmodelDependencies = new ArrayList<String>();
+        List<String> genmodelDependencies = new ArrayList<>();
         for (GenModel model : genmodelPage.getSelectedGenmodels()) {
             String modelPluginID = model.getModelPluginID();
             if (!genmodelDependencies.contains(modelPluginID)) {

@@ -43,6 +43,7 @@ public class TransformationDebugUIActivator extends AbstractUIPlugin implements 
 
     private static TransformationDebugUIActivator plugin;
 
+    @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
@@ -61,6 +62,7 @@ public class TransformationDebugUIActivator extends AbstractUIPlugin implements 
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         

@@ -54,43 +54,43 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     /**
      * @since 1.6
      */
-    final protected IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator;
+    protected final IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator;
     /**
      * @since 1.6
      */
-    final protected TupleMask groupMask;
+    protected final TupleMask groupMask;
     /**
      * @since 1.6
      */
-    final protected TupleMask columnMask;
+    protected final TupleMask columnMask;
     /**
      * @since 1.6
      */
-    final protected IPosetComparator posetComparator;
+    protected final IPosetComparator posetComparator;
     /**
      * @since 1.6
      */
-    final protected int sourceWidth;
+    protected final int sourceWidth;
     /**
      * @since 1.6
      */
-    final protected IQueryRuntimeContext runtimeContext;
+    protected final IQueryRuntimeContext runtimeContext;
     /**
      * @since 1.6
      */
-    final protected boolean deleteRederiveEvaluation;
+    protected final boolean deleteRederiveEvaluation;
 
     // invariant: neutral values are not stored
     /**
      * @since 1.6
      */
-    final protected Map<Tuple, Accumulator> memory;
+    protected final Map<Tuple, Accumulator> memory;
     /**
      * @since 1.6
      */
-    final protected Map<Tuple, Accumulator> rederivableMemory;
+    protected final Map<Tuple, Accumulator> rederivableMemory;
 
-    final private AggregateResult NEUTRAL;
+    private final AggregateResult NEUTRAL;
 
     AggregatorOuterIndexer aggregatorOuterIndexer = null;
     @SuppressWarnings("rawtypes")

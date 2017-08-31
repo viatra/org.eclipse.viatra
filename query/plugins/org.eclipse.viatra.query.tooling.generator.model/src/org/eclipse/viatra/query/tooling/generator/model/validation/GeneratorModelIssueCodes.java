@@ -16,7 +16,7 @@ package org.eclipse.viatra.query.tooling.generator.model.validation;
  */
 public class GeneratorModelIssueCodes {
 
-    private final static String GENERATOR_MODEL_PREFIX = "vqgen.";
+    private static final String GENERATOR_MODEL_PREFIX = "vqgen.";
 
-    public final static String PACKAGE_OVERRIDE_CODE = GENERATOR_MODEL_PREFIX + "package_override";
+    public static final String PACKAGE_OVERRIDE_CODE = GENERATOR_MODEL_PREFIX + "package_override";
 }

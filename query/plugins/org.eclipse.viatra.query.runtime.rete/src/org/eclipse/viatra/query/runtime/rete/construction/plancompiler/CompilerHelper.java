@@ -62,7 +62,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class CompilerHelper {
 
-    final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
+    static final RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
 
     /**
      * Makes sure that all variables in the tuple are different so that it can be used as {@link CompiledSubPlan}. If a

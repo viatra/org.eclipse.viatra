@@ -174,6 +174,7 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         else return null;
     }
 
+    @Override
     protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
         Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);

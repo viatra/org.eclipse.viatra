@@ -65,9 +65,9 @@ public class ModelElementCellEditor extends CellEditor {
 
     public ModelElementCellEditor(Table table, PatternMatcherContent patternMatcherContent) {
         super(table, SWT.NONE);
-        this.notifierReference = new WeakReference<Notifier>(patternMatcherContent.getParent().getNotifier());
+        this.notifierReference = new WeakReference<>(patternMatcherContent.getParent().getNotifier());
         this.table = table;
-        this.patternMatcherContent = new WeakReference<PatternMatcherContent>(patternMatcherContent);
+        this.patternMatcherContent = new WeakReference<>(patternMatcherContent);
     }
 
     private class DialogCellLayout extends Layout {
@@ -142,6 +142,7 @@ public class ModelElementCellEditor extends CellEditor {
         dialogButton.setFont(font);
 
         dialogButton.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 if (e.character == '\u001b') { // Escape
                     fireCancelEditor();
@@ -150,6 +151,7 @@ public class ModelElementCellEditor extends CellEditor {
         });
 
         dialogButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 TableItem selection = table.getSelection()[0];
                 MatcherConfiguration matcherConfiguration = (MatcherConfiguration) selection.getData();
@@ -195,6 +197,7 @@ public class ModelElementCellEditor extends CellEditor {
         return editor;
     }
 
+    @Override
     public void deactivate() {
         if (inputText != null && !inputText.isDisposed()) {
             inputText.removeKeyListener(getTextKeyListener());
@@ -315,7 +318,7 @@ public class ModelElementCellEditor extends CellEditor {
     }
 
     private Object[] getElements(Object inputElement, String restrictionFqn) {
-        List<Object> result = new ArrayList<Object>();
+        List<Object> result = new ArrayList<>();
         TreeIterator<EObject> iterator = null;
         EObject obj = null;
 
@@ -360,7 +363,7 @@ public class ModelElementCellEditor extends CellEditor {
 
     @SuppressWarnings("rawtypes")
     private List<String> collectAllInterfaces(Class clazz) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         Class[] interfaces = clazz.getInterfaces();
 
         for (Class i : interfaces) {

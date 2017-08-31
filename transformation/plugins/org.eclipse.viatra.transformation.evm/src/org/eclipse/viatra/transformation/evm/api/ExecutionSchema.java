@@ -47,6 +47,7 @@ public class ExecutionSchema extends RuleEngine {
     /**
      * Disposes of the scheduler.
      */
+    @Override
     public void dispose() {
         scheduler.dispose();
     }

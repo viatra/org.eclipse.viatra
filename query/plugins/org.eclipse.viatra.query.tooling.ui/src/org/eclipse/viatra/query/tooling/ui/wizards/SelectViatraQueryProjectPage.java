@@ -43,7 +43,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 
 public class SelectViatraQueryProjectPage extends WizardPage {
-    private final static class ProjectColumnLabelProvider extends ColumnLabelProvider {
+    private static final class ProjectColumnLabelProvider extends ColumnLabelProvider {
         private Color disabledColor;
 
         public ProjectColumnLabelProvider(Color disabledColor) {

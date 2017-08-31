@@ -29,7 +29,7 @@ public class Options {
         INDEXER_AND_REMOTEPROXY, ALL
     }
 
-    public final static NodeSharingOption nodeSharingOption = NodeSharingOption.ALL;
+    public static final NodeSharingOption nodeSharingOption = NodeSharingOption.ALL;
     public static final boolean releaseOnetimeIndexers = true; // effective only
                                                                // with
                                                                // nodesharing
@@ -39,9 +39,9 @@ public class Options {
         EAGER, LAZY
     }
 
-    public final static InjectivityStrategy injectivityStrategy = InjectivityStrategy.EAGER;
+    public static final InjectivityStrategy injectivityStrategy = InjectivityStrategy.EAGER;
 
-    public final static boolean enableInheritance = true;
+    public static final boolean enableInheritance = true;
 
     // public final static boolean useComplementerMask = true;
 
@@ -49,8 +49,8 @@ public class Options {
 
     // public final static boolean synchronous = false;
 
-    public final static int numberOfLocalContainers = 1;
-    public final static int firstFreeContainer = 0; // 0 if head container is
+    public static final int numberOfLocalContainers = 1;
+    public static final int firstFreeContainer = 0; // 0 if head container is
                                                     // free to contain pattern
                                                     // bodies, 1 otherwise
 
@@ -84,7 +84,7 @@ public class Options {
         }
     }
 
-    public final static BuilderMethod builderMethod =
+    public static final BuilderMethod builderMethod =
     // BuilderMethod.PSYSTEM_BASIC_LINEAR;
     BuilderMethod.PSYSTEM_QUASITREE;
     

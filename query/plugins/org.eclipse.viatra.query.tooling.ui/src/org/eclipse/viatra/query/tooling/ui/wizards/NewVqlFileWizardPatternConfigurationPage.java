@@ -85,7 +85,7 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
         importListAdapter = new ImportListAdapter(metamodelLoader);
         importListLabelProvider = new ImportListLabelProvider();
 
-        importList = new ListDialogField<String>(importListAdapter, buttonLiterals, importListLabelProvider);
+        importList = new ListDialogField<>(importListAdapter, buttonLiterals, importListLabelProvider);
         importList.setLabelText("&Imported packages:");
         importList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] { "EPackage" }, true));
         importList.setRemoveButtonIndex(1);
@@ -97,7 +97,7 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
         objectListAdapter = new ObjectListAdapter(this, importList, metamodelLoader);
         objectListLabelProvider = new ObjectListLabelProvider();
 
-        objectList = new ListDialogField<ObjectParameter>(objectListAdapter, buttonLiterals, objectListLabelProvider);
+        objectList = new ListDialogField<>(objectListAdapter, buttonLiterals, objectListLabelProvider);
         objectList.setLabelText("&Pattern parameters:");
         objectList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] { "Name", "Type" }, true));
         // disable modify button for an empty list

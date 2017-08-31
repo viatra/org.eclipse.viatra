@@ -40,6 +40,7 @@ public class AdaptableRuleBase extends RuleBase {
         return instance;
     }
 
+    @Override
     protected <EventAtom> boolean removeRule(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
         boolean result = super.removeRule(specification, filter);

@@ -24,7 +24,7 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     /**
      * EXPERIMENTAL
      */
-    private final static int reteThreads = 0;
+    private static final int reteThreads = 0;
     
     /**
      * @since 1.5

@@ -61,7 +61,7 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     /**
      * This predicate selects a pattern that has at least one untyped parameter
      */
-    private final static Predicate<Pattern> UNTYPED_PATTERN_PREDICATE = new Predicate<Pattern>(){
+    private static final Predicate<Pattern> UNTYPED_PATTERN_PREDICATE = new Predicate<Pattern>(){
 
         @Override
         public boolean apply(Pattern input) {
@@ -76,7 +76,7 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
         
     };
     
-    private final static Predicate<Pattern> TYPED_PATTERN_PREDICATE = Predicates.not(UNTYPED_PATTERN_PREDICATE);
+    private static final Predicate<Pattern> TYPED_PATTERN_PREDICATE = Predicates.not(UNTYPED_PATTERN_PREDICATE);
     
     /**
      * @since 1.3

@@ -66,7 +66,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
 
     public PatternMatcherRootContent(RootContent parent, PatternMatcherRootContentKey key) {
         super(parent);
-        this.children = new ContentChildren<PatternMatcherContent>();
+        this.children = new ContentChildren<>();
         this.taintListener = new ContentEngineTaintListener();
         this.mapping = Maps.newHashMap();
         this.key = key;

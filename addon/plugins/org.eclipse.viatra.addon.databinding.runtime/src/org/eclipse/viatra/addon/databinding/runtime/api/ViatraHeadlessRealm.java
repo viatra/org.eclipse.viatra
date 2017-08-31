@@ -32,6 +32,7 @@ public class ViatraHeadlessRealm extends Realm {
         return true;
     }
 
+    @Override
     protected void syncExec(Runnable runnable) {
         runnable.run();
     }
@@ -39,6 +40,7 @@ public class ViatraHeadlessRealm extends Realm {
     /**
      * @throws UnsupportedOperationException
      */
+    @Override
     public void asyncExec(Runnable runnable) {
         throw new UnsupportedOperationException("asyncExec is unsupported");
     }

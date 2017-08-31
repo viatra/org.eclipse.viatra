@@ -25,7 +25,7 @@ public class DetailComparator implements Comparator<String> {
     private Map<String, Integer> parameterMap;
 
     public DetailComparator(List<String> parameterNames) {
-        parameterMap = new HashMap<String, Integer>();
+        parameterMap = new HashMap<>();
         for (int i = 0; i < parameterNames.size(); i++) {
             parameterMap.put(parameterNames.get(i), Integer.valueOf(i));
         }

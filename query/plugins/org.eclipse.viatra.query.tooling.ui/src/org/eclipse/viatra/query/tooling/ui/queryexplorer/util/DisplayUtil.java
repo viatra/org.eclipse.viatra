@@ -74,7 +74,7 @@ public class DisplayUtil {
 
     @Inject
     private IResourceSetProvider resSetProvider;
-    private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<IProject, ResourceSet>();
+    private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<>();
 
     /**
      * Creates a marker with a warning for the given pattern. The marker's message will be set to the given message
@@ -135,7 +135,7 @@ public class DisplayUtil {
      *            the uri
      * @return the {@link AdapterFactoryLabelProvider} instance
      */
-    public synchronized static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
+    public static synchronized AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
         if (uriConfElementMap == null) {
             uriConfElementMap = collectItemProviders();
         }
@@ -160,7 +160,7 @@ public class DisplayUtil {
     }
 
     private static Map<URI, IConfigurationElement> collectItemProviders() {
-        Map<URI, IConfigurationElement> result = new HashMap<URI, IConfigurationElement>();
+        Map<URI, IConfigurationElement> result = new HashMap<>();
         try {
             IExtensionRegistry reg = Platform.getExtensionRegistry();
             IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.emf.edit.itemProviderAdapterFactories");

@@ -21,11 +21,13 @@ public class ViewersZestPlugin extends AbstractUIPlugin {
     // The shared instance
     private static ViewersZestPlugin plugin;
 
+    @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);

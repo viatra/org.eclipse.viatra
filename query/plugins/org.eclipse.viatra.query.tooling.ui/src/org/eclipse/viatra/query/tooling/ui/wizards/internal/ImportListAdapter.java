@@ -66,7 +66,7 @@ public class ImportListAdapter implements IListAdapter<String> {
      * @return the array of {@link EPackage}s
      */
     private Object[] getElements(ListDialogField<String> field) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         Collection<String> packages = metamodelLoader.listEPackages();
         for (String ePackage : packages) {

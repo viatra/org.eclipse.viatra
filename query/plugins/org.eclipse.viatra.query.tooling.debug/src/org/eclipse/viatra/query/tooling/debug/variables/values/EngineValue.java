@@ -58,7 +58,7 @@ public class EngineValue extends ViatraQueryDebugValue implements Comparable<Eng
             return fVariables;
         } else {
             try {
-                fVariables = new ArrayList<IJavaVariable>();
+                fVariables = new ArrayList<>();
                 ValueWrapper matchers = fValue.get("matchers").get("table");
 
                 if (matchers.isArray()) {

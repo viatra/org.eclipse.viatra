@@ -40,8 +40,8 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
     
     public RootContent() {
         super(null);
-        this.children = new ContentChildren<PatternMatcherRootContent>();
-        this.mapping = new HashMap<PatternMatcherRootContentKey, PatternMatcherRootContent>();
+        this.children = new ContentChildren<>();
+        this.mapping = new HashMap<>();
     }
 
     public void addPatternMatcherRoot(IEditorPart editorPart, Notifier notifier, QueryEvaluationHint hint) {

@@ -46,6 +46,9 @@ public enum LocalSearchGenericBackendFactory implements IQueryBackendFactory {
                 return new GenericLocalSearchResultProvider(this, context, query, planProvider, hints);
             }
 
+            /**
+             * @deprecated use the general cache
+             */
             @Override
             @Deprecated
             public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {

@@ -50,7 +50,7 @@ public class DetailsViewerUtil {
     private final Set<String> primitiveTypes;
 
     protected DetailsViewerUtil() {
-        primitiveTypes = new HashSet<String>();
+        primitiveTypes = new HashSet<>();
         primitiveTypes.add(Boolean.class.getName());
         primitiveTypes.add(Character.class.getName());
         primitiveTypes.add(Byte.class.getName());

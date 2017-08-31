@@ -153,7 +153,7 @@ public class ReteRecipeCompiler {
         this(plannerStrategy, logger, metaContext, queryCacheContext, hintProvider, new QueryAnalyzer(metaContext));
     }
 
-    final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
+    static final RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
 
     // INTERNALLY CACHED
     private Map<PBody, SubPlan> plannerCache = new HashMap<PBody, SubPlan>();

@@ -208,6 +208,8 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
             //setImageDescriptor(ViewersToolingPlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID,"icons/layout-join-vertical_16x16.png"));
 //    		setEnabled(isEnabled());
         }
+        
+        @Override
         public void run() {
             if (defaultComponent.equals(currentComponent)) {
                 // do nothing, we cannot close the default component
@@ -239,6 +241,8 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
             setImageDescriptor(ViewersToolingPlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID,"icons/expand.gif"));
             //setImageDescriptor(ViewersToolingPlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID,"icons/layout-split-vertical_16x16.png"));
         }
+        
+        @Override
         public void run() {
             ViewersMultiSandboxViewComponent newC = new ViewersMultiSandboxViewComponent(ViewersMultiSandboxView.this);
             additionalComponents.add(newC);
@@ -263,6 +267,8 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
         {
             setState();
         }
+        
+        @Override
         public void run() {
             isVerticalSashing = !isVerticalSashing;
             if (isVerticalSashing) {

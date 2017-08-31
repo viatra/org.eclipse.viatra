@@ -46,8 +46,8 @@ public class DetailObserver extends AbstractObservableList {
 
     public DetailObserver(PatternMatchContent pm) {
         this.patternMatch = pm;
-        this.details = new ArrayList<DetailElement>();
-        this.valueMap = new HashMap<IObservableValue, DetailElement>();
+        this.details = new ArrayList<>();
+        this.valueMap = new HashMap<>();
         this.listener = new ValueChangeListener();
         for (String param : MatcherProperties.getPropertyNames(patternMatch.getPatternMatch().specification())) {
             IObservableValue oval = MatcherProperties.getObservableValue(patternMatch.getPatternMatch().specification(), patternMatch.getPatternMatch(), param);

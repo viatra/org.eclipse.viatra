@@ -125,7 +125,7 @@ import com.google.inject.Inject;
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
 
-    private final static class InputKeyToData implements Function<IInputKey, String> {
+    private static final class InputKeyToData implements Function<IInputKey, String> {
         
         EMFTypeSystem typeSystem;
         
@@ -153,7 +153,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
-    private final static class SamePackageUri implements Predicate<PackageImport> {
+    private static final class SamePackageUri implements Predicate<PackageImport> {
         private final String nsUri;
 
         private SamePackageUri(String nsUri) {
@@ -166,7 +166,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
     
-    private final static class EClassType implements Predicate<IInputKey> {
+    private static final class EClassType implements Predicate<IInputKey> {
 
         @Override
         public boolean apply(IInputKey input) {
@@ -228,6 +228,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             this.logger = logger;
         }
 
+        @Override
         protected void handleInvocationTargetException(Throwable targetException, State state) {
             // superclass ignores NPEs, instead we should at least log them
             if (targetException instanceof NullPointerException) {

@@ -26,6 +26,7 @@ public class ExtendedPatternLanguageGenerator extends Generator {
             @Override
             public Injector createInjector() {
                 return Guice.createInjector(new XtextRuntimeModule() {
+                    @Override
                     public void configureIXtext2EcorePostProcessor(Binder binder) {
                         try {
                             Class.forName("org.eclipse.xtend.expression.ExecutionContext"); // XtextRuntimeModule does the same

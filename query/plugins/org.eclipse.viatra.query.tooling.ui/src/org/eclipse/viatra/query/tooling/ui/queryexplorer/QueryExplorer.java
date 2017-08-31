@@ -136,8 +136,8 @@ public class QueryExplorer extends ViewPart {
     
     
     public QueryExplorer() {
-        modelConnectorMap = new HashMap<PatternMatcherRootContentKey, IModelConnector>();
-        modelConnectorMapReversed = new HashMap<IModelConnector, PatternMatcherRootContentKey>();
+        modelConnectorMap = new HashMap<>();
+        modelConnectorMapReversed = new HashMap<>();
         patternsViewerInput = new PatternsViewerInput();
         treeViewerRootContent = new RootContent();
         flatCP = new PatternsViewerFlatContentProvider();
@@ -201,7 +201,7 @@ public class QueryExplorer extends ViewPart {
     }
     
     public Collection<PatternMatcherRootContentKey> getPatternMatcherRootContentKeys() {
-        Set<PatternMatcherRootContentKey> keys = new HashSet<PatternMatcherRootContentKey>();
+        Set<PatternMatcherRootContentKey> keys = new HashSet<>();
         keys.addAll(this.modelConnectorMap.keySet());
         return Collections.unmodifiableSet(keys);
     }

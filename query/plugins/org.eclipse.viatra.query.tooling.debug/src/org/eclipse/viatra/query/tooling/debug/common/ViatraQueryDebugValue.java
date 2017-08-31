@@ -46,6 +46,7 @@ public abstract class ViatraQueryDebugValue extends JDIValue {
         this.additionalData = additionalData;
     }
 
+    @Override
     protected synchronized List<IJavaVariable> getVariablesList() throws DebugException {
         return Collections.emptyList();
     }

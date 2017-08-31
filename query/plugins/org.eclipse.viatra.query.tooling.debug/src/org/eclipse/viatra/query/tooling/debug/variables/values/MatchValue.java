@@ -46,7 +46,7 @@ public class MatchValue extends ViatraQueryDebugValue {
             return fVariables;
         } else {
             try {
-                fVariables = new ArrayList<IJavaVariable>();
+                fVariables = new ArrayList<>();
 
                 ValueWrapper parameters = fValue.invoke("toArray");
                 ValueWrapper parameterNames = fValue.invoke("parameterNames").invoke("toArray");

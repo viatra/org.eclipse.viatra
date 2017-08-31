@@ -103,7 +103,7 @@ public class ReteEngine implements IQueryBackend {
     /**
      * initializes engine components
      */
-    synchronized private void initEngine() {
+    private synchronized void initEngine() {
         this.disposedOrUninitialized = false;
         this.disconnectables = new LinkedList<Disconnectable>();
         // this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
@@ -135,7 +135,7 @@ public class ReteEngine implements IQueryBackend {
     /**
      * deconstructs engine components
      */
-    synchronized private void deconstructEngine() {
+    private synchronized void deconstructEngine() {
         ensureInitialized();
         reteNet.kill();
 

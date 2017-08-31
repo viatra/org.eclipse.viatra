@@ -35,8 +35,8 @@ public class PatternComposite extends PatternComponent {
     public PatternComposite(String patternNameFragment, PatternComposite parent) {
         super();
         this.patternNameFragment = patternNameFragment;
-        this.children = new ArrayList<PatternComponent>();
-        this.fragmentMap = new HashMap<String, PatternComposite>();
+        this.children = new ArrayList<>();
+        this.fragmentMap = new HashMap<>();
         this.parent = parent;
     }
     
@@ -53,7 +53,7 @@ public class PatternComposite extends PatternComponent {
      * @return the list of components
      */
     public List<PatternComponent> find(String patternFragment) {
-        List<PatternComponent> components = new ArrayList<PatternComponent>();
+        List<PatternComponent> components = new ArrayList<>();
         find(patternFragment, components);
         return components;
     }
@@ -130,7 +130,7 @@ public class PatternComposite extends PatternComponent {
      * @return the list of leaves
      */
     public List<PatternLeaf> getAllLeaves() {
-        List<PatternLeaf> leaves = new ArrayList<PatternLeaf>();
+        List<PatternLeaf> leaves = new ArrayList<>();
 
         for (PatternComponent component : children) {
             if (component instanceof PatternLeaf) {
@@ -149,7 +149,7 @@ public class PatternComposite extends PatternComponent {
      * @return the list of direct leaf elements
      */
     public List<PatternLeaf> getDirectLeaves() {
-        List<PatternLeaf> leaves = new ArrayList<PatternLeaf>();
+        List<PatternLeaf> leaves = new ArrayList<>();
 
         for (PatternComponent component : children) {
             if (component instanceof PatternLeaf) {
@@ -164,7 +164,7 @@ public class PatternComposite extends PatternComponent {
      * Removes all composite elements which do not have a leaf component under it.
      */
     public void purge() {
-        List<PatternComponent> copyOfChildren = new ArrayList<PatternComponent>(children);
+        List<PatternComponent> copyOfChildren = new ArrayList<>(children);
 
         for (PatternComponent component : copyOfChildren) {
             if (component instanceof PatternComposite) {
@@ -185,7 +185,7 @@ public class PatternComposite extends PatternComponent {
      * @return
      */
     public List<PatternComponent> getAllChildren() {
-        List<PatternComponent> result = new ArrayList<PatternComponent>(this.children);
+        List<PatternComponent> result = new ArrayList<>(this.children);
 
         for (PatternComponent component : children) {
             if (component instanceof PatternComposite) {
@@ -198,7 +198,7 @@ public class PatternComposite extends PatternComponent {
 
     @Override
     protected Set<PatternComponent> propagateSelectionStateUpwards() {
-        Set<PatternComponent> changedComponents = new HashSet<PatternComponent>();
+        Set<PatternComponent> changedComponents = new HashSet<>();
 
         boolean allSelected = true;
         for (PatternComponent child : children) {
@@ -224,7 +224,7 @@ public class PatternComposite extends PatternComponent {
 
     @Override
     protected Set<PatternComponent> propagateSelectionStateDownwards() {
-        Set<PatternComponent> changedComponents = new HashSet<PatternComponent>();
+        Set<PatternComponent> changedComponents = new HashSet<>();
 
         for (PatternComponent child : children) {
             if (child.selected != this.selected) {

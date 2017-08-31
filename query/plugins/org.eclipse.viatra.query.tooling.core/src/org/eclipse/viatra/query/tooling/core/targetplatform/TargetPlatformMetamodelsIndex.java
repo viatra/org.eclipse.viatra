@@ -193,7 +193,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         private final String packageURI;
         private Logger logger;
 
-        private final static String GENMODEL_LOAD_ERROR = "Error while loading genmodel '%s' for EPackage '%s'. Check corresponding plugin.xml declaration.";
+        private static final String GENMODEL_LOAD_ERROR = "Error while loading genmodel '%s' for EPackage '%s'. Check corresponding plugin.xml declaration.";
         
         private TargetPlatformMetamodel(String packageURI, URI genModel, Logger logger) {
             this.logger = logger;

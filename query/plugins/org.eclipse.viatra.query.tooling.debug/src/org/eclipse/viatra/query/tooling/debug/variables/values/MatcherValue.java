@@ -60,7 +60,7 @@ public class MatcherValue extends ViatraQueryDebugValue {
         if (fVariables != null) {
             return fVariables;
         } else {
-            fVariables = new ArrayList<IJavaVariable>();
+            fVariables = new ArrayList<>();
 
             ValueWrapper matchesWrapper = fValue.invoke("getAllMatches").get("elementData");
             if (matchesWrapper.isArray()) {

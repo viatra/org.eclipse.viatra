@@ -151,7 +151,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
      * @return the array of {@link EClassifier}s
      */
     private Object[] getElements() {
-        List<EObject> result = new ArrayList<EObject>();
+        List<EObject> result = new ArrayList<>();
         for (String _nsURI : currentPackages) {
             EPackage _package = metamodelLoader.loadPackage(set, _nsURI);
             TreeIterator<EObject> iterator = _package.eAllContents();

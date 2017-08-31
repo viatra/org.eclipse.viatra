@@ -53,7 +53,7 @@ public abstract class PatternComponent {
     public abstract void updateHasChildren();
 
     public Collection<PatternComponent> setCheckedState(boolean checked) {
-        Set<PatternComponent> changedComponents = new HashSet<PatternComponent>();
+        Set<PatternComponent> changedComponents = new HashSet<>();
 
         if (this.selected != checked) {
             changedComponents.add(this);

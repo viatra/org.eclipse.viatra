@@ -85,7 +85,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
     private void setCheckedStatesOnNewPatterns(final QueryExplorer queryExplorerInstance,
             final PatternComposite viewerInput, final Collection<IQuerySpecification<?>> newSpecifications) {
-        final List<PatternComponent> components = new ArrayList<PatternComponent>();
+        final List<PatternComponent> components = new ArrayList<>();
         for (final IQuerySpecification<?> specification : newSpecifications) {
             final PatternComponent component = viewerInput.addComponent(specification.getFullyQualifiedName());
             components.add(component);

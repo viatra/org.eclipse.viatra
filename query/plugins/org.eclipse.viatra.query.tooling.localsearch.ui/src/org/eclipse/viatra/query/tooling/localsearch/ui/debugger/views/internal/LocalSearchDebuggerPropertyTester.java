@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearc
 
 public class LocalSearchDebuggerPropertyTester extends PropertyTester {
 
-    private final static String IS_DEBUGGER_RUNNING = "operational";
+    private static final String IS_DEBUGGER_RUNNING = "operational";
     /**
      * @since 1.4
      */

@@ -71,7 +71,7 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
         super(parent);
         this.labelProvider = labelProvider;
         this.contentProvider = new ElementSelectionDialogContentProvider();
-        this.elements = new ArrayList<Object>();
+        this.elements = new ArrayList<>();
         this.header = header;
     }
 
@@ -85,7 +85,7 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
     @Override
     protected void computeResult() {
         TableItem[] selection = this.tableViewer.getTable().getSelection();
-        List<Object> result = new ArrayList<Object>();
+        List<Object> result = new ArrayList<>();
         for (TableItem item : selection) {
             result.add(item.getData());
         }
@@ -155,6 +155,7 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
         text.addListener(SWT.Modify, listener);
 
         text.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.keyCode == SWT.ARROW_DOWN) {
                     tableViewer.getTable().setFocus();

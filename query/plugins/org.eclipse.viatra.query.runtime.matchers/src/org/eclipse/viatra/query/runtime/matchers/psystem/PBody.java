@@ -39,8 +39,8 @@ import com.google.common.collect.Lists;
  */
 public class PBody implements PTraceable {
     
-    public final static String VIRTUAL_VARIABLE_PREFIX = ".virtual";
-    private final static String VIRTUAL_VARIABLE_PATTERN = VIRTUAL_VARIABLE_PREFIX + "{%d}";
+    public static final String VIRTUAL_VARIABLE_PREFIX = ".virtual";
+    private static final String VIRTUAL_VARIABLE_PATTERN = VIRTUAL_VARIABLE_PREFIX + "{%d}";
     
     private PQuery query;
 
@@ -60,10 +60,10 @@ public class PBody implements PTraceable {
     public PBody(PQuery query) {
         super();
         this.query = query;
-        allVariables = new LinkedHashSet<PVariable>();
-        uniqueVariables = new LinkedHashSet<PVariable>();
-        variablesByName = new HashMap<Object, PVariable>();
-        constraints = new LinkedHashSet<PConstraint>();
+        allVariables = new LinkedHashSet<>();
+        uniqueVariables = new LinkedHashSet<>();
+        variablesByName = new HashMap<>();
+        constraints = new LinkedHashSet<>();
     }
 
     /**

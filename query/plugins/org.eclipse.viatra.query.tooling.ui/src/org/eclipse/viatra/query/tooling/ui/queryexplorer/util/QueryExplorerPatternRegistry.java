@@ -91,8 +91,8 @@ public class QueryExplorerPatternRegistry {
                         return Lists.newArrayList();
                     }
                 });
-        patternNameMap = new HashMap<String, IQuerySpecification<?>>();
-        activePatterns = new ArrayList<IQuerySpecification<?>>();
+        patternNameMap = new HashMap<>();
+        activePatterns = new ArrayList<>();
         builder = new SpecificationBuilder();
     }
 
@@ -138,7 +138,7 @@ public class QueryExplorerPatternRegistry {
         Set<IQuerySpecification<?>> activeSpecifications = Sets.newLinkedHashSet();
 
         if (patternModel != null) {
-            List<IStatus> warnings = new ArrayList<IStatus>();
+            List<IStatus> warnings = new ArrayList<>();
             for (Pattern pattern : patternModel.getPatterns()) {
                 IQuerySpecification<?> spec = builder
                         .getOrCreateSpecification(pattern, allCreatedSpecifications, false);

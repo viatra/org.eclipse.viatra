@@ -121,7 +121,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
                 return true;
             }
         }
-        return true;
+        return false;
     }
     
     @Override
