@@ -37,6 +37,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
 
 /**
  * {@link ViatraQueryMatcher} implementation inferrer.
@@ -53,8 +54,10 @@ class PatternMatcherClassInferrer {
     @Extension private JvmAnnotationReferenceBuilder annBuilder
     @Inject private IErrorFeedback feedback
 
-    def inferMatcherClassElements(JvmGenericType matcherClass, Pattern pattern, JvmDeclaredType specificationClass, JvmDeclaredType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
+    def inferMatcherClassElements(JvmGenericType matcherClass, Pattern pattern, JvmDeclaredType specificationClass, JvmDeclaredType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder, EMFPatternLanguageGeneratorConfig config) {
         try {
+          val generateMatchProcessors = config.generateMatchProcessors
+            
           this.builder = builder
           this.annBuilder = annBuilder
         
@@ -62,7 +65,7 @@ class PatternMatcherClassInferrer {
           matcherClass.inferStaticMethods(pattern)
           matcherClass.inferFields(pattern)
           matcherClass.inferConstructors(pattern)
-          matcherClass.inferMethods(pattern, matchClass)
+          matcherClass.inferMethods(pattern, matchClass, generateMatchProcessors)
         
           // add querySpecification() field to Matcher class
           matcherClass.members += pattern.toMethod("querySpecification",
@@ -141,7 +144,6 @@ class PatternMatcherClassInferrer {
        def inferConstructors(JvmDeclaredType matcherClass, Pattern pattern) {
 
         matcherClass.members += pattern.toConstructor [
-            simpleName = pattern.matcherClassName
             visibility = JvmVisibility::PRIVATE
             documentation = pattern.javadocMatcherConstructorEngine.toString
             exceptions += typeRef(typeof (ViatraQueryException))
@@ -152,7 +154,7 @@ class PatternMatcherClassInferrer {
     /**
         * Infers methods for Matcher class based on the input 'pattern'.
         */
-       def inferMethods(JvmDeclaredType type, Pattern pattern, JvmType matchClass) {
+       def inferMethods(JvmDeclaredType type, Pattern pattern, JvmType matchClass, boolean generateMatchProcessor) {
            this.builder = builder
            // Adding type-safe matcher calls
         // if the pattern not defines parameters, the Matcher class contains only the hasMatch method
@@ -193,17 +195,19 @@ class PatternMatcherClassInferrer {
                        return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
                    '''
                ]
-               type.members += pattern.toMethod("forEachMatch", null) [
-                   returnType = typeRef(Void::TYPE)
-                   documentation = pattern.javadocForEachMatchMethod.toString
-                   for (parameter : pattern.parameters){
-                    parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
-                   }
-                parameters += pattern.toParameter("processor", typeRef(typeof (IMatchProcessor), typeRef(matchClass).wildcardSuper))
-                   body = '''
-                       rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
-                   '''
-               ]
+               if (generateMatchProcessor) {
+                   type.members += pattern.toMethod("forEachMatch", null) [
+                       returnType = typeRef(Void::TYPE)
+                       documentation = pattern.javadocForEachMatchMethod.toString
+                       for (parameter : pattern.parameters){
+                        parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
+                       }
+                    parameters += pattern.toParameter("processor", typeRef(typeof (IMatchProcessor), typeRef(matchClass).wildcardSuper))
+                       body = '''
+                           rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
+                       '''
+                   ]
+               }
                type.members += pattern.toMethod("forOneArbitraryMatch", typeRef(typeof(boolean))) [
                    documentation = pattern.javadocForOneArbitraryMatchMethod.toString
                    for (parameter : pattern.parameters){
@@ -294,9 +298,9 @@ class PatternMatcherClassInferrer {
                visibility = JvmVisibility::PROTECTED
                parameters += pattern.toParameter("match", typeRef(typeof (Object)).addArrayTypeDimension)
            ]
-           tupleToMatchMethod.body = '''«pattern.inferTupleToMatchMethodBody»'''
-           arrayToMatchMethod.body = '''«pattern.inferArrayToMatchMethodBody»'''
-           arrayToMatchMutableMethod.body = '''«pattern.inferArrayToMatchMutableMethodBody»'''
+           tupleToMatchMethod.body = '''«pattern.inferTupleToMatchMethodBody(matchClass)»'''
+           arrayToMatchMethod.body = '''«pattern.inferArrayToMatchMethodBody(matchClass)»'''
+           arrayToMatchMutableMethod.body = '''«pattern.inferArrayToMatchMutableMethodBody(matchClass)»'''
            matcherClass.members += tupleToMatchMethod
            matcherClass.members += arrayToMatchMethod
            matcherClass.members += arrayToMatchMutableMethod
@@ -305,10 +309,10 @@ class PatternMatcherClassInferrer {
       /**
        * Infers the tupleToMatch method body.
        */
-      def StringConcatenationClient inferTupleToMatchMethodBody(Pattern pattern) {
+      def StringConcatenationClient inferTupleToMatchMethodBody(Pattern pattern, JvmType matchClass) {
            '''
             try {
-                return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») t.get(«p.positionConstant»)«ENDFOR»);
+                return «matchClass».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») t.get(«p.positionConstant»)«ENDFOR»);
             } catch(ClassCastException e) {
                 «inferErrorLogging("Element(s) in tuple not properly typed!", "e")»
                 return null;
@@ -319,10 +323,10 @@ class PatternMatcherClassInferrer {
       /**
        * Infers the arrayToMatch method body.
        */
-      def StringConcatenationClient inferArrayToMatchMethodBody(Pattern pattern) {
+      def StringConcatenationClient inferArrayToMatchMethodBody(Pattern pattern, JvmType matchClass) {
           '''
             try {
-                return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») match[«p.positionConstant»]«ENDFOR»);
+                return «matchClass».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») match[«p.positionConstant»]«ENDFOR»);
             } catch(ClassCastException e) {
                 «inferErrorLogging("Element(s) in array not properly typed!", "e")»
                 return null;
@@ -332,10 +336,10 @@ class PatternMatcherClassInferrer {
       /**
        * Infers the arrayToMatch method body.
        */
-      def StringConcatenationClient inferArrayToMatchMutableMethodBody(Pattern pattern) {
+      def StringConcatenationClient inferArrayToMatchMutableMethodBody(Pattern pattern, JvmType matchClass) {
           '''
                try {
-                   return «pattern.matchClassName».newMutableMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») match[«p.positionConstant»]«ENDFOR»);
+                   return «matchClass».newMutableMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») match[«p.positionConstant»]«ENDFOR»);
                } catch(ClassCastException e) {
                    «inferErrorLogging("Element(s) in array not properly typed!", "e")»
                    return null;

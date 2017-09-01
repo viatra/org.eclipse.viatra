@@ -16,8 +16,8 @@ import com.google.inject.Inject
 import java.util.Arrays
 import java.util.List
 import java.util.Set
-import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
@@ -33,9 +33,12 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
@@ -53,9 +56,8 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -78,39 +80,43 @@ class PatternQuerySpecificationClassInferrer {
     /**
      * Infers the {@link IQuerySpecification} implementation class from {@link Pattern}.
      */
-    def JvmDeclaredType inferQuerySpecificationClass(Pattern pattern, boolean isPrelinkingPhase, String querySpecificationPackageName, JvmType matcherClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
+    def JvmDeclaredType inferQuerySpecificationClass(Pattern pattern, boolean isPrelinkingPhase, String querySpecificationPackageName, JvmType matcherClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder, EMFPatternLanguageGeneratorConfig config) {
         this.builder = builder
         this.annBuilder = annBuilder
         
-        val querySpecificationClass = pattern.toClass(pattern.querySpecificationClassName) [
+        val querySpecificationClass = pattern.toClass(pattern.querySpecificationClassName(config.matcherGenerationStrategy)) [
               packageName = querySpecificationPackageName
               documentation = pattern.javadocQuerySpecificationClass.toString
               final = true
-              if (pattern.isPublic) {
+              if (pattern.isPublic && config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC) {
                 superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass))
               } else {
-                superTypes += typeRef(typeof (BaseGeneratedPrivateEMFQuerySpecification))
+                superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecificationWithGenericMatcher))
               }
               fileHeader = pattern.fileComment
           ]
           return querySpecificationClass
       }
 
-      def initializeSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
-          try {
-              querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, pattern.isPublic)
-              querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, pattern.isPublic, specBuilder)
-              querySpecificationClass.inferExpressions(pattern)
-        } catch (IllegalStateException ex) {
-            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
-                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+      def initializeSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass,
+            JvmType matchClass, EMFPatternLanguageGeneratorConfig config) {
+            try {
+                val withPatternSpecificMatcher = pattern.isPublic &&
+                    config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC
+                querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass,
+                    withPatternSpecificMatcher)
+                querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, withPatternSpecificMatcher)
+                querySpecificationClass.inferExpressions(pattern)
+            } catch (IllegalStateException ex) {
+                feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                    IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+            }
         }
-      }
 
     /**
         * Infers methods for QuerySpecification class based on the input 'pattern'.
         */
-      def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, boolean isPublic) {
+      def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, boolean withPatternSpecificMatcher) {
           querySpecificationClass.members += pattern.toConstructor [
             visibility = JvmVisibility::PRIVATE
             body = '''
@@ -132,7 +138,7 @@ class PatternQuerySpecificationClassInferrer {
             '''
         ]
 
-          if (isPublic) {
+          if (withPatternSpecificMatcher) {
               querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
                 visibility = JvmVisibility::PROTECTED
                 annotations += annotationRef(typeof (Override))
@@ -157,7 +163,7 @@ class PatternQuerySpecificationClassInferrer {
                 annotations += annotationRef(typeof(Override))
                 parameters += pattern.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
                 varArgs = true
-                body = '''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
+                body = '''return «matchClass».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
             ]
           }
       }
@@ -173,7 +179,7 @@ class PatternQuerySpecificationClassInferrer {
         '''«PParameterDirection».«variable.direction.name()»'''
     }
 
-    def inferPQueryMembers(JvmDeclaredType pQueryClass, Pattern pattern, SpecificationBuilder specBuilder) {
+    def inferPQueryMembers(JvmDeclaredType pQueryClass, Pattern pattern) {
         pQueryClass.members += pattern.toField("INSTANCE", typeRef(pQueryClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
             final = true
             static = true
@@ -295,14 +301,14 @@ class PatternQuerySpecificationClassInferrer {
      /**
         * Infers inner class for QuerySpecification class based on the input 'pattern'.
         */
-      def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean isPublic, SpecificationBuilder specBuilder) {
+      def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean withPatternSpecificMatcher) {
            querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
             visibility = JvmVisibility::PRIVATE
             static = true
             documentation = '''
-                Inner class allowing the singleton instance of {@link «pattern.querySpecificationClassName»} to be created 
+                Inner class allowing the singleton instance of {@link «pattern.findInferredSpecification»} to be created 
                     <b>not</b> at the class load time of the outer class, 
-                    but rather at the first call to {@link «pattern.querySpecificationClassName»#instance()}.
+                    but rather at the first call to {@link «pattern.findInferredSpecification»#instance()}.
                 
                 <p> This workaround is required e.g. to support recursion.
             '''
@@ -310,7 +316,7 @@ class PatternQuerySpecificationClassInferrer {
             members += pattern.toField("INSTANCE", typeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
                 final = true
                 static = true
-                initializer = '''new «pattern.querySpecificationClassName»()''';
+                initializer = '''new «pattern.findInferredSpecification»()''';
             ]
             members += pattern.toField("STATIC_INITIALIZER", typeRef(Object)) [
                 final = true
@@ -338,7 +344,7 @@ class PatternQuerySpecificationClassInferrer {
             visibility = JvmVisibility::PRIVATE
             static = true
             superTypes += typeRef(typeof (BaseGeneratedEMFPQuery))
-            inferPQueryMembers(pattern, specBuilder)
+            inferPQueryMembers(pattern)
         ]
     }
     

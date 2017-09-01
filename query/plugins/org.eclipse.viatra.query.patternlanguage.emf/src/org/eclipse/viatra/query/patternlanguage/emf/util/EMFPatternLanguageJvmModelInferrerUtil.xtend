@@ -20,14 +20,22 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
+import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
+import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
@@ -40,15 +48,13 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
-import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
-import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -63,6 +69,12 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     @Inject var IJvmModelAssociations associations
     @Inject EMFPatternLanguageGrammarAccess grammar
     @Inject IErrorFeedback feedback
+    
+    private static final String MATCH_POSTFIX = "Match"
+    private static final String MATCHER_POSTFIX = "Matcher"
+    private static final String PROCESSOR_POSTFIX = "Processor"
+    private static final String SPECIFICATION_POSTFIX = "QuerySpecification"
+    
     /**
      * This method returns the pattern name.
      * If the pattern name contains the package (any dot),
@@ -104,21 +116,20 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     
     /**
      * Returns the QuerySpecificationClass name based on the Pattern's name
+     * @since 1.7
      */
-    def querySpecificationClassName(Pattern pattern) {
+    def querySpecificationClassName(Pattern pattern, MatcherGenerationStrategy strategy) {
         var name = pattern.name
         if (name.contains(".")) {
             name = pattern.realPatternName
         }
-        name.toFirstUpper+"QuerySpecification"
+        if (strategy === MatcherGenerationStrategy::SEPARATE_CLASS) {
+            name.toFirstUpper+SPECIFICATION_POSTFIX
+        } else {
+            return name.toFirstUpper
+        }
     }
 
-    /**
-     * Returns the IQuerySpecificationProvider class name based on the Pattern's name
-     */
-    def querySpecificationProviderClassName(Pattern pattern) {
-        "Provider"
-    }
     /**
      * Returns the holder class name based on the Pattern's name
      */
@@ -134,25 +145,36 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
     /**
      * Returns the MatcherClass name based on the Pattern's name
+     * @since 1.7
      */
-       def matcherClassName(Pattern pattern) {
-           var name = pattern.name
-        if (name.contains(".")) {
-            name = pattern.realPatternName
-        }
-           name.toFirstUpper+"Matcher"
+       def matcherClassName(Pattern pattern, MatcherGenerationStrategy strategy) {
+        if (strategy === MatcherGenerationStrategy::NESTED_CLASS) {
+            return MATCHER_POSTFIX
+            } else {
+               var name = pattern.name
+            if (name.contains(".")) {
+                name = pattern.realPatternName
+            }
+           name.toFirstUpper+MATCHER_POSTFIX
+           
+           }
        }
 
     /**
      * Returns the MatchClass name based on the Pattern's name
+     * @since 1.7
      */
-       def matchClassName(Pattern pattern) {
-           var name = pattern.name
-        if (name.contains(".")) {
-            name = pattern.realPatternName
+       def matchClassName(Pattern pattern, MatcherGenerationStrategy strategy) {
+        if (strategy === MatcherGenerationStrategy::NESTED_CLASS) {
+            return MATCH_POSTFIX
+        } else {
+            var name = pattern.name
+            if (name.contains(".")) {
+                name = pattern.realPatternName
+            }
+            name.toFirstUpper + MATCH_POSTFIX
         }
-           name.toFirstUpper+"Match"
-       }
+    }
 
        def matchImmutableInnerClassName(Pattern pattern) {
            "Immutable"
@@ -163,13 +185,19 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
     /**
      * Returns the ProcessorClass name based on the Pattern's name
+     * @since 1.7
      */
-       def processorClassName(Pattern pattern) {
+       def processorClassName(Pattern pattern, MatcherGenerationStrategy strategy) {
+        if (strategy === MatcherGenerationStrategy::NESTED_CLASS) {
+            return PROCESSOR_POSTFIX
+        } else {
+           
            var name = pattern.name
         if (name.contains(".")) {
             name = pattern.realPatternName
         }
-           name.toFirstUpper+"Processor"
+           name.toFirstUpper+PROCESSOR_POSTFIX
+           }
        }
 
        /**
@@ -395,14 +423,38 @@ class EMFPatternLanguageJvmModelInferrerUtil {
         Splitter.on(".").split(fqn).last
     }
     
-    def findInferredSpecification(Pattern pattern) {
-        pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification), typeof (BaseGeneratedPrivateEMFQuerySpecification))
+    def JvmType findInferredSpecification(Pattern pattern) {
+        pattern.findInferredClass(BaseGeneratedEMFQuerySpecification, BaseGeneratedPrivateEMFQuerySpecification, BaseGeneratedEMFQuerySpecificationWithGenericMatcher)
+    }
+    
+    /**
+     * @since 1.7
+     */
+    def JvmType findMatchClass(Pattern pattern) {
+        val matchClass = pattern.findInferredClass(BasePatternMatch)
+        if (matchClass === null) {
+            return getTypeForName(GenericPatternMatch, pattern).type
+        } else {
+            return matchClass
+        }
+    }
+    
+    /**
+     * @since 1.7
+     */
+    def JvmType findMatcherClass(Pattern pattern) {
+        val matcherClass = pattern.findInferredClass(BaseMatcher)
+        if (matcherClass === null) {
+            return getTypeForName(GenericPatternMatcher, pattern).type
+        } else {
+            return matcherClass
+        }
     }
     
     /**
      * Returns an inferred class with a predefined <em>direct</em> subtype
      */
-    def findInferredClass(EObject pattern, Class<?> clazz) {
+    def JvmType findInferredClass(EObject pattern, Class<?> clazz) {
         findInferredClass(pattern, #{clazz})
     }
     /**
@@ -411,7 +463,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
      * @param clazzes a set of classes to check whether the inferred class has any as given values
      * @since 1.6
      */
-    def findInferredClass(EObject pattern, Class<?>... clazzes) {
+    def JvmType findInferredClass(EObject pattern, Class<?>... clazzes) {
         associations.getJvmElements(pattern).filter(typeof(JvmType)).findFirst[
             clazzes.exists[clazz | isCompatibleWith(clazz)]
         ]

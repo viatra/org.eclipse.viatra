@@ -81,7 +81,7 @@ public abstract class ShowPatternLocationHandler extends AbstractHandler {
             String patternName = list.remove(list.size() - 1);
             p.setName(patternName);
             EMFPatternLanguageJvmModelInferrerUtil inferrerUtil = new EMFPatternLanguageJvmModelInferrerUtil();
-            String querySpecificationClassName = inferrerUtil.querySpecificationClassName(p); 
+            String querySpecificationClassName = inferrerUtil.findInferredSpecification(p).getQualifiedName();
             
             String publicFqn = Joiner.on(".").join(Iterables.concat(list, ImmutableList.of("util", querySpecificationClassName)));
             String privateFqn = Joiner.on(".").join(Iterables.concat(list, ImmutableList.of("internal", querySpecificationClassName)));

@@ -27,6 +27,8 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -39,7 +41,7 @@ class PatternGroupClassInferrer {
     @Inject extension JavadocInferrer
     @Extension JvmTypeReferenceBuilder builder
 
-    def inferPatternGroupClass(PatternModel model, JvmTypeReferenceBuilder builder, boolean includePrivate) {
+    def inferPatternGroupClass(PatternModel model, JvmTypeReferenceBuilder builder, EMFPatternLanguageGeneratorConfig config, boolean includePrivate) {
         this.builder = builder
         model.toClass(model.groupClassName(includePrivate)) [
             packageName = model.groupPackageName(includePrivate)
@@ -49,14 +51,14 @@ class PatternGroupClassInferrer {
         ]
     }
         
-    def initializePatternGroup(JvmGenericType groupClass, PatternModel model, JvmTypeReferenceBuilder builder, boolean includePrivate) {
+    def initializePatternGroup(JvmGenericType groupClass, PatternModel model, JvmTypeReferenceBuilder builder, EMFPatternLanguageGeneratorConfig config, boolean includePrivate) {
         this.builder = builder
         
         groupClass.documentation = javadocGroupClass(model, includePrivate).toString
         groupClass.members += model.inferInstanceMethod(groupClass)
         groupClass.members += model.inferInstanceField(groupClass)
         groupClass.members += model.inferConstructor(groupClass, includePrivate)
-        if (!includePrivate) {
+        if (!includePrivate && config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC) {
             for (pattern : model.patterns.filter[public && !name.nullOrEmpty]) {
                 groupClass.members += pattern.inferSpecificationGetter(groupClass, pattern.findInferredSpecification)
                 groupClass.members += pattern.inferMatcherGetter(groupClass, pattern.findInferredClass(typeof(BaseMatcher)))

@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderIn
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.PatternLanguageShouldGenerate;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageGeneratorConfigProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderConfigurationBlock;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
@@ -67,7 +68,9 @@ import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.ui.builder.EclipseGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
 
 import com.google.inject.Binder;
@@ -249,5 +252,13 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends BuilderConfigurationBlock> bindBuilderConfigurationBlock() {
         return EMFPatternLanguageBuilderConfigurationBlock.class;
+    }
+    
+    /**
+     * @since 1.7
+     */
+    @Override
+    public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
+        return EMFPatternLanguageGeneratorConfigProvider.class;
     }
 }

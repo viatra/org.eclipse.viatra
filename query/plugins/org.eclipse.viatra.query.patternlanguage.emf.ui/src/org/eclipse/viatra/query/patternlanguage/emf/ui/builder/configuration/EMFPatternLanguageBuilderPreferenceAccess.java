@@ -11,7 +11,10 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreAccess;
+import org.eclipse.xtext.xbase.compiler.GeneratorConfig;
 import org.eclipse.xtext.xbase.ui.builder.XbaseBuilderPreferenceAccess;
 
 import com.google.inject.Inject;
@@ -31,6 +34,14 @@ public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPrefe
      * Preference identifier for generating extensions.
      */
     public static final String PREF_GENERATE_ECLIPSE_EXTENSIONS = "generateEclipseExtensions"; //$NON-NLS-1$
+    /**
+     * @since 1.7
+     */
+    public static final String PREF_GENERATE_MATCH_PROCESSOR = "generateMatchProcessors"; //$NON-NLS-1$
+    /**
+     * @since 1.7
+     */
+    public static final String PREF_MATCHER_GENERATION_STRATEGY = "generateMatchers"; //$NON-NLS-1$
     
     public static class Initializer extends XbaseBuilderPreferenceAccess.Initializer {
 
@@ -39,6 +50,8 @@ public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPrefe
             super.initializeBuilderPreferences(store);
             store.setDefault(PREF_GENERATE_MANIFEST_ENTRIES, true);
             store.setDefault(PREF_GENERATE_ECLIPSE_EXTENSIONS, true);
+            store.setDefault(PREF_GENERATE_MATCH_PROCESSOR, true);
+            store.setDefault(PREF_MATCHER_GENERATION_STRATEGY, EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy.defaultValue().toString());
         }
         
     }
@@ -64,5 +77,19 @@ public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPrefe
     public void setExtensionGenerationEnabled(Object context, boolean enabled) {
         IPreferenceStore preferenceStore = preferenceStoreAccess.getWritablePreferenceStore(context);
         preferenceStore.setValue(PREF_GENERATE_ECLIPSE_EXTENSIONS, enabled);
+    }
+    
+    @Override
+    public void loadBuilderPreferences(GeneratorConfig generatorConfig, Object context) {
+        super.loadBuilderPreferences(generatorConfig, context);
+        if (generatorConfig instanceof EMFPatternLanguageGeneratorConfig) {
+            
+            EMFPatternLanguageGeneratorConfig config = (EMFPatternLanguageGeneratorConfig) generatorConfig;
+            IPreferenceStore preferenceStore = preferenceStoreAccess.getContextPreferenceStore(context);
+            config.setGenerateExtensions(preferenceStore.getBoolean(PREF_GENERATE_ECLIPSE_EXTENSIONS));
+            config.setUpdateManifest(preferenceStore.getBoolean(PREF_GENERATE_MANIFEST_ENTRIES));
+            config.setGenerateMatchProcessors(preferenceStore.getBoolean(PREF_GENERATE_MATCH_PROCESSOR));
+            config.setMatcherGenerationStrategy(MatcherGenerationStrategy.valueOf(preferenceStore.getString(PREF_MATCHER_GENERATION_STRATEGY)));
+        }
     }
 }

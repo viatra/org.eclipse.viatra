@@ -23,6 +23,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
 
 /**
  * {@link IMatchProcessor} implementation inferrer.
@@ -42,11 +43,11 @@ class PatternMatchProcessorClassInferrer {
     /**
      * Infers the {@link IMatchProcessor} implementation class from a {@link Pattern}.
      */
-    def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
+    def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder, EMFPatternLanguageGeneratorConfig config) {
         this.builder = builder
         this.annBuilder = annBuilder
         
-        val processorClass = pattern.toClass(pattern.processorClassName) [
+        val processorClass = pattern.toClass(pattern.processorClassName(config.matcherGenerationStrategy)) [
               packageName = processorPackageName
               documentation = pattern.javadocProcessorClass.toString
               abstract = true

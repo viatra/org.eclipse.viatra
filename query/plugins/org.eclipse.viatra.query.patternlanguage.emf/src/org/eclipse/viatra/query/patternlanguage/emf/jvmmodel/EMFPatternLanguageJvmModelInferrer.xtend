@@ -14,20 +14,23 @@ package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch
 import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
-import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
+import org.eclipse.emf.ecore.EObject
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -47,6 +50,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     private Logger logger;
     @Inject
     private IErrorFeedback errorFeedback;
+    @Inject
+    private IGeneratorConfigProvider generatorConfigProvider
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */
@@ -68,15 +73,22 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
      * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
      *        must not rely on linking using the index if this is <code>true</code>
      */
-       def void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
-        boolean isPrelinkingPhase) {
+       def void inferPattern(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
+        val config = getConfiguration(pattern)
+        
         if (!pattern.name.nullOrEmpty) {
             val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
             try {
                 if (isPublic) {
-                    pattern.inferPublic(acceptor, builder, isPrelinkingPhase)
+                    switch(config.matcherGenerationStrategy) {
+                        case MatcherGenerationStrategy::SEPARATE_CLASS,
+                        case MatcherGenerationStrategy::NESTED_CLASS : 
+                            pattern.inferPublic(acceptor, config, isPrelinkingPhase)
+                        case MatcherGenerationStrategy::USE_GENERIC:
+                            pattern.inferPublicWithNoMatchers(acceptor, config, isPrelinkingPhase)
+                    }
                 } else {
-                    pattern.inferPrivate(acceptor, builder, isPrelinkingPhase)
+                    pattern.inferPrivate(acceptor, config, isPrelinkingPhase)
                 }
             } catch (Exception e) {
                     logger.error("Exception during Jvm Model Infer for: " + pattern, e)
@@ -84,32 +96,56 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
         }
     }
 
-    private def void inferPublic(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+    private def EMFPatternLanguageGeneratorConfig getConfiguration(EObject ctx) {
+        val _config = generatorConfigProvider.get(ctx)
+        val EMFPatternLanguageGeneratorConfig config = if (_config instanceof EMFPatternLanguageGeneratorConfig) {
+            _config
+        } else {
+            val newConfig = new EMFPatternLanguageGeneratorConfig
+            newConfig.copy(_config)
+            newConfig
+        }
+        return config
+    }
+
+    private def void inferPublic(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, EMFPatternLanguageGeneratorConfig config,
         boolean isPrelinkingPhase) {
         logger.debug("Inferring Jvm Model for pattern" + pattern.name);
+        val generateMatchProcessors = config.generateMatchProcessors
+        val nestedClasses = (config.matcherGenerationStrategy === MatcherGenerationStrategy::NESTED_CLASS)
         val packageName = pattern.getPackageName
         val utilPackageName = pattern.utilPackageName
-
-        val matchClass = pattern.toClass(pattern.matchClassName) [
-            it.packageName = packageName
+        val specificationPackageName = if (nestedClasses) packageName else utilPackageName
+   
+        val matchClass = pattern.toClass(pattern.matchClassName(config.matcherGenerationStrategy)) [
+            if (nestedClasses) { 
+                it.static = true
+            } else {
+                it.packageName = packageName
+                fileHeader = pattern.fileComment
+            }
             superTypes += typeRef(typeof(BasePatternMatch))
-            fileHeader = pattern.fileComment
         ]
 
-        val matcherClass = pattern.toClass(pattern.matcherClassName) [
-            it.packageName = packageName
+        val matcherClass = pattern.toClass(pattern.matcherClassName(config.matcherGenerationStrategy)) [
+            if (nestedClasses) {
+                it.static = true
+            } else {
+                it.packageName = packageName
+                fileHeader = pattern.fileComment
+            }
             superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
-            fileHeader = pattern.fileComment
         ]
-        val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
-            matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
-        val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, specificationPackageName,
+            matcherClass, _typeReferenceBuilder, _annotationTypesBuilder, config)
+        
+        if (nestedClasses) {
+            querySpecificationClass.members += matchClass
+            querySpecificationClass.members += matcherClass
+        }
 
         acceptor.accept(querySpecificationClass) [
-            initializeSpecification(pattern, matcherClass, matchClass, builder)
-        ]
-        acceptor.accept(processorClass) [
-            processorClass.inferProcessorClassMethods(pattern, matchClass)
+            initializeSpecification(pattern, matcherClass, matchClass, config)
         ]
 
         acceptor.accept(matchClass) [
@@ -117,34 +153,56 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
         ]
 
         acceptor.accept(matcherClass) [
-            inferMatcherClassElements(pattern, querySpecificationClass, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
+            inferMatcherClassElements(pattern, querySpecificationClass, matchClass, _typeReferenceBuilder, _annotationTypesBuilder, config)
         ]
 
-        associator.associatePrimary(pattern, matcherClass)
+        associator.associatePrimary(pattern, querySpecificationClass)
         associator.associate(pattern, matcherClass)
         associator.associate(pattern, querySpecificationClass)
-        associator.associate(pattern, processorClass)
-
+        
+        if (generateMatchProcessors) {
+            val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClass, _typeReferenceBuilder, _annotationTypesBuilder, config)
+            acceptor.accept(processorClass) [
+                processorClass.inferProcessorClassMethods(pattern, matchClass)
+            ]
+            associator.associate(pattern, processorClass)
+            if (nestedClasses) {
+                querySpecificationClass.members += processorClass
+            }
+        }
+        
     }
 
+    private def void inferPublicWithNoMatchers(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, EMFPatternLanguageGeneratorConfig config,
+        boolean isPrelinkingPhase) {
+         logger.debug("Inferring Jvm Model for private pattern " + pattern.name);
+        val utilPackageName = pattern.packageName
 
-    private def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+        inferQuerySpecificationWithGeneric(pattern, acceptor, config, isPrelinkingPhase, utilPackageName)   
+    }
+
+    private def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, EMFPatternLanguageGeneratorConfig config,
         boolean isPrelinkingPhase) {
         logger.debug("Inferring Jvm Model for private pattern " + pattern.name);
         val utilPackageName = pattern.internalSpecificationPackage /* This package is not exported by design */
 
-
-        val matcherClass = typeRef(typeof(GenericPatternMatcher)).type 
+        inferQuerySpecificationWithGeneric(pattern, acceptor, config, isPrelinkingPhase, utilPackageName)
+    }
+    
+    private def void inferQuerySpecificationWithGeneric(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, EMFPatternLanguageGeneratorConfig config,
+        boolean isPrelinkingPhase, String packageName) {
+           val matcherClass = typeRef(typeof(GenericPatternMatcher)).type 
         val matchClass = typeRef(typeof(GenericPatternMatch)).type 
-        val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
-            matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
+        val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, packageName,
+            matcherClass, _typeReferenceBuilder, _annotationTypesBuilder, config)
         associator.associatePrimary(pattern, querySpecificationClass)
         acceptor.accept(querySpecificationClass) [
-            initializeSpecification(querySpecificationClass, pattern, matcherClass, matchClass, builder)
-        ]
+            initializeSpecification(querySpecificationClass, pattern, matcherClass, matchClass, config)
+        ] 
     }
+    
         
-       /**
+    /**
      * Is called for each PatternModel instance in a resource.
      *
      * @param model - the model to create one or more JvmDeclaredTypes from.
@@ -155,20 +213,20 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
      */
        def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
            try {
-               val builder = new SpecificationBuilder()
+               val config = getConfiguration(model)
                for (pattern : model.patterns){
-                   pattern.infer(acceptor, builder, isPrelinkingPhase)
+                   pattern.inferPattern(acceptor, isPrelinkingPhase)
                }
                logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
                if (!model.patterns.empty) {
-                   val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder, false)
+                   val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder, config, false)
                    acceptor.accept(groupClass) [
-                       initializePatternGroup(model, _typeReferenceBuilder, false)
+                       initializePatternGroup(model, _typeReferenceBuilder, config, false)
                    ]
                    if (model.patterns.exists[CorePatternLanguageHelper.isPrivate(it)]) {
-                       val privateGroupClass = model.inferPatternGroupClass(_typeReferenceBuilder, true)
+                       val privateGroupClass = model.inferPatternGroupClass(_typeReferenceBuilder, config, true)
                        acceptor.accept(privateGroupClass) [
-                           initializePatternGroup(model, _typeReferenceBuilder, true)
+                           initializePatternGroup(model, _typeReferenceBuilder, config, true)
                        ]
                    }
                    model.associatePrimary(groupClass)

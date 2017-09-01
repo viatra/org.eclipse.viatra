@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
 import org.eclipse.xtext.xbase.ui.builder.XbaseBuilderConfigurationBlock;
 
 /**
@@ -24,6 +25,11 @@ public class EMFPatternLanguageBuilderConfigurationBlock extends XbaseBuilderCon
     protected void createGeneralSectionItems(Composite composite) {
         super.createGeneralSectionItems(composite);
 
+        addComboBox(composite, "Pattern-specific matcher generation strategy",
+                EMFPatternLanguageBuilderPreferenceAccess.PREF_MATCHER_GENERATION_STRATEGY, 0,
+                MatcherGenerationStrategy.getAllIdentifiers(), MatcherGenerationStrategy.getAllLabels());
+        addCheckBox(composite, "Generate pattern-specific match processor",
+                EMFPatternLanguageBuilderPreferenceAccess.PREF_GENERATE_MATCH_PROCESSOR, BOOLEAN_VALUES, 0);
         addCheckBox(composite, "Update MANIFEST.MF file during code generation",
                 EMFPatternLanguageBuilderPreferenceAccess.PREF_GENERATE_MANIFEST_ENTRIES, BOOLEAN_VALUES, 0);
         addCheckBox(composite, "Generate query specification extensions during code generation",

@@ -90,7 +90,6 @@ class PatternMatchClassInferrer {
         */
        def inferMatchClassConstructors(JvmDeclaredType matchClass, Pattern pattern) {
            matchClass.members += pattern.toConstructor() [
-               simpleName = pattern.matchClassName
                visibility = JvmVisibility::PRIVATE //DEFAULT
                for (Variable variable : pattern.parameters) {
                    val javaType = variable.calculateType
@@ -176,7 +175,7 @@ class PatternMatchClassInferrer {
         matchClass.members += pattern.toMethod("parameterNames", typeRef(typeof (List), builder.typeRef(typeof (String)))) [
                annotations += annotationRef(typeof (Override))
                body = '''
-                   return «pattern.matchClassName».parameterNames;
+                   return «matchClass».parameterNames;
                '''
            ]
            matchClass.members += pattern.toMethod("toArray", typeRef(typeof (Object)).addArrayTypeDimension) [
@@ -222,7 +221,7 @@ class PatternMatchClassInferrer {
             body = '''
                 if (this == obj)
                     return true;
-                if (!(obj instanceof «pattern.matchClassName»)) { // this should be infrequent
+                if (!(obj instanceof «matchClass»)) { // this should be infrequent
                     if (obj == null) {
                         return false;
                     }
@@ -235,7 +234,7 @@ class PatternMatchClassInferrer {
                     return «Arrays».deepEquals(toArray(), otherSig.toArray());
                 }
                 «IF !pattern.parameters.isEmpty»
-                «pattern.matchClassName» other = («pattern.matchClassName») obj;
+                «matchClass» other = («matchClass») obj;
                 «FOR variable : pattern.parameters»
                 if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
                 else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;

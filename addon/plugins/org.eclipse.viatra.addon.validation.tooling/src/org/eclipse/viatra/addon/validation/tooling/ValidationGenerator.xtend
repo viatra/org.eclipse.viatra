@@ -196,6 +196,7 @@ class ValidationGenerator implements IGenerationFragment {
     }
 
     def patternHandler(Pattern pattern, Annotation annotation) {
+        val specificationType = pattern.findInferredSpecification
         val className = pattern.name.toFirstUpper + annotationLiteral + pattern.annotations.indexOf(annotation)
         '''
             /**
@@ -217,14 +218,14 @@ class ValidationGenerator implements IGenerationFragment {
             import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
             import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
             
-            import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;
+            import «specificationType.qualifiedName»;
             
             public class «className» implements IConstraintSpecification {
             
-                private «pattern.querySpecificationClassName» querySpecification;
+                private «specificationType.simpleName» querySpecification;
             
                 public «className»() throws ViatraQueryException {
-                    querySpecification = «pattern.querySpecificationClassName».instance();
+                    querySpecification = «specificationType.simpleName».instance();
                 }
             
                 @Override

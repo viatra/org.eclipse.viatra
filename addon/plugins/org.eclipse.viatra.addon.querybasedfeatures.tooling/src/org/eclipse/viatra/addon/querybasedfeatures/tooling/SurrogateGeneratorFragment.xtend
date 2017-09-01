@@ -69,7 +69,7 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
                 contribAttribute(it, "feature-name", parameters.feature.name)
                 contribAttribute(it, "query-fqn", pattern.fullyQualifiedName)
                 contribAttribute(it, "surrogate-query", 
-                    typeof(PQueryExtensionFactory).canonicalName + ":" + pattern.utilPackageName + "." + pattern.querySpecificationClassName
+                    typeof(PQueryExtensionFactory).canonicalName + ":" + pattern.findInferredSpecification.qualifiedName
                 )
               ]
             ]

@@ -16,4 +16,124 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/EMFPatternLanguageJvmModelInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer">
+        <filter comment="Internal code generator API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer"/>
+                <message_argument value="infer(Pattern, IJvmDeclaredTypeAcceptor, SpecificationBuilder, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/PatternGroupClassInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternGroupClassInferrer">
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternGroupClassInferrer"/>
+                <message_argument value="inferPatternGroupClass(PatternModel, JvmTypeReferenceBuilder, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternGroupClassInferrer"/>
+                <message_argument value="initializePatternGroup(JvmGenericType, PatternModel, JvmTypeReferenceBuilder, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/PatternMatchProcessorClassInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatchProcessorClassInferrer">
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatchProcessorClassInferrer"/>
+                <message_argument value="inferProcessorClass(Pattern, boolean, String, JvmType, JvmTypeReferenceBuilder, JvmAnnotationReferenceBuilder)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/PatternMatcherClassInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatcherClassInferrer">
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatcherClassInferrer"/>
+                <message_argument value="inferArrayToMatchMethodBody(Pattern)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatcherClassInferrer"/>
+                <message_argument value="inferArrayToMatchMutableMethodBody(Pattern)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatcherClassInferrer"/>
+                <message_argument value="inferMatcherClassElements(JvmGenericType, Pattern, JvmDeclaredType, JvmDeclaredType, JvmTypeReferenceBuilder, JvmAnnotationReferenceBuilder)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatcherClassInferrer"/>
+                <message_argument value="inferMethods(JvmDeclaredType, Pattern, JvmType)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternMatcherClassInferrer"/>
+                <message_argument value="inferTupleToMatchMethodBody(Pattern)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/PatternQuerySpecificationClassInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer">
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="inferPQueryMembers(JvmDeclaredType, Pattern, SpecificationBuilder)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="inferQuerySpecificationClass(Pattern, boolean, String, JvmType, JvmTypeReferenceBuilder, JvmAnnotationReferenceBuilder)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="inferQuerySpecificationInnerClasses(JvmDeclaredType, Pattern, boolean, SpecificationBuilder)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal model inferrer api updated" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="initializeSpecification(JvmDeclaredType, Pattern, JvmType, JvmType, SpecificationBuilder)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/util/EMFPatternLanguageJvmModelInferrerUtil.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil">
+        <filter comment="Internal code generator API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil"/>
+                <message_argument value="matchClassName(Pattern)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal code generator API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil"/>
+                <message_argument value="matcherClassName(Pattern)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal code generator API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil"/>
+                <message_argument value="processorClassName(Pattern)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal code generator API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil"/>
+                <message_argument value="querySpecificationClassName(Pattern)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Removal of unused method" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil"/>
+                <message_argument value="querySpecificationProviderClassName(Pattern)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

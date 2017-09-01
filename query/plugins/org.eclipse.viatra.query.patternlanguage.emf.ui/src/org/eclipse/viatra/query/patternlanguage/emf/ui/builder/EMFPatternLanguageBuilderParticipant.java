@@ -28,7 +28,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
@@ -45,6 +47,8 @@ import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
+import org.eclipse.xtext.xbase.compiler.GeneratorConfig;
+import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -84,6 +88,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
     @Inject
     private PatternSetValidator validator;
+    
+    @Inject
+    private IGeneratorConfigProvider generatorConfigProvider;
 
     @Override
     public void build(final IBuildContext context, IProgressMonitor monitor) throws CoreException {
@@ -169,7 +176,10 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 if (isPublic) {
                     executeGeneratorFragments(context.getBuiltProject(), pattern);
                     ensureSupport.exportPackage(project, util.getPackageName(pattern));
-                    ensureSupport.exportPackage(project, util.getUtilPackageName(pattern));
+                    if (getConfiguration(pattern).getMatcherGenerationStrategy() == MatcherGenerationStrategy.SEPARATE_CLASS) {
+                        // Util package is only used by the separate class generation strategy
+                        ensureSupport.exportPackage(project, util.getUtilPackageName(pattern));
+                    }
                 }
             } else if (obj instanceof PatternModel) {
                 PatternModel model = (PatternModel) obj;
@@ -271,4 +281,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         }
     }
 
+    private EMFPatternLanguageGeneratorConfig getConfiguration(EObject ctx) {
+        GeneratorConfig _config = generatorConfigProvider.get(ctx);
+        if (_config instanceof EMFPatternLanguageGeneratorConfig) {
+            return (EMFPatternLanguageGeneratorConfig) _config;
+        } else {
+            EMFPatternLanguageGeneratorConfig newConfig = new EMFPatternLanguageGeneratorConfig();
+            newConfig.copy(_config);
+            return newConfig;
+        }
+    }
 }
