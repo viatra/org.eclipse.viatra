@@ -1,0 +1,2810 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.integration.uml" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionContextMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionContextMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionContextMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionContextMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionInputMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionInputMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionInputMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionInputMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionOutputMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionOutputMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionOutputMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionOutputMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityEdgeInGroupMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityEdgeInGroupMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityEdgeInGroupMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityEdgeInGroupMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedEdgeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedEdgeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedEdgeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedEdgeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedNodeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedNodeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedNodeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedNodeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupInActivityMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupInActivityMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupInActivityMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupInActivityMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSubgroupMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSubgroupMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSubgroupMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSubgroupMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSuperGroupMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSuperGroupMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSuperGroupMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSuperGroupMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeActivityMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeActivityMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeActivityMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeActivityMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeInGroupMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeInGroupMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeInGroupMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeInGroupMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndTypeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndTypeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndTypeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndTypeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.BehaviorContextMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.BehaviorContextMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.BehaviorContextMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.BehaviorContextMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassExtensionMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassExtensionMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassExtensionMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassExtensionMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassSuperClassMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassSuperClassMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassSuperClassMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassSuperClassMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierAttributeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierAttributeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierAttributeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierAttributeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierFeatureMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierFeatureMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierFeatureMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierFeatureMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierGeneralMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierGeneralMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierGeneralMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierGeneralMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectableElementEndMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectableElementEndMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectableElementEndMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectableElementEndMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectorKindMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectorKindMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectorKindMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectorKindMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.DeploymentTargetDeployedElementMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DeploymentTargetDeployedElementMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.DeploymentTargetDeployedElementMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DeploymentTargetDeployedElementMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipSourceMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipSourceMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipSourceMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipSourceMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipTargetMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipTargetMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipTargetMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipTargetMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnedElementMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnedElementMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnedElementMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnedElementMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnerMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnerMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnerMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnerMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.EncapsulatedClassifierOwnedPortMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.EncapsulatedClassifierOwnedPortMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.EncapsulatedClassifierOwnedPortMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.EncapsulatedClassifierOwnedPortMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ExtensionMetaclassMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ExtensionMetaclassMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ExtensionMetaclassMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ExtensionMetaclassMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.FeatureFeaturingClassifierMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.FeatureFeaturingClassifierMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.FeatureFeaturingClassifierMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.FeatureFeaturingClassifierMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.MessageMessageKindMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.MessageMessageKindMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.MessageMessageKindMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.MessageMessageKindMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementClientDependencyMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementClientDependencyMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementClientDependencyMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementClientDependencyMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespaceMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespaceMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespaceMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespaceMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedNameMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedNameMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedNameMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedNameMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceImportedMemberMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceImportedMemberMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceImportedMemberMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceImportedMemberMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceMemberMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceMemberMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceMemberMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceMemberMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceOwnedMemberMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceOwnedMemberMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceOwnedMemberMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceOwnedMemberMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.OpaqueExpressionResultMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.OpaqueExpressionResultMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.OpaqueExpressionResultMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.OpaqueExpressionResultMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestedPackageMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestedPackageMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestedPackageMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestedPackageMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestingPackageMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestingPackageMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestingPackageMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestingPackageMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedStereotypeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedStereotypeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedStereotypeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedStereotypeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedTypeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedTypeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedTypeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedTypeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PropertyIsCompositeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PropertyIsCompositeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.PropertyIsCompositeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PropertyIsCompositeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ProtocolTransitionReferredMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ProtocolTransitionReferredMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.ProtocolTransitionReferredMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ProtocolTransitionReferredMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinedElementMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinedElementMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinedElementMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinedElementMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinitionContextMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinitionContextMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinitionContextMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinitionContextMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableTemplateSignatureInheritedParameterMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableTemplateSignatureInheritedParameterMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableTemplateSignatureInheritedParameterMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableTemplateSignatureInheritedParameterMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RelationshipRelatedElementMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RelationshipRelatedElementMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.RelationshipRelatedElementMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RelationshipRelatedElementMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsCompositeMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsCompositeMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsCompositeMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsCompositeMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierPartMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierPartMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierPartMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierPartMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierRoleMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierRoleMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierRoleMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierRoleMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.TypePackageMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.TypePackageMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.TypePackageMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.TypePackageMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.VertexIncomingMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.VertexIncomingMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.VertexIncomingMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.VertexIncomingMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoingMatch">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoingMatch"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoingMatcher">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoingMatcher"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionContextProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionContextProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionContextQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionContextQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionInputProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionInputProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionInputQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionInputQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionOutputProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionOutputProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionOutputQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActionOutputQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityEdgeInGroupProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityEdgeInGroupProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityEdgeInGroupQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityEdgeInGroupQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedEdgeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedEdgeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedEdgeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedEdgeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedNodeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedNodeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedNodeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupContainedNodeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupInActivityProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupInActivityProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupInActivityQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupInActivityQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSubgroupProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSubgroupProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSubgroupQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSubgroupQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSuperGroupProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSuperGroupProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSuperGroupQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityGroupSuperGroupQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeActivityProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeActivityProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeActivityQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeActivityQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeInGroupProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeInGroupProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeInGroupQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeInGroupQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ActivityNodeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.AssociationEndTypeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.AssociationEndTypeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.AssociationEndTypeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.AssociationEndTypeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.BehaviorContextProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.BehaviorContextProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.BehaviorContextQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.BehaviorContextQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassExtensionProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassExtensionProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassExtensionQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassExtensionQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassSuperClassProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassSuperClassProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassSuperClassQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassSuperClassQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierAttributeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierAttributeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierAttributeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierAttributeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierFeatureProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierFeatureProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierFeatureQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierFeatureQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierGeneralProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierGeneralProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierGeneralQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierGeneralQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectableElementEndProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectableElementEndProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectableElementEndQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectableElementEndQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectorKindProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectorKindProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectorKindQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ConnectorKindQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.DeploymentTargetDeployedElementProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.DeploymentTargetDeployedElementProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.DeploymentTargetDeployedElementQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.DeploymentTargetDeployedElementQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipSourceProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipSourceProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipSourceQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipSourceQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipTargetProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipTargetProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipTargetQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.DirectedRelationshipTargetQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnedElementProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnedElementProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnedElementQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnedElementQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnerProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnerProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnerQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ElementOwnerQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.EncapsulatedClassifierOwnedPortProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.EncapsulatedClassifierOwnedPortProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.EncapsulatedClassifierOwnedPortQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.EncapsulatedClassifierOwnedPortQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ExtensionMetaclassProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ExtensionMetaclassProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ExtensionMetaclassQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ExtensionMetaclassQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.FeatureFeaturingClassifierProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.FeatureFeaturingClassifierProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.FeatureFeaturingClassifierQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.FeatureFeaturingClassifierQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.MessageMessageKindProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.MessageMessageKindProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.MessageMessageKindQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.MessageMessageKindQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementClientDependencyProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementClientDependencyProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementClientDependencyQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementClientDependencyQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementNamespaceProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementNamespaceProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementNamespaceQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementNamespaceQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementQualifiedNameProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementQualifiedNameProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementQualifiedNameQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamedElementQualifiedNameQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceImportedMemberProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceImportedMemberProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceImportedMemberQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceImportedMemberQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceMemberProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceMemberProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceMemberQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceMemberQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceOwnedMemberProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceOwnedMemberProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceOwnedMemberQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.NamespaceOwnedMemberQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.OpaqueExpressionResultProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.OpaqueExpressionResultProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.OpaqueExpressionResultQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.OpaqueExpressionResultQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestedPackageProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestedPackageProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestedPackageQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestedPackageQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestingPackageProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestingPackageProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestingPackageQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageNestingPackageQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedStereotypeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedStereotypeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedStereotypeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedStereotypeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedTypeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedTypeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedTypeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedTypeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PropertyIsCompositeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PropertyIsCompositeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.PropertyIsCompositeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.PropertyIsCompositeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ProtocolTransitionReferredProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ProtocolTransitionReferredProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.ProtocolTransitionReferredQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.ProtocolTransitionReferredQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinedElementProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinedElementProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinedElementQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinedElementQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinitionContextProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinitionContextProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinitionContextQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableElementRedefinitionContextQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableTemplateSignatureInheritedParameterProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableTemplateSignatureInheritedParameterProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableTemplateSignatureInheritedParameterQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RedefinableTemplateSignatureInheritedParameterQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RelationshipRelatedElementProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RelationshipRelatedElementProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.RelationshipRelatedElementQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.RelationshipRelatedElementQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsCompositeProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsCompositeProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsCompositeQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsCompositeQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsOrthogonalProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsOrthogonalProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsOrthogonalQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StateIsOrthogonalQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierPartProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierPartProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierPartQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierPartQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierRoleProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierRoleProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierRoleQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassifierRoleQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.TypePackageProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.TypePackageProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.TypePackageQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.TypePackageQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexIncomingProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexIncomingProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexIncomingQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexIncomingQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexOutgoingProcessor">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexOutgoingProcessor"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexOutgoingQuerySpecification">
+        <filter comment="Updated generated code structure" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexOutgoingQuerySpecification"/>
+                <message_argument value="org.eclipse.viatra.integration.uml_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActionContext.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionContext">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionContext"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActionInput.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionInput">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionInput"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActionOutput.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActionOutput">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActionOutput"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityEdgeInGroup.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityEdgeInGroup">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityEdgeInGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityGroup.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroup">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityGroupContainedEdge.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedEdge">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedEdge"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityGroupContainedNode.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedNode">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupContainedNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityGroupInActivity.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupInActivity">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupInActivity"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityGroupSubgroup.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSubgroup">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSubgroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityGroupSuperGroup.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSuperGroup">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityGroupSuperGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityNode.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNode">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityNodeActivity.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeActivity">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeActivity"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ActivityNodeInGroup.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeInGroup">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ActivityNodeInGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/AssociationEndType.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndType">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndType"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/BehaviorContext.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.BehaviorContext">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.BehaviorContext"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ClassExtension.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassExtension">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassExtension"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ClassSuperClass.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassSuperClass">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassSuperClass"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ClassifierAttribute.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierAttribute">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierAttribute"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ClassifierFeature.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierFeature">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierFeature"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ClassifierGeneral.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierGeneral">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ClassifierGeneral"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ConnectableElementEnd.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectableElementEnd">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectableElementEnd"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ConnectorKind.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectorKind">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ConnectorKind"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/DeploymentTargetDeployedElement.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.DeploymentTargetDeployedElement">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DeploymentTargetDeployedElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/DerivedFeatures.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures">
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActionContext()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActionContext(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActionInput()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActionInput(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActionOutput()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActionOutput(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityEdgeInGroup()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityEdgeInGroup(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroup()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroup(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupContainedEdge()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupContainedEdge(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupContainedNode()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupContainedNode(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupInActivity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupInActivity(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupSubgroup()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupSubgroup(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupSuperGroup()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityGroupSuperGroup(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityNode()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityNode(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityNodeActivity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityNodeActivity(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityNodeInGroup()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getActivityNodeInGroup(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getAssociationEndType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getAssociationEndType(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getBehaviorContext()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getBehaviorContext(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassExtension()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassExtension(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassSuperClass()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassSuperClass(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassifierAttribute()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassifierAttribute(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassifierFeature()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassifierFeature(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassifierGeneral()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getClassifierGeneral(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getConnectableElementEnd()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getConnectableElementEnd(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getConnectorKind()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getConnectorKind(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getDeploymentTargetDeployedElement()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getDeploymentTargetDeployedElement(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getDirectedRelationshipSource()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getDirectedRelationshipSource(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getDirectedRelationshipTarget()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getDirectedRelationshipTarget(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getElementOwnedElement()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getElementOwnedElement(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getElementOwner()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getElementOwner(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getEncapsulatedClassifierOwnedPort()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getEncapsulatedClassifierOwnedPort(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getExtensionMetaclass()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getExtensionMetaclass(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getFeatureFeaturingClassifier()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getFeatureFeaturingClassifier(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getMessageMessageKind()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getMessageMessageKind(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamedElementClientDependency()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamedElementClientDependency(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamedElementNamespace()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamedElementNamespace(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamedElementQualifiedName()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamedElementQualifiedName(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamespaceImportedMember()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamespaceImportedMember(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamespaceMember()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamespaceMember(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamespaceOwnedMember()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getNamespaceOwnedMember(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getOpaqueExpressionResult()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getOpaqueExpressionResult(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageNestedPackage()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageNestedPackage(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageNestingPackage()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageNestingPackage(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageOwnedStereotype()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageOwnedStereotype(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageOwnedType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPackageOwnedType(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPropertyIsComposite()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getPropertyIsComposite(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getProtocolTransitionReferred()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getProtocolTransitionReferred(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRedefinableElementRedefinedElement()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRedefinableElementRedefinedElement(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRedefinableElementRedefinitionContext()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRedefinableElementRedefinitionContext(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRedefinableTemplateSignatureInheritedParameter()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRedefinableTemplateSignatureInheritedParameter(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRelationshipRelatedElement()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getRelationshipRelatedElement(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStateIsComposite()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStateIsComposite(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStateIsOrthogonal()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStateIsOrthogonal(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStructuredClassifierPart()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStructuredClassifierPart(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStructuredClassifierRole()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getStructuredClassifierRole(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getTypePackage()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getTypePackage(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getVertexIncoming()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getVertexIncoming(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getVertexOutgoing()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Updated generated code structure" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+                <message_argument value="getVertexOutgoing(ViatraQueryEngine)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/DirectedRelationshipSource.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipSource">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipSource"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/DirectedRelationshipTarget.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipTarget">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.DirectedRelationshipTarget"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ElementOwnedElement.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnedElement">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwnedElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ElementOwner.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwner">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ElementOwner"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/EncapsulatedClassifierOwnedPort.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.EncapsulatedClassifierOwnedPort">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.EncapsulatedClassifierOwnedPort"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ExtensionMetaclass.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ExtensionMetaclass">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ExtensionMetaclass"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/FeatureFeaturingClassifier.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.FeatureFeaturingClassifier">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.FeatureFeaturingClassifier"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/MessageMessageKind.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.MessageMessageKind">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.MessageMessageKind"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/NamedElementClientDependency.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementClientDependency">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementClientDependency"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/NamedElementNamespace.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespace">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespace"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/NamedElementQualifiedName.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedName">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedName"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/NamespaceImportedMember.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceImportedMember">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceImportedMember"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/NamespaceMember.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceMember">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceMember"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/NamespaceOwnedMember.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceOwnedMember">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.NamespaceOwnedMember"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/OpaqueExpressionResult.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.OpaqueExpressionResult">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.OpaqueExpressionResult"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/PackageNestedPackage.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestedPackage">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestedPackage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/PackageNestingPackage.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestingPackage">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageNestingPackage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/PackageOwnedStereotype.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedStereotype">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedStereotype"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/PackageOwnedType.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedType">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PackageOwnedType"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/PropertyIsComposite.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.PropertyIsComposite">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.PropertyIsComposite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/ProtocolTransitionReferred.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.ProtocolTransitionReferred">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.ProtocolTransitionReferred"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/RedefinableElementRedefinedElement.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinedElement">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinedElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/RedefinableElementRedefinitionContext.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinitionContext">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableElementRedefinitionContext"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/RedefinableTemplateSignatureInheritedParameter.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableTemplateSignatureInheritedParameter">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RedefinableTemplateSignatureInheritedParameter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/RelationshipRelatedElement.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.RelationshipRelatedElement">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.RelationshipRelatedElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/StateIsComposite.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsComposite">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsComposite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/StateIsOrthogonal.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonal">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonal"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/StructuredClassifierPart.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierPart">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierPart"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/StructuredClassifierRole.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierRole">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.StructuredClassifierRole"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/TypePackage.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.TypePackage">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.TypePackage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/VertexIncoming.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.VertexIncoming">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.VertexIncoming"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/integration/uml/derivedfeatures/VertexOutgoing.java" type="org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoing">
+        <filter comment="Updated generated code structure" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoing"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -23,10 +23,11 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLFactory;
-import org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndTypeMatcher;
-import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespaceMatcher;
-import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedNameMatcher;
-import org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatcher;
+import org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndType;
+import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespace;
+import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedName;
+import org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonal;
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -63,9 +64,11 @@ public class TestUmlDerivedFeatures {
         resource.getContents().add(pkg);
         pkg.getPackagedElements().add(pkg1);
         pkg.getPackagedElements().add(clazz);
-        NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
+        NamedElementQualifiedName specification = NamedElementQualifiedName.instance();
+        GenericPatternMatcher matcher = specification.getMatcher(getEngine(resource));
         pkg1.getPackagedElements().add(clazz);
-        assertEquals(ImmutableSet.of(clazz.getQualifiedName()), matcher.getAllValuesOfqualifiedName(clazz));
+        assertEquals(ImmutableSet.of(clazz.getQualifiedName()), matcher.getAllValues("qualifiedName",
+                specification.newMatch(clazz, null)));
     }
 
     @Test
@@ -79,8 +82,8 @@ public class TestUmlDerivedFeatures {
         Type endType = FACTORY.createClass();
         resource.getContents().add(endType);
         memberEnd.setType(endType);
-        AssociationEndTypeMatcher matcher = AssociationEndTypeMatcher.on(getEngine(resource));
-        assertEquals(ImmutableSet.of(endType), matcher.getAllValuesOftype());
+        GenericPatternMatcher matcher = AssociationEndType.instance().getMatcher(getEngine(resource));
+        assertEquals(ImmutableSet.of(endType), matcher.getAllValues("type"));
     }
 
     @Test
@@ -92,8 +95,10 @@ public class TestUmlDerivedFeatures {
         Package childPackage = FACTORY.createPackage();
         rootPackage.getPackagedElements().add(childPackage);
         childPackage.setName("child");
-        NamedElementNamespaceMatcher matcher = NamedElementNamespaceMatcher.on(getEngine(resource));
-        assertEquals(ImmutableSet.of(rootPackage), matcher.getAllValuesOftarget(childPackage));
+        NamedElementNamespace specification = NamedElementNamespace.instance();
+        GenericPatternMatcher matcher = specification.getMatcher(getEngine(resource));
+        assertEquals(ImmutableSet.of(rootPackage), matcher.getAllValues("target", 
+                specification.newMatch(childPackage, null)));
     }
 
     @Test
@@ -105,8 +110,10 @@ public class TestUmlDerivedFeatures {
         Package childPackage = FACTORY.createPackage();
         rootPackage.getPackagedElements().add(childPackage);
         childPackage.setName("child");
-        NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
-        assertEquals(ImmutableSet.of(rootPackage.getName() + NamedElement.SEPARATOR + childPackage.getName()), matcher.getAllValuesOfqualifiedName(childPackage));
+        NamedElementQualifiedName specification = NamedElementQualifiedName.instance();
+        GenericPatternMatcher matcher = specification.getMatcher(getEngine(resource));
+        assertEquals(ImmutableSet.of(rootPackage.getName() + NamedElement.SEPARATOR + childPackage.getName()),
+                matcher.getAllValues("qualifiedName", specification.newMatch(childPackage, null)));
     }
 
     @Test
@@ -115,10 +122,13 @@ public class TestUmlDerivedFeatures {
         State state = FACTORY.createState();
         resource.getContents().add(state);
         state.getRegions().add(FACTORY.createRegion());
-        StateIsOrthogonalMatcher matcher = StateIsOrthogonalMatcher.on(getEngine(resource));
-        assertEquals(ImmutableSet.of(false), matcher.getAllValuesOftarget(state));
+        StateIsOrthogonal specification = StateIsOrthogonal.instance();
+        GenericPatternMatcher matcher = specification.getMatcher(getEngine(resource));
+        assertEquals(ImmutableSet.of(false), matcher.getAllValues("target",
+                specification.newMatch(state, null)));
         state.getRegions().add(FACTORY.createRegion());
-        assertEquals(ImmutableSet.of(true), matcher.getAllValuesOftarget(state));
+        assertEquals(ImmutableSet.of(true), matcher.getAllValues("target",
+                specification.newMatch(state, null)));
     }
     
 }
