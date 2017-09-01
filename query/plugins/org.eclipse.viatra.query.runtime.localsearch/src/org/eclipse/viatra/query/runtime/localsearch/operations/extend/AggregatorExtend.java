@@ -36,7 +36,6 @@ public class AggregatorExtend extends ExtendOperation<Object> {
 
     private final CallOperationHelper helper;
     private PatternCall call;
-    private int position;
     private final AggregatorConstraint aggregator;
     
     

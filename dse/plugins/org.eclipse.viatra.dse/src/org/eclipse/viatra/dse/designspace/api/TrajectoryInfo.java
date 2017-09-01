@@ -23,7 +23,7 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransforma
 
 import com.google.common.base.Preconditions;
 
-public class TrajectoryInfo implements Cloneable {
+public class TrajectoryInfo {
 
     private final List<Object> trajectory;
     private final List<Object> trajectoryView;
@@ -48,6 +48,15 @@ public class TrajectoryInfo implements Cloneable {
         rulesView = Collections.unmodifiableList(rules);
     }
 
+    /**
+     * Copy constructor
+     * 
+     * @since 0.17
+     */
+    public TrajectoryInfo(TrajectoryInfo other) {
+        this(other.stateIds, other.trajectory, other.rules, other.measuredCosts);
+    }
+    
     protected TrajectoryInfo(List<Object> stateIds, List<Object> trajectory, List<BatchTransformationRule<?, ?>> rules, List<Map<String, Double>> measuredCosts) {
 
         this.stateIds = new ArrayList<>(stateIds);
@@ -121,12 +130,6 @@ public class TrajectoryInfo implements Cloneable {
 
     public boolean canStepBack() {
         return !trajectory.isEmpty();
-    }
-
-    @Override
-    public TrajectoryInfo clone() {
-        TrajectoryInfo clone = new TrajectoryInfo(stateIds, trajectory, rules, measuredCosts);
-        return clone;
     }
 
     @Override

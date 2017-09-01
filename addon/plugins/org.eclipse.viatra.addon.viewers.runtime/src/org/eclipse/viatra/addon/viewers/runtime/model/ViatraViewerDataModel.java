@@ -37,7 +37,6 @@ import com.google.common.collect.Sets;
  * 
  */
 public class ViatraViewerDataModel extends ViewerDataModel {
-    private ViatraQueryEngine engine;
     private Logger logger;
     private Set<IQuerySpecification<?>> patterns;
     
@@ -52,7 +51,6 @@ public class ViatraViewerDataModel extends ViewerDataModel {
     public ViatraViewerDataModel(Collection<IQuerySpecification<?>> patterns, ViatraQueryEngine engine) throws ViatraQueryException, ViatraBaseException {
         super(engine);
         this.patterns = Sets.newHashSet(patterns);
-        this.engine = engine;
         this.logger = ViatraQueryLoggingUtil.getLogger(getClass());
     }
 
