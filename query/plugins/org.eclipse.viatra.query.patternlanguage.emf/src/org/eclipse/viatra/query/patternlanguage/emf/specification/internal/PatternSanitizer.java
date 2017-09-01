@@ -54,9 +54,9 @@ import com.google.inject.Injector;
  *
  */
 public class PatternSanitizer {
-    Set<Pattern> admittedPatterns = new HashSet<Pattern>();
-    Set<Pattern> rejectedPatterns = new HashSet<Pattern>();
-    Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
+    Set<Pattern> admittedPatterns = new HashSet<>();
+    Set<Pattern> rejectedPatterns = new HashSet<>();
+    Map<String, Pattern> patternsByName = new HashMap<>();
     Multimap<Pattern, PProblem> problemsByPattern = HashMultimap.create();
 
     Logger logger;
@@ -132,8 +132,8 @@ public class PatternSanitizer {
 
         boolean nullPatternFound = false;
         // TODO validate(toBeValidated) as a group
-        Set<Pattern> inadmissible = new HashSet<Pattern>();
-        Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
+        Set<Pattern> inadmissible = new HashSet<>();
+        Map<String, Pattern> newPatternsByName = new HashMap<>();
         for (Pattern current : newPatterns) {
             if (current == null || current.eIsProxy()) {
                 nullPatternFound = true;
@@ -218,9 +218,9 @@ public class PatternSanitizer {
      * Gathers all patterns that are not admitted yet, but are transitively referenced from the given patterns.
      */
     protected Set<Pattern> getAllReferencedUnvalidatedPatterns(Collection<Pattern> patterns) {
-        Set<Pattern> toBeValidated = new HashSet<Pattern>();
+        Set<Pattern> toBeValidated = new HashSet<>();
 
-        Deque<Pattern> unexplored = new LinkedList<Pattern>();
+        Deque<Pattern> unexplored = new LinkedList<>();
 
         for (Pattern pattern : patterns) {
             if (!admittedPatterns.contains(pattern)) {

@@ -286,7 +286,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     private List<GenPackage> getAllGenPackages(GenModel genModel) {
-        List<GenPackage> resultList = new ArrayList<GenPackage>();
+        List<GenPackage> resultList = new ArrayList<>();
         for (GenPackage genPackage : genModel.getGenPackages()) {
             resultList.add(genPackage);
             resultList.addAll(getAllNestedGenPackages(genPackage));
@@ -295,7 +295,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     private List<GenPackage> getAllNestedGenPackages(GenPackage outerGenPackage) {
-        List<GenPackage> resultList = new ArrayList<GenPackage>();
+        List<GenPackage> resultList = new ArrayList<>();
         for (GenPackage innerGenPackage : outerGenPackage.getNestedGenPackages()) {
             resultList.add(innerGenPackage);
             resultList.addAll(getAllNestedGenPackages(innerGenPackage));

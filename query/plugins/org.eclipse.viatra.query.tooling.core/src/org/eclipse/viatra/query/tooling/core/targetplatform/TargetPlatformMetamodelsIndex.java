@@ -69,7 +69,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
     private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
     private final Set<String> processedPlugins = Sets.newHashSet();
     private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
-    private Map<URI, URI> platformURIMap = new HashMap<URI, URI>();
+    private Map<URI, URI> platformURIMap = new HashMap<>();
 //    private Map<String, URI> ePackageNsURIToGenModelLocationMap;
     
     private boolean automaticIndexing = true;
@@ -106,8 +106,8 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
             return;
         }
         IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-        Set<String> workspacePlugins = new HashSet<String>();
-        Map<String, IPluginBase> pluginset = new HashMap<String, IPluginBase>();
+        Set<String> workspacePlugins = new HashSet<>();
+        Map<String, IPluginBase> pluginset = new HashMap<>();
         for(IPluginModelBase mbase : plugins){
             IPluginBase base = mbase.createPluginBase();
             String ID = mbase.getInstallLocation();
@@ -118,14 +118,14 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         }
         
         /* Remove entries that disappeared */
-        Set<String> remove = new HashSet<String>(processedPlugins);
+        Set<String> remove = new HashSet<>(processedPlugins);
         remove.removeAll(pluginset.keySet());
         for(String id : remove){
             entries.removeAll(id);
             processedPlugins.remove(id);
         }
         /* Add new entries */
-        Set<String> added = new HashSet<String>(pluginset.keySet());
+        Set<String> added = new HashSet<>(pluginset.keySet());
         added.removeAll(processedPlugins);
         // compute platform URI map only when platform plugin list changed
         if(!added.isEmpty()){
@@ -153,7 +153,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
     }
     
     private List<TargetPlatformMetamodel> load(IPluginBase base){
-        List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodel>();
+        List<TargetPlatformMetamodel> metamodels = new LinkedList<>();
         for(IPluginExtension extension : base.getExtensions()){
             if (EP_GENPACKAGE.equals(extension.getPoint())){
                 for(IPluginObject po : extension.getChildren()){
@@ -278,13 +278,13 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         synchronized (TargetPlatformMetamodelsIndex.class) {
             update();
             
-            return Iterables.filter(new ArrayList<TargetPlatformMetamodel>(entries.values()), Predicates.notNull());
+            return Iterables.filter(new ArrayList<>(entries.values()), Predicates.notNull());
         }
     }
 
     @Override
     public List<String> listEPackages() {
-        List<String> packageURIs = new LinkedList<String>();
+        List<String> packageURIs = new LinkedList<>();
         for(TargetPlatformMetamodel entry: load()){
             packageURIs.add(entry.getPackageURI());
         }

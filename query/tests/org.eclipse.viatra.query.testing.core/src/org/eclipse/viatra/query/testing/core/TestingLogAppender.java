@@ -32,7 +32,7 @@ public class TestingLogAppender extends AppenderSkeleton implements Appender {
     private static final String FORMAT_LAYOUT = "%m%n";
     private static final Level LEVEL_MIN = Level.WARN;
 
-    private final Map<String, StringBuilder> messages = new HashMap<String, StringBuilder>();
+    private final Map<String, StringBuilder> messages = new HashMap<>();
     private final StringBuilder output = new StringBuilder();
 
     public TestingLogAppender() {

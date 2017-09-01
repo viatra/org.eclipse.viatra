@@ -98,7 +98,7 @@ public class TupleTest {
     
     @Test
     public void testMasks() {
-        ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
+        ArrayList<Integer> selectedIndices = new ArrayList<>();
         recursiveBuildIndices(selectedIndices);
     }
 

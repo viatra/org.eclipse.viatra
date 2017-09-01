@@ -60,7 +60,7 @@ public class ParserTest {
 
     protected void testParserRule(String text, String rulename,
             Collection<ExpectedIssue> issues) {
-        HashSet<ExpectedIssue> issueSet = new HashSet<ExpectedIssue>(issues);
+        HashSet<ExpectedIssue> issueSet = new HashSet<>(issues);
         Grammar grammar = grammarAccess.getGrammar();
         ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(grammar,
                 rulename);

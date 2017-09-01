@@ -60,7 +60,7 @@ public class EclipseResourceSupport {
         EclipseResourceFileSystemAccess2 fsa = fileSystemAccessProvider.get();
         fsa.setProject(targetProject);
         fsa.setMonitor(new NullProgressMonitor());
-        Map<String, OutputConfiguration> outputs = new HashMap<String, OutputConfiguration>();
+        Map<String, OutputConfiguration> outputs = new HashMap<>();
         for (OutputConfiguration conf : outputConfigurationProvider.getOutputConfigurations(targetProject)) {
             outputs.put(conf.getName(), conf);
         }

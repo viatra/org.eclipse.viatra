@@ -144,7 +144,7 @@ public final class CorePatternLanguageHelper {
      * @return all xbase check() or eval() expressions in the pattern
      */
     public static Collection<XExpression> getAllTopLevelXBaseExpressions(EObject patternOrBody) {
-        final List<XExpression> result = new ArrayList<XExpression>();
+        final List<XExpression> result = new ArrayList<>();
         final TreeIterator<EObject> eAllContents = patternOrBody.eAllContents();
         while (eAllContents.hasNext()) {
             final EObject content = eAllContents.next();
@@ -178,7 +178,7 @@ public final class CorePatternLanguageHelper {
     /** Compiles a map for name-based lookup of symbolic parameter positions. */
     public static Map<String, Integer> getParameterPositionsByName(Pattern pattern) {
         EList<Variable> parameters = pattern.getParameters();
-        Map<String, Integer> posMapping = new HashMap<String, Integer>();
+        Map<String, Integer> posMapping = new HashMap<>();
         int parameterPosition = 0;
         for (Variable parameter : parameters) {
             posMapping.put(parameter.getName(), parameterPosition++);
@@ -193,7 +193,7 @@ public final class CorePatternLanguageHelper {
      * as that is used to set up the list of available local variables.
      */
     public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression, IJvmModelAssociations associations) {
-        Set<Variable> result = new HashSet<Variable>();
+        Set<Variable> result = new HashSet<>();
         if (xExpression != null) {
             collectVariableFromExpression(xExpression, associations, result, xExpression);
             TreeIterator<EObject> eAllContents = xExpression.eAllContents();
@@ -248,7 +248,7 @@ public final class CorePatternLanguageHelper {
 
     /** Finds all patterns referenced from the given pattern. */
     public static Set<Pattern> getReferencedPatterns(Pattern sourcePattern) {
-        Set<Pattern> result = new HashSet<Pattern>();
+        Set<Pattern> result = new HashSet<>();
         TreeIterator<EObject> eAllContents = sourcePattern.eAllContents();
         while (eAllContents.hasNext()) {
             EObject element = eAllContents.next();
@@ -339,7 +339,7 @@ public final class CorePatternLanguageHelper {
             calculateReferencedPatternsTransitive(pattern, patterns, filter);
             return patterns;
         } else {
-            Pair<Pattern, Predicate<Pattern>> key = new Pair<Pattern, Predicate<Pattern>>(pattern, filter);
+            Pair<Pattern, Predicate<Pattern>> key = new Pair<>(pattern, filter);
             return cache.get(key, pattern.eResource(), new Provider<Set<Pattern>>() {
 
                 @Override
@@ -471,7 +471,7 @@ public final class CorePatternLanguageHelper {
      *         AggregatedValue.)
      */
     public static Set<Variable> getVariablesFromValueReference(ValueReference valueReference) {
-        Set<Variable> resultSet = new HashSet<Variable>();
+        Set<Variable> resultSet = new HashSet<>();
         if (valueReference != null) {
             if (valueReference instanceof VariableValue) {
                 resultSet.add(((VariableValue) valueReference).getValue().getVariable());
@@ -512,7 +512,7 @@ public final class CorePatternLanguageHelper {
      *         starts with the "_" prefix, and can be found in find, count find calls.
      */
     public static List<Variable> getUnnamedRunningVariables(PatternBody patternBody) {
-        List<Variable> resultList = new ArrayList<Variable>();
+        List<Variable> resultList = new ArrayList<>();
         for (Constraint constraint : patternBody.getConstraints()) {
             if (constraint instanceof CompareConstraint) {
                 // Just from aggregated elements
@@ -540,7 +540,7 @@ public final class CorePatternLanguageHelper {
 
     private static Set<Variable> getUnnamedVariablesFromValueReference(ValueReference valueReference,
             boolean onlyFromAggregatedValues) {
-        Set<Variable> resultSet = new HashSet<Variable>();
+        Set<Variable> resultSet = new HashSet<>();
         if (valueReference != null) {
             if (valueReference instanceof VariableValue) {
                 Variable variable = ((VariableValue) valueReference).getValue().getVariable();
@@ -599,7 +599,7 @@ public final class CorePatternLanguageHelper {
      * Retains the first parameter of each parameter name.
      */
     public static Map<String, Object> evaluateAnnotationParameters(Annotation annotation) {
-       Map<String, Object> result = new HashMap<String, Object>();
+       Map<String, Object> result = new HashMap<>();
        for (Entry<String, Object> entry : evaluateAnnotationParametersWithMultiplicity(annotation).entries()) {
            if (! result.containsKey(entry.getKey()))
                result.put(entry.getKey(), entry.getValue());

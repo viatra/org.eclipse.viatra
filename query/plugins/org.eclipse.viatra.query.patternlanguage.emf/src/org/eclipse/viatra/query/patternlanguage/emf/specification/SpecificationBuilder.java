@@ -69,7 +69,7 @@ public class SpecificationBuilder {
     /**
      * This map is used to detect a re-addition of a pattern with a fqn that is used by a previously added pattern.
      */
-    private Map<String, Pattern> patternNameMap = new HashMap<String, Pattern>();
+    private Map<String, Pattern> patternNameMap = new HashMap<>();
     private Multimap<PQuery, IQuerySpecification<?>> dependantQueries = Multimaps.newSetMultimap(
             new HashMap<PQuery, Collection<IQuerySpecification<?>>>(), new Supplier<Set<IQuerySpecification<?>>>() {
 

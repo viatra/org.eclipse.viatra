@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.patternlanguage.emf" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider">
+        <filter comment="Internal API update" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf_1.6.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/PatternParsingUtil.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil">
         <filter comment="Code cleanup" id="354463860">
             <message_arguments>

@@ -171,7 +171,7 @@ public abstract class ProjectGenerationHelper {
     public static void updateNatures(IProject proj, Collection<String> naturesToAdd,
             Collection<String> naturesToRemove, IProgressMonitor monitor) throws CoreException {
         IProjectDescription desc = proj.getDescription();
-        Set<String> newNatures = new LinkedHashSet<String>();
+        Set<String> newNatures = new LinkedHashSet<>();
         newNatures.addAll(Arrays.asList(desc.getNatureIds()));
         newNatures.addAll(naturesToAdd);
         newNatures.removeAll(naturesToRemove);
@@ -405,8 +405,8 @@ public abstract class ProjectGenerationHelper {
         
         IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
         
-        Set<String> toRemove = new HashSet<String>();
-        Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<IRequiredBundleDescription>();
+        Set<String> toRemove = new HashSet<>();
+        Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<>();
         
         for(IRequiredBundleDescription r : existingDependencies){
             String id = r.getName();
@@ -425,7 +425,7 @@ public abstract class ProjectGenerationHelper {
             // We can't remove existing entries with this API. Just add new entries.
             bundleDesc.setRequiredBundles(toAdd.toArray(new IRequiredBundleDescription[toAdd.size()]));
         }else{
-            List<IRequiredBundleDescription> dependencies = new LinkedList<IRequiredBundleDescription>();
+            List<IRequiredBundleDescription> dependencies = new LinkedList<>();
             for(IRequiredBundleDescription r : existingDependencies){
                 if (!toRemove.contains(r.getName())){
                     dependencies.add(r);
@@ -454,7 +454,7 @@ public abstract class ProjectGenerationHelper {
             bundleDesc.setRequiredBundles(Iterables.toArray(missingDependencies, IRequiredBundleDescription.class));
             
         } else {
-            List<String> missingDependencyNames = new ArrayList<String>(dependencyNames);
+            List<String> missingDependencyNames = new ArrayList<>(dependencyNames);
             for (IRequiredBundleDescription bundle : existingDependencies) {
                 if (missingDependencyNames.contains(bundle.getName())) {
                     missingDependencyNames.remove(bundle.getName());
@@ -631,7 +631,7 @@ public abstract class ProjectGenerationHelper {
     static void removePackageExports(final IBundleProjectService service, IBundleProjectDescription bundleDesc,
             final List<String> exports) {
         IPackageExportDescription[] packageExports = bundleDesc.getPackageExports();
-        List<IPackageExportDescription> exportList = new ArrayList<IPackageExportDescription>();
+        List<IPackageExportDescription> exportList = new ArrayList<>();
         if (packageExports != null) {
             for (IPackageExportDescription export : packageExports) {
                 if (!exports.contains(export.getName())) {

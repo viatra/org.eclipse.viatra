@@ -158,7 +158,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     }
 
     private Set<EClassifier> minimizeClassifiersList(Set<EClassifier> classifierList) {
-        final Set<EClassifier> resultList = new HashSet<EClassifier>(classifierList);
+        final Set<EClassifier> resultList = new HashSet<>(classifierList);
         if (resultList.size() > 1) {
             for (EClassifier classifier : classifierList) {
                 if ("EObject".equals(classifier.getName())
@@ -209,7 +209,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     private EClassifier getClassifierForVariableWithPattern(Pattern pattern, Variable variable,
             int recursionCallingLevel) {
-        Set<EClassifier> intermediateResultList = new HashSet<EClassifier>();
+        Set<EClassifier> intermediateResultList = new HashSet<>();
         for (PatternBody body : pattern.getBodies()) {
             EClassifier classifier = getClassifierForVariableWithPatternBody(body, variable, recursionCallingLevel,
                     null);
@@ -226,11 +226,11 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
                 for (EClassifier classifier : intermediateResultList) {
                     if (classifier instanceof EClass) {
                         if (resultSuperTypes == null) {
-                            resultSuperTypes = new LinkedHashSet<EClassifier>();
+                            resultSuperTypes = new LinkedHashSet<>();
                             resultSuperTypes.addAll(((EClass) classifier).getEAllSuperTypes());
                             resultSuperTypes.add(classifier);
                         } else {
-                            Set<EClassifier> nextSet = new LinkedHashSet<EClassifier>();
+                            Set<EClassifier> nextSet = new LinkedHashSet<>();
                             nextSet.addAll(((EClass) classifier).getEAllSuperTypes());
                             nextSet.add(classifier);
                             resultSuperTypes.retainAll(nextSet);
@@ -290,7 +290,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     private Set<EClassifier> getPotentialClassifiersForVariableWithPatternBody(PatternBody patternBody,
             Variable variable, int recursionCallingLevel, Variable injectiveVariablePair) {
-        Set<EClassifier> possibleClassifiersList = new HashSet<EClassifier>();
+        Set<EClassifier> possibleClassifiersList = new HashSet<>();
         EClassifier classifier = null;
 
         // Calculate explicit type with just the variable only (works only for parameters)

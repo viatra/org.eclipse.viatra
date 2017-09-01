@@ -88,7 +88,7 @@ public class PatternSetValidator {
     public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
         BasicDiagnostic chain = new BasicDiagnostic();
         PatternSetValidationDiagnostics collectedIssues = new PatternSetValidationDiagnostics();
-        Set<Resource> containerResources = new HashSet<Resource>();
+        Set<Resource> containerResources = new HashSet<>();
         for (Pattern pattern : patternSet) {
             Resource resource = pattern.eResource();
             if (resource != null) {

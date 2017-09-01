@@ -128,7 +128,7 @@ public class DisjunctionBasedPQuery implements PQuery {
         wrapped.ensureInitialized();
     }
 
-    List<Object> specificationTraces = new ArrayList<Object>();
+    List<Object> specificationTraces = new ArrayList<>();
 
     @Override
     public List<Object> publishedAs() {

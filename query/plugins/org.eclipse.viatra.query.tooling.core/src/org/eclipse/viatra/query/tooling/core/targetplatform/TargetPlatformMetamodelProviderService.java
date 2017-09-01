@@ -74,7 +74,7 @@ public class TargetPlatformMetamodelProviderService extends
     public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
         final ResourceSet resourceSet = context.eResource().getResourceSet();
         List<String> tpmetamodels = metamodelLoader.listEPackages();
-        List<IEObjectDescription> metamodels = new ArrayList<IEObjectDescription>();
+        List<IEObjectDescription> metamodels = new ArrayList<>();
         for (String metamodel : tpmetamodels) {
             EPackage ePackage = metamodelLoader.loadPackage(resourceSet, metamodel);
             QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(metamodel);

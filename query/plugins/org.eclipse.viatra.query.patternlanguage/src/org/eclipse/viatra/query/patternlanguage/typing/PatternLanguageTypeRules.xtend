@@ -52,6 +52,9 @@ class PatternLanguageTypeRules {
    @Inject NumberLiterals literals
    @Inject Logger logger
    
+   /**
+    * @since 1.7
+    */
    def void loadParameterVariableTypes(Pattern pattern, TypeInformation information) {
        pattern.parameters.forEach[parameter|
             val typeKey = typeSystem.extractTypeDescriptor(parameter.type)

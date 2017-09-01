@@ -163,7 +163,7 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
             return Boolean.toString(CorePatternLanguageHelper.getValue(ref, Boolean.class));
         } else if (ref instanceof ListValue) {
             EList<ValueReference> values = ((ListValue) ref).getValues();
-            List<String> valueStrings = new ArrayList<String>();
+            List<String> valueStrings = new ArrayList<>();
             for (ValueReference valueReference : values) {
                 valueStrings.add(getValueText(valueReference));
             }

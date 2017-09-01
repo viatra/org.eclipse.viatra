@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 class CollectDeletedElement implements IResourceVisitor {
-    List<IResource> toDelete = new ArrayList<IResource>();
+    List<IResource> toDelete = new ArrayList<>();
 
     @Override
     public boolean visit(IResource resource) throws CoreException {

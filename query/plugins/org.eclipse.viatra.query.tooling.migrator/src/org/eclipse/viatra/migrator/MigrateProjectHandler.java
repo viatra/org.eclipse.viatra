@@ -33,7 +33,7 @@ public class MigrateProjectHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelectionChecked(event);
-        final List<JavaProjectMigrator> projects = new ArrayList<JavaProjectMigrator>(selection.size());
+        final List<JavaProjectMigrator> projects = new ArrayList<>(selection.size());
         
         for(Object o : selection.toArray()){
             if (o instanceof IProject){

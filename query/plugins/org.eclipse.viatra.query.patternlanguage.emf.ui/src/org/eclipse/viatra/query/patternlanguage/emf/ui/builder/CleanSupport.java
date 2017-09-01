@@ -102,7 +102,7 @@ public class CleanSupport {
         // clean all fragments
         cleanAllFragment(modelProject);
         // clean current model project
-        List<Pair<String, String>> removableExtensions = new ArrayList<Pair<String, String>>();
+        List<Pair<String, String>> removableExtensions = new ArrayList<>();
         removableExtensions.addAll(GenerateQuerySpecificationExtension.getRemovableExtensionIdentifiers());
         if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
             ProjectGenerationHelper.removeAllExtension(modelProject, removableExtensions);

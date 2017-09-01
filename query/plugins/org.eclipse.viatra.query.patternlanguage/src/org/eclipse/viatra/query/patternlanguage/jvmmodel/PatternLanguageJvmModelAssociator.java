@@ -106,7 +106,7 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
     private EList<Variable> getAllVariablesInBody(PatternBody body, EList<Variable> previous) {
         EList<Variable> variables = previous;
 
-        Map<String, Variable> parameterMap = new HashMap<String, Variable>();
+        Map<String, Variable> parameterMap = new HashMap<>();
 
         EList<Variable> parameters = ((Pattern) body.eContainer()).getParameters();
         for (Variable var : variables) {

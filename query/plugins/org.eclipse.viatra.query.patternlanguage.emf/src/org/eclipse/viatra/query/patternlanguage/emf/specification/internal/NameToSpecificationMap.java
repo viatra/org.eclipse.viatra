@@ -36,7 +36,7 @@ public class NameToSpecificationMap implements Map<String, IQuerySpecification<?
     Map<String, IQuerySpecification<?>> map;
     
     public NameToSpecificationMap() {
-        map = new HashMap<String, IQuerySpecification<?>>();
+        map = new HashMap<>();
     }
     
     public NameToSpecificationMap(IQuerySpecification<?>... specifications) {
@@ -54,7 +54,7 @@ public class NameToSpecificationMap implements Map<String, IQuerySpecification<?
     }
     
     public NameToSpecificationMap(Map<String, IQuerySpecification<?>> source) {
-        map = new HashMap<String, IQuerySpecification<?>>(source);
+        map = new HashMap<>(source);
     }
 
     /**

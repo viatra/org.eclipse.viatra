@@ -361,8 +361,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
         Set<String> typeNameSet = Sets.newHashSet(Iterables.transform(allPossibleTypes, TYPENAME));
 
-        Set<String> classifierNamesSet = new HashSet<String>();
-        Set<String> classifierPackagesSet = new HashSet<String>();
+        Set<String> classifierNamesSet = new HashSet<>();
+        Set<String> classifierPackagesSet = new HashSet<>();
         for (EClassifier classifier : possibleClassifiers) {
             classifierNamesSet.add(classifier.getName());
             if (classifier.getEPackage() != null) {
@@ -579,15 +579,15 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         List<Variable> variables = Lists.newArrayList(patternBody.getVariables());
         List<Variable> unnamedRunningVariables = CorePatternLanguageHelper.getUnnamedRunningVariables(patternBody);
         variables.removeAll(unnamedRunningVariables);
-        UnionFind<Variable> justPositiveUnionFindForVariables = new UnionFind<Variable>(variables);
-        UnionFind<Variable> generalUnionFindForVariables = new UnionFind<Variable>(variables);
+        UnionFind<Variable> justPositiveUnionFindForVariables = new UnionFind<>(variables);
+        UnionFind<Variable> generalUnionFindForVariables = new UnionFind<>(variables);
         boolean isSecondRunNeeded = false;
 
         // First run
         // Just put together the real positive connections, and all of the general connections first
         for (Constraint constraint : patternBody.getConstraints()) {
-            Set<Variable> positiveVariables = new HashSet<Variable>();
-            Set<Variable> generalVariables = new HashSet<Variable>();
+            Set<Variable> positiveVariables = new HashSet<>();
+            Set<Variable> generalVariables = new HashSet<>();
             if (constraint instanceof CompareConstraint) {
                 // Equality and inequality (==, !=)
                 CompareConstraint compareConstraint = (CompareConstraint) constraint;
@@ -675,7 +675,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         // If the aggregated contains unnamed/running vars it should be omitted during the positive relation checking
         if (isSecondRunNeeded) {
             for (Constraint constraint : patternBody.getConstraints()) {
-                Set<Variable> positiveVariables = new HashSet<Variable>();
+                Set<Variable> positiveVariables = new HashSet<>();
                 if (constraint instanceof CompareConstraint) {
                     CompareConstraint compareConstraint = (CompareConstraint) constraint;
                     if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
@@ -781,9 +781,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * Returns a copy of this with the given value removed. The given value does not have to be a set's root node.
      */
     private static <V> UnionFind<V> copyAndRemove(UnionFind<V> unionFind, V element) {
-        UnionFind<V> result = new UnionFind<V>();
+        UnionFind<V> result = new UnionFind<>();
         for (Set<V> partition : unionFind.getPartitions()) {
-            Set<V> filteredPartition = new HashSet<V>(partition);
+            Set<V> filteredPartition = new HashSet<>(partition);
             filteredPartition.remove(element);
             result.makeSet(filteredPartition);
         }

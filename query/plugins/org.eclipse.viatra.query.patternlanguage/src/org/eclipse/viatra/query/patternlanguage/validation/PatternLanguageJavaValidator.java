@@ -515,7 +515,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private LinkedList<PatternCall> dfsCheckCycle(PatternCall source, Map<PatternCall, Set<PatternCall>> graph) {
-        LinkedList<PatternCall> path = new LinkedList<PatternCall>();
+        LinkedList<PatternCall> path = new LinkedList<>();
         path.add(source);
         return dfsCheckCycle(source, path, new HashSet<PatternCall>(), graph);
     }
@@ -583,14 +583,14 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
         @Override
         public Map<PatternCall, Set<PatternCall>> get() {
-            Map<PatternCall, Set<PatternCall>> graph = new HashMap<PatternCall, Set<PatternCall>>();
+            Map<PatternCall, Set<PatternCall>> graph = new HashMap<>();
             TreeIterator<EObject> resourceIterator = resource.getAllContents();
             Set<PatternCall> knownCalls = Sets.newHashSet(Iterators.filter(resourceIterator, PatternCall.class));
             Set<PatternCall> unprocessedCalls = Sets.difference(knownCalls, graph.keySet());
 
             while (!unprocessedCalls.isEmpty()) {
                 PatternCall source = unprocessedCalls.iterator().next();
-                Set<PatternCall> targets = new TreeSet<PatternCall>(patternCallComparator);
+                Set<PatternCall> targets = new TreeSet<>(patternCallComparator);
                 graph.put(source, targets);
 
                 TreeIterator<EObject> headIterator = source.getPatternRef().eAllContents();
@@ -767,7 +767,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private void checkForImpureJavaCallsInternal(XExpression xExpression, EStructuralFeature feature) {
-        Set<String> elementsWithWarnings = new HashSet<String>();
+        Set<String> elementsWithWarnings = new HashSet<>();
         Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression),
                 xExpression.eAllContents());
         while (eAllContents.hasNext()) {

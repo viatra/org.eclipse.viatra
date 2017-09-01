@@ -110,7 +110,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
     }
 
     private List<URL> getClassesAsURLs(String[] classPathEntries) throws MalformedURLException {
-        List<URL> urlList = new ArrayList<URL>();
+        List<URL> urlList = new ArrayList<>();
         for (int i = 0; i < classPathEntries.length; i++) {
             String entry = classPathEntries[i];
             IPath path = new Path(entry);

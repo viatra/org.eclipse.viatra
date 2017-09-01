@@ -78,9 +78,9 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
     }
     
     private EPackage lookUpEPackageInResourceSetContents(String packageUri, ResourceSet resourceSet) {
-        Set<Resource> processedResources = new HashSet<Resource>();
+        Set<Resource> processedResources = new HashSet<>();
         while (processedResources.size() != resourceSet.getResources().size()) {
-            Set<Resource> resources = new HashSet<Resource>(resourceSet.getResources());
+            Set<Resource> resources = new HashSet<>(resourceSet.getResources());
             resources.removeAll(processedResources);
             for (Resource resource : resources) {
                 EPackage pkg = findEPackageInResource(packageUri, resource);

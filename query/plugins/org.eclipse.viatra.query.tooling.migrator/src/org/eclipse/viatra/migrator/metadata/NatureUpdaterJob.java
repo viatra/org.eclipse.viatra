@@ -156,8 +156,8 @@ class NatureUpdaterJob extends Job {
     public void removeExpressionExtensions(IProject project) throws CoreException {
         final List<Pair<String, String>> removableExtensions = Lists.newArrayList();
     
-        removableExtensions.add(new Pair<String, String>("", "org.eclipse.incquery.runtime.queryspecification"));
-        removableExtensions.add(new Pair<String, String>("", MigratorConstants.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
+        removableExtensions.add(new Pair<>("", "org.eclipse.incquery.runtime.queryspecification"));
+        removableExtensions.add(new Pair<>("", MigratorConstants.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
         ProjectGenerationHelper.removeAllExtension(project, removableExtensions);
     }
 

@@ -71,7 +71,7 @@ public class ExtensionBasedGenerationFragmentProvider implements IGenerationFrag
         if (fragments == null) {
             initializeFragments();
         }
-        Set<IGenerationFragment> fragmentSet = new HashSet<IGenerationFragment>(fragments.get(GENERIC_ATTRIBUTE));
+        Set<IGenerationFragment> fragmentSet = new HashSet<>(fragments.get(GENERIC_ATTRIBUTE));
         for (Annotation annotation : pattern.getAnnotations()) {
             fragmentSet.addAll(fragments.get(annotation.getName()));
         }
@@ -83,7 +83,7 @@ public class ExtensionBasedGenerationFragmentProvider implements IGenerationFrag
         if (fragments == null) {
             initializeFragments();
         }
-        return new HashSet<IGenerationFragment>(fragments.values());
+        return new HashSet<>(fragments.values());
     }
 
     @Override

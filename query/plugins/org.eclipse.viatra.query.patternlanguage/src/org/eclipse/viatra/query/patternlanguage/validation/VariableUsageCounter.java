@@ -58,7 +58,7 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
 
     @Override
     protected List<EPackage> getEPackages() {
-        List<EPackage> result = new ArrayList<EPackage>();
+        List<EPackage> result = new ArrayList<>();
         result.add(org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage.eINSTANCE);
         return result;
     }
@@ -66,8 +66,8 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
     @Check(CheckType.NORMAL)
     public void checkVariableUsageCounters(PatternBody body) {
         UnionFind<Variable> variableUnions = calculateEqualVariables(body);
-        Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters = new HashMap<Set<Variable>, VariableReferenceCount>();
-        Map<Variable, VariableReferenceCount> individualRefCounters = new HashMap<Variable, VariableReferenceCount>();
+        Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters = new HashMap<>();
+        Map<Variable, VariableReferenceCount> individualRefCounters = new HashMap<>();
         calculateUsageCounts(body, variableUnions, individualRefCounters, unifiedRefCounters);
         for (Variable var : body.getVariables()) {
             if (var instanceof ParameterRef) {
@@ -179,7 +179,7 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
     }
 
     private UnionFind<Variable> calculateEqualVariables(PatternBody body) {
-        UnionFind<Variable> unions = new UnionFind<Variable>(body.getVariables());
+        UnionFind<Variable> unions = new UnionFind<>(body.getVariables());
         TreeIterator<EObject> it = body.eAllContents();
         while (it.hasNext()) {
             EObject obj = it.next();
