@@ -1097,7 +1097,7 @@
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
         version="1.6"
-        location="${installation.location}/api/v1.5/"
+        location="${installation.location}/api/v1.6/"
         remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.6.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
