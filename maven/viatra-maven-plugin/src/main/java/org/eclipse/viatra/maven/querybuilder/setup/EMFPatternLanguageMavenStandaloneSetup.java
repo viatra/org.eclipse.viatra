@@ -15,6 +15,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageRuntimeMod
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
+import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -33,7 +34,14 @@ public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageSt
                 Multibinder<IMetamodelProviderInstance> metamodelProviderBinder = Multibinder.newSetBinder(bind, IMetamodelProviderInstance.class);
                 metamodelProviderBinder.addBinding().to(MavenGenmodelMetamodelProvider.class);
             }
-
+            
+            /**
+             * @since 1.7
+             */
+            @SuppressWarnings("unused")
+            public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
+                return MavenGeneratorConfigProvider.class;
+            }
         });
     }
 

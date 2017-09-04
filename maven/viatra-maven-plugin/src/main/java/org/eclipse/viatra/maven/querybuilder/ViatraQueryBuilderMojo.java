@@ -12,11 +12,14 @@
 package org.eclipse.viatra.maven.querybuilder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,6 +41,9 @@ import org.eclipse.viatra.maven.querybuilder.helper.Metamodel;
 import org.eclipse.viatra.maven.querybuilder.helper.UriMapping;
 import org.eclipse.viatra.maven.querybuilder.setup.EMFPatternLanguageMavenStandaloneSetup;
 import org.eclipse.viatra.maven.querybuilder.setup.MavenBuilderGenmodelLoader;
+import org.eclipse.viatra.maven.querybuilder.setup.MavenGeneratorConfigProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
 import org.eclipse.xtext.maven.Language;
 import org.eclipse.xtext.maven.OutputConfiguration;
 
@@ -124,12 +130,12 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
     protected String encoding;
 
     /**
-     * @parameter expression="${maven.compiler.source}" default-value="1.6"
+     * @parameter expression="${maven.compiler.source}" default-value="1.7"
      */
     private String compilerSourceLevel;
 
     /**
-     * @parameter expression="${maven.compiler.target}" default-value="1.6"
+     * @parameter expression="${maven.compiler.target}" default-value="1.7"
      */
     private String compilerTargetLevel;
     
@@ -139,6 +145,32 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * @parameter
      */
     private boolean useProjectDependencies = false;
+    
+    /**
+     * @parameter default-value="true"
+     * @since 1.7
+     */
+    private boolean useEclipseGeneratorPreferences = true;
+    
+    /**
+     * @parameter default-value="SEPARATE_CLASS"
+     * @since 1.7
+     */
+    private MatcherGenerationStrategy matcherGeneration;
+    
+    /**
+     * @parameter
+     * @since 1.7
+     */
+    private boolean generateMatchProcessors = true;
+    
+    /**
+     * Location of the VIATRA Compiler settings file.
+     * 
+     * @parameter default-value="${basedir}/.settings/org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.prefs"
+     * @readonly
+     */
+    private String propertiesFileLocation;
     
     /**
      * URI mappings to add to the global URI mapping registry.
@@ -158,11 +190,46 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
         registerMetamodels();
 
         ResourceOrderingXtextGenerator generator = new ResourceOrderingXtextGenerator();
-
+        provideModelInferrerConfiguration();
+        
         setupXtextGenerator(generator);
 
         generator.execute();
 
+    }
+
+    protected void provideModelInferrerConfiguration() {
+        EMFPatternLanguageGeneratorConfig config = new EMFPatternLanguageGeneratorConfig();
+        if (useEclipseGeneratorPreferences && propertiesFileLocation != null) {
+            File f = new File(propertiesFileLocation);
+            if (f.canRead()) {
+                Properties vqlCompilerSettings = new Properties();
+                try {
+                    vqlCompilerSettings.load(new FileInputStream(f));
+                    String matcherGenerationProp = vqlCompilerSettings.getProperty("generateMatchers", MatcherGenerationStrategy.defaultValue().toString());
+                    try {
+                        config.setMatcherGenerationStrategy(MatcherGenerationStrategy.valueOf(matcherGenerationProp));
+                    } catch (IllegalArgumentException e) {
+                        getLog().warn("Invalid matcher generation strategy " + matcherGenerationProp + "; using default value instead");
+                    }
+                    String generateProcessorProp = vqlCompilerSettings.getProperty("generateMatchProcessors", "true");
+                    config.setGenerateMatchProcessors(Boolean.valueOf(generateProcessorProp));
+                    
+                } catch (IOException e) {
+                    getLog().warn(e);
+                }
+            } else {
+                getLog().info(
+                        "Can't find VIATRA Generator properties under " + propertiesFileLocation + ", maven defaults are used.");
+                config.setMatcherGenerationStrategy(matcherGeneration);
+                config.setGenerateMatchProcessors(generateMatchProcessors);
+            }
+        } else {
+            config.setMatcherGenerationStrategy(matcherGeneration);
+            config.setGenerateMatchProcessors(generateMatchProcessors);
+        }
+
+        MavenGeneratorConfigProvider.setGeneratorConfig(config);
     }
     
     /**
