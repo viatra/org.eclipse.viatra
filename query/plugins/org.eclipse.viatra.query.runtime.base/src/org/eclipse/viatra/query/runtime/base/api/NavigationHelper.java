@@ -268,7 +268,10 @@ public interface NavigationHelper {
      * 
      * @param feature the EStructuralFeature
      * @return the map from source {@link EObject}s to the value(s) of the given feature
+     * @deprecated use {@link #processAllFeatureInstances(EStructuralFeature, IStructuralFeatureInstanceProcessor)} 
+     *  or other, more specific getter methods on this API
      */
+    @Deprecated
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature feature);
     
     /**
@@ -818,15 +821,28 @@ public interface NavigationHelper {
      * it. There is no guaranteed order in which the processor will be called with the selected features.
      * 
      * <p>
-     * <strong>Precondition:</strong> Will only find those EAttributes that have already been registered using
+     * <strong>Precondition:</strong> Will only find those {@link EStructuralFeature}s that have already been registered using
      * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
      * {@link #isInWildcardMode()}).
      * 
-     * @param feature
-     * @param processor
+     * @deprecated use {@link #processAllFeatureInstances(EStructuralFeature, IStructuralFeatureInstanceProcessor)}
      */
+    @Deprecated
     public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor);
-    
+    /**
+     * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Will only find those {@link EStructuralFeature}s that have already been registered using
+     * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
+     * {@link #isInWildcardMode()}).
+     * 
+     * <p> Slightly more efficient than the deprecated {@link #processAllFeatureInstances(EStructuralFeature, IEStructuralFeatureProcessor)}
+     * 
+     * @since 1.7
+     */
+    void processAllFeatureInstances(EStructuralFeature feature, IStructuralFeatureInstanceProcessor processor);
     /**
      * Returns all EClasses that currently have direct instances cached by the index. <ul>
      * <li> Supertypes will not be returned, unless they have direct instances in the model as well.

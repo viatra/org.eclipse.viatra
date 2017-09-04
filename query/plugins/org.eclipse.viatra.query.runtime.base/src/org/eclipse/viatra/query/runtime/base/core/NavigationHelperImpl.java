@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.NotifyingList;
+import org.eclipse.emf.common.notify.impl.NotificationImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -52,6 +53,7 @@ import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEClassPr
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IEMFIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.viatra.query.runtime.base.api.IStructuralFeatureInstanceProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
@@ -60,6 +62,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
+import org.eclipse.viatra.query.runtime.base.core.EMFBaseIndexInstanceStore.FeatureData;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
@@ -316,51 +319,34 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<Object> getDataTypeInstances(EDataType type) {
         Object typeKey = toKey(type);
-        Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
-        if (valMap != null) {
-            return Collections.unmodifiableSet(valMap.keySet());
-        } else {
-            return Collections.emptySet();
-        }
+        return Collections.unmodifiableSet(instanceStore.getDistinctDataTypeInstances(typeKey));
     }
 
     @Override
     public boolean isInstanceOfDatatype(Object value, EDataType type) {
         Object typeKey = toKey(type);
-        Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
-        return valMap != null && valMap.containsKey(value);
+        Set<Object> valMap = instanceStore.getDistinctDataTypeInstances(typeKey);
+        return valMap.contains(value);
+    }
+
+    private FeatureData featureData(EStructuralFeature feature) {
+        return instanceStore.getFeatureData(toKey(feature));
     }
 
     @Override
     public Set<Setting> findByAttributeValue(Object value_) {
         Object value = toCanonicalValueRepresentation(value_);
-        Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
-
-        for (Entry<Object, Collection<EObject>> entry : valMap.entrySet()) {
-            final Collection<EObject> holders = entry.getValue();
-            EStructuralFeature feature = metaStore.getKnownFeatureForKey(entry.getKey());
-            for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
-                retSet.add(new NavigationHelperSetting(feature, holder, value));
-            }
-        }
-
-        return retSet;
+        return getSettingsForTarget(value);
     }
 
     @Override
     public Set<Setting> findByAttributeValue(Object value_, Collection<EAttribute> attributes) {
         Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
 
         for (EAttribute attr : attributes) {
-            Object feature = toKey(attr);
-            final Collection<EObject> holders = valMap.get(feature);
-            if (holders != null) {
-                for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
-                    retSet.add(new NavigationHelperSetting(attr, holder, value));
-                }
+            for (EObject holder : featureData(attr).getDistinctHoldersOfValue(value)) {
+                retSet.add(new NavigationHelperSetting(attr, holder, value));
             }
         }
 
@@ -370,26 +356,22 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> findByAttributeValue(Object value_, EAttribute attribute) {
         Object value = toCanonicalValueRepresentation(value_);
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
-        Object feature = toKey(attribute);
-        final Collection<EObject> holders = valMap.get(feature);
-        if (holders == null) {
-            return Collections.emptySet();
-        } else {
-            return Collections.unmodifiableSet(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
-        }
+        final Set<EObject> holders = featureData(attribute).getDistinctHoldersOfValue(value);
+        return Collections.unmodifiableSet(holders);
     }
 
     @Override
-    public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
-        final Map<Object, Collection<EObject>> instanceMap = instanceStore.getValueToFeatureToHolderMap()
-                .column(toKey(feature));
-        for (Entry<Object, Collection<EObject>> entry : instanceMap.entrySet()) {
-            final Collection<EObject> holders = entry.getValue();
-            for (EObject src : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
-                processor.process(feature, src, entry.getKey());
+    public void processAllFeatureInstances(final EStructuralFeature feature, final IEStructuralFeatureProcessor processor) {
+        processAllFeatureInstances(feature, new IStructuralFeatureInstanceProcessor() {
+            @Override
+            public void process(EObject source, Object target) {
+                processor.process(feature, source, target);
             }
-        }
+        });
+    }
+    @Override
+    public void processAllFeatureInstances(EStructuralFeature feature, IStructuralFeatureInstanceProcessor processor) {
+        featureData(feature).forEach(processor);
     }
 
     @Override
@@ -413,11 +395,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor) {
         Object typeKey = toKey(type);
-        Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
-        if (valMap == null) {
-            return;
-        }
-        for (Object value : valMap.keySet()) {
+        for (Object value : instanceStore.getDistinctDataTypeInstances(typeKey)) {
             processor.process(type, value);
         }
     }
@@ -433,32 +411,28 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<Setting> getInverseReferences(EObject target) {
-        Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
+        return getSettingsForTarget(target);
+    }
 
-        for (Entry<Object, Collection<EObject>> entry : valMap.entrySet()) {
-            final Collection<EObject> holders = entry.getValue();
-            for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
-                EStructuralFeature feature = metaStore.getKnownFeatureForKey(entry.getKey());
-                retSet.add(new NavigationHelperSetting(feature, source, target));
+    private Set<Setting> getSettingsForTarget(Object target) {
+        Set<Setting> retSet = new HashSet<Setting>();
+        for (Object featureKey : instanceStore.getFeatureKeysPointingTo(target)) {
+            Set<EObject> holders = instanceStore.getFeatureData(featureKey).getDistinctHoldersOfValue(target);
+            for (EObject holder : holders) {
+                EStructuralFeature feature = metaStore.getKnownFeatureForKey(featureKey);
+                retSet.add(new NavigationHelperSetting(feature, holder, target));
             }
         }
-
         return retSet;
     }
 
     @Override
     public Set<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
-        Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
-
+        Set<Setting> retSet = new HashSet<>();
         for (EReference ref : references) {
-            Object feature = toKey(ref);
-            final Collection<EObject> holders = valMap.get(feature);
-            if (holders != null) {
-                for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
-                    retSet.add(new NavigationHelperSetting(ref, source, target));
-                }
+            final Set<EObject> holders = featureData(ref).getDistinctHoldersOfValue(target);
+            for (EObject source : holders) {
+                retSet .add(new NavigationHelperSetting(ref, source, target));
             }
         }
 
@@ -467,14 +441,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> getInverseReferences(EObject target, EReference reference) {
-        Object feature = toKey(reference);
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
-        final Collection<EObject> holders = valMap.get(feature);
-        if (holders == null) {
-            return Collections.emptySet();
-        } else {
-            return Collections.unmodifiableSet(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
-        }
+        final Set<EObject> holders = featureData(reference).getDistinctHoldersOfValue(target);
+        return Collections.unmodifiableSet(holders);
     }
 
     @Override
@@ -486,31 +454,24 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature _feature) {
-        Object feature = toKey(_feature);
-        final Set<Object> valSet = instanceStore.getHolderToFeatureToValueMap().get(source, feature);
-        if (valSet == null) {
-            return Collections.emptySet();
-        } else {
-            return Collections.unmodifiableSet(valSet);
-        }
+        return Collections.unmodifiableSet(featureData(_feature).getDistinctValuesOfHolder(source));
     }
 
     @Override
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature _feature) {
-        Object feature = toKey(_feature);
-        final Map<EObject, Set<Object>> valMap = instanceStore.getHolderToFeatureToValueMap().column(feature);
-        if (valMap == null) {
-            return Collections.emptyMap();
-        } else {
-            return Collections.unmodifiableMap(valMap);
-        }
+        final FeatureData fd = featureData(_feature);
+       
+        return Maps.asMap(fd.getAllDistinctHolders(), new Function<EObject, Set<Object>>() {
+            @Override
+            public Set<Object> apply(EObject arg0) {
+                return fd.getDistinctValuesOfHolder(arg0);
+            }
+        });
     }
 
     @Override
     public boolean isFeatureInstance(EObject source, Object target, EStructuralFeature _feature) {
-        Object feature = toKey(_feature);
-        final Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().column(feature);
-        return valMap != null && valMap.containsKey(target) && valMap.get(target).contains(source);
+        return featureData(_feature).isInstance(source, target);
     }
 
     @Override
@@ -588,25 +549,13 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> findByFeatureValue(Object value_, EStructuralFeature _feature) {
         Object value = toCanonicalValueRepresentation(value_);
-        Object feature = toKey(_feature);
-        Set<EObject> retSet = new HashSet<EObject>();
-        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
-        final Collection<EObject> holders = valMap.get(feature);
-        if (holders != null) {
-            retSet.addAll(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
-        }
-        return retSet;
+        return Collections.unmodifiableSet(featureData(_feature).getDistinctHoldersOfValue(value));
     }
 
     @Override
     public Set<EObject> getHoldersOfFeature(EStructuralFeature _feature) {
         Object feature = toKey(_feature);
-        Multiset<EObject> holders = instanceStore.getFeatureToHolderMap().get(feature);
-        if (holders == null) {
-            return Collections.emptySet();
-        } else {
-            return Collections.unmodifiableSet(holders.elementSet());
-        }
+        return Collections.unmodifiableSet(instanceStore.getHoldersOfFeature(feature));
     }
 
     @Override
@@ -1164,13 +1113,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             observedFeatures.keySet().removeAll(resolved);
             delayedFeatures.keySet().removeAll(resolved);
             for (Object f : resolved) {
-                instanceStore.getValueToFeatureToHolderMap().column(f).clear();
-                if (instanceStore.peekFeatureToHolderMap() != null) {
-                    instanceStore.peekFeatureToHolderMap().remove(f);
-                }
-                if (instanceStore.peekHolderToFeatureToValueMap() != null) {
-                    instanceStore.peekHolderToFeatureToValueMap().column(f).clear();
-                }
+                instanceStore.forgetFeature(f);
                 statsStore.removeType(f);
             }
         }
@@ -1571,7 +1514,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
         // traverse features and update value
         Object newValue = source.eGet(feature);
-        Set<Object> oldValues = instanceStore.getOldValuesForHolderAndFeature(source, feature);
+        Set<Object> oldValues = instanceStore.getOldValuesForHolderAndFeature(source, toKey(feature));
         if (feature.isMany()) {
             resampleManyFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
         } else {
@@ -1621,11 +1564,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra.query.runtime.base.api.NavigationHelper#countAllInstances(org.eclipse.emf.ecore.EClass)
-     */
     @Override
     public int countAllInstances(EClass type) {
         int result = 0;
@@ -1649,7 +1587,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public int countFeatureTargets(EObject seedSource, EStructuralFeature feature) {
-        return instanceStore.getHolderToFeatureToValueMap().get(seedSource, toKey(feature)).size();
+        return featureData(feature).getDistinctValuesOfHolder(seedSource).size();
     }
 
     @Override

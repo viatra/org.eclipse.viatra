@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.viatra.query.runtime.base.api.IStructuralFeatureInstanceProcessor;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
@@ -140,10 +141,10 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
                 allEObjects.addAll(navigationHelper.getAllInstances(clazz));
             }
             for (EReference ref : references) {
-                navigationHelper.processAllFeatureInstances(ref, new IEStructuralFeatureProcessor() {
+                navigationHelper.processAllFeatureInstances(ref, new IStructuralFeatureInstanceProcessor() {
 
                     @Override
-                    public void process(EStructuralFeature feature, EObject source, Object target) {
+                    public void process(EObject source, Object target) {
                         allEObjects.add(source);
                         allEObjects.add((EObject) target);
                     }

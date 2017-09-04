@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
 import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.viatra.query.runtime.base.api.IStructuralFeatureInstanceProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
@@ -270,8 +271,8 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 if (containsTuple(key, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedSource, seedTarget));
             } else if (seedSource == null && seedTarget == null) { // fully unseeded
-                baseIndex.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
-                    public void process(EStructuralFeature feature, EObject source, Object target) {
+                baseIndex.processAllFeatureInstances(feature, new IStructuralFeatureInstanceProcessor() {
+                    public void process(EObject source, Object target) {
                         result.add(Tuples.staticArityFlatTupleOf(source, target));
                     }
                 });
