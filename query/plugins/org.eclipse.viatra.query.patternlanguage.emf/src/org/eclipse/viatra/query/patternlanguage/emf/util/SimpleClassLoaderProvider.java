@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
@@ -24,10 +23,10 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 public class SimpleClassLoaderProvider implements IClassLoaderProvider {
 
     @Override
-    public ClassLoader getClassLoader(Pattern pattern) throws ViatraQueryException {
-        ClassLoader l = pattern.getClass().getClassLoader();
+    public ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException {
+        ClassLoader l = ctx.getClass().getClassLoader();
         if (l == null) {
-            throw new ViatraQueryException(String.format("No classloader found for pattern %s.", CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "No classloader found.");
+            throw new ViatraQueryException(String.format("No classloader found for context object %s.", ctx), "No classloader found.");
         }
         return l;
     }

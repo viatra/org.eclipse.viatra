@@ -23,12 +23,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
@@ -37,7 +37,7 @@ import com.google.inject.Singleton;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @noreference This class is not intended to be referenced by clients.
  */
 @Singleton
 public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider implements IWorkspaceUtilities{
@@ -46,30 +46,32 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
     private IWorkspaceRoot root;
 
     @Override
-    public ClassLoader getClassLoader(Pattern pattern) throws ViatraQueryException {
+    public ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException {
         try {
-            IFile file = getIFile(pattern);
+            IFile file = getIFile(ctx);
             ClassLoader l;
             if (file != null && file.exists()) {
                 l = getClassLoader(file);
                 if (l == null) {
-                    throw new ViatraQueryException(String.format("No classloader found for pattern %s.", CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "No classloader found.");
+                    throw new ViatraQueryException(String.format("No classloader found for context object %s.", ctx), "No classloader found.");
                 }
             } else {
-                l = super.getClassLoader(pattern);
+                l = super.getClassLoader(ctx);
             }
             return l;
         } catch (Exception e) {
-            throw new ViatraQueryException(String.format("Cannot initialize classloader for pattern %s because %s",
-                    CorePatternLanguageHelper.getFullyQualifiedName(pattern), e.getMessage()),
-                    "Cannot initialize classloader", e);
+            throw new ViatraQueryException(String.format("Cannot initialize classloader for context object %s because %s",
+                    ctx, e.getMessage()), "Cannot initialize classloader", e);
         }
     }
-
     @Override
     public IFile getIFile(Pattern pattern) {
-        if (pattern != null) {
-            Resource resource = pattern.eResource();
+        return getIFile((EObject)pattern);
+    }
+
+    private IFile getIFile(EObject ctx) {
+        if (ctx != null) {
+            Resource resource = ctx.eResource();
             if (resource != null) {
                 URI uri = resource.getURI();
                 String scheme = uri.scheme();

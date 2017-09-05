@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
@@ -21,13 +21,13 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 public interface IClassLoaderProvider {
 
     /**
-     * Finds the class loader usable for interpreting expressions defined inside the pattern.
+     * Finds the class loader usable for interpreting expressions defined inside the context object, e.g. a pattern.
      * 
      * @param pattern
      * @return the found classloader, never null
      * @throws ViatraQueryException
      *             if no classloader is found, or classloader cannot be initialized, an exception is thrown
      */
-    ClassLoader getClassLoader(Pattern pattern) throws ViatraQueryException;
+    ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException;
 
 }

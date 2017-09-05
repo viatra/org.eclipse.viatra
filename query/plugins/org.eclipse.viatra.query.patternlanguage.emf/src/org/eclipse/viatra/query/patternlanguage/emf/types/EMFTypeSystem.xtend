@@ -51,6 +51,7 @@ import static com.google.common.base.Preconditions.checkArgument
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType
 import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
+import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider
 
 /** 
  * @author Zoltan Ujhelyi
@@ -79,6 +80,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     @Inject IErrorFeedback errorFeedback
     @Inject Primitives primitives
     @Inject TypeReferences typeReferences
+    @Inject IClassLoaderProvider classLoaderProvider 
 
     @Inject new(Logger logger) {
         super(EMFQueryMetaContext.DEFAULT)
@@ -170,6 +172,9 @@ public class EMFTypeSystem extends AbstractTypeSystem {
      */
     def Class<?> getJavaClass(EDataTypeInSlotsKey key) {
         var dataTypeClass = key.getEmfKey().instanceClass
+        if (dataTypeClass === null) {
+            dataTypeClass = classLoaderProvider.getClassLoader(key.emfKey).loadClass(key.emfKey.instanceClassName)
+        }
         if(dataTypeClass.isPrimitive) dataTypeClass = dataTypeClass?.wrapperClassForType
         return dataTypeClass
     }

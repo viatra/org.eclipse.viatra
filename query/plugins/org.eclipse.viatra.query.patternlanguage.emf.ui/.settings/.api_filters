@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage.emf.ui" version="2">
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/ui/util/JavaProjectClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider">
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider"/>
+                <message_argument value="getClassLoader(Pattern)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

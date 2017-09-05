@@ -8,6 +8,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/IClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider">
+        <filter comment="Internal API update" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider"/>
+                <message_argument value="getClassLoader(Pattern)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/helper/EMFPatternLanguageHelper.java" type="org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper">
         <filter comment="Utility class with only static methods; no need to instantiate" id="354463860">
             <message_arguments>
