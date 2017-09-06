@@ -14,42 +14,35 @@ package org.eclipse.viatra.transformation.views.traceability.patterns
 import "http://www.eclipse.org/viatra/transformation/views/traceability/1.0"
 import "http://www.eclipse.org/emf/2002/Ecore"
 
-@QueryExplorer(checked = false)
 pattern emptyTrace(trace : Trace) {
 	Trace(trace);
 	neg find traceTargets(trace,_);
 }
 
-@QueryExplorer(checked = false)
 private pattern traceTargets(trace : Trace, target : EObject) {
 	Trace.targets(trace, target);
 }
 
-@QueryExplorer(checked = false)
 pattern trace2target(target : EObject, trace : Trace) {
 	Trace.targets(trace, target);
 }
 
-@QueryExplorer(checked = false)
-pattern trace2param(param : EObject, trace : Trace, id) {
+pattern trace2param(param : EObject, trace : Trace, id : java String) {
 	Trace.params(trace, param);
 	Trace.id(trace, id);
 }
 
-@QueryExplorer(checked = false)
-pattern trace2object(param, trace : Trace, id) {
+pattern trace2object(param : java Object, trace : Trace, id : java String) {
 	Trace.objects(trace, param);
 	Trace.id(trace, id);
 }
 
-@QueryExplorer(checked = false)
 pattern param2target(param : EObject, target : EObject) {
 	Trace.params(trace, param);
 	Trace.targets(trace, target);
 }
 
-@QueryExplorer(checked = false)
-pattern trace(source : EObject, id, target : EObject, trace : Trace, traceabilityId) {
+pattern trace(source : EObject, id : java String, target : EObject, trace : Trace, traceabilityId : java String) {
 	Trace.params(trace, source);
 	Trace.targets(trace, target);
 	Trace.id(trace,id);

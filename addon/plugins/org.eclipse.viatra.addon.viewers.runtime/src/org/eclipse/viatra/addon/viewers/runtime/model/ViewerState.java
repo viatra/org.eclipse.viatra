@@ -17,9 +17,7 @@ import java.util.Collections;
 
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.IViewerStateListener;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.ChildrenMatch;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.ChildrenMatcher;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.util.ChildrenQuerySpecification;
+import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Children;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
@@ -106,10 +104,10 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
 
     public Collection<Item> getChildren(Item parent) {
         try {
-            ChildrenMatcher matcher = model.getEngine().getMatcher(ChildrenQuerySpecification.instance());
-            Collection<ChildrenMatch> matches = matcher.getAllMatches(parent, null);
+            Children.Matcher matcher = model.getEngine().getMatcher(Children.instance());
+            Collection<Children.Match> matches = matcher.getAllMatches(parent, null);
             Collection<Item> items = Lists.newArrayList();
-            for (ChildrenMatch match: matches) {
+            for (Children.Match match: matches) {
                 items.add(match.getChild());
             }
             return items;

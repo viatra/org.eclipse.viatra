@@ -17,12 +17,9 @@ import java.util.Collections;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2containmentMatch;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2containmentMatcher;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2edgeMatch;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2edgeMatcher;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2itemMatch;
-import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2itemMatcher;
+import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2containment;
+import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2edge;
+import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2item;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
@@ -44,18 +41,18 @@ public final class ViewerTraceabilityUtil {
     public static Collection<Item> traceToItem(ViatraQueryEngine engine, Object source) {
 
         ArrayList<Item> list = Lists.newArrayList();
-        Collection<Param2itemMatch> allMatches = executeParam2itemMatcher(engine, source);
+        Collection<Param2item.Match> allMatches = executeParam2itemMatcher(engine, source);
         
-        for (Param2itemMatch match : allMatches) {
+        for (Param2item.Match match : allMatches) {
             list.add(match.getItem());
         }
         return list;
     }
 
-    private static Collection<Param2itemMatch> executeParam2itemMatcher(ViatraQueryEngine engine, Object source) {
+    private static Collection<Param2item.Match> executeParam2itemMatcher(ViatraQueryEngine engine, Object source) {
         try {
 
-            Param2itemMatcher matcher = Param2itemMatcher.on(engine);
+            Param2item.Matcher matcher = Param2item.Matcher.on(engine);
             return matcher.getAllMatches(source, null, null);
 
         } catch (ViatraQueryException e) {
@@ -68,18 +65,18 @@ public final class ViewerTraceabilityUtil {
     public static Collection<Edge> traceToEdge(ViatraQueryEngine engine, Object source, Object target) {
 
         ArrayList<Edge> list = Lists.newArrayList();
-        Collection<Param2edgeMatch> allMatches = executeParam2edgeMatcher(engine, source, target);
+        Collection<Param2edge.Match> allMatches = executeParam2edgeMatcher(engine, source, target);
         
-        for (Param2edgeMatch match : allMatches) {
+        for (Param2edge.Match match : allMatches) {
             list.add(match.getEdge());
         }
         return list;
     }
 
-    private static Collection<Param2edgeMatch> executeParam2edgeMatcher(ViatraQueryEngine engine, Object source, Object target) {
+    private static Collection<Param2edge.Match> executeParam2edgeMatcher(ViatraQueryEngine engine, Object source, Object target) {
         try {
 
-            Param2edgeMatcher matcher = Param2edgeMatcher.on(engine);
+            Param2edge.Matcher matcher = Param2edge.Matcher.on(engine);
             return matcher.getAllMatches(source, target, null, null);
 
         } catch (ViatraQueryException e) {
@@ -92,18 +89,18 @@ public final class ViewerTraceabilityUtil {
     public static Collection<Containment> traceTocontainment(ViatraQueryEngine engine, Object source, Object target) {
 
         ArrayList<Containment> list = Lists.newArrayList();
-        Collection<Param2containmentMatch> allMatches = executeParam2containmentMatcher(engine, source, target);
+        Collection<Param2containment.Match> allMatches = executeParam2containmentMatcher(engine, source, target);
         
-        for (Param2containmentMatch match : allMatches) {
+        for (Param2containment.Match match : allMatches) {
             list.add(match.getContainment());
         }
         return list;
     }
 
-    private static Collection<Param2containmentMatch> executeParam2containmentMatcher(ViatraQueryEngine engine, Object source, Object target) {
+    private static Collection<Param2containment.Match> executeParam2containmentMatcher(ViatraQueryEngine engine, Object source, Object target) {
         try {
 
-            Param2containmentMatcher matcher = Param2containmentMatcher.on(engine);
+            Param2containment.Matcher matcher = Param2containment.Matcher.on(engine);
             return matcher.getAllMatches(source, target, null, null);
 
         } catch (ViatraQueryException e) {
@@ -115,9 +112,9 @@ public final class ViewerTraceabilityUtil {
     
     public static Collection<Item> deleteTracesAndItems(ViatraQueryEngine engine, Object source) {
         ArrayList<Item> list = Lists.newArrayList();
-        Collection<Param2itemMatch> allMatches = executeParam2itemMatcher(engine, source);
+        Collection<Param2item.Match> allMatches = executeParam2itemMatcher(engine, source);
         
-        for (Param2itemMatch match : allMatches) {
+        for (Param2item.Match match : allMatches) {
             EcoreUtil.delete(match.getTrace());
             EcoreUtil.delete(match.getItem());
             list.add(match.getItem());
@@ -128,9 +125,9 @@ public final class ViewerTraceabilityUtil {
     
     public static Collection<Edge> deleteTracesAndEdges(ViatraQueryEngine engine, Object source, Object target) {
         ArrayList<Edge> list = Lists.newArrayList();
-        Collection<Param2edgeMatch> allMatches = executeParam2edgeMatcher(engine, source, target);
+        Collection<Param2edge.Match> allMatches = executeParam2edgeMatcher(engine, source, target);
         
-        for (Param2edgeMatch match : allMatches) {
+        for (Param2edge.Match match : allMatches) {
             EcoreUtil.delete(match.getTrace());
             EcoreUtil.delete(match.getEdge());
             list.add(match.getEdge());
@@ -141,9 +138,9 @@ public final class ViewerTraceabilityUtil {
     
     public static Collection<Containment> deleteTracesAndContainments(ViatraQueryEngine engine, Object source, Object target) {
         ArrayList<Containment> list = Lists.newArrayList();
-        Collection<Param2containmentMatch> allMatches = executeParam2containmentMatcher(engine, source, target);
+        Collection<Param2containment.Match> allMatches = executeParam2containmentMatcher(engine, source, target);
         
-        for (Param2containmentMatch match : allMatches) {
+        for (Param2containment.Match match : allMatches) {
             match.getContainment().getTarget().setParent(null);
             EcoreUtil.delete(match.getTrace());
             EcoreUtil.delete(match.getContainment());

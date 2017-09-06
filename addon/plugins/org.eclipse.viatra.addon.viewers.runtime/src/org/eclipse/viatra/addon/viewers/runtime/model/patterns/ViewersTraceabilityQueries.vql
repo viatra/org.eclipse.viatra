@@ -13,8 +13,7 @@ package org.eclipse.viatra.addon.viewers.runtime.model.patterns
 import "http://www.eclipse.org/viatra/transformation/views/traceability/1.0"
 import "http://www.eclipse.org/viatra/addon/viewers/notation/1.0"
 
-@QueryExplorer(checked = false)
-pattern param2item(param, trace : Trace, item : Item) {
+pattern param2item(param : java Object, trace : Trace, item : Item) {
 	Trace.params(trace, param);
 	Trace.targets(trace, item);
 } or {
@@ -22,8 +21,7 @@ pattern param2item(param, trace : Trace, item : Item) {
 	Trace.targets(trace, item);
 }
 
-@QueryExplorer(checked = false)
-pattern param2edge(source, target, trace, edge : Edge) {
+pattern param2edge(source : java Object, target : java Object, trace : Trace, edge : Edge) {
 	Trace.params(trace, source);
 	Trace.params(trace, target);
 	Trace.targets(trace, edge);
@@ -41,8 +39,7 @@ pattern param2edge(source, target, trace, edge : Edge) {
 	Trace.targets(trace, edge);
 }
 
-@QueryExplorer(checked = false)
-pattern param2containment(source, target, trace, containment : Containment) {
+pattern param2containment(source : java Object, target : java Object, trace : Trace, containment : Containment) {
 	Trace.params(trace, source);
 	Trace.params(trace, target);
 	Trace.targets(trace, containment);
@@ -60,7 +57,6 @@ pattern param2containment(source, target, trace, containment : Containment) {
 	Trace.targets(trace, containment);
 }
 
-@QueryExplorer(checked = false)
 pattern children(parent:Item, child:Item) {
 	Containment.source(c, parent);
 	Containment.target(c, child);

@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.transformation.views.traceability.patterns.util.Trace2targetQuerySpecification;
+import org.eclipse.viatra.transformation.views.traceability.patterns.Trace2target;
 
 import com.google.common.collect.Lists;
 
@@ -82,7 +82,7 @@ public class TraceabilityUtil {
      */
     public static void deleteTraceAndTarget(ViatraQueryEngine engine, EObject toDelete) throws ViatraQueryException {
     
-        Trace trace = (Trace) engine.getMatcher(Trace2targetQuerySpecification.instance()).getAllMatches().iterator().next().getTrace();
+        Trace trace = (Trace) engine.getMatcher(Trace2target.instance()).getOneArbitraryMatch().getTrace();
         EcoreUtil.delete(trace);
         
         // Push up the contained objects and delete the targets

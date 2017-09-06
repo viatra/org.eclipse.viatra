@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.transformation.views.traceability.patterns.util.TraceQuerySpecification;
+import org.eclipse.viatra.transformation.views.traceability.patterns.Trace;
 
 import com.google.common.collect.Lists;
 
@@ -75,7 +75,7 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
             if(baseParameters.contains(parameter.getParameterName())) {
                 try {
                     new PositivePatternCall(body, Tuples.wideFlatTupleOf(parameter.getParameterVariable(), var_id, var_su, var_trace, var_traceability),
-                            TraceQuerySpecification.instance().getInternalQueryRepresentation());
+                            Trace.instance().getInternalQueryRepresentation());
                 } catch (ViatraQueryException e) {
                     Logger logger = ViatraQueryLoggingUtil.getLogger(GenericTracedPQuery.class);
                     logger.error(e.getMessage());

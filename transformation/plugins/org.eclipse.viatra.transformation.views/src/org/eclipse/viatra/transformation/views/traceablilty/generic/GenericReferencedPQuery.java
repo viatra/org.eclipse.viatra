@@ -38,7 +38,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.transformation.views.traceability.patterns.util.TraceQuerySpecification;
+import org.eclipse.viatra.transformation.views.traceability.patterns.Trace;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -153,9 +153,9 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
             
             
             new PositivePatternCall(body, Tuples.wideFlatTupleOf(var_source, var_id, var_target, var_trace1, var_traceability),
-                    TraceQuerySpecification.instance().getInternalQueryRepresentation());
+                    Trace.instance().getInternalQueryRepresentation());
             new NegativePatternCall(body, Tuples.wideFlatTupleOf(var_target, var_id, var_, var_trace2, var_traceability),
-                    TraceQuerySpecification.instance().getInternalQueryRepresentation());
+                    Trace.instance().getInternalQueryRepresentation());
         }
         if (pTarget.getTypeName() != null) {
             //TODO: resolve hack
