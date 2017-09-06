@@ -42,4 +42,34 @@
             name="Save VIATRA Query snapshot">
       </command>
     </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.emf.ecore.presentation.EcoreEditor"
+            contributorClass="org.eclipse.emf.ecore.presentation.EcoreActionBarContributor$Reflective"
+            extensions="snapshot"
+            icon="platform:/plugin/org.eclipse.emf.edit/icons/full/obj16/ModelFile.gif"
+            id="org.eclipse.viatra.query.testing.snapshot.presentation.SnapshotEditorID"
+            name="VIATRA Query Snapshot">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.emf.ecore.xmi">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+      <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.viatra.query.tooling.ui.category"
+            class="org.eclipse.viatra.query.testing.ui.wizards.SnapshotModelWizard"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+            id="org.eclipse.viatra.query.testing.snapshot.presentation.SnapshotModelWizardID"
+            name="Query Snapshot">
+         <description>
+            %_UI_SnapshotModelWizard_description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+   </extension>
 </plugin>

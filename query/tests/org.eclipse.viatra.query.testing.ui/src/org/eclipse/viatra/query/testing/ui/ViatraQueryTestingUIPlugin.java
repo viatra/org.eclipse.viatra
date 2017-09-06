@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra.query.testing.ui;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -46,4 +48,7 @@ public class ViatraQueryTestingUIPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
+    public void log(Exception e) {
+        getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e));
+    }
 }

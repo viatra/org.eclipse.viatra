@@ -31,20 +31,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.query.testing.snapshot.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra.query.testing.snapshot.editor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra.query.testing.core"
          download-size="0"
          install-size="0"

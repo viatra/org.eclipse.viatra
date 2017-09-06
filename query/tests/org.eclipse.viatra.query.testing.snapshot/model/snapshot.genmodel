@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2010-2017, Gabor Bergmann, Abel Hegedus, Zoltan Ujhelyi, Peter Lunk, Istvan Rath, Daniel Varro, IncQuery Labs Ltd.&#xD;&#xA;All rights reserved. This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License v1.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;http://www.eclipse.org/legal/epl-v10.html&#xD;&#xA;&#xD;&#xA;Contributors:&#xD;&#xA;  Gabor Bergmann, Abel Hegedus, Zoltan Ujhelyi - initial API and implementation&#xD;&#xA;  Peter Lunk - SerializedJavaObjectSubstitution"
-    modelDirectory="/org.eclipse.viatra.query.testing.snapshot/emf-gen" editDirectory="/org.eclipse.viatra.query.testing.snapshot.edit/emf-gen"
-    editorDirectory="/org.eclipse.viatra.query.testing.snapshot.editor/emf-gen" modelPluginID="org.eclipse.viatra.query.testing.snapshot"
-    modelName="Snapshot" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    testsDirectory="/org.eclipse.viatra.query.testing.snapshot.tests/emf-gen" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="7.0" copyrightFields="false" runtimeVersion="2.10" language=""
-    usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore" operationReflection="true"
-    importOrganizing="true">
+    modelDirectory="/org.eclipse.viatra.query.testing.snapshot/emf-gen" editDirectory=""
+    editorDirectory="" modelPluginID="org.eclipse.viatra.query.testing.snapshot" modelName="Snapshot"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" testsDirectory=""
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    runtimeVersion="2.10" language="" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore"
+    operationReflection="true" importOrganizing="true">
   <foreignModel>snapshot.ecore</foreignModel>
   <genPackages prefix="Snapshot" basePackage="org.eclipse.viatra.query.testing" disposableProviderFactory="true"
       ecorePackage="snapshot.ecore#/">
