@@ -146,7 +146,7 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
         }
     }
 
-    protected void internalExecute() throws MojoExecutionException, MojoFailureException {
+    protected void internalExecute() throws MojoExecutionException {
         Map<String, LanguageAccess> languageMap = new LanguageAccessFactory().createLanguageAccess(getLanguages(), this
                 .getClass().getClassLoader());
         Iterable<String> classPathEntries = filter(getClasspathElements(), emptyStringFilter());

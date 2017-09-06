@@ -289,7 +289,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * @param generator
      *            The XtextGenerator object
      */
-    private void setupXtextGenerator(ResourceOrderingXtextGenerator generator) throws MojoFailureException {
+    private void setupXtextGenerator(ResourceOrderingXtextGenerator generator) {
         generator.setLog(getLog()); // it's needed to give our Logger to the
                                     // other plugin to avoid exceptions
 
@@ -301,12 +301,12 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
         outputConfiguration.setCreateOutputDirectory(createOutputDirectory);
         outputConfiguration.setOverrideExistingResources(overrideExistingResources);
 
-        List<OutputConfiguration> ocList = new ArrayList<OutputConfiguration>();
+        List<OutputConfiguration> ocList = new ArrayList<>();
         ocList.add(outputConfiguration);
 
         language.setOutputConfigurations(ocList);
 
-        List<Language> languageList = new ArrayList<Language>();
+        List<Language> languageList = new ArrayList<>();
         languageList.add(language);
 
         generator.setLanguages(languageList);
@@ -340,38 +340,46 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
                 getLog().warn(String.format("For metamodel %s both EPackage class and genmodel are set. Using EPackage class", fqnOfEPackageClass));
             }
             
-            if (!Strings.isNullOrEmpty(fqnOfEPackageClass)) {
-                /*
-                 * Note that the side effect of this call is that the EPackage will be added to the Registry 
-                 */
-                loadNSUriFromClass(fqnOfEPackageClass);
+            doRegisterMetamodel(fqnOfEPackageClass, genmodelUri, metamodelNSURI);
+        }
+    }
+
+    /**
+     * Helper method to load a single metamodel
+     */
+    private void doRegisterMetamodel(String fqnOfEPackageClass, String genmodelUri, String metamodelNSURI)
+            throws MojoExecutionException {
+        if (!Strings.isNullOrEmpty(fqnOfEPackageClass)) {
+            /*
+             * Note that the side effect of this call is that the EPackage will be added to the Registry 
+             */
+            loadNSUriFromClass(fqnOfEPackageClass);
+        }
+        
+        if (!Strings.isNullOrEmpty(genmodelUri) && Strings.isNullOrEmpty(fqnOfEPackageClass)) {
+            if (URI.createURI(genmodelUri).isRelative()) {
+                genmodelUri = "file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
             }
-            
-            if (!Strings.isNullOrEmpty(genmodelUri) && Strings.isNullOrEmpty(fqnOfEPackageClass)) {
-                if (URI.createURI(genmodelUri).isRelative()) {
-                    genmodelUri = "file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
+            if (Strings.isNullOrEmpty(metamodelNSURI)) {
+                try {
+                ResourceSet set = new ResourceSetImpl();
+                final Resource resource = set.getResource(URI.createURI(genmodelUri), true);
+                resource.load(Maps.newHashMap());
+                EcoreUtil.resolveAll(resource);
+                final Iterator<GenPackage> it = Iterators.filter(resource.getAllContents(), GenPackage.class);
+                while (it.hasNext()) {
+                    final GenPackage genPackage = it.next();
+                    final EPackage ecorePackage = genPackage.getEcorePackage();
+                    EPackage.Registry.INSTANCE.put(ecorePackage.getNsURI(), ecorePackage);
+                    MavenBuilderGenmodelLoader.addGenmodel(ecorePackage.getNsURI(), genmodelUri);
                 }
-                if (Strings.isNullOrEmpty(metamodelNSURI)) {
-                    try {
-                    ResourceSet set = new ResourceSetImpl();
-                    final Resource resource = set.getResource(URI.createURI(genmodelUri), true);
-                    resource.load(Maps.newHashMap());
-                    EcoreUtil.resolveAll(resource);
-                    final Iterator<GenPackage> it = Iterators.filter(resource.getAllContents(), GenPackage.class);
-                    while (it.hasNext()) {
-                        final GenPackage genPackage = it.next();
-                        final EPackage ecorePackage = genPackage.getEcorePackage();
-                        EPackage.Registry.INSTANCE.put(ecorePackage.getNsURI(), ecorePackage);
-                        MavenBuilderGenmodelLoader.addGenmodel(ecorePackage.getNsURI(), genmodelUri);
-                    }
-                    } catch (Exception e) {
-                        final String msg = "Error while loading metamodel specification from " + genmodelUri;
-                        getLog().error(msg);
-                        throw new MojoExecutionException(msg, e);
-                    }
-                } else {
-                    MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, genmodelUri);
+                } catch (Exception e) {
+                    final String msg = "Error while loading metamodel specification from " + genmodelUri;
+                    getLog().error(msg);
+                    throw new MojoExecutionException(msg, e);
                 }
+            } else {
+                MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, genmodelUri);
             }
         }
     }

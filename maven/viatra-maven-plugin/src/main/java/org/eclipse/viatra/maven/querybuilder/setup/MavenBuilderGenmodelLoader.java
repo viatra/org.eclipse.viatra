@@ -23,7 +23,7 @@ public class MavenBuilderGenmodelLoader implements IGenmodelMappingLoader {
     private Map<String, String> genModels;
 
     protected MavenBuilderGenmodelLoader() {
-        genModels = new HashMap<String, String>();
+        genModels = new HashMap<>();
     }
 
     public static void addGenmodel(String modelNsUri, String genmodelUri) {
