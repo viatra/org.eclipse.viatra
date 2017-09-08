@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.eclipse.viatra.parent.incubation.maven</artifactId>
+    <name>VIATRA Design Space Exploration</name>
+    <version>0.17.0-SNAPSHOT</version>
+    <url>http://eclipse.org/viatra</url>
+    <packaging>pom</packaging>
+    <modules>
+        <!-- Transformation -->
+        <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.debug</module>
+        <module>../../maven/viatra-transformation-debugger-runtime</module>
+        <!-- DSE -->
+        <module>../org.eclipse.viatra.parent.dse</module>
+
+    </modules>
+    <build>
+        <plugins>
+           <plugin>
+               <groupId>org.eclipse.tycho</groupId>
+               <artifactId>tycho-versions-plugin</artifactId>
+               <version>${tycho.version}</version>
+               <configuration>
+                 <artifacts>${project.artifactId}</artifacts>
+                 <properties>viatra.incubation.version</properties>
+               </configuration>
+           </plugin>
+        </plugins>
+    </build>
+    <parent>
+        <groupId>org.eclipse.viatra</groupId>
+        <!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
+        <artifactId>org.eclipse.viatra.parent.core</artifactId>
+        <version>1.7.0-SNAPSHOT</version>
+        <relativePath>../org.eclipse.viatra.parent.core/pom.xml</relativePath>
+    </parent>
+    <repositories>
+        <repository>
+            <id>viatra.nexus</id>
+            <url>https://repo.eclipse.org/content/groups/viatra/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>

@@ -9,7 +9,9 @@
     <url>http://eclipse.org/viatra</url>
     <packaging>pom</packaging>
     <modules>
-    
+        <!-- Incubation modules to be published to a Maven repository -->
+        <module>../org.eclipse.viatra.parent.incubation.maven</module>
+        
         <!-- Query -->
          <module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
         <module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
@@ -20,7 +22,6 @@
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.tooling.debug</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.tooling.debug.ui</module>
-        <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.debug</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.transformationtrace</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.tracer</module>
         <module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
@@ -41,7 +42,6 @@
         <module>../../cep/features/org.eclipse.viatra.cep.feature</module>
 
         <!-- DSE -->
-        <module>../org.eclipse.viatra.parent.dse</module>
         <module>../../dse/features/org.eclipse.viatra.dse.feature</module>
 
         <!-- Addons -->

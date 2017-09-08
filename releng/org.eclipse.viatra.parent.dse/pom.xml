@@ -5,7 +5,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.eclipse.viatra.parent.dse</artifactId>
     <name>VIATRA Design Space Exploration</name>
-    <version>0.17.0-SNAPSHOT</version>
     <url>http://eclipse.org/viatra</url>
     <packaging>pom</packaging>
     <modules>
@@ -16,36 +15,10 @@
         <module>../../maven/viatra-dse-runtime</module>
 
     </modules>
-    <build>
-        <plugins>
-           <plugin>
-               <groupId>org.eclipse.tycho</groupId>
-               <artifactId>tycho-versions-plugin</artifactId>
-               <version>${tycho.version}</version>
-               <configuration>
-                 <artifacts>${project.artifactId}</artifacts>
-                 <properties>viatra.incubation.version</properties>
-               </configuration>
-           </plugin>
-        </plugins>
-    </build>
     <parent>
         <groupId>org.eclipse.viatra</groupId>
-        <!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
-        <artifactId>org.eclipse.viatra.parent.core</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../org.eclipse.viatra.parent.core/pom.xml</relativePath>
+        <artifactId>org.eclipse.viatra.parent.incubation.maven</artifactId>
+        <version>0.17.0-SNAPSHOT</version>
+        <relativePath>../org.eclipse.viatra.parent.incubation.maven/pom.xml</relativePath>
     </parent>
-    <repositories>
-        <repository>
-            <id>viatra.nexus</id>
-            <url>https://repo.eclipse.org/content/groups/viatra/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

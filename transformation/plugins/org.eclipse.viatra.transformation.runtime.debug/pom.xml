@@ -4,13 +4,12 @@
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>org.eclipse.viatra.parent.core</artifactId>
+        <artifactId>org.eclipse.viatra.parent.incubation.maven</artifactId>
         <groupId>org.eclipse.viatra</groupId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../../../releng/org.eclipse.viatra.parent.core/pom.xml</relativePath>
+        <version>0.17.0-SNAPSHOT</version>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.incubation.maven/pom.xml</relativePath>
     </parent>
     <artifactId>org.eclipse.viatra.transformation.runtime.debug</artifactId>
-    <version>0.17.0-SNAPSHOT</version>
     <packaging>eclipse-plugin</packaging>
     <build>
         <resources>
@@ -50,27 +49,6 @@
                     </execution>
                 </executions>
             </plugin>
-           <plugin>
-               <groupId>org.eclipse.tycho</groupId>
-               <artifactId>tycho-versions-plugin</artifactId>
-               <version>${tycho.version}</version>
-               <configuration>
-                 <artifacts>${project.artifactId}</artifacts>
-                 <properties>viatra.incubation.version</properties>
-               </configuration>
-           </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>viatra.nexus</id>
-            <url>https://repo.eclipse.org/content/groups/viatra/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>
