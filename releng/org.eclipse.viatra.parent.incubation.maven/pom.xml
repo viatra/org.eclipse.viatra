@@ -11,6 +11,7 @@
     <modules>
         <!-- Transformation -->
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.debug</module>
+        <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.transformationtrace</module>
         <module>../../maven/viatra-transformation-debugger-runtime</module>
         <!-- DSE -->
         <module>../org.eclipse.viatra.parent.dse</module>

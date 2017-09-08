@@ -13,16 +13,15 @@
         <module>../org.eclipse.viatra.parent.incubation.maven</module>
         
         <!-- Query -->
-         <module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
         <module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
-         <module>../../query/features/org.eclipse.viatra.query.tooling.ui.visualization.feature</module>
+        <module>../../query/features/org.eclipse.viatra.query.tooling.ui.visualization.feature</module>
         <module>../../query/features/org.eclipse.viatra.query.sdk.extensions.feature</module>
         
         <!-- Transformations -->
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.tooling.debug</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.tooling.debug.ui</module>
-        <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.transformationtrace</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.tracer</module>
         <module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
         <module>../../transformation/features/org.eclipse.viatra.transformation.runtime.debug.feature</module>
