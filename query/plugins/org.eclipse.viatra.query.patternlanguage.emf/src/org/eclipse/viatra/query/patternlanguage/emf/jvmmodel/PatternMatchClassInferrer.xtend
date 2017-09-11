@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.xtext.diagnostics.Severity
+import java.util.Objects
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -198,9 +199,7 @@ class PatternMatchClassInferrer {
                     return "[]";
                 «ELSE»
                     «StringBuilder» result = new «StringBuilder»();
-                    «FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");\n"»
-                        result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
-                    «ENDFOR»
+                    «FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");\n"»result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)«ENDFOR»
                     return result.toString();
                 «ENDIF»
             '''
@@ -208,12 +207,7 @@ class PatternMatchClassInferrer {
         matchClass.members += pattern.toMethod("hashCode", typeRef(int)) [
             annotations += annotationRef(Override)
             body = '''
-                final int prime = 31;
-                int result = 1;
-                «FOR variable : pattern.parameters»
-                    result = prime * result + ((«variable.fieldName» == null) ? 0 : «variable.fieldName».hashCode());
-                «ENDFOR»
-                return result;
+                return «Objects».hash «FOR variable : pattern.parameters BEFORE "(" SEPARATOR ", " AFTER ");"»«variable.fieldName»«ENDFOR»
             '''
         ]
         matchClass.members += pattern.toMethod("equals", typeRef(boolean)) [
@@ -222,26 +216,24 @@ class PatternMatchClassInferrer {
             body = '''
                 if (this == obj)
                     return true;
-                if (!(obj instanceof «matchClass»)) { // this should be infrequent
-                    if (obj == null) {
-                        return false;
-                    }
+                if (obj == null) {
+                    return false;
+                }
+                if ((obj instanceof «matchClass»)) {
+                    «IF !pattern.parameters.isEmpty»
+                        «matchClass» other = («matchClass») obj;
+                        «FOR variable : pattern.parameters BEFORE "return " SEPARATOR " && " AFTER ";"»«Objects».equals(«variable.fieldName», other.«variable.fieldName»)«ENDFOR»
+                    «ELSE»
+                        return true;
+                    «ENDIF»
+                } else {
+                    // this should be infrequent
                     if (!(obj instanceof «IPatternMatch»)) {
                         return false;
                     }
                     «IPatternMatch» otherSig  = («IPatternMatch») obj;
-                    if (!specification().equals(otherSig.specification()))
-                        return false;
-                    return «Arrays».deepEquals(toArray(), otherSig.toArray());
+                    return «Objects».equals(specification(), otherSig.specification()) && «Arrays».deepEquals(toArray(), otherSig.toArray());
                 }
-                «IF !pattern.parameters.isEmpty»
-                    «matchClass» other = («matchClass») obj;
-                    «FOR variable : pattern.parameters»
-                        if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
-                        else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
-                    «ENDFOR»
-                «ENDIF»
-                return true;
             '''
         ]
         matchClass.members += pattern.toMethod("specification", querySpecificationClassRef) [
