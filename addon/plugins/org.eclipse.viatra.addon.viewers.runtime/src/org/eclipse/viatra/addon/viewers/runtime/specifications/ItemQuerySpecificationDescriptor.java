@@ -30,10 +30,10 @@ public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecification
     private static final String LABEL_PARAMETER_NAME = "label";
     private static final String HIERARCHY_PARAMETER_NAME = "hierarchy";
 
-    private String source;
-    private String label;
-    private HierarchyPolicy policy;
-    private PAnnotation formatAnnotation;
+    private final String source;
+    private final String label;
+    private final HierarchyPolicy policy;
+    private final PAnnotation formatAnnotation;
 
     public ItemQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation)
             throws QueryInitializationException {

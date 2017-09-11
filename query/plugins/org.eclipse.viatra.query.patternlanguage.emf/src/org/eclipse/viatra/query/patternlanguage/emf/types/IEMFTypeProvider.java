@@ -30,7 +30,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  */
 /**
  * @author Andras Okros, Zoltan Ujhelyi
- *
+ * @deprecated The functionality of this class was superseeded by {@link EMFTypeInferrer} and {@link EMFTypeSystem}.
  */
 @Deprecated
 public interface IEMFTypeProvider {

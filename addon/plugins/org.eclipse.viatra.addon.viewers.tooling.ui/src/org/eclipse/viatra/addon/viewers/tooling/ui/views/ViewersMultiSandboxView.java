@@ -331,7 +331,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
         @Override
         public void selectionChanged(IWorkbenchPart part, ISelection selection) {
             if (!ViewersMultiSandboxView.this.equals(part) && selection instanceof IStructuredSelection) {
-                ArrayList<Notifier> r = new ArrayList<Notifier>();
+                ArrayList<Notifier> r = new ArrayList<>();
                 for (Object _target : ((IStructuredSelection) selection).toArray()) {
                     if (_target instanceof Notifier) {
                         r.add((Notifier) _target);

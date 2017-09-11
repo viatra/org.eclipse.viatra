@@ -55,8 +55,8 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     private EMFModelComprehension comprehension;
     private Logger logger = ViatraQueryLoggingUtil.getLogger(DerivedFeatureAdapter.class);
 
-    private final List<EStructuralFeature> localFeatures = new ArrayList<EStructuralFeature>();
-    private final List<DependentFeaturePath> featurePaths = new ArrayList<DerivedFeatureAdapter.DependentFeaturePath>();
+    private final List<EStructuralFeature> localFeatures = new ArrayList<>();
+    private final List<DependentFeaturePath> featurePaths = new ArrayList<>();
 
     /**
      * Convenience constructor for a local and navigated dependency
@@ -200,11 +200,11 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 }
                 if (derivedFeature.isMany()) {
                     if (currentValue != null) {
-                        oldValue = new HashSet<EObject>((Collection<EObject>) currentValue);
+                        oldValue = new HashSet<>((Collection<EObject>) currentValue);
                     } else {
-                        oldValue = new HashSet<EObject>();
+                        oldValue = new HashSet<>();
                     }
-                    currentValue = new HashSet<EObject>();
+                    currentValue = new HashSet<>();
                     Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
                     int position = 0;
                     for (Object target : targets) {
@@ -212,7 +212,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     }
                     if (currentValue instanceof Collection<?> && oldValue instanceof Collection<?>) {
                         ((Collection<?>) oldValue).removeAll((Collection<?>) currentValue);
-                        if (((Collection<?>) oldValue).size() > 0) {
+                        if (!((Collection<?>) oldValue).isEmpty()) {
                             sendRemoveManyNotification(source, derivedFeature, oldValue);
                         }
                     }
@@ -244,40 +244,24 @@ public class DerivedFeatureAdapter extends AdapterImpl {
             }
         };
 
-        /**
-         * 
-         */
         public DependentFeaturePath(EStructuralFeature navigationFeature, EStructuralFeature dependantFeature) {
             this.dependantFeature = dependantFeature;
             this.navigationFeature = navigationFeature;
         }
 
-        /**
-         * @return the dependantAdapter
-         */
         public AdapterImpl getDependantAdapter() {
             return dependantAdapter;
         }
 
-        /**
-         * @return the dependantFeature
-         */
         public EStructuralFeature getDependantFeature() {
             return dependantFeature;
         }
 
-        /**
-         * @return the navigationFeature
-         */
         public EStructuralFeature getNavigationFeature() {
             return navigationFeature;
         }
     }
 
-    /**
-     * @param direction
-     * @return
-     */
     protected class DerivedFeatureEMFVisitor extends EMFVisitor {
 
         public DerivedFeatureEMFVisitor() {

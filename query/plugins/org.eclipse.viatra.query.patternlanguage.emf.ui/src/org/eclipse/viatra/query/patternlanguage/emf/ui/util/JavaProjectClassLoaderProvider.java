@@ -72,7 +72,6 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
             Resource resource = pattern.eResource();
             if (resource != null) {
                 URI uri = resource.getURI();
-//                uri = resource.getResourceSet().getURIConverter().normalize(uri);
                 String scheme = uri.scheme();
                 if ("platform".equals(scheme) && uri.segmentCount() > 1 && "resource".equals(uri.segment(0))) {
                     StringBuilder platformResourcePath = new StringBuilder();
@@ -102,7 +101,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
             IJavaProject jp = JavaCore.create(project);
             String[] classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(jp);
             List<URL> classURLs = getClassesAsURLs(classPathEntries);
-            URL[] urls = (URL[]) classURLs.toArray(new URL[classURLs.size()]);
+            URL[] urls = classURLs.toArray(new URL[classURLs.size()]);
             URLClassLoader loader = URLClassLoader.newInstance(urls, jp.getClass().getClassLoader());
             return loader;
         }

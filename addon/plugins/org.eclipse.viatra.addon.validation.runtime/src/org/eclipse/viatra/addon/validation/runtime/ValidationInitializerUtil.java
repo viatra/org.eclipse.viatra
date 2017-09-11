@@ -25,6 +25,8 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  */
 public final class ValidationInitializerUtil {
 
+    private ValidationInitializerUtil() {}
+    
     /**
      * Initializes a new validation engine implementing the IValidationEngine interface on the provided Notifier
      * instance with the constrains specified for the given editor Id.

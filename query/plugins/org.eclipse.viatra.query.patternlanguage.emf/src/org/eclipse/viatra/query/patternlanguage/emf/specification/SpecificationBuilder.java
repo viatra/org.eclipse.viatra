@@ -206,8 +206,6 @@ public class SpecificationBuilder {
                 try {
                     buildAnnotations(newPattern, pQuery);
                     buildBodies(newPattern, pQuery);
-                } catch (ViatraQueryException e) {
-                    pQuery.addError(new PProblem(e, e.getShortMessage()));
                 } catch (RewriterException e) {
                     pQuery.addError(new PProblem(e, e.getShortMessage()));
                 }
@@ -242,8 +240,7 @@ public class SpecificationBuilder {
         return specification;
     }
 
-    protected void buildAnnotations(Pattern pattern, InitializablePQuery query)
-            throws ViatraQueryException {
+    protected void buildAnnotations(Pattern pattern, InitializablePQuery query) {
         for (Annotation annotation : pattern.getAnnotations()) {
             PAnnotation pAnnotation = new PAnnotation(annotation.getName());
             for (Entry<String, Object> attribute : 

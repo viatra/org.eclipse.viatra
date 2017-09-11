@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Zoltan Ujhelyi and Csaba Debreceni
  *
  */
-public class FormatParser {
+public final class FormatParser {
 
     public static final String ANNOTATION_ID = "Format";
     private static final String PREFIX = "org.eclipse.viatra.viewers.format.";
@@ -48,6 +48,8 @@ public class FormatParser {
             .put("arrowTargetEnd", ARROW_TARGET_END)
             .build();
 
+    private FormatParser() {}
+    
     public static boolean isFormatted(FormattableElement element) {
         return element.getFormat() != null;
     }
@@ -90,9 +92,6 @@ public class FormatParser {
     /**
      * Returns a numeric format property. If the input is erroneous (e.g. non-existent or non-numeric properties), -1 is
      * returned.
-     * 
-     * @param index
-     * @return
      */
     public static int getNumberProperty(FormattableElement element, String index) {
         try {
@@ -105,8 +104,6 @@ public class FormatParser {
     /**
      * Returns a string format property. If the input is erroneous (e.g. non-existent properties),
      * null is returned.
-     * @param index
-     * @return
      */
     public static String getStringProperty(FormattableElement element, String index) {
         return (String) element.getFormat().getProperties().get(index);

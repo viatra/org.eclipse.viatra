@@ -15,8 +15,10 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 
 import com.google.common.base.Predicate;
 
-public abstract class ItemExtender implements Item {
+public final class ItemExtender {
 
+    private ItemExtender() {}
+    
     public static final class RootItem implements Predicate<Item> {
 
         @Override

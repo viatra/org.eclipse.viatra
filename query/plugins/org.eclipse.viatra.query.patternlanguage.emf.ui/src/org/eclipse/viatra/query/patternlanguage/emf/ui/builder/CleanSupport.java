@@ -170,7 +170,7 @@ public class CleanSupport {
     }
 
     private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor)
-            throws CoreException, ViatraQueryException {
+            throws CoreException {
         for (Delta delta : relevantDeltas) {
             // Determine if this resource is logically nested in the project being built.
             // Not currently built projects should be left alone, see bugs 452176 and 496257
@@ -210,12 +210,8 @@ public class CleanSupport {
     /**
      * Executes Normal Build cleanUp on the current Built Project (modelProject). Removes all code generated previously
      * for the {@link Pattern}, and marks current {@link Pattern} related extensions for removal.
-     *
-     * @param modelProject
-     * @param pattern
-     * @throws CoreException
      */
-    private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) throws CoreException {
+    private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) {
         if (pattern != null) {
             String extensionId = inferrerUtil.modelFileQualifiedName(pattern);
             ensureSupport
@@ -227,10 +223,6 @@ public class CleanSupport {
      * Executes Normal Build cleanUp on every {@link IGenerationFragment} registered to the current {@link Pattern}.
      * Marks current {@link Pattern} related extensions for removal. If the {@link IProject} related to
      * {@link IGenerationFragment} does not exist, clean up skipped for the fragment.
-     *
-     * @param modelProject
-     * @param pattern
-     * @throws CoreException
      */
     private void executeCleanUpOnFragments(IProject modelProject, Pattern pattern) throws CoreException {
         for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {

@@ -194,6 +194,10 @@
                     <configuration>
                         <!-- need to prefix by basedir to generate to currently built module -->
                         <outputDirectory>${basedir}/xtend-gen</outputDirectory>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
                     </configuration>
                 </plugin>
                 <plugin>

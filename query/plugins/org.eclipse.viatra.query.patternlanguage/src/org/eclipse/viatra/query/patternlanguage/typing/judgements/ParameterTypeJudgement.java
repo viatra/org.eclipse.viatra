@@ -27,6 +27,7 @@ public class ParameterTypeJudgement extends TypeConformJudgement {
     /**
      * @deprecated Use {@link #ParameterTypeJudgement(Expression, Variable)} instead
      */
+    @Deprecated
     public ParameterTypeJudgement(Expression expression, Expression conformsTo) {
         super(expression, conformsTo);
     }

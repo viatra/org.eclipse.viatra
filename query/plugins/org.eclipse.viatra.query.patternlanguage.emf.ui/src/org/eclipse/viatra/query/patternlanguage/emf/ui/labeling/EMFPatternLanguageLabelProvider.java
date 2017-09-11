@@ -121,11 +121,11 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     }
 
     String text(CheckConstraint constraint) {
-        return String.format("check()");
+        return "check()";
     }
     
     String text(FunctionEvaluationValue eval) {
-        return String.format("eval()");
+        return "eval()";
     }
 
     String text(AggregatedValue aggregate) {

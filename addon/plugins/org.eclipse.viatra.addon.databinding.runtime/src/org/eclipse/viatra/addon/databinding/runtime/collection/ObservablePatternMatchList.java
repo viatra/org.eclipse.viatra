@@ -262,13 +262,14 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         }
 
         private int placeOf(Match match) {
-            if (cache.size() == 0) {
+            if (cache.isEmpty()) {
                 return 0;
             }
             // tradeoff between the ArrayList get(int) and add(int, E) vs LinkedList get(int) and add(int, E)
             // stick to LinkedList and binary search so get(int) will be invoked not that many times (log2) and add(int,
             // E) is more efficient
-            int left = 0, right = cache.size() - 1;
+            int left = 0;
+            int right = cache.size() - 1;
             while (left <= right) {
                 int mid = (left + right) >> 1;
                 int cv = comparator.compare(match, cache.get(mid));

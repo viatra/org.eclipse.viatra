@@ -229,12 +229,10 @@ public class TypeInformation {
             return typeSystem.extractTypeDescriptor(((Variable)expression).getType());
         }
         final Set<IInputKey> allTypes = getMinimizedTypes(expression);
-        if (allTypes.size() >= 1) {
-            return allTypes.iterator().next();
-        } else if (allTypes.isEmpty()) {
+        if (allTypes.isEmpty()) {
             return null;
         } else {
-            return BottomTypeKey.INSTANCE;
+            return allTypes.iterator().next();
         }
     }
     

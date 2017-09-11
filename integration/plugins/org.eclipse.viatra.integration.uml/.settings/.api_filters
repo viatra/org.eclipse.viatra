@@ -2807,4 +2807,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/integration/uml/ViatraQueryUMLStandaloneSetup.java" type="org.eclipse.viatra.integration.uml.ViatraQueryUMLStandaloneSetup">
+        <filter comment="Utility class with only private fields; no need to instantiate" id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.integration.uml.ViatraQueryUMLStandaloneSetup"/>
+                <message_argument value="ViatraQueryUMLStandaloneSetup()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

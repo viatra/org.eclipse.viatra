@@ -241,7 +241,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
-        if (pattern.getParameters().size() == 0) {
+        if (pattern.getParameters().isEmpty()) {
             warning("Parameterless patterns can only be used to check for existence of a condition.",
                     PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.MISSING_PATTERN_PARAMETERS);
             // As no duplicate parameters are available, returning now

@@ -31,6 +31,8 @@ import com.google.common.collect.Lists;
  */
 public class EMFPatternLanguageHelper {
 
+    private EMFPatternLanguageHelper() {}
+    
     /**
      * Initializes a new list of package imports defined in a selected pattern model
      * 

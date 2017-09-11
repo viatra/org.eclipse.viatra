@@ -65,11 +65,10 @@ public class EclipseLogAppender extends AppenderSkeleton {
 
             ILog myLog = getLog();
             if (myLog != null) {
-                String loggerName = event.getLoggerName();
                 int severity = mapLevel(event.getLevel());
                 final Throwable throwable = event.getThrowableInformation() != null ? event.getThrowableInformation()
                         .getThrowable() : null;
-                IStatus status = createStatus(severity, loggerName, logString, throwable);
+                IStatus status = createStatus(severity, logString, throwable);
                 getLog().log(status);
             }
         }
@@ -97,7 +96,7 @@ public class EclipseLogAppender extends AppenderSkeleton {
         }
     }
 
-    private IStatus createStatus(int severity, String loggerName, String message, Throwable throwable) {
+    private IStatus createStatus(int severity, String message, Throwable throwable) {
         return new Status(severity, BUNDLE_NAME, message, throwable);
     }
 

@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -48,6 +49,7 @@ import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
@@ -237,7 +239,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     }
     
     private List<IContributionItem> getDropdownMenuContributions(IViewerSandboxTab tab) {
-        List<IContributionItem> r = new ArrayList<IContributionItem>();
+        List<IContributionItem> r = new ArrayList<>();
         if (tab!=null && tab.getDropDownMenuContributions()!=null) {
             r.addAll(tab.getDropDownMenuContributions());
         }
@@ -245,7 +247,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     }
     
     private List<IContributionItem> getToolbarContributions(IViewerSandboxTab tab) {
-        List<IContributionItem> r = new ArrayList<IContributionItem>();
+        List<IContributionItem> r = new ArrayList<>();
         if (tab!=null && tab.getToolBarContributions()!=null) {
             r.addAll(tab.getToolBarContributions());
         }   
@@ -296,14 +298,13 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
             engine.dispose();
         }
         // make sure that the engine is initialized according to how the Query Explorer is set up through preferences
-        boolean wildcardMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.WILDCARD_MODE);
-        boolean dynamicEMFMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
+        IPreferenceStore prefStore = ViatraQueryGUIPlugin.getDefault().getPreferenceStore();
+        IndexingLevel wildcardLevel = (prefStore.getBoolean(PreferenceConstants.WILDCARD_MODE)) ? IndexingLevel.FULL: IndexingLevel.NONE;
+        boolean dynamicEMFMode = prefStore.getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
         
         engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(scope.getScopeRoots(),
-                new BaseIndexOptions().withDynamicEMFMode(dynamicEMFMode).withWildcardMode(wildcardMode)));
-        ViewersMultiSandboxView.log("Viewers initialized a new VIATRA Query engine with wildcardMode: "+wildcardMode+", dynamicMode: "+dynamicEMFMode);
+                new BaseIndexOptions().withDynamicEMFMode(dynamicEMFMode).withWildcardLevel(wildcardLevel)));
+        ViewersMultiSandboxView.log("Viewers initialized a new VIATRA Query engine with indexing level: " + wildcardLevel + ", dynamicMode: "+dynamicEMFMode);
         return engine;
     }
 

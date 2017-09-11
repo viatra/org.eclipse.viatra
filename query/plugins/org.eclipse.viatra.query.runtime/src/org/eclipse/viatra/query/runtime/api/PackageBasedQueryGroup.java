@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class PackageBasedQueryGroup extends BaseQueryGroup {
 
-    private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
+    private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<>();
     private final String packageName;
     private final boolean includeSubPackages;
     private IRegistryView view;
@@ -84,13 +84,11 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
      * @return the querySpecifications
      * @deprecated Use {@link #getSpecifications()} instead
      */
+    @Deprecated
     public Set<IQuerySpecification<?>> getQuerySpecifications() {
         return getSpecifications();
     }
 
-    /**
-     * @return the includeSubPackages
-     */
     public boolean isIncludeSubPackages() {
         return includeSubPackages;
     }

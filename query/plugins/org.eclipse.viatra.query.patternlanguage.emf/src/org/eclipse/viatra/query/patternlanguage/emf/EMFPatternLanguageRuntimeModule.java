@@ -96,6 +96,11 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return PatternLanguageResourceDescriptionStrategy.class;
     }
 
+    /**
+     * 
+     * @deprecated this injection is only kept for backward compatibility, use {@link ITypeSystem} or {@link ITypeInferrer} instead
+     */
+    @Deprecated
     public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
         return EMFPatternTypeProvider.class;
     }

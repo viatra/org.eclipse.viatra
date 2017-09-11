@@ -73,7 +73,6 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
 
     @Override
     protected Collection<String> getProvidedMetamodels() {
-        // TODO Auto-generated method stub
         return Lists.newArrayList();
     }
     
@@ -114,7 +113,6 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
 
     @Override
     protected String doGetQualifiedClassName(EClassifier classifier, EObject context) {
-        // TODO Auto-generated method stub
         return null;
     }
 

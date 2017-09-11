@@ -84,41 +84,41 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                 }
                 return scope_EPackage(importDecl, ref);
             } else if (EcoreUtil2.isAssignableFrom(EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT, refType)) {
-                return scope_PackageImport(ctx, ref);
+                return scope_PackageImport(ctx);
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ECLASSIFIER, refType)) {
                 ClassType containingClassDeclaration = EcoreUtil2.getContainerOfType(ctx, ClassType.class);
                 if (containingClassDeclaration != null) {
-                    return scope_EClassifier(containingClassDeclaration, ref);
+                    return scope_EClassifier(containingClassDeclaration);
                 } else {
-                    return scope_EClassifier(ctx, ref);
+                    return scope_EClassifier(ctx);
                 }
             } else if (EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.VARIABLE, refType)) {
                 PatternBody containingBody = EcoreUtil2.getContainerOfType(ctx, PatternBody.class);
                 if (containingBody != null) {
-                    return scope_Variable((PatternBody) ctx, ref);
+                    return scope_Variable((PatternBody) ctx);
                 }
                 AnnotationParameter containingAnnotationParameter = EcoreUtil2.getContainerOfType(ctx,
                         AnnotationParameter.class);
                 if (containingAnnotationParameter != null) {
-                    return scope_Variable(containingAnnotationParameter, ref);
+                    return scope_Variable(containingAnnotationParameter);
                 }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ESTRUCTURAL_FEATURE, refType)) {
                 PathExpressionTail tail = EcoreUtil2.getContainerOfType(ctx, PathExpressionTail.class);
                 if (tail != null) {
-                    return scope_EStructuralFeature(tail, ref);
+                    return scope_EStructuralFeature(tail);
                 } else {
                     PathExpressionHead head = EcoreUtil2.getContainerOfType(ctx, PathExpressionHead.class);
-                    return scope_EStructuralFeature(head, ref);
+                    return scope_EStructuralFeature(head);
                 }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM, refType)) {
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
                 if (containingValue != null) {
-                    return scope_EEnum(containingValue, ref);
+                    return scope_EEnum(containingValue);
                 }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM_LITERAL, refType)) {
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
                 if (containingValue != null) {
-                    return scope_EEnumLiteral(containingValue, ref);
+                    return scope_EEnumLiteral(containingValue);
                 }
             }
         }
@@ -129,7 +129,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
         return metamodelProvider.getAllMetamodelObjects(delegateGetScope(ctx, ref), ctx);
     }
     
-    private IScope scope_PackageImport(EObject ctx, EReference ref) {
+    private IScope scope_PackageImport(EObject ctx) {
         EObject root = getRootContainer(ctx);
         if (root instanceof PatternModel) {
             SimpleAttributeResolver<PackageImport, String> attributeResolver = SimpleAttributeResolver.<PackageImport, String>newResolver(String.class, "alias");
@@ -140,15 +140,15 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
         }
     }
 
-    private IScope scope_EClassifier(EObject ctx, EReference ref) {
+    private IScope scope_EClassifier(EObject ctx) {
         // The context is general as content assist might ask for different context types
         if (ctx instanceof ClassType) {
-            return scope_EClassifier((ClassType)ctx, ref);
+            return scope_EClassifier((ClassType)ctx);
         }
         return createUnqualifiedClassifierScope(ctx);
     }
     
-    private IScope scope_EClassifier(ClassType ctx, EReference ref) {
+    private IScope scope_EClassifier(ClassType ctx) {
         if (ctx.getMetamodel() != null && !ctx.getMetamodel().eIsProxy()) {
             return createClassifierScope(ctx.getMetamodel().getEPackage(), IScope.NULLSCOPE);
         }
@@ -158,7 +158,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
     /**
      * @since 1.6
      */
-    private IScope scope_Variable(AnnotationParameter ctx, EReference ref) {
+    private IScope scope_Variable(AnnotationParameter ctx) {
         Pattern pattern = EcoreUtil2.getContainerOfType(ctx, Pattern.class);
         if (pattern != null) {
             return Scopes.scopeFor(pattern.getParameters());
@@ -166,7 +166,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
         return IScope.NULLSCOPE;
     }
     
-    private IScope scope_Variable(PatternBody ctx, EReference ref) {
+    private IScope scope_Variable(PatternBody ctx) {
         if (ctx != null && !ctx.eIsProxy()) {
             return Scopes.scopeFor(ctx.getVariables());
         }
@@ -197,16 +197,16 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
         return Scopes.scopeFor(ePackage.getEClassifiers(), outer);
     }
 
-    private IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
+    private IScope scope_EStructuralFeature(PathExpressionHead ctx) {
         // This is needed for content assist - in that case the ExpressionTail does not exists
         return expressionParentScopeProvider.doSwitch(ctx);
     }
 
-    private IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
+    private IScope scope_EStructuralFeature(PathExpressionTail ctx) {
         return expressionParentScopeProvider.doSwitch(ctx.eContainer());
     }
 
-    private IScope scope_EEnum(EnumValue ctx, EReference ref) {
+    private IScope scope_EEnum(EnumValue ctx) {
         PatternModel model = (PatternModel) getRootContainer(ctx);
         final Collection<EEnum> enums = Lists.newArrayList();
         for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
@@ -217,7 +217,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
         return Scopes.scopeFor(enums);
     }
 
-    private IScope scope_EEnumLiteral(EnumValue ctx, EReference ref) {
+    private IScope scope_EEnumLiteral(EnumValue ctx) {
         EEnum type;
         try {
             type = ctx.getEnumeration();

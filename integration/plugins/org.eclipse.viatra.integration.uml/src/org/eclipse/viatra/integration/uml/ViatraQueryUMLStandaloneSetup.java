@@ -93,6 +93,8 @@ public class ViatraQueryUMLStandaloneSetup {
 
     private static final String CONNECTOR_ID = "org.eclipse.viatra.integration.uml.standalone.connector";
 
+    private ViatraQueryUMLStandaloneSetup() {}
+    
     /**
      * Register the query specifications
      * @throws ViatraQueryException if a query specification cannot be initialized or registered

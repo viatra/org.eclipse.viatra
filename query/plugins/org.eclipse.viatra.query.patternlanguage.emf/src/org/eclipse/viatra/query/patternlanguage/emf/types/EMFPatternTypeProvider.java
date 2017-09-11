@@ -83,6 +83,7 @@ import com.google.inject.Singleton;
  * A type provider for inferring the correct types for the pattern variables. It handles all constraints in the model
  * which can modify the outcome of the type, but it has some practical limitations, as the calculation of the proper
  * type can be time consuming in some cases.
+ * @deprecated The functionality of this class was superseeded by {@link EMFTypeInferrer} and {@link EMFTypeSystem}.
  */
 @Singleton
 @SuppressWarnings("restriction")

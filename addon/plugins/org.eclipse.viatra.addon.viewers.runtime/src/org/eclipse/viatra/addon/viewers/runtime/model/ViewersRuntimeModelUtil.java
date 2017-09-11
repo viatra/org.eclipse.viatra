@@ -21,6 +21,8 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
  */
 public class ViewersRuntimeModelUtil {
 
+    private ViewersRuntimeModelUtil() {}
+    
     public static boolean isItemQuerySpecification(IQuerySpecification<?> querySpecification) {
         return querySpecification.getFirstAnnotationByName(ItemQuerySpecificationDescriptor.ANNOTATION_ID) != null;
     }

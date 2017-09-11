@@ -30,9 +30,9 @@ public final class ValidationUtil {
 
     }
 
-    private static Map<IWorkbenchPage, Set<IEditorPart>> pageMap = new HashMap<IWorkbenchPage, Set<IEditorPart>>();
+    private static Map<IWorkbenchPage, Set<IEditorPart>> pageMap = new HashMap<>();
 
-    private static Map<IEditorPart, ConstraintAdapter> adapterMap = new HashMap<IEditorPart, ConstraintAdapter>();
+    private static Map<IEditorPart, ConstraintAdapter> adapterMap = new HashMap<>();
 
     public static synchronized Map<IEditorPart, ConstraintAdapter> getAdapterMap() {
         return adapterMap;
@@ -47,7 +47,7 @@ public final class ValidationUtil {
         if (pageMap.containsKey(page)) {
             pageMap.get(page).add(editorPart);
         } else {
-            Set<IEditorPart> editorParts = new HashSet<IEditorPart>();
+            Set<IEditorPart> editorParts = new HashSet<>();
             editorParts.add(editorPart);
             pageMap.put(page, editorParts);
             page.addPartListener(ValidationPartListener.getInstance());
@@ -58,7 +58,7 @@ public final class ValidationUtil {
         IWorkbenchPage page = editorPart.getSite().getPage();
         if (pageMap.containsKey(page)) {
             pageMap.get(page).remove(editorPart);
-            if (pageMap.get(page).size() == 0) {
+            if (pageMap.get(page).isEmpty()) {
                 pageMap.remove(page);
                 page.removePartListener(ValidationPartListener.getInstance());
             }

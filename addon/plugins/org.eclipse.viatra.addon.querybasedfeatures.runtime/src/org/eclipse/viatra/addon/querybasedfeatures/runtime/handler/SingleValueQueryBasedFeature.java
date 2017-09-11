@@ -29,8 +29,8 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  */
 public class SingleValueQueryBasedFeature extends QueryBasedFeature {
 
-    private final Map<InternalEObject, Object> singleRefMemory = new HashMap<InternalEObject, Object>();
-    private final Map<InternalEObject, Object> updateMemory = new HashMap<InternalEObject, Object>();
+    private final Map<InternalEObject, Object> singleRefMemory = new HashMap<>();
+    private final Map<InternalEObject, Object> updateMemory = new HashMap<>();
         
     protected SingleValueQueryBasedFeature(EStructuralFeature feature, boolean keepCache) {
         super(feature, keepCache);
@@ -77,7 +77,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
     
     protected void processDisappearedMatch(IPatternMatch signature) {
         Object target = getTargetValue(signature);
-        InternalEObject source = (InternalEObject) getSourceValue(signature);
+        InternalEObject source = getSourceValue(signature);
         if (target != null) {
             Object updateValue = updateMemory.get(source);
             if (updateValue != null) {

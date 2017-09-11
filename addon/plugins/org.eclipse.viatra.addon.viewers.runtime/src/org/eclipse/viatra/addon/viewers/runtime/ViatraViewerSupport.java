@@ -24,6 +24,8 @@ import org.eclipse.viatra.addon.viewers.runtime.sources.TreeContentProvider;
  */
 public class ViatraViewerSupport {
 
+    private ViatraViewerSupport() {}
+    
     /**
      * Bind the viewerstate to the list viewer.
      * @param viewer

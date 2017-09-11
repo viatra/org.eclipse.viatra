@@ -31,8 +31,10 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
     private static final String TARGET_PARAMETER_NAME = "target";
     private static final String LABEL_PARAMETER_NAME = "label";
 
-    private String source, target, label;
-    private PAnnotation formatAnnotation;
+    private final String source;
+    private final String target;
+    private final String label;
+    private final PAnnotation formatAnnotation;
 
     public EdgeQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation)
             throws QueryInitializationException {

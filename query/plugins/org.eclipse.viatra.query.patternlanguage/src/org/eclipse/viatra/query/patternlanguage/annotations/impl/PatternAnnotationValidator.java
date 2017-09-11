@@ -68,7 +68,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
     private static final class AnnotationParameterName implements Function<AnnotationParameter, String> {
         @Override
         public String apply(AnnotationParameter input) {
-            Preconditions.checkNotNull(input, "annotation");
+            Preconditions.checkNotNull(input);
             return input.getName();
         }
     }
@@ -78,7 +78,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
 
         @Override
         public String apply(PatternAnnotationParameter input) {
-            Preconditions.checkNotNull(input, "input");
+            Preconditions.checkNotNull(input);
             return input.getName();
         }
 
@@ -101,7 +101,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
 
                     @Override
                     public boolean apply(PatternAnnotationParameter input) {
-                        Preconditions.checkNotNull(input, "input");
+                        Preconditions.checkNotNull(input);
                         return input.isMandatory() && !Iterables.contains(actualAttributeNames, input.getName());
                     }
                 });
@@ -116,7 +116,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
 
             @Override
             public boolean apply(AnnotationParameter input) {
-                Preconditions.checkNotNull(input, "input");
+                Preconditions.checkNotNull(input);
                 return !Iterables.contains(parameterNames, input.getName());
             }
         });

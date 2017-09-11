@@ -22,10 +22,8 @@ public class ModelConnectorAdapterFactoryForGraphiti implements IAdapterFactory 
 
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (adapterType == IModelConnector.class) {
-            if (adaptableObject instanceof IEditorPart) {
-                return new GraphitiModelConnector((IEditorPart) adaptableObject);
-            }
+        if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
+            return new GraphitiModelConnector((IEditorPart) adaptableObject);
         }
         return null;
     }

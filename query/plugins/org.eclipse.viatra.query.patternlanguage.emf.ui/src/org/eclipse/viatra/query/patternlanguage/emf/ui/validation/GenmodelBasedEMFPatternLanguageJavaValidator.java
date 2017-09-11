@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
@@ -49,16 +48,6 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
     private IMetamodelProvider metamodelProvider;
     @Inject
     private TypeReferences typeReferences;
-
-    @Deprecated
-    public void checkPackageDeclaration(PatternModel model) {
-        //check moved to patternlanguage project using an IExpectedPackageNameProvider instance
-    }
-    
-    @Deprecated
-    protected String getActualPackageName(PatternModel model) {
-        return null;
-    }
     
     @Check(CheckType.NORMAL)
     public void checkImportDependency(PackageImport importDecl) {

@@ -8,6 +8,70 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/helper/EMFPatternLanguageHelper.java" type="org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper">
+        <filter comment="Utility class with only static methods; no need to instantiate" id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper"/>
+                <message_argument value="EMFPatternLanguageHelper()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/scoping/EMFPatternLanguageDeclarativeScopeProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider">
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_EClassifier(ClassType, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_EClassifier(EObject, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_EEnum(EnumValue, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_EEnumLiteral(EnumValue, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_EStructuralFeature(PathExpressionHead, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_EStructuralFeature(PathExpressionTail, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_PackageImport(EObject, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_Variable(AnnotationParameter, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider"/>
+                <message_argument value="scope_Variable(PatternBody, EReference)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/PatternParsingUtil.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil">
         <filter comment="Code cleanup" id="354463860">
             <message_arguments>
@@ -16,8 +80,16 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/validation/EMFIssueCodes.java" type="org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes">
+        <filter comment="Utility class with constants; no need to instantiate" id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes"/>
+                <message_argument value="EMFIssueCodes()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/EMFPatternLanguageJvmModelInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer">
-        <filter comment="Internal code generator API update" id="338792546">
+        <filter comment="Internal API update" id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer"/>
                 <message_argument value="infer(Pattern, IJvmDeclaredTypeAcceptor, SpecificationBuilder, boolean)"/>

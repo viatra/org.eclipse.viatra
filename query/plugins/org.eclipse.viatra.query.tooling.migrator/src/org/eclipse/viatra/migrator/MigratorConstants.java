@@ -12,8 +12,10 @@ package org.eclipse.viatra.migrator;
 
 import com.google.common.collect.ImmutableList;
 
-public class MigratorConstants {
+public final class MigratorConstants {
 
+    private MigratorConstants() {}
+    
     public static final ImmutableList<String> INCORRECT_BUILDER_IDS = ImmutableList.of(
             "org.eclipse.incquery.tooling.ui.projectbuilder", // $NON-NLS-1
             "org.eclipse.incquery.tooling.core.projectbuilder",// $NON-NLS-1

@@ -132,7 +132,7 @@ public class ZestContentViewer extends ContentViewer {
         canvas = createCanvas(parent, style);
 
         // inject domain
-        domain = (IDomain) injector.getInstance(IDomain.class);
+        domain = injector.getInstance(IDomain.class);
 
         // hook viewer
         viewer = domain.getAdapter(AdapterKey.get(IViewer.class, IDomain.CONTENT_VIEWER_ROLE));

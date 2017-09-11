@@ -22,10 +22,8 @@ public class ModelConnectorAdapterFactoryForGMFEditors implements IAdapterFactor
 
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (adapterType == IModelConnector.class) {
-            if (adaptableObject instanceof IEditorPart) {
-                return new GMFModelConnector((IEditorPart) adaptableObject);
-            }
+        if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
+            return new GMFModelConnector((IEditorPart) adaptableObject);
         }
         return null;
     }

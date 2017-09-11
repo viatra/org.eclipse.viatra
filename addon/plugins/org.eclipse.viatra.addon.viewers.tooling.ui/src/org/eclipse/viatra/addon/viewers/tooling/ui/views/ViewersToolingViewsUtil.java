@@ -27,6 +27,8 @@ public final class ViewersToolingViewsUtil {
 
     public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.viatra.addon.viewers.tooling.ui.viewersandboxtab";
 
+    private ViewersToolingViewsUtil() {}
+    
     public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws ViatraQueryException {
         //ViewersSandboxView.getInstance().setContents(model, patterns, filter);
         ViewersMultiSandboxView.ensureOpen();

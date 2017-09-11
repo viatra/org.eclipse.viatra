@@ -96,7 +96,7 @@ public class PatternBodyTransformer {
             throws QueryInitializationException {
         try {
             preprocessVariables(body, acceptor);
-            preprocessParameters(body, acceptor);
+            preprocessParameters(acceptor);
             gatherBodyConstraints(body, acceptor);
             return acceptor.getResult();
         } catch (SpecificationBuilderException e) {
@@ -111,7 +111,7 @@ public class PatternBodyTransformer {
         }
     }
 
-    private void preprocessParameters(final PatternBody body, PatternModelAcceptor<?> acceptor) {
+    private void preprocessParameters(PatternModelAcceptor<?> acceptor) {
         EList<Variable> parameters = pattern.getParameters();
         for (Variable variable : parameters) {
             if (variable.getType() instanceof ClassType) {

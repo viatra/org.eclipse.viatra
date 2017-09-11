@@ -17,8 +17,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
-public class LabelParser {
+public final class LabelParser {
 
+    private LabelParser() {}
+    
     public static <Match extends IPatternMatch> String calculateLabel(Match match, String labelExpression) {
 
         if (labelExpression == null || labelExpression.isEmpty())

@@ -42,11 +42,11 @@ public final class PatternParsingResults {
     }
     
     public boolean hasWarning() {
-        return diag.getAllWarnings().size() > 0;
+        return !diag.getAllWarnings().isEmpty();
     }
     
     public boolean hasError() {
-        return diag.getAllErrors().size() > 0;
+        return !diag.getAllErrors().isEmpty();
     }
     
     public boolean validationOK() {

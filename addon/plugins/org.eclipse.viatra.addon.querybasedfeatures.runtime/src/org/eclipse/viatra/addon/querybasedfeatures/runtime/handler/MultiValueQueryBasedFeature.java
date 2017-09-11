@@ -38,13 +38,8 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
      * could use EObjectEList or similar to have notifications handled by EMF, but notification sending must be delayed
      * in order to avoid infinite notification loop
      */
-    private final Map<InternalEObject, List<Object>> manyRefMemory = new HashMap<InternalEObject, List<Object>>();
+    private final Map<InternalEObject, List<Object>> manyRefMemory = new HashMap<>();
     
-    /**
-     * @param feature
-     * @param kind
-     * @param keepCache
-     */
     protected MultiValueQueryBasedFeature(EStructuralFeature feature,  boolean keepCache) {
         super(feature, keepCache);
     }
@@ -53,11 +48,11 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
         if (isCached()) {
             List<Object> values = manyRefMemory.get(source);
             if (values == null) {
-                values = new BasicEList<Object>();
+                values = new BasicEList<>();
             }
             return values;
         } else {
-            final List<Object> values = new BasicEList<Object>();
+            final List<Object> values = new BasicEList<>();
             if (!isInitialized()) {
                 return values;
             }
@@ -85,7 +80,7 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
     
     protected void processDisappearedMatch(IPatternMatch signature) {
         Object target = getTargetValue(signature);
-        InternalEObject source = (InternalEObject) getSourceValue(signature);
+        InternalEObject source = getSourceValue(signature);
         if (target != null) {
             appendNotificationToList(new ENotificationImpl(source, Notification.REMOVE, getFeature(), target, null));
             removeFromManyRefMemory(source, target);
@@ -96,7 +91,7 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
         if (isCached()) {
             List<Object> values = manyRefMemory.get(source);
             if (values == null) {
-                values = new BasicEList<Object>();
+                values = new BasicEList<>();
                 manyRefMemory.put(source, values);
             }
             values.add(added);
@@ -119,10 +114,10 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
     @SuppressWarnings("rawtypes")
     public EList getManyReferenceValueAsEList(Object source) {
         Collection<?> values = getManyReferenceValue(source);
-        if (values.size() > 0) {
-            return new EcoreEList.UnmodifiableEList((InternalEObject) source, getFeature(), values.size(), values.toArray());
-        } else {
+        if (values.isEmpty()) {
             return new EcoreEList.UnmodifiableEList((InternalEObject) source, getFeature(), 0, null);
+        } else {
+            return new EcoreEList.UnmodifiableEList((InternalEObject) source, getFeature(), values.size(), values.toArray());
         }
     }
 

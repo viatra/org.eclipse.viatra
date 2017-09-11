@@ -15,6 +15,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation;
  */
 public final class EMFIssueCodes {
 
+    private EMFIssueCodes() {}
+    
     protected static final String ISSUE_CODE_PREFIX = "org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes.";
 
     public static final String DUPLICATE_IMPORT = ISSUE_CODE_PREFIX + "duplicate_import";

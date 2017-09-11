@@ -29,7 +29,8 @@ public class ContainmentQuerySpecificationDescriptor extends AbstractQuerySpecif
     private static final String SOURCE = "container";
     private static final String TARGET = "item";
 
-    private String container, item;
+    private final String container;
+    private final String item;
 
     public ContainmentQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation)
             throws QueryInitializationException {

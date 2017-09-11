@@ -88,7 +88,7 @@ public class ParserTest {
     }
 
     @Test
-    public void emptyPatternBody() throws Exception {
+    public void emptyPatternBody() {
         // Parser allows empty pattern body - only validation checks for it
         testParserRule("pattern emptyPattern() = {}", PATTERN_RULE);
     }
@@ -190,7 +190,7 @@ public class ParserTest {
     }
 
     @Test
-    public void indexing() throws Exception {
+    public void indexing() {
         //PatternModel constraint = patternParseHelper
         //		.parse("Pattern.parameters[1](Name, in)");
         //helper.assertNoErrors(constraint);
@@ -203,19 +203,19 @@ public class ParserTest {
     }
 
     @Test
-    public void equality() throws Exception {
+    public void equality() {
         testParserRule("A == B", COMPARE_CONSTRAINT_RULE);
     }
     @Test
-    public void equalityConstant() throws Exception {
+    public void equalityConstant() {
         testParserRule("A == 1", COMPARE_CONSTRAINT_RULE);
     }
     @Test
-    public void inequality() throws Exception {
+    public void inequality() {
         testParserRule("A != B", COMPARE_CONSTRAINT_RULE);
     }
     @Test
-    public void inequalityConstant() throws Exception {
+    public void inequalityConstant() {
         testParserRule("A != 1", COMPARE_CONSTRAINT_RULE);
     }
     
