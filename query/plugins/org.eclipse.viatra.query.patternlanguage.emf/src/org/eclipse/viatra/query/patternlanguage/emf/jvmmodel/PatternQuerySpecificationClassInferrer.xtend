@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *   Mark Czotter - initial API and implementation
  *******************************************************************************/
@@ -61,7 +61,7 @@ import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificat
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
- *
+ * 
  * @author Mark Czotter
  * @noreference
  */
@@ -80,66 +80,70 @@ class PatternQuerySpecificationClassInferrer {
     /**
      * Infers the {@link IQuerySpecification} implementation class from {@link Pattern}.
      */
-    def JvmDeclaredType inferQuerySpecificationClass(Pattern pattern, boolean isPrelinkingPhase, String querySpecificationPackageName, JvmType matcherClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder, EMFPatternLanguageGeneratorConfig config) {
+    def JvmDeclaredType inferQuerySpecificationClass(Pattern pattern, boolean isPrelinkingPhase,
+        String querySpecificationPackageName, JvmType matcherClass, JvmTypeReferenceBuilder builder,
+        JvmAnnotationReferenceBuilder annBuilder, EMFPatternLanguageGeneratorConfig config) {
         this.builder = builder
         this.annBuilder = annBuilder
-        
-        val querySpecificationClass = pattern.toClass(pattern.querySpecificationClassName(config.matcherGenerationStrategy)) [
-              packageName = querySpecificationPackageName
-              documentation = pattern.javadocQuerySpecificationClass.toString
-              final = true
-              if (pattern.isPublic && config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC) {
-                superTypes += typeRef(BaseGeneratedEMFQuerySpecification, typeRef(matcherClass))
-              } else {
-                superTypes += typeRef(BaseGeneratedEMFQuerySpecificationWithGenericMatcher)
-              }
-              fileHeader = pattern.fileComment
-          ]
-          return querySpecificationClass
-      }
 
-      def initializeSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass,
-            JvmType matchClass, EMFPatternLanguageGeneratorConfig config) {
-            try {
-                val withPatternSpecificMatcher = pattern.isPublic &&
-                    config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC
-                querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass,
-                    withPatternSpecificMatcher)
-                querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, withPatternSpecificMatcher)
-                querySpecificationClass.inferExpressions(pattern)
-            } catch (IllegalStateException ex) {
-                feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
-                    IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+        val querySpecificationClass = pattern.toClass(
+            pattern.querySpecificationClassName(config.matcherGenerationStrategy)) [
+            packageName = querySpecificationPackageName
+            documentation = pattern.javadocQuerySpecificationClass.toString
+            final = true
+            if (pattern.isPublic && config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC) {
+                superTypes += typeRef(BaseGeneratedEMFQuerySpecification, typeRef(matcherClass))
+            } else {
+                superTypes += typeRef(BaseGeneratedEMFQuerySpecificationWithGenericMatcher)
             }
+            fileHeader = pattern.fileComment
+        ]
+        return querySpecificationClass
+    }
+
+    def initializeSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass,
+        JvmType matchClass, EMFPatternLanguageGeneratorConfig config) {
+        try {
+            val withPatternSpecificMatcher = pattern.isPublic &&
+                config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC
+            querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass,
+                withPatternSpecificMatcher)
+            querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, withPatternSpecificMatcher)
+            querySpecificationClass.inferExpressions(pattern)
+        } catch (IllegalStateException ex) {
+            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
         }
+    }
 
     /**
-        * Infers methods for QuerySpecification class based on the input 'pattern'.
-        */
-      def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, boolean withPatternSpecificMatcher) {
-          querySpecificationClass.members += pattern.toConstructor [
+     * Infers methods for QuerySpecification class based on the input 'pattern'.
+     */
+    def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass,
+        JvmType matchClass, boolean withPatternSpecificMatcher) {
+        querySpecificationClass.members += pattern.toConstructor [
             visibility = JvmVisibility::PRIVATE
             body = '''
                 super(«pattern.querySpecificationPQueryClassName».INSTANCE);
             '''
-        ] 	
-          
-           querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
+        ]
+
+        querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
             visibility = JvmVisibility::PUBLIC
             static = true
             exceptions += typeRef(ViatraQueryException)
             documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
             body = '''
-                    try{
-                        return «pattern.querySpecificationHolderClassName».INSTANCE;
-                    } catch («ExceptionInInitializerError» err) {
-                        throw processInitializerError(err);
-                    }
+                try{
+                    return «pattern.querySpecificationHolderClassName».INSTANCE;
+                } catch («ExceptionInInitializerError» err) {
+                    throw processInitializerError(err);
+                }
             '''
         ]
 
-          if (withPatternSpecificMatcher) {
-              querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
+        if (withPatternSpecificMatcher) {
+            querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
                 visibility = JvmVisibility::PROTECTED
                 annotations += annotationRef(Override)
                 parameters += pattern.toParameter("engine", typeRef(ViatraQueryEngine))
@@ -156,7 +160,7 @@ class PatternQuerySpecificationClassInferrer {
                 visibility = JvmVisibility::PUBLIC
                 annotations += annotationRef(Override)
                 body = '''return «matchClass».newEmptyMatch();'''
-                
+
             ]
             querySpecificationClass.members += pattern.toMethod("newMatch", typeRef(matchClass)) [
                 visibility = JvmVisibility::PUBLIC
@@ -165,39 +169,41 @@ class PatternQuerySpecificationClassInferrer {
                 varArgs = true
                 body = '''return «matchClass».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
             ]
-          }
-      }
+        }
+    }
 
-    def direction(Variable variable){
-        if(variable instanceof Parameter){
+    def direction(Variable variable) {
+        if (variable instanceof Parameter) {
             variable.direction
         }
         ParameterDirection.INOUT;
     }
-    
-    def StringConcatenationClient directionLiteral(Variable variable){
+
+    def StringConcatenationClient directionLiteral(Variable variable) {
         '''«PParameterDirection».«variable.direction.name()»'''
     }
 
     def inferPQueryMembers(JvmDeclaredType pQueryClass, Pattern pattern) {
-        pQueryClass.members += pattern.toField("INSTANCE", typeRef(pQueryClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
-            final = true
-            static = true
-            initializer = '''new «pattern.querySpecificationPQueryClassName»()'''
-        ]
+        pQueryClass.members +=
+            pattern.toField("INSTANCE",
+                typeRef(pQueryClass) /*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/ ) [
+                final = true
+                static = true
+                initializer = '''new «pattern.querySpecificationPQueryClassName»()'''
+            ]
         for (parameter : pattern.parameters) {
-            pQueryClass.members += pattern.toField(parameter.PParameterName, typeRef(PParameter))[
+            pQueryClass.members += pattern.toField(parameter.PParameterName, typeRef(PParameter)) [
                 final = true
                 visibility = JvmVisibility::PRIVATE
                 initializer = parameter.parameterInstantiation
             ]
         }
-        pQueryClass.members += pattern.toField("parameters", typeRef(List, typeRef(PParameter)))[
+        pQueryClass.members += pattern.toField("parameters", typeRef(List, typeRef(PParameter))) [
             final = true
             visibility = JvmVisibility::PRIVATE
             initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.PParameterName»«ENDFOR»)'''
         ]
-        
+
         pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(String)) [
             visibility = JvmVisibility::PUBLIC
             annotations += annotationRef(Override)
@@ -205,20 +211,17 @@ class PatternQuerySpecificationClassInferrer {
                 return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
             '''
         ]
-        pQueryClass.members += pattern.toMethod("getParameterNames",
-            typeRef(List, typeRef(String))) [
+        pQueryClass.members += pattern.toMethod("getParameterNames", typeRef(List, typeRef(String))) [
             visibility = JvmVisibility::PUBLIC
             annotations += annotationRef(Override)
             body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
         ]
-        pQueryClass.members += pattern.toMethod("getParameters",
-            typeRef(List, typeRef(PParameter))) [
+        pQueryClass.members += pattern.toMethod("getParameters", typeRef(List, typeRef(PParameter))) [
             visibility = JvmVisibility::PUBLIC
             annotations += annotationRef(Override)
             body = '''return parameters;'''
         ]
-        pQueryClass.members += pattern.toMethod("doGetContainedBodies",
-            typeRef(Set, typeRef(PBody))) [
+        pQueryClass.members += pattern.toMethod("doGetContainedBodies", typeRef(Set, typeRef(PBody))) [
             visibility = JvmVisibility::PUBLIC
             annotations += annotationRef(Override)
             exceptions += typeRef(QueryInitializationException)
@@ -237,42 +240,42 @@ class PatternQuerySpecificationClassInferrer {
                     return bodies;
                 '''
             } catch (Exception e) {
-                //If called with an inconsistent pattern, then no body will be built
+                // If called with an inconsistent pattern, then no body will be built
                 body = '''
                     addError(new «PProblem»("Inconsistent pattern definition threw exception «e.class.simpleName»  with message: «e.getMessage.escapeToQuotedString»"));
                     return bodies;
                 '''
-                //TODO smarter error reporting required, see bug 468992
-                //Turned off logging as it is disturbing for users, while the cause of the error should be reported by validation 
-                //logger.warn("Error while building PBodies", e)
+            // TODO smarter error reporting required, see bug 468992
+            // Turned off logging as it is disturbing for users, while the cause of the error should be reported by validation 
+            // logger.warn("Error while building PBodies", e)
             }
         ]
-        
+
     }
-    
-    def ExecutionType getRequestedExecutionType(Pattern pattern){
+
+    def ExecutionType getRequestedExecutionType(Pattern pattern) {
         val modifier = pattern.modifiers
-        if(modifier !== null){
+        if (modifier !== null) {
             modifier.execution
-        } else{
+        } else {
             ExecutionType::UNSPECIFIED
         }
     }
-    
-    def StringConcatenationClient incrementalBackendFactory(){
+
+    def StringConcatenationClient incrementalBackendFactory() {
         '''new «ReteBackendFactory»()'''
     }
-    
-    def StringConcatenationClient searchBackendFactory(){
+
+    def StringConcatenationClient searchBackendFactory() {
         '''«LocalSearchBackendFactory».INSTANCE'''
     }
-    def StringConcatenationClient defaultBackendFactory(){
-        '''(«IQueryBackendFactory»)null''' 
+
+    def StringConcatenationClient defaultBackendFactory() {
+        '''(«IQueryBackendFactory»)null'''
     }
-    
+
     def StringConcatenationClient inferQueryEvaluationHints(Pattern pattern) {
-        '''new «QueryEvaluationHint»(null, «
-        switch(getRequestedExecutionType(pattern)){
+        '''new «QueryEvaluationHint»(null, «switch(getRequestedExecutionType(pattern)){
             case INCREMENTAL: {
                 incrementalBackendFactory
             }
@@ -283,13 +286,11 @@ class PatternQuerySpecificationClassInferrer {
                defaultBackendFactory 
             }
             
-         }
-            »)'''
+         }»)'''
     }
-    
 
     def StringConcatenationClient inferBodies(Pattern pattern) throws IllegalStateException {
-        '''«FOR body : pattern.bodies »
+        '''«FOR body : pattern.bodies»
             {
                 PBody body = new PBody(this);
                 «new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder)»
@@ -298,11 +299,12 @@ class PatternQuerySpecificationClassInferrer {
         «ENDFOR»'''
     }
 
-     /**
-        * Infers inner class for QuerySpecification class based on the input 'pattern'.
-        */
-      def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean withPatternSpecificMatcher) {
-           querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
+    /**
+     * Infers inner class for QuerySpecification class based on the input 'pattern'.
+     */
+    def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern,
+        boolean withPatternSpecificMatcher) {
+        querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
             visibility = JvmVisibility::PRIVATE
             static = true
             documentation = '''
@@ -312,105 +314,109 @@ class PatternQuerySpecificationClassInferrer {
                 
                 <p> This workaround is required e.g. to support recursion.
             '''
-            
-            members += pattern.toField("INSTANCE", typeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
-                final = true
-                static = true
-                initializer = '''new «pattern.findInferredSpecification»()''';
+
+            members +=
+                pattern.toField("INSTANCE",
+                    typeRef(
+                        querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
+                        final = true
+                        static = true
+                        initializer = '''new «pattern.findInferredSpecification»()''';
+                    ]
+                members += pattern.toField("STATIC_INITIALIZER", typeRef(Object)) [
+                    final = true
+                    static = true
+                    initializer = '''ensureInitialized()''';
+                    documentation = '''
+                        Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
+                        This initialization order is required to support indirect recursion.
+                        
+                        <p> The static initializer is defined using a helper field to work around limitations of the code generator.
+                    '''
+
+                ]
+                it.members += pattern.toMethod("ensureInitialized", typeRef(Object)) [
+                    visibility = JvmVisibility::PUBLIC
+                    static = true
+                    body = '''
+                        INSTANCE.ensureInitializedInternalSneaky();
+                        return null;
+                    '''
+                ]
             ]
-            members += pattern.toField("STATIC_INITIALIZER", typeRef(Object)) [
-                final = true
+
+            querySpecificationClass.members += pattern.toClass(pattern.querySpecificationPQueryClassName) [
+                visibility = JvmVisibility::PRIVATE
                 static = true
-                initializer = '''ensureInitialized()''';
-                documentation = '''
-                    Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
-                    This initialization order is required to support indirect recursion.
-                    
-                    <p> The static initializer is defined using a helper field to work around limitations of the code generator.
-                '''
-                
+                superTypes += typeRef(BaseGeneratedEMFPQuery)
+                inferPQueryMembers(pattern)
             ]
-            it.members += pattern.toMethod("ensureInitialized", typeRef(Object)) [
-                visibility = JvmVisibility::PUBLIC
-                static = true
-                body = '''
-                    INSTANCE.ensureInitializedInternalSneaky();
-                    return null;
-                '''
+        }
+
+        def inferExpressions(JvmDeclaredType querySpecificationClass, Pattern pattern) {
+            pattern.bodies.map[CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(it)].flatten.forEach [ ex |
+                querySpecificationClass.members += ex.toMethod(expressionMethodName(ex), inferredType(ex)) [
+                    it.visibility = JvmVisibility::PRIVATE
+                    it.static = true
+                    for (variable : variables(ex)) {
+                        val parameter = variable.toParameter(variable.name, variable.calculateType)
+                        it.parameters += parameter
+                    }
+                    it.body = ex
+                ]
             ]
-        ]
-        
-           querySpecificationClass.members += pattern.toClass(pattern.querySpecificationPQueryClassName) [
-            visibility = JvmVisibility::PRIVATE
-            static = true
-            superTypes += typeRef(BaseGeneratedEMFPQuery)
-            inferPQueryMembers(pattern)
-        ]
+        }
+
+        def StringConcatenationClient parameterInstantiation(Variable variable) {
+            val ref = getJvmType(variable, variable);
+            // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
+            val clazz = if (ref === null || ref instanceof JvmUnknownTypeReference) {
+                    ""
+                } else {
+                    ref.getType().getQualifiedName()
+                }
+            val type = variable.type
+            if (type === null || !typeSystem.isValidType(type)) {
+                '''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
+            } else {
+                val declaredInputKey = typeSystem.extractTypeDescriptor(type)
+                '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)», «variable.directionLiteral»)'''
+            }
+        }
+
+        def StringConcatenationClient inferAnnotations(Pattern pattern) {
+            '''
+                «FOR annotation : pattern.annotations»
+                    {
+                        «PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
+                        «FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
+                            annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);
+                        «ENDFOR»
+                        addAnnotation(annotation);
+                    }
+                «ENDFOR»
+            '''
+        }
+
+        def StringConcatenationClient outputAnnotationParameter(Object value) {
+            switch value {
+                List<?>: {
+                    '''«Arrays».asList(new Object[] {
+                    «FOR item : value SEPARATOR ", "»
+                        «outputAnnotationParameter(item)»
+                    «ENDFOR»
+                    })'''
+                }
+                ParameterReference: {
+                    '''new «ParameterReference»("«value.name»")'''
+                }
+                String: {
+                    '''"«value»"'''
+                }
+                default: {
+                    '''«value.toString»'''
+                }
+            }
+        }
     }
     
-    def inferExpressions(JvmDeclaredType querySpecificationClass, Pattern pattern) {
-        pattern.bodies.map[CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(it)].flatten.forEach[ex |
-            querySpecificationClass.members += ex.toMethod(expressionMethodName(ex), inferredType(ex)) [
-                  it.visibility = JvmVisibility::PRIVATE
-                  it.static = true
-                for (variable : variables(ex)){
-                    val parameter = variable.toParameter(variable.name, variable.calculateType)
-                    it.parameters += parameter
-                }
-                it.body = ex
-            ]
-        ]
-    }
-
-    def StringConcatenationClient parameterInstantiation(Variable variable) {
-        val ref = getJvmType(variable, variable);
-        // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-        val clazz = if (ref === null || ref instanceof JvmUnknownTypeReference) {
-            ""
-        } else {
-            ref.getType().getQualifiedName()
-        }
-        val type = variable.type
-        if (type === null || !typeSystem.isValidType(type)) {
-            '''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
-        } else {
-            val declaredInputKey = typeSystem.extractTypeDescriptor(type)
-            '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)», «variable.directionLiteral»)'''
-        }
-    }
-
-    def StringConcatenationClient inferAnnotations(Pattern pattern) {
-        '''
-            «FOR annotation : pattern.annotations»
-                {
-                    «PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
-                    «FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
-                        annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);
-                    «ENDFOR»
-                    addAnnotation(annotation);
-                }
-            «ENDFOR»
-        '''
-    }
-
-    def StringConcatenationClient outputAnnotationParameter(Object value) {
-        switch value {
-            List<?>: {
-                '''«Arrays».asList(new Object[] {
-                «FOR item : value SEPARATOR ", "»
-                    «outputAnnotationParameter(item)»
-                «ENDFOR»
-                })'''
-            }
-            ParameterReference: {
-                '''new «ParameterReference»("«value.name»")'''
-            }
-            String: {
-                '''"«value»"'''
-            }
-            default: {
-                '''«value.toString»'''
-            }
-        }
-    }
-}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *   Mark Czotter - initial API and implementation
  *   Andras Okros - minor changes
@@ -41,7 +41,8 @@ class PatternGroupClassInferrer {
     @Inject extension JavadocInferrer
     @Extension JvmTypeReferenceBuilder builder
 
-    def inferPatternGroupClass(PatternModel model, JvmTypeReferenceBuilder builder, EMFPatternLanguageGeneratorConfig config, boolean includePrivate) {
+    def inferPatternGroupClass(PatternModel model, JvmTypeReferenceBuilder builder,
+        EMFPatternLanguageGeneratorConfig config, boolean includePrivate) {
         this.builder = builder
         model.toClass(model.groupClassName(includePrivate)) [
             packageName = model.groupPackageName(includePrivate)
@@ -50,10 +51,11 @@ class PatternGroupClassInferrer {
             fileHeader = model.fileComment
         ]
     }
-        
-    def initializePatternGroup(JvmGenericType groupClass, PatternModel model, JvmTypeReferenceBuilder builder, EMFPatternLanguageGeneratorConfig config, boolean includePrivate) {
+
+    def initializePatternGroup(JvmGenericType groupClass, PatternModel model, JvmTypeReferenceBuilder builder,
+        EMFPatternLanguageGeneratorConfig config, boolean includePrivate) {
         this.builder = builder
-        
+
         groupClass.documentation = javadocGroupClass(model, includePrivate).toString
         groupClass.members += model.inferInstanceMethod(groupClass)
         groupClass.members += model.inferInstanceField(groupClass)
@@ -68,12 +70,12 @@ class PatternGroupClassInferrer {
 
     private def String groupClassName(PatternModel model, boolean includePrivate) {
         val fileName = model.modelFileName.toFirstUpper
-        return if (includePrivate) fileName + "All" else fileName
+        return if(includePrivate) fileName + "All" else fileName
     }
-    
+
     private def String groupPackageName(PatternModel model, boolean includePrivate) {
         val packageName = model.packageName
-        return if (includePrivate) packageName + ".internal" else packageName
+        return if(includePrivate) packageName + ".internal" else packageName
     }
 
     def JvmField inferInstanceField(PatternModel model, JvmType groupClass) {
@@ -116,10 +118,10 @@ class PatternGroupClassInferrer {
 
     def JvmOperation inferSpecificationGetter(Pattern model, JvmType groupClass, JvmType specificationClass) {
         val classRef = if (specificationClass === null) {
-            typeRef(Object)
-        } else {
-            specificationClass.typeRef
-        }
+                typeRef(Object)
+            } else {
+                specificationClass.typeRef
+            }
         val exception = typeRef(ViatraQueryException)
         model.toMethod("get" + model.name.toFirstUpper, classRef) [
             visibility = JvmVisibility::PUBLIC
@@ -127,13 +129,13 @@ class PatternGroupClassInferrer {
             body = '''return «classRef».instance();'''
         ]
     }
-    
+
     def JvmOperation inferMatcherGetter(Pattern model, JvmType groupClass, JvmType matcherClass) {
         val classRef = if (matcherClass === null) {
-            typeRef(Object)
-        } else {
-            matcherClass.typeRef
-        }
+                typeRef(Object)
+            } else {
+                matcherClass.typeRef
+            }
         val exception = typeRef(ViatraQueryException)
         model.toMethod("get" + model.name.toFirstUpper, classRef) [
             visibility = JvmVisibility::PUBLIC
