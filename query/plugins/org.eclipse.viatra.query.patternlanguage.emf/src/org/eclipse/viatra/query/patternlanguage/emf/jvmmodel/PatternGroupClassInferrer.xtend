@@ -46,7 +46,7 @@ class PatternGroupClassInferrer {
         model.toClass(model.groupClassName(includePrivate)) [
             packageName = model.groupPackageName(includePrivate)
             final = true
-            superTypes += typeRef(typeof (BaseGeneratedPatternGroup))
+            superTypes += typeRef(BaseGeneratedPatternGroup)
             fileHeader = model.fileComment
         ]
     }
@@ -61,7 +61,7 @@ class PatternGroupClassInferrer {
         if (!includePrivate && config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC) {
             for (pattern : model.patterns.filter[public && !name.nullOrEmpty]) {
                 groupClass.members += pattern.inferSpecificationGetter(groupClass, pattern.findInferredSpecification)
-                groupClass.members += pattern.inferMatcherGetter(groupClass, pattern.findInferredClass(typeof(BaseMatcher)))
+                groupClass.members += pattern.inferMatcherGetter(groupClass, pattern.findInferredClass(BaseMatcher))
             }
         }
     }
@@ -84,7 +84,7 @@ class PatternGroupClassInferrer {
     }
 
     def JvmOperation inferInstanceMethod(PatternModel model, JvmType groupClass) {
-        val exception = typeRef(typeof (ViatraQueryException))
+        val exception = typeRef(ViatraQueryException)
         model.toMethod("instance", groupClass.typeRef) [
             documentation = model.javadocGroupClassInstanceMethod.toString
             visibility = JvmVisibility::PUBLIC
@@ -101,7 +101,7 @@ class PatternGroupClassInferrer {
     }
 
     def JvmConstructor inferConstructor(PatternModel model, JvmType groupClass, boolean includePrivate) {
-        val exception = typeRef(typeof (ViatraQueryException))
+        val exception = typeRef(ViatraQueryException)
         model.toConstructor [
             visibility = JvmVisibility::PRIVATE
             simpleName = groupClassName(model, includePrivate)
@@ -116,11 +116,11 @@ class PatternGroupClassInferrer {
 
     def JvmOperation inferSpecificationGetter(Pattern model, JvmType groupClass, JvmType specificationClass) {
         val classRef = if (specificationClass === null) {
-            typeRef(typeof(Object))
+            typeRef(Object)
         } else {
             specificationClass.typeRef
         }
-        val exception = typeRef(typeof(ViatraQueryException))
+        val exception = typeRef(ViatraQueryException)
         model.toMethod("get" + model.name.toFirstUpper, classRef) [
             visibility = JvmVisibility::PUBLIC
             exceptions += exception
@@ -130,15 +130,15 @@ class PatternGroupClassInferrer {
     
     def JvmOperation inferMatcherGetter(Pattern model, JvmType groupClass, JvmType matcherClass) {
         val classRef = if (matcherClass === null) {
-            typeRef(typeof(Object))
+            typeRef(Object)
         } else {
             matcherClass.typeRef
         }
-        val exception = typeRef(typeof(ViatraQueryException))
+        val exception = typeRef(ViatraQueryException)
         model.toMethod("get" + model.name.toFirstUpper, classRef) [
             visibility = JvmVisibility::PUBLIC
             exceptions += exception
-            parameters += model.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
+            parameters += model.toParameter("engine", typeRef(ViatraQueryEngine))
             body = '''return «classRef».on(engine);'''
         ]
     }

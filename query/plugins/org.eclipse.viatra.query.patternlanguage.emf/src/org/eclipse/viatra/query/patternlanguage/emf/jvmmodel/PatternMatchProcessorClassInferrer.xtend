@@ -51,7 +51,7 @@ class PatternMatchProcessorClassInferrer {
               packageName = processorPackageName
               documentation = pattern.javadocProcessorClass.toString
               abstract = true
-              superTypes += typeRef(typeof(IMatchProcessor), typeRef(matchClass))
+              superTypes += typeRef(IMatchProcessor, typeRef(matchClass))
               fileHeader = pattern.fileComment
           ]
           return processorClass
@@ -72,7 +72,7 @@ class PatternMatchProcessorClassInferrer {
           ]
           processorClass.members += pattern.toMethod("process", null) [
              returnType = typeRef(Void::TYPE)
-             annotations += annotationRef(typeof (Override))
+             annotations += annotationRef(Override)
              parameters += pattern.toParameter("match", typeRef(matchClassRef))
              body = '''
                     process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);

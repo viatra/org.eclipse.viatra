@@ -69,11 +69,11 @@ class PatternMatcherClassInferrer {
         
           // add querySpecification() field to Matcher class
           matcherClass.members += pattern.toMethod("querySpecification",
-             typeRef(typeof(IQuerySpecification), typeRef(matcherClass))) [
+             typeRef(IQuerySpecification, typeRef(matcherClass))) [
              visibility = JvmVisibility::PUBLIC
              static = true
              documentation = pattern.javadocQuerySpecificationMethod.toString
-             exceptions += typeRef(typeof(ViatraQueryException))
+             exceptions += typeRef(ViatraQueryException)
              body = '''
                     return «specificationClass.typeRef».instance();
              '''
@@ -90,13 +90,13 @@ class PatternMatcherClassInferrer {
         */
        def inferFields(JvmDeclaredType matcherClass, Pattern pattern) {
            for (Variable variable : pattern.parameters) {
-               matcherClass.members += pattern.toField(variable.positionConstant, typeRef(typeof (int)))[
+               matcherClass.members += pattern.toField(variable.positionConstant, typeRef(int))[
                  static = true
                  final = true
                    initializer = '''«pattern.parameters.indexOf(variable)»'''
                ]
            }
-           matcherClass.members += pattern.toField("LOGGER", typeRef(typeof(Logger))) [
+           matcherClass.members += pattern.toField("LOGGER", typeRef(Logger)) [
                static = true
                final = true
                initializer = '''
@@ -114,8 +114,8 @@ class PatternMatcherClassInferrer {
                static = true
             visibility = JvmVisibility::PUBLIC
             documentation = pattern.javadocMatcherStaticOnEngine.toString
-            parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
-            exceptions += typeRef(typeof (ViatraQueryException))
+            parameters += pattern.toParameter("engine", typeRef(ViatraQueryEngine))
+            exceptions += typeRef(ViatraQueryException)
             body = '''
                 // check if matcher already exists
                 «matcherClass.simpleName» matcher = engine.getExistingMatcher(querySpecification());
@@ -129,7 +129,7 @@ class PatternMatcherClassInferrer {
             static = true
             visibility = JvmVisibility::PUBLIC
             documentation = pattern.javadocMatcherStaticCreate.toString
-            exceptions += typeRef(typeof (ViatraQueryException))
+            exceptions += typeRef(ViatraQueryException)
             body = '''
                 return new «matcherClass.simpleName»();
             '''
@@ -146,7 +146,7 @@ class PatternMatcherClassInferrer {
         matcherClass.members += pattern.toConstructor [
             visibility = JvmVisibility::PRIVATE
             documentation = pattern.javadocMatcherConstructorEngine.toString
-            exceptions += typeRef(typeof (ViatraQueryException))
+            exceptions += typeRef(ViatraQueryException)
             body = '''super(querySpecification());'''
         ]
        }
@@ -159,7 +159,7 @@ class PatternMatcherClassInferrer {
            // Adding type-safe matcher calls
         // if the pattern not defines parameters, the Matcher class contains only the hasMatch method
         if (!pattern.parameters.isEmpty) {
-             type.members += pattern.toMethod("getAllMatches", typeRef(typeof(Collection), typeRef(matchClass))) [
+             type.members += pattern.toMethod("getAllMatches", typeRef(Collection, typeRef(matchClass))) [
                    documentation = pattern.javadocGetAllMatchesMethod.toString
                    for (parameter : pattern.parameters){
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
@@ -177,7 +177,7 @@ class PatternMatcherClassInferrer {
                        return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
                    '''
                ]
-               type.members += pattern.toMethod("hasMatch", typeRef(typeof(boolean))) [
+               type.members += pattern.toMethod("hasMatch", typeRef(boolean)) [
                    documentation = pattern.javadocHasMatchMethod.toString
                    for (parameter : pattern.parameters){
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
@@ -186,7 +186,7 @@ class PatternMatcherClassInferrer {
                        return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
                    '''
                ]
-               type.members += pattern.toMethod("countMatches", typeRef(typeof(int))) [
+               type.members += pattern.toMethod("countMatches", typeRef(int)) [
                    documentation = pattern.javadocCountMatchesMethod.toString
                    for (parameter : pattern.parameters){
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
@@ -202,18 +202,18 @@ class PatternMatcherClassInferrer {
                        for (parameter : pattern.parameters){
                         parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                        }
-                    parameters += pattern.toParameter("processor", typeRef(typeof (IMatchProcessor), typeRef(matchClass).wildcardSuper))
+                    parameters += pattern.toParameter("processor", typeRef(IMatchProcessor, typeRef(matchClass).wildcardSuper))
                        body = '''
                            rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
                        '''
                    ]
                }
-               type.members += pattern.toMethod("forOneArbitraryMatch", typeRef(typeof(boolean))) [
+               type.members += pattern.toMethod("forOneArbitraryMatch", typeRef(boolean)) [
                    documentation = pattern.javadocForOneArbitraryMatchMethod.toString
                    for (parameter : pattern.parameters){
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                    }
-                   parameters += pattern.toParameter("processor", typeRef(typeof (IMatchProcessor), typeRef(matchClass).wildcardSuper))
+                   parameters += pattern.toParameter("processor", typeRef(IMatchProcessor, typeRef(matchClass).wildcardSuper))
                    body = '''
                        return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
                    '''
@@ -229,9 +229,9 @@ class PatternMatcherClassInferrer {
                ]
                for (variable : pattern.parameters){
                    val typeOfVariable = variable.calculateType
-                   type.members += variable.toMethod("rawAccumulateAllValuesOf"+variable.name, typeRef(typeof(Set), typeOfVariable)) [
+                   type.members += variable.toMethod("rawAccumulateAllValuesOf"+variable.name, typeRef(Set, typeOfVariable)) [
                        documentation = variable.javadocGetAllValuesOfMethod.toString
-                       parameters += variable.toParameter("parameters", typeRef(typeof (Object)).addArrayTypeDimension)
+                       parameters += variable.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
                        visibility = JvmVisibility::PROTECTED
                        body = '''
                            «Set»<«typeOfVariable»> results = new «HashSet»<«typeOfVariable»>();
@@ -239,21 +239,21 @@ class PatternMatcherClassInferrer {
                            return results;
                        '''
                    ]
-                   type.members += pattern.toMethod("getAllValuesOf"+variable.name, typeRef(typeof(Set), typeOfVariable)) [
+                   type.members += pattern.toMethod("getAllValuesOf"+variable.name, typeRef(Set, typeOfVariable)) [
                        documentation = variable.javadocGetAllValuesOfMethod.toString
                        body = '''
                            return rawAccumulateAllValuesOf«variable.name»(emptyArray());
                        '''
                    ]
                    if(pattern.parameters.size > 1){
-                       type.members += variable.toMethod("getAllValuesOf"+variable.name, typeRef(typeof(Set), typeOfVariable)) [
+                       type.members += variable.toMethod("getAllValuesOf"+variable.name, typeRef(Set, typeOfVariable)) [
                            documentation = variable.javadocGetAllValuesOfMethod.toString
                            parameters += pattern.toParameter("partialMatch", typeRef(matchClass))
                            body = '''
                                return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());
                            '''
                        ]
-                       type.members += variable.toMethod("getAllValuesOf"+variable.name, typeRef(typeof(Set), typeOfVariable)) [
+                       type.members += variable.toMethod("getAllValuesOf"+variable.name, typeRef(Set, typeOfVariable)) [
                            documentation = variable.javadocGetAllValuesOfMethod.toString
                            for (parameter : pattern.parameters){
                                if(parameter != variable){
@@ -270,7 +270,7 @@ class PatternMatcherClassInferrer {
                    }
                }
         } else {
-            type.members += pattern.toMethod("hasMatch", typeRef(typeof(boolean))) [
+            type.members += pattern.toMethod("hasMatch", typeRef(boolean)) [
                    documentation = pattern.javadocHasMatchMethodNoParameter.toString
                    body = '''return rawHasMatch(new Object[]{});'''
                ]
@@ -284,19 +284,19 @@ class PatternMatcherClassInferrer {
         */
        def inferMatcherClassToMatchMethods(JvmDeclaredType matcherClass, Pattern pattern, JvmType matchClass) {
            val tupleToMatchMethod = pattern.toMethod("tupleToMatch", typeRef(matchClass)) [
-               annotations += annotationRef(typeof (Override))
+               annotations += annotationRef(Override)
                visibility = JvmVisibility::PROTECTED
-               parameters += pattern.toParameter("t", typeRef(typeof (Tuple)))
+               parameters += pattern.toParameter("t", typeRef(Tuple))
            ]
            val arrayToMatchMethod = pattern.toMethod("arrayToMatch", typeRef(matchClass)) [
-               annotations += annotationRef(typeof (Override))
+               annotations += annotationRef(Override)
                visibility = JvmVisibility::PROTECTED
-               parameters += pattern.toParameter("match", typeRef(typeof (Object)).addArrayTypeDimension)
+               parameters += pattern.toParameter("match", typeRef(Object).addArrayTypeDimension)
            ]
            val arrayToMatchMutableMethod = pattern.toMethod("arrayToMatchMutable", typeRef(matchClass)) [
-               annotations += annotationRef(typeof (Override))
+               annotations += annotationRef(Override)
                visibility = JvmVisibility::PROTECTED
-               parameters += pattern.toParameter("match", typeRef(typeof (Object)).addArrayTypeDimension)
+               parameters += pattern.toParameter("match", typeRef(Object).addArrayTypeDimension)
            ]
            tupleToMatchMethod.body = '''«pattern.inferTupleToMatchMethodBody(matchClass)»'''
            arrayToMatchMethod.body = '''«pattern.inferArrayToMatchMethodBody(matchClass)»'''

@@ -89,9 +89,9 @@ class PatternQuerySpecificationClassInferrer {
               documentation = pattern.javadocQuerySpecificationClass.toString
               final = true
               if (pattern.isPublic && config.matcherGenerationStrategy !== MatcherGenerationStrategy::USE_GENERIC) {
-                superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass))
+                superTypes += typeRef(BaseGeneratedEMFQuerySpecification, typeRef(matcherClass))
               } else {
-                superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecificationWithGenericMatcher))
+                superTypes += typeRef(BaseGeneratedEMFQuerySpecificationWithGenericMatcher)
               }
               fileHeader = pattern.fileComment
           ]
@@ -127,7 +127,7 @@ class PatternQuerySpecificationClassInferrer {
            querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
             visibility = JvmVisibility::PUBLIC
             static = true
-            exceptions += typeRef(typeof (ViatraQueryException))
+            exceptions += typeRef(ViatraQueryException)
             documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
             body = '''
                     try{
@@ -141,26 +141,26 @@ class PatternQuerySpecificationClassInferrer {
           if (withPatternSpecificMatcher) {
               querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
                 visibility = JvmVisibility::PROTECTED
-                annotations += annotationRef(typeof (Override))
-                parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
-                exceptions += typeRef(typeof (ViatraQueryException))
+                annotations += annotationRef(Override)
+                parameters += pattern.toParameter("engine", typeRef(ViatraQueryEngine))
+                exceptions += typeRef(ViatraQueryException)
                 body = '''return «matcherClass».on(engine);'''
             ]
             querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
                 visibility = JvmVisibility::PUBLIC
-                annotations += annotationRef(typeof (Override))
-                exceptions += typeRef(typeof (ViatraQueryException))
+                annotations += annotationRef(Override)
+                exceptions += typeRef(ViatraQueryException)
                 body = '''return «matcherClass».create();'''
             ]
             querySpecificationClass.members += pattern.toMethod("newEmptyMatch", typeRef(matchClass)) [
                 visibility = JvmVisibility::PUBLIC
-                annotations += annotationRef(typeof(Override))
+                annotations += annotationRef(Override)
                 body = '''return «matchClass».newEmptyMatch();'''
                 
             ]
             querySpecificationClass.members += pattern.toMethod("newMatch", typeRef(matchClass)) [
                 visibility = JvmVisibility::PUBLIC
-                annotations += annotationRef(typeof(Override))
+                annotations += annotationRef(Override)
                 parameters += pattern.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
                 varArgs = true
                 body = '''return «matchClass».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
@@ -186,42 +186,42 @@ class PatternQuerySpecificationClassInferrer {
             initializer = '''new «pattern.querySpecificationPQueryClassName»()'''
         ]
         for (parameter : pattern.parameters) {
-            pQueryClass.members += pattern.toField(parameter.PParameterName, typeRef(typeof(PParameter)))[
+            pQueryClass.members += pattern.toField(parameter.PParameterName, typeRef(PParameter))[
                 final = true
                 visibility = JvmVisibility::PRIVATE
                 initializer = parameter.parameterInstantiation
             ]
         }
-        pQueryClass.members += pattern.toField("parameters", typeRef(typeof(List), typeRef(typeof(PParameter))))[
+        pQueryClass.members += pattern.toField("parameters", typeRef(List, typeRef(PParameter)))[
             final = true
             visibility = JvmVisibility::PRIVATE
             initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.PParameterName»«ENDFOR»)'''
         ]
         
-        pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(typeof (String))) [
+        pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(String)) [
             visibility = JvmVisibility::PUBLIC
-            annotations += annotationRef(typeof (Override))
+            annotations += annotationRef(Override)
             body = '''
                 return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
             '''
         ]
         pQueryClass.members += pattern.toMethod("getParameterNames",
-            typeRef(typeof(List), typeRef(typeof(String)))) [
+            typeRef(List, typeRef(String))) [
             visibility = JvmVisibility::PUBLIC
-            annotations += annotationRef(typeof(Override))
+            annotations += annotationRef(Override)
             body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
         ]
         pQueryClass.members += pattern.toMethod("getParameters",
-            typeRef(typeof(List), typeRef(typeof(PParameter)))) [
+            typeRef(List, typeRef(PParameter))) [
             visibility = JvmVisibility::PUBLIC
-            annotations += annotationRef(typeof(Override))
+            annotations += annotationRef(Override)
             body = '''return parameters;'''
         ]
         pQueryClass.members += pattern.toMethod("doGetContainedBodies",
-            typeRef(typeof(Set), typeRef(typeof(PBody)))) [
+            typeRef(Set, typeRef(PBody))) [
             visibility = JvmVisibility::PUBLIC
-            annotations += annotationRef(typeof(Override))
-            exceptions += typeRef(typeof(QueryInitializationException))
+            annotations += annotationRef(Override)
+            exceptions += typeRef(QueryInitializationException)
             try {
                 body = '''
                     setEvaluationHints(«inferQueryEvaluationHints(pattern)»);
@@ -343,7 +343,7 @@ class PatternQuerySpecificationClassInferrer {
            querySpecificationClass.members += pattern.toClass(pattern.querySpecificationPQueryClassName) [
             visibility = JvmVisibility::PRIVATE
             static = true
-            superTypes += typeRef(typeof (BaseGeneratedEMFPQuery))
+            superTypes += typeRef(BaseGeneratedEMFPQuery)
             inferPQueryMembers(pattern)
         ]
     }

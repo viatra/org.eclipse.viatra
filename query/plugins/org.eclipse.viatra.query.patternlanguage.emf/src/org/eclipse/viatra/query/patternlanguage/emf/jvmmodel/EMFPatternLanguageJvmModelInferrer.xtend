@@ -124,7 +124,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                 it.packageName = packageName
                 fileHeader = pattern.fileComment
             }
-            superTypes += typeRef(typeof(BasePatternMatch))
+            superTypes += typeRef(BasePatternMatch)
         ]
 
         val matcherClass = pattern.toClass(pattern.matcherClassName(config.matcherGenerationStrategy)) [
@@ -134,7 +134,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                 it.packageName = packageName
                 fileHeader = pattern.fileComment
             }
-            superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
+            superTypes += typeRef(BaseMatcher, typeRef(matchClass))
         ]
         val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, specificationPackageName,
             matcherClass, _typeReferenceBuilder, _annotationTypesBuilder, config)
@@ -191,8 +191,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     
     private def void inferQuerySpecificationWithGeneric(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, EMFPatternLanguageGeneratorConfig config,
         boolean isPrelinkingPhase, String packageName) {
-           val matcherClass = typeRef(typeof(GenericPatternMatcher)).type 
-        val matchClass = typeRef(typeof(GenericPatternMatch)).type 
+           val matcherClass = typeRef(GenericPatternMatcher).type 
+        val matchClass = typeRef(GenericPatternMatch).type 
         val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, packageName,
             matcherClass, _typeReferenceBuilder, _annotationTypesBuilder, config)
         associator.associatePrimary(pattern, querySpecificationClass)
