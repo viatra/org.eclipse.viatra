@@ -24,7 +24,7 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 public interface IInputKey {
 
     /**
-     * A user-friendly name that can be shown on screen for degug purposes, included in exceptions, etc.
+     * A user-friendly name that can be shown on screen for debug purposes, included in exceptions, etc.
      */
     public String getPrettyPrintableName();
     /**
