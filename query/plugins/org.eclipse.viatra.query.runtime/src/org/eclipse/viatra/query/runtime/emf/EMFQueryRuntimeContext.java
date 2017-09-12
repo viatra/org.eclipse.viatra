@@ -154,10 +154,8 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
      * @since 1.4
      */
     protected EnumSet<IndexingService> getCurrentIndexingServiceFor(IInputKey key){
-        ensureValidKey(key);
-        if (!key.isEnumerable()) {
-            return EnumSet.noneOf(IndexingService.class);
-        } else if (key instanceof EClassTransitiveInstancesKey) {
+        ensureEnumerableKey(key);
+        if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             EnumSet<IndexingService> is = indexedClasses.get(eClass);
             return is == null ? EnumSet.noneOf(IndexingService.class) : is; 

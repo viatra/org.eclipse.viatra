@@ -50,7 +50,7 @@ public interface IQueryRuntimeContext {
     
     /**
      * Returns true if index is available for the given key providing the given service.
-     * 
+     * @throws IllegalArgumentException if key is not enumerable or an unknown type, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      * @since 1.4
      */
     public boolean isIndexed(IInputKey key, IndexingService service);
@@ -58,6 +58,7 @@ public interface IQueryRuntimeContext {
     /**
      * @return true iff the given input key is already indexed, and contents are available without costly model traversal.
      * @deprecated use {@link #isIndexed(IInputKey, IndexingService)} instead
+     * @throws IllegalArgumentException if key is not enumerable or an unknown type, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      */
     @Deprecated
     public boolean isIndexed(IInputKey key);
@@ -72,7 +73,7 @@ public interface IQueryRuntimeContext {
      * and service will be guaranteed to return the requested or a highing indexing level as soon as {@link #isCoalescing()} first returns false.
      * 
      * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @throws IllegalArgumentException if key is not enumerable or an unknown type, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      * @since 1.4
      */
     public void ensureIndexed(IInputKey key, IndexingService service);
@@ -86,7 +87,7 @@ public interface IQueryRuntimeContext {
      * will be guaranteed to return true as soon as {@link #isCoalescing()} first returns false.
      * 
      * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @throws IllegalArgumentException if key is not enumerable or an unknown type, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      * 
      * @deprecated use ensureIndexed(IInputKey, IndexingServices) instead
      */
