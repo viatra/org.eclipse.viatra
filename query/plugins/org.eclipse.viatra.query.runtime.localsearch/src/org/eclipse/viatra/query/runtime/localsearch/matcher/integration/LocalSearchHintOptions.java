@@ -38,23 +38,23 @@ public final class LocalSearchHintOptions {
      * @since 1.4
      */
     public static final QueryHintOption<ICostFunction> PLANNER_COST_FUNCTION = 
-            hintOption("PLANNER_COST_FUNCTION", (ICostFunction) new IndexerBasedConstraintCostFunction());
+            hintOption("PLANNER_COST_FUNCTION", new IndexerBasedConstraintCostFunction());
     /**
      * Predicate to decide whether to flatten specific positive pattern calls {@link IFlattenCallPredicate}
      * @since 1.4
      */
     public static final QueryHintOption<IFlattenCallPredicate> FLATTEN_CALL_PREDICATE = 
-            hintOption("FLATTEN_CALL_PREDICATE", (IFlattenCallPredicate) new DontFlattenIncrementalPredicate());
+            hintOption("FLATTEN_CALL_PREDICATE", new DontFlattenIncrementalPredicate());
     
     /**
      * A provider of expected adornments {@link IAdornmentProvider}
      * @since 1.5
      */
     public static final QueryHintOption<IAdornmentProvider> ADORNMENT_PROVIDER = 
-            hintOption("ADORNMENT_PROVIDER", (IAdornmentProvider)new AllValidAdornments());
+            hintOption("ADORNMENT_PROVIDER", new AllValidAdornments());
     
     // internal helper for conciseness
-    private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
+    private static <T, V extends T> QueryHintOption<T> hintOption(String hintKeyLocalName, V defaultValue) {
         return new QueryHintOption<>(LocalSearchHintOptions.class, hintKeyLocalName, defaultValue);
     }
 }

@@ -37,7 +37,7 @@ public class QueryHintOption<HintValue> {
      * This is the recommended constructor for hint options defined as static fields within an enclosing class. 
      * Combines the qualified name of the hint from the (qualified) name of the enclosing class and a local name (unique within that class).  
      */
-    public QueryHintOption(Class<?> optionNamespace, String optionLocalName, HintValue defaultValue) {
+    public <T extends HintValue> QueryHintOption(Class<?> optionNamespace, String optionLocalName, T defaultValue) {
         this(String.format("%s#%s", optionNamespace.getName(), optionLocalName), defaultValue);
     }
 

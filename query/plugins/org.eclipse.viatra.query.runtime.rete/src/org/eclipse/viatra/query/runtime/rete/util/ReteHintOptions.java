@@ -58,6 +58,6 @@ public final class ReteHintOptions {
    
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
-        return new QueryHintOption<T>(ReteHintOptions.class, hintKeyLocalName, defaultValue);
+        return new QueryHintOption<>(ReteHintOptions.class, hintKeyLocalName, defaultValue);
     }
 }

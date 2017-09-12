@@ -118,8 +118,8 @@ public final class LocalSearchHints implements IMatcherCapability {
         LocalSearchHints result = new LocalSearchHints();
         result.useBase = true; // Should be unused; but a false value might cause surprises as an engine-default hint
         result.rowCount = 4;
-        result.costFunction = new VariableBindingBasedCostFunction();
-        result.flattenCallPredicate = new NeverFlattenCallPredicate();
+        result.costFunction = new IndexerBasedConstraintCostFunction();
+        result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         result.backendFactory = LocalSearchGenericBackendFactory.INSTANCE;
         return result;

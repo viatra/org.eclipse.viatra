@@ -28,7 +28,7 @@ public final class CommonQueryHintOptions {
     
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
-        return new QueryHintOption<T>(CommonQueryHintOptions.class, hintKeyLocalName, defaultValue);
+        return new QueryHintOption<>(CommonQueryHintOptions.class, hintKeyLocalName, defaultValue);
     }
 
 }
