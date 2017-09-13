@@ -55,7 +55,7 @@ public class ModifiableZestContentViewer extends ZestContentViewer {
         final Map<Object, Node> nodeMap = getContentNodeMap();
         Node sourceNode = nodeMap.get(contentSourceNode);
         Node targetNode = nodeMap.get(contentTargetNode);
-        Edge edge = createEdge(getLabelProvider(), contentSourceNode, sourceNode, contentTargetNode, targetNode);
+        Edge edge = createEdge(getLabelProvider(), contentEdge, sourceNode, targetNode);
         edgeMap.put(contentEdge, edge);
 
         Graph graph = sourceNode.getGraph();
