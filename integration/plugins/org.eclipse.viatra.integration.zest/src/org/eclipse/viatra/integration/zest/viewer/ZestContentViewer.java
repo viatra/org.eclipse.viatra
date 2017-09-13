@@ -51,6 +51,8 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -83,8 +85,10 @@ public class ZestContentViewer extends ContentViewer {
     private IDomain domain;
     private IViewer viewer;
     private ILayoutAlgorithm layoutAlgorithm;
-    protected Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
-    protected Map<Object, Edge> contentEdgeMap = new IdentityHashMap<>();
+    protected BiMap<Object, Node> contentNodeMap = HashBiMap.create();
+    protected BiMap<Node, Object> inverseContentNodeMap = contentNodeMap.inverse();
+    protected BiMap<Object, Edge> contentEdgeMap = HashBiMap.create();
+    protected BiMap<Edge, Object> inverseContentEdgeMap = contentEdgeMap.inverse();
 
     /**
      * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
@@ -615,7 +619,14 @@ public class ZestContentViewer extends ContentViewer {
         SelectionModel selectionModel = getSelectionModel();
         for (IContentPart<? extends javafx.scene.Node> selectedPart : selectionModel
                 .getSelectionUnmodifiable()) {
-            selectedContents.add(selectedPart.getContent());
+            Object contentNode = selectedPart.getContent();
+            if (inverseContentEdgeMap.containsKey(contentNode)) {
+                selectedContents.add(inverseContentEdgeMap.get(contentNode));
+            } else if (inverseContentNodeMap.containsKey(contentNode)) {
+                selectedContents.add(inverseContentNodeMap.get(contentNode));
+            } else {
+                selectedContents.add(contentNode);
+            }
         }
         return new StructuredSelection(selectedContents);
     }

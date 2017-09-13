@@ -27,6 +27,7 @@ public class ReteVisualizationView extends ViewPart {
     public void createPartControl(Composite parent) {
         ModifiableZestContentViewer graphViewer =  new ModifiableZestContentViewer();
         graphViewer.createControl(parent, SWT.BORDER);
+        getSite().setSelectionProvider(graphViewer);
         
         try {
             viewSupport = new ReteVisualizationViewSupport(
