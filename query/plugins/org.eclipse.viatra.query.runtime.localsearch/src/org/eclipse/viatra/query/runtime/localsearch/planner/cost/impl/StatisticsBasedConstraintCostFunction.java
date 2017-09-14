@@ -48,9 +48,9 @@ import com.google.common.collect.Sets;
  * @since 1.4
  */
 public abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
-    protected static double MAX_COST = 250.0;
+    protected static final double MAX_COST = 250.0;
 
-    protected static double DEFAULT_COST = StatisticsBasedConstraintCostFunction.MAX_COST - 100.0;
+    protected static final double DEFAULT_COST = StatisticsBasedConstraintCostFunction.MAX_COST - 100.0;
 
     public abstract long countTuples(final IConstraintEvaluationContext input, final IInputKey supplierKey);
 
@@ -70,7 +70,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     protected double _calculateCost(final TypeConstraint constraint, final IConstraintEvaluationContext input) throws QueryProcessingException {
         final Collection<PVariable> freeMaskVariables = input.getFreeVariables();
         final Collection<PVariable> boundMaskVariables = input.getBoundVariables();
-        IInputKey supplierKey = ((TypeConstraint) constraint).getSupplierKey();
+        IInputKey supplierKey = constraint.getSupplierKey();
         long arity = supplierKey.getArity();
 
         if ((arity == 1)) {
@@ -79,8 +79,8 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         } else if ((arity == 2)) {
             // binary constraint
             long edgeCount = countTuples(input, supplierKey);
-            PVariable srcVariable = ((PVariable) ((TypeConstraint) constraint).getVariablesTuple().get(0));
-            PVariable dstVariable = ((PVariable) ((TypeConstraint) constraint).getVariablesTuple().get(1));
+            PVariable srcVariable = ((PVariable) constraint.getVariablesTuple().get(0));
+            PVariable dstVariable = ((PVariable) constraint.getVariablesTuple().get(1));
             boolean isInverse = false;
             // Check if inverse navigation is needed along the edge
             if ((freeMaskVariables.contains(srcVariable) && boundMaskVariables.contains(dstVariable))) {
@@ -101,10 +101,8 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             final PVariable dstVariable, final boolean isInverse, final long edgeCount,
             final IConstraintEvaluationContext input) throws QueryProcessingException {
         final Collection<PVariable> freeMaskVariables = input.getFreeVariables();
-        final Collection<PVariable> boundMaskVariables = input.getBoundVariables();
         final PConstraint constraint = input.getConstraint();
         IQueryMetaContext metaContext = input.getRuntimeContext().getMetaContext();
-        final QueryAnalyzer queryAnalyzer = input.getQueryAnalyzer();
 
         Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey);
         // TODO prepare for cases when this info is not available - use only metamodel related cost calculation
@@ -112,15 +110,13 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         double dstCount = -1;
         // Obtain runtime information
         for (final InputKeyImplication implication : implications) {
-            {
-                List<Integer> impliedIndices = implication.getImpliedIndices();
-                if (impliedIndices.size() == 1 && impliedIndices.contains(0)) {
-                    // Source key implication
-                    srcCount = this.countTuples(input, implication.getImpliedKey());
-                } else if (impliedIndices.size() == 1 && impliedIndices.contains(1)) {
-                    // Target key implication
-                    dstCount = this.countTuples(input, implication.getImpliedKey());
-                }
+            List<Integer> impliedIndices = implication.getImpliedIndices();
+            if (impliedIndices.size() == 1 && impliedIndices.contains(0)) {
+                // Source key implication
+                srcCount = this.countTuples(input, implication.getImpliedKey());
+            } else if (impliedIndices.size() == 1 && impliedIndices.contains(1)) {
+                // Target key implication
+                dstCount = this.countTuples(input, implication.getImpliedKey());
             }
         }
 
@@ -132,37 +128,33 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
 
             if (srcNodeCount > -1 && edgeCount > -1) {
                 // The end nodes had implied (type) constraint and both nodes and adjacent edges are indexed
-                if ((srcNodeCount == 0)) {
-                    return 0;
-                } else {
-                    return ((double) edgeCount) / srcNodeCount;
-                }
+                return (srcNodeCount == 0) ? 0.0 : ((double) edgeCount) / srcNodeCount;
             } else if (srcCount > -1 && dstCount > -1) {
                 // Both of the end nodes had implied (type) constraint
-                if ((srcCount != 0)) {
-                    return (dstNodeCount / srcNodeCount);
-                } else {
-                    // No such element exists in the model, so the traversal will backtrack at this point
-                    return 1.0f;
-                }
+                // If count is 0, no such element exists in the model, so there will be no branching
+                return srcCount != 0 ? (dstNodeCount / srcNodeCount) : 1.0;
             } else {
                 // At least one of the end variables had no restricting type information
                 // Strategy: try to navigate along many-to-one relations
-                final Map<Set<PVariable>, Set<PVariable>> functionalDependencies = queryAnalyzer
-                        .getFunctionalDependencies(
-                                Collections.<PConstraint> unmodifiableSet(Sets.newHashSet(constraint)), false);
-                final Set<PVariable> impliedVariables = FunctionalDependencyHelper
-                        .<PVariable> closureOf(boundMaskVariables, functionalDependencies);
-                if (((impliedVariables != null) && impliedVariables.containsAll(freeMaskVariables))) {
-                    return 1.0;
-                } else {
-                    return DEFAULT_COST;
-                }
+                return navigatesThroughFunctionalDependency(input, constraint) ? 1.0 : DEFAULT_COST; 
             }
 
         }
     }
 
+    /**
+     * @since 1.7
+     */
+    protected boolean navigatesThroughFunctionalDependency(final IConstraintEvaluationContext input,
+            final PConstraint constraint) {
+        final QueryAnalyzer queryAnalyzer = input.getQueryAnalyzer();
+        final Map<Set<PVariable>, Set<PVariable>> functionalDependencies = queryAnalyzer
+                .getFunctionalDependencies(Collections.unmodifiableSet(Sets.newHashSet(constraint)), false);
+        final Set<PVariable> impliedVariables = FunctionalDependencyHelper.closureOf(input.getBoundVariables(),
+                functionalDependencies);
+        return ((impliedVariables != null) && impliedVariables.containsAll(input.getFreeVariables()));
+    }
+    
     protected double calculateUnaryConstraintCost(final TypeConstraint constraint,
             final IConstraintEvaluationContext input) throws QueryProcessingException {
         PVariable variable = (PVariable) constraint.getVariablesTuple().get(0);
@@ -246,8 +238,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
      * Default cost calculation strategy
      */
     protected double _calculateCost(final PConstraint constraint, final IConstraintEvaluationContext input) throws QueryProcessingException {
-        boolean _isEmpty = input.getFreeVariables().isEmpty();
-        if (_isEmpty) {
+        if (input.getFreeVariables().isEmpty()) {
             return 1.0;
         } else {
             return StatisticsBasedConstraintCostFunction.DEFAULT_COST;

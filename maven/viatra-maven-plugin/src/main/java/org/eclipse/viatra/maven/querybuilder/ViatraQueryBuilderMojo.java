@@ -357,13 +357,13 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
         }
         
         if (!Strings.isNullOrEmpty(genmodelUri) && Strings.isNullOrEmpty(fqnOfEPackageClass)) {
-            if (URI.createURI(genmodelUri).isRelative()) {
-                genmodelUri = "file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
-            }
+            String uriToLoad =  (URI.createURI(genmodelUri).isRelative())
+                ? ("file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri)
+                : genmodelUri;
             if (Strings.isNullOrEmpty(metamodelNSURI)) {
                 try {
                 ResourceSet set = new ResourceSetImpl();
-                final Resource resource = set.getResource(URI.createURI(genmodelUri), true);
+                final Resource resource = set.getResource(URI.createURI(uriToLoad), true);
                 resource.load(Maps.newHashMap());
                 EcoreUtil.resolveAll(resource);
                 final Iterator<GenPackage> it = Iterators.filter(resource.getAllContents(), GenPackage.class);
@@ -371,15 +371,15 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
                     final GenPackage genPackage = it.next();
                     final EPackage ecorePackage = genPackage.getEcorePackage();
                     EPackage.Registry.INSTANCE.put(ecorePackage.getNsURI(), ecorePackage);
-                    MavenBuilderGenmodelLoader.addGenmodel(ecorePackage.getNsURI(), genmodelUri);
+                    MavenBuilderGenmodelLoader.addGenmodel(ecorePackage.getNsURI(), uriToLoad);
                 }
                 } catch (Exception e) {
-                    final String msg = "Error while loading metamodel specification from " + genmodelUri;
+                    final String msg = "Error while loading metamodel specification from " + uriToLoad;
                     getLog().error(msg);
                     throw new MojoExecutionException(msg, e);
                 }
             } else {
-                MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, genmodelUri);
+                MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, uriToLoad);
             }
         }
     }

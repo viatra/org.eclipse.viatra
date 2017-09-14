@@ -96,8 +96,12 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
 
     String text(CompareConstraint constraint) {
         CompareFeature feature = constraint.getFeature();
-        String op = feature.equals(CompareFeature.EQUALITY) ? "==" : feature.equals(CompareFeature.INEQUALITY) ? "!="
-                : "<???>";
+        String op = "<???>";
+        if (feature == CompareFeature.EQUALITY) {
+            op = "==";
+        } else if (feature == CompareFeature.INEQUALITY) {
+            op = "!=";
+        }
         String left = getValueText(constraint.getLeftOperand());
         String right = getValueText(constraint.getRightOperand());
         return String.format("%s %s %s", left, op, right);

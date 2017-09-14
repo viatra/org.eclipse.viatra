@@ -136,4 +136,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/cost/impl/StatisticsBasedConstraintCostFunction.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction">
+        <filter comment="Internal API update" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction"/>
+                <message_argument value="DEFAULT_COST"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction"/>
+                <message_argument value="MAX_COST"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
