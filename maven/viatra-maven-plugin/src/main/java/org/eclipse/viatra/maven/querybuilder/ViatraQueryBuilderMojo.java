@@ -206,15 +206,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
                 Properties vqlCompilerSettings = new Properties();
                 try {
                     vqlCompilerSettings.load(new FileInputStream(f));
-                    String matcherGenerationProp = vqlCompilerSettings.getProperty("generateMatchers", MatcherGenerationStrategy.defaultValue().toString());
-                    try {
-                        config.setMatcherGenerationStrategy(MatcherGenerationStrategy.valueOf(matcherGenerationProp));
-                    } catch (IllegalArgumentException e) {
-                        getLog().warn("Invalid matcher generation strategy " + matcherGenerationProp + "; using default value instead");
-                    }
-                    String generateProcessorProp = vqlCompilerSettings.getProperty("generateMatchProcessors", "true");
-                    config.setGenerateMatchProcessors(Boolean.valueOf(generateProcessorProp));
-                    
+                    config.parseBuilderConfigurationPropertiesFile(vqlCompilerSettings);
                 } catch (IOException e) {
                     getLog().warn(e);
                 }

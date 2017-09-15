@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderIn
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.PatternLanguageShouldGenerate;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
-import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageGeneratorConfigProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageGeneratorEclipseConfigProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderConfigurationBlock;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
@@ -258,6 +258,6 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
      */
     @Override
     public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
-        return EMFPatternLanguageGeneratorConfigProvider.class;
+        return EMFPatternLanguageGeneratorEclipseConfigProvider.class;
     }
 }

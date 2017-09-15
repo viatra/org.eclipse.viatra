@@ -38,7 +38,7 @@ public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageSt
             /**
              * @since 1.7
              */
-            @SuppressWarnings("unused")
+            @Override
             public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
                 return MavenGeneratorConfigProvider.class;
             }

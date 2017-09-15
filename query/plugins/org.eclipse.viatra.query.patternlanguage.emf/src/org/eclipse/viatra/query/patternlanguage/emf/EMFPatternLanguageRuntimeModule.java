@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.ResourceDiagnosticFeedback;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfigProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
@@ -49,6 +50,7 @@ import org.eclipse.xtext.resource.IGlobalServiceProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
+import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
@@ -172,5 +174,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     @Override
     public Class<? extends IFragmentProvider> bindIFragmentProvider() {
         return DefaultFragmentProvider.class;
+    }
+    
+    
+    /**
+     * @since 1.7
+     */
+    public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
+        return EMFPatternLanguageGeneratorConfigProvider.class;
     }
 }

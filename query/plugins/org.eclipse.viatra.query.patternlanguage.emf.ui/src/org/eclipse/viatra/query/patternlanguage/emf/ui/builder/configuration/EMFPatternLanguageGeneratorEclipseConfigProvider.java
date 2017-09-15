@@ -30,7 +30,7 @@ import com.google.common.collect.Iterables;
  * @since 1.7
  */
 @SuppressWarnings("restriction")
-public class EMFPatternLanguageGeneratorConfigProvider implements IGeneratorConfigProvider {
+public class EMFPatternLanguageGeneratorEclipseConfigProvider implements IGeneratorConfigProvider {
 
     @Inject
     EMFPatternLanguageBuilderPreferenceAccess builderPreferenceAccess;

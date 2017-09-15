@@ -22,6 +22,9 @@ Workflow {
     }
  
     component = org.eclipse.xtext.mwe.Reader {
+        resourceSetProvider = org.eclipse.viatra.generators.ResourceSetProvider {
+            projectName = "../../${projectPath}/${projectName}" 
+        } 
         useJavaClassPath = true
 
         // or define search scope explicitly

@@ -11,7 +11,11 @@
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import java.util.Arrays;
+import java.util.Properties;
 
+import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.xtext.xbase.compiler.GeneratorConfig;
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -88,6 +92,20 @@ public class EMFPatternLanguageGeneratorConfig extends GeneratorConfig {
     private boolean updateManifest = true;
     private boolean generateExtensions = true;
 
+    public void parseBuilderConfigurationPropertiesFile(Properties vqlCompilerSettings) {
+        
+        String matcherGenerationProp = vqlCompilerSettings.getProperty("generateMatchers", MatcherGenerationStrategy.defaultValue().toString());
+        try {
+            this.setMatcherGenerationStrategy(MatcherGenerationStrategy.valueOf(matcherGenerationProp));
+        } catch (IllegalArgumentException e) {
+            Logger logger = ViatraQueryLoggingUtil.getLogger(EMFPatternLanguageGeneratorConfig.class);
+            logger.warn("Invalid matcher generation strategy " + matcherGenerationProp + "; using default value instead");
+        }
+        String generateProcessorProp = vqlCompilerSettings.getProperty("generateMatchProcessors", "true");
+        this.setGenerateMatchProcessors(Boolean.valueOf(generateProcessorProp));
+        
+    }
+    
     @Override
     public GeneratorConfig copy(final GeneratorConfig other) {
         super.copy(other);
@@ -100,7 +118,7 @@ public class EMFPatternLanguageGeneratorConfig extends GeneratorConfig {
         }
         return this;
     }
-
+    
     @Pure
     public boolean isGenerateMatchProcessors() {
         return generateMatchProcessors;
