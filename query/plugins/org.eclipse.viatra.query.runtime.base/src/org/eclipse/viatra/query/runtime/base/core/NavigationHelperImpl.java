@@ -563,27 +563,25 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object candidateTypeKey = toKey(clazz);
         Object typeKey = toKey(object.eClass()); 
         
-        if (candidateTypeKey.equals(typeKey)) return true;
-        if (metaStore.getEObjectClassKey().equals(candidateTypeKey)) return true;
-                    
-        Set<Object> superTypes = metaStore.getSuperTypeMap().get(typeKey);
-        return superTypes.contains(candidateTypeKey);            
+        return doCalculateInstanceOf(candidateTypeKey, typeKey);            
     }
     
     @Override
     public boolean isInstanceOfScoped(EObject object, EClass clazz) {
-        Object typeKey = toKey(clazz);
-        Set<Object> subTypes = metaStore.getSubTypeMap().get(typeKey);
-        if (subTypes != null) {
-            for (Object subTypeKey : subTypes) {
-                final Set<EObject> instances = instanceStore.getInstanceSet(subTypeKey);
-                if (instances != null && instances.contains(object)) {
-                    return true;
-                }
-            }
+        Object typeKey = toKey(object.eClass());
+        if (!doCalculateInstanceOf(typeKey, toKey(clazz))) {
+            return false;
         }
         final Set<EObject> instances = instanceStore.getInstanceSet(typeKey);
         return instances != null && instances.contains(object);
+    }
+    
+    private boolean doCalculateInstanceOf(Object candidateTypeKey, Object typeKey) {
+        if (candidateTypeKey.equals(typeKey)) return true;
+        if (metaStore.getEObjectClassKey().equals(candidateTypeKey)) return true;
+        
+        Set<Object> superTypes = metaStore.getSuperTypeMap().get(typeKey);
+        return superTypes.contains(candidateTypeKey);
     }
 
     @Override
