@@ -5,10 +5,10 @@
     <name>VIATRA Transforamtion Debugger Runtime (Incubation)</name>
 
     <parent>
-        <artifactId>org.eclipse.viatra.parent.dse</artifactId>
+        <artifactId>org.eclipse.viatra.parent.incubation.maven</artifactId>
         <groupId>org.eclipse.viatra</groupId>
         <version>0.17.0-SNAPSHOT</version>
-        <relativePath>../../releng/org.eclipse.viatra.parent.dse/pom.xml</relativePath>
+        <relativePath>../../releng/org.eclipse.viatra.parent.incubation.maven/pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -30,6 +30,17 @@
         <dependency>
             <groupId>org.eclipse.viatra</groupId>
             <artifactId>org.eclipse.viatra.transformation.runtime.debug</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.viatra</groupId>
+            <artifactId>org.eclipse.viatra.transformation.runtime.transformationtrace</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
