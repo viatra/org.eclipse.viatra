@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
  * 
  * @author Marton Bur
  * @noimplement This interface is not intended to be implemented by clients.
- * @deprecated Do not use this interface
+ * @deprecated A marker interface is available for match operations in @link{IPatternMatcherOperation}
  */
 @Deprecated
 public interface IMatcherBasedOperation {

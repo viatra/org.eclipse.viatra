@@ -108,11 +108,12 @@ public class EMFModelConnector implements IModelConnector {
         reflectiveSetSelection(key.getEditorPart(), preparedSelection);
     }
 
-    // XXX This is only needed for the current QueryExplorer. In the future these should be removed.
+    // XXX This is only needed for the current QueryExplorer. In the future this should be removed.
     /**
      * @deprecated
      * @noreference This method is only used by the Query Explorer
      */
+    @Deprecated
     public PatternMatcherRootContentKey getKey() {
         return key;
     }

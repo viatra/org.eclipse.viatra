@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewel
 
 import java.util.List;
 
-import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
@@ -67,26 +67,27 @@ public class SearchOperationViewerNode {
     }
 
     private void setup() {
-        matcherBased = searchOperation == null ? false : searchOperation instanceof IMatcherBasedOperation;
+        matcherBased = searchOperation == null ? false : searchOperation instanceof IPatternMatcherOperation;
         operationStatus = OperationStatus.QUEUED;
         children = Lists.newArrayList();
 
         try {
             if (searchOperation != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(searchOperation.toString());
 
-                this.labelText = searchOperation.toString();
-
-                this.labelText += "(";
+                sb.append("(");
                 BiMap<Integer, PVariable> variableMapping = planExecutor.getVariableMapping();
                 List<Integer> variablePositions = searchOperation.getVariablePositions();
                 for (int i = 0; i < variablePositions.size(); i++) {
                     PVariable pVariable = variableMapping.get(variablePositions.get(i));
-                    this.labelText += pVariable.getName();
+                    sb.append(pVariable.getName());
                     if (i != variablePositions.size() - 1) {
-                        this.labelText += ", ";
+                        sb.append(", ");
                     }
                 }
-                this.labelText += ")";
+                sb.append(")");
+                this.labelText = sb.toString();
             } else {
                 this.labelText = "Match found";
             }

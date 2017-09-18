@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -32,7 +33,7 @@ import com.google.common.collect.Lists;
  * @since 1.4
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class AggregatorCheck extends CheckOperation{
+public class AggregatorCheck extends CheckOperation implements IPatternMatcherOperation {
 
     private final CallOperationHelper helper;
     private PatternCall call;

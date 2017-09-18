@@ -38,6 +38,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * @author Abel Hegedus
  * @deprecated Use {@link org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry#getInstance()} and read notes on deprecated methods for usage.
  */
+@Deprecated
 public final class QuerySpecificationRegistry {
 
     private static final String DYNAMIC_CONNECTOR_ID = "org.eclipse.viatra.query.runtime.registy.dynamic.connector";

@@ -325,6 +325,7 @@ public final class EMFHelper {
      * 
      * @deprecated Use {@link #getAllMetaModelElements(Set)} instead.
      */
+    @Deprecated
     public static List<EModelElement> getClassesAndReferences(Collection<EPackage> metaModelPackages) {
         List<EModelElement> result = new ArrayList<EModelElement>();
         for (EPackage ePackage : metaModelPackages) {

@@ -131,6 +131,7 @@ public class PatternBodyTransformer {
      * 
      * @deprecated use {@link EMFTypeSystem#classifierToInputKey(EClassifier)} instead.
      */
+    @Deprecated
     public static IInputKey classifierToInputKey(EClassifier classifier) {
         IInputKey key = classifier == null ? null
                 : classifier instanceof EClass ? new EClassTransitiveInstancesKey((EClass) classifier)

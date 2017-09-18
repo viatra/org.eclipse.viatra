@@ -58,6 +58,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * 
      * @deprecated redefine in a subclass {@link #shouldCalculateImpliedTypes(PQuery)} instead
      */
+    @Deprecated
     public boolean calcImpliedTypes;
     private IQueryMetaContext context;
 
@@ -72,6 +73,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      *            If set to true, shrinks the net by avoiding unnecessary typechecks
      * @deprecated redefine in a subclass {@link #shouldCalculateImpliedTypes(PQuery)} instead
      */
+    @Deprecated
     public PBodyNormalizer(IQueryMetaContext context, boolean calculateImpliedTypes) {
         this.context = context;
         calcImpliedTypes = calculateImpliedTypes;

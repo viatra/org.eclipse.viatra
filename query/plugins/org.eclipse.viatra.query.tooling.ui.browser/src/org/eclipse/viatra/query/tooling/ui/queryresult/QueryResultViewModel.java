@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -53,9 +54,10 @@ public enum QueryResultViewModel {
         
         boolean wildcardMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.WILDCARD_MODE);
+        IndexingLevel wildcardLevel = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
         boolean dynamicEMFMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
-        BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardMode);
+        BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardLevel);
         QueryScope scope = new EMFScope(notifier, options);
         
         AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
@@ -66,8 +68,6 @@ public enum QueryResultViewModel {
 
     /**
      * This method is intended to support existing engines 
-     * @param engine
-     * @return
      */
     protected QueryResultTreeInput createInput(AdvancedViatraQueryEngine engine, boolean readOnlyEngine) {
         QueryResultTreeInput input = new QueryResultTreeInput(engine, QuerySpecificationRegistry.getInstance(),

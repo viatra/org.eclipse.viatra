@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -35,7 +36,7 @@ import com.google.common.collect.Lists;
  * @since 1.7
  * 
  */
-public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Object> {
+public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Object> implements IPatternMatcherOperation {
 
     /**
      * Calculates the transitive closure of a pattern match in a forward direction (first parameter bound, second

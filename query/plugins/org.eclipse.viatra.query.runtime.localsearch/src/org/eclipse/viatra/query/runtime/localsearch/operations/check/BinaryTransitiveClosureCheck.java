@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -35,7 +36,7 @@ import com.google.common.collect.Lists;
  * @noextend This class is not intended to be subclassed by clients.
  * 
  */
-public class BinaryTransitiveClosureCheck extends CheckOperation{
+public class BinaryTransitiveClosureCheck extends CheckOperation implements IPatternMatcherOperation {
 
     private final CallOperationHelper helper;
     private PatternCall call;

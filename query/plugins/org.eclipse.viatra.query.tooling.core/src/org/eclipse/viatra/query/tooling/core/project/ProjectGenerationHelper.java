@@ -724,6 +724,7 @@ public abstract class ProjectGenerationHelper {
      * @throws CoreException
      * @deprecated Use {@link #ensureSourceFolders(IProject,List,IProgressMonitor)} instead
      */
+    @Deprecated
     public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
         ensureSourceFolders(project, SOURCEFOLDERS, monitor);
     }

@@ -548,6 +548,7 @@ public interface NavigationHelper {
      * @throws IllegalStateException if in wildcard mode
      * @deprecated use {@link #registerObservedTypes(Set, Set, Set, IndexingLevel)} instead
      */
+    @Deprecated
     public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
     
     /**

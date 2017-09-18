@@ -60,6 +60,7 @@ public class QueryEvaluationHint {
      * @deprecated As of 1.5, use {@link #QueryEvaluationHint(Map, IQueryBackendFactory)} instead. 
      * String-keyed hint setting map will be ignored.
      */
+    @Deprecated
     public QueryEvaluationHint(
             IQueryBackendFactory queryBackendFactory, 
             Map<String, Object> backendHints) {
@@ -82,6 +83,7 @@ public class QueryEvaluationHint {
      * 
      * @deprecated As of 1.5, string keys are no longer available. Use {@link QueryHintOption} instead
      */
+    @Deprecated
     public Map<String, Object> getBackendHints() {
         return Collections.emptyMap();
     }

@@ -231,6 +231,7 @@ public class BaseIndexOptions {
      * @since 0.9
      * @deprecated use {@link #withWildcardLevel(IndexingLevel)} instead.
      */
+    @Deprecated
     public BaseIndexOptions withWildcardMode(boolean wildcardMode) {
         BaseIndexOptions result = copy();
         result.wildcardMode = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;

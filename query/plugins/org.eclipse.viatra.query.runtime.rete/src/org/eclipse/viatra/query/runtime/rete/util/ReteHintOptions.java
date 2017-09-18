@@ -44,6 +44,7 @@ public final class ReteHintOptions {
      * @deprecated Use the base index option <code>DANGLING_FREE_ASSUMPTION_DEFAULT</code> instead.
      * @since 1.6
      */
+    @Deprecated
     public static final QueryHintOption<Boolean> checkScopeBoundaries =
             hintOption("checkScopeBoundaries", true);
     

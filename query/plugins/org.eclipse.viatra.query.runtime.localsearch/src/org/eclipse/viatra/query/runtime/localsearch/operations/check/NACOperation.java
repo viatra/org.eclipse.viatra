@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
@@ -25,7 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
  * @author Zoltan Ujhelyi
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class NACOperation extends CheckOperation {
+public class NACOperation extends CheckOperation implements IPatternMatcherOperation {
 
     CallOperationHelper helper;
     PatternCall call;
