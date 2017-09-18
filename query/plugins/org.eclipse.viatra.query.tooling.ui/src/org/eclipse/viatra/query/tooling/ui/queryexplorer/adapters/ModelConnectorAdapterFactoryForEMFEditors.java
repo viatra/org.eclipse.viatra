@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
 
+import java.util.Objects;
+
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
@@ -38,7 +41,8 @@ public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactor
             }
         } if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
             IEditorPart editorPart = (IEditorPart) adaptableObject;
-            if ("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage".equals(editorPart.getSite().getId())) {
+            IWorkbenchPartSite site = editorPart.getSite();
+            if (site != null && Objects.equals("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage", site.getId())) {
                 return new VQLEditorModelConnector(editorPart, resourceSetProvider);
             } else if (editorPart instanceof IEditingDomainProvider) {
                 return new EMFModelConnector(editorPart);
