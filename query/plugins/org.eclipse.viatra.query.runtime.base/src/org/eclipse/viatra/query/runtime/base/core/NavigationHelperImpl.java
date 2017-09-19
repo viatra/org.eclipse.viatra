@@ -569,7 +569,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public boolean isInstanceOfScoped(EObject object, EClass clazz) {
         Object typeKey = toKey(object.eClass());
-        if (!doCalculateInstanceOf(typeKey, toKey(clazz))) {
+        if (!doCalculateInstanceOf(toKey(clazz), typeKey)) {
             return false;
         }
         final Set<EObject> instances = instanceStore.getInstanceSet(typeKey);
