@@ -31,10 +31,10 @@ import com.google.common.collect.Sets;
 
 public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>>
         implements ITransformationRule<Match, Matcher> {
-    private String name;
-    private IQuerySpecification<Matcher> precondition;
-    private RuleSpecification<Match> ruleSpecification;
-    private EventFilter<? super Match> filter;
+    private final String name;
+    private final IQuerySpecification<Matcher> precondition;
+    private final RuleSpecification<Match> ruleSpecification;
+    private final EventFilter<? super Match> filter;
 
     public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
             Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
@@ -48,7 +48,7 @@ public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher 
 
             jobs.add(Jobs.newStatelessJob(state, action));
         }
-
+        this.precondition = precondition;
         ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs, name);
         this.filter = filter;
     }
