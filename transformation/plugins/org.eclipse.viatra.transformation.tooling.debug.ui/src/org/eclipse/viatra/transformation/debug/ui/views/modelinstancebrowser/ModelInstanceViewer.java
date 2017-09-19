@@ -48,7 +48,6 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
     public static final String ID = "org.eclipse.viatra.transformation.ui.debug.TransformationViewer";
 
     private CTabFolder tabFolder;
-    private Composite composite;
 
     private TransformationThread currentThread;
     private Map<CTabItem, TreeViewer> tabMap = Maps.newHashMap();
@@ -62,7 +61,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
         ISelectionService sService = getSite().getWorkbenchWindow().getSelectionService();
 
 
-        composite = new Composite(parent, SWT.NONE);
+        Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 
         tabFolder = new CTabFolder(composite, SWT.BORDER);
@@ -126,8 +125,8 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
         disposeTabs();
         for (TransformationModelElement element : rootElements) {
             CTabItem ritem = new CTabItem(tabFolder, SWT.NONE);
-            String nameAttribute = ((TransformationModelElement) element).getNameAttribute();
-            ritem.setText(((TransformationModelElement) element).getTypeAttribute()
+            String nameAttribute = element.getNameAttribute();
+            ritem.setText(element.getTypeAttribute()
                     + ((nameAttribute.isEmpty()) ? " " : (" \"" + nameAttribute + "\" ")));
             
             TreeViewer treeViewer = new TreeViewer(tabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.VIRTUAL);

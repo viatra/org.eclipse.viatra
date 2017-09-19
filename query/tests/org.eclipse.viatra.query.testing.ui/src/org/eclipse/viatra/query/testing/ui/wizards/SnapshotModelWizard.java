@@ -135,19 +135,14 @@ public class SnapshotModelWizard extends Wizard implements INewWizard {
             }
 
             // Open an editor on the new file.
-            try {
-                page.openEditor
-                    (new FileEditorInput(modelFile),
-                     workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());					 	 
-            }
-            catch (PartInitException exception) {
-                MessageDialog.openError(workbenchWindow.getShell(), "Error opening Snapshot Editor", exception.getMessage());
-                return false;
-            }
+            page.openEditor(new FileEditorInput(modelFile),
+                    workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());					 	 
 
             return true;
-        }
-        catch (Exception exception) {
+        } catch (PartInitException exception) {
+            MessageDialog.openError(getShell(), "Error opening Snapshot Editor", exception.getMessage());
+            return false;
+        } catch (Exception exception) {
             ViatraQueryTestingUIPlugin.getDefault().log(exception);
             return false;
         }

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -37,7 +36,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     private List<TransformationThread> threads = new ArrayList<>();
     private boolean terminated = false;
     
-    public TransformationDebugTarget(ILaunch launch, IDebuggerHostAgent agent, IType transformationType) throws CoreException {
+    public TransformationDebugTarget(ILaunch launch, IDebuggerHostAgent agent, IType transformationType) {
         super(null);
         this.launch = launch;
         this.name = "Model Transformation Debugger Session";
@@ -72,7 +71,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
 
     @Override
     public boolean hasThreads() throws DebugException {
-        return threads.size() > 0;
+        return !threads.isEmpty();
     }
 
     @Override
@@ -139,15 +138,20 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     }
     
     //IBreakpointListener
-    //Instead of the debug target, debug threads handle breakpoints
     @Override
-    public void breakpointAdded(IBreakpoint breakpoint) {}
+    public void breakpointAdded(IBreakpoint breakpoint) {
+      //Instead of the debug target, debug threads handle breakpoints
+    }
 
     @Override
-    public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {}
+    public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+      //Instead of the debug target, debug threads handle breakpoints
+    }
 
     @Override
-    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {}
+    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+      //Instead of the debug target, debug threads handle breakpoints
+    }
     
     //IDisconnect
 
@@ -179,7 +183,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
         return null;
     }
     
-    protected void requestTermination() throws DebugException {
+    protected void requestTermination() {
         terminated = true;
         fireTerminateEvent();
     }

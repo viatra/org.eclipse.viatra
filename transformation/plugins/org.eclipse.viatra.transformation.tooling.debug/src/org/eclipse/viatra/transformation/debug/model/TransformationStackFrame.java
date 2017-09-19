@@ -31,7 +31,7 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
     private final TransformationModelProvider modelProvider;
     
     
-    public TransformationStackFrame(TransformationThread thread, RuleActivation activation, TransformationModelProvider modelProvider) throws DebugException {
+    public TransformationStackFrame(TransformationThread thread, RuleActivation activation, TransformationModelProvider modelProvider) {
         super((TransformationDebugTarget) thread.getDebugTarget());
         this.thread = thread;
         this.name = activation.getRuleName()+" : "+activation.getState();
@@ -40,7 +40,7 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
         List<TransformationVariable> transformationVariables = Lists.newArrayList();
         transformationVariables.addAll(createVariables(activation));
         
-        this.variables = (IVariable[]) transformationVariables.toArray(new TransformationVariable[0]); 
+        this.variables = transformationVariables.toArray(new TransformationVariable[0]); 
     }
     
     private List<TransformationVariable> createVariables(RuleActivation activation){

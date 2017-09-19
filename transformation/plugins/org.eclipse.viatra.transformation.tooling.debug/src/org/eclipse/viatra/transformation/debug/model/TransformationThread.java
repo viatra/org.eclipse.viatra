@@ -224,11 +224,8 @@ public class TransformationThread extends TransformationDebugElement implements 
         
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         TransformationThreadFactory.getInstance().deleteTransformationThread(this);
-        try {
-            ((TransformationDebugTarget)getDebugTarget()).requestTermination();
-        } catch (DebugException e) {
-            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-        }
+
+        ((TransformationDebugTarget)getDebugTarget()).requestTermination();
         fireTerminateEvent();
     }
 
@@ -306,7 +303,7 @@ public class TransformationThread extends TransformationDebugElement implements 
             while(!activationStack.isEmpty()){
                 try {
                     stackFrames.add(new TransformationStackFrame(this, activationStack.pop(), modelProvider));
-                } catch (EmptyStackException | DebugException e) {
+                } catch (EmptyStackException e) {
                     ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage());
                 }
             }
