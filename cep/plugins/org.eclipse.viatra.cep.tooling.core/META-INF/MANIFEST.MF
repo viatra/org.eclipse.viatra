@@ -7,8 +7,8 @@ Bundle-Activator: org.eclipse.viatra.cep.tooling.core.internal.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.pde.core,
- org.eclipse.xtext.xbase;bundle-version="[2.9.0,2.13.0)",
- org.eclipse.xtext.ui;bundle-version="[2.9.0,2.13.0)"
+ org.eclipse.xtext.xbase;bundle-version="[2.9.0,3.0.0)",
+ org.eclipse.xtext.ui;bundle-version="[2.9.0,3.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.cep.tooling.core.nature;uses:="org.eclipse.core.resources",
