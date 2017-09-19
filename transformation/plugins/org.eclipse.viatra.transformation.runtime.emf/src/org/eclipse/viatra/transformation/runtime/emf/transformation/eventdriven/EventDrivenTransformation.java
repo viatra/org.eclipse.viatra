@@ -104,6 +104,7 @@ public class EventDrivenTransformation {
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         public EventDrivenTransformation build() throws ViatraQueryException {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
@@ -125,8 +126,8 @@ public class EventDrivenTransformation {
             
             Iterable<IQuerySpecification<?>> preconditions = collectPreconditions();
             GenericQueryGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
-            for (EventDrivenTransformationRule<?, ?> rule : rules) {
-                schema.addRule(rule.getRuleSpecification());
+            for (@SuppressWarnings("rawtypes") EventDrivenTransformationRule rule : rules) {
+                schema.addRule(rule.getRuleSpecification(), rule.getFilter());
                 rulesToAdd.put(rule.getRuleSpecification(), rule);
             }
             EventDrivenTransformation transformation = new EventDrivenTransformation(schema, engine);
