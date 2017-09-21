@@ -30,7 +30,7 @@ import org.eclipse.viatra.transformation.views.core.ViewModelManager;
 import org.eclipse.viatra.transformation.views.traceability.Trace;
 import org.eclipse.viatra.transformation.views.traceability.Traceability;
 import org.eclipse.viatra.transformation.views.traceability.TraceabilityUtil;
-import org.eclipse.viatra.transformation.views.traceablilty.generic.GenericTracedPQuery;
+import org.eclipse.viatra.transformation.views.traceability.generic.GenericTracedPQuery;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
