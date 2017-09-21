@@ -22,9 +22,9 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
-import org.eclipse.viatra.transformation.views.traceablilty.generic.AbstractQuerySpecificationDescriptor;
-import org.eclipse.viatra.transformation.views.traceablilty.generic.GenericReferencedQuerySpecification;
-import org.eclipse.viatra.transformation.views.traceablilty.generic.GenericTracedQuerySpecification;
+import org.eclipse.viatra.transformation.views.traceability.generic.AbstractQuerySpecificationDescriptor;
+import org.eclipse.viatra.transformation.views.traceability.generic.GenericReferencedQuerySpecification;
+import org.eclipse.viatra.transformation.views.traceability.generic.GenericTracedQuerySpecification;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;

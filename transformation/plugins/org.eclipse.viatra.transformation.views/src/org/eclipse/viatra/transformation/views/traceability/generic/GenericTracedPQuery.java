@@ -9,7 +9,7 @@
  *   Csaba Debreceni - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.transformation.views.traceablilty.generic;
+package org.eclipse.viatra.transformation.views.traceability.generic;
 
 import java.util.ArrayList;
 import java.util.Collection;

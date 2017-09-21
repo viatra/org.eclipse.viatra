@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
-import org.eclipse.viatra.transformation.views.traceablilty.generic.AbstractQuerySpecificationDescriptor;
+import org.eclipse.viatra.transformation.views.traceability.generic.AbstractQuerySpecificationDescriptor;
 
 import com.google.common.collect.ArrayListMultimap;
 
