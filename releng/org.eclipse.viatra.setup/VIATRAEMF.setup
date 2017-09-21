@@ -207,6 +207,19 @@
         <repository
             url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
       </repositoryList>
+      <repositoryList
+          name="Photon">
+        <repository
+            url="http://download.eclipse.org/releases/photon"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+        <repository
+            url="http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201709191305/"/>
+      </repositoryList>
     </targlet>
   </setupTask>
   <setupTask
@@ -304,6 +317,17 @@
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+        </repositoryList>
+        <repositoryList
+            name="Photon">
+          <repository
+              url="http://download.eclipse.org/releases/photon"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
@@ -1154,6 +1178,15 @@
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0"/>
         </repositoryList>
+        <repositoryList
+            name="Photon">
+          <repository
+              url="http://download.eclipse.org/releases/photon"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201709191305/"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1184,6 +1217,11 @@
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
+        </repositoryList>
+        <repositoryList
+            name="Photon">
+          <repository
+              url="http://download.eclipse.org/releases/photon"/>
         </repositoryList>
       </targlet>
       <targlet
