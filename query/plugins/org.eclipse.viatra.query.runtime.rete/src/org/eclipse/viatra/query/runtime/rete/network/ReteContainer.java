@@ -70,7 +70,7 @@ public final class ReteContainer {
         this.network = network;
         this.backendContext = network.getEngine().getBackendContext();
         this.tracker = new CommunicationTracker();
-        this.nodesById = CollectionsFactory.getMap();
+        this.nodesById = CollectionsFactory.createMap();
         this.clearables = new LinkedList<Clearable>();
         this.logger = network.getEngine().getLogger();
 
@@ -78,7 +78,7 @@ public final class ReteContainer {
         this.nodeProvisioner = new NodeProvisioner(this);
 
         if (threaded) {
-            this.terminationCriteria = CollectionsFactory.getMap();// new HashMap<ReteContainer, Long>();
+            this.terminationCriteria = CollectionsFactory.createMap();
             this.consumerThread = new Thread("Rete thread of " + ReteContainer.super.toString()) {
                 @Override
                 public void run() {
@@ -430,13 +430,11 @@ public final class ReteContainer {
                                                        // is non-empty,
                                                        // retrieve the next
                                                        // message instantly
-                {
-                message = takeExternalMessage();
-                }
+                    message = takeExternalMessage();
                 } else { // if external queue is found empty (and this is
                          // the first time in a row)
-                incrementedClock = ++clock; // local termination point
-                // synchronized(clock){incrementedClock = ++clock;}
+                    incrementedClock = ++clock; // local termination point
+                    // synchronized(clock){incrementedClock = ++clock;}
                 }
                 }
 

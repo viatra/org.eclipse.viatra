@@ -64,7 +64,7 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     public MaskedTupleMemory(TupleMask mask, Node owner) {
         this.mask = mask;
         this.owner = owner;
-        matchings = CollectionsFactory.getMap();//new HashMap<Tuple, Collection<Tuple>>();
+        matchings = CollectionsFactory.createMap();
     }
 
     /**
@@ -92,7 +92,7 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
         boolean change = (coll == null);
 
         if (change) {
-            coll = CollectionsFactory.getSet();
+            coll = CollectionsFactory.createSet();
             matchings.put(signature, coll);
         }
         if (!coll.add(ps)) {

@@ -57,7 +57,7 @@ public interface PConstraint extends PTraceable {
     /**
      * Compares by {@link PConstraint#getMonotonousID()}
      */
-    public static enum CompareByMonotonousID implements Comparator<PConstraint> {
+    public enum CompareByMonotonousID implements Comparator<PConstraint> {
         INSTANCE;
         @Override
         public int compare(PConstraint arg0, PConstraint arg1) {

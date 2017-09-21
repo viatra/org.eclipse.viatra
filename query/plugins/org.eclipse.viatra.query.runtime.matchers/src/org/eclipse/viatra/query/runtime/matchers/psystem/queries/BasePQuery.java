@@ -89,7 +89,7 @@ public abstract class BasePQuery implements PQuery {
 	}
 
 	@Override
-	public void checkMutability() throws IllegalStateException {
+	public void checkMutability() {
 	    Preconditions.checkState(isMutable(), "Cannot edit query definition %s", getFullyQualifiedName());
 	}
 

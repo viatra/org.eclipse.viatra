@@ -25,5 +25,5 @@ public interface IValueProvider {
      * @return the value of the variable; never null
      * @throws IllegalArgumentException if the variable is not defined
      */
-    Object getValue(String variableName) throws IllegalArgumentException;
+    Object getValue(String variableName);
 }

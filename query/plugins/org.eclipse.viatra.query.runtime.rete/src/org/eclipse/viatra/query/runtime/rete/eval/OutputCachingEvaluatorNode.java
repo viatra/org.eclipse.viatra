@@ -49,7 +49,7 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
 
 
 
-    Map<Tuple, Tuple> outputCache = CollectionsFactory.getMap();
+    Map<Tuple, Tuple> outputCache = CollectionsFactory.createMap();
     //Map<Tuple, SoftReference<Object>> opportunisticCacheResults = new WeakHashMap<Tuple, SoftReference<Object>>();
     
     @Override

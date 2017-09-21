@@ -43,8 +43,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     protected Production productionNode;
     protected RecipeTraceInfo productionNodeTrace;
     protected Map<String, Integer> posMapping;
-    protected Map<Object, Receiver> taggedChildren = // new HashMap<Object, Receiver>();
-            CollectionsFactory.getMap();
+    protected Map<Object, Receiver> taggedChildren = CollectionsFactory.createMap();
     protected boolean connected = false; // is rete-wise connected to the
                                          // production node?
 

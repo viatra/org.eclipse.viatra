@@ -108,7 +108,7 @@ public interface PQuery extends PQueryHeader, PTraceable {
      * Before a modification operation is executed, a mutability check is performed (via the {@link #getStatus()}
      * implementation, and in case of problems an {@link IllegalStateException} is thrown.
      */
-    void checkMutability() throws IllegalStateException;
+    void checkMutability();
 
     /**
      * An option to check mutability of the query. It can be used to avoid getting an {@link IllegalStateException} by

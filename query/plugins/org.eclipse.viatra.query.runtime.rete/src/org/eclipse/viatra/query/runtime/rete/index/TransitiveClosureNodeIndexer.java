@@ -45,7 +45,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
                 // mask ()/2
                 return getSignatures();
             } else if (mask.indices.length == 1) {
-                Set<Tuple> retSet = CollectionsFactory.getSet();//new HashSet<Tuple>();
+                Set<Tuple> retSet = CollectionsFactory.createSet();
 
                 // mask (0)/2
                 if (mask.indices[0] == 0) {
@@ -93,7 +93,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
 
     private Collection<Tuple> asTupleCollection(
             Collection<org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple<Object>> tuples) {
-        Set<Tuple> retSet = CollectionsFactory.getSet();//new HashSet<Tuple>();
+        Set<Tuple> retSet = CollectionsFactory.createSet();
         for (org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple<Object> tuple : tuples) {
             retSet.add(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()));
         }

@@ -58,14 +58,8 @@ public class NodeProvisioner {
     IQueryRuntimeContext runtimeContext;
 
     // TODO as recipe?
-    Map<Supplier, RemoteReceiver> remoteReceivers = CollectionsFactory.getMap();// new
-                                                                                // HashMap<Supplier,
-                                                                                // RemoteReceiver>();
-    Map<Address<? extends Supplier>, RemoteSupplier> remoteSuppliers = CollectionsFactory.getMap();// new
-                                                                                                   // HashMap<Address<?
-                                                                                                   // extends
-                                                                                                   // Supplier>,
-                                                                                                   // RemoteSupplier>();
+    Map<Supplier, RemoteReceiver> remoteReceivers = CollectionsFactory.createMap();
+    Map<Address<? extends Supplier>, RemoteSupplier> remoteSuppliers = CollectionsFactory.createMap();
 
     private RecipeRecognizer recognizer;
 

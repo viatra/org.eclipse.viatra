@@ -58,7 +58,7 @@ public class UnionFind<V> {
      * @return the root element
      */
     public V makeSet(Collection<V> nodes) {
-        if (nodes.size() > 0) {
+        if (!nodes.isEmpty()) {
             Iterator<V> iterator = nodes.iterator();
             V root = makeSet(iterator.next());
             while (iterator.hasNext()) {

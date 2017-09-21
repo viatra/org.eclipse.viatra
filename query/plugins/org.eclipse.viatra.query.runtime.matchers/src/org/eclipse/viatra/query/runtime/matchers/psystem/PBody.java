@@ -160,7 +160,7 @@ public class PBody implements PTraceable {
      * @throws IllegalArgumentException
      *             if no PVariable is found with the selected name
      */
-    public PVariable getVariableByNameChecked(Object name) throws IllegalArgumentException {
+    public PVariable getVariableByNameChecked(Object name) {
         if (!variablesByName.containsKey(name))
             throw new IllegalArgumentException(String.format("Cannot find PVariable %s", name));
         return getVariableByName(name);
@@ -253,7 +253,7 @@ public class PBody implements PTraceable {
         }
     }
     
-    void checkMutability() throws IllegalStateException {
+    void checkMutability() {
         if (status == null) {
             query.checkMutability();
         } else {

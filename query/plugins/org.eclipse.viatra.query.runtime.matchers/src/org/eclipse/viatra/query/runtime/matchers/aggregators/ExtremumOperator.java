@@ -24,7 +24,7 @@ import com.google.common.collect.TreeMultiset;
 public class ExtremumOperator<T extends Comparable<T>>
         extends AbstractMultisetAggregationOperator<T, SortedMultiset<T>, T> {
     
-    public static enum Extreme {
+    public enum Extreme {
         MIN, MAX;
         
         public <T> T pickFrom(SortedMultiset<T> nonEmptyMultiSet) {
@@ -32,9 +32,10 @@ public class ExtremumOperator<T extends Comparable<T>>
             case MIN: 
                 return nonEmptyMultiSet.firstEntry().getElement(); 
             case MAX:
-                return nonEmptyMultiSet.lastEntry().getElement(); 
+                return nonEmptyMultiSet.lastEntry().getElement();
+            default:
+                return null;
             }
-            return null;
         }
     }
 

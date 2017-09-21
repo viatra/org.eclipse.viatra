@@ -31,6 +31,11 @@ import com.google.common.collect.Sets;
  * 
  */
 public class FunctionalDependencyHelper {
+    
+    private FunctionalDependencyHelper() {
+        // Hiding constructor for utility class
+    }
+    
     /**
      * Get the closure of the specified attribute set relative to the specified functional dependencies.
      * 

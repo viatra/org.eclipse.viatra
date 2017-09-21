@@ -35,6 +35,10 @@ import com.google.common.collect.Sets;
  * @author Tamas Szabo
  */
 public class TypeHelper {
+    
+    private TypeHelper() {
+        // Hiding constructor for utility class
+    }
 
     /**
      * Collects the type constraints for the specified collection of variables. The type constraints consist of the

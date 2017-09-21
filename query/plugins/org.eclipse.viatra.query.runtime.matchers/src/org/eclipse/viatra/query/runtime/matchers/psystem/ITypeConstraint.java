@@ -35,6 +35,11 @@ public interface ITypeConstraint extends ITypeInfoProviderConstraint {
      * @author Bergmann Gabor
      */
     public static class TypeConstraintUtil {
+        
+        private TypeConstraintUtil() {
+            // Hiding constructor for utility class
+        }
+        
         public static Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context, IInputKey inputKey, Tuple variablesTuple) {
             final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
             

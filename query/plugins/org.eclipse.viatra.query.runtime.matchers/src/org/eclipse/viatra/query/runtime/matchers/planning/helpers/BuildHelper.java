@@ -33,7 +33,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
  */
 public class BuildHelper {
 
-
+    private BuildHelper() {
+        // Hiding constructor for utility class
+    }
 
 //    public static SubPlan naturalJoin(IOperationCompiler buildable,
 //            SubPlan primaryPlan, SubPlan secondaryPlan) {
@@ -173,7 +175,7 @@ public class BuildHelper {
                 throw new QueryProcessingException(
                         "Exported pattern parameter {1} could not be deduced during pattern matcher construction."
                                 + " A pattern constraint is required to positively deduce its value.",
-                        new String[] { export.getParameterName().toString() }, "Could not calculate pattern parameter",
+                        new String[] { export.getParameterName() }, "Could not calculate pattern parameter",
                         null);
             }
         }

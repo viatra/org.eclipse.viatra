@@ -53,8 +53,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     public IndexerBasedAggregatorNode(ReteContainer reteContainer) {
         super(reteContainer);
         this.me = this;
-        mainAggregates = //new HashMap<Tuple, Object>();
-                CollectionsFactory.getMap();
+        mainAggregates = CollectionsFactory.createMap();
     }
     
     /**

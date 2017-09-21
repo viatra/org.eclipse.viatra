@@ -74,8 +74,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
             // STARTING THE LINE
             SubPlan plan = planFactory.createSubPlan(new PStart());
 
-            Set<PConstraint> pQueue = CollectionsFactory.getSet(pSystem.getConstraints());//new HashSet<PConstraint>(pSystem.getConstraints()); // TreeSet<PConstraint>(new
-                                                                                          // OrderingHeuristics());
+            Set<PConstraint> pQueue = CollectionsFactory.createSet(pSystem.getConstraints());
 
             // MAIN LOOP
             while (!pQueue.isEmpty()) {
@@ -143,7 +142,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
         throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
     private void raiseForeverDeferredError(ExportedParameter constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
-        String[] args = { constraint.getParameterName().toString() };
+        String[] args = { constraint.getParameterName() };
         String msg = "Pattern Graph Search terminated incompletely: "
                 + "exported pattern variable {1} could not be determined based on the pattern constraints. "
                 + "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
@@ -162,7 +161,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
         }
     }
     private void raiseForeverDeferredError(VariableDeferredPConstraint constraint, SubPlan plan) throws RetePatternBuildException {
-        Set<PVariable> missing = CollectionsFactory.getSet(constraint.getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
+        Set<PVariable> missing = CollectionsFactory.createSet(constraint.getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
         missing.removeAll(plan.getVisibleVariables());
         String[] args = { toString(), Arrays.toString(missing.toArray()) };
         String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. "

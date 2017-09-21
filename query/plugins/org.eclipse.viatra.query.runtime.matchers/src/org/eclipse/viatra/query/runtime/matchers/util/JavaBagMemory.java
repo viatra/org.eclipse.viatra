@@ -12,8 +12,6 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Default implementation based on Java Collections.

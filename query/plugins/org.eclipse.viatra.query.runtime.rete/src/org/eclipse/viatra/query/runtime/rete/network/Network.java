@@ -59,8 +59,8 @@ public class Network {
     // Node and recipe administration
     // incl. addresses for existing nodes by recipe (where available)
     // Maintained by NodeProvisioner of each container
-    Map<ReteNodeRecipe, Address<? extends Node>> nodesByRecipe = CollectionsFactory.getMap();
-    Set<RecipeTraceInfo> recipeTraces = CollectionsFactory.getSet();
+    Map<ReteNodeRecipe, Address<? extends Node>> nodesByRecipe = CollectionsFactory.createMap();
+    Set<RecipeTraceInfo> recipeTraces = CollectionsFactory.createSet();
 
     /**
      * @throws IllegalStateException
@@ -98,12 +98,8 @@ public class Network {
         nextContainer = firstContainer;
 
         if (threads > 0) {
-            globalTerminationCriteria = CollectionsFactory.getMap();// new
-                                                                    // HashMap<ReteContainer,
-                                                                    // Long>();
-            reportedClocks = CollectionsFactory.getMap();// new
-                                                         // HashMap<ReteContainer,
-                                                         // Long>();
+            globalTerminationCriteria = CollectionsFactory.createMap();
+            reportedClocks = CollectionsFactory.createMap();
             ReadWriteLock rwl = new ReentrantReadWriteLock();
             updateLock = rwl.readLock();
             structuralChangeLock = rwl.writeLock();

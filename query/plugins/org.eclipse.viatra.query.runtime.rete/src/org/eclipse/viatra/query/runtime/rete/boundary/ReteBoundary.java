@@ -72,10 +72,10 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
         this.headContainer = network.getHeadContainer();
         inputConnector = network.getInputConnector();
 
-        this.parentPlansOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<SubPlan<Address<? extends Supplier>>>>();
+        this.parentPlansOfReceiver = CollectionsFactory.createMap();
 
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();
-        subplanToAddressMapping = CollectionsFactory.getMap();
+        subplanToAddressMapping = CollectionsFactory.createMap();
 
     }
 

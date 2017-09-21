@@ -68,39 +68,22 @@ class VariableMappingExpressionEvaluatorWrapper implements IExpressionEvaluator 
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator#getShortDescription()
-     */
     @Override
     public String getShortDescription() {
         return wrapped.getShortDescription();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator#getInputParameterNames()
-     */
     @Override
     public Iterable<String> getInputParameterNames() {
         return variableMapping.values();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator#evaluateExpression(org.eclipse.viatra.
-     * query.runtime.matchers.psystem.IValueProvider)
-     */
     @Override
     public Object evaluateExpression(final IValueProvider provider) throws Exception {
         return wrapped.evaluateExpression(new IValueProvider() {
             
             @Override
-            public Object getValue(String variableName) throws IllegalArgumentException {
+            public Object getValue(String variableName) {
                 String mappedVariableName = variableMapping.get(variableName);
                 Preconditions.checkArgument(mappedVariableName != null, "Could not find variable %s", variableName);
                 return provider.getValue(mappedVariableName);

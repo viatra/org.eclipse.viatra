@@ -39,7 +39,7 @@ public class QueryProcessingException extends Exception {
     protected Object patternDescription;
     protected String templateMessage;
     protected String[] templateContext;
-    
+
     protected String shortMessage;
     
     /**

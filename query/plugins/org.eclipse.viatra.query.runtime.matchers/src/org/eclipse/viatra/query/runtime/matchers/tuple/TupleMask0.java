@@ -22,6 +22,7 @@ public final class TupleMask0 extends TupleMask {
     /**
      * @param indices
      * @param sourceWidth
+     * 
      */
     @SuppressWarnings("deprecation")
     TupleMask0(int[] indices, int sourceWidth) {

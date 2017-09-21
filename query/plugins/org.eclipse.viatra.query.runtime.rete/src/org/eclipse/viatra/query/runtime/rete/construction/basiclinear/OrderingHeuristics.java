@@ -32,9 +32,6 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
     private SubPlan plan;
     private IQueryMetaContext context;
 
-    /**
-     * @param plan
-     */
     public OrderingHeuristics(SubPlan plan, IQueryMetaContext context) {
         super();
         this.plan = plan;
@@ -46,7 +43,7 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
         return new OrderingCompareAgent<PConstraint>(o1, o2) {
             @Override
             protected void doCompare() {
-                boolean temp = true && consider(preferTrue(isConstant(a), isConstant(b)))
+                boolean temp = consider(preferTrue(isConstant(a), isConstant(b)))
                         && consider(preferTrue(isReady(a), isReady(b)));
                 if (!temp)
                     return;
@@ -75,7 +72,7 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
     }
 
     Set<PVariable> boundVariables(PConstraint o) {
-        Set<PVariable> boundVariables = CollectionsFactory.getSet(o.getAffectedVariables());//new HashSet<PVariable>(o.getAffectedVariables());
+        Set<PVariable> boundVariables = CollectionsFactory.createSet(o.getAffectedVariables());
         boundVariables.retainAll(plan.getVisibleVariables());
         return boundVariables;
     }

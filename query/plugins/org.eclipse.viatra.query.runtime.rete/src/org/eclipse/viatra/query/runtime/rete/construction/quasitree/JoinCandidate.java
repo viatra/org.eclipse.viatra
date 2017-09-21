@@ -54,7 +54,7 @@ class JoinCandidate {
 
         varPrimary = getPrimary().getVisibleVariables();
         varSecondary = getSecondary().getVisibleVariables();
-        varCommon = CollectionsFactory.getSet(varPrimary);
+        varCommon = CollectionsFactory.createSet(varPrimary);
         varCommon.retainAll(varSecondary);
         
         consPrimary = new ArrayList<PConstraint>(primary.getAllEnforcedConstraints());

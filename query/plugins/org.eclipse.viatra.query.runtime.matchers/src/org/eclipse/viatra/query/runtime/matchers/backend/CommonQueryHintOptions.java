@@ -20,6 +20,10 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NopTraceColle
  */
 public final class CommonQueryHintOptions {
     
+    private CommonQueryHintOptions() {
+        // Hiding constructor for utility class
+    }
+    
     /**
      * This hint instructs the query backends to record trace information into the given trace collector
      */

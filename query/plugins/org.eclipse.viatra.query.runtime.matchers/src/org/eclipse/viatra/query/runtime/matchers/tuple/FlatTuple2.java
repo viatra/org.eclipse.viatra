@@ -36,9 +36,11 @@ public final class FlatTuple2 extends BaseFlatTuple {
 
     @Override
     public Object get(int index) {
-        if (index == 0) return element0;
-        if (index == 1) return element1;
-        throw raiseIndexingError(index);
+        switch(index) {
+        case 0 : return element0;
+        case 1 : return element1;
+        default: throw raiseIndexingError(index);
+        }
     }
     
     @Override

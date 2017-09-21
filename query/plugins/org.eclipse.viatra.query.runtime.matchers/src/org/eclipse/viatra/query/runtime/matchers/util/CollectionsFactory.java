@@ -164,6 +164,9 @@ public final class CollectionsFactory
         return FRAMEWORK.createSet(initial);
     }
 
+    /**
+     * @deprecated This enum is entirely unnecessary; don't use it
+     */
     @Deprecated
     public enum CollectionsFramework {
         Java,
@@ -174,6 +177,10 @@ public final class CollectionsFactory
         Apache,
         Javolution
     }
+    
+    /**
+     * @deprecated This enum is entirely unnecessary; don't use it
+     */
     @Deprecated
     public static CollectionsFramework mode = CollectionsFramework.Java;
     

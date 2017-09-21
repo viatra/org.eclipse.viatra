@@ -121,8 +121,8 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         this.operator = operator;
         this.groupMask = groupMask;
         this.columnMask = columnMask;
-        this.memory = CollectionsFactory.getMap();
-        this.rederivableMemory = CollectionsFactory.getMap();
+        this.memory = CollectionsFactory.createMap();
+        this.rederivableMemory = CollectionsFactory.createMap();
         this.deleteRederiveEvaluation = deleteRederiveEvaluation;
         this.posetComparator = posetComparator;
         this.mailbox = instantiateMailbox();

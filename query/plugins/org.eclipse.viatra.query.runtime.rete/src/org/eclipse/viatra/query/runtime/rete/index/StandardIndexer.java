@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.rete.index;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -49,9 +48,6 @@ public abstract class StandardIndexer extends BaseNode implements Indexer {
         }
     }
 
-    /**
-     * @return the mask
-     */
     public TupleMask getMask() {
         return mask;
     }

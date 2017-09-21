@@ -114,8 +114,7 @@ public class ReteEngine implements IQueryBackend {
         this.reteNet = new Network(reteThreads, this);
         this.boundary = new ReteBoundary(this); // prerequisite: network
 
-        this.matchers = //new HashMap<PatternDescription, RetePatternMatcher>();
-                CollectionsFactory.getMap();
+        this.matchers = CollectionsFactory.createMap();
         /* this.matchersScoped = new HashMap<PatternDescription, Map<Map<Integer,Scope>,RetePatternMatcher>>(); */
 
         // prerequisite: network, framework, boundary, disconnectables
