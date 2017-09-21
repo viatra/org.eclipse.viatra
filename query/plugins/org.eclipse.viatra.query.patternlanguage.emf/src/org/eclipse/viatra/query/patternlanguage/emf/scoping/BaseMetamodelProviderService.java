@@ -71,7 +71,7 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
                                 Collections.singletonMap("nsURI", "true"));
                     }
                 });
-        return new SimpleScope(IScope.NULLSCOPE, metamodels);
+        return new SimpleScope(delegateScope, metamodels);
     }
 
     protected abstract Collection<String> getProvidedMetamodels();

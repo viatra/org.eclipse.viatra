@@ -301,7 +301,10 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
                     // We are not at the end of the file
                     try {
                         if ("\"".equals(document.get(endPos, 1))) {
-                            prop.setReplacementLength(replacementLength-1);
+                            /*
+                             * XXX Updating replacementLength should be enough, however it does not work, as it will be
+                             * rewritten when apply() is called on the proposal
+                             */ 
                             String replacementString = prop.getReplacementString();
                             prop.setReplacementString(replacementString.substring(0,replacementString.length()-1));
                         }

@@ -84,6 +84,8 @@
                 <artifactId>tycho-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>${vmargs}</argLine>
+                    <!-- UI harness is required for content assist tests -->
+                    <useUIHarness>true</useUIHarness>
                 </configuration>
             </plugin>
             <plugin>
