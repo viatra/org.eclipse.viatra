@@ -61,6 +61,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilte
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -131,7 +132,7 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     // private final Set<Runnable> afterUpdateCallbacks;
     private final Set<EMFBaseIndexChangeListener> baseIndexChangeListeners;
-    private final Map<LightweightEObjectObserver, Collection<EObject>> lightweightObservers;
+    private final Map<EObject, Set<LightweightEObjectObserver>> lightweightObservers;
 
     // These are the user subscriptions to notifications
     private final Map<InstanceListener, Set<EClass>> subscribedInstanceListeners;
@@ -236,7 +237,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.subscribedInstanceListeners = new HashMap<InstanceListener, Set<EClass>>();
         this.subscribedFeatureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
         this.subscribedDataTypeListeners = new HashMap<DataTypeListener, Set<EDataType>>();
-        this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
+        this.lightweightObservers = CollectionsFactory.createMap();
         this.observedFeatures = new HashMap<Object, IndexingLevel>();
         this.ignoreResolveNotificationFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashMap<Object, IndexingLevel>();
@@ -716,32 +717,52 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
-        Collection<EObject> observedObjects = lightweightObservers.get(observer);
-        if (observedObjects == null) {
-            observedObjects = new HashSet<EObject>();
-            lightweightObservers.put(observer, observedObjects);
+        Set<LightweightEObjectObserver> observers = lightweightObservers.get(observedObject);
+        if (observers == null) {
+            observers = CollectionsFactory.createSet();
+            lightweightObservers.put(observedObject, observers);
         }
-        return observedObjects.add(observedObject);
+        return observers.add(observer);
     }
 
     @Override
     public boolean removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
         boolean result = false;
-        Collection<EObject> observedObjects = lightweightObservers.get(observer);
-        if (observedObjects != null) {
-            result = observedObjects.remove(observedObject);
-            if (observedObjects.isEmpty()) {
-                lightweightObservers.remove(observer);
+        Set<LightweightEObjectObserver> observers = lightweightObservers.get(observedObject);
+        if (observers != null) {
+            result = observers.remove(observer);
+            if (observers.isEmpty()) {
+                lightweightObservers.remove(observedObject);
             }
         }
         return result;
     }
 
     /**
-     * @return the lightweightObservers
+     * NOTE: This method returns the inverted map of the internal storage of observers and
+     *  the inversion can be expensive when a large number of observers are registered for 
+     *  many different EObjects.
+     * 
+     * @return the lightweightObservers to EObject Map
+     * @deprecated Use {@link #getEObjectsObservedByLightweightObservers()} and
+     *             {@link #getLightweightEObjectObservers(EObject)} instead.
      */
+    @Deprecated
     public Map<LightweightEObjectObserver, Collection<EObject>> getLightweightObservers() {
-        return lightweightObservers;
+        Map<LightweightEObjectObserver, Collection<EObject>> invertedMap = CollectionsFactory.createMap();
+        for (Entry<EObject, Set<LightweightEObjectObserver>> entry : lightweightObservers.entrySet()) {
+            EObject key = entry.getKey();
+            Set<LightweightEObjectObserver> value = entry.getValue();
+            for (LightweightEObjectObserver observer : value) {
+                Collection<EObject> observedObjects = invertedMap.get(observer);
+                if (observedObjects == null) {
+                    observedObjects = CollectionsFactory.createSet();
+                    invertedMap.put(observer, observedObjects);
+                }
+                observedObjects.add(key);
+            }
+        }
+        return invertedMap;
     }
 
     public void notifyBaseIndexChangeListeners() {
@@ -814,10 +835,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void notifyLightweightObservers(final EObject host, final EStructuralFeature feature,
             final Notification notification) {
-        for (final Entry<LightweightEObjectObserver, Collection<EObject>> entry : getLightweightObservers()
-                .entrySet()) {
-            if (entry.getValue().contains(host)) {
-                entry.getKey().notifyFeatureChanged(host, feature, notification);
+        if (lightweightObservers.containsKey(host)) {
+            Set<LightweightEObjectObserver> observers = lightweightObservers.get(host);
+            for (final LightweightEObjectObserver observer : observers) {
+                observer.notifyFeatureChanged(host, feature, notification);
             }
         }
     }
