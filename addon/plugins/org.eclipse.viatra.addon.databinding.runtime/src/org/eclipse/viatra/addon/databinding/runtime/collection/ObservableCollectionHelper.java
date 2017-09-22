@@ -26,12 +26,14 @@ import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
 import org.eclipse.viatra.transformation.evm.specific.job.SequentialProcessorsJob;
 
 import com.google.common.collect.ImmutableList;
@@ -129,6 +131,19 @@ public final class ObservableCollectionHelper {
         ruleEngine.addRule(specification, filter);
         fireActivations(ruleEngine, specification, filter);
         return ruleEngine;
+    }
+    
+    protected static void disposeRuleEngine(RuleEngine ruleEngine) {
+        Map<ViatraQueryEngine, WeakReference<RuleEngine>> ruleEngineMap = getInstance().getQueryToRuleEngineMap();
+        EventRealm eventRealm = ruleEngine.getEventRealm();
+        if(eventRealm instanceof ViatraQueryEventRealm) {
+            ViatraQueryEngine queryEngine = ((ViatraQueryEventRealm) eventRealm).getEngine();
+            ruleEngineMap.remove(queryEngine);
+        } else {
+            // very unlikely case as we always create such realm
+            throw new IllegalArgumentException("Trying to dispose rule engine on realm different from ViatraQueryEventRealm!");
+        }
+        ruleEngine.dispose();
     }
 
     /**

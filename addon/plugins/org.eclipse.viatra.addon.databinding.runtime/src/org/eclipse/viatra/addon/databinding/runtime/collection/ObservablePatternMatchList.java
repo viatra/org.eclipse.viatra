@@ -132,9 +132,12 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
     @Override
     public synchronized void dispose() {
-        ruleEngine.removeRule(specification,matchFilter);
-        if(privateRuleEngine && ruleEngine.getRuleSpecificationMultimap().isEmpty()) {
-            ruleEngine.dispose();
+        if (ruleEngine != null) {
+            ruleEngine.removeRule(specification, matchFilter);
+            if (privateRuleEngine && ruleEngine.getRuleSpecificationMultimap().isEmpty()) {
+                ObservableCollectionHelper.disposeRuleEngine(ruleEngine);
+            }
+            ruleEngine = null;
         }
         clear();
         super.dispose();
