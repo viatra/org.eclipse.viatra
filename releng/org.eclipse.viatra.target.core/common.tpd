@@ -32,7 +32,8 @@ location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R
 location "http://download.eclipse.org/cbi/updates/license/" {
     org.eclipse.license.feature.group
 }
-location "http://download.eclipse.org/collections/8.2.0/repository/" {
+location "http://download.eclipse.org/viatra/dependency/collections-71" {
     org.eclipse.collections
+    org.eclipse.collections.api
 }
 

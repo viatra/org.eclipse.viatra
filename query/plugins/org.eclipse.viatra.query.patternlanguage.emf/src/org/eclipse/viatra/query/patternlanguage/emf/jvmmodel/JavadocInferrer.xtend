@@ -32,15 +32,15 @@ class JavadocInferrer {
      */
     def javadocMatchClass(Pattern pattern) '''
         Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern,
-        to be used in conjunction with {@link «pattern.findMatcherClass.simpleName»}.
+        to be used in conjunction with {@link «pattern.findMatcherClass?.simpleName»}.
         
         <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
         Each instance is a (possibly partial) substitution of pattern parameters,
         usable to represent a match of the pattern in the result of a query,
         or to specify the bound (fixed) input parameters when issuing a query.
         
-        @see «pattern.findMatcherClass.simpleName»
-        «IF pattern.findInferredClass(IMatchProcessor) !== null» @see «pattern.findInferredClass(IMatchProcessor).simpleName»«ENDIF»
+        @see «pattern.findMatcherClass?.simpleName»
+        «IF pattern.findInferredClass(IMatchProcessor) !== null» @see «pattern.findInferredClass(IMatchProcessor)?.simpleName»«ENDIF»
     '''
 
     def javadocMatcherClass(Pattern pattern) '''
@@ -50,23 +50,23 @@ class JavadocInferrer {
         <p>Use the pattern matcher on a given model via {@link #on(ViatraQueryEngine)},
         e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}.
         
-        <p>Matches of the pattern will be represented as {@link «pattern.findMatchClass.simpleName»}.
+        <p>Matches of the pattern will be represented as {@link «pattern.findMatchClass?.simpleName»}.
         
         <p>Original source:
         <code><pre>
         «pattern.serializeToJavadoc»
         </pre></code>
         
-        @see «pattern.findMatchClass.simpleName»
-        «IF pattern.findInferredClass(IMatchProcessor) !== null» @see «pattern.findInferredClass(IMatchProcessor).simpleName»«ENDIF»
-        @see «pattern.findInferredSpecification.simpleName»
+        @see «pattern.findMatchClass?.simpleName»
+        «IF pattern.findInferredClass(IMatchProcessor) !== null» @see «pattern.findInferredClass(IMatchProcessor)?.simpleName»«ENDIF»
+        @see «pattern.findInferredSpecification?.simpleName»
     '''
 
     def javadocQuerySpecificationClass(Pattern pattern) '''
-        A pattern-specific query specification that can instantiate «pattern.findMatcherClass.simpleName» in a type-safe way.
+        A pattern-specific query specification that can instantiate «pattern.findMatcherClass?.simpleName» in a type-safe way.
         
-        @see «pattern.findMatcherClass.simpleName»
-        @see «pattern.findMatchClass.simpleName»
+        @see «pattern.findMatcherClass?.simpleName»
+        @see «pattern.findMatchClass?.simpleName»
     '''
 
     def javadocProcessorClass(Pattern pattern) '''
@@ -102,7 +102,7 @@ class JavadocInferrer {
         «FOR p : pattern.parameters»
             @param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
         «ENDFOR»
-        @return matches represented as a «pattern.findMatchClass.simpleName» object.
+        @return matches represented as a «pattern.findMatchClass?.simpleName» object.
     '''
 
     def javadocGetOneArbitraryMatchMethod(Pattern pattern) '''
@@ -111,7 +111,7 @@ class JavadocInferrer {
         «FOR p : pattern.parameters»
             @param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
         «ENDFOR»
-        @return a match represented as a «pattern.findMatchClass.simpleName» object, or null if no match is found.
+        @return a match represented as a «pattern.findMatchClass?.simpleName» object, or null if no match is found.
     '''
 
     def javadocHasMatchMethod(Pattern pattern) '''
