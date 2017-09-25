@@ -85,6 +85,11 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                 return scope_EPackage(importDecl, ref);
             } else if (EcoreUtil2.isAssignableFrom(EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT, refType)) {
                 return scope_PackageImport(ctx);
+            } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM, refType)) {
+                EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
+                if (containingValue != null) {
+                    return scope_EEnum(containingValue);
+                }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ECLASSIFIER, refType)) {
                 ClassType containingClassDeclaration = EcoreUtil2.getContainerOfType(ctx, ClassType.class);
                 if (containingClassDeclaration != null) {
@@ -95,7 +100,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
             } else if (EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.VARIABLE, refType)) {
                 PatternBody containingBody = EcoreUtil2.getContainerOfType(ctx, PatternBody.class);
                 if (containingBody != null) {
-                    return scope_Variable((PatternBody) ctx);
+                    return scope_Variable((PatternBody) containingBody);
                 }
                 AnnotationParameter containingAnnotationParameter = EcoreUtil2.getContainerOfType(ctx,
                         AnnotationParameter.class);
@@ -109,11 +114,6 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                 } else {
                     PathExpressionHead head = EcoreUtil2.getContainerOfType(ctx, PathExpressionHead.class);
                     return scope_EStructuralFeature(head);
-                }
-            } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM, refType)) {
-                EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
-                if (containingValue != null) {
-                    return scope_EEnum(containingValue);
                 }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM_LITERAL, refType)) {
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
