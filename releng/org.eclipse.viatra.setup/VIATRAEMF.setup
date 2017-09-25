@@ -176,6 +176,9 @@
           name="org.mockito"/>
       <requirement
           name="org.hamcrest"/>
+      <requirement
+          name="com.google.guava"
+          versionRange="[15.0.0,21.0.0)"/>
       <repositoryList
           name="Mars">
         <repository
