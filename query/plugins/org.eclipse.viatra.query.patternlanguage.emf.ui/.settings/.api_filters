@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.patternlanguage.emf.ui" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/ui/AbstractEMFPatternLanguageUiModule.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.AbstractEMFPatternLanguageUiModule">
+        <filter comment="Internal API; used only generically" id="1143996420">
+            <message_arguments>
+                <message_argument value="configureCompareViewerTitle(Binder)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/ui/util/JavaProjectClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider">
         <filter comment="Internal API update" id="338792546">
             <message_arguments>

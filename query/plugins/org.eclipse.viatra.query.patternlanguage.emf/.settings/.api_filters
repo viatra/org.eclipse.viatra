@@ -8,14 +8,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/IClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider">
-        <filter comment="Internal API update" id="405901410">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider"/>
-                <message_argument value="getClassLoader(Pattern)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/helper/EMFPatternLanguageHelper.java" type="org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper">
         <filter comment="Utility class with only static methods; no need to instantiate" id="354463860">
             <message_arguments>
@@ -80,11 +72,33 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/IClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider">
+        <filter comment="Internal API update" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider"/>
+                <message_argument value="getClassLoader(EObject)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider"/>
+                <message_argument value="getClassLoader(Pattern)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/PatternParsingUtil.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil">
         <filter comment="Code cleanup" id="354463860">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil"/>
                 <message_argument value="PatternParsingUtil()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/SimpleClassLoaderProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider">
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider"/>
+                <message_argument value="getClassLoader(Pattern)"/>
             </message_arguments>
         </filter>
     </resource>

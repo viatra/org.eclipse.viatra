@@ -159,13 +159,13 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
     
         parameters.source = source
     
-        if(source == null || source.EPackage == null){
+        if(source === null || source.EPackage === null){
           if(feedback)
             errorFeedback.reportError(sourcevar,"Source EClass or EPackage not found!", SURROGATE_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
           throw new IllegalArgumentException("Surrogate pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
         }
         val pckg = source.EPackage
-        if(pckg == null){
+        if(pckg === null){
           if(feedback)
             errorFeedback.reportError(sourcevar,"EPackage not found!", SURROGATE_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
           throw new IllegalArgumentException("Surrogate pattern "+pattern.fullyQualifiedName+": EPackage not found!")

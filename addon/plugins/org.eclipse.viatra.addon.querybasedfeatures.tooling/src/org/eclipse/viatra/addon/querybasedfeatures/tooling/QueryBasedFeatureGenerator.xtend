@@ -185,13 +185,13 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     parameters.sourceVar = sourceTmp
     parameters.source = source
 
-    if(source == null || source.EPackage == null){
+    if(source === null || source.EPackage === null){
       if(feedback)
         errorFeedback.reportError(sourcevar,"Source EClass or EPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
     }
     val pckg = source.EPackage
-    if(pckg == null){
+    if(pckg === null){
       if(feedback)
         errorFeedback.reportError(sourcevar,"EPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": EPackage not found!")
@@ -225,7 +225,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
           parameters.resourceWritable = false
           val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode");
           var useModelCode = false;
-          if(useModelCodeRef != null){
+          if(useModelCodeRef !== null){
             useModelCode = useModelCodeRef.getValue(Boolean)
           }
           val annotationsOK = QueryBasedFeatures::checkEcoreAnnotation(pckg, feature, pattern.fullyQualifiedName, useModelCode)

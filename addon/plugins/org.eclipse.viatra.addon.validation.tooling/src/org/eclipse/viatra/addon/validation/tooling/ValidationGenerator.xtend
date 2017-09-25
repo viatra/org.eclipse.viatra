@@ -73,7 +73,7 @@ class ValidationGenerator implements IGenerationFragment {
             val pack = imp.EPackage;
             val genPackage = vqGenModelProvider.findGenPackage(pattern, pack);
 
-            if (genPackage != null) {
+            if (genPackage !== null) {
                 val editorId = genPackage.qualifiedEditorClassName + "ID";
                 if (!editorId.nullOrEmpty) {
                     extensionList.add(Pair::of(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT))
@@ -134,7 +134,7 @@ class ValidationGenerator implements IGenerationFragment {
                                 val pack = imp.EPackage;
                                 val genPackage = vqGenModelProvider.findGenPackage(pattern, pack);
 
-                                if (genPackage != null) {
+                                if (genPackage !== null) {
                                     val editorId = genPackage.qualifiedEditorClassName + "ID";
                                     contribElement(it, "enabledForEditor") [
                                         contribAttribute(it, "editorId", editorId)

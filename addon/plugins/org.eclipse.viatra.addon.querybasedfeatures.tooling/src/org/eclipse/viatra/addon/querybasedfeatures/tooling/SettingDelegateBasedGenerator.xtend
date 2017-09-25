@@ -63,7 +63,7 @@ class SettingDelegateBasedGenerator {
       var ecoreAnnotation = annotations.findFirst[
         source == QueryBasedFeatures::ECORE_ANNOTATION
       ]
-      if(ecoreAnnotation == null) {
+      if(ecoreAnnotation === null) {
         ecoreAnnotation = EcoreFactory::eINSTANCE.createEAnnotation
         ecoreAnnotation.source = QueryBasedFeatures::ECORE_ANNOTATION
         pckg.EAnnotations.add(ecoreAnnotation)
@@ -71,7 +71,7 @@ class SettingDelegateBasedGenerator {
       var entry = ecoreAnnotation.details.findFirst[
         key == QueryBasedFeatures::SETTING_DELEGATES_KEY
       ]
-      if(entry == null) {
+      if(entry === null) {
         // add entry ("patternFQN", pattern.fullyQualifiedName)
         ecoreAnnotation.details.put(QueryBasedFeatures::SETTING_DELEGATES_KEY, QueryBasedFeatures::ANNOTATION_SOURCE)
       } else {

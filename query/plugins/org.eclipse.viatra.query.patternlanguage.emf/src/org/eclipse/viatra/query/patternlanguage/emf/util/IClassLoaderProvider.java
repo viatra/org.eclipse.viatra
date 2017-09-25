@@ -27,6 +27,7 @@ public interface IClassLoaderProvider {
      * @return the found classloader, never null
      * @throws ViatraQueryException
      *             if no classloader is found, or classloader cannot be initialized, an exception is thrown
+     * @since 1.7
      */
     ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException;
 

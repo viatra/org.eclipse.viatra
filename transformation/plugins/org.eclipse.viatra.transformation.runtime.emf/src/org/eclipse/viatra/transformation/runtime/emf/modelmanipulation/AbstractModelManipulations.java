@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableList;
  */
 public abstract class AbstractModelManipulations implements IModelManipulations {
 
+    private static final String UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE = "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.";
     protected final ViatraQueryEngine engine;
     private NavigationHelper baseEMFIndex;
 
@@ -145,7 +146,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
-                "The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(),
                 "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
@@ -159,7 +160,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
-                "The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(),
                 "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
@@ -172,7 +173,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public void set(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException {
         EClass containerClass = container.eClass();
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
-                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(!feature.isMany(), "The EStructuralFeature %s must have an upper bound of 1.",
                 feature.getName());
@@ -189,7 +190,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
-                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(),
                 "Remove only works on EStructuralFeatures with 'many' multiplicity.");
@@ -200,7 +201,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public void remove(EObject container, EStructuralFeature feature, int index) throws ModelManipulationException {
         EClass containerClass = container.eClass();
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
-                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(), "Remove only works on features with 'many' multiplicity.");
         doRemove(container, feature, index);
@@ -210,7 +211,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public void remove(EObject container, EStructuralFeature feature) throws ModelManipulationException {
         EClass containerClass = container.eClass();
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
-                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(), "Remove only works on references with 'many' multiplicity.");
         doRemove(container, feature);
