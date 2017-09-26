@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -38,7 +39,7 @@ public abstract class BasePQuery implements PQuery {
 	protected PQueryStatus status = PQueryStatus.UNINITIALIZED;
 	protected List<PProblem> pProblems = new ArrayList<PProblem>();
 	private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
-	private QueryEvaluationHint evaluationHints = null;
+	private QueryEvaluationHint evaluationHints = new QueryEvaluationHint(null, (IQueryBackendFactory)null);
 	PDisjunction canonicalDisjunction;
 	
 	/** For traceability only. */

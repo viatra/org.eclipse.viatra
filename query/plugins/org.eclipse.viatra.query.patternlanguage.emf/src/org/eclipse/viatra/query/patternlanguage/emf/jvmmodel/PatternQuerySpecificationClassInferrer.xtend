@@ -35,7 +35,6 @@ import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
@@ -226,16 +225,19 @@ class PatternQuerySpecificationClassInferrer {
             exceptions += typeRef(QueryInitializationException)
             try {
                 body = '''
-                    setEvaluationHints(«inferQueryEvaluationHints(pattern)»);
+                    «inferQueryEvaluationHints(pattern)»
                     «Set»<«PBody»> bodies = «Sets».newLinkedHashSet();
-                    try {
+                    «IF CorePatternLanguageHelper.getReferencedPatterns(pattern).isEmpty»
                         «inferBodies(pattern)»
                         «inferAnnotations(pattern)»
-                        // to silence compiler error
-                        if (false) throw new ViatraQueryException("Never", "happens");
-                    } catch («ViatraQueryException» ex) {
-                        throw processDependencyException(ex);
-                    }
+                    «ELSE»
+                        try {
+                            «inferBodies(pattern)»
+                            «inferAnnotations(pattern)»
+                        } catch («ViatraQueryException» ex) {
+                            throw processDependencyException(ex);
+                        }
+                    «ENDIF»
                     return bodies;
                 '''
             } catch (Exception e) {
@@ -261,31 +263,19 @@ class PatternQuerySpecificationClassInferrer {
         }
     }
 
-    def StringConcatenationClient incrementalBackendFactory() {
-        '''new «ReteBackendFactory»()'''
-    }
-
-    def StringConcatenationClient searchBackendFactory() {
-        '''«LocalSearchBackendFactory».INSTANCE'''
-    }
-
-    def StringConcatenationClient defaultBackendFactory() {
-        '''(«IQueryBackendFactory»)null'''
-    }
-
     def StringConcatenationClient inferQueryEvaluationHints(Pattern pattern) {
-        '''new «QueryEvaluationHint»(null, «switch(getRequestedExecutionType(pattern)){
+        switch(getRequestedExecutionType(pattern)){
             case INCREMENTAL: {
-                incrementalBackendFactory
+                '''setEvaluationHints(new «QueryEvaluationHint»(null, new «ReteBackendFactory»()));'''
             }
             case SEARCH: {
-                searchBackendFactory
+                '''setEvaluationHints(new «QueryEvaluationHint»(null, «LocalSearchBackendFactory».INSTANCE»));'''
             }
             case UNSPECIFIED: {
-               defaultBackendFactory 
+               '''''' 
             }
             
-         }»)'''
+         }
     }
 
     def StringConcatenationClient inferBodies(Pattern pattern) throws IllegalStateException {
@@ -295,7 +285,7 @@ class PatternQuerySpecificationClassInferrer {
                 «new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder)»
                 bodies.add(body);
             }
-        «ENDFOR»'''
+            «ENDFOR»'''
     }
 
     /**
@@ -315,9 +305,7 @@ class PatternQuerySpecificationClassInferrer {
             '''
 
             members +=
-                pattern.toField("INSTANCE",
-                    typeRef(
-                        querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
+                pattern.toField("INSTANCE", typeRef(querySpecificationClass)) [
                         final = true
                         static = true
                         initializer = '''new «pattern.findInferredSpecification»()''';
