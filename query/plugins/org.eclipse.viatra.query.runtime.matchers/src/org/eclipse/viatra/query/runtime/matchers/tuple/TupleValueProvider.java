@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider;
  */
 public class TupleValueProvider implements IValueProvider {
 
-    final Tuple tuple;
+    final ITuple tuple;
     final Map<String, Integer> indexMapping;
     
     /**
@@ -28,7 +28,7 @@ public class TupleValueProvider implements IValueProvider {
      * @param tuple
      * @param indexMapping
      */
-    public TupleValueProvider(Tuple tuple, Map<String, Integer> indexMapping) {
+    public TupleValueProvider(ITuple tuple, Map<String, Integer> indexMapping) {
         super();
         this.tuple = tuple;
         this.indexMapping = indexMapping;

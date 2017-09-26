@@ -54,7 +54,7 @@ public final class FlatTuple extends BaseFlatTuple {
     }
 
     @Override
-    protected boolean internalEquals(Tuple other) {
+    protected boolean internalEquals(ITuple other) {
         if (other instanceof FlatTuple) {
             return Arrays.equals(elements, ((FlatTuple) other).elements);
         } else

@@ -13,6 +13,10 @@
 package org.eclipse.viatra.query.runtime.localsearch;
 
 import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITupleMask;
 
 /**
  * VariableType will be mapped to PatternVariable in the interpreted

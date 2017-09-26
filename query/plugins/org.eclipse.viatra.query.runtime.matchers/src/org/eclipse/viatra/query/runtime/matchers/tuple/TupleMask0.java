@@ -19,11 +19,6 @@ import java.util.List;
  */
 public final class TupleMask0 extends TupleMask {
 
-    /**
-     * @param indices
-     * @param sourceWidth
-     * 
-     */
     @SuppressWarnings("deprecation")
     TupleMask0(int[] indices, int sourceWidth) {
         super(indices, sourceWidth);
@@ -35,7 +30,7 @@ public final class TupleMask0 extends TupleMask {
     }
     
     @Override
-    public Tuple transform(Tuple original) {
+    public Tuple transform(ITuple original) {
         return Tuples.staticArityFlatTupleOf();
     }
 

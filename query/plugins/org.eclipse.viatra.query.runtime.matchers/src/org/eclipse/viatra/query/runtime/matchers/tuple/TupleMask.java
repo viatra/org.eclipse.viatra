@@ -12,16 +12,19 @@
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
+ * 
+ * Specifies select indices of a tuple. If viewed through this mask, the signature of the pattern will consist of its
+ * individual substitutions at the given positions, in the exact same order as they appear in indices[].
+ * 
  * @author Gabor Bergmann
- * 
- *         Specifies select indices of a tuple. If viewed through this mask, the signature of the pattern will consist
- *         of its individual substitutions at the given positions, in the exact same order as they appear in indices[].
- * 
  */
 public class TupleMask {
     /**
@@ -158,6 +161,13 @@ public class TupleMask {
         return fromSelectedIndicesInternal(selected, sourceArity);
     }
     /**
+     * Creates a TupleMask instance that selects given positions.
+     * @since 1.7
+     */
+    public static TupleMask fromSelectedIndices(int sourceArity, int[] selectedIndices) {
+        return fromSelectedIndicesInternal(Arrays.copyOf(selectedIndices, selectedIndices.length), sourceArity);
+    }
+    /**
      * @since 1.7
      */
     public static int[] integersToIntArray(Collection<Integer> selectedIndices) {
@@ -226,9 +236,29 @@ public class TupleMask {
     }
 
     /**
-     * Generates a masked view of the original tuple.
+     * Returns a selected masked value from the selected tuple.
+     * @pre: 0 <= index < getSize() 
+     * @since 1.7
      */
-    public Tuple transform(Tuple original) {
+    public Object getValue(ITuple original, int index) {
+        return original.get(indices[index]);
+    }
+    
+    /**
+     * Sets the selected value in the original tuple based on the mask definition
+     * 
+     * @pre: 0 <= index < getSize()
+     * @since 1.7
+     */
+    public void set(IModifiableTuple tuple, int index, Object value) {
+        tuple.set(indices[index], value);
+    }
+    
+    /**
+     * Generates an immutable, masked view of the original tuple.
+     * @since 1.7
+     */
+    public Tuple transform(ITuple original) {
         Object signature[] = new Object[indices.length];
         for (int i = 0; i < indices.length; ++i)
             signature[i] = original.get(indices[i]);
@@ -236,7 +266,7 @@ public class TupleMask {
     }
 
     /**
-     * Generates a masked view of the original tuple.
+     * Generates an immutable, masked view of the original tuple.
      */
     public <T> List<T> transform(List<T> original) {
         List<T> signature = new ArrayList<T>(indices.length);
@@ -366,5 +396,31 @@ public class TupleMask {
         s.append(')');
         return s.toString();
     }
+    
+    /**
+     * Returns the size of the masked tuples described by this mask
+     * @since 1.7 
+     */
+    public int getSize() {
+        return indices.length;
+    }
 
+    /**
+     * Returns the size of the original tuples handled by this mask
+     * @since 1.7
+     */
+    public int getSourceWidth() {
+        return sourceWidth;
+    }
+    
+    /**
+     * Creates a copied version of an original list into a set, keeping a single element in case of duplicate values
+     * @since 1.7 
+     */
+    public <T> Set<T> transformUnique(List<T> original) {
+        Set<T> signature = new HashSet<>();
+        for (int i = 0; i < indices.length; ++i)
+            signature.add(original.get(indices[i]));
+        return signature;
+    }
 }

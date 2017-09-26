@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.TransitiveClosureGraph;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -47,12 +47,12 @@ public abstract class ExtendBinaryTransitiveClosureIncremental extends ExtendOpe
         }
         
         @Override
-        protected Object getSource(Tuple frame) {
+        protected Object getSource(ITuple frame) {
             return frame.get(1);
         }
 
         @Override
-        protected Iterable<Object> getTargets(Tuple frame, TransitiveClosureGraph closure) {
+        protected Iterable<Object> getTargets(ITuple frame, TransitiveClosureGraph closure) {
             return closure.getAllSources(frame.get(0));
         }
     }
@@ -70,12 +70,12 @@ public abstract class ExtendBinaryTransitiveClosureIncremental extends ExtendOpe
         }
 
         @Override
-        protected Object getSource(Tuple frame) {
+        protected Object getSource(ITuple frame) {
             return frame.get(1);
         }
         
         @Override
-        protected Iterable<Object> getTargets(Tuple frame, TransitiveClosureGraph closure) {
+        protected Iterable<Object> getTargets(ITuple frame, TransitiveClosureGraph closure) {
             return closure.getAllSources(frame.get(1));
         }
 
@@ -95,8 +95,8 @@ public abstract class ExtendBinaryTransitiveClosureIncremental extends ExtendOpe
                 seedPosition, calledQuery.getQuery().getParameters().get(1), targetPosition));
     }
 
-    protected abstract Object getSource(Tuple frame);
-    protected abstract Iterable<Object> getTargets(Tuple frame, TransitiveClosureGraph closure);
+    protected abstract Object getSource(ITuple frame);
+    protected abstract Iterable<Object> getTargets(ITuple frame, TransitiveClosureGraph closure);
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {

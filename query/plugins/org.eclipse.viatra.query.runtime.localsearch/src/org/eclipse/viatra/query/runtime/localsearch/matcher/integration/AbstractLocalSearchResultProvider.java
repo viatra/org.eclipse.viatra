@@ -335,7 +335,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
         final MatchingFrame frame = matcher.editableMatchingFrame();
         frame.setParameterValues(parameters);
-        return matcher.getOneArbitraryMatch(frame);
+        return matcher.getOneArbitraryMatch(frame).toImmutable();
     }
 
     @Override

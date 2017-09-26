@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileTuple;
 
 import com.google.common.base.Preconditions;
 
@@ -30,7 +30,7 @@ import com.google.common.base.Preconditions;
  * <li>ValueType => AnyModelElement</li>
  * </ul>
  */
-public class MatchingFrame extends Tuple {
+public class MatchingFrame extends VolatileTuple {
 
     private static final String KEYS_ARRAY_SETUP_MISSING_MESSAGE = "A non-null key array has to be set up before getElements() is called.";
     private static final String KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE = "Argument keys must not be null.";

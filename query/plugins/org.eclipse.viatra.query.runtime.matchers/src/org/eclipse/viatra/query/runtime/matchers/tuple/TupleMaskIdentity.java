@@ -29,8 +29,8 @@ public final class TupleMaskIdentity extends TupleMask {
     }
     
     @Override
-    public Tuple transform(Tuple original) {
-        return original;
+    public Tuple transform(ITuple original) {
+        return original.toImmutable();
     }
     
     @Override

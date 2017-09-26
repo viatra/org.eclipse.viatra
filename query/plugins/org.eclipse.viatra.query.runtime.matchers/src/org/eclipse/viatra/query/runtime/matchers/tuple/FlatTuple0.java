@@ -42,7 +42,7 @@ public final class FlatTuple0 extends BaseFlatTuple {
     }
     
     @Override
-    protected boolean internalEquals(Tuple other) {
+    protected boolean internalEquals(ITuple other) {
         return 0 == other.getSize();
     }
 }
