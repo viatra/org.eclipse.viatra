@@ -13,7 +13,9 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 /**
  * Provides instance model information (relations corresponding to input keys) to query evaluator backends at runtime.
@@ -106,11 +108,33 @@ public interface IQueryRuntimeContext {
      * 
      * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @deprecated use {@link #countTuples(IInputKey, ITuple)} instead
      */
+    @Deprecated
     public int countTuples(IInputKey key, Tuple seed);
     
     /**
-     * Returns the tuples in the extensional relation identified by the input key, optionally seeded with the given tuple.
+     * Returns the number of tuples in the extensional relation identified by the input key seeded with the given mask and tuple.
+     * 
+     * @param key an input key 
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value;  must not be null. <strong>Note</strong>: any given index must occur at most once in seedMask.
+     * @param seed
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold. Must not be null.
+     *  
+     * @return the number of tuples in the model for the given key and seed
+     * 
+     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @since 1.7
+     */
+    public int countTuples(IInputKey key, TupleMask seedMask, ITuple seed);
+    
+    /**
+     * Returns the tuples in the extensional relation identified by the input key seeded with the given mask and tuple.
      * 
      * @param key an input key
      * @param seed can be null or a tuple with matching arity; 
@@ -120,8 +144,29 @@ public interface IQueryRuntimeContext {
      * 
      * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @deprecated use {@link #enumerateTuples(IInputKey, ITuple)} instead
      */
+    @Deprecated
     public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed);
+    
+    /**
+     * Returns the tuples in the extensional relation identified by the input key, optionally seeded with the given tuple.
+     * 
+     * @param key an input key
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value;  must not be null. <strong>Note</strong>: any given index must occur at most once in seedMask.
+     * @param seed
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold. Must not be null. 
+     * @return the tuples in the model for the given key and seed
+     * 
+     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @since 1.7
+     */
+    public Iterable<Tuple> enumerateTuples(IInputKey key, TupleMask seedMask, ITuple seed);
     
     /**
      * Simpler form of {@link #enumerateTuples(IInputKey, Tuple)} in the case where all values of the tuples are bound by the seed except for one. 
@@ -138,8 +183,38 @@ public interface IQueryRuntimeContext {
      * 
      * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @deprecated use {@link #enumerateValues(IInputKey, ITuple)} instead
      */
+    @Deprecated
     public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed);
+    
+    /**
+     * Simpler form of {@link #enumerateTuples(IInputKey, TupleMask, Tuple)} in the case where all values of the tuples
+     * are bound by the seed except for one.
+     * 
+     * <p>
+     * Selects the tuples in the extensional relation identified by the input key, optionally seeded with the given
+     * tuple, and then returns the single value from each tuple which is not bound by the ssed mask.
+     * 
+     * @param key
+     *            an input key
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value; must not be null. <strong>Note</strong>: any given index must occur at most
+     *            once in seedMask, and seedMask must include all parameters in any arbitrary order except one.
+     * @param seed
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold. Must not be null.
+     * @return the objects in the model for the given key and seed
+     * 
+     *         <p>
+     *         <b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @throws IllegalArgumentException
+     *             if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @since 1.7
+     */
+    public Iterable<? extends Object> enumerateValues(IInputKey key, TupleMask seedMask, ITuple seed);
     
     /**
      * Simpler form of {@link #enumerateTuples(IInputKey, Tuple)} in the case where all values of the tuples are bound by the seed. 
@@ -151,8 +226,38 @@ public interface IQueryRuntimeContext {
      * @param key an input key
      * @param seed a tuple with matching arity, consisting of non-null elements (null can be used in the 0-ary case). 
      * @return true iff the seed tuple is contained in the relation
+     * @deprecated use {@link #containsTuple(IInputKey, ITuple)} instead
      */
+    @Deprecated
     public boolean containsTuple(IInputKey key, Tuple seed);
+    
+    /**
+     * Simpler form of {@link #enumerateTuples(IInputKey, TupleMask, Tuple)} in the case where all values of the tuples
+     * are bound by the seed.
+     * 
+     * <p>
+     * Returns whether the given tuple is in the extensional relation identified by the input key.
+     * 
+     * <p>
+     * Note: this call works for non-enumerable input keys as well.
+     * 
+     * @param key
+     *            an input key
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value; must not be null. <strong>Note</strong>: this mask is expected to be
+     *            TupleMask.identity(type.getArity()); the parameter is entirely ignored. The parameter is only
+     *            introduced to avoid potential confusion between the deprecated
+     *            {@link #containsTuple(IInputKey, Tuple)} method and this. For version 2.0 this conflict will be
+     *            resolved by having only a single containsTuple(IInputKey, ITuple) method.
+     * @param seed
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold. Must not be null.
+     * @return true iff there is at least a single tuple contained in the relation that corresponds to the seed tuple
+     * @since 1.7
+     */
+    public boolean containsTuple(IInputKey key, TupleMask seedMask, ITuple seed);
 
     
     /**
@@ -169,6 +274,7 @@ public interface IQueryRuntimeContext {
      * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
      */
     public void addUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener);
+    
     /**
      * Unsubscribes from updates in the extensional relation identified by the input key, optionally seeded with the given tuple.
      * 

@@ -37,5 +37,10 @@ public final class TupleMaskIdentity extends TupleMask {
     public TupleMask transform(TupleMask mask) {
         return mask;
     }
+
+    @Override
+    public Tuple revertFrom(ITuple masked) {
+        return masked.toImmutable();
+    }
     
 }

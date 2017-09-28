@@ -28,13 +28,23 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
  */
 public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
 
+    private PVariable variable;
+
     public ConstantValue(PBody pBody, PVariable variable, Object value) {
         super(pBody, Tuples.staticArityFlatTupleOf(variable), value);
+        this.variable = variable;
     }
 
     @Override
     protected String keyToString() {
         return supplierKey.toString();
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public PVariable getVariable() {
+        return variable;
     }
     
     @Override

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.generic;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -20,12 +18,15 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Zoltan Ujhelyi
@@ -35,41 +36,45 @@ import com.google.common.collect.Iterators;
 public class GenericTypeCheck extends CheckOperation implements IIteratingSearchOperation {
 
     private final IInputKey type;
-    private final Integer[] positions;
+    private ImmutableList<Integer> positionList;
+    private VolatileMaskedTuple maskedTuple;
+    private final TupleMask indexerMask;
 
-    public GenericTypeCheck(IInputKey type, Integer[] positions) {
+    public GenericTypeCheck(IInputKey type, int[] positions, TupleMask callMask) {
         Preconditions.checkArgument(positions.length == type.getArity(),
                 "The type %s requires %s parameters, but %s positions are provided", type.getPrettyPrintableName(),
                 type.getArity(), positions.length);
-        this.positions = positions;
+        Builder<Integer> builder = ImmutableList.<Integer>builder();
+        for (int position : positions) {
+            builder.add(position);
+        }
+        this.positionList = builder.build();
+        this.maskedTuple = new VolatileMaskedTuple(callMask);
         this.type = type;
+        this.indexerMask = TupleMask.identity(type.getArity());
     }
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(positions);
+        return positionList;
     }
 
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        Object[] seed = new Object[positions.length];
-        for (int i = 0; i < positions.length; i++) {
-            seed[i] = frame.get(positions[i]);
-        }
-        return context.getRuntimeContext().containsTuple(type, Tuples.flatTupleOf(seed));
+        maskedTuple.updateTuple(frame);
+        return context.getRuntimeContext().containsTuple(type, indexerMask, maskedTuple);
     }
 
     @Override
     public String toString() {
-        Iterator<String> parameterIndexii = Iterators.transform(Iterators.forArray(positions),
-                new Function<Integer, String>() {
+        Iterable<String> parameterIndices = Iterables.transform(positionList, new Function<Integer, String>() {
 
                     @Override
                     public String apply(Integer input) {
                         return String.format("+%d", input);
                     }
                 });
-        return "check     " + type.getPrettyPrintableName() + "(" + Joiner.on(", ").join(parameterIndexii) + ")";
+        return "check     " + type.getPrettyPrintableName() + "(" + Joiner.on(", ").join(parameterIndices) + ")";
     }
 
     @Override

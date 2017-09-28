@@ -11,6 +11,8 @@ package org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
  * Cost function which calculates cost based on the cardinality of items in the runtime model, provided by the base indexer
@@ -23,7 +25,7 @@ public class IndexerBasedConstraintCostFunction extends StatisticsBasedConstrain
     @Override 
     public long countTuples(IConstraintEvaluationContext input, IInputKey supplierKey) {
         return (supplierKey.isEnumerable()) 
-            ? input.getRuntimeContext().countTuples(supplierKey, null)
+            ? input.getRuntimeContext().countTuples(supplierKey, TupleMask.empty(supplierKey.getArity()), Tuples.staticArityFlatTupleOf())
             : Math.round(DEFAULT_COST);
     }
     

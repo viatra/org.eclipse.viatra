@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.generic;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -23,12 +23,15 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchO
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * @author Zoltan Ujhelyi
@@ -38,9 +41,12 @@ import com.google.common.collect.Iterators;
 public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOperation {
 
     private final IInputKey type;
-    private final Integer[] positions;
+    private final int[] positions;
+    private final ImmutableList<Integer> positionList;
     private final Set<Integer> unboundVariableIndex;
     private Iterator<Tuple> it;
+    private final VolatileMaskedTuple maskedTuple;
+    private TupleMask indexerMask;
 
     /**
      * 
@@ -51,10 +57,15 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
      * @param adornment
      *            the set of positions that are bound at the start of the operation
      */
-    public GenericTypeExtend(IInputKey type, Integer[] positions, Set<Integer> adornment) {
+    public GenericTypeExtend(IInputKey type, int[] positions, TupleMask callMask, TupleMask indexerMask, Set<Integer> adornment) {
         Preconditions.checkArgument(positions.length == type.getArity(),
                 "The type %s requires %s parameters, but %s positions are provided", type.getPrettyPrintableName(),
                 type.getArity(), positions.length);
+        Builder<Integer> builder = ImmutableList.<Integer>builder();
+        for (int position : positions) {
+            builder.add(position);
+        }
+        this.positionList = builder.build();
         this.positions = positions;
         this.type = type;
 
@@ -64,6 +75,8 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
                 unboundVariableIndex.add(position);
             }
         }
+        this.maskedTuple = new VolatileMaskedTuple(callMask);
+        this.indexerMask = indexerMask;
     }
 
     @Override
@@ -80,11 +93,8 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        Object[] seed = new Object[positions.length];
-        for (int i = 0; i < positions.length; i++) {
-            seed[i] = frame.get(positions[i]);
-        }
-        it = context.getRuntimeContext().enumerateTuples(type, Tuples.flatTupleOf(seed)).iterator();
+        maskedTuple.updateTuple(frame);
+        it = context.getRuntimeContext().enumerateTuples(type, indexerMask, maskedTuple).iterator();
 
     }
 
@@ -92,8 +102,19 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
     public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         if (it.hasNext()) {
             final Tuple next = it.next();
+            for (Integer position : unboundVariableIndex) {
+                frame.setValue(position, null);
+            }
             for (int i = 0; i < positions.length; i++) {
-                frame.setValue(positions[i], next.get(i));
+                Object newValue = next.get(i);
+                Object oldValue = frame.getValue(positions[i]);
+                if (oldValue != null && !Objects.equals(oldValue, newValue)) {
+                    // If positions tuple maps more than one values for the same element (e.g. loop), it means that
+                    // these arguments are to unified by the caller. In this case if the callee assigns different values
+                    // the frame shall be considered a failed match
+                    return false;
+                }
+                frame.setValue(positions[i], newValue);
             }
             return true;
         } else {
@@ -103,13 +124,12 @@ public class GenericTypeExtend implements ISearchOperation, IIteratingSearchOper
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(positions);
+        return positionList;
     }
 
     @Override
     public String toString() {
-        Iterator<String> parameterNames = Iterators.transform(Iterators.forArray(positions),
-                new Function<Integer, String>() {
+        Iterable<String> parameterNames = Iterables.transform(positionList, new Function<Integer, String>() {
 
                     @Override
                     public String apply(Integer input) {

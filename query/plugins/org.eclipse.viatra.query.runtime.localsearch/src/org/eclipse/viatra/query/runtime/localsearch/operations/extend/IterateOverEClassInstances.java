@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 import com.google.common.collect.Lists;
 
@@ -35,6 +36,7 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
 
     private final EClass clazz;
     private final EClassTransitiveInstancesKey type;
+    private final static TupleMask indexerMask = TupleMask.empty(1);
 
     public IterateOverEClassInstances(int position, EClass clazz) {
         super(position);
@@ -49,7 +51,7 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
     @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, null);
+        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, null);
         // XXX This casting is only required for API backwards compatibility
         it = (Iterator<EObject>) values.iterator();
     }

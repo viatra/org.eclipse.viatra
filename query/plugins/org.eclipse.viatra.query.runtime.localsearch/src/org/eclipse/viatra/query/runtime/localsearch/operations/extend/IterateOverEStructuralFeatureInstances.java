@@ -22,6 +22,8 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.collect.Lists;
 
@@ -37,6 +39,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
     private final int targetPosition;
     private final EStructuralFeatureInstancesKey type;
     private Iterator<Tuple> it;
+    private final static TupleMask indexerMask = TupleMask.empty(2);
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         this.sourcePosition = sourcePosition;
@@ -58,7 +61,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        Iterable<Tuple> tuples = context.getRuntimeContext().enumerateTuples(type, null);
+        Iterable<Tuple> tuples = context.getRuntimeContext().enumerateTuples(type, indexerMask, Tuples.staticArityFlatTupleOf());
 
         it = tuples.iterator();
     }

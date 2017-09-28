@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
-import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IStructuralFeatureInstanceProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
@@ -41,7 +40,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Function;
@@ -185,14 +186,26 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     }
     
     @Override
+    @Deprecated
     public boolean containsTuple(IInputKey key, Tuple seed) {
+        if (seed == null) {
+            return containsTuple(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
+        } else {
+            TupleMask mask = TupleMask.fromNonNullIndices(seed);
+            return containsTuple(key, mask, mask.transform(seed));
+        }
+    }
+    
+    @Override
+    public boolean containsTuple(IInputKey key, TupleMask seedMask, ITuple seed) {
+        // TODO seedMask is considered to be IdentityMask; it should be removed in version 2.0 
         ensureValidKey(key);
         if (key instanceof JavaTransitiveInstancesKey) {
             Class<?> instanceClass = forceGetWrapperInstanceClass((JavaTransitiveInstancesKey) key);
-            return instanceClass != null && instanceClass.isInstance(getFromSeed(seed, 0));
+            return instanceClass != null && instanceClass.isInstance(seed.get(0));
         } else if (key instanceof EClassUnscopedTransitiveInstancesKey) {
             EClass emfKey = ((EClassUnscopedTransitiveInstancesKey) key).getEmfKey();
-            Object candidateInstance = getFromSeed(seed, 0);
+            Object candidateInstance = seed.get(0);
             return candidateInstance instanceof EObject
                     && baseIndex.isInstanceOfUnscoped((EObject) candidateInstance, emfKey);
         } else {
@@ -200,17 +213,17 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (key instanceof EClassTransitiveInstancesKey) {
                 EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
                 // instance check not enough to satisfy scoping, must lookup from index
-                Object candidateInstance = getFromSeed(seed, 0);
+                Object candidateInstance = seed.get(0);
                 return candidateInstance instanceof EObject 
                         && baseIndex.isInstanceOfScoped((EObject) candidateInstance, eClass);
             } else if (key instanceof EDataTypeInSlotsKey) {
                 EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-                return baseIndex.isInstanceOfDatatype(getFromSeed(seed, 0), dataType);
+                return baseIndex.isInstanceOfDatatype(seed.get(0), dataType);
             } else if (key instanceof EStructuralFeatureInstancesKey) {
                 EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-                Object sourceCandidate = getFromSeed(seed, 0);
+                Object sourceCandidate = seed.get(0);
                 return sourceCandidate instanceof EObject 
-                        && baseIndex.isFeatureInstance((EObject) sourceCandidate, getFromSeed(seed, 1), feature);
+                        && baseIndex.isFeatureInstance((EObject) sourceCandidate, seed.get(1), feature);
             } else {
                 illegalInputKey(key);
                 return false;
@@ -230,36 +243,61 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     }
     
     @Override
+    @Deprecated
     public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed) {
+        if (seed == null) {
+            return enumerateTuples(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
+        } else {
+            TupleMask mask = TupleMask.fromNonNullIndices(seed);
+            return enumerateTuples(key, mask, mask.transform(seed));
+        }
+    }
+    
+    @Override
+    public Iterable<Tuple> enumerateTuples(IInputKey key, TupleMask seedMask, ITuple seed) {
         ensureIndexed(key);
         final Collection<Tuple> result = new HashSet<Tuple>();
         
         if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             
-            Object seedInstance = getFromSeed(seed, 0);
-            if (seedInstance == null) { // unseeded
+            if (seedMask.indices.length == 0) { // unseeded
                 return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
             } else { // fully seeded
-                if (containsTuple(key, seed)) 
+                Object seedInstance = seedMask.getValue(seed, 0);
+                if (containsTuple(key, seedMask, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedInstance));
             }
         } else if (key instanceof EDataTypeInSlotsKey) {
             EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
             
-            Object seedInstance = getFromSeed(seed, 0);
-            if (seedInstance == null) { // unseeded
+            if (seedMask.indices.length == 0) { // unseeded
                 return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
             } else { // fully seeded
-                if (containsTuple(key, seed)) 
+                Object seedInstance = seedMask.getValue(seed, 0);
+                if (containsTuple(key, seedMask, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedInstance));
             }
         } else if (key instanceof EStructuralFeatureInstancesKey) {
             EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
             
-            final Object seedSource = getFromSeed(seed, 0);
-            final Object seedTarget = getFromSeed(seed, 1);
-            if (seedSource == null && seedTarget != null) { 
+            boolean isSourceBound = false;
+            int sourceIndex = -1;
+            boolean isTargetBound = false;
+            int targetIndex = -1;
+            for (int i = 0; i < seedMask.getSize(); i++) {
+                int index = seedMask.indices[i];
+                if (index == 0) {
+                    isSourceBound = true;
+                    sourceIndex = i;
+                } else if (index == 1) {
+                    isTargetBound = true;
+                    targetIndex = i;
+                }
+            }
+            
+            if (!isSourceBound && isTargetBound) { 
+                final Object seedTarget = seed.get(targetIndex);
                 final Set<EObject> results = baseIndex.findByFeatureValue(seedTarget, feature);
                 return Iterables.transform(results, new Function<Object, Tuple>() {
                     @Override
@@ -267,16 +305,19 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                         return Tuples.staticArityFlatTupleOf(obj, seedTarget);
                     }
                 });
-            } else if (seedSource != null && seedTarget != null) { // fully seeded
-                if (containsTuple(key, seed)) 
+            } else if (isSourceBound && isTargetBound) { // fully seeded
+                final Object seedSource = seed.get(sourceIndex);
+                final Object seedTarget = seed.get(targetIndex);
+                if (containsTuple(key, seedMask, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedSource, seedTarget));
-            } else if (seedSource == null && seedTarget == null) { // fully unseeded
+            } else if (!isSourceBound && !isTargetBound) { // fully unseeded
                 baseIndex.processAllFeatureInstances(feature, new IStructuralFeatureInstanceProcessor() {
                     public void process(EObject source, Object target) {
                         result.add(Tuples.staticArityFlatTupleOf(source, target));
                     }
                 });
-            } else if (seedSource != null && seedTarget == null) { 
+            } else if (isSourceBound && !isTargetBound) { 
+                final Object seedSource = seed.get(sourceIndex);
                 final Set<Object> results = baseIndex.getFeatureTargets((EObject) seedSource, feature);
                 return Iterables.transform(results, new Function<Object, Tuple>() {
                     public Tuple apply(Object obj) {
@@ -298,43 +339,67 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             return Tuples.staticArityFlatTupleOf(obj);
         }
     };
+    
+    @Override
+    @Deprecated
+    public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed) {
+        if (seed == null) {
+            return enumerateValues(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
+        } else {
+            TupleMask mask = TupleMask.fromNonNullIndices(seed);
+            return enumerateValues(key, mask, mask.transform(seed));
+        }
+    }
 
     @Override
-    public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed) {
+    public Iterable<? extends Object> enumerateValues(IInputKey key, TupleMask seedMask, ITuple seed) {
         ensureIndexed(key);
         
         if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             
-            Object seedInstance = getFromSeed(seed, 0);
-            if (seedInstance == null) { // unseeded
+            if (seedMask.indices.length == 0) { // unseeded
                 return baseIndex.getAllInstances(eClass);
             } else {
                 // must be unseeded, this is enumerateValues after all!
-                illegalEnumerateValues(seed);
+                illegalEnumerateValues(seed.toImmutable());
             }
         } else if (key instanceof EDataTypeInSlotsKey) {
             EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
             
-            Object seedInstance = getFromSeed(seed, 0);
-            if (seedInstance == null) { // unseeded
+            if (seedMask.indices.length == 0) { // unseeded
                 return baseIndex.getDataTypeInstances(dataType);
             } else {
                 // must be unseeded, this is enumerateValues after all!
-                illegalEnumerateValues(seed);
+                illegalEnumerateValues(seed.toImmutable());
             }
         } else if (key instanceof EStructuralFeatureInstancesKey) {
             EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
             
-            Object seedSource = getFromSeed(seed, 0);
-            Object seedTarget = getFromSeed(seed, 1);
-            if (seedSource == null && seedTarget != null) { 
+            boolean isSourceBound = false;
+            int sourceIndex = -1;
+            boolean isTargetBound = false;
+            int targetIndex = -1;
+            for (int i = 0; i < seedMask.getSize(); i++) {
+                int index = seedMask.indices[i];
+                if (index == 0) {
+                    isSourceBound = true;
+                    sourceIndex = i;
+                } else if (index == 1) {
+                    isTargetBound = true;
+                    targetIndex = i;
+                }
+            }
+            
+            if (!isSourceBound && isTargetBound) { 
+                Object seedTarget = seed.get(targetIndex);
                 return baseIndex.findByFeatureValue(seedTarget, feature);
-            } else if (seedSource != null && seedTarget == null) { 
+            } else if (isSourceBound && !isTargetBound) { 
+                Object seedSource = seed.get(sourceIndex);
                 return baseIndex.getFeatureTargets((EObject) seedSource, feature);
             } else {
                 // must be singly unseeded, this is enumerateValues after all!
-                illegalEnumerateValues(seed);
+                illegalEnumerateValues(seed.toImmutable());
             }
         } else {
             illegalInputKey(key);
@@ -343,39 +408,63 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     }
     
     @Override
+    @Deprecated
     public int countTuples(IInputKey key, Tuple seed) {
+        if (seed == null) {
+            return countTuples(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
+        } else {
+            TupleMask mask = TupleMask.fromNonNullIndices(seed);
+            return countTuples(key, mask, mask.transform(seed));
+        }
+    }
+    
+    @Override
+    public int countTuples(IInputKey key, TupleMask seedMask, ITuple seed) {
         ensureIndexed(key, IndexingService.STATISTICS);
         
         if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             
-            Object seedInstance = getFromSeed(seed, 0);
-            if (seedInstance == null) { // unseeded
+            if (seedMask.indices.length == 0) { // unseeded
                 return baseIndex.countAllInstances(eClass);
             } else { // fully seeded
-                return (containsTuple(key, seed)) ? 1 : 0;
+                return (containsTuple(key, seedMask, seed)) ? 1 : 0;
             }
         } else if (key instanceof EDataTypeInSlotsKey) {
             EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
             
-            Object seedInstance = getFromSeed(seed, 0);
-            if (seedInstance == null) { // unseeded
+            if (seedMask.indices.length == 0) { // unseeded
                 return baseIndex.countDataTypeInstances(dataType);
             } else { // fully seeded
-                return (containsTuple(key, seed)) ? 1 : 0;
+                return (containsTuple(key, seedMask, seed)) ? 1 : 0;
             }
         } else if (key instanceof EStructuralFeatureInstancesKey) {
             EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
             
-            final Object seedSource = getFromSeed(seed, 0);
-            final Object seedTarget = getFromSeed(seed, 1);
-            if (seedSource == null && seedTarget != null) { 
+            boolean isSourceBound = false;
+            int sourceIndex = -1;
+            boolean isTargetBound = false;
+            int targetIndex = -1;
+            for (int i = 0; i < seedMask.getSize(); i++) {
+                int index = seedMask.indices[i];
+                if (index == 0) {
+                    isSourceBound = true;
+                    sourceIndex = i;
+                } else if (index == 1) {
+                    isTargetBound = true;
+                    targetIndex = i;
+                }
+            }
+            
+            if (!isSourceBound && isTargetBound) { 
+                final Object seedTarget = seed.get(targetIndex);
                 return baseIndex.findByFeatureValue(seedTarget, feature).size();
-            } else if (seedSource != null && seedTarget != null) { // fully seeded
-                return (containsTuple(key, seed)) ? 1 : 0;
-            } else if (seedSource == null && seedTarget == null) { // fully unseeded
+            } else if (isSourceBound && isTargetBound) { // fully seeded
+                return (containsTuple(key, seedMask, seed)) ? 1 : 0;
+            } else if (!isSourceBound && !isTargetBound) { // fully unseeded
                 return baseIndex.countFeatures(feature);
-            } else if (seedSource != null && seedTarget == null) { 
+            } else if (isSourceBound && !isTargetBound) { 
+                final Object seedSource = seed.get(sourceIndex);
                 return baseIndex.countFeatureTargets((EObject) seedSource, feature);
             } 
         } else {
@@ -647,10 +736,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         } else {
             illegalInputKey(key);
         }
-    }    
-    
-    private Object getFromSeed(Tuple seed, int index) {
-        return seed == null ? null : seed.get(index);
     }
     
     // TODO wrap / unwrap enum literals 

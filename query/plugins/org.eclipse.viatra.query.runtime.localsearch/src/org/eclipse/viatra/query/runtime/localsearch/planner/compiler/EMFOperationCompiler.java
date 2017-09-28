@@ -35,6 +35,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 /**
  * Operation compiler implementation that uses EMF-specific operations.
@@ -135,7 +136,8 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
                     operations.add(new IterateOverContainers(sourcePosition, targetPosition, false));
                     operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
                 } else if(baseIndexAvailable){
-                    operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));                  
+                    TupleMask mask = TupleMask.fromSelectedIndices(variableMapping.size(), new int[] {targetPosition});
+                    operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature, mask));                  
                 } else {
                     operations.add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(
                                     sourcePosition, targetPosition, feature));

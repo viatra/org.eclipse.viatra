@@ -168,6 +168,19 @@ public class TupleMask {
         return fromSelectedIndicesInternal(Arrays.copyOf(selectedIndices, selectedIndices.length), sourceArity);
     }
     /**
+     * Creates a TupleMask instance that selects non-null positions of a given tuple
+     * @since 1.7
+     */
+    public static TupleMask fromNonNullIndices(ITuple tuple) {
+        List<Integer> indices = new ArrayList<>();
+        for (int i=0; i < tuple.getSize(); i++) {
+            if (tuple.get(i) != null) {
+                indices.add(i);
+            }
+        }
+        return fromSelectedIndicesInternal(integersToIntArray(indices), tuple.getSize());
+    }
+    /**
      * @since 1.7
      */
     public static int[] integersToIntArray(Collection<Integer> selectedIndices) {
@@ -262,6 +275,20 @@ public class TupleMask {
         Object signature[] = new Object[indices.length];
         for (int i = 0; i < indices.length; ++i)
             signature[i] = original.get(indices[i]);
+        return Tuples.flatTupleOf(signature);
+    }
+    
+    /**
+     * Returns a tuple `result` that satisfies `this.transform(result).equals(masked)`. Positions of the result tuple
+     * that are not determined this way will be filled with null.
+     * 
+     * @pre: all indices of the mask must be different
+     * @since 1.7
+     */
+    public Tuple revertFrom(ITuple masked) {
+        Object signature[] = new Object[sourceWidth];
+        for (int i = 0; i < indices.length; ++i)
+            signature[indices[i]] = masked.get(i);
         return Tuples.flatTupleOf(signature);
     }
 
@@ -414,8 +441,10 @@ public class TupleMask {
     }
     
     /**
-     * Creates a copied version of an original list into a set, keeping a single element in case of duplicate values
-     * @since 1.7 
+     * Transforms the given list by applying the mask and putting all results into a set; keeping only a single element
+     * in case of the mapping result in duplicate values.
+     * 
+     * @since 1.7
      */
     public <T> Set<T> transformUnique(List<T> original) {
         Set<T> signature = new HashSet<>();
