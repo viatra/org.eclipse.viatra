@@ -12,17 +12,17 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -35,28 +35,41 @@ import com.google.common.collect.Lists;
  */
 public class AggregatorExtend extends ExtendOperation<Object> implements IPatternMatcherOperation{
 
-    private final CallOperationHelper helper;
-    private PatternCall call;
     private final AggregatorConstraint aggregator;
+    private final CallInformation information; 
+    private final VolatileModifiableMaskedTuple maskedTuple;
+    private IQueryResultProvider matcher;
     
     
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public AggregatorExtend(MatcherReference calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
+    public AggregatorExtend(CallInformation information, AggregatorConstraint aggregator, int position) {
         super(position);
-        helper = new CallOperationHelper(calledQuery, parameterMapping);
         this.aggregator = aggregator;
+        this.information = information;
+        this.maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        call = helper.createCall(context);
-        Object aggregate = call.aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn(), frame);
+        maskedTuple.updateTuple(frame);
+        matcher = context.getMatcher(information.getReference());
+        Object aggregate = aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn());
         it = aggregate == null ? Collections.emptyIterator() : Iterators.<Object>singletonIterator(aggregate);
         
     }
 
+    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn) {
+        Accumulator accumulator = operator.createNeutral();
+        for(Tuple match : matcher.getAllMatches(information.getParameterMask(), maskedTuple)){
+            @SuppressWarnings("unchecked")
+            Domain column = (Domain) match.get(aggregatedColumn);
+            accumulator = operator.update(accumulator, column, true);
+        }
+        return operator.getAggregate(accumulator);
+    }
+    
     @Override
     public List<Integer> getVariablePositions() {
         return Lists.asList(position, new Integer[0]);
@@ -64,7 +77,7 @@ public class AggregatorExtend extends ExtendOperation<Object> implements IPatter
     
     @Override
     public String toString() {
-        return "extend    -"+position+" = " + aggregator.getAggregator().getOperator().getName()+" find "+helper.toString();
+        return "extend    -"+position+" = " + aggregator.getAggregator().getOperator().getName()+" find " + information.toString();
     }
     
 }

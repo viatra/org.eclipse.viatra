@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.Expression
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendBinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendConstant;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.CompilerHelper;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -47,7 +48,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
@@ -55,7 +55,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Consta
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -71,37 +70,6 @@ import com.google.common.collect.Sets;
  *
  */
 public abstract class AbstractOperationCompiler implements IOperationCompiler {
-
-    public class FrameMapping{
-        public final Map<PParameter, Integer> mapping = Maps.newHashMap();
-        public final Set<PParameter> adornment = Sets.newHashSet();
-        
-        public FrameMapping(PatternCallBasedDeferred constraint, Map<PVariable, Integer> variableMapping) {
-            final Set<Integer> bindings = variableBindings.get(constraint);
-            int keySize = constraint.getActualParametersTuple().getSize();
-            for (int i = 0; i < keySize; i++) {
-                PParameter symbolicParameter = constraint.getReferredQuery().getParameters().get(i);
-                PVariable parameter = (PVariable) constraint.getActualParametersTuple().get(i);
-                mapping.put(symbolicParameter, variableMapping.get(parameter));
-                if (bindings.contains(variableMapping.get(parameter))) {
-                    adornment.add(symbolicParameter);
-                }
-            }
-        }
-        
-        public FrameMapping(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping){
-            final Set<Integer> bindings = variableBindings.get(pCall);
-            int keySize = pCall.getVariablesTuple().getSize();
-            for (int i = 0; i < keySize; i++) {
-                PParameter symbolicParameter = pCall.getReferredQuery().getParameters().get(i);
-                PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
-                mapping.put(symbolicParameter, variableMapping.get(parameter));
-                if (bindings.contains(variableMapping.get(parameter))) {
-                    adornment.add(symbolicParameter);
-                }
-            }
-        }
-    }
     
     protected static final String UNSUPPORTED_TYPE_MESSAGE = "Unsupported type: ";
 
@@ -293,19 +261,15 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     }
 
     protected void createCheck(PatternMatchCounter counter, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(counter, variableMapping);
-    
-        PQuery referredQuery = counter.getReferredQuery();
-        MatcherReference matcherReference = new MatcherReference(referredQuery, mapping.adornment);
-        operations.add(new CountCheck(matcherReference, mapping.mapping, variableMapping.get(counter.getResultVariable())));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(counter, variableMapping, variableBindings.get(counter));
+        operations.add(new CountCheck(information, variableMapping.get(counter.getResultVariable())));
+        dependencies.add(information.getReference());
     }
 
     protected void createCheck(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(pCall, variableMapping);
-        MatcherReference matcherReference = new MatcherReference(pCall.getReferredQuery(), mapping.adornment);
-        operations.add(new CheckPositivePatternCall(matcherReference, mapping.mapping));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(pCall, variableMapping, variableBindings.get(pCall));
+        operations.add(new CheckPositivePatternCall(information));
+        dependencies.add(information.getReference());
     }
 
     protected void createCheck(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
@@ -313,16 +277,14 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         operations.add(new CheckConstant(position, constant.getSupplierKey()));
     }
 
-    protected void createCheck(BinaryTransitiveClosure binaryTransitiveColsure, Map<PVariable, Integer> variableMapping) {
-        int sourcePosition = variableMapping.get(binaryTransitiveColsure.getVariablesTuple().get(0));
-        int targetPosition = variableMapping.get(binaryTransitiveColsure.getVariablesTuple().get(1));
+    protected void createCheck(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
+        int sourcePosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(0));
+        int targetPosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(1));
         
-        PQuery referredQuery = binaryTransitiveColsure.getReferredQuery();
-        
-        operations.add(new BinaryTransitiveClosureCheck(new MatcherReference(referredQuery, ImmutableSet.of(referredQuery.getParameters().get(0), referredQuery.getParameters().get(1))), sourcePosition, targetPosition));
         //The second parameter is NOT bound during execution!
-        Set<PParameter> adornment = ImmutableSet.of(referredQuery.getParameters().get(0));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
+        CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, ImmutableSet.of(sourcePosition));
+        operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition));
+        dependencies.add(information.getReference());
     }
 
     protected void createCheck(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
@@ -344,20 +306,15 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     }
 
     protected void createCheck(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(aggregator, variableMapping);
-        
-        PQuery referredQuery = aggregator.getReferredQuery();
-        MatcherReference matcherReference = new MatcherReference(referredQuery, mapping.adornment);
-        operations.add(new AggregatorCheck(matcherReference, aggregator, mapping.mapping, variableMapping.get(aggregator.getResultVariable())));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(aggregator, variableMapping, variableBindings.get(aggregator));
+        operations.add(new AggregatorCheck(information, aggregator, variableMapping.get(aggregator.getResultVariable())));
+        dependencies.add(information.getReference());
     }
 
     protected void createCheck(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(negativePatternCall, variableMapping);
-        PQuery referredQuery = negativePatternCall.getReferredQuery();
-        MatcherReference matcherReference = new MatcherReference(referredQuery, mapping.adornment);
-        operations.add(new NACOperation(matcherReference, mapping.mapping));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(negativePatternCall, variableMapping, variableBindings.get(negativePatternCall));
+        operations.add(new NACOperation(information));
+        dependencies.add(information.getReference());
     }
 
     protected void createCheck(Inequality inequality, Map<PVariable, Integer> variableMapping) {
@@ -365,29 +322,26 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     }
 
     protected void createExtend(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(pCall, variableMapping);
-        MatcherReference matcherReference = new MatcherReference(pCall.getReferredQuery(), mapping.adornment);
-        operations.add(new ExtendPositivePatternCall(matcherReference, mapping.mapping));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(pCall, variableMapping, variableBindings.get(pCall));
+        operations.add(new ExtendPositivePatternCall(information));
+        dependencies.add(information.getReference());
     }
 
     protected void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
         int sourcePosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(0));
         int targetPosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(1));
         
-        PQuery referredQuery = binaryTransitiveClosure.getReferredQuery();
-        
         boolean sourceBound = variableBindings.get(binaryTransitiveClosure).contains(sourcePosition);
         boolean targetBound = variableBindings.get(binaryTransitiveClosure).contains(targetPosition);
         
+        CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, variableBindings.get(binaryTransitiveClosure));
+        
         if (sourceBound && !targetBound) {
-            Set<PParameter> adornment = ImmutableSet.of(referredQuery.getParameters().get(0));
-            operations.add(new ExtendBinaryTransitiveClosure.Forward(new MatcherReference(referredQuery, adornment), sourcePosition, targetPosition));
-            dependencies.add(new MatcherReference(referredQuery, adornment));            
+            operations.add(new ExtendBinaryTransitiveClosure.Forward(information, sourcePosition, targetPosition));
+            dependencies.add(information.getReference());            
         } else if (!sourceBound && targetBound) {
-            Set<PParameter> adornment = ImmutableSet.of(referredQuery.getParameters().get(1));
-            operations.add(new ExtendBinaryTransitiveClosure.Backward(new MatcherReference(referredQuery, adornment), sourcePosition, targetPosition));
-            dependencies.add(new MatcherReference(referredQuery, adornment));                        
+            operations.add(new ExtendBinaryTransitiveClosure.Backward(information, sourcePosition, targetPosition));
+            dependencies.add(information.getReference());                        
         } else {
             String msg = "Binary transitive closure not supported with two unbound parameters";
             throw new QueryProcessingException(msg, null, msg, binaryTransitiveClosure.getPSystem().getPattern());
@@ -418,21 +372,15 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     }
 
     protected void createExtend(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(aggregator, variableMapping);
-        
-        PQuery referredQuery = aggregator.getReferredQuery();
-        MatcherReference matcherReference = new MatcherReference(referredQuery, mapping.adornment);
-        operations.add(new AggregatorExtend(matcherReference, aggregator, mapping.mapping, variableMapping.get(aggregator.getResultVariable())));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(aggregator, variableMapping, variableBindings.get(aggregator));
+        operations.add(new AggregatorExtend(information, aggregator, variableMapping.get(aggregator.getResultVariable())));
+        dependencies.add(information.getReference());
     }
 
     protected void createExtend(PatternMatchCounter patternMatchCounter, Map<PVariable, Integer> variableMapping) {
-        FrameMapping mapping = new FrameMapping(patternMatchCounter, variableMapping);
-        
-        PQuery referredQuery = patternMatchCounter.getReferredQuery();
-        MatcherReference matcherReference = new MatcherReference(referredQuery, mapping.adornment);
-        operations.add(new CountOperation(matcherReference, mapping.mapping, variableMapping.get(patternMatchCounter.getResultVariable())));
-        dependencies.add(matcherReference);
+        CallInformation information = CallInformation.create(patternMatchCounter, variableMapping, variableBindings.get(patternMatchCounter));
+        operations.add(new CountOperation(information, variableMapping.get(patternMatchCounter.getResultVariable())));
+        dependencies.add(information.getReference());
     }
-
+    
 }

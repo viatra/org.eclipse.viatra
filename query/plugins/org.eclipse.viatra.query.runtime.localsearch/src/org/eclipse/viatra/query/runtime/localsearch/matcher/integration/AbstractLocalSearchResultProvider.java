@@ -49,7 +49,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -104,7 +106,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                         final SearchPlan plan = new SearchPlan();
                         plan.addOperations(input.getCompiledOperations());
     
-                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.getParameterKeys());
+                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.calculateParameterMask());
                     }
                 });
     
@@ -274,7 +276,27 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             throw new RuntimeException(e);
         }
     }
+    
+    private LocalSearchMatcher initializeMatcher(TupleMask parameterSeedMask, ITuple parameters) {
+        try {
+            return newLocalSearchMatcher(parameterSeedMask.transformUnique(query.getParameters()));
+        } catch (QueryProcessingException | ViatraQueryException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    
+    public LocalSearchMatcher newLocalSearchMatcher(ITuple parameters) throws ViatraQueryException, QueryProcessingException {
+        final Set<PParameter> adornment = Sets.newHashSet();
+        for (int i = 0; i < parameters.getSize(); i++) {
+            if (parameters.get(i) != null) {
+                adornment.add(query.getParameters().get(i));
+            }
+        }
+        
+        return newLocalSearchMatcher(adornment);
+    }
+    
     public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException, QueryProcessingException {
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
@@ -283,6 +305,11 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             }
         }
     
+        return newLocalSearchMatcher(adornment);
+    }
+
+    private LocalSearchMatcher newLocalSearchMatcher(final Set<PParameter> adornment)
+            throws QueryProcessingException, ViatraQueryException {
         final MatcherReference reference = new MatcherReference(query, adornment, userHints);
         
         IPlanDescriptor plan = createPlan(reference, planProvider);
@@ -322,15 +349,33 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     }
 
     @Override
+    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        return matcher.getOneArbitraryMatch(parameterSeedMask, parameters);
+    }
+
+    @Override
     public int countMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
         return matcher.countMatches(parameters);
+    }
+    
+    @Override
+    public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        return matcher.countMatches(parameterSeedMask, parameters);
     }
 
     @Override
     public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
         return matcher.getAllMatches(parameters);
+    }
+    
+    @Override
+    public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        return matcher.getAllMatches(parameterSeedMask, parameters);
     }
 
     @Override

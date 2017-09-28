@@ -11,16 +11,14 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 import com.google.common.collect.Iterators;
 
@@ -31,33 +29,36 @@ import com.google.common.collect.Iterators;
  */
 public class CountOperation extends ExtendOperation<Integer> implements IPatternMatcherOperation{
 
-    private final CallOperationHelper helper;
-    private PatternCall call;
+    private final CallInformation information; 
+    private final VolatileModifiableMaskedTuple maskedTuple;
+    private IQueryResultProvider matcher;
 
     
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public CountOperation(MatcherReference calledQuery, Map<PParameter, Integer> parameterMapping, int position) {
+    public CountOperation(CallInformation information, int position) {
         super(position);
-        helper = new CallOperationHelper(calledQuery, parameterMapping);
+        this.information = information;
+        maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        call = helper.createCall(context);
-        it = Iterators.singletonIterator(call.count(frame));
+        matcher = context.getMatcher(information.getReference());
+        maskedTuple.updateTuple(frame);
+        it = Iterators.singletonIterator(matcher.countMatches(information.getParameterMask(), maskedTuple));
         
     }
     
     @Override
     public List<Integer> getVariablePositions() {
-        return helper.getVariablePositions();
+        return information.getVariablePositions();
     }
 
     @Override
     public String toString() {
-        return "extend    -"+position+" = count find "+helper.toString();
+        return "extend    -"+position+" = count find " + information.toString();
     }
     
 }

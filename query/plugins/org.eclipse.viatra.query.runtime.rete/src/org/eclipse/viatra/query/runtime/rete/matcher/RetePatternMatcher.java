@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
@@ -86,17 +87,25 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         TupleMask mask = TupleMask.fromKeepIndicators(fixed);
         Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
+        return matchAll(mask, inputSignature);
+
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public ArrayList<Tuple> matchAll(TupleMask mask, ITuple inputSignature) {
         AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
-                context.wrapTuple(inputSignature));
+                context.wrapTuple(inputSignature.toImmutable()));
         engine.reteNet.waitForReteTermination(fetcher);
         ArrayList<Tuple> unscopedMatches = fetcher.getMatches();
-
+        
         // checking scopes
         if (unscopedMatches == null)
             return new ArrayList<Tuple>();
         else
             return unscopedMatches;
-
+        
     }
 
     public Tuple matchOne(Object[] inputMapping, boolean[] fixed) {
@@ -104,12 +113,19 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         TupleMask mask = TupleMask.fromKeepIndicators(fixed);
         Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
+        return matchOne(mask, inputSignature);
+    }
+
+    /**
+     * @since 1.7
+     */
+    public Tuple matchOne(TupleMask mask, ITuple inputSignature) {
         SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
-                context.wrapTuple(inputSignature));
+                context.wrapTuple(inputSignature.toImmutable()));
         engine.reteNet.waitForReteTermination(fetcher);
         return fetcher.getMatch();
     }
-
+    
     /**
      * Counts the number of occurrences of the pattern that match inputMapping on positions where fixed is true.
      *
@@ -119,10 +135,20 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         TupleMask mask = TupleMask.fromKeepIndicators(fixed);
         Tuple inputSignature = mask.transform(Tuples.flatTupleOf(inputMapping));
 
+        return count(mask, inputSignature);
+    }
+    
+    /**
+     * Counts the number of occurrences of the pattern that match inputMapping on positions where fixed is true.
+     *
+     * @return the number of occurrences
+     * @since 1.7
+     */
+    public int count(TupleMask mask, ITuple inputSignature) {
         CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNodeTrace, mask),
-                context.wrapTuple(inputSignature));
+                context.wrapTuple(inputSignature.toImmutable()));
         engine.reteNet.waitForReteTermination(fetcher);
-
+        
         return fetcher.getCount();
     }
 
@@ -328,15 +354,32 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     }
 
     @Override
+    public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
+        return countMatches(parameterSeedMask, parameters);
+    }
+
+
+
+    @Override
     public Tuple getOneArbitraryMatch(Object[] parameters) {
         return matchOne(parameters, notNull(parameters));
     }
 
     @Override
+    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
+        return getOneArbitraryMatch(parameterSeedMask, parameters);
+    }
+    
+    @Override
     public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
         return matchAll(parameters, notNull(parameters));
     }
 
+    @Override
+    public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
+        return getAllMatches(parameterSeedMask, parameters);
+    }
+    
     @Override
     public IQueryBackend getQueryBackend() {
         return engine;

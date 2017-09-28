@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -75,6 +76,10 @@ public class SearchPlanForBody {
     
     public Collection<MatcherReference> getDependencies() {
         return dependencies;
+    }
+    
+    public TupleMask calculateParameterMask() {
+        return TupleMask.fromSelectedIndices(variableKeys.size(), parameterKeys);
     }
     
     @Override

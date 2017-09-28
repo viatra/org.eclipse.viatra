@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -44,7 +45,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     private final ISearchContext context;
     private final List<ILocalSearchAdapter> adapters = Lists.newCopyOnWriteArrayList();
     private final BiMap<Integer,PVariable> variableMapping;
-    private final int[] parameterIndices;
+    private final TupleMask parameterMask;
 
     public BiMap<Integer, PVariable> getVariableMapping() {
         return variableMapping;
@@ -61,8 +62,8 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     /**
      * @since 1.7
      */
-    public int[] getParameterIndices() {
-        return parameterIndices;
+    public TupleMask getParameterMask() {
+        return parameterMask;
     }
 
     @Override
@@ -87,14 +88,14 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     /**
      * @since 1.7
      */
-    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping, int[] parameterIndices) {
+    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping, TupleMask parameterMask) {
         Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
         this.variableMapping = HashBiMap.<PVariable, Integer>create(variableMapping).inverse();
         operations = plan.getOperations();
         this.currentOperation = -1;
-        this.parameterIndices = parameterIndices;
+        this.parameterMask = parameterMask;
     }
    
 

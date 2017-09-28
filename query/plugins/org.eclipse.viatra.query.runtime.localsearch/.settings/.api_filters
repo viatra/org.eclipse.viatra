@@ -16,6 +16,22 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.localsearch.operations.AbstractPositivePatternCallOperation">
+        <filter comment="Internal API update" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.AbstractPositivePatternCallOperation"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper">
+        <filter comment="Internal API update" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck">
         <filter comment="Cleanup of internal LS API" id="305324134">
             <message_arguments>
@@ -171,6 +187,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/AbstractLocalSearchResultProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.AbstractLocalSearchResultProvider">
+        <filter comment="Internal API implementation" id="574619656">
+            <message_arguments>
+                <message_argument value="IQueryResultProvider"/>
+                <message_argument value="AbstractLocalSearchResultProvider"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/LocalSearchBackend.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend">
         <filter comment="Internal API update" id="337764418">
             <message_arguments>
@@ -199,12 +223,72 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/CallOperationHelper.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper$PatternCall">
-        <filter id="643846161">
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/AggregatorCheck.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.AggregatorCheck">
+        <filter comment="Internal API update" id="338722907">
             <message_arguments>
-                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="PatternCall"/>
-                <message_argument value="aggregate(IMultisetAggregationOperator&lt;Domain,Accumulator,AggregateResult&gt;, int, MatchingFrame)"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.AggregatorCheck"/>
+                <message_argument value="AggregatorCheck(MatcherReference, AggregatorConstraint, Map&lt;PParameter,Integer&gt;, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/BinaryTransitiveClosureCheck.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck"/>
+                <message_argument value="BinaryTransitiveClosureCheck(MatcherReference, int, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/CheckPositivePatternCall.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall"/>
+                <message_argument value="CheckPositivePatternCall(MatcherReference, Map&lt;PParameter,Integer&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/CountCheck.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.CountCheck">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.CountCheck"/>
+                <message_argument value="CountCheck(MatcherReference, Map&lt;PParameter,Integer&gt;, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/NACOperation.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation"/>
+                <message_argument value="NACOperation(MatcherReference, Map&lt;PParameter,Integer&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/extend/AggregatorExtend.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.extend.AggregatorExtend">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.AggregatorExtend"/>
+                <message_argument value="AggregatorExtend(MatcherReference, AggregatorConstraint, Map&lt;PParameter,Integer&gt;, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/extend/CountOperation.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation"/>
+                <message_argument value="CountOperation(MatcherReference, Map&lt;PParameter,Integer&gt;, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/extend/ExtendPositivePatternCall.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall">
+        <filter comment="Internal API update" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall"/>
+                <message_argument value="ExtendPositivePatternCall(MatcherReference, Map&lt;PParameter,Integer&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338849923">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall"/>
             </message_arguments>
         </filter>
     </resource>
