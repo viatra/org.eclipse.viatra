@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
@@ -105,23 +104,11 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                         final SearchPlan plan = new SearchPlan();
                         plan.addOperations(input.getCompiledOperations());
     
-                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys());
+                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.getParameterKeys());
                     }
                 });
     
-        final Collection<Integer> parameterSizes = Collections2.transform(compiledPlans,
-                new Function<SearchPlanForBody, Integer>() {
-    
-                    @Override
-                    public Integer apply(SearchPlanForBody input) {
-                        PBody body = input.getBody();
-                        return body.getUniqueVariables().size();
-                        // return Math.max(input.getSymbolicParameters().size(), input.getUniqueVariables().size());
-                    }
-                });
-    
-        return new LocalSearchMatcher(plan, executors,
-                Collections.max(parameterSizes));
+        return new LocalSearchMatcher(plan, executors);
     }
 
     private IPlanDescriptor createPlan(MatcherReference key, IPlanProvider planProvider) throws QueryProcessingException {
@@ -286,11 +273,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         } catch (QueryProcessingException | ViatraQueryException e) {
             throw new RuntimeException(e);
         }
-    
     }
 
     public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException, QueryProcessingException {
-    
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
@@ -333,25 +318,19 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     @Override
     public Tuple getOneArbitraryMatch(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        final MatchingFrame frame = matcher.editableMatchingFrame();
-        frame.setParameterValues(parameters);
-        return matcher.getOneArbitraryMatch(frame).toImmutable();
+        return matcher.getOneArbitraryMatch(parameters);
     }
 
     @Override
     public int countMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        final MatchingFrame frame = matcher.editableMatchingFrame();
-        frame.setParameterValues(parameters);
-        return matcher.countMatches(frame);
+        return matcher.countMatches(parameters);
     }
 
     @Override
     public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        final MatchingFrame frame = matcher.editableMatchingFrame();
-        frame.setParameterValues(parameters);
-        return matcher.getAllMatches(frame);
+        return matcher.getAllMatches(parameters);
     }
 
     @Override

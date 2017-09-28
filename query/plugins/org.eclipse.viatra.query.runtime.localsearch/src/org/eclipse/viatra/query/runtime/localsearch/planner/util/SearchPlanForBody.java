@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -49,7 +48,6 @@ public class SearchPlanForBody {
             parameterKeys[i] = variableKeys.get(parameters.get(i));
         }
         this.compiledOperations = Lists.newArrayListWithCapacity(compiledOperations.size()+1);
-        this.compiledOperations.add(new FrameInitializationCheck(parameterKeys));
         this.compiledOperations.addAll(compiledOperations);
         
         this.dependencies = Lists.newArrayList(dependencies);

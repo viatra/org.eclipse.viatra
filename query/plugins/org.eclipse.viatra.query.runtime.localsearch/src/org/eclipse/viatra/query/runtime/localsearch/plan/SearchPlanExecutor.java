@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 
 /**
  * A search plan executor is used to execute {@link SearchPlan} instances.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SearchPlanExecutor implements ILocalSearchAdaptable{
 
@@ -43,6 +44,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     private final ISearchContext context;
     private final List<ILocalSearchAdapter> adapters = Lists.newCopyOnWriteArrayList();
     private final BiMap<Integer,PVariable> variableMapping;
+    private final int[] parameterIndices;
 
     public BiMap<Integer, PVariable> getVariableMapping() {
         return variableMapping;
@@ -56,6 +58,13 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         return plan;
     }
     
+    /**
+     * @since 1.7
+     */
+    public int[] getParameterIndices() {
+        return parameterIndices;
+    }
+
     @Override
     public void addAdapters(List<ILocalSearchAdapter> adapters) {
         for(ILocalSearchAdapter adapter : adapters){
@@ -75,13 +84,17 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         }
     }
 
-    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping) {
+    /**
+     * @since 1.7
+     */
+    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping, int[] parameterIndices) {
         Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
         this.variableMapping = HashBiMap.<PVariable, Integer>create(variableMapping).inverse();
         operations = plan.getOperations();
         this.currentOperation = -1;
+        this.parameterIndices = parameterIndices;
     }
    
 

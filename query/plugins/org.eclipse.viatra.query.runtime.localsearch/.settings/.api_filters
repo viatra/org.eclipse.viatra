@@ -1,10 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.localsearch" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.localsearch.MatchingKey">
+        <filter comment="Cleanup of internal LS API" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingKey"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.localsearch.MatchingTable">
+        <filter comment="Cleanup of internal LS API" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingTable"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck">
+        <filter comment="Cleanup of internal LS API" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch_1.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/MatchingFrame.java" type="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame">
+        <filter comment="Cleanup of internal LS API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame"/>
+                <message_argument value="MatchingFrame(Object, int)"/>
+            </message_arguments>
+        </filter>
         <filter comment="Code cleanup" id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame"/>
                 <message_argument value="clone()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame"/>
+                <message_argument value="getKey()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame"/>
+                <message_argument value="getPattern()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame"/>
+                <message_argument value="setKeys(int[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.MatchingFrame"/>
+                <message_argument value="setParameterValues(Object[])"/>
             </message_arguments>
         </filter>
     </resource>
@@ -40,6 +94,80 @@
                 <message_argument value="ICache"/>
                 <message_argument value="SearchContext"/>
                 <message_argument value="getValue(Object, Class&lt;? extends T&gt;, IProvider&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/LocalSearchMatcher.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher">
+        <filter comment="Cleanup of internal LS API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="LocalSearchMatcher(IPlanDescriptor, Collection&lt;SearchPlanExecutor&gt;, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="LocalSearchMatcher(IPlanDescriptor, ImmutableList&lt;SearchPlanExecutor&gt;, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="LocalSearchMatcher(IPlanDescriptor, SearchPlanExecutor, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="LocalSearchMatcher(IPlanDescriptor, SearchPlanExecutor[], int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="countMatches(MatchingFrame)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="editableMatchingFrame()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="getAllMatches(MatchingFrame)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="getFrameSize()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="getOneArbitraryMatch()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="getOneArbitraryMatch(MatchingFrame)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="hasMatch(MatchingFrame)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cleanup of internal LS API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher"/>
+                <message_argument value="setFramesize(int)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -119,6 +247,14 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider"/>
                 <message_argument value="getPlan(LocalSearchBackend, LocalSearchHints, MatcherReference)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/SearchPlanExecutor.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor">
+        <filter comment="Cleanup of internal LS API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor"/>
+                <message_argument value="SearchPlanExecutor(SearchPlan, ISearchContext, Map&lt;PVariable,Integer&gt;)"/>
             </message_arguments>
         </filter>
     </resource>
