@@ -170,6 +170,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         
         private boolean removeFromHolderToValueMap(Object value, EObject holder) throws IllegalStateException {
             IMultiset<Object> values = holderToValueMap.get(holder);
+            if (values == null)
+                throw new IllegalStateException();
             boolean changed = values.removeOne(value);
             if (changed) {
                 if (values.isEmpty())
@@ -179,6 +181,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         }
         private boolean removeFromValueToHolderMap(final Object value, final EObject holder) throws IllegalStateException {
             IMultiset<EObject> holders = valueToHolderMap.get(value);
+            if (holders == null)
+                throw new IllegalStateException();
             boolean changed = holders.removeOne(holder);
             if (changed) {
                 if (holders.isEmpty())
@@ -252,7 +256,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         public boolean isInstance(EObject source, Object target) {
             // TODO we currently assume V2H map exists
            if (valueToHolderMap != null) {
-                return valueToHolderMap.get(target).containsNonZero(source);
+                IMultiset<EObject> holders = valueToHolderMap.get(target);
+                return holders != null && holders.containsNonZero(source);
            } else throw new UnsupportedOperationException("TODO implement");
         }
 
