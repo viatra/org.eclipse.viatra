@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * Default mailbox implementation. 
@@ -27,6 +28,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * @since 1.6
  */
 public class DefaultMailbox implements Mailbox {
+    
+    private static int SIZE_TRESHOLD = 127;
 
     protected Map<Tuple, Integer> queue;
     protected Map<Tuple, Integer> buffer;
@@ -44,8 +47,8 @@ public class DefaultMailbox implements Mailbox {
         this.receiver = receiver;
         this.container = container;
         this.tracker = container == null ? null : container.getTracker();
-        this.queue = new LinkedHashMap<Tuple, Integer>();
-        this.buffer = new LinkedHashMap<Tuple, Integer>();
+        this.queue = CollectionsFactory.createMap();
+        this.buffer = CollectionsFactory.createMap();
     }
 
     protected Map<Tuple, Integer> getActiveQueue() {
@@ -73,31 +76,41 @@ public class DefaultMailbox implements Mailbox {
         if (fallThrough) {
             receiver.update(direction, update);
         } else {
-            Map<Tuple, Integer> activeQueue = getActiveQueue();
-            
-            Integer count = activeQueue.get(update);
-            if (count == null) {
-                count = 0;
-            }
-            
-            if (direction == Direction.REVOKE) {
-                count--;
-            } else {
-                count++;
-            }
-            
-            if (count == 0) {
-                activeQueue.remove(update);
-            } else {
-                activeQueue.put(update, count);
-            }
-            
-            if (container != null) {
-                if (activeQueue.isEmpty()) {
-                    tracker.notifyLostAllMessages(this, MessageKind.DEFAULT);
-                } else {
-                    tracker.notifyHasMessage(this, MessageKind.DEFAULT);
-                }
+            enqueue(direction, update);
+        }
+    }
+
+    private void enqueue(Direction direction, Tuple update) {
+        Map<Tuple, Integer> activeQueue = getActiveQueue();
+        boolean wasEmpty = activeQueue.isEmpty();
+        
+        boolean significantChange;
+        Integer count = activeQueue.get(update);
+        if (count == null) {
+            count = 0;
+            significantChange = true;
+        } else {
+            significantChange = false;
+        }
+        
+        if (direction == Direction.REVOKE) {
+            count--;
+        } else {
+            count++;
+        }
+        
+        if (count == 0) {
+            activeQueue.remove(update);
+            significantChange = true;
+        } else {
+            activeQueue.put(update, count);
+        }
+        
+        if (significantChange && container != null) {
+            if (wasEmpty) {
+                tracker.notifyHasMessage(this, MessageKind.DEFAULT);
+            } else if (activeQueue.isEmpty()) {
+                tracker.notifyLostAllMessages(this, MessageKind.DEFAULT);
             }
         }
     }
@@ -125,10 +138,15 @@ public class DefaultMailbox implements Mailbox {
         
         this.delivering = false;
 
-        Map<Tuple, Integer> tmpQueue = this.queue;
-        this.queue = this.buffer;
-        this.buffer = tmpQueue;
-        this.buffer = new LinkedHashMap<>();
+        if (queue.size() > SIZE_TRESHOLD) {
+            this.queue = this.buffer;
+            this.buffer = CollectionsFactory.createMap();
+        } else {            
+            this.queue.clear();
+            Map<Tuple, Integer> tmpQueue = this.queue;
+            this.queue = this.buffer;
+            this.buffer = tmpQueue;
+        }
     }
 
     @Override
