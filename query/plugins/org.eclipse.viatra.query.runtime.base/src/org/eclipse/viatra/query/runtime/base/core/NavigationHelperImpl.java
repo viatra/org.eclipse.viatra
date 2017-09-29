@@ -109,15 +109,15 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * Classes (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
-    protected Map<Object, IndexingLevel> delayedClasses;
+    protected Map<Object, IndexingLevel> delayedClasses = new HashMap<>();
     /**
      * EStructuralFeatures (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
-    protected Map<Object, IndexingLevel> delayedFeatures;
+    protected Map<Object, IndexingLevel> delayedFeatures = new HashMap<>();
     /**
      * EDataTypes (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
-    protected Map<Object, IndexingLevel> delayedDataTypes;
+    protected Map<Object, IndexingLevel> delayedDataTypes = new HashMap<>();
 
     /**
      * Features per EObject to be resolved later (towards the end of a coalescing period when no Resources are loading)
@@ -897,20 +897,27 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     /**
      * Add the given item the map with the given indexing level if it wasn't already added with a higher level.
-     * 
-     * @param map
-     * @param key
-     * @param level
+     * @param level non-null
+     * @return whether actually changed
      */
-    private static <V> void putIntoMapIfHigherLevel(Map<V, IndexingLevel> map, V key, IndexingLevel level) {
+    private static <V> boolean putIntoMapMerged(Map<V, IndexingLevel> map, V key, IndexingLevel level) {
         IndexingLevel l = map.get(key);
-        if (l == null || level.compareTo(l) > 0) {
-            map.put(key, level);
+        IndexingLevel merged = level.merge(l);
+        if (merged != l) {
+            map.put(key, merged);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    private void addObservedClassesInternal(Object eClassKey, IndexingLevel level) {
-        putIntoMapIfHigherLevel(allObservedClasses, eClassKey, level);
+    /**
+     * @return true if actually changed
+     */
+    private boolean addObservedClassesInternal(Object eClassKey, IndexingLevel level) {
+        boolean changed = putIntoMapMerged(allObservedClasses, eClassKey, level);
+        if (!changed) return false;
+        
         final Set<Object> subTypes = metaStore.getSubTypeMap().get(eClassKey);
         if (subTypes != null) {
             for (Object subType : subTypes) {
@@ -919,9 +926,10 @@ public class NavigationHelperImpl implements NavigationHelper {
                  * of multiple inheritance, a subclass may be registered for statistics only but full indexing may be
                  * required via one of its super classes.
                  */
-                putIntoMapIfHigherLevel(allObservedClasses, subType, level);
+                putIntoMapMerged(allObservedClasses, subType, level);
             }
         }
+        return true;
     }
 
     /**
@@ -1148,13 +1156,21 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     /**
-     * @param classes
+     * @return true if there is an actual change in the transitively computed observation levels, 
+     * warranting an actual traversal
      */
-    protected void startObservingClasses(Map<Object, IndexingLevel> classObservations) {
-        for (Entry<Object, IndexingLevel> classObservation : classObservations.entrySet()) {
-            putIntoMapIfHigherLevel(directlyObservedClasses, classObservation.getKey(), classObservation.getValue());
-            addObservedClassesInternal(classObservation.getKey(), classObservation.getValue());
+    protected boolean startObservingClasses(Map<Object, IndexingLevel> requestedClassObservations) {
+        boolean warrantsTraversal = false;
+        getAllObservedClassesInternal(); // pre-populate
+        for (Entry<Object, IndexingLevel> request : requestedClassObservations.entrySet()) {
+            if (putIntoMapMerged(directlyObservedClasses, request.getKey(), request.getValue())) {
+                // maybe already observed for the sake of a supertype?
+                if (addObservedClassesInternal(request.getKey(), request.getValue())) { 
+                    warrantsTraversal = true;
+                };
+            }
         }
+        return warrantsTraversal;
     }
 
     @Override
@@ -1234,129 +1250,33 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         boolean firstRun = true;
         while (callable != null) { // repeat if post-processing needed
-            delayedClasses = new HashMap<Object, IndexingLevel>();
-            delayedFeatures = new HashMap<Object, IndexingLevel>();
-            delayedDataTypes = new HashMap<Object, IndexingLevel>();
 
             try {
-                try {
-                    delayTraversals = true;
+                delayTraversals = true;
 
-                    V result = callable.call();
-                    if (firstRun) {
-                        firstRun = false;
-                        finalResult = result;
-                    }
-
-                    // are there proxies left to be resolved? are we allowed to resolve them now?
-                    while ((!delayedProxyResolutions.isEmpty()) && resolutionDelayingResources.isEmpty()) {
-                        // pop first entry
-                        final Collection<Entry<EObject, EReference>> entries = delayedProxyResolutions.entries();
-                        final Entry<EObject, EReference> toResolve = entries.iterator().next();
-                        entries.remove(toResolve);
-
-                        // see if we can resolve proxies
-                        comprehension.tryResolveReference(toResolve.getKey(), toResolve.getValue());
-                    }
-
-                } finally {
-                    delayTraversals = false;
-                    callable = null;
-
-                    for(Entry<Object, IndexingLevel> entry: observedFeatures.entrySet()){
-                        IndexingLevel requested = delayedFeatures.get(entry.getKey());
-                        if (requested != null){
-                            IndexingLevel old = entry.getValue();
-                            IndexingLevel merged = requested.merge(old);
-                            if (merged == old){
-                                delayedFeatures.remove(entry.getKey());
-                            }else{
-                                delayedFeatures.put(entry.getKey(), merged);
-                            }
-                        }
-                    }
-                    for(Entry<Object, IndexingLevel> entry: directlyObservedClasses.entrySet()){
-                        IndexingLevel requested = delayedClasses.get(entry.getKey());
-                        if (requested != null){
-                            IndexingLevel old = entry.getValue();
-                            IndexingLevel merged = requested.merge(old);
-                            if (merged == old){
-                                delayedClasses.remove(entry.getKey());
-                            } else{
-                                delayedClasses.put(entry.getKey(), merged);
-                            }
-                        }
-                    }
-                    for(Entry<Object, IndexingLevel> entry: observedDataTypes.entrySet()){
-                        IndexingLevel requested = delayedDataTypes.get(entry.getKey());
-                        if (requested != null){
-                            IndexingLevel old = entry.getValue();
-                            IndexingLevel merged = requested.merge(old);
-                            if (merged == old){
-                                delayedDataTypes.remove(entry.getKey());
-                            } else {
-                                delayedDataTypes.put(entry.getKey(), merged);
-                            }
-                        }
-                    }
-
-                    boolean classesWarrantTraversal = !Maps
-                            .difference(delayedClasses, getAllObservedClassesInternal()).areEqual();
-
-                    if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
-                        final HashMap<Object, IndexingLevel> oldClasses = new HashMap<Object, IndexingLevel>(
-                                directlyObservedClasses);
-                        startObservingClasses(delayedClasses);
-                        observedDataTypes.putAll(delayedDataTypes);
-                        observedFeatures.putAll(delayedFeatures);
-
-                        // make copies so that original accumulators can be cleaned for the next cycle
-                        // or for the rare case that a coalesced traversal is invoked during visitation,
-                        // e.g. by a derived feature implementation
-                        final Map<Object, IndexingLevel> toGatherClasses = new HashMap<Object, IndexingLevel>(
-                                delayedClasses);
-                        final Map<Object, IndexingLevel> toGatherFeatures = new HashMap<Object, IndexingLevel>(
-                                delayedFeatures);
-                        final Map<Object, IndexingLevel> toGatherDataTypes = new HashMap<Object, IndexingLevel>(
-                                delayedDataTypes);
-                        
-                        // Instance indexing would add extra entries to the statistics store, so we have to clean the
-                        // appropriate entries. If no re-traversal is required, it is detected earlier; at this point we
-                        // only have to consider the target indexing level. See bug
-                        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=518356 for more details.
-                        
-                        // Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
-                        // works as expected, but it seems a better idea to do the cleanup for all types in the same way
-                        for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
-                                toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
-                            if (entry.getValue().hasInstances()) {
-                                statsStore.removeType(entry.getKey());
-                            }
-                        }
-
-                        if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
-                            // repeat the cycle with this visit
-                            final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-                                    toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
-
-                            callable = new Callable<V>() {
-                                @Override
-                                public V call() throws Exception {
-                                    // temporarily ignoring RESOLVE on these features, as they were not observed before
-                                    ignoreResolveNotificationFeatures.addAll(toGatherFeatures.keySet());
-                                    try {
-                                        traverse(visitor);
-                                    } finally {
-                                        ignoreResolveNotificationFeatures.removeAll(toGatherFeatures.keySet());
-                                    }
-                                    return null;
-                                }
-                            };
-
-                        }
-                    }
+                V result = callable.call();
+                if (firstRun) {
+                    firstRun = false;
+                    finalResult = result;
                 }
+
+                // are there proxies left to be resolved? are we allowed to resolve them now?
+                while ((!delayedProxyResolutions.isEmpty()) && resolutionDelayingResources.isEmpty()) {
+                    // pop first entry
+                    final Collection<Entry<EObject, EReference>> entries = delayedProxyResolutions.entries();
+                    final Entry<EObject, EReference> toResolve = entries.iterator().next();
+                    entries.remove(toResolve);
+
+                    // see if we can resolve proxies
+                    comprehension.tryResolveReference(toResolve.getKey(), toResolve.getValue());
+                }
+
+                delayTraversals = false;
+                callable = considerRevisit();
             } catch (Exception e) {
+                // since this is a fatal error, it is OK if delayTraversals remains true, 
+                //  hence no need for a try-finally block
+                
                 notifyFatalListener(
                         "VIATRA Base encountered an error while traversing the EMF model to gather new information. ",
                         e);
@@ -1365,6 +1285,97 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         executeTraversalCallbacks();
         return finalResult;
+    }
+
+    private <V> Callable<V> considerRevisit() {
+        // has there been any requests for a retraversal at all?
+        if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
+            // make copies of requested types so that 
+            // (a) original accumulators can be cleaned for the next cycle, also 
+            // (b) to remove entries that are already covered, or
+            // (c) for the rare case that a coalesced traversal is invoked during visitation,
+            //      e.g. by a derived feature implementation
+            // initialize the collections empty (but with capacity), fill with new entries
+            final Map<Object, IndexingLevel> toGatherClasses = new HashMap<Object, IndexingLevel>(delayedClasses.size());
+            final Map<Object, IndexingLevel> toGatherFeatures = new HashMap<Object, IndexingLevel>(delayedFeatures.size());
+            final Map<Object, IndexingLevel> toGatherDataTypes = new HashMap<Object, IndexingLevel>(delayedDataTypes.size());
+            
+            for (Entry<Object, IndexingLevel> requested : delayedFeatures.entrySet()) {
+                Object typekey = requested.getKey();
+                IndexingLevel old = observedFeatures.get(typekey);
+                IndexingLevel merged = requested.getValue().merge(old);
+                if (merged != old) toGatherFeatures.put(typekey, merged);
+            }
+            for (Entry<Object, IndexingLevel> requested : delayedClasses.entrySet()) {
+                Object typekey = requested.getKey();
+                IndexingLevel old = directlyObservedClasses.get(typekey);
+                IndexingLevel merged = requested.getValue().merge(old);
+                if (merged != old) toGatherClasses.put(typekey, merged);
+            }
+            for (Entry<Object, IndexingLevel> requested : delayedDataTypes.entrySet()) {
+                Object typekey = requested.getKey();
+                IndexingLevel old = observedDataTypes.get(typekey);
+                IndexingLevel merged = requested.getValue().merge(old);
+                if (merged != old) toGatherDataTypes.put(typekey, merged);
+            }
+            
+            delayedClasses.clear(); 
+            delayedFeatures.clear();
+            delayedDataTypes.clear();
+            
+            // check if the filtered request sets are empty
+            //      - could be false alarm if we already observe all of them
+            if (!toGatherClasses.isEmpty() || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
+                final HashMap<Object, IndexingLevel> oldClasses = new HashMap<Object, IndexingLevel>(
+                        directlyObservedClasses);
+                
+                // Are there new classes to be observed that are not available via superclasses? 
+                //      (at sufficient level)
+                // if yes, model traversal needed
+                // if not, index can be updated without retraversal
+                boolean classesWarrantTraversal = startObservingClasses(toGatherClasses);
+                observedDataTypes.putAll(toGatherDataTypes);
+                observedFeatures.putAll(toGatherFeatures);
+                
+                // Instance indexing would add extra entries to the statistics store, so we have to clean the
+                // appropriate entries. If no re-traversal is required, it is detected earlier; at this point we
+                // only have to consider the target indexing level. See bug
+                // https://bugs.eclipse.org/bugs/show_bug.cgi?id=518356 for more details.
+                
+                // Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
+                // works as expected, but it seems a better idea to do the cleanup for all types in the same way
+                for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
+                        toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
+                    if (entry.getValue().hasInstances()) {
+                        statsStore.removeType(entry.getKey());
+                    }
+                }
+                
+                // So, is an actual traversal needed, or are we done?
+                if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
+                    // repeat the cycle with this visit
+                    final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
+                            toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+                    
+                    return new Callable<V>() {
+                        @Override
+                        public V call() throws Exception {
+                            // temporarily ignoring RESOLVE on these features, as they were not observed before
+                            ignoreResolveNotificationFeatures.addAll(toGatherFeatures.keySet());
+                            try {
+                                traverse(visitor);
+                            } finally {
+                                ignoreResolveNotificationFeatures.removeAll(toGatherFeatures.keySet());
+                            }
+                            return null;
+                        }
+                    };
+                    
+                }
+            }
+        }
+        
+        return null; // no callable -> no further action
     }
     
     private void executeTraversalCallbacks() throws InvocationTargetException{
