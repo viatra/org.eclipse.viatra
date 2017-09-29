@@ -31,24 +31,27 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
  */
 public abstract class StandardNode extends BaseNode implements Supplier {
     protected List<Receiver> children = CollectionsFactory.createObserverList();
+    private List<Mailbox> childMailboxes = CollectionsFactory.createObserverList();
 
     public StandardNode(ReteContainer reteContainer) {
         super(reteContainer);
     }
     
     protected void propagateUpdate(Direction direction, Tuple updateElement) {
-        for (Receiver r : children)
-            reteContainer.sendUpdateInternal(r, direction, updateElement);
+        for (Mailbox childMailbox : childMailboxes)
+            childMailbox.postMessage(direction, updateElement);            
     }
 
     @Override
     public void appendChild(Receiver receiver) {
         children.add(receiver);
+        childMailboxes.add(receiver.getMailbox());
     }
 
     @Override
     public void removeChild(Receiver receiver) {
         children.remove(receiver);
+        childMailboxes.remove(receiver.getMailbox());
     }
 
     @Override

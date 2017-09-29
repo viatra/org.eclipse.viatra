@@ -224,12 +224,15 @@ public final class ReteContainer {
      * Sends an update message to the receiver node, indicating a newly found or lost partial matching. They are
      * inserted into the queue atomically. Delivery is either synchronous or asynchronous. Designed to be called during
      * network construction.
+     * 
+     * NOTE: unused in 1.7
      */
     public void sendConstructionUpdate(Receiver receiver, Direction direction, Tuple updateElement) {
-        if (consumerThread == null)
+        if (consumerThread == null) {
             sendUpdateInternal(receiver, direction, updateElement);
-        else
+        } else {
             network.sendConstructionUpdate(makeAddress(receiver), direction, updateElement);
+        }
     }
 
     /**
@@ -238,16 +241,21 @@ public final class ReteContainer {
      * called during network construction.
      */
     public void sendConstructionUpdates(Receiver receiver, Direction direction, Collection<Tuple> updateElements) {
-        if (consumerThread == null)
-            for (Tuple updateElement : updateElements)
-                sendUpdateInternal(receiver, direction, updateElement);
-        else
+        if (consumerThread == null) {
+          Mailbox mailbox = receiver.getMailbox();
+          for (Tuple updateElement : updateElements) {
+              mailbox.postMessage(direction, updateElement);              
+          }
+        } else {
             network.sendConstructionUpdates(makeAddress(receiver), direction, updateElements);
+        }
     }
 
     /**
      * Sends an update message to the receiver node by placing the message into its mailbox. NOT to be called from user
      * threads.
+     * 
+     * NOTE: unused in 1.7
      */
     public void sendUpdateInternal(Receiver receiver, Direction direction, Tuple updateElement) {
         Mailbox mailbox = receiver.getMailbox();

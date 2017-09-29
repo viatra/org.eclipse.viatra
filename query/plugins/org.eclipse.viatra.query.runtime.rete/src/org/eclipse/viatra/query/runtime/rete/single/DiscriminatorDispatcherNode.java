@@ -17,8 +17,8 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 
@@ -34,7 +34,8 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 public class DiscriminatorDispatcherNode extends SingleInputNode {
 
     private int discriminationColumnIndex;
-    private Map<Object, DiscriminatorBucketNode> buckets = new HashMap<Object, DiscriminatorBucketNode>();
+    private Map<Object, DiscriminatorBucketNode> buckets = new HashMap<>();
+    private Map<Object, Mailbox> bucketMailboxes = new HashMap<>();
 
     /**
      * @param reteContainer
@@ -47,9 +48,10 @@ public class DiscriminatorDispatcherNode extends SingleInputNode {
     @Override
     public void update(Direction direction, Tuple updateElement) {
         Object dispatchKey = updateElement.get(discriminationColumnIndex);
-        DiscriminatorBucketNode bucket = buckets.get(dispatchKey);
-        if (bucket != null)
-            reteContainer.sendUpdateInternal(bucket, direction, updateElement);
+        Mailbox bucketMailBox = bucketMailboxes.get(dispatchKey);
+        if (bucketMailBox != null) {
+            bucketMailBox.postMessage(direction, updateElement);
+        }
     }
 
     public int getDiscriminationColumnIndex() {
@@ -75,8 +77,10 @@ public class DiscriminatorDispatcherNode extends SingleInputNode {
         super.appendChild(receiver);
         if (receiver instanceof DiscriminatorBucketNode) {
             DiscriminatorBucketNode bucket = (DiscriminatorBucketNode) receiver;
-            DiscriminatorBucketNode old = buckets.put(bucket.getBucketKey(), bucket);
+            Object bucketKey = bucket.getBucketKey();
+            DiscriminatorBucketNode old = buckets.put(bucketKey, bucket);
             if (old != null) throw new IllegalStateException();
+            bucketMailboxes.put(bucketKey, bucket.getMailbox());
         }
     }
     
@@ -85,8 +89,10 @@ public class DiscriminatorDispatcherNode extends SingleInputNode {
         super.removeChild(receiver);
         if (receiver instanceof DiscriminatorBucketNode) {
             DiscriminatorBucketNode bucket = (DiscriminatorBucketNode) receiver;
-            DiscriminatorBucketNode old = buckets.remove(bucket.getBucketKey());
+            Object bucketKey = bucket.getBucketKey();
+            DiscriminatorBucketNode old = buckets.remove(bucketKey);
             if (old != bucket) throw new IllegalStateException();
+            bucketMailboxes.remove(bucketKey);
         }
     }
     
