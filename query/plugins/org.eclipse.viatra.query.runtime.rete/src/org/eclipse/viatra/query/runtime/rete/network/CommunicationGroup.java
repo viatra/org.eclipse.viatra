@@ -40,7 +40,16 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
      */
     protected int identifier;
 
-    public CommunicationGroup(final Node representative, final int identifier) {
+    /**
+     * @since 1.7
+     */
+    protected CommunicationTracker tracker;
+
+    /**
+     * @since 1.7
+     */
+    public CommunicationGroup(CommunicationTracker tracker, final Node representative, final int identifier) {
+        this.tracker = tracker;
         this.representative = representative;
         this.identifier = identifier;
     }
@@ -99,8 +108,12 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 
         private Mailbox mailbox;
 
-        public Singleton(final Node representative, final int identifier) {
-            super(representative, identifier);
+        /**
+         * @since 1.7
+         */
+        public Singleton(CommunicationTracker tracker, 
+                final Node representative, final int identifier) {
+            super(tracker, representative, identifier);
         }
 
         @Override
@@ -117,6 +130,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         public void notifyHasMessage(final Mailbox mailbox, final MessageKind kind) {
             if (kind == MessageKind.DEFAULT) {
                 this.mailbox = mailbox;
+                if (!isEnqueued) tracker.activateUnenqueued(this);
             } else {
                 throw new IllegalArgumentException();
             }
@@ -126,6 +140,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         public void notifyLostAllMessages(final Mailbox mailbox, final MessageKind kind) {
             if (kind == MessageKind.DEFAULT) {
                 this.mailbox = null;
+                tracker.deactivate(this); 
             } else {
                 throw new IllegalArgumentException();
             }
@@ -170,8 +185,11 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         private final Set<Mailbox> defaultMailboxes;
         private final Set<RederivableNode> rederivables;
 
-        public Recursive(final Node representative, final int identifier) {
-            super(representative, identifier);
+        /**
+         * @since 1.7
+         */
+        public Recursive(CommunicationTracker tracker, final Node representative, final int identifier) {
+            super(tracker, representative, identifier);
             this.antiMonotoneMailboxes = new HashSet<Mailbox>();
             this.monotoneMailboxes = new HashSet<Mailbox>();
             this.defaultMailboxes = new HashSet<Mailbox>();
@@ -223,12 +241,14 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         public void notifyHasMessage(final Mailbox mailbox, final MessageKind kind) {
             final Collection<Mailbox> mailboxes = getMailboxContainer(kind);
             mailboxes.add(mailbox);
+            if (!isEnqueued) tracker.activateUnenqueued(this);
         }
 
         @Override
         public void notifyLostAllMessages(final Mailbox mailbox, final MessageKind kind) {
             final Collection<Mailbox> mailboxes = getMailboxContainer(kind);
             mailboxes.remove(mailbox);
+            if (isEmpty()) tracker.deactivate(this);
         }
 
         private Collection<Mailbox> getMailboxContainer(final MessageKind kind) {
@@ -244,11 +264,13 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         @Override
         public void addRederivable(RederivableNode node) {
             this.rederivables.add(node);
+            if (!isEnqueued) tracker.activateUnenqueued(this);
         }
 
         @Override
         public void removeRederivable(RederivableNode node) {
             this.rederivables.remove(node);
+            if (isEmpty()) tracker.deactivate(this);
         }
 
         @Override

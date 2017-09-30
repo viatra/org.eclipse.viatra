@@ -160,6 +160,56 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/CommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup"/>
+                <message_argument value="CommunicationGroup(Node, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/CommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup$Recursive">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Recursive"/>
+                <message_argument value="Recursive(Node, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/CommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup$Singleton">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup.Singleton"/>
+                <message_argument value="Singleton(Node, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/CommunicationTracker.java" type="org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker"/>
+                <message_argument value="addRederivable(RederivableNode)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker"/>
+                <message_argument value="notifyHasMessage(Mailbox, MessageKind)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker"/>
+                <message_argument value="notifyLostAllMessages(Mailbox, MessageKind)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker"/>
+                <message_argument value="removeRederivable(RederivableNode)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/DefaultMailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox">
         <filter id="337682486">
             <message_arguments>
@@ -185,6 +235,15 @@
         <filter id="337682486">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox.MessageIndexer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/RederivableNode.java" type="org.eclipse.viatra.query.runtime.rete.network.RederivableNode">
+        <filter id="403984517">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.RederivableNode"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.IGroupable"/>
+                <message_argument value="getCurrentGroup()"/>
             </message_arguments>
         </filter>
     </resource>

@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.StandardIndexer;
+import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
@@ -89,6 +90,14 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
      * @since 1.6
      */
     protected final Map<Tuple, Accumulator> rederivableMemory;
+    
+    
+    /**
+     * @since 1.7
+     */
+    protected CommunicationGroup currentGroup = null;
+
+    
 
     private final AggregateResult NEUTRAL;
 
@@ -190,7 +199,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     public Indexer getAggregatorOuterIndexer() {
         if (aggregatorOuterIndexer == null) {
             aggregatorOuterIndexer = new AggregatorOuterIndexer();
-            reteContainer.getTracker().registerDependency(this, aggregatorOuterIndexer);
+            communicationTracker.registerDependency(this, aggregatorOuterIndexer);
         }
         return aggregatorOuterIndexer;
     }
@@ -202,7 +211,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         if (aggregatorOuterIdentityIndexers[resultPositionInSignature] == null) {
             aggregatorOuterIdentityIndexers[resultPositionInSignature] = new AggregatorOuterIdentityIndexer(
                     resultPositionInSignature);
-            reteContainer.getTracker().registerDependency(this,
+            communicationTracker.registerDependency(this,
                     aggregatorOuterIdentityIndexers[resultPositionInSignature]);
         }
         return aggregatorOuterIdentityIndexers[resultPositionInSignature];
@@ -217,7 +226,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         memory.put(group, accumulator);
         // unregister the node if there is nothing left to be re-derived
         if (this.rederivableMemory.isEmpty()) {
-            reteContainer.getTracker().removeRederivable(this);
+            currentGroup.removeRederivable(this);
         }
         AggregateResult value = operator.getAggregate(accumulator);
         propagate(group, NEUTRAL, value);
@@ -280,7 +289,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
                     // this can happen if the accumulator became neutral in response to the INSERT
-                    reteContainer.getTracker().removeRederivable(this);
+                    currentGroup.removeRederivable(this);
                 }
             } else {
                 // the group is in the main memory
@@ -312,7 +321,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
                     if (rederivableMemory.isEmpty()) {
                         // there is nothing left to be re-derived
                         // this can happen if the accumulator became neutral in response to the DELETE
-                        reteContainer.getTracker().removeRederivable(this);
+                        currentGroup.removeRederivable(this);
                     }
                 } catch (NullPointerException ex) {
                     issueError("[INTERNAL ERROR] Deleting a domain element in " + update
@@ -337,7 +346,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
                 } else {
                     boolean wasEmpty = rederivableMemory.isEmpty();
                     if (storeIfNotNeutral(group, newMainAccumulator, rederivableMemory) && wasEmpty) {
-                        reteContainer.getTracker().addRederivable(this);
+                        currentGroup.addRederivable(this);
                     }
                     memory.remove(group);
                     propagate(group, oldValue, NEUTRAL);
@@ -431,6 +440,20 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
                 groupTuple, 
                 runtimeContext.wrapElement(aggregateResult));
     }
+
+    
+    
+    
+    public CommunicationGroup getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public void setCurrentGroup(CommunicationGroup currentGroup) {
+        this.currentGroup = currentGroup;
+    }
+
+
+
 
     /**
      * A special non-iterable index that retrieves the aggregated, packed result (signature+aggregate) for the original

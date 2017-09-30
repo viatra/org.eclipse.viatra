@@ -98,7 +98,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     public Indexer getAggregatorOuterIndexer() {
         if (aggregatorOuterIndexer == null) {
             aggregatorOuterIndexer = new AggregatorOuterIndexer();
-            reteContainer.getTracker().registerDependency(this, aggregatorOuterIndexer);
+            communicationTracker.registerDependency(this, aggregatorOuterIndexer);
             // reteContainer.connectAndSynchronize(this, aggregatorOuterIndexer);
         }
         return aggregatorOuterIndexer;
@@ -111,7 +111,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         if (aggregatorOuterIdentityIndexers[resultPositionInSignature] == null) {
             aggregatorOuterIdentityIndexers[resultPositionInSignature] = new AggregatorOuterIdentityIndexer(
                     resultPositionInSignature);
-            reteContainer.getTracker().registerDependency(this, aggregatorOuterIdentityIndexers[resultPositionInSignature]);
+            communicationTracker.registerDependency(this, aggregatorOuterIdentityIndexers[resultPositionInSignature]);
             // reteContainer.connectAndSynchronize(this, aggregatorOuterIdentityIndexers[resultPositionInSignature]);
         }
         return aggregatorOuterIdentityIndexers[resultPositionInSignature];

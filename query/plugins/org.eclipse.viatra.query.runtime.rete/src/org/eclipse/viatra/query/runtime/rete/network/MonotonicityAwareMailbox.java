@@ -42,6 +42,10 @@ public class MonotonicityAwareMailbox implements Mailbox {
     protected final ReteContainer container;
     protected final CommunicationTracker tracker;
     protected final TupleMask groupMask;
+    /**
+     * @since 1.7
+     */
+    protected CommunicationGroup currentGroup = null;
 
     public MonotonicityAwareMailbox(final MonotonicityAwareReceiver receiver, final ReteContainer container) {
         this.receiver = receiver;
@@ -148,15 +152,15 @@ public class MonotonicityAwareMailbox implements Mailbox {
 
         if (container != null) {
             if (antiMonotoneQueue.isEmpty()) {
-                tracker.notifyLostAllMessages(this, MessageKind.ANTI_MONOTONE);
+                currentGroup.notifyLostAllMessages(this, MessageKind.ANTI_MONOTONE);
             } else {
-                tracker.notifyHasMessage(this, MessageKind.ANTI_MONOTONE);
+                currentGroup.notifyHasMessage(this, MessageKind.ANTI_MONOTONE);
             }
 
             if (monotoneQueue.isEmpty()) {
-                tracker.notifyLostAllMessages(this, MessageKind.MONOTONE);
+                currentGroup.notifyLostAllMessages(this, MessageKind.MONOTONE);
             } else {
-                tracker.notifyHasMessage(this, MessageKind.MONOTONE);
+                currentGroup.notifyHasMessage(this, MessageKind.MONOTONE);
             }
         }
     }
@@ -260,6 +264,18 @@ public class MonotonicityAwareMailbox implements Mailbox {
         monotoneBuffer.clear();
         antiMonotoneBuffer.clear();
     }
+    
+    
+
+    public CommunicationGroup getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public void setCurrentGroup(CommunicationGroup currentGroup) {
+        this.currentGroup = currentGroup;
+    }
+
+
 
     protected class MessageIndexer implements Clearable {
 

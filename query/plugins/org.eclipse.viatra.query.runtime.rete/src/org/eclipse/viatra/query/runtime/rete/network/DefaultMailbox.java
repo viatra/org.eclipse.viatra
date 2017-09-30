@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -38,6 +37,10 @@ public class DefaultMailbox implements Mailbox {
     protected boolean delivering;
     protected final CommunicationTracker tracker;
     protected boolean fallThrough = false;
+    /**
+     * @since 1.7
+     */
+    protected CommunicationGroup currentGroup = null;
 
     public DefaultMailbox() {
         this(null, null);
@@ -108,9 +111,9 @@ public class DefaultMailbox implements Mailbox {
         
         if (significantChange && container != null) {
             if (wasEmpty) {
-                tracker.notifyHasMessage(this, MessageKind.DEFAULT);
+                currentGroup.notifyHasMessage(this, MessageKind.DEFAULT);
             } else if (activeQueue.isEmpty()) {
-                tracker.notifyLostAllMessages(this, MessageKind.DEFAULT);
+                currentGroup.notifyLostAllMessages(this, MessageKind.DEFAULT);
             }
         }
     }
@@ -175,6 +178,14 @@ public class DefaultMailbox implements Mailbox {
      */
     public void setFallThrough(boolean fallThrough) {
         this.fallThrough = fallThrough;
+    }
+
+    public CommunicationGroup getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public void setCurrentGroup(CommunicationGroup currentGroup) {
+        this.currentGroup = currentGroup;
     }
 
     

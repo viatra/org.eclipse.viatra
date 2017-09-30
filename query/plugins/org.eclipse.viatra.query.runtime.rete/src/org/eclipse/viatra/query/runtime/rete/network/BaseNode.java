@@ -29,7 +29,11 @@ public abstract class BaseNode implements Node {
     protected ReteContainer reteContainer;
     protected long nodeId;
     protected Object tag;
-    protected Set<TraceInfo> traceInfos; 
+    protected Set<TraceInfo> traceInfos;
+    /**
+     * @since 1.7
+     */
+    protected CommunicationTracker communicationTracker; 
 
     /**
      * @param reteContainer
@@ -39,6 +43,7 @@ public abstract class BaseNode implements Node {
         super();
         this.reteContainer = reteContainer;
         this.nodeId = reteContainer.registerNode(this);
+        communicationTracker = reteContainer.getTracker();
         this.traceInfos = new HashSet<TraceInfo>();
     }
 

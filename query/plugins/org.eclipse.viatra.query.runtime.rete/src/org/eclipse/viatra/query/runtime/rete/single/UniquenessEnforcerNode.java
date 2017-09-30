@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
+import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
@@ -78,6 +79,10 @@ public class UniquenessEnforcerNode extends StandardNode
      * @since 1.7
      */
     protected final List<ListenerSubscription> specializedListeners;
+    /**
+     * @since 1.7
+     */
+    protected CommunicationGroup currentGroup = null;
 
     public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth) {
         this(reteContainer, tupleWidth, false);
@@ -202,7 +207,7 @@ public class UniquenessEnforcerNode extends StandardNode
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
                     // this can happen if the INSERT cancelled out a DELETE
-                    reteContainer.getTracker().removeRederivable(this);
+                    currentGroup.removeRederivable(this);
                 }
             } else {
                 // the tuple is in the main memory
@@ -228,7 +233,7 @@ public class UniquenessEnforcerNode extends StandardNode
                 }
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
-                    reteContainer.getTracker().removeRederivable(this);
+                    currentGroup.removeRederivable(this);
                 }
             } else {
                 // the tuple is in the main memory
@@ -239,7 +244,7 @@ public class UniquenessEnforcerNode extends StandardNode
                     if (count > 0) {
                         if (rederivableMemory.isEmpty()) {
                             // there is now something to be re-derived
-                            reteContainer.getTracker().addRederivable(this);
+                            currentGroup.addRederivable(this);
                         }
                         rederivableMemory.addPositive(update, count);
                     }
@@ -284,7 +289,7 @@ public class UniquenessEnforcerNode extends StandardNode
         memory.addPositive(update, count);
         // if there is no other re-derivable tuple, then unregister the node itself
         if (this.rederivableMemory.isEmpty()) {
-            reteContainer.getTracker().removeRederivable(this);
+            currentGroup.removeRederivable(this);
         }
         propagate(Direction.INSERT, update);
     }
@@ -333,7 +338,7 @@ public class UniquenessEnforcerNode extends StandardNode
     public MemoryNullIndexer getNullIndexer() {
         if (memoryNullIndexer == null) {
             memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory.keySet(), this, this, specializedListeners);
-            reteContainer.getTracker().registerDependency(this, memoryNullIndexer);
+            communicationTracker.registerDependency(this, memoryNullIndexer);
         }
         return memoryNullIndexer;
     }
@@ -341,7 +346,7 @@ public class UniquenessEnforcerNode extends StandardNode
     public MemoryIdentityIndexer getIdentityIndexer() {
         if (memoryIdentityIndexer == null) {
             memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory.keySet(), this, this, specializedListeners);
-            reteContainer.getTracker().registerDependency(this, memoryIdentityIndexer);
+            communicationTracker.registerDependency(this, memoryIdentityIndexer);
         }
         return memoryIdentityIndexer;
     }
@@ -369,4 +374,13 @@ public class UniquenessEnforcerNode extends StandardNode
                 parent.acceptPropagatedTraceInfo(traceInfo);
     }
 
+    public CommunicationGroup getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public void setCurrentGroup(CommunicationGroup currentGroup) {
+        this.currentGroup = currentGroup;
+    }
+
+    
 }

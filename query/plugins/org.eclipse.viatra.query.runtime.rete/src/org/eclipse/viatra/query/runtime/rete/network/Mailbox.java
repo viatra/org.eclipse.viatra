@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
  * @since 1.6
  *
  */
-public interface Mailbox extends Clearable {
+public interface Mailbox extends Clearable, IGroupable {
 
     /**
      * Posts a new message to this mailbox.

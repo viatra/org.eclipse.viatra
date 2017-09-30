@@ -16,7 +16,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
  * @author Tamas Szabo
  * @since 1.6
  */
-public interface RederivableNode extends Node {
+public interface RederivableNode extends Node, IGroupable {
 
     /**
      * The method is called by the {@link ReteContainer} to re-derive tuples after the normal messages have been 

@@ -110,7 +110,7 @@ public final class CommunicationTracker {
             final Node representative = sccInformationProvider.getRepresentative(node);
             final CommunicationGroup group = groupMap.get(representative);
             if (representative != node) {
-                groupMap.put(node, group);
+                addToGroup(node, group);
             }
         }
         
@@ -120,29 +120,32 @@ public final class CommunicationTracker {
 
         // reconstruct new queue contents based on new group map
         if (!groupQueue.isEmpty()) {
-            final Set<CommunicationGroup> immediatelyActiveGroups = new HashSet<CommunicationGroup>();
+            final Set<CommunicationGroup> oldActiveGroups = new HashSet<CommunicationGroup>(groupQueue);
+            groupQueue.clear();
 
-            for (final CommunicationGroup oldGroup : groupQueue) {
+            for (final CommunicationGroup oldGroup : oldActiveGroups) {
                 for (final Entry<MessageKind, Collection<Mailbox>> entry : oldGroup.getMailboxes().entrySet()) {
                     for (final Mailbox mailbox : entry.getValue()) {
                         final CommunicationGroup newGroup = this.groupMap.get(mailbox.getReceiver());
                         newGroup.notifyHasMessage(mailbox, entry.getKey());
-                        immediatelyActiveGroups.add(newGroup);                        
                     }
                 }
                 
                 for (final RederivableNode node : oldGroup.getRederivables()) {
                     final CommunicationGroup newGroup = this.groupMap.get(node);
                     newGroup.addRederivable(node);
-                    immediatelyActiveGroups.add(newGroup);
                 }
                 oldGroup.isEnqueued = false;
             }
+        }
+    }
 
-            groupQueue.clear();
-
-            for (final CommunicationGroup group : immediatelyActiveGroups) {
-                activate(group);
+    private void addToGroup(final Node node, final CommunicationGroup group) {
+        groupMap.put(node, group);
+        if (node instanceof Receiver) {
+            ((Receiver) node).getMailbox().setCurrentGroup(group);
+            if (node instanceof IGroupable) {
+                ((IGroupable) node).setCurrentGroup(group);
             }
         }
     }
@@ -153,7 +156,7 @@ public final class CommunicationTracker {
     private void precomputeFallThroughFlag(final Node node) {
         CommunicationGroup group = groupMap.get(node); 
             if (node instanceof Receiver) {
-                Mailbox mailbox = ((Receiver) node).getMailbox();
+                IGroupable mailbox = ((Receiver) node).getMailbox();
                 if (mailbox instanceof DefaultMailbox) {
                     Set<Node> directParents = dependencyGraph.getSourceNodes(node).keySet();
                     // decide between using quick&cheap fall-through, or allowing for update cancellation
@@ -229,48 +232,18 @@ public final class CommunicationTracker {
 
     private void activate(final CommunicationGroup group) {
         if (!group.isEnqueued) {
-            groupQueue.add(group);
-            group.isEnqueued = true;
+            activateUnenqueued(group);
         }
     }
 
-    private void deactivate(final CommunicationGroup group) {
+    void activateUnenqueued(final CommunicationGroup group) {
+        groupQueue.add(group);
+        group.isEnqueued = true;
+    }
+
+    void deactivate(final CommunicationGroup group) {
         groupQueue.remove(group);
         group.isEnqueued = false;
-    }
-
-    public void addRederivable(final RederivableNode node) {
-        final CommunicationGroup group = this.groupMap.get(node);
-        group.addRederivable(node);
-        activate(group);
-    }
-
-    public void removeRederivable(final RederivableNode node) {
-        final CommunicationGroup group = this.groupMap.get(node);
-        group.removeRederivable(node);
-        if (group.isEmpty()) {
-            deactivate(group);
-        }
-    }
-
-    public void notifyHasMessage(final Mailbox mailbox, final MessageKind kind) {
-        final Receiver receiver = mailbox.getReceiver();
-        final CommunicationGroup group = this.groupMap.get(receiver);
-
-        group.notifyHasMessage(mailbox, kind);
-
-        activate(group);
-    }
-
-    public void notifyLostAllMessages(final Mailbox mailbox, final MessageKind kind) {
-        final Receiver receiver = mailbox.getReceiver();
-        final CommunicationGroup group = this.groupMap.get(receiver);
-
-        group.notifyLostAllMessages(mailbox, kind);
-
-        if (group.isEmpty()) {
-            deactivate(group);
-        }
     }
 
     public CommunicationGroup getAndRemoveFirstGroup() {
@@ -290,11 +263,11 @@ public final class CommunicationTracker {
         
         CommunicationGroup group = null;
         if (isSingleton && (isDefault || !isReceiver)) {
-            group = new CommunicationGroup.Singleton(representative, index);
+            group = new CommunicationGroup.Singleton(this, representative, index);
         } else {
-            group = new CommunicationGroup.Recursive(representative, index);
+            group = new CommunicationGroup.Recursive(this, representative, index);
         }
-        groupMap.put(representative, group);
+        addToGroup(representative, group);
         
         return group;
     }
