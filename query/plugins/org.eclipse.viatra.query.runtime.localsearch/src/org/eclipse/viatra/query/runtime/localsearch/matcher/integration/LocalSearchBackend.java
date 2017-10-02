@@ -17,8 +17,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
-import org.eclipse.viatra.query.runtime.localsearch.plan.CachingPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
@@ -66,7 +66,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
         super();
         this.context = context;
         this.generalCache = new PurgableCache();
-        this.planProvider = new CachingPlanProvider(context.getLogger());
+        this.planProvider = new SimplePlanProvider(context.getLogger());
     }
 
     @Override
