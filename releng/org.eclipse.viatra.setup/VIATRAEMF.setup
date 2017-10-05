@@ -1137,7 +1137,7 @@
         xsi:type="setup.p2:P2Task">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
-          versionRange="[2.9.0,2.13.0)"/>
+          versionRange="[2.9.0,3.0.0)"/>
       <requirement
           name="de.itemis.xtext.antlr.feature.feature.group"/>
       <requirement
@@ -1159,7 +1159,7 @@
             name="de.itemis.xtext.antlr.feature.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.9.0,2.13.0)"/>
+            versionRange="[2.9.0,3.0.0)"/>
         <repositoryList
             name="Mars">
           <repository
@@ -1185,8 +1185,6 @@
             name="Photon">
           <repository
               url="http://download.eclipse.org/releases/photon"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201709191305/"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
