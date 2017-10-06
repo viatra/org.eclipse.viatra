@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
@@ -305,8 +306,10 @@ public class EMFBaseIndexMetaStore {
      */
     private void maintainTypeHierarhyInternal(final Object subClassKey, final Object superClassKey) {
         // update observed class and instance listener tables according to new subtype information
-        if (navigationHelper.directlyObservedClasses.containsKey(superClassKey)) {
-            navigationHelper.getAllObservedClassesInternal().put(subClassKey, navigationHelper.directlyObservedClasses.get(superClassKey));
+        Map<Object, IndexingLevel> allObservedClasses = navigationHelper.getAllObservedClassesInternal();
+        if (allObservedClasses.containsKey(superClassKey)) {
+            // we know that there are no known subtypes of subClassKey at this point, so a single insert should suffice
+            allObservedClasses.put(subClassKey, allObservedClasses.get(superClassKey));
         }
         final Table<Object, InstanceListener, Set<EClass>> instanceListeners = navigationHelper.peekInstanceListeners();
         if (instanceListeners != null) { // table already constructed
