@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  */
 public class DefaultMailbox implements Mailbox {
     
-    private static int SIZE_TRESHOLD = 127;
+    private static int SIZE_THRESHOLD = 32; 
 
     protected Map<Tuple, Integer> queue;
     protected Map<Tuple, Integer> buffer;
@@ -41,6 +41,8 @@ public class DefaultMailbox implements Mailbox {
      * @since 1.7
      */
     protected CommunicationGroup currentGroup = null;
+    private boolean queueSizeTresholdExceeded = false;
+    private boolean bufferSizeTresholdExceeded = false;
 
     public DefaultMailbox() {
         this(null, null);
@@ -92,6 +94,14 @@ public class DefaultMailbox implements Mailbox {
         if (count == null) {
             count = 0;
             significantChange = true;
+            
+            // is size threshold exceeded with the new tuple?
+            // Since we check it again at each step, same effect as if it was (size >= SIZE_TRESHOLD)
+            //  because if count grows larger then threshold, it must pass through threshold
+            if (delivering)
+                bufferSizeTresholdExceeded = bufferSizeTresholdExceeded || (activeQueue.size() == SIZE_THRESHOLD);
+            else
+                queueSizeTresholdExceeded = queueSizeTresholdExceeded || (activeQueue.size() == SIZE_THRESHOLD);
         } else {
             significantChange = false;
         }
@@ -141,15 +151,18 @@ public class DefaultMailbox implements Mailbox {
         
         this.delivering = false;
 
-        if (queue.size() > SIZE_TRESHOLD) {
+        // If queue was too big, it still has a lot of memory reserved that we should free up
+        if (queueSizeTresholdExceeded) {
             this.queue = this.buffer;
             this.buffer = CollectionsFactory.createMap();
-        } else {            
+        } else { // otherwise, queue can be emptied and reused           
             this.queue.clear();
             Map<Tuple, Integer> tmpQueue = this.queue;
             this.queue = this.buffer;
             this.buffer = tmpQueue;
         }
+        queueSizeTresholdExceeded = bufferSizeTresholdExceeded;
+        bufferSizeTresholdExceeded = false;
     }
 
     @Override
