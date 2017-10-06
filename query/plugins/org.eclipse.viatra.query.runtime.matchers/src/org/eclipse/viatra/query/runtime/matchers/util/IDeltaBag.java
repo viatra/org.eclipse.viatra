@@ -11,22 +11,12 @@
 package org.eclipse.viatra.query.runtime.matchers.util;
 
 /**
- * An {@link IMemory} that always contains values with a nonnegative multiplicity.
- * 
- * <p> In case a write operation caused underflow, an {@link IllegalStateException} is thrown.
+ * An {@link IMemory} that represents the difference between two states of a set or {@link IMultiset}, and therefore
+ *  may contain values with a negative multiplicity.
  * 
  * @author Gabor Bergmann
  * @since 1.7
  */
-public interface IMultiset<T> extends IMemory<T> {
+public interface IDeltaBag<T> extends IMemory<T> {
 
-    /**
-     * Adds the given number of occurrences to the memory. The count value must be a positive number.
-     * 
-     * @param count
-     *            the number of occurrences
-     * @return true if the tuple was not present before in the memory
-     */
-    boolean addPositive(T value, int count);
-    
 }

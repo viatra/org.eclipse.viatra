@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.IDeltaBag;
 
 /**
  * Default mailbox implementation. 
@@ -30,8 +31,8 @@ public class DefaultMailbox implements Mailbox {
     
     private static int SIZE_THRESHOLD = 32; 
 
-    protected Map<Tuple, Integer> queue;
-    protected Map<Tuple, Integer> buffer;
+    protected IDeltaBag<Tuple> queue;
+    protected IDeltaBag<Tuple> buffer;
     protected final Receiver receiver;
     protected final ReteContainer container;
     protected boolean delivering;
@@ -52,11 +53,11 @@ public class DefaultMailbox implements Mailbox {
         this.receiver = receiver;
         this.container = container;
         this.tracker = container == null ? null : container.getTracker();
-        this.queue = CollectionsFactory.createMap();
-        this.buffer = CollectionsFactory.createMap();
+        this.queue = CollectionsFactory.createDeltaBag();
+        this.buffer = CollectionsFactory.createDeltaBag();
     }
 
-    protected Map<Tuple, Integer> getActiveQueue() {
+    protected IDeltaBag<Tuple> getActiveQueue() {
         if (this.delivering) {
             return this.buffer;
         } else {
@@ -65,7 +66,7 @@ public class DefaultMailbox implements Mailbox {
     }
 
     protected Integer get(Tuple key) {
-        return getActiveQueue().get(key);
+        return getActiveQueue().getCount(key);
     }
 
     protected boolean isEmpty() {
@@ -86,46 +87,35 @@ public class DefaultMailbox implements Mailbox {
     }
 
     private void enqueue(Direction direction, Tuple update) {
-        Map<Tuple, Integer> activeQueue = getActiveQueue();
+        IDeltaBag<Tuple> activeQueue = getActiveQueue();
         boolean wasEmpty = activeQueue.isEmpty();
         
         boolean significantChange;
-        Integer count = activeQueue.get(update);
-        if (count == null) {
-            count = 0;
-            significantChange = true;
-            
-            // is size threshold exceeded with the new tuple?
-            // Since we check it again at each step, same effect as if it was (size >= SIZE_TRESHOLD)
-            //  because if count grows larger then threshold, it must pass through threshold
-            if (delivering)
-                bufferSizeTresholdExceeded = bufferSizeTresholdExceeded || (activeQueue.size() == SIZE_THRESHOLD);
-            else
-                queueSizeTresholdExceeded = queueSizeTresholdExceeded || (activeQueue.size() == SIZE_THRESHOLD);
-        } else {
-            significantChange = false;
-        }
-        
         if (direction == Direction.REVOKE) {
-            count--;
+            significantChange = activeQueue.removeOne(update);
         } else {
-            count++;
+            significantChange = activeQueue.addOne(update);
         }
         
-        if (count == 0) {
-            activeQueue.remove(update);
-            significantChange = true;
-        } else {
-            activeQueue.put(update, count);
-        }
+        if (significantChange) {
+          // is size threshold exceeded with the new tuple?
+          // Since we check it again at each step, same effect as if it was (size >= SIZE_TRESHOLD)
+          //  because if count grows larger then threshold, it must pass through threshold
+          if (delivering)
+              bufferSizeTresholdExceeded = bufferSizeTresholdExceeded || (activeQueue.size() == SIZE_THRESHOLD);
+          else
+              queueSizeTresholdExceeded = queueSizeTresholdExceeded || (activeQueue.size() == SIZE_THRESHOLD);
         
-        if (significantChange && container != null) {
-            if (wasEmpty) {
-                currentGroup.notifyHasMessage(this, MessageKind.DEFAULT);
-            } else if (activeQueue.isEmpty()) {
-                currentGroup.notifyLostAllMessages(this, MessageKind.DEFAULT);
-            }
+          // (de)activate group
+          if (container != null) {
+              if (wasEmpty) {
+                  currentGroup.notifyHasMessage(this, MessageKind.DEFAULT);
+              } else if (activeQueue.isEmpty()) {
+                  currentGroup.notifyLostAllMessages(this, MessageKind.DEFAULT);
+              }
+          }
         }
+                
     }
 
     @Override
@@ -133,8 +123,8 @@ public class DefaultMailbox implements Mailbox {
         // use the buffer during delivering so that there is a clear separation between the stages
         this.delivering = true;
 
-        for (Entry<Tuple, Integer> entry : this.queue.entrySet()) {
-            int count = entry.getValue();
+        for (Tuple tuple : this.queue) {
+            int count = queue.getCount(tuple);
             
             Direction direction;
             if (count < 0) {
@@ -145,7 +135,7 @@ public class DefaultMailbox implements Mailbox {
             }
             
             for (int i = 0; i < count; i++) {
-                this.receiver.update(direction, entry.getKey());
+                this.receiver.update(direction, tuple);
             }
         }
         
@@ -154,10 +144,10 @@ public class DefaultMailbox implements Mailbox {
         // If queue was too big, it still has a lot of memory reserved that we should free up
         if (queueSizeTresholdExceeded) {
             this.queue = this.buffer;
-            this.buffer = CollectionsFactory.createMap();
+            this.buffer = CollectionsFactory.createDeltaBag();
         } else { // otherwise, queue can be emptied and reused           
             this.queue.clear();
-            Map<Tuple, Integer> tmpQueue = this.queue;
+            IDeltaBag<Tuple> tmpQueue = this.queue;
             this.queue = this.buffer;
             this.buffer = tmpQueue;
         }

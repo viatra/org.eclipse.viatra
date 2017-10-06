@@ -52,13 +52,19 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
     
     @Override
     public <T> IMultiset<T> createMultiset() {
-        return new EclipseCollectionsBagMemory<T>();
+        return new EclipseCollectionsMultiset<T>();
+    }
+    
+    @Override
+    public <T> IDeltaBag<T> createDeltaBag() {
+        return new EclipseCollectionsDeltaBag<T>();
     }
     
     @Override
     public <O> List<O> createObserverList() {
         return new ArrayList<O>(1); // keep concurrent modification exceptions for error detection
-        // Lists.mutable.empty();
+        // Lists.mutable.empty
+
     }
 
 }

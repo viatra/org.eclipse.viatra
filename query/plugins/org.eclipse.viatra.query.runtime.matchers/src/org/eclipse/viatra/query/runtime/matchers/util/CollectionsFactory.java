@@ -72,6 +72,14 @@ public final class CollectionsFactory
     }
 
     /**
+     * Instantiates a new empty delta bag.
+     * @since 1.7
+     */
+    public static <T> IDeltaBag<T> createDeltaBag() {
+        return FRAMEWORK.createDeltaBag();
+    }
+
+    /**
      * Instantiates a new list that is optimized for registering observers / callbacks.
      * @since 1.7
      */
@@ -96,6 +104,7 @@ public final class CollectionsFactory
         public abstract <E> Set<E> createSet();
         public abstract <E> Set<E> createSet(Collection<E> initial);
         public abstract <T> IMultiset<T> createMultiset();
+        public abstract <T> IDeltaBag<T> createDeltaBag();
         public abstract <O> List<O> createObserverList();
     }
     
@@ -134,6 +143,11 @@ public final class CollectionsFactory
         @Override
         public <O> List<O> createObserverList() {
             return new ArrayList<O>(1);
+        }
+
+        @Override
+        public <T> IDeltaBag<T> createDeltaBag() {
+            throw new UnsupportedOperationException();
         }
         
     }
