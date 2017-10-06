@@ -40,14 +40,6 @@ public class FrameInitializationCheck extends CheckOperation {
         return Collections.emptyList();
     }
 
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
-
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         return frame.setKeys(this.parameterKeys);

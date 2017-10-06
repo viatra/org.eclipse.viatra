@@ -34,14 +34,6 @@ public class InstanceOfJavaClassCheck extends CheckOperation {
 
     }
 
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) {
-        return check(frame, null);
-    }
-
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);

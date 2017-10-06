@@ -80,6 +80,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/CheckPositivePatternCall.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall">
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall"/>
+                <message_argument value="check(MatchingFrame)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/extend/IterateOverEStructuralFeatureInstances.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances">
         <filter comment="Internal API update" id="388018290">
             <message_arguments>

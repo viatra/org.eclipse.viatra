@@ -45,13 +45,6 @@ public class NACOperation extends CheckOperation implements IPatternMatcherOpera
         call = helper.createCall(context);
     }
 
-    /**
-     * @deprecated Use {@link #check(MatchingFrame,ISearchContext)} instead
-     */
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
-
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         return !call.has(frame);

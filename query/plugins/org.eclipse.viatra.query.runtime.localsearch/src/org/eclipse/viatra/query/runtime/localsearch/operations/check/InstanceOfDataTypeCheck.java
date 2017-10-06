@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.base.Preconditions;
@@ -33,14 +32,6 @@ public class InstanceOfDataTypeCheck extends CheckOperation {
         this.position = position;
         this.dataType = dataType;
 
-    }
-
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
     }
 
     @Override

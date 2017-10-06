@@ -37,14 +37,6 @@ public class CheckPositivePatternCall extends CheckOperation implements IPattern
         super.onInitialize(frame, context);
         call = helper.createCall(context);
     }
-    
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    public boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
 
     /**
      * @since 1.5

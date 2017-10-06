@@ -23,6 +23,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.lang.model.SourceVersion;
+
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -45,6 +47,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSe
 import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
@@ -85,6 +88,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmEnumerationType;
 import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
@@ -218,6 +222,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     
     @Inject
     private Logger logger;
+    
+    @Inject
+    private EMFPatternLanguageJvmModelInferrerUtil inferrerUtil;
 
     private static class CustomMethodWrapper extends MethodWrapper{
 
@@ -967,6 +974,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    @Check
+    public void checkPatternName(Pattern pattern) {
+        if (pattern.getName() != null && !SourceVersion.isName(pattern.getName())) {
+            JvmType inferredSpecification = inferrerUtil.findInferredSpecification(pattern);
+            if (inferredSpecification != null && !inferredSpecification.eIsProxy() && !SourceVersion.isName(inferredSpecification.getQualifiedName())) {
+                error(String.format("The pattern name %s is not a valid Java classname", pattern.getName()), PatternLanguagePackage.Literals.PATTERN__NAME, EMFIssueCodes.OTHER_ISSUE);
+            }
+        }
+    }
+    
     public Map<PathExpressionTail, EStructuralFeature> getAllFeaturesFromPathExpressionTail(
             PathExpressionTail pathExpressionTail) {
         Map<PathExpressionTail, EStructuralFeature> types = Maps.newHashMap();

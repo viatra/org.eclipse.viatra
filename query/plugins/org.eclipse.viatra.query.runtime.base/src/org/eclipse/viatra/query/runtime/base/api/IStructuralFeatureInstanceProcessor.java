@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.base.api;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * @author Gabor Bergmann

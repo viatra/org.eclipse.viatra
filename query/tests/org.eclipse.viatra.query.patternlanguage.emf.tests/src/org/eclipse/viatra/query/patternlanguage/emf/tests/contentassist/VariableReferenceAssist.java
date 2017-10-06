@@ -23,11 +23,11 @@ import org.junit.runner.RunWith;
 @SuppressWarnings({ "restriction"})
 public class VariableReferenceAssist extends AbstractContentAssistTest {
 
-    private final static String line1 = String.format("import \"%s\"%n", PatternLanguagePackage.eNS_URI);
-    private final static String line2 = "pattern util(p : Pattern) {Pattern (p);}\n";
-    private final static String line3 = "pattern test(p : Pattern) {\n";
-    private final static String line4_preassist = "  find util(";
-    private final static String line4_postassist = "  find util(p";
+    private static final String line1 = String.format("import \"%s\"%n", PatternLanguagePackage.eNS_URI);
+    private static final String line2 = "pattern util(p : Pattern) {Pattern (p);}\n";
+    private static final String line3 = "pattern test(p : Pattern) {\n";
+    private static final String line4_preassist = "  find util(";
+    private static final String line4_postassist = "  find util(p";
 
     @Test
     public void testEPackageImport() throws Exception {

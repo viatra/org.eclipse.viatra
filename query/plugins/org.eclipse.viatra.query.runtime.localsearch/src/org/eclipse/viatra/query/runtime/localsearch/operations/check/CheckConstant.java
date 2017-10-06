@@ -35,14 +35,6 @@ public class CheckConstant extends CheckOperation {
         this.value = value;
     }
 
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
-
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         return frame.get(position).equals(value);

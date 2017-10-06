@@ -67,14 +67,6 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IPat
         // Note: second parameter is NOT bound during execution, but the first is
         call = helper.createCall(context);
     }
-    
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
 
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {

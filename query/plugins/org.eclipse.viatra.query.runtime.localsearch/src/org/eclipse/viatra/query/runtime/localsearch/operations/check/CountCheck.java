@@ -51,14 +51,6 @@ public class CountCheck extends CheckOperation implements IPatternMatcherOperati
         call = helper.createCall(context);
     }
 
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
-
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         int count = call.count(frame);

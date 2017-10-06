@@ -48,14 +48,6 @@ public class ExpressionEvalCheck extends CheckOperation {
         return variables;
     }
 
-    /**
-     * @deprecated Use {@link #check(MatchingFrame, ISearchContext)} instead
-     */
-    @Deprecated
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return check(frame, null);
-    }
-
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         try {
