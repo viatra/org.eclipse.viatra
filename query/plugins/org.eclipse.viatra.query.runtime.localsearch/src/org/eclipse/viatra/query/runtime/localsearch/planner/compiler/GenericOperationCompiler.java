@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.operations.generic.GenericTypeCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.generic.GenericTypeExtend;
+import org.eclipse.viatra.query.runtime.localsearch.operations.generic.GenericTypeExtendSingleValue;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -71,20 +72,27 @@ public class GenericOperationCompiler extends AbstractOperationCompiler {
         Tuple tuple = typeConstraint.getVariablesTuple();
         
         int[] positions = new int[tuple.getSize()];
-        List<Integer> boundVariableIndices = new ArrayList<>(); 
-        Set<Integer> boundVariables = new HashSet<>();
+        List<Integer> boundVariableIndices = new ArrayList<>();
+        List<Integer> boundVariables = new ArrayList<>();
+        Set<Integer> unboundVariables = new HashSet<>();
         for (int i = 0; i < tuple.getSize(); i++) {
             PVariable variable = (PVariable) tuple.get(i);
             Integer position = variableMapping.get(variable);
             positions[i] = position;
             if (variableBindings.get(typeConstraint).contains(position)) {
-                boundVariables.add(position);
                 boundVariableIndices.add(i);
+                boundVariables.add(position);
+            } else {
+                unboundVariables.add(position);
             }
         }
         TupleMask indexerMask = TupleMask.fromSelectedIndices(inputKey.getArity(), boundVariableIndices);
         TupleMask callMask = TupleMask.fromSelectedIndices(variableMapping.size(), boundVariables);
-        operations.add(new GenericTypeExtend(inputKey, positions, callMask, indexerMask, boundVariables));
+        if (unboundVariables.size() == 1) {
+            operations.add(new GenericTypeExtendSingleValue(inputKey, positions, callMask, indexerMask, unboundVariables.iterator().next()));
+        } else {
+            operations.add(new GenericTypeExtend(inputKey, positions, callMask, indexerMask, unboundVariables));
+        }
 
     }
 
