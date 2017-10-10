@@ -15,6 +15,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageRuntimeMod
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
+import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 
 import com.google.inject.Binder;
@@ -41,6 +42,11 @@ public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageSt
             @Override
             public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
                 return MavenGeneratorConfigProvider.class;
+            }
+            
+            @Override
+            public Class<? extends XtextResource> bindXtextResource() {
+                return EagerBatchLinkableResource.class;
             }
         });
     }
