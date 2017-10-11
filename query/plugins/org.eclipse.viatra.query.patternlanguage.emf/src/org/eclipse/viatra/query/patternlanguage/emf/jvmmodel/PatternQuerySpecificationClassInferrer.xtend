@@ -227,7 +227,7 @@ class PatternQuerySpecificationClassInferrer {
                 body = '''
                     «inferQueryEvaluationHints(pattern)»
                     «Set»<«PBody»> bodies = «Sets».newLinkedHashSet();
-                    «IF CorePatternLanguageHelper.getReferencedPatterns(pattern).isEmpty»
+                    «IF CorePatternLanguageHelper.getReferencedPatterns(pattern).filter[it != pattern].isEmpty»
                         «inferBodies(pattern)»
                         «inferAnnotations(pattern)»
                     «ELSE»
