@@ -85,7 +85,10 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
                 10 == count find Good(count find Good(X));
             }
         ')
-        tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
+        tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL),
+            getWarningCode(IssueCodes.MISTYPED_PARAMETER)
+        )
     }
 
     @Test

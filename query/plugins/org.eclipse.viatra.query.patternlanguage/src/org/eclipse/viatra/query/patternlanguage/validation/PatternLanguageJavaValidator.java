@@ -240,6 +240,18 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             
         }
     }
+    /**
+     * Check for mistyped aggregator expressions
+     * @since 1.7
+     */
+    @Check
+    public void checkAggregatorCallTypes(AggregatedValue expression) {
+        List<ValueReference> callVariables = expression.getCall().getParameters();
+        List<Variable> patternParameters = expression.getCall().getPatternRef().getParameters();
+        //maxIndex is used to avoid overindexing in case of incorrect number of parameters
+        int maxIndex = Math.max(callVariables.size(), patternParameters.size());
+        produceParameterTypeWarnings(callVariables, patternParameters, maxIndex);
+    }
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -839,21 +851,26 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                         IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
             }
             
-            for (int i = 0; i < maxIndex; i++ ) {
-                IInputKey actualType = typeInferrer.getType(callVariables.get(i));
-                IInputKey expectedType = typeInferrer.getType(patternParameters.get(i));
-                
-                if (actualType != null && expectedType != null && 
-                        // If the expression matches the parameter type, it is valid 
-                        !( typeSystem.isConformant(expectedType, actualType) 
-                        // The inverse relation is also valid: the neg only applies to a subset of the class 
-                        || typeSystem.isConformant(actualType, expectedType))) {
-                    // Parameter variable will never match pattern, suggest mistyping
-                    warning(String.format(
-                            "Expression type %s does not match type of the parameter type %s of the called pattern.",
-                            typeSystem.typeString(actualType), typeSystem.typeString(expectedType)),
-                            callVariables.get(i), null, IssueCodes.MISTYPED_PARAMETER);
-                }
+            produceParameterTypeWarnings(callVariables, patternParameters, maxIndex);
+        }
+    }
+
+    private void produceParameterTypeWarnings(List<ValueReference> callVariables, List<Variable> patternParameters,
+            int maxIndex) {
+        for (int i = 0; i < maxIndex; i++ ) {
+            IInputKey actualType = typeInferrer.getType(callVariables.get(i));
+            IInputKey expectedType = typeInferrer.getType(patternParameters.get(i));
+            
+            if (actualType != null && expectedType != null && 
+                    // If the expression matches the parameter type, it is valid 
+                    !( typeSystem.isConformant(expectedType, actualType) 
+                    // The inverse relation is also valid: the neg only applies to a subset of the class 
+                    || typeSystem.isConformant(actualType, expectedType))) {
+                // Parameter variable will never match pattern, suggest mistyping
+                warning(String.format(
+                        "Expression type %s does not match type of the parameter type %s of the called pattern.",
+                        typeSystem.typeString(actualType), typeSystem.typeString(expectedType)),
+                        callVariables.get(i), null, IssueCodes.MISTYPED_PARAMETER);
             }
         }
     }

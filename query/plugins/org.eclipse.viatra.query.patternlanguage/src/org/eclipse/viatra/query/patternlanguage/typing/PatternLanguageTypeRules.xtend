@@ -141,7 +141,6 @@ class PatternLanguageTypeRules {
    }
    
    def dispatch void inferTypes(AggregatedValue reference, TypeInformation information) {
-       inferCallTypes(reference.call, information)
         if (reference === null || reference.aggregator === null) {
             //Unresolved aggregator type, not a type error
             return
@@ -178,22 +177,28 @@ class PatternLanguageTypeRules {
                 return
             } 
 
+            val index = AggregatorUtil.getAggregateVariableIndex(reference)
             for (var i=0; i < returnTypes.size; i++) {
                 information.provideType(new ConditionalJudgement(
                     reference, 
                     new JavaTransitiveInstancesKey(returnTypes.get(i).identifier),
-                    reference.call.parameters.get(AggregatorUtil.getAggregateVariableIndex(reference)), 
+                    reference.call.parameters.get(index), 
                     new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier)
                 ))
                 information.provideType(new ConditionalJudgement(
-                    reference.call.parameters.get(AggregatorUtil.getAggregateVariableIndex(reference)), 
+                    reference.call.parameters.get(index), 
                     new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier),
                     reference, 
                     new JavaTransitiveInstancesKey(returnTypes.get(i).identifier)
                 ))
             }
             
-           }    
+            // Aggregate variable needs to be connected to called pattern;
+            // Other variables are not connected, similar to negative pattern calls
+            information.provideType(
+                new ParameterTypeJudgement(reference.call.parameters.get(index), reference.call.patternRef.parameters.get(index))
+            )
+           }
    }
    
    def dispatch void inferTypes(Expression reference, TypeInformation information) {

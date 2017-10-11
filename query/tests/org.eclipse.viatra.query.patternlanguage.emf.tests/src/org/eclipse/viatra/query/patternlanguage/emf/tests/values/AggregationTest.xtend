@@ -637,5 +637,50 @@ class AggregationTest extends AbstractValidatorTest {
             getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR)
         )
     }
+    
+    @Test
+    def void supertypedCountAggregator() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            
+            pattern p(a){
+                Expression(a);
+                0 == count find h(a);
+            }
+            
+            pattern h(b:Variable){
+                Variable(b);
+            }
+            '''
+        )
+        tester.validate(parsed).assertAll(
+            getInfoCode(EMFIssueCodes.MISSING_PARAMETER_TYPE)
+        )
+    }
+    
+    @Test
+    def void mistypedCountAggregator() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            
+            pattern p(a){
+                Pattern(a);
+                0 == count find h(a);
+            }
+            
+            pattern h(b:Variable){
+                Variable(b);
+            }
+            '''
+        )
+        tester.validate(parsed).assertAll(
+            getWarningCode(IssueCodes.MISTYPED_PARAMETER),
+            getInfoCode(EMFIssueCodes.MISSING_PARAMETER_TYPE)
+        )
+    }
 
 }

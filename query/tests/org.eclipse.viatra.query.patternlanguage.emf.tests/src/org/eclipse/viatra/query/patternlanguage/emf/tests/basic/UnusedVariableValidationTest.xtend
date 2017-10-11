@@ -128,7 +128,6 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
