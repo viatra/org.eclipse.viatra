@@ -668,6 +668,7 @@ public class ZestContentViewer extends ContentViewer {
     @Override
     public void refresh() {
         contentNodeMap.clear();
+        contentEdgeMap.clear();
         viewer.getContents()
                 .setAll(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
     }
