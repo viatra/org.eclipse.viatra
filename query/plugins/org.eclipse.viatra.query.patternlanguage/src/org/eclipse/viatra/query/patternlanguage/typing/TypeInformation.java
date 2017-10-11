@@ -67,6 +67,7 @@ public class TypeInformation {
             Maps.<Expression, Collection<AbstractTypeJudgement>> newHashMap(),
             new HashSetSupplier<AbstractTypeJudgement>());
     final Set<Pattern> processedPatterns = Sets.newHashSet();
+    final Set<Expression> typeCalculationInProgress = Sets.newHashSet();
     
     private SetMultimap<Expression, IInputKey> expressionTypes = Multimaps.newSetMultimap(
             Maps.<Expression, Collection<IInputKey>> newHashMap(), 
@@ -239,11 +240,16 @@ public class TypeInformation {
     public Set<IInputKey> getAllTypes(Expression expression) {
         Expression escapedExpression = replaceVariableReferences(expression);
         Set<IInputKey> existingInformation = expressionTypes.get(escapedExpression);
-        if (existingInformation == null || existingInformation.isEmpty()) {
-            for (AbstractTypeJudgement judgement : typeJudgements.get(escapedExpression)) {
-                provideType(judgement);
+        if (!typeCalculationInProgress.contains(escapedExpression) && (existingInformation == null || existingInformation.isEmpty())) {
+            try {
+                typeCalculationInProgress.add(escapedExpression);
+                for (AbstractTypeJudgement judgement : typeJudgements.get(escapedExpression)) {
+                    provideType(judgement);
+                }
+                existingInformation = expressionTypes.get(escapedExpression);
+            } finally {
+                typeCalculationInProgress.remove(escapedExpression);
             }
-            existingInformation = expressionTypes.get(escapedExpression);
         }
         return existingInformation;
     }
