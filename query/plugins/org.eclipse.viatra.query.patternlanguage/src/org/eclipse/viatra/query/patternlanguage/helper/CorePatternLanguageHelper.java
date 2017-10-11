@@ -20,12 +20,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
@@ -722,5 +724,17 @@ public final class CorePatternLanguageHelper {
     public static boolean isUnnamedSingleUseVariable(Variable variable) {
         String name = variable.getName();
         return name != null && name.startsWith("_") && name.contains("<");
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public static String getModelFileName(EObject object) {
+        Resource eResource = object.eResource();
+        if (eResource != null) {
+            return eResource.getURI().trimFileExtension().lastSegment();
+        } else {
+            return "";
+        }
     }
 }

@@ -17,11 +17,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.util.DuplicationChecker;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
@@ -52,16 +49,6 @@ public class PatternLanguageResourceDescriptionStrategy extends DefaultResourceD
             if (qualifiedName != null) {
                 acceptor.accept(EObjectDescription.create(qualifiedName, eObject, getUserData((Pattern) eObject)));
             }
-            return true;
-        } else if (eObject instanceof Variable /*&& !(eObject.eContainer() instanceof Pattern)*/) {
-            return false;
-        } else if (eObject instanceof Constraint) {
-            // Constraints are not needed in the index
-            return false;
-        } else if (eObject instanceof PatternBody) {
-            // Pattern bodies are not needed in the index
-            return false;
-        } else if (eObject instanceof Annotation) {
             return false;
         }
         return super.createEObjectDescriptions(eObject, acceptor);

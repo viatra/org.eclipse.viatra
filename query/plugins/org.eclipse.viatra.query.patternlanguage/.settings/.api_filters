@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/validation/PatternLanguageJavaValidator.java" type="org.eclipse.viatra.query.patternlanguage.validation.PatternLanguageJavaValidator">
+        <filter comment="Not relevant here" id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.validation.PatternLanguageJavaValidator"/>
+                <message_argument value="CONFLICTING_SPECIFICATION_NAME_MESSAGE"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

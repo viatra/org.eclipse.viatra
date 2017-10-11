@@ -15,8 +15,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.eclipse.xtext.xbase.scoping.XbaseQualifiedNameProvider;
 
 import com.google.inject.Inject;
@@ -28,7 +30,14 @@ public class PatternNameProvider extends XbaseQualifiedNameProvider {
 
     @Override
     public QualifiedName getFullyQualifiedName(EObject obj) {
-        if (obj instanceof Pattern) {
+        if (obj instanceof PatternModel) {
+            PatternModel model = (PatternModel) obj;
+            String modelClassName = StringExtensions.toFirstUpper(CorePatternLanguageHelper.getModelFileName(model));
+            String modelPackageName = model.getPackageName();
+            if (modelClassName != null && !modelClassName.isEmpty() && modelPackageName != null && !modelPackageName.isEmpty()) {
+                return nameConverter.toQualifiedName(model.getPackageName()).append(modelClassName);
+            }
+        } if (obj instanceof Pattern) {
             Pattern pattern = (Pattern) obj;
             return nameConverter.toQualifiedName(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
         } else if (obj instanceof PatternBody) {

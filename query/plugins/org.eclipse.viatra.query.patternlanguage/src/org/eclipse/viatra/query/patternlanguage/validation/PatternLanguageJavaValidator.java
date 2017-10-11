@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.validation;
 
-import static org.eclipse.xtext.util.Strings.equal;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,6 +110,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     
     public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
     public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern %s (the shadowing pattern is in %s)";
+    /**
+     * @since 1.7
+     */
+    public static final String CONFLICTING_SPECIFICATION_NAME_MESSAGE = "Generated query specification name %s would conflict with generated query group name for file %s";
     public static final String UNKNOWN_ANNOTATION_ATTRIBUTE = "Undefined annotation attribute ";
     public static final String MISSING_ANNOTATION_ATTRIBUTE = "Required attribute missing ";
     public static final String ANNOTATION_PARAMETER_TYPE_ERROR = "Invalid parameter type %s. Expected %s";
@@ -250,7 +252,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         for (int i = 0; i < pattern.getParameters().size(); ++i) {
             String leftParameterName = pattern.getParameters().get(i).getName();
             for (int j = i + 1; j < pattern.getParameters().size(); ++j) {
-                if (equal(leftParameterName, pattern.getParameters().get(j).getName())) {
+                if (Strings.equal(leftParameterName, pattern.getParameters().get(j).getName())) {
                     error(DUPLICATE_VARIABLE_MESSAGE + leftParameterName,
                             PatternLanguagePackage.Literals.PATTERN__PARAMETERS, i,
                             IssueCodes.DUPLICATE_PATTERN_PARAMETER_NAME);
@@ -335,7 +337,9 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             // TODO: more precise calculation is needed for duplicate patterns
             // (number and type of pattern parameters)
             for (Pattern pattern : model.getPatterns()) {
+                boolean isDuplicateFound = false;
                 for (IEObjectDescription shadowingPatternDescription : duplicateChecker.findDuplicates(pattern)) {
+                    isDuplicateFound = true;
                     QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
                     URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment();
                     String otherResourcePath = otherResourceUri.toPlatformString(true);
@@ -345,6 +349,19 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName,
                             otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
                             IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+                }
+                if (!isDuplicateFound) {
+                    for (IEObjectDescription shadowingGroupDescription : duplicateChecker.findShadowingClasses(pattern, PatternLanguagePackage.Literals.PATTERN_MODEL)) {
+                        QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+                        URI otherResourceUri = shadowingGroupDescription.getEObjectURI().trimFragment();
+                        String otherResourcePath = otherResourceUri.toPlatformString(true);
+                        if (otherResourcePath == null) {
+                            otherResourcePath = otherResourceUri.toFileString();
+                        }
+                        error(String.format(CONFLICTING_SPECIFICATION_NAME_MESSAGE, fullyQualifiedName,
+                                otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
+                                IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+                    }
                 }
             }
         }

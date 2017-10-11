@@ -15,9 +15,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IContainer;
@@ -26,6 +29,7 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.impl.LiveShadowedResourceDescriptions;
 import org.eclipse.xtext.workspace.IProjectConfig;
 import org.eclipse.xtext.workspace.IProjectConfigProvider;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -47,6 +51,10 @@ public class DuplicationChecker {
     private IContainer.Manager containerManager;
     @Inject
     IProjectConfigProvider projectConfigurationProvider;
+    @Inject
+    IJvmModelAssociations associations;
+    @Inject
+    IQualifiedNameConverter nameConverter;
 
     private static Predicate<IContainer> contains(final IResourceDescription resourceDescription) {
         return new Predicate<IContainer>() {
@@ -58,14 +66,19 @@ public class DuplicationChecker {
     }
 
     public Set<IEObjectDescription> findDuplicates(Pattern pattern) {
-        
+        return findShadowingClasses(pattern, PatternLanguagePackage.Literals.PATTERN);
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public Set<IEObjectDescription> findShadowingClasses(Pattern pattern, EClass sourceType) {
         resourceDescriptions.setContext(pattern.eContainer());
         QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
-        
         Iterable<IEObjectDescription> shadowingPatternDescriptions = null;
         if (isStandaloneFileURI(pattern, pattern.eResource().getURI())) {
             // If pattern is not in a source folder, duplicate analysis is only meaningful inside the file
-            shadowingPatternDescriptions = resourceDescriptions.getLocalDescriptions().getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
+            shadowingPatternDescriptions = resourceDescriptions.getLocalDescriptions().getExportedObjects(sourceType, fullyQualifiedName, true);
             // Visibility can be ignored in case of local descriptions
             return processDuplicateCandidates(pattern, false, shadowingPatternDescriptions);
         } else {
@@ -74,9 +87,8 @@ public class DuplicationChecker {
                     .getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
             return processDuplicateCandidates(pattern, true, shadowingPatternDescriptions);
         }
-        
     }
-
+    
     private Set<IEObjectDescription> processDuplicateCandidates(Pattern pattern, boolean calculateVisibility,
             final Iterable<IEObjectDescription> shadowingPatternDescriptions) {
         Set<IEObjectDescription> duplicates = Sets.newHashSet();

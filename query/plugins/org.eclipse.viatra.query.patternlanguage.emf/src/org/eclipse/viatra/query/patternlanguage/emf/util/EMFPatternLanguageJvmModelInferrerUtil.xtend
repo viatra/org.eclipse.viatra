@@ -94,18 +94,13 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     }
 
     def modelFileName(EObject object) {
-        val eResource = object.eResource
-        if (eResource !== null) {
-            val name = eResource.URI.trimFileExtension.lastSegment
-            if (!(name.validClassName)) {
-                feedback.reportErrorNoLocation(object,
-                    String.format("The file name %s is not a valid Java type name. Please, rename the file!", name),
-                    EMFIssueCodes::OTHER_ISSUE, Severity.ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
-            }
-            return name
-        } else {
-            return ""
+        val name = CorePatternLanguageHelper.getModelFileName(object)
+        if (name !== null && !(name.validClassName)) {
+            feedback.reportErrorNoLocation(object,
+                String.format("The file name %s is not a valid Java type name. Please, rename the file!", name),
+                EMFIssueCodes::OTHER_ISSUE, Severity.ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
         }
+        return name
     }
     
     /**
