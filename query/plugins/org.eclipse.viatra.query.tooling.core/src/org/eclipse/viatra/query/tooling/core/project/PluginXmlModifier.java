@@ -145,6 +145,16 @@ public class PluginXmlModifier {
     }
 
     /**
+     * @param extensionId
+     *            the id that should be lexicographically preceding the returned node
+     * @return true if there is at least a single extension with the given identifier
+     * @since 1.7
+     */
+    public boolean hasExtensionFollowingId(String extensionId) {
+        return extensionTable.containsColumn(extensionId);
+    }
+    
+    /**
      * Find the extension node in the document node that has an id lexicographically following the given extensionId.
      * 
      * @param extensionId

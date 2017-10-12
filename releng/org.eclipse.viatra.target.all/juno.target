@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="VIATRA-Juno" sequenceNumber="1498492941">
+<target name="VIATRA-Juno" sequenceNumber="1508164275">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.8.2.v201511170833"/>
@@ -37,7 +37,7 @@
       <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
       <repository location="http://download.eclipse.org/cbi/updates/license/"/>
     </location>
-    <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.collections" version="7.1.1"/>
       <unit id="org.eclipse.collections.api" version="7.1.1"/>
       <repository location="http://download.eclipse.org/viatra/dependency/collections-71"/>
@@ -64,6 +64,7 @@
       <unit id="org.eclipse.platform.sdk" version="4.2.2.M20130204-1200"/>
       <unit id="org.eclipse.pde.feature.group" version="3.8.2.v20130116-091538-7c7wFj0FFt6Zr9bd4AM1JEQMS"/>
       <unit id="org.eclipse.platform.feature.group" version="4.2.1.v20130118-173121-9MF7GHYdG0B5kx4E_SkfZV-1mNjVATf67ZAb7"/>
+      <unit id="org.eclipse.equinox.executable.feature.group" version="3.6.0.v20121119-201001-7P7OG2BFLWUl7UnqBnO8V4Of"/>
       <repository location="http://download.eclipse.org/eclipse/updates/4.2/R-4.2.2-201302041200/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">

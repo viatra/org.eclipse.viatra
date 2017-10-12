@@ -76,6 +76,7 @@ import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.ComposedChecks;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
+import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
@@ -172,6 +173,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private NumberLiterals numberLiterals;
     @Inject
     private DuplicationChecker duplicateChecker;
+    @Inject
+    private JvmModelAssociator associator;
     
     /**
      * Checks if an aggregate {@link VariableReference} is used only in the right context, that is, in an
@@ -363,16 +366,20 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                 }
                 if (!isDuplicateFound) {
-                    for (IEObjectDescription shadowingGroupDescription : duplicateChecker.findShadowingClasses(pattern, PatternLanguagePackage.Literals.PATTERN_MODEL)) {
-                        QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
-                        URI otherResourceUri = shadowingGroupDescription.getEObjectURI().trimFragment();
-                        String otherResourcePath = otherResourceUri.toPlatformString(true);
-                        if (otherResourcePath == null) {
-                            otherResourcePath = otherResourceUri.toFileString();
+                    EObject _jvmElement = associator.getPrimaryJvmElement(pattern);
+                    if (_jvmElement instanceof JvmDeclaredType) {
+                        String qualifiedName = ((JvmDeclaredType) _jvmElement).getQualifiedName();
+                        for (IEObjectDescription shadowingGroupDescription : duplicateChecker.findShadowingClasses(pattern, qualifiedName, PatternLanguagePackage.Literals.PATTERN_MODEL)) {
+                            QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+                            URI otherResourceUri = shadowingGroupDescription.getEObjectURI().trimFragment();
+                            String otherResourcePath = otherResourceUri.toPlatformString(true);
+                            if (otherResourcePath == null) {
+                                otherResourcePath = otherResourceUri.toFileString();
+                            }
+                            error(String.format(CONFLICTING_SPECIFICATION_NAME_MESSAGE, fullyQualifiedName,
+                                    otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
+                                    IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                         }
-                        error(String.format(CONFLICTING_SPECIFICATION_NAME_MESSAGE, fullyQualifiedName,
-                                otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
-                                IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                     }
                 }
             }

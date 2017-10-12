@@ -65,15 +65,22 @@ public class DuplicationChecker {
     }
 
     public Set<IEObjectDescription> findDuplicates(Pattern pattern) {
-        return findShadowingClasses(pattern, PatternLanguagePackage.Literals.PATTERN);
+        QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+        return findShadowingClasses(pattern, fullyQualifiedName, PatternLanguagePackage.Literals.PATTERN);
     }
     
     /**
      * @since 1.7
      */
-    public Set<IEObjectDescription> findShadowingClasses(Pattern pattern, EClass sourceType) {
+    public Set<IEObjectDescription> findShadowingClasses(Pattern pattern, String fullyQualifiedName, EClass sourceType) {
+        return findShadowingClasses(pattern, nameConverter.toQualifiedName(fullyQualifiedName), sourceType);
+    }
+    /**
+     * @since 1.7
+     */
+    public Set<IEObjectDescription> findShadowingClasses(Pattern pattern, QualifiedName fullyQualifiedName, EClass sourceType) {
         resourceDescriptions.setContext(pattern.eContainer());
-        QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+        
         Iterable<IEObjectDescription> shadowingPatternDescriptions = null;
         if (isStandaloneFileURI(pattern, pattern.eResource().getURI())) {
             // If pattern is not in a source folder, duplicate analysis is only meaningful inside the file

@@ -9,6 +9,7 @@ location "http://download.eclipse.org/eclipse/updates/3.7/R-3.7.2-201202080800/"
     org.eclipse.platform.sdk
     org.eclipse.pde.feature.group
     org.eclipse.platform.feature.group
+    org.eclipse.equinox.executable.feature.group
 }
 
 location "http://download.eclipse.org/releases/indigo/201202240900/" {
