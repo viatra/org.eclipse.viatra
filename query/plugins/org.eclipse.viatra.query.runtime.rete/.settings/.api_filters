@@ -316,5 +316,11 @@
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory"/>
             </message_arguments>
         </filter>
+        <filter id="389300331">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory.matchings"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
+            </message_arguments>
+        </filter>
     </resource>
 </component>

@@ -19,7 +19,9 @@ import java.util.Set;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.collections.impl.factory.Sets;
+import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.ICollectionsFramework;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MarkedSet;
 
 /**
  * @author Gabor Bergmann
@@ -65,6 +67,15 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
         return new ArrayList<O>(1); // keep concurrent modification exceptions for error detection
         // Lists.mutable.empty
 
+    }
+
+    @Override
+    public <E> MarkedSet<E> createMarkedSet() {
+        return new EclipseCollectionsMarkedSet<E>();
+    }
+    
+    private static class EclipseCollectionsMarkedSet<E> extends UnifiedSet<E> implements MarkedSet<E> {
+        
     }
 
 }

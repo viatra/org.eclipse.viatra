@@ -16,25 +16,31 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MarkedSet;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 
 /**
  * @author Gabor Bergmann
  * 
  *         Indexes a collection of Tuples according to their masks.
+ *         Must belong to an owner {@link Node}.
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     /**
-     * Counts the number of occurences of each pattern. Element is deleted if # of occurences drops to 0.
+     * Maps a signature tuple to the bucket of tuples with the given signature.
+     * <p> Invariant: Value is either <ul>
+     *  <li>a {@link Tuple} if there is only that one tuple in the bucket, or </li>
+     *  <li>a {@link MarkedSet} if there are 2 or more tuples in the in the bucket.</li>
+     * </ul>
+     * If the signature has no associated tuples in the memory, the map must not contain the signature as key.
      */
-    protected Map<Tuple, Collection<Tuple>> matchings;
+    protected Map<Tuple, Object> matchings;
 
     /**
      * The mask used to index the matchings
@@ -50,7 +56,9 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     /**
      * @param mask
      *            The mask used to index the matchings
+     * @deprecated use {@link #MaskedTupleMemory(TupleMask, Node)}
      */
+    @Deprecated
     public MaskedTupleMemory(TupleMask mask) {
         this(mask, null);
     }
@@ -87,19 +95,28 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
      * 
      * @return true if new signature encountered
      */
+    @SuppressWarnings("unchecked")
     public boolean add(Tuple ps, Tuple signature) {
-        Collection<Tuple> coll = matchings.get(signature);
-        boolean change = (coll == null);
+        Object old = matchings.get(signature);
+        boolean change = (old == null);
 
-        if (change) {
-            coll = CollectionsFactory.createSet();
-            matchings.put(signature, coll);
-        }
-        if (!coll.add(ps)) {
-            throw new IllegalStateException(
-                    String.format(
-                            "Duplicate insertion of tuple %s into node %s", 
-                            ps, owner));
+        if (change) { // key was not present
+            matchings.put(signature, ps);
+        } else { // key was already present
+            MarkedSet<Tuple> coll;
+            if (old instanceof MarkedSet) { // ... as set
+                coll = (MarkedSet<Tuple>) old;
+            } else { // ... as singleton
+                coll = CollectionsFactory.createMarkedSet();
+                coll.add((Tuple) old);
+                matchings.put(signature, coll);
+            }
+            if (!coll.add(ps)) {
+                throw new IllegalStateException(
+                        String.format(
+                                "Duplicate insertion of tuple %s into node %s", 
+                                ps, owner));
+            }
         }
 
         return change;
@@ -121,19 +138,25 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
      * @return true if this was the the last occurence of the signature
      */
     public boolean remove(Tuple ps, Tuple signature) {
-        Collection<Tuple> coll = matchings.get(signature);
-        if (!coll.remove(ps)) {
-            throw new IllegalStateException(
-                    String.format(
-                            "Duplicate deletion of tuple %s from node %s", 
-                            ps, owner));
-        }
-
-        boolean change = coll.isEmpty();
-        if (change)
+        Object old = matchings.get(signature);
+        if (old instanceof MarkedSet<?>) { // collection
+            @SuppressWarnings("unchecked")
+            MarkedSet<Tuple> coll = (MarkedSet<Tuple>) old;
+            if (coll.remove(ps)) {
+                if (1 == coll.size()) { // only one remains
+                    Tuple remainingSingleton = coll.iterator().next();
+                    matchings.put(signature, remainingSingleton);
+                }
+                return false; // at least one remains anyway
+            }
+        } else if (ps.equals(old)) { // matching singleton
             matchings.remove(signature);
-
-        return change;
+            return true;
+        }
+        throw new IllegalStateException(
+                String.format(
+                        "Duplicate deletion of tuple %s from node %s", 
+                        ps, owner));
     }
 
     /**
@@ -141,8 +164,16 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
      * 
      * @return collection of matchings found
      */
+    @SuppressWarnings("unchecked")
     public Collection<Tuple> get(Tuple signature) {
-        return matchings.get(signature);
+        Object bucket = matchings.get(signature);
+        if (bucket instanceof MarkedSet<?>) {
+            return (MarkedSet<Tuple>) bucket;
+        } else { // singleton or empty
+            if (bucket == null) 
+                return null;
+            return Collections.singleton((Tuple)bucket);
+        }
     }
 
     public void clear() {
@@ -162,28 +193,34 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
         return new MaskedPatternIterator(this);
     }
 
+    
+    private static final Iterator<Tuple> EMPTY_ITERATOR = Collections.<Tuple>emptySet().iterator(); 
     class MaskedPatternIterator implements Iterator<Tuple> {
-        // private MaskedTupleMemory memory;
-        Iterator<Collection<Tuple>> signatureGroup;
+        Iterator<Object> signatureGroup;
         Iterator<Tuple> element;
-
+        
         public MaskedPatternIterator(MaskedTupleMemory memory) {
-            // this.memory = memory;
             signatureGroup = memory.matchings.values().iterator();
-            Set<Tuple> emptySet = Collections.emptySet();
-            element = emptySet.iterator();
+            element = EMPTY_ITERATOR;
         }
 
         public boolean hasNext() {
             return (element.hasNext() || signatureGroup.hasNext());
         }
 
+        @SuppressWarnings("unchecked")
         public Tuple next() throws NoSuchElementException {
             if (element.hasNext())
                 return element.next();
             else if (signatureGroup.hasNext()) {
-                element = signatureGroup.next().iterator();
-                return element.next();
+                Object bucket = signatureGroup.next();
+                if (bucket instanceof MarkedSet<?>) {
+                    element = ((MarkedSet<Tuple>) bucket).iterator();
+                    return element.next();
+                } else {
+                    element = EMPTY_ITERATOR;
+                    return (Tuple) bucket;
+                }
             } else
                 throw new NoSuchElementException();
         }
@@ -192,7 +229,7 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
          * Not implemented
          */
         public void remove() {
-
+            throw new UnsupportedOperationException();
         }
 
     }
@@ -203,11 +240,13 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     }
 
     public int getTotalSize() {
-        // return matchings.values().size(); // return the number of values (collections of tuples)
-        // instead, flatten 
         int i = 0;
-        for (Collection<Tuple> v : matchings.values()) {
-            i+=v.size();
+        for (Object v : matchings.values()) {
+            if (v instanceof MarkedSet<?>) {
+                i+=((MarkedSet<?>) v).size();
+            } else {
+                i++;
+            }
         }
         return i;
     }

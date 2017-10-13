@@ -43,4 +43,5 @@ Import-Package: com.google.common.base;version="15.0.0",
  org.eclipse.collections.api.map,
  org.eclipse.collections.impl.factory,
  org.eclipse.collections.impl.map.mutable.primitive,
- org.eclipse.collections.impl.map.primitive
+ org.eclipse.collections.impl.map.primitive,
+ org.eclipse.collections.impl.set.mutable
