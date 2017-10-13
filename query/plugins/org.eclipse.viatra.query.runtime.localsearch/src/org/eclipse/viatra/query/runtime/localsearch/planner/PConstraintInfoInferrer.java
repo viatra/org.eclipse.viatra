@@ -269,9 +269,8 @@ class PConstraintInfoInferrer {
                  hasEOpposite(feature) 
                  ||
                  (feature instanceof EReference) && ((EReference)feature).isContainment()
-                 || (   // Or indexing is enabled, and the feature can be indexed (it's not a non-well-behaving 
-                        // derived feature) and it's a reference TODO this constraint might not be needed. It shall be possible to find elements by an attribute value using the base indexer
-                        useIndex && modelComprehension.representable(feature) && (feature instanceof EReference)
+                 || (   // Indexing is enabled, and the feature can be indexed (not a non-well-behaving derived feature).
+                        useIndex && modelComprehension.representable(feature)
                  ));
     }
     
