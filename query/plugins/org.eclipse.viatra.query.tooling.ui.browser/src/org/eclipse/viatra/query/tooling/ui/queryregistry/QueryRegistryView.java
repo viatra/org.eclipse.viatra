@@ -11,6 +11,10 @@
 package org.eclipse.viatra.query.tooling.ui.queryregistry;
 
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -21,6 +25,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -40,6 +45,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory;
 import org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler;
@@ -63,10 +69,25 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     private XtextIndexBasedRegistryUpdater updater;
     private CollapseAllHandler collapseHandler;
 
-    public QueryRegistryView() {
-        updater = XtextIndexBasedRegistryUpdaterFactory.INSTANCE.getUpdater(QuerySpecificationRegistry.getInstance());
-        queryRegistryTreeInput = new QueryRegistryTreeInput(QuerySpecificationRegistry.getInstance());
-    }
+    private Job initializerJob = new Job("Initializing Query Registry") {
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+            updater = XtextIndexBasedRegistryUpdaterFactory.INSTANCE.getUpdater(QuerySpecificationRegistry.getInstance());
+            queryRegistryTreeInput = new QueryRegistryTreeInput(QuerySpecificationRegistry.getInstance());
+            
+            QueryRegistryView.this.getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    queryTreeViewer.setInput(queryRegistryTreeInput);
+                }
+                
+            });
+            return Status.OK_STATUS;
+        }
+        
+    };
     
     @Override
     public void dispose() {
@@ -85,12 +106,15 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         queryRegistryContainer.setLayout(new GridLayout(1, false));
         
         initializeQueryTreeViewer(queryRegistryContainer);
+        
+        initializerJob.setUser(false);
+        initializerJob.schedule();
     }
 
     private void initializeQueryTreeViewer(Composite queryRegistryContainer) {
         PatternFilter patternFilter = new PatternFilter();
         patternFilter.setIncludeLeadingWildcard(true);
-        FilteredTree filteredTree = new FilteredTree(queryRegistryContainer, SWT.BORDER | SWT.MULTI, patternFilter, true);
+        FilteredTree filteredTree = new FilteredTree(queryRegistryContainer, SWT.BORDER | SWT.MULTI | SWT.VIRTUAL, patternFilter, true);
         queryTreeViewer = filteredTree.getViewer();
         filteredTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         queryTreeViewer.setComparator(new ViewerComparator() {
@@ -132,8 +156,6 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         
         getSite().setSelectionProvider(queryTreeViewer);
         
-        queryTreeViewer.setInput(queryRegistryTreeInput);
-        
         IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         collapseHandler = new CollapseAllHandler(queryTreeViewer);
         handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
@@ -173,8 +195,22 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     }
 
     public void resetView() {
-        updater.disconnectIndexFromRegistry();
-        updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
+        BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
+            
+            @Override
+            public void run() {
+                try {
+                    // Initializer job cannot really be cancelled; wait for it to finish
+                    initializerJob.join();
+                    updater.disconnectIndexFromRegistry();
+                    updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
+                } catch (InterruptedException e) {
+                    String logMessage = "Error while resetting Query Registry: " + e.getMessage();
+                    ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
+                            ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), logMessage, e));
+                }
+            }
+        });
     }
     
     public void collapseAll() {

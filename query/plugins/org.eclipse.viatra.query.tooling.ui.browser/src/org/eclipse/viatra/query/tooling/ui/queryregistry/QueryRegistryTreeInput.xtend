@@ -39,13 +39,11 @@ class QueryRegistryTreeInput {
     @Accessors(PUBLIC_GETTER)
     IRegistryView view
     
-    @Accessors(PUBLIC_GETTER)
-    QueryRegistryTreeViewListener listener
+    @Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
+    IQuerySpecificationRegistryChangeListener listener
     
     new(IQuerySpecificationRegistry registry) {
         this.registry = registry
-        this.listener = new QueryRegistryTreeViewListener
-        this.listener.input = this
         view = registry.createView[
             return new AbstractRegistryView(registry, true) {
                 override protected isEntryRelevant(IQuerySpecificationRegistryEntry entry) {
@@ -206,41 +204,4 @@ class QueryRegistryTreeInputChange {
     QueryRegistryTreePackage pckg
     boolean sourceAffected
     QueryRegistryTreeSource source
-} 
-
-class QueryRegistryTreeViewListener implements IQuerySpecificationRegistryChangeListener {
-    
-    public QueryRegistryTreeInput input
-    public QueryRegistryTreeContentProvider provider
-    
-    override entryAdded(IQuerySpecificationRegistryEntry entry) {
-        val newEntry = input.addEntryToInput(entry)
-        if(provider !== null){
-            provider.viewer.tree.display.asyncExec[
-                if(newEntry.sourceAffected){
-                    provider.viewer.add(input, newEntry.source)
-                }
-                if(newEntry.pckgAffected){
-                    provider.viewer.add(newEntry.source, newEntry.pckg)
-                }
-                provider.viewer.add(newEntry.pckg, newEntry.entry)
-            ]
-        }
-    }
-    
-    override entryRemoved(IQuerySpecificationRegistryEntry entry) {
-        val oldEntry = input.removeEntry(entry)
-        if(oldEntry !== null && provider !== null) {
-            provider.viewer.tree.display.asyncExec[
-                provider.viewer.remove(oldEntry.entry)
-                if(oldEntry.pckgAffected){
-                    provider.viewer.remove(oldEntry.pckg)
-                }
-                if(oldEntry.sourceAffected){
-                    provider.viewer.remove(oldEntry.source)
-                }
-            ]
-        }
-    }
-    
 }

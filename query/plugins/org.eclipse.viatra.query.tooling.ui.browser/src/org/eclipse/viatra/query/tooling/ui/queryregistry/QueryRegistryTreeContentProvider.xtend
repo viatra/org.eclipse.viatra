@@ -13,25 +13,64 @@ import com.google.common.base.Preconditions
 import org.eclipse.jface.viewers.ITreeContentProvider
 import org.eclipse.jface.viewers.TreeViewer
 import org.eclipse.jface.viewers.Viewer
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 
 class QueryRegistryTreeContentProvider implements ITreeContentProvider {
     protected TreeViewer viewer
     protected QueryRegistryTreeInput input
+
+    @FinalFieldsConstructor
+    static class QueryRegistryTreeViewListener implements IQuerySpecificationRegistryChangeListener {
+        
+        val QueryRegistryTreeInput input
+        val TreeViewer viewer
+        
+        override entryAdded(IQuerySpecificationRegistryEntry entry) {
+            val newEntry = input.addEntryToInput(entry)
+            viewer.tree.display.asyncExec[
+                if(newEntry.sourceAffected){
+                    viewer.add(input, newEntry.source)
+                }
+                if(newEntry.pckgAffected){
+                    viewer.add(newEntry.source, newEntry.pckg)
+                }
+                viewer.add(newEntry.pckg, newEntry.entry)
+            ]
+        }
+        
+        override entryRemoved(IQuerySpecificationRegistryEntry entry) {
+            val oldEntry = input.removeEntry(entry)
+            if(oldEntry !== null) {
+                viewer.tree.display.asyncExec[
+                    viewer.remove(oldEntry.entry)
+                    if(oldEntry.pckgAffected){
+                        viewer.remove(oldEntry.pckg)
+                    }
+                    if(oldEntry.sourceAffected){
+                        viewer.remove(oldEntry.source)
+                    }
+                ]
+            }
+        }
+        
+    }
 
     override void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         Preconditions.checkArgument(viewer instanceof TreeViewer)
         this.viewer = viewer as TreeViewer
         if (oldInput instanceof QueryRegistryTreeInput) {
              // remove listeners
-             oldInput.listener.provider = null
+             oldInput.listener = null
         }
         if (newInput instanceof QueryRegistryTreeInput) {
             this.input = newInput as QueryRegistryTreeInput
-            // initialize listeners
-            newInput.listener.provider = this
+            // initialize listener
+            newInput.listener = new QueryRegistryTreeViewListener(newInput, this.viewer)
         } else if (newInput !== null) {
             throw new IllegalArgumentException(
-                String.format("Invalid input type %s for List Viewer.", newInput.getClass().getName()))
+                String.format("Invalid input type %s for Query Registry.", newInput.getClass().getName()))
         }
     }
 
