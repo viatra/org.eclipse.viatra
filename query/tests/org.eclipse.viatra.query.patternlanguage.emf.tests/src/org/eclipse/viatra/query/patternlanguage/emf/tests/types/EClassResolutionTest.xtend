@@ -45,7 +45,7 @@ class EClassResolutionTest {
             pattern resolutionTest(Name) = {
                 Pattern(Name);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
@@ -62,7 +62,7 @@ class EClassResolutionTest {
             pattern ECoreNamedElement(Name) = {
                 EString(Name);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
@@ -79,7 +79,7 @@ class EClassResolutionTest {
             pattern resolutionTest(Name) = {
                 UndefinedType(Name);
             }
-        ') as PatternModel
+        ')
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
         val type = constraint.type as ClassType
@@ -94,7 +94,7 @@ class EClassResolutionTest {
             pattern resolutionTest(Name) = {
                 Pattern(Name);
             }
-        ') as PatternModel
+        ')
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
         val type = constraint.type as ClassType

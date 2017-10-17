@@ -42,7 +42,7 @@ class PackageDeclarationTest {
             pattern resolutionTest(Name) = {
                 Pattern(Name);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         val packageName = model.packageName
         assertEquals(packageName, "school");
@@ -55,7 +55,7 @@ class PackageDeclarationTest {
             pattern resolutionTest(Name) = {
                 Pattern(Name);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
     }
     @Test
@@ -67,7 +67,7 @@ class PackageDeclarationTest {
             pattern resolutionTest(Name) = {
                 Pattern(Name);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         val packageName = model.packageName
         assertEquals(packageName, "hu.bme.mit.school");
@@ -82,7 +82,7 @@ class PackageDeclarationTest {
             pattern resolutionTest(Name) = {
                 Pattern(Name);
             }
-        ') as PatternModel
+        ')
         model.assertError(PatternLanguagePackage$Literals::PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
     }
 }

@@ -46,7 +46,7 @@ class EnumResolutionTest {
                 GenModel(Model);
                 GenModel.runtimeVersion(Model, ::EMF23);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(1) as PathExpressionConstraint
@@ -67,7 +67,7 @@ class EnumResolutionTest {
                 GenModel(Model);
                 GenModel.runtimeVersion(Model, GenRuntimeVersion::EMF23);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(1) as PathExpressionConstraint
@@ -88,7 +88,7 @@ class EnumResolutionTest {
                 GenModel(Model);
                 GenModel.runtimeVersion(Model, ::NOTEXIST);
             }
-        ') as PatternModel
+        ')
         model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "NOTEXIST")
     }
@@ -102,7 +102,7 @@ class EnumResolutionTest {
                 GenModel(Model);
                 GenModel.copyrightText(Model, ::EMF23);
             }
-        ') as PatternModel
+        ')
         //XXX With better type inference this error message should be replaced
         model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "EMF23")
@@ -122,7 +122,7 @@ class EnumResolutionTest {
             pattern call() = {
                 find runtimeVersion(::EMF24);
             }
-        ') as PatternModel
+        ')
         model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "EMF24")
     }
@@ -138,7 +138,7 @@ class EnumResolutionTest {
                 GenModel.runtimeVersion(Model, Version);
                 Version == ::EMF23;
             }
-        ') as PatternModel
+        ')
         model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "EMF23")
     }

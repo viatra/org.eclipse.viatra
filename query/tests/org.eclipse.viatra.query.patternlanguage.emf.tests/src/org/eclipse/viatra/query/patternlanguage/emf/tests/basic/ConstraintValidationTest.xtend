@@ -52,7 +52,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 Pattern(A);
                 1 == 2;
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
     }
     @Test
@@ -64,7 +64,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 Pattern(A);
                 1.2 == "String";
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
             getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
             getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
@@ -79,7 +79,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 Pattern(A);
                 false == 2;
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
             getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
             getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
@@ -95,7 +95,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 1 == Name2;
                 ETypedElement.lowerValue(_, Name2);
             }
-        ''') as PatternModel
+        ''')
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
     }
     @Test
@@ -108,7 +108,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 StringValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
                 StringValue(Name2);				// Then this line can be deleted.
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertAll(
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
@@ -124,7 +124,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 StringValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
                 StringValue(Name3);					// Then this line can be deleted.
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
     }
     @Test
@@ -137,7 +137,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 Name == Name2;
                 Pattern(Name2);
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertOK
     }
     @Test
@@ -147,7 +147,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
             pattern constantCompareTest(Name) = {
                 Name == Name;
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
             getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT),
@@ -165,7 +165,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
               EClass(Y);
               EClass.eAttributes.upperBound(Y,X);
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertWarning(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE)
     }
 }

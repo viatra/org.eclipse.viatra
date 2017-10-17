@@ -48,7 +48,7 @@ class PatternValidationTest extends AbstractValidatorTest {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-            pattern resolutionTest(A) = {}') as PatternModel
+            pattern resolutionTest(A) = {}')
         tester.validate(model).assertAll(getErrorCode(IssueCodes::PATTERN_BODY_EMPTY), getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED))
     }
     @Test
@@ -56,7 +56,7 @@ class PatternValidationTest extends AbstractValidatorTest {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-        pattern resolutionTest() = {Pattern(A);}') as PatternModel
+        pattern resolutionTest() = {Pattern(A);}')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::MISSING_PATTERN_PARAMETERS), getWarningCode(IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE))
     }
     

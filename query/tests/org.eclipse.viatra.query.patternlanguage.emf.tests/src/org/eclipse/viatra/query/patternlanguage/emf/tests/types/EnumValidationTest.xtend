@@ -57,7 +57,7 @@ class EnumValidationTest extends AbstractValidatorTest {
                 GenModel(Model);
                 GenModel.runtimeVersion(Model, ::EMF23);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         tester.validate(model).assertOK
     }
@@ -71,7 +71,7 @@ class EnumValidationTest extends AbstractValidatorTest {
                 GenModel(Model);
                 GenModel.runtimeVersion(Model, GenRuntimeVersion::EMF23);
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         tester.validate(model).assertOK
     }
@@ -86,7 +86,7 @@ class EnumValidationTest extends AbstractValidatorTest {
                 GenModel.runtimeVersion(Model, Version);
                 Version == GenRuntimeVersion::EMF23;
             }
-        ') as PatternModel
+        ')
         model.assertNoErrors
         tester.validate(model).assertOK
     }
@@ -101,7 +101,7 @@ class EnumValidationTest extends AbstractValidatorTest {
                 GenModel(Model);
                 GenModel.runtimeVersion(Model, GenDelegationKind::None);
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertError(EMFIssueCodes::INVALID_ENUM_LITERAL)
     }
     @Test
@@ -119,7 +119,7 @@ class EnumValidationTest extends AbstractValidatorTest {
                 GenModel(c);
                 find runtimeVersion(GenRuntimeVersion::EMF24);
             }
-        ') as PatternModel
+        ')
         tester.validate(model).assertAll(
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
