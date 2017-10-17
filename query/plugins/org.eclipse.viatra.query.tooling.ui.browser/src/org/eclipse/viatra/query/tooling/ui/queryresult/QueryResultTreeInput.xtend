@@ -62,9 +62,12 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     
     @Accessors(PUBLIC_GETTER)
     AdvancedViatraQueryEngine engine
-
+    
     @Accessors(PUBLIC_GETTER)
     boolean readOnlyEngine
+    
+    @Accessors(PUBLIC_GETTER)
+    boolean engineOperational
     
     @Accessors(PUBLIC_GETTER)
     Map<String, QueryResultTreeMatcher> matchers
@@ -96,6 +99,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         QueryEvaluationHint hint
     ) {
         this.engine = engine
+        this.engineOperational = true
         this.hint = hint
         this.readOnlyEngine = readOnlyEngine
         this.matchers = Maps.newTreeMap()
@@ -215,17 +219,22 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
             throw new UnsupportedOperationException("Cannot load queries to read-only engine")
         }
         builder = new SpecificationBuilder
-        entries.forEach[ entry |
+        val iterator = entries.iterator
+        while(engineOperational && iterator.hasNext) {
+            val entry = iterator.next
             if(matchers.containsKey(entry.fullyQualifiedName)){
                 entry.removeMatcher
             }
             entry.loadQuery
             loadedEntries.put(entry.sourceIdentifier, entry.fullyQualifiedName, entry)
-        ]
+        }
         schema.startUnscheduledExecution
     }
     
     private def loadQuery(IQuerySpecificationRegistryEntry entry) {
+        if (!engineOperational) {
+            entry.addErroneousMatcher(new IllegalStateException("Query engine encountered a fatal error or has been disposed"))
+        }
         val entryFQN = entry.fullyQualifiedName
         if(matchers.containsKey(entryFQN)){
             entry.removeMatcher
@@ -345,10 +354,12 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         final QueryResultTreeInput input
 
         override engineBecameTainted(String message, Throwable t) {
+            input.engineOperational = false
             input.dispose
         }
 
         override engineDisposed() {
+            input.engineOperational = false
             input.dispose
         }
 
