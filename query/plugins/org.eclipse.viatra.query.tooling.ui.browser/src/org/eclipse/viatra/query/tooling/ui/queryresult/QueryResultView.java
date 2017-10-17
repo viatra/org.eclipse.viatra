@@ -10,8 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -24,6 +32,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.DND;
@@ -47,11 +56,17 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
+import org.eclipse.viatra.query.runtime.registry.IRegistryView;
+import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
+import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
+import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory;
 import org.eclipse.viatra.query.tooling.ui.queryresult.internal.ActiveEnginePropertyTester;
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.ViatraQueryEngineContentProvider;
@@ -59,6 +74,7 @@ import org.eclipse.viatra.query.tooling.ui.queryresult.util.ViatraQueryEngineLab
 import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -84,7 +100,63 @@ public class QueryResultView extends ViewPart {
     private TreeViewer engineDetailsTreeViewer;
 
     private StackLayout engineDetailsStackLayout;
+    
+    private Queue<Object> loadQueue = new ConcurrentLinkedQueue<>();
 
+    private static class DynamicPatternDescriptor {
+        private final Set<String> sourceFQNs;
+        private final String sourceId;
+        
+        private DynamicPatternDescriptor(Set<String> sourceFQNs, String sourceId) {
+            this.sourceFQNs = sourceFQNs;
+            this.sourceId = sourceId;
+        }
+        
+        private IRegistryView createView() {
+            return QuerySpecificationRegistry.getInstance().createView(new IRegistryViewFilter() {
+                
+                @Override
+                public boolean isEntryRelevant(final IQuerySpecificationRegistryEntry entry) {
+                    boolean sourceSame = Objects.equals(entry.getSourceIdentifier(), sourceId);
+                    boolean fqnRelevant = sourceFQNs.contains(entry.getFullyQualifiedName());
+                    return sourceSame && fqnRelevant;
+                }
+            });
+        }
+    }
+    
+    private Job contentLoaderJob = new Job("Loading queries into the Query Result View") {
+
+        private XtextIndexBasedRegistryUpdater updater;
+        
+        /** make sure Xtext index patterns are loaded into query registry */
+        private void ensureXtextBasedIndexerLoaded() {
+            if (updater == null) {
+                updater = XtextIndexBasedRegistryUpdaterFactory.INSTANCE.getUpdater(QuerySpecificationRegistry.getInstance());
+            }
+        }
+        
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+            Object nextContentToLoad = loadQueue.poll();
+            while (nextContentToLoad != null && !monitor.isCanceled()) {
+                if (nextContentToLoad instanceof QueryRegistryTreeEntry) {
+                    QueryRegistryTreeEntry entry = (QueryRegistryTreeEntry) nextContentToLoad;
+                    entry.load();
+                    loadQueriesIntoActiveEngine(QueryResultViewUtil.unwrapEntries(ImmutableSet.of(entry)));
+                } else if (nextContentToLoad instanceof DynamicPatternDescriptor) {
+                    ensureXtextBasedIndexerLoaded();
+                    
+                    IRegistryView view = ((DynamicPatternDescriptor) nextContentToLoad).createView();
+                    loadQueriesIntoActiveEngine(view.getEntries());
+                }
+                nextContentToLoad = loadQueue.poll();
+            }
+            return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+        }
+        
+    };
+    
     public QueryResultView() {
         this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
             @Override
@@ -165,10 +237,7 @@ public class QueryResultView extends ViewPart {
                     boolean active = hasActiveEngine();
                     if (active) {
                         Set<QueryRegistryTreeEntry> selectedQueries = QueryResultViewUtil.getRegistryEntriesFromSelection((IStructuredSelection) data);
-                        for (QueryRegistryTreeEntry queryRegistryTreeEntry : selectedQueries) {
-                            queryRegistryTreeEntry.load();
-                        }
-                        loadQueriesIntoActiveEngine(QueryResultViewUtil.unwrapEntries(selectedQueries));
+                        loadQueriesIntoActiveEngineInBackground(selectedQueries);
                         return true;
                     }
                 }
@@ -243,7 +312,6 @@ public class QueryResultView extends ViewPart {
     }
     
     public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) throws ViatraQueryException {
-
         unloadModel();
 
         input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);
@@ -280,6 +348,7 @@ public class QueryResultView extends ViewPart {
     
     public void unloadModel() {
         if(input != null) {
+            cancelLoadProcess();
             QueryResultViewModel.INSTANCE.removeInput(input);
             if(input.getModelConnector() instanceof EMFModelConnector) {
                 EMFModelConnector emfModelConnector = (EMFModelConnector) input.getModelConnector();
@@ -294,7 +363,28 @@ public class QueryResultView extends ViewPart {
         }
     }
     
-    public void loadQueriesIntoActiveEngine(Iterable<IQuerySpecificationRegistryEntry> providers) {
+    public void loadQueriesIntoActiveEngineInBackground(Collection<QueryRegistryTreeEntry> registryEntries) {
+        if(!input.isReadOnlyEngine()) {
+            boolean queueEmpty = loadQueue.isEmpty(); 
+            loadQueue.addAll(registryEntries);
+            if (queueEmpty) {
+               contentLoaderJob.schedule();
+            }
+        }
+    }
+    
+    public void loadQueriesIntoActiveEngineInBackground(Set<String> sourceFQNs, String sourceId) {
+        if(!input.isReadOnlyEngine()) {
+            DynamicPatternDescriptor desc = new DynamicPatternDescriptor(sourceFQNs, sourceId);
+            boolean queueEmpty = loadQueue.isEmpty(); 
+            loadQueue.add(desc);
+            if (queueEmpty) {
+               contentLoaderJob.schedule();
+            }
+        }
+    }
+    
+    private void loadQueriesIntoActiveEngine(Iterable<IQuerySpecificationRegistryEntry> providers) {
         if(!input.isReadOnlyEngine()){
             input.loadQueries(providers);
         }
@@ -306,7 +396,14 @@ public class QueryResultView extends ViewPart {
 
     public void wipeEngine() {
         if(input != null && !input.isReadOnlyEngine()){
-            input.resetInput();
+            BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
+
+                @Override
+                public void run() {
+                    cancelLoadProcess();
+                    input.resetInput();
+                }
+            });
         }
     }
 
@@ -332,5 +429,18 @@ public class QueryResultView extends ViewPart {
             return input.getModelConnector();
         }
         return null;
+    }
+
+    private void cancelLoadProcess() {
+        try {
+            contentLoaderJob.cancel();
+            contentLoaderJob.join();
+        } catch (InterruptedException e) {
+            String msg = "Error while stopping loading queries: " + e.getMessage();
+            ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
+                    ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), msg, e));
+        } finally {
+            loadQueue.clear();
+        }
     }
 }

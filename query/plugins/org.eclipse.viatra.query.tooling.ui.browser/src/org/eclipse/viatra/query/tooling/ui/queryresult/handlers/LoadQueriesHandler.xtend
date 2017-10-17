@@ -36,10 +36,7 @@ class LoadQueriesHandler extends AbstractHandler {
             
             if (active && selection instanceof IStructuredSelection) {
                 val selectedQueries = QueryResultViewUtil.getRegistryEntriesFromSelection(selection as IStructuredSelection)
-                selectedQueries.forEach [
-                    load
-                ]
-                queryResultView.loadQueriesIntoActiveEngine(selectedQueries.map[entry])
+                queryResultView.loadQueriesIntoActiveEngineInBackground(selectedQueries)
             } else {
                 queryResultView.site.shell.queryLoadingFailed
             }
