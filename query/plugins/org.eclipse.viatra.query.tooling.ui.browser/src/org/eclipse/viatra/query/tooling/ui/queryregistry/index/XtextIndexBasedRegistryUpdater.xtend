@@ -16,8 +16,6 @@ import com.google.common.collect.Maps
 import com.google.common.collect.Multimap
 import com.google.inject.Inject
 import java.util.Map
-import java.util.WeakHashMap
-import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IResourceChangeEvent
 import org.eclipse.core.resources.IResourceChangeListener
 import org.eclipse.core.resources.ResourcesPlugin
@@ -63,8 +61,6 @@ class XtextIndexBasedRegistryUpdater {
     @Accessors(PROTECTED_GETTER)
     private IQuerySpecificationRegistry connectedRegistry
     
-    private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<IProject, ResourceSet>();
-    
     @Inject
     new(IStateChangeEventBroker source, IResourceDescriptions descriptions, IResourceSetProvider resSetProvider) {
         super()
@@ -108,7 +104,7 @@ class XtextIndexBasedRegistryUpdater {
                 val resourceSet = createResourceSet(projectName)
                 // create specification providers based on patterns
                 patternObjects.forEach[
-                    val provider = new PatternDescriptionBasedSpecificationProvider(this, resourceDesc, it, resourceSet)
+                    val provider = new PatternDescriptionBasedSpecificationProvider(resourceDesc, it, resourceSet)
                     conn.addProvider(uri, provider)
                 ]
             ]
@@ -200,7 +196,7 @@ class XtextIndexBasedRegistryUpdater {
                     if(delta.haveEObjectDescriptionsChanged) {
                         val resourceSet = updater.createResourceSet(projectName)
                         desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).forEach[
-                            val provider = new PatternDescriptionBasedSpecificationProvider(updater, desc, it, resourceSet)
+                            val provider = new PatternDescriptionBasedSpecificationProvider(desc, it, resourceSet)
                             connector.addProvider(desc.URI.toString, provider)
                         ]
                     }
@@ -214,7 +210,6 @@ class XtextIndexBasedRegistryUpdater {
     @FinalFieldsConstructor
     private static final class PatternDescriptionBasedSpecificationProvider implements IPatternBasedSpecificationProvider {
         
-        final XtextIndexBasedRegistryUpdater updater
         final IResourceDescription resourceDesc
         final IEObjectDescription description
         final ResourceSet resourceSet
@@ -316,7 +311,7 @@ class XtextIndexBasedRegistryUpdater {
                         val resourceSet = updater.createResourceSet(projectName)
                         val patternObjects = descr.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)
                         patternObjects.forEach[
-                            val provider = new PatternDescriptionBasedSpecificationProvider(updater, descr, it, resourceSet)
+                            val provider = new PatternDescriptionBasedSpecificationProvider(descr, it, resourceSet)
                             connector.addProvider(uri.toString, provider)
                         ]
                     } catch (Exception ex) {
