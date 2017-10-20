@@ -1329,6 +1329,23 @@ public class NavigationHelperImpl implements NavigationHelper {
                 final HashMap<Object, IndexingLevel> oldClasses = new HashMap<Object, IndexingLevel>(
                         directlyObservedClasses);
                 
+                /* Instance indexing would add extra entries to the statistics store, so we have to clean the
+                 * appropriate entries. If no re-traversal is required, it is detected earlier; at this point we
+                 * only have to consider the target indexing level. See bug
+                 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=518356 for more details.
+                 * 
+                 * This has to be executed before the old observed types are updated to check whether the indexing level increased.
+                 *
+                 * Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
+                 * works as expected, but it seems a better idea to do the cleanup for all types in the same way */
+                for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
+                        toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
+                    IndexingLevel oldIndexingLevel = getIndexingLevel(entry.getKey());
+                    if (entry.getValue().hasInstances() && oldIndexingLevel.hasStatistics() && !oldIndexingLevel.hasInstances()) {
+                        statsStore.removeType(entry.getKey());
+                    }
+                }
+                
                 // Are there new classes to be observed that are not available via superclasses? 
                 //      (at sufficient level)
                 // if yes, model traversal needed
@@ -1337,19 +1354,6 @@ public class NavigationHelperImpl implements NavigationHelper {
                 observedDataTypes.putAll(toGatherDataTypes);
                 observedFeatures.putAll(toGatherFeatures);
                 
-                // Instance indexing would add extra entries to the statistics store, so we have to clean the
-                // appropriate entries. If no re-traversal is required, it is detected earlier; at this point we
-                // only have to consider the target indexing level. See bug
-                // https://bugs.eclipse.org/bugs/show_bug.cgi?id=518356 for more details.
-                
-                // Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
-                // works as expected, but it seems a better idea to do the cleanup for all types in the same way
-                for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
-                        toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
-                    if (entry.getValue().hasInstances()) {
-                        statsStore.removeType(entry.getKey());
-                    }
-                }
                 
                 // So, is an actual traversal needed, or are we done?
                 if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
@@ -1606,6 +1610,18 @@ public class NavigationHelperImpl implements NavigationHelper {
         return statsStore.countFeatures(toKey(feature));
     }
 
+    private IndexingLevel getIndexingLevel(Object type) {
+        if (type instanceof EClass) {
+            return getIndexingLevel((EClass)type);
+        } else if (type instanceof EDataType) {
+            return getIndexingLevel((EDataType)type);
+        } else if (type instanceof EStructuralFeature) {
+            return getIndexingLevel((EStructuralFeature)type);
+        } else {
+            throw new IllegalArgumentException("Unexpected type descriptor " + type.toString());
+        }
+    }
+    
     @Override
     public IndexingLevel getIndexingLevel(EClass type) {
         Object key = toKey(type);
