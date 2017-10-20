@@ -1263,6 +1263,8 @@ public class NavigationHelperImpl implements NavigationHelper {
                     delayTraversals = false;
                     callable = null;
 
+                    // This set collects all types whose indexing level increases from statistics to full
+                    Set<Object> moveFromStatsToFullRequests = new HashSet<>();
                     for(Entry<Object, IndexingLevel> entry: observedFeatures.entrySet()){
                         IndexingLevel requested = delayedFeatures.get(entry.getKey());
                         if (requested != null){
@@ -1270,8 +1272,11 @@ public class NavigationHelperImpl implements NavigationHelper {
                             IndexingLevel merged = requested.merge(old);
                             if (merged == old){
                                 delayedFeatures.remove(entry.getKey());
-                            }else{
+                            } else {
                                 delayedFeatures.put(entry.getKey(), merged);
+                            }
+                            if (merged.hasInstances() && old.hasStatistics() && !old.hasInstances()) {
+                                moveFromStatsToFullRequests.add(entry.getKey());
                             }
                         }
                     }
@@ -1285,6 +1290,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                             } else{
                                 delayedClasses.put(entry.getKey(), merged);
                             }
+                            if (merged.hasInstances() && old.hasStatistics() && !old.hasInstances()) {
+                                moveFromStatsToFullRequests.add(entry.getKey());
+                            }
                         }
                     }
                     for(Entry<Object, IndexingLevel> entry: observedDataTypes.entrySet()){
@@ -1297,9 +1305,14 @@ public class NavigationHelperImpl implements NavigationHelper {
                             } else {
                                 delayedDataTypes.put(entry.getKey(), merged);
                             }
+                            if (merged.hasInstances() && old.hasStatistics() && !old.hasInstances()) {
+                                moveFromStatsToFullRequests.add(entry.getKey());
+                            }
                         }
                     }
 
+                    
+                    
                     boolean classesWarrantTraversal = !Maps
                             .difference(delayedClasses, getAllObservedClassesInternal()).areEqual();
 
@@ -1321,19 +1334,16 @@ public class NavigationHelperImpl implements NavigationHelper {
                                 delayedDataTypes);
                         
                         // Instance indexing would add extra entries to the statistics store, so we have to clean the
-                        // appropriate entries. If no re-traversal is required, it is detected earlier; at this point we
-                        // only have to consider the target indexing level. See bug
+                        // appropriate entries. At this point we simply empty the stats store for elements where
+                        // indexing level is increased from statistics to full. See bug
                         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=518356 for more details.
-                        
+
                         // Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
                         // works as expected, but it seems a better idea to do the cleanup for all types in the same way
-                        for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
-                                toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
-                            if (entry.getValue().hasInstances()) {
-                                statsStore.removeType(entry.getKey());
-                            }
+                        for (Object type : moveFromStatsToFullRequests) {
+                            statsStore.removeType(type);
                         }
-
+                        
                         if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
                             // repeat the cycle with this visit
                             final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
