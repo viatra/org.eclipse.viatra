@@ -181,7 +181,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/FlatTuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple">
-        <filter id="337768515">
+        <filter comment="Internal API update" id="337768515">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple"/>
             </message_arguments>
@@ -191,6 +191,34 @@
         <filter id="337768515">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/Tuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple">
+        <filter comment="Method inherited from base class" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
+                <message_argument value="get(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method inherited from base class" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
+                <message_argument value="getSize()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method inherited from base class" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
+                <message_argument value="internalEquals(Tuple)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/TupleMask.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask">
+        <filter comment="Minor update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask"/>
+                <message_argument value="transform(Tuple)"/>
             </message_arguments>
         </filter>
     </resource>

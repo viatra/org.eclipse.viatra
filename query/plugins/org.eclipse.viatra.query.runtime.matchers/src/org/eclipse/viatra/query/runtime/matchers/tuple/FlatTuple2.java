@@ -44,7 +44,7 @@ public final class FlatTuple2 extends BaseFlatTuple {
     }
     
     @Override
-    protected boolean internalEquals(Tuple other) {
+    protected boolean internalEquals(ITuple other) {
         return 2 == other.getSize() &&
                 Objects.equals(element0, other.get(0)) &&
                 Objects.equals(element1, other.get(1));

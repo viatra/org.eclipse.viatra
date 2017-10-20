@@ -19,13 +19,11 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
@@ -46,12 +44,16 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
      */
     public static class Forward extends ExtendBinaryTransitiveClosure {
 
-        public Forward(MatcherReference calledQuery, int sourcePosition, int targetPosition) {
-            super(calledQuery, sourcePosition, targetPosition);
+        private Object[] seedFrame = new Object[2];
+        
+        public Forward(CallInformation information, int sourcePosition, int targetPosition) {
+            super(information, sourcePosition, targetPosition);
         }
 
         protected Object[] calculateCallFrame(Object seed) {
-            return new Object[] { seed, null };
+            seedFrame[0] = seed;
+            seedFrame[1] = null;
+            return seedFrame;
         }
 
         protected Object getTarget(Tuple frame) {
@@ -66,13 +68,16 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
      * @since 1.7
      */
     public static class Backward extends ExtendBinaryTransitiveClosure {
+        private Object[] seedFrame = new Object[2];
 
-        public Backward(MatcherReference calledQuery, int sourcePosition, int targetPosition) {
-            super(calledQuery, targetPosition, sourcePosition);
+        public Backward(CallInformation information, int sourcePosition, int targetPosition) {
+            super(information, targetPosition, sourcePosition);
         }
 
         protected Object[] calculateCallFrame(Object seed) {
-            return new Object[] { null, seed };
+            seedFrame[0] = null;
+            seedFrame[1] = seed;
+            return seedFrame;
         }
 
         protected Object getTarget(Tuple frame) {
@@ -80,18 +85,16 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
         }
     }
 
-    private final CallOperationHelper helper;
     private final int seedPosition;
+    private final CallInformation information;
 
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
      */
-    protected ExtendBinaryTransitiveClosure(MatcherReference calledQuery, int seedPosition, int targetPosition) {
+    protected ExtendBinaryTransitiveClosure(CallInformation information, int seedPosition, int targetPosition) {
         super(targetPosition);
+        this.information = information;
         this.seedPosition = seedPosition;
-
-        helper = new CallOperationHelper(calledQuery, ImmutableMap.of(calledQuery.getQuery().getParameters().get(0),
-                seedPosition, calledQuery.getQuery().getParameters().get(1), targetPosition));
     }
 
     protected abstract Object[] calculateCallFrame(Object seed);
@@ -101,7 +104,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         // Note: second parameter is NOT bound during execution, but the first is
-        PatternCall call = helper.createCall(context);
+        IQueryResultProvider matcher = context.getMatcher(information.getReference());
 
         Queue<Object> seedsToEvaluate = new LinkedList<>();
         seedsToEvaluate.add(frame.get(seedPosition));
@@ -112,7 +115,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
             Object currentValue = seedsToEvaluate.poll();
             seedsEvaluated.add(currentValue);
             final Object[] mappedFrame = calculateCallFrame(currentValue);
-            for (Tuple match : call.getAllMatches(mappedFrame)) {
+            for (Tuple match : matcher.getAllMatches(mappedFrame)) {
                 Object foundTarget = getTarget(match);
                 targetsFound.add(foundTarget);
                 if (!seedsEvaluated.contains(foundTarget)) {
@@ -126,7 +129,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
 
     @Override
     public String toString() {
-        String c = helper.toString();
+        String c = information.toString();
         int p = c.indexOf('(');
         return "extend    find " + c.substring(0, p) + "+" + c.substring(p);
     }

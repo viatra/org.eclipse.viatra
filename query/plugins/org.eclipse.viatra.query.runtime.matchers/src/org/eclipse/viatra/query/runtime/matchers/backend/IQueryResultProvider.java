@@ -12,12 +12,14 @@ package org.eclipse.viatra.query.runtime.matchers.backend;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 /**
  * An internal interface of the query backend that provides results of a given query. 
  * @author Bergmann Gabor
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQueryResultProvider {
     
@@ -29,7 +31,22 @@ public interface IQueryResultProvider {
      * @pre size of input array must be equal to the number of parameters.
      * @return the number of pattern matches found.
      */
-    public int countMatches(Object[] parameters); 
+    public int countMatches(Object[] parameters);
+    
+    /**
+     * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
+     *
+     * @param parameterSeedMask
+     *            a mask that extracts those parameters of the query (from the entire parameter list) that should be
+     *            bound to a fixed value
+     * @param parameters
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold
+     * @return the number of pattern matches found.
+     * @since 1.7
+     */
+    public int countMatches(TupleMask parameterSeedMask, ITuple projectedParameterSeed);
     
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
@@ -40,7 +57,23 @@ public interface IQueryResultProvider {
      * @pre size of input array must be equal to the number of parameters.
      * @return a match represented in the internal {@link Tuple} representation.
      */
-    public Tuple getOneArbitraryMatch(Object[] parameters); 
+    public Tuple getOneArbitraryMatch(Object[] parameters);
+    
+    /**
+     * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
+     * Neither determinism nor randomness of selection is guaranteed.
+     * 
+     * @param parameterSeedMask
+     *            a mask that extracts those parameters of the query (from the entire parameter list) that should be
+     *            bound to a fixed value
+     * @param parameters
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold
+     * @return a match represented in the internal {@link Tuple} representation.
+     * @since 1.7
+     */
+    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters); 
     
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
@@ -50,8 +83,22 @@ public interface IQueryResultProvider {
      * @pre size of input array must be equal to the number of parameters.
      * @return matches represented in the internal {@link Tuple} representation.
      */
-    public Collection<? extends Tuple> getAllMatches(Object[] parameters); 
+    public Collection<? extends Tuple> getAllMatches(Object[] parameters);
     
+    /**
+     * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
+     *
+     * @param parameterSeedMask
+     *            a mask that extracts those parameters of the query (from the entire parameter list) that should be
+     *            bound to a fixed value
+     * @param parameters
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold
+     * @return matches represented in the internal {@link Tuple} representation.
+     * @since 1.7
+     */
+    public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters); 
     
     /**
      * The underlying query evaluator backend.

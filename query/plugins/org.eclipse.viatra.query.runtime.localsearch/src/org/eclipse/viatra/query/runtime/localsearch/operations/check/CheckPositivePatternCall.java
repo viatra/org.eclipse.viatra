@@ -11,16 +11,14 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 /**
  * @author Grill Balázs
@@ -29,38 +27,42 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
  */
 public class CheckPositivePatternCall extends CheckOperation implements IPatternMatcherOperation {
 
-    private final CallOperationHelper helper;
-    private PatternCall call;
+    private final CallInformation information; 
+    private final VolatileModifiableMaskedTuple maskedTuple;
+    private IQueryResultProvider matcher;
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        call = helper.createCall(context);
+        maskedTuple.updateTuple(frame);
+        matcher = context.getMatcher(information.getReference());
     }
 
     /**
      * @since 1.5
      */
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        return call.has(frame);
+        return matcher.getOneArbitraryMatch(information.getParameterMask(), maskedTuple) != null;
     }
 
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public CheckPositivePatternCall(MatcherReference calledQuery, Map<PParameter, Integer> frameMapping) {
+    public CheckPositivePatternCall(CallInformation information) {
         super();
-        helper = new CallOperationHelper(calledQuery, frameMapping);
+        this.information = information;
+        this.maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
+        
     }
 
     @Override
     public List<Integer> getVariablePositions() {
-        return helper.getVariablePositions();
+        return information.getVariablePositions();
     }
     
     @Override
     public String toString() {
-        return "check     find "+helper.toString();
+        return "check     find "+information.toString();
     }
 
 }

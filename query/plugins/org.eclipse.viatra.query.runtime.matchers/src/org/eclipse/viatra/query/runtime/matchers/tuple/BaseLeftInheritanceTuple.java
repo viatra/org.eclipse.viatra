@@ -48,7 +48,7 @@ public abstract class BaseLeftInheritanceTuple extends Tuple {
      * Optimized equals calculation (prediction: true, since hash values match)
      */    
     @Override
-    protected boolean internalEquals(Tuple other) {
+    protected boolean internalEquals(ITuple other) {
         if (other instanceof BaseLeftInheritanceTuple) {
             BaseLeftInheritanceTuple blit = (BaseLeftInheritanceTuple) other;
             if (blit.inheritedIndex == this.inheritedIndex) {

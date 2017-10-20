@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -34,6 +35,7 @@ import com.google.common.collect.Lists;
 
 /**
  * A search plan executor is used to execute {@link SearchPlan} instances.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SearchPlanExecutor implements ILocalSearchAdaptable{
 
@@ -43,6 +45,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     private final ISearchContext context;
     private final List<ILocalSearchAdapter> adapters = Lists.newCopyOnWriteArrayList();
     private final BiMap<Integer,PVariable> variableMapping;
+    private final TupleMask parameterMask;
 
     public BiMap<Integer, PVariable> getVariableMapping() {
         return variableMapping;
@@ -56,6 +59,13 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         return plan;
     }
     
+    /**
+     * @since 1.7
+     */
+    public TupleMask getParameterMask() {
+        return parameterMask;
+    }
+
     @Override
     public void addAdapters(List<ILocalSearchAdapter> adapters) {
         for(ILocalSearchAdapter adapter : adapters){
@@ -75,13 +85,17 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         }
     }
 
-    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping) {
+    /**
+     * @since 1.7
+     */
+    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping, TupleMask parameterMask) {
         Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
         this.variableMapping = HashBiMap.<PVariable, Integer>create(variableMapping).inverse();
         operations = plan.getOperations();
         this.currentOperation = -1;
+        this.parameterMask = parameterMask;
     }
    
 

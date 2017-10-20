@@ -20,6 +20,8 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.collect.Lists;
 
@@ -32,6 +34,7 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
 
     private final EDataType dataType;
     private final EDataTypeInSlotsKey type;
+    private final static TupleMask indexerMask = TupleMask.empty(1);
 
     public IterateOverEDatatypeInstances(int position, EDataType dataType) {
         super(position);
@@ -46,7 +49,7 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
     @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, null);
+        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf());
         // XXX This casting is only required for API backwards compatibility
         it = (Iterator<Object>) values.iterator();
     }

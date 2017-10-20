@@ -13,15 +13,16 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
@@ -50,7 +51,10 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -70,12 +74,16 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     protected final IQueryRuntimeContext runtimeContext;
     protected final PQuery query;
     protected final QueryEvaluationHint userHints;
+    protected final Map<PQuery, LocalSearchHints> hintCache = new HashMap<>();
     protected final IPlanProvider planProvider;
+    private final static String PLAN_CACHE_KEY = AbstractLocalSearchResultProvider.class.getName() + "#planCache"; 
+    private final Map<MatcherReference, IPlanDescriptor> planCache;
     protected final ISearchContext searchContext;
 
     /**
      * @since 1.5
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractLocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
             IPlanProvider planProvider, QueryEvaluationHint userHints) {
         this.backend = backend;
@@ -86,6 +94,13 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         this.userHints = userHints;
         this.runtimeContext = context.getRuntimeContext();
         this.searchContext = new ISearchContext.SearchContext(backendContext, userHints, backend.getCache());
+        this.planCache = backend.getCache().getValue(PLAN_CACHE_KEY, Map.class, new IProvider<Map>() {
+
+            @Override
+            public Map<MatcherReference, IPlanDescriptor> get() {
+                return new HashMap<>();
+            }
+        });
     }
     
     protected abstract IOperationCompiler getOperationCompiler(IQueryBackendContext backendContext, LocalSearchHints configuration);
@@ -105,40 +120,49 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                         final SearchPlan plan = new SearchPlan();
                         plan.addOperations(input.getCompiledOperations());
     
-                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys());
+                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.calculateParameterMask());
                     }
                 });
     
-        final Collection<Integer> parameterSizes = Collections2.transform(compiledPlans,
-                new Function<SearchPlanForBody, Integer>() {
-    
-                    @Override
-                    public Integer apply(SearchPlanForBody input) {
-                        PBody body = input.getBody();
-                        return body.getUniqueVariables().size();
-                        // return Math.max(input.getSymbolicParameters().size(), input.getUniqueVariables().size());
-                    }
-                });
-    
-        return new LocalSearchMatcher(plan, executors,
-                Collections.max(parameterSizes));
+        return new LocalSearchMatcher(plan, executors);
     }
 
-    private IPlanDescriptor createPlan(MatcherReference key, IPlanProvider planProvider) throws QueryProcessingException {
-        LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
-        IOperationCompiler compiler = getOperationCompiler(backendContext, configuration);
-        IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, configuration, key);
-        return plan;
+    private IPlanDescriptor getOrCreatePlan(MatcherReference key, IQueryBackendContext backendContext, IOperationCompiler compiler, LocalSearchHints configuration, IPlanProvider planProvider) throws QueryProcessingException {
+        if (planCache.containsKey(key)){
+            return planCache.get(key);
+        } else {
+            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, configuration, key);
+            planCache.put(key, plan);
+            return plan;
+        }
     }
-
+    
+    private IPlanDescriptor getOrCreatePlan(MatcherReference key, IPlanProvider planProvider) throws QueryProcessingException {
+        if (planCache.containsKey(key)){
+            return planCache.get(key);
+        } else {
+            LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
+            IOperationCompiler compiler = getOperationCompiler(backendContext, configuration);
+            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, configuration, key);
+            planCache.put(key, plan);
+            return plan;
+        }
+    }
+    
     private LocalSearchHints overrideDefaultHints(PQuery pQuery) {
-        return LocalSearchHints.getDefaultOverriddenBy(
-                computeOverridingHints(pQuery));
+        if (hintCache.containsKey(pQuery)) {
+            return hintCache.get(pQuery);
+        } else {
+            LocalSearchHints hint = LocalSearchHints.getDefaultOverriddenBy(
+                    computeOverridingHints(pQuery));
+            hintCache.put(pQuery, hint);
+            return hint;
+        }
     }
 
     /** 
      * Combine with {@link QueryHintOption#getValueOrDefault(QueryEvaluationHint)} to access 
-     *  hint settings not covered by {@link LocalSearchHints} 
+     * hint settings not covered by {@link LocalSearchHints} 
      */
     private QueryEvaluationHint computeOverridingHints(PQuery pQuery) {
         return backendContext.getHintProvider().getQueryEvaluationHint(pQuery).overrideBy(userHints);
@@ -192,7 +216,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         while(iterator.hasNext()){
             LocalSearchHints configuration = overrideDefaultHints(query);
             IOperationCompiler compiler = getOperationCompiler(backendContext, configuration);
-            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, configuration, iterator.next());
+            IPlanDescriptor plan = getOrCreatePlan(iterator.next(), backendContext, compiler, configuration, planProvider); 
             // Index keys
             try {
                 indexKeys(plan.getIteratedKeys());
@@ -286,11 +310,29 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         } catch (QueryProcessingException | ViatraQueryException e) {
             throw new RuntimeException(e);
         }
+    }
     
+    private LocalSearchMatcher initializeMatcher(TupleMask parameterSeedMask, ITuple parameters) {
+        try {
+            return newLocalSearchMatcher(parameterSeedMask.transformUnique(query.getParameters()));
+        } catch (QueryProcessingException | ViatraQueryException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException, QueryProcessingException {
     
+    public LocalSearchMatcher newLocalSearchMatcher(ITuple parameters) throws ViatraQueryException, QueryProcessingException {
+        final Set<PParameter> adornment = Sets.newHashSet();
+        for (int i = 0; i < parameters.getSize(); i++) {
+            if (parameters.get(i) != null) {
+                adornment.add(query.getParameters().get(i));
+            }
+        }
+        
+        return newLocalSearchMatcher(adornment);
+    }
+    
+    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException, QueryProcessingException {
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
@@ -298,9 +340,14 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             }
         }
     
+        return newLocalSearchMatcher(adornment);
+    }
+
+    private LocalSearchMatcher newLocalSearchMatcher(final Set<PParameter> adornment)
+            throws QueryProcessingException, ViatraQueryException {
         final MatcherReference reference = new MatcherReference(query, adornment, userHints);
         
-        IPlanDescriptor plan = createPlan(reference, planProvider);
+        IPlanDescriptor plan = getOrCreatePlan(reference, planProvider);
         if (overrideDefaultHints(reference.getQuery()).isUseBase()){
             try {
                 indexKeys(plan.getIteratedKeys());
@@ -333,25 +380,37 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     @Override
     public Tuple getOneArbitraryMatch(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        final MatchingFrame frame = matcher.editableMatchingFrame();
-        frame.setParameterValues(parameters);
-        return matcher.getOneArbitraryMatch(frame);
+        return matcher.getOneArbitraryMatch(parameters);
+    }
+
+    @Override
+    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        return matcher.getOneArbitraryMatch(parameterSeedMask, parameters);
     }
 
     @Override
     public int countMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        final MatchingFrame frame = matcher.editableMatchingFrame();
-        frame.setParameterValues(parameters);
-        return matcher.countMatches(frame);
+        return matcher.countMatches(parameters);
+    }
+    
+    @Override
+    public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        return matcher.countMatches(parameterSeedMask, parameters);
     }
 
     @Override
     public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        final MatchingFrame frame = matcher.editableMatchingFrame();
-        frame.setParameterValues(parameters);
-        return matcher.getAllMatches(frame);
+        return matcher.getAllMatches(parameters);
+    }
+    
+    @Override
+    public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        return matcher.getAllMatches(parameterSeedMask, parameters);
     }
 
     @Override

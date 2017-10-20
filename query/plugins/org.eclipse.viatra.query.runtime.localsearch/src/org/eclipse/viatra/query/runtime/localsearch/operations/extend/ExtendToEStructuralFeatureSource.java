@@ -20,7 +20,8 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -35,12 +36,15 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
     private int targetPosition;
     private EStructuralFeature feature;
     private final IInputKey type;
+    private VolatileMaskedTuple maskedTuple;
+    private final static TupleMask indexerMask = TupleMask.fromSelectedIndices(2, new int[] {1});
 
-    public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature) {
+    public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature, TupleMask mask) {
         super(sourcePosition);
         this.targetPosition = targetPosition;
         this.feature = feature;
-        type = new EStructuralFeatureInstancesKey(feature);
+        this.type = new EStructuralFeatureInstancesKey(feature);
+        this.maskedTuple = new VolatileMaskedTuple(mask);
     }
 
     public EStructuralFeature getFeature() {
@@ -49,8 +53,8 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type,
-                Tuples.flatTupleOf(null, frame.getValue(targetPosition)));
+        maskedTuple.updateTuple(frame);
+        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple);
         it = Iterables.filter(values, EObject.class).iterator();
     }
     

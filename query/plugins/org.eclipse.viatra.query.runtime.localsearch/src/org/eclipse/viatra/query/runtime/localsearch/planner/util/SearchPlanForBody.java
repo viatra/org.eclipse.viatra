@@ -17,10 +17,10 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -49,7 +49,6 @@ public class SearchPlanForBody {
             parameterKeys[i] = variableKeys.get(parameters.get(i));
         }
         this.compiledOperations = Lists.newArrayListWithCapacity(compiledOperations.size()+1);
-        this.compiledOperations.add(new FrameInitializationCheck(parameterKeys));
         this.compiledOperations.addAll(compiledOperations);
         
         this.dependencies = Lists.newArrayList(dependencies);
@@ -77,6 +76,10 @@ public class SearchPlanForBody {
     
     public Collection<MatcherReference> getDependencies() {
         return dependencies;
+    }
+    
+    public TupleMask calculateParameterMask() {
+        return TupleMask.fromSelectedIndices(variableKeys.size(), parameterKeys);
     }
     
     @Override

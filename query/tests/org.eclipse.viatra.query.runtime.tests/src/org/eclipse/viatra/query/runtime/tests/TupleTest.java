@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.tests;
 
+import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.matchers.tuple.BaseFlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.BaseLeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
@@ -18,47 +19,116 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMaskIdentity;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.junit.Assume;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Tests for tuples to ensure equivalence between implementations
  * @author Gabor Bergmann
  *
  */
+@RunWith(Parameterized.class)
 public class TupleTest {
     
     public static final int SPECIALIZED_ARITY_LIMIT = 4;
     public static final Tuple ANCESTOR = Tuples.staticArityFlatTupleOf(-3, -2, -1);
     public static final Tuple MASKABLE_TUPLE = Tuples.flatTupleOf(-100, -200, -300);
     
+    @Parameters()
+    public static Collection<Object[][]> data() {
+        return Arrays.asList(new Object[][][] {     
+                 {{}},
+                 {{0}},
+                 {{0, 1}},
+                 {{0, 1, 2}},
+                 {{0, 1, 2, 3}},
+                 {{0, 1, 2, 3, 4}} 
+           });
+    }
+    
+    private final Object[] values;
+    private final int arity;
+    
+    
+    
+    public TupleTest(Object[] values) {
+        super();
+        this.values = values;
+        this.arity = values.length;
+    }
+
     @Test
     public void testFlatTuples() {
-        for (int arity = 0; arity <= SPECIALIZED_ARITY_LIMIT + 1; ++arity) {
-            Object[] values = new Object[arity];
-            for (int i=0; i<arity; ++i) values[i] = i;
-            
-            boolean highArity = arity > SPECIALIZED_ARITY_LIMIT;
-            Tuple tuple = Tuples.flatTupleOf(values);
-            
-            assertEquals("size", arity, tuple.getSize());            
-            assertTrue("baseClass", tuple instanceof BaseFlatTuple);            
-            assertEquals("specialized iff low arity", highArity, (tuple instanceof FlatTuple));            
-            for (int i=0; i<arity; ++i) {
-                assertEquals("get" + i, i, tuple.get(i));
-            }
-            assertArrayEquals("elements[]", values, tuple.getElements());
-            
-            Tuple flatTupleReference = Tuples.wideFlatTupleOf(values);
-            assertTrue("equality(ft)",  flatTupleReference.equals(tuple));
-            assertTrue("equality(spec)", tuple.equals(flatTupleReference));
-            assertTrue("equality(other)", tuple.equals(Tuples.flatTupleOf(values)));
-            assertEquals("hashCode", flatTupleReference.hashCode(), tuple.hashCode());
+        boolean highArity = arity > SPECIALIZED_ARITY_LIMIT;
+        Tuple tuple = Tuples.flatTupleOf(values);
+        
+        assertEquals("size", arity, tuple.getSize());            
+        assertTrue("baseClass", tuple instanceof BaseFlatTuple);            
+        assertEquals("specialized iff low arity", highArity, (tuple instanceof FlatTuple));            
+        for (int i=0; i<arity; ++i) {
+            assertEquals("get" + i, i, tuple.get(i));
+        }
+        assertArrayEquals("elements[]", values, tuple.getElements());
+        
+        Tuple flatTupleReference = Tuples.wideFlatTupleOf(values);
+        assertTrue("equality(ft)",  flatTupleReference.equals(tuple));
+        assertTrue("equality(spec)", tuple.equals(flatTupleReference));
+        assertTrue("equality(other)", tuple.equals(Tuples.flatTupleOf(values)));
+        assertEquals("hashCode", flatTupleReference.hashCode(), tuple.hashCode());
+    }
+    
+    @Test
+    public void testVolatileTuples() {
+        MatchingFrame frame = new MatchingFrame(arity);
+        for (int i=0; i<arity; ++i) {
+            frame.set(i, values[i]);
+        }
+        Tuple tuple = Tuples.flatTupleOf(values);
+        
+        assertTrue("equality", Objects.equals(tuple, frame));
+        assertEquals("hashCode", tuple.hashCode(), frame.hashCode());
+        
+        if (arity > 0) {
+            frame.setValue(0, "x");
+            assertFalse("equality", Objects.equals(tuple, frame));
+            assertNotEquals("hashCode", tuple.hashCode(), frame.hashCode());
+        }
+    }
+    
+    @Test
+    public void testToImmutable() {
+        MatchingFrame frame = new MatchingFrame(arity);
+        for (int i=0; i<arity; ++i) {
+            frame.set(i, values[i]);
+        }
+        Tuple tuple = Tuples.flatTupleOf(values);
+        
+        Tuple tupleFromTuple = tuple.toImmutable();
+        Tuple tupleFromFrame = frame.toImmutable();
+        assertTrue("equality tuple", Objects.equals(tuple, tupleFromTuple));
+        assertTrue("equality tuple", Objects.equals(tupleFromTuple, tuple));
+        assertTrue("equality frame", Objects.equals(frame, tupleFromFrame));
+        assertTrue("equality frame", Objects.equals(tupleFromFrame, frame));
+        
+        if (arity > 0) {
+            frame.setValue(0, "x");
+            assertFalse("equality frame", Objects.equals(frame, tupleFromFrame));
+            assertFalse("equality frame", Objects.equals(tupleFromFrame, frame));
         }
     }
     
@@ -152,5 +222,13 @@ public class TupleTest {
         
     }
         
-
+    @Test
+    public void simpleMaskTest() {
+        Assume.assumeTrue(arity > 2);
+        Tuple tuple = Tuples.flatTupleOf(values);
+        Tuple expectedResult = Tuples.staticArityFlatTupleOf(0, 0);
+        TupleMask mask = TupleMask.fromSelectedIndices(arity, new int[] {0, 0});
+        Tuple actualResult = mask.transform(tuple);
+        assertEquals(expectedResult, actualResult);
+    }
 }

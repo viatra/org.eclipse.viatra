@@ -12,19 +12,25 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.MatchingTable;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -35,7 +41,6 @@ import com.google.common.collect.UnmodifiableIterator;
 public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     private ImmutableList<SearchPlanExecutor> plan;
-    private int frameSize;
     private IPlanDescriptor planDescriptor;
     private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
 
@@ -43,59 +48,69 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return plan;
     }
     
-    public int getFrameSize() {
-        return frameSize;
-    }
-    
     @Override
     public List<ILocalSearchAdapter> getAdapters() {
         return Lists.newArrayList(adapters);
     }
     
-    private class PlanExecutionIterator extends UnmodifiableIterator<MatchingFrame> {
+    private abstract class PlanExecutionIterator extends UnmodifiableIterator<Tuple> {
 
-        private UnmodifiableIterator<SearchPlanExecutor> iterator;
-        private SearchPlanExecutor currentPlan;
-        private MatchingFrame frame;
-        private boolean frameReturned;
+        protected final UnmodifiableIterator<SearchPlanExecutor> planIterator;
         
-        public PlanExecutionIterator(final ImmutableList<SearchPlanExecutor> plan, MatchingFrame initialFrame) {
-            this.frame = new MatchingFrame(initialFrame);
-            Preconditions.checkArgument(!plan.isEmpty());
-            iterator = plan.iterator();
-            getNextPlan();
-            frameReturned = true;
+        protected SearchPlanExecutor currentPlan;
+        protected MatchingFrame frame;
+        protected VolatileModifiableMaskedTuple parametersOfFrameView; 
+        private boolean isNextMatchCalculated;
+        
+        public PlanExecutionIterator(final UnmodifiableIterator<SearchPlanExecutor> planIterator) {
+            this.planIterator = planIterator;
+            isNextMatchCalculated = false;
         }
 
-        private void getNextPlan() {
+        protected boolean selectNextPlan() {
             if(currentPlan !=null) {
                 currentPlan.removeAdapters(adapters);
             }
-            SearchPlanExecutor nextPlan = iterator.next();
-            nextPlan.addAdapters(adapters);
-            nextPlan.resetPlan();
-            for (ILocalSearchAdapter adapter : adapters) {
-                adapter.planChanged(currentPlan, nextPlan);
+            boolean validPlanSelected = false;
+            
+            SearchPlanExecutor nextPlan = null;
+            
+            while (!validPlanSelected && planIterator.hasNext()) {
+                nextPlan = planIterator.next();
+                nextPlan.addAdapters(adapters);
+                nextPlan.resetPlan();
+                
+                validPlanSelected = initializeMatchingFrame(nextPlan);
             }
-            currentPlan = nextPlan;
+            
+            if (validPlanSelected) {
+                for (ILocalSearchAdapter adapter : adapters) {
+                    adapter.planChanged(currentPlan, nextPlan);
+                }
+                currentPlan = nextPlan;
+                return true;
+            } else {
+                currentPlan = null;
+                return false;
+            }
         }
+
+        protected abstract boolean initializeMatchingFrame(SearchPlanExecutor nextPlan);
 
         @Override
         public boolean hasNext() {
-            if (!frameReturned) {
+            if (isNextMatchCalculated) {
                 return true;
+            }
+            if (currentPlan == null) {
+                return false;
             }
             try {
                 boolean foundMatch = currentPlan.execute(frame);
-                while ((!foundMatch) && iterator.hasNext()) {
-                    // here ends the previous plan
-                    getNextPlan();
-                    // here starts the new plan
-                    foundMatch = currentPlan.execute(frame);
+                while ((!foundMatch) && planIterator.hasNext()) {
+                    foundMatch = selectNextPlan() && currentPlan.execute(frame);
                 }
-                if (foundMatch) {
-                    frameReturned = false;
-                }
+                isNextMatchCalculated = foundMatch;
                 return foundMatch;
             } catch (LocalSearchException e) {
                 throw new RuntimeException(e);
@@ -103,16 +118,82 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         }
 
         @Override
-        public MatchingFrame next() {
+        public Tuple next() {
             if (!hasNext()) {
                 throw new NoSuchElementException("No more matches available.");
             }
-            frameReturned = true;
-            return new MatchingFrame(frame);
+            isNextMatchCalculated = false;
+            return parametersOfFrameView.toImmutable();
         }
 
     }
 
+    private class PlanExecutionIteratorWithArrayParameters extends PlanExecutionIterator {
+        
+        private final Object[] parameterValues;
+        
+        public PlanExecutionIteratorWithArrayParameters(UnmodifiableIterator<SearchPlanExecutor> planIterator, final Object[] parameterValues) {
+            super(planIterator);
+            this.parameterValues = parameterValues;
+            selectNextPlan();
+        }
+        
+        protected boolean initializeMatchingFrame(SearchPlanExecutor nextPlan) {
+            frame = new MatchingFrame(nextPlan.getVariableMapping().size());
+            parametersOfFrameView = new VolatileModifiableMaskedTuple(frame, nextPlan.getParameterMask());
+            for (int i = 0; i < parameterValues.length; i++) {
+                Object valueToSet = parameterValues[i];
+                if (valueToSet != null) {
+                    Object oldValue = parametersOfFrameView.get(i);
+                    if (oldValue == null) {
+                        parametersOfFrameView.set(i, valueToSet);
+                    } else if (!Objects.equals(valueToSet, oldValue)) {
+                        // Initial value setting resulted in contradictory values. This can happen because two parameter
+                        // variables have been unified but the call provides different values for the parameters.
+                        return false;
+                    }
+                    // If oldValue is not null but equal to newValue, the setting can be ignored
+                }
+            }
+            
+            return true;
+        }
+    }
+    private class PlanExecutionIteratorWithTupleParameters extends PlanExecutionIterator {
+        
+        private final ITuple parameterValues;
+        final private TupleMask parameterSeedMask;
+        
+        public PlanExecutionIteratorWithTupleParameters(UnmodifiableIterator<SearchPlanExecutor> planIterator, final TupleMask parameterSeedMask, final ITuple parameterValues) {
+            super(planIterator);
+            this.parameterSeedMask = parameterSeedMask;
+            this.parameterValues = parameterValues;
+            selectNextPlan();
+        }
+        
+        protected boolean initializeMatchingFrame(SearchPlanExecutor nextPlan) {
+            frame = new MatchingFrame(nextPlan.getVariableMapping().size());
+            parametersOfFrameView = new VolatileModifiableMaskedTuple(frame, nextPlan.getParameterMask());
+            for (int i = 0; i < parameterSeedMask.getSize(); i++) {
+                int index = parameterSeedMask.indices[i];
+                Object valueToSet = parameterValues.get(i);
+                if (valueToSet != null) {
+                    Object oldValue = parametersOfFrameView.get(index);
+                    if (oldValue == null) {
+                        parametersOfFrameView.set(index, valueToSet);
+                    } else if (!Objects.equals(valueToSet, oldValue)) {
+                        // Initial value setting resulted in contradictory values. This can happen because two parameter
+                        // variables have been unified but the call provides different values for the parameters.
+                        return false;
+                    }
+                    // If oldValue is not null but equal to newValue, the setting can be ignored
+                }
+            }
+            
+            return true;
+        }
+    }
+    
     /**
      * If a descendant initializes a matcher using the default constructor, it is expected that it also calls the
      * {@link #setPlan(SearchPlanExecutor)} and {@link #setFramesize(int)} methods manually.
@@ -124,33 +205,32 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     }
 
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor plan, int frameSize) {
-        this(planDescriptor, ImmutableList.of(plan), frameSize);
+    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor plan) {
+        this(planDescriptor, ImmutableList.of(plan));
     }
     
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor[] plan, int frameSize) {
-        this(planDescriptor, ImmutableList.copyOf(plan), frameSize);
+    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor[] plan) {
+        this(planDescriptor, ImmutableList.copyOf(plan));
     }
     
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public LocalSearchMatcher(IPlanDescriptor planDescriptor, Collection<SearchPlanExecutor> plan, int frameSize) {
-        this(planDescriptor, ImmutableList.copyOf(plan), frameSize);
+    public LocalSearchMatcher(IPlanDescriptor planDescriptor, Collection<SearchPlanExecutor> plan) {
+        this(planDescriptor, ImmutableList.copyOf(plan));
     }
     
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    protected LocalSearchMatcher(IPlanDescriptor planDescriptor, ImmutableList<SearchPlanExecutor> plan, int frameSize) {
+    protected LocalSearchMatcher(IPlanDescriptor planDescriptor, ImmutableList<SearchPlanExecutor> plan) {
         this(planDescriptor);
         this.plan = plan;
-        this.frameSize = frameSize;
         this.adapters = Lists.newLinkedList(adapters);
     }
     
@@ -188,40 +268,66 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         this.plan = ImmutableList.copyOf(plan);
     }
 
-    protected void setFramesize(int frameSize) {
-        this.frameSize = frameSize;
-    }
-
-    public MatchingFrame editableMatchingFrame() {
-        return new MatchingFrame(null, frameSize);
-    }
-
     public boolean hasMatch() {
-        boolean hasMatch = hasMatch(editableMatchingFrame());
+        boolean hasMatch = hasMatch(new Object[0]);
         return hasMatch;
     }
 
-    public boolean hasMatch(final MatchingFrame initialFrame) {
+    /**
+     * @since 1.7
+     */
+    public boolean hasMatch(Object[] parameterValues) {
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
+        boolean hasMatch = it.hasNext();
+        matchingFinished();
+        return hasMatch;
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameterValues) {
+        matchingStarted();
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
         boolean hasMatch = it.hasNext();
         matchingFinished();
         return hasMatch;
     }
 
     public int countMatches() {
-        int countMatches = countMatches(editableMatchingFrame());
+        int countMatches = countMatches(new Object[0]);
         return countMatches;
     }
 
-    public int countMatches(MatchingFrame initialFrame) {
+    /**
+     * @since 1.7
+     */
+    public int countMatches(Object[] parameterValues) {
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
         
-        MatchingTable results = new MatchingTable();
+        Set<Tuple> results = new HashSet<>();
         while (it.hasNext()) {
-            final MatchingFrame frame = it.next();
-            results.put(frame.getKey(), frame);
+            results.add(it.next());
+        }
+        
+        int result = results.size();
+        
+        matchingFinished();
+        return result;
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public int countMatches(TupleMask parameterSeedMask, ITuple parameterValues) {
+        matchingStarted();
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        
+        Set<Tuple> results = new HashSet<>();
+        while (it.hasNext()) {
+            results.add(it.next());
         }
         
         int result = results.size();
@@ -234,15 +340,34 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return planDescriptor.getQuery().getParameters().size();
     }
 
-    public MatchingFrame getOneArbitraryMatch() {
-        MatchingFrame oneArbitraryMatch = getOneArbitraryMatch(editableMatchingFrame());
-        return oneArbitraryMatch;
+    /**
+     * @since 1.7
+     */
+    public Tuple getOneArbitraryMatch() {
+        return getOneArbitraryMatch(new Object[0]);
     }
 
-    public MatchingFrame getOneArbitraryMatch(final MatchingFrame initialFrame) {
+    /**
+     * @since 1.7
+     */
+    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameterValues) {
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
-        MatchingFrame returnValue = null;
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        Tuple returnValue = null;
+        if (it.hasNext()) {
+            returnValue = it.next();
+        }
+        matchingFinished();
+        return returnValue;
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public Tuple getOneArbitraryMatch(Object[] parameterValues) {
+        matchingStarted();
+        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
+        Tuple returnValue = null;
         if (it.hasNext()) {
             returnValue = it.next();
         }
@@ -251,8 +376,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     }
 
     public Collection<Tuple> getAllMatches() {
-        Collection<Tuple> allMatches = getAllMatches(editableMatchingFrame());
-        return allMatches;
+        return getAllMatches(new Object[0]);
     }
 
     private void matchingStarted() {
@@ -267,17 +391,26 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         }		
     }
 
-    public Collection<Tuple> getAllMatches(final MatchingFrame initialFrame) {
+    /**
+     * @since 1.7
+     */
+    public Collection<Tuple> getAllMatches(final Object[] parameterValues) {
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);        
-        
-        MatchingTable results = new MatchingTable();
-        while (it.hasNext()) {
-            final MatchingFrame frame = it.next();
-            results.put(frame.getKey(), frame);
-        }
+        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
+        ImmutableSet<Tuple> results = ImmutableSet.copyOf(it);
         matchingFinished();
-        return ImmutableList.copyOf(results.iterator());
+        return results;
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public Iterable<Tuple> getAllMatches(TupleMask parameterSeedMask, final ITuple parameterValues) {
+        matchingStarted();
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        ImmutableSet<Tuple> results = ImmutableSet.copyOf(it);
+        matchingFinished();
+        return results;
     }
     
     /**

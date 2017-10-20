@@ -19,13 +19,11 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
@@ -38,34 +36,28 @@ import com.google.common.collect.Lists;
  */
 public class BinaryTransitiveClosureCheck extends CheckOperation implements IPatternMatcherOperation {
 
-    private final CallOperationHelper helper;
-    private PatternCall call;
+    private final CallInformation information; 
+    private IQueryResultProvider matcher;
     private final int sourcePosition;
     private final int targetPosition;
     
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
      * 
-     * @param calledQuery
-     * @param sourcePosition
-     * @param targetPosition
-     * @since 1.5
+     * @since 1.7
      */
-    public BinaryTransitiveClosureCheck(MatcherReference calledQuery, int sourcePosition, int targetPosition) {
+    public BinaryTransitiveClosureCheck(CallInformation information, int sourcePosition, int targetPosition) {
         super();
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
-
-        helper = new CallOperationHelper(calledQuery, ImmutableMap.of(
-                calledQuery.getQuery().getParameters().get(0), sourcePosition,
-                calledQuery.getQuery().getParameters().get(1), targetPosition));
+        this.information = information;
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
+        matcher = context.getMatcher(information.getReference());
         // Note: second parameter is NOT bound during execution, but the first is
-        call = helper.createCall(context);
     }
 
     @Override
@@ -74,11 +66,12 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IPat
         Queue<Object> sourcesToEvaluate = new LinkedList<>();
         sourcesToEvaluate.add(frame.get(sourcePosition));
         Set<Object> sourceEvaluated = new HashSet<>();
+        final Object[] mappedFrame = new Object[] {null, null};
         while (!sourcesToEvaluate.isEmpty()) {
             Object currentValue = sourcesToEvaluate.poll();
             sourceEvaluated.add(currentValue);
-            final Object[] mappedFrame = new Object[]{currentValue, null};
-            for (Tuple match : call.getAllMatches(mappedFrame)) {
+            mappedFrame[0] = currentValue;
+            for (Tuple match : matcher.getAllMatches(mappedFrame)) {
                 Object foundTarget = match.get(1);
                 if (targetValue.equals(foundTarget)) {
                     return true;
@@ -92,7 +85,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IPat
     
     @Override
     public String toString() {
-        String c = helper.toString();
+        String c = information.toString();
         int p = c.indexOf('(');
         return "check     find "+c.substring(0, p)+"+"+c.substring(p);
     }

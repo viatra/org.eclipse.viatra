@@ -64,7 +64,7 @@ public final class LocalSearchHints implements IMatcherCapability {
      * Return the default settings overridden by the given hints
      */
     public static LocalSearchHints getDefaultOverriddenBy(QueryEvaluationHint overridingHint){
-        return parse(getDefault().build().overrideBy(overridingHint));
+        return parse(getDefault().build(overridingHint));
     }
     
     /**
@@ -138,8 +138,9 @@ public final class LocalSearchHints implements IMatcherCapability {
         return result;
     }
     
-    public QueryEvaluationHint build(){
-        @SuppressWarnings("rawtypes")
+
+    @SuppressWarnings("rawtypes")
+    private Map<QueryHintOption, Object> calculateHintMap() {
         Map<QueryHintOption, Object> map = Maps.newHashMap();
         if (useBase != null){
             USE_BASE_INDEX.insertOverridingValue(map, useBase); 
@@ -159,7 +160,33 @@ public final class LocalSearchHints implements IMatcherCapability {
         if (traceCollector != null){
             normalizationTraceCollector.insertOverridingValue(map, traceCollector);
         }
+        return map;
+    }
+    
+    public QueryEvaluationHint build(){
+        @SuppressWarnings("rawtypes")
+        Map<QueryHintOption, Object> map = calculateHintMap();
         return new QueryEvaluationHint(map, backendFactory);
+    }
+    
+    /**
+     * @since 1.7
+     */
+    public QueryEvaluationHint build(QueryEvaluationHint overridingHint) {
+        if (overridingHint == null)
+            return build();
+        
+        IQueryBackendFactory factory = (overridingHint.getQueryBackendFactory() == null)
+                ? this.backendFactory
+                : overridingHint.getQueryBackendFactory();
+        
+        @SuppressWarnings("rawtypes")
+        Map<QueryHintOption, Object> hints = calculateHintMap();
+        if (overridingHint.getBackendHintSettings() != null) {
+            hints.putAll(overridingHint.getBackendHintSettings());
+        }
+        
+        return new QueryEvaluationHint(hints, factory);
     }
     
     public boolean isUseBase() {

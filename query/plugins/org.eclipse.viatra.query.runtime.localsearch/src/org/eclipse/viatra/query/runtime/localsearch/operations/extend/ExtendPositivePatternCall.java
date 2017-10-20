@@ -11,44 +11,51 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.AbstractPositivePatternCallOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 /**
  * @author Grill Balázs
  * @since 1.4
  *
  */
-public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperation implements IPatternMatcherOperation {
+public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatcherOperation {
 
+    private final CallInformation information; 
+    private final VolatileModifiableMaskedTuple maskedTuple;
+    private IQueryResultProvider matcher;
     private Iterator<? extends Tuple> matches = null;
     
     /**
-     * @since 1.5
+     * @since 1.7
      */
-    public ExtendPositivePatternCall(MatcherReference calledQuery, Map<PParameter, Integer> frameMapping) {
-       super(calledQuery, frameMapping);
+    public ExtendPositivePatternCall(CallInformation information) {
+       this.information = information;
+       maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        super.onInitialize(frame, context);
-        matches = call.getAllMatches(frame).iterator();
+        maskedTuple.updateTuple(frame);
+        matcher = context.getMatcher(information.getReference());
+        matches = matcher.getAllMatches(information.getParameterMask(), maskedTuple).iterator();
     }
 
     @Override
     public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         if (matches.hasNext()){
             Tuple tuple = matches.next();
-            while(!call.fillInResult(frame, tuple) && matches.hasNext()){
+            while(!fillInResult(frame, tuple) && matches.hasNext()){
                 tuple = matches.next();
             }
             return true;
@@ -57,13 +64,42 @@ public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperat
         }
     }
 
+    private boolean fillInResult(MatchingFrame frame, Tuple result) {
+        TupleMask mask = information.getFullFrameMask();
+        // The first loop clears out the elements from a possible previous iteration 
+        for(int i : information.getFreeParameterIndices()) {
+            mask.set(frame, i, null);
+        }
+        for(int i : information.getFreeParameterIndices()) {
+            Object oldValue = mask.getValue(frame, i);
+            Object valueToFill = result.get(i);
+            if (oldValue != null && !oldValue.equals(valueToFill)){
+                // If the inverse map contains more than one values for the same key, it means that these arguments are unified by the caller. 
+                // In this case if the callee assigns different values the frame shall be dropped
+                return false;
+            }
+            oldValue = valueToFill;
+            mask.set(frame, i, valueToFill);
+        }
+        return true;
+    }
+    
     @Override
     public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        call.backtrack(frame);
+        TupleMask mask = information.getFullFrameMask();
+        for(int i : information.getFreeParameterIndices()){
+            mask.set(frame, i, null);
+        }
+    }
+    
+    @Override
+    public List<Integer> getVariablePositions() {
+        return information.getVariablePositions();
     }
     
     @Override
     public String toString() {
-        return "extend find "+super.toString();
+        return "extend find " + information.toString();
     }
+    
 }
