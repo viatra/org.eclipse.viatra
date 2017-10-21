@@ -208,6 +208,8 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
                     String logMessage = "Error while resetting Query Registry: " + e.getMessage();
                     ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
                             ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), logMessage, e));
+                    // Maintaining interrupted state
+                    Thread.currentThread().interrupt();
                 }
             }
         });

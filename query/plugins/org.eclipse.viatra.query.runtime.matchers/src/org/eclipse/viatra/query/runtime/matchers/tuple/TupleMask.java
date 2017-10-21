@@ -286,7 +286,7 @@ public class TupleMask {
      * @since 1.7
      */
     public Tuple revertFrom(ITuple masked) {
-        Object signature[] = new Object[sourceWidth];
+        Object[] signature = new Object[sourceWidth];
         for (int i = 0; i < indices.length; ++i)
             signature[indices[i]] = masked.get(i);
         return Tuples.flatTupleOf(signature);

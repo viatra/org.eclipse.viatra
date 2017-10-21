@@ -185,6 +185,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return isIndexed(key, IndexingService.INSTANCES);
     }
     
+    /**
+     * @deprecated use {@link #containsTuple(IInputKey, TupleMask, ITuple)} instead
+     */
     @Override
     @Deprecated
     public boolean containsTuple(IInputKey key, Tuple seed) {
@@ -242,6 +245,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return instanceClass;
     }
     
+    /**
+     * @deprecated use {@link #enumerateTuples(IInputKey, TupleMask, ITuple)} instead
+     */
     @Override
     @Deprecated
     public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed) {
@@ -340,6 +346,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         }
     };
     
+    /**
+     * @deprecated use {@link #enumerateValues(IInputKey, TupleMask, ITuple)} instead
+     */
     @Override
     @Deprecated
     public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed) {
@@ -407,6 +416,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return null;
     }
     
+    /**
+     * @deprecated use {@link #countTuples(IInputKey, TupleMask, ITuple)} instead
+     */
     @Override
     @Deprecated
     public int countTuples(IInputKey key, Tuple seed) {

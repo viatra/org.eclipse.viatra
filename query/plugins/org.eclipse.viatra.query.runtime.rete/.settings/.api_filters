@@ -31,6 +31,12 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/ColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
+                <message_argument value="currentGroup"/>
+            </message_arguments>
+        </filter>
         <filter id="337682486">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
@@ -168,7 +174,21 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/BaseNode.java" type="org.eclipse.viatra.query.runtime.rete.network.BaseNode">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.BaseNode"/>
+                <message_argument value="communicationTracker"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/CommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup"/>
+                <message_argument value="tracker"/>
+            </message_arguments>
+        </filter>
         <filter id="338722907">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup"/>
@@ -219,6 +239,12 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/DefaultMailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox"/>
+                <message_argument value="currentGroup"/>
+            </message_arguments>
+        </filter>
         <filter id="337682486">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox"/>
@@ -256,6 +282,12 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/MonotonicityAwareMailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox"/>
+                <message_argument value="currentGroup"/>
+            </message_arguments>
+        </filter>
         <filter id="337682486">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox"/>

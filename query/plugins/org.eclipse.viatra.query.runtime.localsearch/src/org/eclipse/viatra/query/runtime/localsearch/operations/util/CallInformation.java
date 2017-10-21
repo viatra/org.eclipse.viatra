@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
  * This class stores a precompiled version of call-related metadata and masks for local search operations
  * 
  * @author Zoltan Ujhelyi
- *
+ * @since 1.7
  */
 public final class CallInformation {
 

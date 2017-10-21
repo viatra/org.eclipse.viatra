@@ -173,6 +173,18 @@
         </filter>
     </resource>
     <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/PatternQuerySpecificationClassInferrer.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer">
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="defaultBackendFactory()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="incrementalBackendFactory()"/>
+            </message_arguments>
+        </filter>
         <filter comment="Internal model inferrer api updated" id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
@@ -195,6 +207,12 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
                 <message_argument value="initializeSpecification(JvmDeclaredType, Pattern, JvmType, JvmType, SpecificationBuilder)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternQuerySpecificationClassInferrer"/>
+                <message_argument value="searchBackendFactory()"/>
             </message_arguments>
         </filter>
     </resource>

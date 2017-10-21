@@ -36,7 +36,7 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
 
     private final EClass clazz;
     private final EClassTransitiveInstancesKey type;
-    private final static TupleMask indexerMask = TupleMask.empty(1);
+    private static final TupleMask indexerMask = TupleMask.empty(1);
 
     public IterateOverEClassInstances(int position, EClass clazz) {
         super(position);

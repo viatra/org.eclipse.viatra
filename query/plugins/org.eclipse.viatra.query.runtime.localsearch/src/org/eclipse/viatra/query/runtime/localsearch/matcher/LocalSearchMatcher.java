@@ -162,7 +162,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     private class PlanExecutionIteratorWithTupleParameters extends PlanExecutionIterator {
         
         private final ITuple parameterValues;
-        final private TupleMask parameterSeedMask;
+        private final TupleMask parameterSeedMask;
         
         public PlanExecutionIteratorWithTupleParameters(UnmodifiableIterator<SearchPlanExecutor> planIterator, final TupleMask parameterSeedMask, final ITuple parameterValues) {
             super(planIterator);

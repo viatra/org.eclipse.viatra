@@ -173,10 +173,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             if (values == null)
                 throw new IllegalStateException();
             boolean changed = values.removeOne(value);
-            if (changed) {
-                if (values.isEmpty())
-                    holderToValueMap.remove(holder);
-            }
+            if (changed && values.isEmpty())
+                holderToValueMap.remove(holder);
             return changed;
         }
         private boolean removeFromValueToHolderMap(final Object value, final EObject holder) throws IllegalStateException {
@@ -184,10 +182,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             if (holders == null)
                 throw new IllegalStateException();
             boolean changed = holders.removeOne(holder);
-            if (changed) {
-                if (holders.isEmpty())
-                    valueToHolderMap.remove(value);
-            }
+            if (changed && holders.isEmpty())
+                valueToHolderMap.remove(value);
             return changed;
         }
 
@@ -420,10 +416,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         final IMultiset<Object> valMap = dataTypeMap.get(keyType);
         if (valMap != null) {
             final boolean lastOccurrence = valMap.removeOne(value);
-            if (lastOccurrence) {
-                if (valMap.isEmpty()) {
-                    dataTypeMap.remove(keyType);
-                }
+            if (lastOccurrence && valMap.isEmpty()) {
+                dataTypeMap.remove(keyType);
             }
 
             isDirty = true;

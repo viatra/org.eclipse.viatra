@@ -33,7 +33,6 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
 
     private final CallInformation information; 
     private final VolatileModifiableMaskedTuple maskedTuple;
-    private IQueryResultProvider matcher;
     private Iterator<? extends Tuple> matches = null;
     
     /**
@@ -47,7 +46,7 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         maskedTuple.updateTuple(frame);
-        matcher = context.getMatcher(information.getReference());
+        IQueryResultProvider matcher = context.getMatcher(information.getReference());
         matches = matcher.getAllMatches(information.getParameterMask(), maskedTuple).iterator();
     }
 
@@ -78,7 +77,6 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
                 // In this case if the callee assigns different values the frame shall be dropped
                 return false;
             }
-            oldValue = valueToFill;
             mask.set(frame, i, valueToFill);
         }
         return true;

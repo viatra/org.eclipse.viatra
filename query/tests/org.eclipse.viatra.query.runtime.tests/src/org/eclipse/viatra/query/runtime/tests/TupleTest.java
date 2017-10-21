@@ -51,14 +51,14 @@ public class TupleTest {
     
     @Parameters()
     public static Collection<Object[][]> data() {
-        return Arrays.asList(new Object[][][] {     
-                 {{}},
-                 {{0}},
-                 {{0, 1}},
-                 {{0, 1, 2}},
-                 {{0, 1, 2, 3}},
-                 {{0, 1, 2, 3, 4}} 
-           });
+        return Arrays.asList(
+                new Object[][] {{}},
+                new Object[][] {{0}},
+                new Object[][] {{0, 1}},
+                new Object[][] {{0, 1, 2}},
+                new Object[][] {{0, 1, 2, 3}},
+                new Object[][] {{0, 1, 2, 3, 4}} 
+           );
     }
     
     private final Object[] values;

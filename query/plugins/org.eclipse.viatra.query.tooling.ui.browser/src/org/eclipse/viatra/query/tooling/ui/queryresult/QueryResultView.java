@@ -143,12 +143,12 @@ public class QueryResultView extends ViewPart {
                 if (nextContentToLoad instanceof QueryRegistryTreeEntry) {
                     QueryRegistryTreeEntry entry = (QueryRegistryTreeEntry) nextContentToLoad;
                     entry.load();
-                    loadQueriesIntoActiveEngine(QueryResultViewUtil.unwrapEntries(ImmutableSet.of(entry)));
+                    input.loadQueries(QueryResultViewUtil.unwrapEntries(ImmutableSet.of(entry)));
                 } else if (nextContentToLoad instanceof DynamicPatternDescriptor) {
                     ensureXtextBasedIndexerLoaded();
                     
                     IRegistryView view = ((DynamicPatternDescriptor) nextContentToLoad).createView();
-                    loadQueriesIntoActiveEngine(view.getEntries());
+                    input.loadQueries(view.getEntries());
                 }
                 nextContentToLoad = loadQueue.poll();
             }
@@ -384,12 +384,6 @@ public class QueryResultView extends ViewPart {
         }
     }
     
-    private void loadQueriesIntoActiveEngine(Iterable<IQuerySpecificationRegistryEntry> providers) {
-        if(!input.isReadOnlyEngine()){
-            input.loadQueries(providers);
-        }
-    }
-    
     public boolean hasActiveEngine() {
         return input != null;
     }
@@ -439,6 +433,9 @@ public class QueryResultView extends ViewPart {
             String msg = "Error while stopping loading queries: " + e.getMessage();
             ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
                     ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), msg, e));
+            
+         // Maintaining interrupted state
+            Thread.currentThread().interrupt();
         } finally {
             loadQueue.clear();
         }

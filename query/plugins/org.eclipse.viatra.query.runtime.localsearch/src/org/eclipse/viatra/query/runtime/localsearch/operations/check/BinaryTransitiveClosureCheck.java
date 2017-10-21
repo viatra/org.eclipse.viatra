@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Zoltan Ujhelyi
  * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  * 
  */
 public class BinaryTransitiveClosureCheck extends CheckOperation implements IPatternMatcherOperation {

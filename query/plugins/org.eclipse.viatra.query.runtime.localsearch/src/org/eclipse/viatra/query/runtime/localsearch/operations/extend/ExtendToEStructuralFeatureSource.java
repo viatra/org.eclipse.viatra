@@ -37,8 +37,11 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> i
     private EStructuralFeature feature;
     private final IInputKey type;
     private VolatileMaskedTuple maskedTuple;
-    private final static TupleMask indexerMask = TupleMask.fromSelectedIndices(2, new int[] {1});
-
+    private static final TupleMask indexerMask = TupleMask.fromSelectedIndices(2, new int[] {1});
+    
+    /**
+     * @since 1.7
+     */
     public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature, TupleMask mask) {
         super(sourcePosition);
         this.targetPosition = targetPosition;

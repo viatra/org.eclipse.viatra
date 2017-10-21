@@ -134,10 +134,8 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
                 if (isInsertion) {
                     tMap.addOne(source);
                 } else {
-                    if (tMap.removeOne(source)) {
-                        if (tMap.isEmpty())
-                            tuplesBackward.remove(target);
-                    }
+                    if (tMap.removeOne(source) && tMap.isEmpty())
+                        tuplesBackward.remove(target);
                 }
             }
         }
@@ -154,10 +152,8 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
                 return sMap.addOne(target);
             } else {
                 boolean last = sMap.removeOne(target);
-                if (last) {
-                    if (sMap.isEmpty())
-                        tuplesForward.remove(source);
-                }
+                if (last && sMap.isEmpty())
+                    tuplesForward.remove(source);
                 return last;
             }
             

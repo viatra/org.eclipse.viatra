@@ -76,7 +76,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     protected final QueryEvaluationHint userHints;
     protected final Map<PQuery, LocalSearchHints> hintCache = new HashMap<>();
     protected final IPlanProvider planProvider;
-    private final static String PLAN_CACHE_KEY = AbstractLocalSearchResultProvider.class.getName() + "#planCache"; 
+    private static final String PLAN_CACHE_KEY = AbstractLocalSearchResultProvider.class.getName() + "#planCache"; 
     private final Map<MatcherReference, IPlanDescriptor> planCache;
     protected final ISearchContext searchContext;
 
@@ -312,7 +312,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         }
     }
     
-    private LocalSearchMatcher initializeMatcher(TupleMask parameterSeedMask, ITuple parameters) {
+    private LocalSearchMatcher initializeMatcher(TupleMask parameterSeedMask) {
         try {
             return newLocalSearchMatcher(parameterSeedMask.transformUnique(query.getParameters()));
         } catch (QueryProcessingException | ViatraQueryException e) {
@@ -385,7 +385,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
 
     @Override
     public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
-        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
         return matcher.getOneArbitraryMatch(parameterSeedMask, parameters);
     }
 
@@ -397,7 +397,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     
     @Override
     public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
-        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
         return matcher.countMatches(parameterSeedMask, parameters);
     }
 
@@ -409,7 +409,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     
     @Override
     public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
-        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask, parameters);
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
         return matcher.getAllMatches(parameterSeedMask, parameters);
     }
 

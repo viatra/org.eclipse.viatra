@@ -231,19 +231,17 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/BinaryTransitiveClosureCheck.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck">
-        <filter comment="Internal API update" id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck"/>
-                <message_argument value="BinaryTransitiveClosureCheck(MatcherReference, int, int)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/CheckPositivePatternCall.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall">
         <filter comment="Internal API update" id="338722907">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall"/>
                 <message_argument value="CheckPositivePatternCall(MatcherReference, Map&lt;PParameter,Integer&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall"/>
+                <message_argument value="check(MatchingFrame)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -292,11 +290,11 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/check/CheckPositivePatternCall.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall">
-        <filter comment="Internal API update" id="338792546">
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/operations/extend/ExtendToEStructuralFeatureSource.java" type="org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource">
+        <filter comment="Internal API update" id="338722907">
             <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall"/>
-                <message_argument value="check(MatchingFrame)"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource"/>
+                <message_argument value="ExtendToEStructuralFeatureSource(int, int, EStructuralFeature)"/>
             </message_arguments>
         </filter>
     </resource>
