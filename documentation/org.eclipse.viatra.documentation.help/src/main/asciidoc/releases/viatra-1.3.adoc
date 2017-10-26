@@ -1,0 +1,93 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+= VIATRA 1.3 - New and Noteworthy
+
+== Neon compatibility
+
+Previous versions of VIATRA were not 100% compatible the Eclipse Neon release for multiple reasons:
+
+* VIATRA 1.3 is the first version to be compatible with Xtext 2.10.
+* JFace data binding in Neon requires Java 1.8. However, in order to be compatible with older releases as well, VIATRA is compiled with older versions, but is ensured it is compatible with the current release.
+
+However, VIATRA is still compatible with older platform versions up to the Indigo release.
+
+== Query development environment update
+
+We have introduced a *Transformation Development* perspective to make it easier for VIATRA users to focus on developing queries and transformations. The perspective opens and lays out the most important views and contains view and new wizard shortcuts for all VIATRA related functionality.
+
+We are also working on a new approach for query development that will replace the monolithic functionality of the current Query Explorer.
+You can install the separate feature *VIATRA Query Browser* (Incubation) to try out the new _Query Registry_ and _Query Results_ views.
+
+* Both views are connected with the Properties view to provide additional information about selected elements.
+* The Query Registry view shows all registered and workspace queries without the need to load them from the pattern editor directly.
+* Models and queries can be loaded into the Query Results view similarly to the Query Explorer.
+
+== Query by Example: create queries based on selected model elements
+
+Query by Example (QBE), a new feature to ease query development, was included in this version. This new tool is primarily aimed at users who want to define queries, but are only familiar with the concrete syntax of a modeling language (i.e. the view presented through a graphical or textual editor), not the intricate details of its abstract syntax (metamodel, EPackgage).
+
+Instead of manually writing .vql files, QBE allows the user to specify a query using an ''example'' - a selection of EMF instance objects highlighted in a model editor or viewer (both EMF tree editors and graphical editors are supported). The QBE tool will discover how the selected elements are related to each other in the model, and generate a .vql query that will find groups of model elements that are arranged similarly. 
+
+The newly introduced *Query by Example* view allows the user to control the process of (a) identifying elements selected in an open model file as the example, (b) fine-tuning the options of interpreting the example, and (c) exporting the resulting query to .vql code. The exported query can be loaded into the Query Explorer (or the new Query Results view) for evaluation and testing; if necessary, adjustments can still be made in the Query by Example view (e.g. adding or removing additional constraints).
+
+The feature can be installed by selecting the _VIATRA Query-by-Example_ (Incubation) addon from the VIATRA repository. For further details, check the paper from CMSEBA'14 https://www.cs.york.ac.uk/es/cmseba/papers/Bergmann.pdf[Graph Query by Example].
+
+== Model transformation debugger prototype
+
+VIATRA 1.3.0 now features the first prototype of a *Model Transformation Debugger*, which aims at helping the development and debugging of VIATRA-based model transformations. The debugger supports the following main features:
+
+* Allows the transformation developer to observe the inner state of the given VIATRA transformation and the associated model instances.
+** Displays the model instances associated with the transformation in a tree view with Properties support.
+** Displays the active activations of the model transformation using a contemporary Eclipse view.
+** Displays the precondition parameters of the next activation to be executed using the Eclipse Variables view.
+* Allows the transformation developer to control the execution of the VIATRA model transformation.
+** Supports the definition of various VIATRA transformation specific breakpoints, which integrate with the Eclipse Debug framework.
+** The user can control the execution of the transformation via the standard Eclipse Debugging controls (Step over (F6), Resume (F8)).
+** The user can define which transformation rule activaton should be executed next, overriding the default decision bade by the transformation.
+* Integrates with the Eclipse Debug framework.
+
+It should be noted, in its current state, the debugger only handles VIATRA transformations that run in the same JVM as the debugger itself. Inter-JVM communication will be introduced in future versions.
+
+A detailed user's guide is part of the main VIATRA documentation and can be accessed via the following link: http://static.incquerylabs.com/projects/viatra/viatra-docs/ViatraDocs.html#_viatra_debugger
+
+=== Other issues ===
+
+Version 1.3 also features a large number of under-the-hood changes, the most important is a rewritten _type inferrer_ that works largely the same, but provides more precise error messages. Usually, this change should be invisible for existing users; for possible migration issues see the Migration Guide below.
+
+Another important area of such changes are enhancements for local search. A number of issues were fixed related to incorrect planning or plan execution in various areas; and for the next version further enhancements are planned in this area.
+
+In total more, than 70 issues were fixed in this release, see https://projects.eclipse.org/projects/modeling.viatra/releases/1.3.0/bugs for details.
+
+= Migrating to VIATRA 1.3 =
+
+== Query specification registry
+
+We have introduced a completely new Query Specification Registry and deprecated the old version.
+Users of the `org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry` class should read the JavaDoc for details on how to migrate to the new `org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry` implementation.
+
+Read http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/API/Advanced#Query_specification_registry for details on the new registry.
+
+== Type inferrer in pattern language
+
+The type inferrer of the VIATRA Query Language was rewritten; in most cases, it should behave exactly the same as the previous version, with the following differences:
+
+* If some data types, such as strings or integers, are returned, sometimes the old inferrer calculated Object as its return type. The new version calculates now the correct type. This behavior is presented by the calculation http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/integration/plugins/org.eclipse.viatra.integration.uml/src/org/eclipse/viatra/integration/uml/derivedfeatures/DerivedFeatures.vql#n1197[QualifiedName derived feature of UML Classifiers]: in version 1.2, the name parameter returned Object, while in 1.3 it is correctly calculated as String.
+* The variables of patterns are required to have a single, identifiable type during type inference. If required, the closest common supertype is calculated, however, if that is not unique for a parameter, an error is thrown. The old inferrer implementation in case of complex inheritance hierarchies sometimes did not detect that this closest common supertype is not unique, but selected one. In such cases, the new inferrer throws an error, requiring the parameter type to be declared manually. For these cases, a quick fix is available to insert any of the possible types manually.
+* *Known issue*: in case of patterns with multiple check and eval expressions, the type inferrer is sometimes incapable of inferring the return types of eval expressions correctly inside other expressions. The error messages are a bit misleading, as the it is perfectly legit to enter an Object into a check expression, so only by an incorrectly typed expression is the issue detected.
+
+The problem can be worked around using a typecast in the expression. See the following (artificial) example:
+
+[[app-listing]]
+[source,vql]
+----
+pattern t4_erroneous(n) {
+  check(n > 2); //Error 1: '> cannot be resolved'; Error 2: 'Check expression must return boolean'
+  n == eval(2);
+}
+
+pattern t4_fixed(n) {
+  check((n as Integer)> 2);
+  n == eval(2);
+}
+----

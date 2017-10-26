@@ -1,0 +1,78 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+= VIATRA 1.2 - New and Noteworthy
+
+== Combined EMF-IncQuery and VIATRA
+VIATRA 1.2 includes both the high-performance query engine of EMF-IncQuery and includes an event-driven transformation engine. This shared stack supports the development of various tasks, including batch and event-driven transformations, complex event processing and design space exploration concepts.
+
+Having all elements in a single project allows a very tight integration between the various components, providing a better user experience.
+
+== Graduation of the transformation engine
+
+In VIATRA 1.2 the transformation API supporting both batch and event-driven transformations have graduated: the API has been stabilized, usage documentation was added. For details, see https://wiki.eclipse.org/VIATRA/Transformation.
+
+== Other issues
+
+Not counting the merge of EMF-IncQuery, VIATRA 1.2 is mainly a bugfix release, with https://projects.eclipse.org/projects/modeling.viatra/releases/1.2.0/bugs[80+ different issues fixed], resulting a more stable environment to write model queries and transformations.
+
+= Migrating from EMF-IncQuery 1.1 to VIATRA 1.2
+
+From version 1.2 EMF-IncQuery is merged into the Viatra project as Viatra Query. The merge involves the complete removal of org.eclipse.incquery namespace, thus making all code depending on EMF-IncQuery incompatible with Viatra Query API. Furthermore, during the merging the existing codebase was cleaned up, removing all existing deprecated code, and a few classes were renamed to be consistent with the new naming conventions.
+
+== The migrator tool
+
+To ease the migration process, a migrator tool is included in Viatra 1.2 to reduce manual refactoring as much as possible.
+
+== Usage
+The tool can be accessed in the 'Configure' context menu on Java/EMF-IncQuery projects where it is applicable.
+
+* _Update Viatra Query Project_: Migration of query projects (EMF-IncQuery 0.8.0-1.1.0)
+** Updates project dependencies
+** Updates query description files
+** Updates query specification extensions
+** Updates usage of EMF-IncQuery API
+** *Important*: this item is not available in projects that are already VIATRA Query projects
+* _Replace EMF-IncQuery API Usage_: Migration of Java and Xtend projects
+** Updates usage of EMF-IncQuery API
+** Safe to be called multiple times
+
+== Remaining manual tasks after migration
+
+* Maven builds are not migrated.
+* Deprecated API https://www.eclipse.org/viatra/javadoc/releases/incquery-1.1.0/deprecated-list.html[in EMF-IncQuery 1.1.0] are removed in 1.2.0. These API usages have to be migrated manually; look for the version 1.1 javadoc for hints on updating.
+* Deprecated pattern annotations and annotation parameters were removed from the language; they need either to be updated or removed manually from query definitions.
+* Generated plugin extensions other than query specifications are regenerated, but the old ones are not removed. These shall be removed manually.
+* The class name of static method calls and enum literals shall be renamed manually, e.g. `AdvancedIncQueryEngine.createUnmanagedEngine()` -> `AdvancedViatraQueryEngine.createUnmanagedEngine()` or `IncQueryActivationStateEnum.UPDATED` -> `CRUDActivationStateEnum.UPDATED`
+* Renamed methods and fields are not migrated by the tool: (incomplete list; in general references to IncQuery were changed; in case of compile errors look for similarly named methods in content assist)
+** `Schedulers.getIQEngineSchedulerFactory` -> `Schedulers.getQueryEngineSchedulerFactory^
+** `ExecutionSchemas.createIncQueryExecutionSchema` -> `ExecutionSchemas.createViatraQueryExecutionSchema`
+** `IncQueryActivationStateEnum.APPEARED` -> `CRUDActivationStateEnum.CREATED`
+** `IncQueryActivationStateEnum.DISAPPEARED` -> `CRUDActivationStateEnum.DELETED`
+
+== A detailed list of changes
+
+The changes done during the merging are https://docs.google.com/spreadsheets/d/1gvu-iWx57z5wCd0HBTdidhuYUmBqfTgEIDIRwuW_vaE/edit?usp=sharing[documented in a spreadsheet]; here we describe the main changes.
+
+=== Project renaming
+
+Projects from EMF-IncQuery projects were (a) moved from the `org.eclipse.incquery` to the `org.eclipse.viatra` namespace; and (b) subcomponents were introduced to split up into the new components of the VIATRA project to make it easier to understand. Projects with bold names in the spreadsheet had some non-trivial renames.
+
+=== Class renaming
+
+In addition to moving all projects into the org.eclipse.viatra namespace, a few classes were also renamed for several reasons:
+
+* All occurrences of EMF-IncQuery or IncQuery were renamed to meet the new project name.
+* Some classes in EVM related to match events were generalized into a CRUD-style event model. The semantic is the same as in previous versions, they were renamed only to suggest they can be reused in other domains.
+
+=== Pattern language updates
+
+The file extensions used by languages were updated from `eiq` to `vql` (VIATRA Query Language), and `eiqgen` to 'vqgen'. The migrator tool updates these file extensions automatically. Furthermore, a few deprecated annotations and annotation parameters were removed:
+
+* The `@PatternUI` annotation is removed, use `@QueryExplorer` instead.
+* Instead of the `display` parameter of the `@QueryExplorer` annotation only the `checked` parameter is available.
+* The `location` parameter of the `@Constraint` annotation is replaced with the `key` parameter.
+
+=== VIATRA Databinding Addon
+
+As detailed in the following https://bugs.eclipse.org/bugs/show_bug.cgi?id=489228[bug], DatabindingAdapter and GenericDatabindingAdapter classes have been removed. Their functionality has been replaced by the http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/addon/plugins/org.eclipse.viatra.addon.databinding.runtime/src/org/eclipse/viatra/addon/databinding/runtime/adapter/MatcherProperties.java[MatcherProperties] class. It has a set of static methods that enable the creation of observable values and value properties based on a query specification.

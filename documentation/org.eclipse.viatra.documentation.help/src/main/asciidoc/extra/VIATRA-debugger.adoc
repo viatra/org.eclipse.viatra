@@ -1,6 +1,6 @@
 = VIATRA Debugger
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ../]
+ifndef::rootdir[:rootdir: .]
 :imagesdir: {rootdir}
 
 == Debugging model transformations
@@ -17,7 +17,7 @@ The VIATRA framework incorporates a debugger framework that supports the followi
 A full-fledged transformation debugger requires a software solution that is able to observe and control model transformations. The debugger should be able to insert additional functionality into certain points during the execution of model transformations. The _VIATRA Adapter Framework_ allows the definition of additional functionalities that are executed at certain points in VIATRA-based model transformations. The previously described debug functionalities are implemented using the _VIATRA Adapter Framework_.
 
 .Adapter Framework
-image::extra/images/adapter_framework.png[Adapter Framework]
+image::images/adapter_framework.png[Adapter Framework]
 
 * _Adapter Interface_: The Adapter Interface defines a set of callback methods that are executed at certain points during the transformation execution. These actions are capable of altering the execution sequence of transformation rules. A number of Adapters can implement this interface, in order to define additional functionality that should be undertaken at certain points in the transformation.
 * _Listener Interface_: The Listener Interface defines a set of callback methods that are executed at certain points during the transformation execution. The actions defined in these methods can have no effect on the transformation itself, purely aim at providing a solution to listening to certain transformation-related events. A number of Adapters can implement this interface, in order to define additional functionality that should be undertaken at certain points in the transformation.
@@ -37,7 +37,7 @@ The VIATRA transformation debugger implements a breakpoint based debugging appro
 
 
 .Debug Adapter
-image::extra/images/transformation_debugger.png[Debugger Overview]
+image::images/transformation_debugger.png[Debugger Overview]
 
 * _Debugger Runtime_
 ** _Transformation Debugger_: Observes and manipulates the execution of a VIATRA transformation.
@@ -71,9 +71,9 @@ In order to support debugging, the model transformation definition needs minor m
 NOTE: Use the _VIATRA Debugger Session Name_ optional parameter to define a textual identifier for the transformation. Usage of this identifier helps the transformation developer to  differentiate between different model transformation sessions, while using the transformation debugger.
 
 .Opening the Wizard
-image::extra\screenshots\VIATRA_transformation_wizard_selection.png[Wizard selection]
+image::screenshots\VIATRA_transformation_wizard_selection.png[Wizard selection]
 .Selecting debugger support
-image::extra\screenshots\VIATRA_transformation_wizard_debugging.png[Wizard debug]
+image::screenshots\VIATRA_transformation_wizard_debugging.png[Wizard debug]
 
 * In case of an already-existing transformation, the model transformation definition needs to be modified manually. This involves adding the VIATRA debug configuration to the VIATRA transformation builder. The following example snippet shows how this is achieved in the example.
 
@@ -133,7 +133,7 @@ The following section describes how to use the VIATRA transformation debugger UI
 * If the VIATRA debugger feature is installed, the Debugger UI Elements are contained by the Eclipse Debug perspective, once this perspective is selected, the related VIATRA debug views are displayed.
 
 .Debug perspective with debugger views
-image::extra\screenshots\VIATRA_debug_persp_empty.png[Debug perspective]
+image::screenshots\VIATRA_debug_persp_empty.png[Debug perspective]
 
 * The debugger can be initialized via launching a _VIATRA Transformation Remote Debugging_ debug configuration. The debug configuration can be specified similarly to any other Eclipse launch configuration. As the figure below shows, firstly, the target port needs to be specified. This value needs to be equal to the port value specified in the target Eclipse launch configuration (typically its 1099).
 * Next the port needs to be queried, via using the button located next to the port text field.
@@ -141,17 +141,17 @@ image::extra\screenshots\VIATRA_debug_persp_empty.png[Debug perspective]
 * Finally, a class file present in the workspace needs to be selected, as the breakpoints associated with the transformation will be bound to the resource of this file.
 
 .Editing launch configuration
-image::extra\screenshots\VIATRA_debug_newlaunch.png[Class selection]
+image::screenshots\VIATRA_debug_newlaunch.png[Class selection]
 
 .Selecting a class
-image::extra\screenshots\VIATRA_debug_newtransf_classsel.png[Class selection]
+image::screenshots\VIATRA_debug_newtransf_classsel.png[Class selection]
 
 * These launch configurations are saved, once the user defines a configuration for a target transformation, it can be reused without any required modifications (Assuming that the user did not modify the ID of the transformation session).
 
 * After launching the debug configuration, the debug session is initialized allowing the user to observe and control the execution of the selected transformation. Here the transformation debugging session is displayed in the Eclipse debug view. There are however additional contemporary views that display the details of the selected debug session.
 
 .Debugger in its initialized state
-image::extra\screenshots\VIATRA_debug_persp.png[Debug perspective]
+image::screenshots\VIATRA_debug_persp.png[Debug perspective]
 
 ==== Browsing the transformation state
 
@@ -164,25 +164,25 @@ One of the main use-cases of the VIATRA transformation debugger, is to enable th
 NOTE: In order to use the debugger UI elements, select the Debug Stack trace representing the transformation:
 
 .Selecting the transformation stack frame
-image::extra\screenshots\VIATRA_debug_selectthread.png[Select transformation stack frame]
+image::screenshots\VIATRA_debug_selectthread.png[Select transformation stack frame]
 
 The _Transformation Browser_ view is responsible for observing the internal state of the transformation. It allows the user to observe the current transformation rule activations, and it supports the definition of various transformation breakpoints.
 
 .Transformation Browser ordered by transformation rules
-image::extra\screenshots\VIATRA_debug_AEVMBr_TR.png[TB rules]
+image::screenshots\VIATRA_debug_AEVMBr_TR.png[TB rules]
 
 .Transformation Browser ordered by EVM Conflict Set state
-image::extra\screenshots\VIATRA_debug_AEVMBr_CS.png[TB conflict set]
+image::screenshots\VIATRA_debug_AEVMBr_CS.png[TB conflict set]
 
 The _Transformation Model Instance Viewer_ enables the transformation developer to observe the state of the source and target model instances related to the model transformation selected in the _Adaptable Transformation Browser_ view. This view displays the model instances in a multi-tabbed tree view with properties view support.
 
 .VIATRA model instance browser view
-image::extra\screenshots\VIATRA_debug_TBr.png[VTB view]
+image::screenshots\VIATRA_debug_TBr.png[VTB view]
 
 The parameters of the next activation to be executed can be observed via the _Variables_ Eclipse Debug View. After selecting the given debug stack frame (representing a transformation rule activation), the parameters of the transformation rule precondition are displayed as variables.
 
 .VIATRA transformation preconditions as Variables
-image::extra\screenshots\VIATRA_debug_variables.png[Variables view]
+image::screenshots\VIATRA_debug_variables.png[Variables view]
 
 ==== Controlling the transformation execution sequence
 
@@ -197,10 +197,10 @@ The Transformation debugger supports the following breakpoints:
 * _Conditional breakpoint_: These breakpoints allow the user to define VIATRA Query based conditions to halt the execution of the transformation. In order to create a conditional breakpoint, select a model transformation instance in the _Transformation Browser_ view, and use the appropriate command on the view's command bar. Afterwards, a dialog window opens which allows the user to define VIATRA query patterns. The execution of the transformation is halted once the match set of the pattern changes.
 
 .Rule breakpoint definition dialog
-image::extra\screenshots\VIATRA_debug_cr_rule_brkp.png[Rule breakpoint definition]
+image::screenshots\VIATRA_debug_cr_rule_brkp.png[Rule breakpoint definition]
 
 .Conditional breakpoint definition dialog
-image::extra\screenshots\VIATRA_debug_cr_cond_brkp.png[Conditional breakpoint definition]
+image::screenshots\VIATRA_debug_cr_cond_brkp.png[Conditional breakpoint definition]
 
 IMPORTANT: This editor reuses the standard Xtext based VIATRA query editor, however in this case, package definitions should be omitted (as there is no enclosed Eclipse resource to the file). Furthermore, the definition can contain only one public pattern at this point, this restriction, however, does not apply to private patterns.
 
@@ -211,10 +211,10 @@ NOTE: The rule and conditional breakpoints are persisted between individual tran
 NOTE: The breakpoints added are displayed in the _Breakpoints_ Eclipse Debug view. Which can be used to disable and remove these breakpoints.
 
 .Conditional breakpoint error dialog
-image::extra\screenshots\VIATRA_debug_cr_cond_brkp_parseerr.png[Conditional breakpoint parsing error]
+image::screenshots\VIATRA_debug_cr_cond_brkp_parseerr.png[Conditional breakpoint parsing error]
 
 .Transformation breakpoints in the Eclipse Breakpoints view
-image::extra\screenshots\VIATRA_debug_breakpoints_view.png[Eclipse Breakpoints view]
+image::screenshots\VIATRA_debug_breakpoints_view.png[Eclipse Breakpoints view]
 
 Supported Eclipse debug commands:
 * _Step Over (F6)_: If the transformation execution is halted, use this command the execute the next activation, and stop the execution again.
@@ -235,7 +235,7 @@ The transformation debugger allows the user to define which activation should be
 WARNING: The changes made this ways could produce unpredictable behavior in the model transformation (Overriding the defined priority could result in inconsistent model states). Use this feature cautiously.
 
 .Selecting the next activation
-image::extra\screenshots\VIATRA_debug_select_next.png[Select next activation]
+image::screenshots\VIATRA_debug_select_next.png[Select next activation]
 
 Once the next activation is selected, notice that the red rectangle representing, the next activation to be fired, is moved to the desired activation. At this point, if the transformation is resumed, it will continue its execution from the selected activation.
 
@@ -246,21 +246,21 @@ Once the next activation is selected, notice that the red rectangle representing
 If the VIATRA transformation instance specified in the debugger launch configuration does not exist, the debugger tooling will inform the user, that the debugging session could not be initialized and terminate the newly created session as well.
 
 .Debugger Connection Error
-image::extra\screenshots\VIATRA_debug_conn_err.png[Debugger Connection Error]
+image::screenshots\VIATRA_debug_conn_err.png[Debugger Connection Error]
 
 ==== Transformation under debugging terminated abruptly.
 
 If the eclipse instance in which the target transformation is running is terminated, or the connection is severed between the host and target components, the debugger tooling will terminate the respective VIATRA debugger launch automatically.
 
 .Automatic termination
-image::extra\screenshots\VIATRA_debug_auto_term.png[Automatic termination]
+image::screenshots\VIATRA_debug_auto_term.png[Automatic termination]
 
 ==== Trying to add a conditional breakpoint, but the Xtext parser infrastructure is not initialized.
 
 In order to ensure that the conditional breakpoint patterns are parsed properly in the runtime Eclipse instance, the Xtext parser infrastructure needs to be initialized. If the debugger tooling produces the following exception, open a VIATRA query view (e.g.: VIATRA Query Explorer) to manually initialize the parser tooling. These manual steps are needed, as Xtext-based parser tooling components are loaded lazily.
 
 .Conditional breakpoint error dialog
-image::extra\screenshots\VIATRA_debug_cr_cond_brkp_parseerr.png[Conditional breakpoint parsing error]
+image::screenshots\VIATRA_debug_cr_cond_brkp_parseerr.png[Conditional breakpoint parsing error]
 
 
 NOTE: Once Discovered, additional corner cases will be added.

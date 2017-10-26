@@ -8,16 +8,6 @@
             file="viatra.toc.xml"
             primary="true">
       </toc>
-      <toc
-            extradir="html/tutorial"
-            file="tutorial.toc.xml"
-            primary="false">
-      </toc>
-      <toc
-            extradir="html/cps"
-            file="cps.toc.xml"
-            primary="false">
-      </toc>
    </extension>
    <extension
          point="org.eclipse.help.contexts">

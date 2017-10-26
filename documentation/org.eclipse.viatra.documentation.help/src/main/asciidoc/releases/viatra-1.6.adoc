@@ -1,0 +1,167 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+= VIATRA 1.6 - New and Noteworthy
+
+== Model Query Evaluation
+
+VIATRA 1.6 provides a few new features that aim for better compatibility in a wider range of use cases. In general, VIATRA should work out of the box the same way it worked before, but there are some settings that allow a more finely tuned behaviour for certain situations.
+
+Custom implementations of the EMF API (e.g. when generated code is manually modified) may violate EMF API contracts, and send *incorrect notifications* (e.g. duplicate model deletion events); similar situations can arise e.g. if there are custom EMF adapters that throw exceptions. In previous versions of VIATRA, this resulted in strange exceptions being thrown from the query backend. In version 1.6, the model indexer identifies most of these cases and provides a more precise error message describing what happens. It is also possible to tell the indexer to ignore (more specifically, log only) these incorrect notifications by turning the *strict notification mode* off, as shown below.
+
+[[app-listing]]
+[source,java]
+----
+BaseIndexOptions options = new BaseIndexOptions().withStrictNotificationMode(false); 
+ResourceSet rSet = new ResourceSetImpl();
+EMFScope scope = new EMFScope(rSet, options);
+ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+----
+
+
+In case of the query scope is set to a subset of the entire model (e.g only one EMF resource within the resource set), model elements within the scope of the engine may have references pointing to elements outside the scope; these are called *dangling edges*. Previous versions of VIATRA made the assumption that the model is self-contained and free of dangling edges; the behavior of the query engine was unspecified (potentially incorrect match sets) if the model did not have this property. In VIATRA 1.6, this behavior was cleaned up by adding a new indexer mode that drops this assumption, and (with a minor cost to performance) always checks both ends of all indexed edges to be in-scope. For backward compatibility, the old behavior is used by default, but you can manually change this using the corresponding base index option as below. For new code we suggest to use the option to drop the dangling-free assumption, as it provides more consistent and intuitive results in a lot of cases; in a future VIATRA release this will be the new default.
+
+[[app-listing]]
+[source,java]
+----
+BaseIndexOptions options = new BaseIndexOptions().withDanglingFreeAssumption(false); 
+ResourceSet rSet = new ResourceSetImpl();
+EMFScope scope = new EMFScope(rSet, options);
+ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+----
+
+
+The advanced query API now includes a feature that lets users temporarily "turn off" query result maintenance in the incremental query backend. During such a code block, only the base model indexer is updated, query results remain stale until the end of the block. The advantage is that it is possible to save significant execution time when changing the model in a way that partially undoes itself, e.g. a large part of the model is removed and then re-added. 
+[[app-listing]]
+[source,java]
+----
+AdvancedViatraQueryEngine engine = ...
+engine.delayUpdatePropagation(new Callable<Void>() {
+    @Override
+    public Void call() throws Exception {
+        // perform extensive changes in model that largely cancel each other out
+        return null;
+    }
+});
+----
+
+
+Finally, VIATRA 1.6 includes the http://dl.acm.org/citation.cfm?id=170066[Delete and REDerive (DRed)] algorithm as an experimental opt-in choice for evaluating recursive queries. Formerly, recursive queries were only fully supported under the condition that there can be circular dependencies between VQL patterns (or a pattern and itself), but not between individual matches of these patterns. Such circularity could lead to incorrect result maintenance after changes, even if all involved pattern calls are positive (simple `find` constraints). This restriction can now be relaxed by enabling DRed. With a small penalty in execution time, DRed guarantees correct result maintenance for arbitrary recursive pattern structures as long as all recursive calls are positive (i.e. no negation or aggregation along cycles of recursion). Note that for the very common special case of transitive closures, the dedicated language element (transitive pattern call) is still likely to be more efficient. DRed is still in an experimental phase, and is turned off by default; it can be manually enabled using the query evaluation hint `ReteHintOptions.deleteRederiveEvaluation`.
+
+== Code generator updates
+
+image:16_query_codegen_options.png[]
+
+For users targeting other environment than Eclipse plug-ins, it is now possible to disallow the *updating of MANIFEST.MF and plugin.xml* files. The bundle manifest is updated to ensure all packages that contain query specifications are exported, while plugin.xml files are used by the query specification registry to load all patterns during runtimes.
+
+This setting is available as a workspace-level preference or a per-project setting. By default, these settings are turned on (so both files are updated on each build), maintaining compatibility with previous releases.
+
+The other major change relates to *the handling of private patterns*. Given private patterns are not expected to be used outside calling them from patterns in the same vql file, the generated code does not need all the type-safe wrappers generated. However, to make private patterns testable using the query test API, the generated QuerySpecification classes were moved to a dedicated package were they could be made public without exporting them to all users of the query bundles.
+
+In complex metamodels described in Ecore and genmodel files there are often *cross-references between files* with absolute or workspace-relative urls. When compiling VIATRA queries using the maven compiler, these urls cannot be resolved automatically. EMF uses URI converters to define a mapping between such source and target model elements. Starting with VIATRA 1.6, you can now specify the location of metamodels referred to via `platform:/resource` URIs with the `uriMappings` configuration element. See http://wiki.eclipse.org/VIATRA/UserDocumentation/Build#viatra-maven-plugin[this wiki page] for more details.
+
+== Query Test Framework updates
+
+image:16_query_coverage_report.png[]
+
+The query testing capabilities of VIATRA were extended to support a wider range of models and queries. This required new customization options for the test definition DSL, including support for non-default EMF resources as models and using more generic Java types in the query result snapshots. For a more detailed definitions of these features look http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryTestFramework[at the documentation].
+
+When testing your patterns, you can measure their *test coverage* (similar to what EclEmma does to Java code). This means you can see which constraints described in the patterns were used during the evaluation of the queries. The coverage can be reported as an HTML file which immediately shows which patterns need more testing. See http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryTestFramework#Coverage_analysis_and_reporting[the feature's documentation] for details.
+
+== Documentation updates
+
+image:16_query_explain_message.png[]
+
+To make it easier to get started with VIATRA, a http://www.eclipse.org/viatra/documentation/tutorial.html[tutorial] is added that presents an example for query and transformation development. In order to make the tutorial available for even more users, this documentation is also included in the platform help. 
+
+A few *error messages* in the query editor related to enumerable and non-enumerable references had been reported to hard to understand. In this version the error messages have been updated, and a quick fix was also added that updates a detailed explanation for the message. In future versions we plan to extend this support to make other error messages more understandable.
+
+== GEF5-based visualization
+
+image:16_rete_visualizer.png[]
+
+The graph-based components, specifically the http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/RETE_Visualizer[Rete visualizer], http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/LocalSearch_DebuggerTooling[Local search debugger] and the http://wiki.eclipse.org/VIATRA/Addon/VIATRA_Viewers[graph visualization support of Viewers], were updated to rely on the latest GEF version 5.0 (available with Eclipse Oxygen). This results in an updated, JavaFX based display and further bugfixes available for these components by default.
+
+Following the dependencies of GEF5 to use these features in the future, JavaFX (available from Java 8) and e(fx)clipse is required to be installed.
+
+== Complex Event Processing
+
+VIATRA CEP has previously supported *event parameters* for atomic events only. From now on, complex events can also be parameterized, with full support for event composition. Furthermore, query events are parameterized as well, the parameters being directly derived from the parameters of the referenced query.
+
+For example, see these sample events https://github.com/viatra/viatra-cep-examples/tree/master/minimal-samples/QueryEvent[from here]. Given the following query:
+[[app-listing]]
+[source,vql]
+----
+pattern hasContainer(contained: EClass, container: EClass) = {
+	EClass.eStructuralFeatures(container, ref);
+	EReference.containment(ref, true);
+	EReference.eType(ref, contained);
+}
+----
+
+We can define a parameterized query event and compose it into a parameterized complex event:
+[[app-listing]]
+[source,vql]
+----
+queryEvent addContainer(contained:EObject, container:EObject) 
+	as hasContainer(contained, container) found
+
+complexEvent addContainer2(cned:EObject, container1:EObject, container2:EObject) {
+	as (addContainer(cned, container1) -> addContainer(cned, container2))
+}
+----
+
+== Design Space Exploration
+
+VIATRA-DSE got a few incremental updates and bug fixes.
+
+A new exploration algorithm called *best-first search* has been added that will eventually explore the whole design space (if it is finite of course) always continuing with the best possible choice. It can be instantiated with `Strategies.createBestFirstStrategy(int maxDepth)`. It also has two configuration possibilities: `continueIfHardObjectivesFulfilled()` (so it won't backtrack if a solution is found) and `goOnOnlyIfFitnessIsBetter()` (so it won't explore equally good states immediately, only better ones). Currently it is implemented without multithreading.
+
+The utility function `DesignSpaceExplorer.saveModels()` will save all solutions as EMF models. See API doc for details.
+
+`DepthHardObjective` has been introduced that provides minimum and maximum depth criteria for solutions. Can be instantiated with `Objectives.createDepthHardObjective()`.
+
+Performance has been improved by a better backtracking mechanism: when an exploration strategy resets to an other trajectory for exploring other areas of the design space and if the new and the old trajectory start with the same rule applications, then it will only backtrack to their last common state.
+
+== Additional issues
+For a complete list of fixed issues for VIATRA 1.6 consult https://projects.eclipse.org/projects/modeling.viatra/releases/1.6.0/bugs
+
+= Migrating to VIATRA 1.6
+
+== Recommended new indexing option for handling dangling edges
+A a new filter option was introduced in this release regarding dangling edges (i.e. references pointing to objects outside the scope of the query engine). The old version made the assumptions that there are no such dangling edges whatsoever, and thus did not apply a filter to reject query matches that would involve such a dangling edge. This led to surprising results in some cases. For more predictable results and more straightforward semantics, we now allow the user to turn off this assumption, so that the appropriate checks will be performed (at a slight cost in performance).
+
+For new code, and for any existing users that experienced problems with the unpredictability of dangling edges, we suggest to use the newly introduced option to drop the dangling-free assumption. In a future VIATRA release this will be the new default. 
+
+[[app-listing]]
+[source,vql]
+----
+BaseIndexOptions options = new BaseIndexOptions().withDanglingFreeAssumption(false); 
+ResourceSet rSet = new ResourceSetImpl();
+EMFScope scope = new EMFScope(rSet, options);
+ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+----
+
+== API break in Transitive Closure Library
+This API breaking change affects users of the org.eclipse.viatra.query.runtime.base.itc Java library for incremental transitive closure computation over custom graph data sources. 
+
+*Not affected*: 
+
+* users of the transitive closure language element in vql. 
+* users of `TransitiveClosureHelper` providing transitive closure of EMF references. 
+* users of the graph representation `org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph`.
+
+*Details*: 
+We have changed the way how the multiset of incoming/outgoing graph edges is represented in interfaces `IGraphDataSource` and `IBiDirectionalGraphDataSource`. The old interface used a `java.util.List` of vertices (parallel edges represented as multiple entries in the list), while the new interface uses `java.util.Map` with vertices as keys, and positive integers representing the count of parallel edges as values. The graph observer interface is unchanged.
+
+== Dependency changes related to Guava
+
+In the Oxygen release train, multiple versions of Guava are available. In order to ensure VIATRA uses a single Guava version, all framework projects now import Guava with package imports, and set the corresponding ''uses'' constraints for all packages where Guava packages are exported.
+
+For projects using the VIATRA framework everything should work as before. However, if there are issues with multiple Guava versions colliding, check whether any of your classes have Guava types on its API (e.g. check superclasses, parameter and return types; most common candidates are Predicate and Function instances). If any such case is available, the following steps are required to ensure the single Guava version:
+
+* Replace required bundle declarations of `com.google.guava` with appropriate package imports declarations.
+* For each package export declaration that includes Guava classes on its API, add a uses constraints as follows: `org.eclipse.viatra.query.runtime.emf;
+  uses:="com.google.common.collect",`
+
+For more details about the issue, and uses constraint violations in general, look at http://blog.springsource.com/2008/10/20/understanding-the-osgi-uses-directive/
