@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
 
@@ -61,6 +62,9 @@ public class ConflictSetIterator implements Iterator<Activation<?>> {
 
     @Override
     public Activation<?> next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         returned = true;
         return nextActivation;
     }

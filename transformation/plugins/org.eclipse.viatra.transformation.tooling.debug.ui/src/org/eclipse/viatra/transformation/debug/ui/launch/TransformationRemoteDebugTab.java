@@ -227,7 +227,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                     if (!filteredNames.isEmpty()) {
                         comboViewer.setInput(filteredNames);
                         comboViewer.setSelection(new StructuredSelection(filteredNames.get(0)));
-                        selectedID = filteredNames.get(0).toString();
+                        selectedID = filteredNames.get(0);
                         portNumberDecorator.hide();
                         
                         setErrorMessage(null);
@@ -241,7 +241,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                     filteredNames.add(NOAGENTS+portText.getText());
                     comboViewer.setInput(filteredNames);
                     comboViewer.setSelection(new StructuredSelection(filteredNames.get(0)));
-                    selectedID = filteredNames.get(0).toString();
+                    selectedID = filteredNames.get(0);
                     
                     setErrorMessage(NOAGENTS+portText.getText());
                     getLaunchConfigurationDialog().updateMessage();
@@ -256,7 +256,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
 
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-        portID = "" + 1099;
+        portID = Integer.toString(1099);
         if (portText != null) {
             portText.setText(portID);
         }
