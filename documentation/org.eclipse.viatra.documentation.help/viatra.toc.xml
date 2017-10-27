@@ -12,6 +12,16 @@
        </topic>
    </topic>
    <topic label="Reference">
+       <topic href="html/language/vql-definition.html" label="The VIATRA Query Language">
+          <topic href="html/language/vql-definition.html#vql-basics" label="Basic Concepts and Syntax">
+          </topic>
+          <topic href="html/language/vql-definition.html#recursion" label="Recursion Support">
+          </topic>
+          <topic href="html/language/vql-definition.html#functional-dependencies" label="Functional Dependencies">
+          </topic>
+          <topic href="html/language/vql-definition.html#extensibility" label="Extensibility">
+          </topic>
+       </topic>
        <topic href="html/tooling/preferences.html" label="Preferences">
        </topic>
        <topic href="html/extra/VIATRA-visualization.html" label="Displaying Query Results in the User Interface">
