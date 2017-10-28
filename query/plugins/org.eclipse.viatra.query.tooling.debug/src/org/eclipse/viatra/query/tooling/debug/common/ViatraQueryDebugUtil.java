@@ -16,6 +16,8 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 public class ViatraQueryDebugUtil {
     
+    private ViatraQueryDebugUtil() {/*Utility class constructor*/}
+    
     /**
      * Returns the value of the {@link Field} with name fieldName in the given {@link Object}. This method uses Java
      * Reflection.

@@ -23,7 +23,8 @@ import com.google.common.base.Preconditions;
  */
 public class ViatraQueryLoggingUtil {
 
-
+    private ViatraQueryLoggingUtil() {/*Utility class constructor*/}
+    
     private static Logger externalLogger;
 
     public static void setExternalLogger(Logger externalLogger) {

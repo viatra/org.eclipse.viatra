@@ -12,19 +12,12 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.ArrayList;
 
-//import gnu.trove.map.hash.THashMap;
-//import gnu.trove.set.hash.THashSet;
-//import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-//import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
  * Factory class used as an accessor to Collections implementations. 

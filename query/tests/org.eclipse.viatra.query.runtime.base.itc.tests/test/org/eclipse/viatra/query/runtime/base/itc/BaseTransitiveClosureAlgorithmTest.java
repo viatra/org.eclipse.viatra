@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.base.itc.graphs.Graph8;
 import org.eclipse.viatra.query.runtime.base.itc.graphs.SelfLoopGraph;
 import org.junit.runners.Parameterized.Parameters;
 
-public class BaseTransitiveClosureAlgorithmTest {
+public abstract class BaseTransitiveClosureAlgorithmTest {
 
     @Parameters
     public static Collection<Object[]> getGraphs() {

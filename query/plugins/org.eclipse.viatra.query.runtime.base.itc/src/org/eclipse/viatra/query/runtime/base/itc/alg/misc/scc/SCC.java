@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
  */
 public class SCC<V> {
 
+    private SCC() {/*Utility class constructor*/}
+    
     public static long sccId = 0;
 
     /**

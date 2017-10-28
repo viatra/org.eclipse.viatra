@@ -32,6 +32,8 @@ import com.google.common.collect.Sets;
  */
 public class CompareQueryTester {
 
+    private CompareQueryTester() {/*Utility class constructor*/}
+    
     /**
      * Compares the results of two queries. It is assumed that the query specifications are equivalent and use the same
      * match classes

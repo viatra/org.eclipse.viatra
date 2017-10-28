@@ -26,6 +26,8 @@ import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventReal
  */
 public class RuleEngines {
 
+    private RuleEngines() {/*Utility class constructor*/}
+    
     /**
      * Creates a new rule engine that is initialized over the given
      * ViatraQueryEngine and an agenda without rules.

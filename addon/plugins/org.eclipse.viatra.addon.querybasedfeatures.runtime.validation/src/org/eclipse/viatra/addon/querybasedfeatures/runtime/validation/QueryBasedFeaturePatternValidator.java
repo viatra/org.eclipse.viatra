@@ -226,6 +226,10 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         if (ref instanceof BoolValue) {
             boolean keepCache = CorePatternLanguageHelper.getValue(ref, Boolean.class); 
             if(!keepCache) {
+                if (kind == null) {
+                    validator.error("Cacheless behavior only available for single and many kinds.", ref,
+                            PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
+                }
                 switch (kind) {
                 case SINGLE_REFERENCE:
                 case MANY_REFERENCE:

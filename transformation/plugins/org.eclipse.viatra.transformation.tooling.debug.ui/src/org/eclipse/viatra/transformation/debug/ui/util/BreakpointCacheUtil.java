@@ -22,6 +22,9 @@ import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugU
 import com.google.common.collect.Lists;
 
 public class BreakpointCacheUtil {
+    
+    private BreakpointCacheUtil() {/*Utility class constructor*/}
+    
     public static String BKP_CACHE_NAME = "/persistentbreakpoints.bpkt"; 
     
     public static String getBreakpointCacheLocation(){

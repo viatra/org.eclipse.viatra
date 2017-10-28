@@ -15,6 +15,8 @@ import org.eclipse.emf.ecore.EPackage;
 
 public class PatternLanguageClassResolver {
 
+    private PatternLanguageClassResolver() {/*Utility class constructor*/}
+    
     public static EClass getVariableType() {
         EPackage corePackage = EPackage.Registry.INSTANCE
                 .getEPackage("http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage");

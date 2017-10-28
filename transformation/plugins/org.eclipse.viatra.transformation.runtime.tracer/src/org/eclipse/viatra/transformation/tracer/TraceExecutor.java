@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.tracer;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -162,6 +163,9 @@ public class TraceExecutor extends AbstractEVMAdapter {
 
         @Override
         public Activation<?> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             return getActivation(activations);
         }
 

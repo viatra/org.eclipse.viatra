@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.transformation.evm" version="2">
+    <resource path="src/org/eclipse/viatra/transformation/evm/specific/ExecutionSchemas.java" type="org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas">
+        <filter comment="Utility class constructor" id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas"/>
+                <message_argument value="ExecutionSchemas()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/evm/specific/RuleEngines.java" type="org.eclipse.viatra.transformation.evm.specific.RuleEngines">
+        <filter comment="Utility class constructor" id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.specific.RuleEngines"/>
+                <message_argument value="RuleEngines()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/evm/specific/Rules.java" type="org.eclipse.viatra.transformation.evm.specific.Rules">
+        <filter comment="Utility class constructor" id="354463860">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.specific.Rules"/>
+                <message_argument value="Rules()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -24,6 +24,8 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
  */
 public class TopologicalSorting {
 
+    private TopologicalSorting() {/*Utility class constructor*/}
+    
     private static final class Pair<T> {
         public T element;
         public boolean isParent;

@@ -38,6 +38,8 @@ import org.eclipse.viatra.transformation.evm.specific.lifecycle.DefaultActivatio
  */
 public final class Rules {
     
+    private Rules() {/*Utility class constructor*/}
+    
     /**
      * Creates a {@link RuleSpecification} with the given query specification, life-cycle and jobs.
      * 

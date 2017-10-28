@@ -11,6 +11,9 @@
 package org.eclipse.viatra.transformation.debug.communication;
 
 public class DebuggerCommunicationConstants {
+    
+    private DebuggerCommunicationConstants() {/*Utility class constructor*/}
+    
     public static final String MBEANNAME = "org.eclipse.viatra.transformation.debug.communication.impl:type=DebuggerTargetEndpoint";
     public static final String CURRENTVERSION = "0.15.0";
     

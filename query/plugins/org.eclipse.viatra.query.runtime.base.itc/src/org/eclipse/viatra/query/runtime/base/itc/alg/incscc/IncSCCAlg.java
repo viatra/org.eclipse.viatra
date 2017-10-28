@@ -138,18 +138,14 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                         targetLoop: for (V targetSCC : targetSCCs) {
                             if (counting.isReachable(sourceSCC, targetSCC)) continue targetLoop;
                             
-                            boolean needsNotification = false;
-
-                            // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
-                            // Issue notifications only if there is no self-loop present at the moment
-                            if (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1 && GraphHelper
-                                    .getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0) {
-                                needsNotification = true;
-                            }
-                            // Case 2. sourceSCC and targetSCC are different sccs.
-                            else if (!sourceSCC.equals(targetSCC)) {
-                                needsNotification = true;
-                            }
+                            boolean needsNotification = 
+                                // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
+                                // Issue notifications only if there is no self-loop present at the moment
+                                (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1 && GraphHelper
+                                        .getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0)
+                                ||
+                                // Case 2. sourceSCC and targetSCC are different sccs.
+                                (!sourceSCC.equals(targetSCC));
                             // if self loop is already present omit the notification
                             if (needsNotification) {
                                 notifyTcObservers(sccs.getPartition(sourceSCC), sccs.getPartition(targetSCC),
@@ -307,18 +303,14 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                         targetLoop: for (V targetSCC : targetSCCs) {
                             if (counting.isReachable(sourceSCC, targetSCC)) continue targetLoop;
                             
-                            boolean needsNotification = false;
-
-                            // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
-                            // Issue notifications only if there is no self-loop present at the moment
-                            if (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1 && GraphHelper
-                                    .getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0) {
-                                needsNotification = true;
-                            }
-                            // Case 2. sourceSCC and targetSCC are different sccs.
-                            else if (!sourceSCC.equals(targetSCC)) {
-                                needsNotification = true;
-                            }
+                            boolean needsNotification = 
+                                // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
+                                // Issue notifications only if there is no self-loop present at the moment
+                                (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1 && GraphHelper
+                                        .getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0)
+                                ||
+                                // Case 2. sourceSCC and targetSCC are different sccs.
+                                (!sourceSCC.equals(targetSCC));
                             // if self loop is already present omit the notification
                             if (needsNotification) {
                                 notifyTcObservers(sccs.getPartition(sourceSCC), sccs.getPartition(targetSCC),

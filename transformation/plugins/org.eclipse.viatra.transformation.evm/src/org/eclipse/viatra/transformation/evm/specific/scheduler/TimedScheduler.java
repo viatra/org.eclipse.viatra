@@ -55,6 +55,7 @@ public class TimedScheduler extends Scheduler {
                 try {
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     // e.printStackTrace();
                 }
             }

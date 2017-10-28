@@ -17,6 +17,9 @@ import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 
 public class ViatraDebuggerUtil {
+    
+    private ViatraDebuggerUtil() {/*Utility class constructor*/}
+    
     public static TransformationThread getThread(TransformationState state){
         List<TransformationThread> transformationThreads = TransformationThreadFactory.getInstance().getTransformationThreads();
         for (TransformationThread transformationThread : transformationThreads) {

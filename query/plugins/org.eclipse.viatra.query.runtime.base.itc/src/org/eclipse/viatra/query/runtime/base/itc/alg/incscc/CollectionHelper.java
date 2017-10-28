@@ -20,6 +20,8 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  */
 public class CollectionHelper {
 
+    private CollectionHelper() {/*Utility class constructor*/}
+    
     /**
      * Returns the intersection of two sets. It calls {@link Set#retainAll(java.util.Collection)} but returns a new set
      * containing the elements of the intersection.

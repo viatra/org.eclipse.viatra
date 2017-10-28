@@ -28,6 +28,8 @@ import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventReal
  */
 public class ExecutionSchemas {
 
+    private ExecutionSchemas() {/*Utility class constructor*/}
+    
     /**
      * Creates a new execution schema that is initialized over the given ViatraQueryEngine, creates an executor and
      * agenda with the given rule specifications and prepares a scheduler using the provided factory.

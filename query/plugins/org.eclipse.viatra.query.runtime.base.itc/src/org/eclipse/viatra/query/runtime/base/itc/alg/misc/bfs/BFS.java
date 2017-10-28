@@ -21,6 +21,8 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 
 public class BFS<V> {
 
+    private BFS() {/*Utility class constructor*/}
+    
     /**
      * Performs a breadth first search on the given graph to determine whether source is reachable from target.
      * 

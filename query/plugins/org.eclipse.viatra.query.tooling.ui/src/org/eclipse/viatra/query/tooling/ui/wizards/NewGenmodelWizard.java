@@ -88,6 +88,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
         try {
             getContainer().run(true, true, op);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return false;
         } catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();

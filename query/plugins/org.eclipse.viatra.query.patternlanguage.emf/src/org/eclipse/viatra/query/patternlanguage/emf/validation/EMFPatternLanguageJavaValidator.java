@@ -453,7 +453,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             }
             reportMissingParameterTypeDeclaration(variable, possibleTypes, typeInferrer.getInferredType(variable));
             
-            if (possibleTypes.size() == 0) {
+            if (possibleTypes.isEmpty()) {
                 return;
             } else if (possibleTypes.size() > 1 && Iterables.all(possibleTypes, Predicates.instanceOf(EClassTransitiveInstancesKey.class))) {
                 Set<IInputKey> types = typeSystem.getCompatibleSupertypes(possibleTypes);
@@ -533,7 +533,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     private void reportMissingParameterTypeDeclaration(Variable parameter, Set<IInputKey> possibleTypes, IInputKey inferredType) {
-        if (possibleTypes.size() == 0) {
+        if (possibleTypes.isEmpty()) {
             return;
         } else if (possibleTypes.size() == 1 && !(possibleTypes.iterator().next() instanceof BottomTypeKey)) {
             String[] issueData = new String[]{new InputKeyToData(typeSystem).apply(inferredType)};

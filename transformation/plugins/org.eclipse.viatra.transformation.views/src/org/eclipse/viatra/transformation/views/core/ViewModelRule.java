@@ -86,11 +86,9 @@ public abstract class ViewModelRule {
 
     private void registerReferencedSpecification(ExecutionSchema executionSchema) {
         Builder<Job<GenericPatternMatch>> builder = ImmutableSet.builder();
-        {
-            builder.add(getAppearedJob());
-            builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.DELETED));
-            builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.UPDATED));
-        }
+        builder.add(getAppearedJob());
+        builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.DELETED));
+        builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.UPDATED));
 
         RuleSpecification<GenericPatternMatch> ruleSpecification = Rules.newMatcherRuleSpecification(
                 getReferencedSpecification(), builder.build());
@@ -103,11 +101,9 @@ public abstract class ViewModelRule {
 
     private void registerTraceabilitySpecification(ExecutionSchema executionSchema) {
         Builder<Job<GenericPatternMatch>> builder = ImmutableSet.builder();
-        {
-            builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.CREATED));
-            builder.add(getDisappearedJob());
-            builder.add(getUpdatedJob());
-        }
+        builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.CREATED));
+        builder.add(getDisappearedJob());
+        builder.add(getUpdatedJob());
 
         RuleSpecification<GenericPatternMatch> ruleSpecification = Rules.newMatcherRuleSpecification(
                 getTracedSpecification(), builder.build());

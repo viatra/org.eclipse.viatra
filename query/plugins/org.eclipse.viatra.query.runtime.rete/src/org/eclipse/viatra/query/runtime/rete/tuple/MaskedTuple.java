@@ -33,10 +33,10 @@ public class MaskedTuple extends Tuple {
         // this.mask = mask.transform(parent.mask);
         // }
         // else
-        {
+        //{
             this.wrapped = wrapped;
             this.mask = mask;
-        }
+        //}
     }
 
     @Override

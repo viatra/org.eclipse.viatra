@@ -27,6 +27,8 @@ import com.google.common.base.Function;
  */
 public class ViatraQueryRuntimeHelper {
     
+    private ViatraQueryRuntimeHelper() {/*Utility class constructor*/}
+    
     private static final StringValueTransformer STRING_VALUE_TRANSFORMER = new StringValueTransformer();
     private static final class StringValueTransformer implements Function<Object, String> {
         @Override

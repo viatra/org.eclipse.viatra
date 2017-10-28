@@ -18,6 +18,8 @@ package org.eclipse.viatra.query.tooling.ui.retevis.preference;
  */
 public class ReteVisualizationPreferenceConstants {
 
+    private ReteVisualizationPreferenceConstants() {/*Utility class constructor*/}
+    
     public static final String DISPLAY_CALLED_NETWORKS_MODE = "org.eclipse.viatra.query.tooling.ui.retevis.displayCalledNetworks";
 
 }

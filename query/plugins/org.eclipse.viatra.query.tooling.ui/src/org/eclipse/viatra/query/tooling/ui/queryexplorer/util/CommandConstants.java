@@ -16,6 +16,8 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.util;
  */
 public class CommandConstants {
 
+    private CommandConstants() {/*Utility class constructor*/}
+    
     public static final String SHOW_LOCATION_COMMAND_ID = "org.eclipse.viatra.query.tooling.ui.showlocation";
 
 }

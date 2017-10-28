@@ -71,6 +71,8 @@ public abstract class ProjectGenerationHelper {
     private static final String INVALID_PROJECT_MESSAGE = "Invalid project %s. Only existing, open plug-in projects are supported by the generator.";
     private static final String UTF8_ENCODING = "UTF-8";
 
+    private ProjectGenerationHelper() {/*Utility class constructor*/}
+    
     private static final class IDToPackageImportTransformer implements Function<String, IPackageImportDescription> {
         private final IBundleProjectService service;
 

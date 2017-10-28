@@ -122,6 +122,7 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
             getContainer().run(false, false, op);
         } catch (InterruptedException e) {
             // This is never thrown as of false cancelable parameter of getContainer().run
+            Thread.currentThread().interrupt();
             return false;
         } catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();

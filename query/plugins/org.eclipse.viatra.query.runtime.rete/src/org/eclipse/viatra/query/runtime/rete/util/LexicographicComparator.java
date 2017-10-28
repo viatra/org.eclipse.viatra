@@ -45,9 +45,13 @@ public class LexicographicComparator<T> implements Comparator<Iterable<? extends
                     return elementComparison;
             }
         } while (bothHaveNext);
-        if (has1 && !has2) return +1;
-        if (!has1 && has2) return -1;
-        /*if (!has1 && !has2)*/ return 0;
+        if (has1 && !has2) {
+            return +1;
+        } else if (!has1 && has2) {
+            return -1;
+        } else /*if (!has1 && !has2)*/ { 
+            return 0;
+        }
     }
 
 

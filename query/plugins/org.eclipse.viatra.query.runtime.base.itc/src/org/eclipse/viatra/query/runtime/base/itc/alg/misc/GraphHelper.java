@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
  */
 public class GraphHelper {
 
+    private GraphHelper() {/*Utility class constructor*/}
+    
     /**
      * Returns the subgraph from the given {@link IBiDirectionalGraphDataSource} which contains the given set of nodes.
      * 

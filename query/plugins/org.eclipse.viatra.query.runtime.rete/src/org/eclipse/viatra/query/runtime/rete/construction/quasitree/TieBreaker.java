@@ -21,6 +21,9 @@ import org.eclipse.viatra.query.runtime.rete.util.LexicographicComparator;
  *
  */
 public class TieBreaker {
+    
+    private TieBreaker() {/*Utility class constructor*/}
+    
     public static final Comparator<PConstraint> CONSTRAINT_COMPARATOR = new Comparator<PConstraint>() {
         @Override
         public int compare(PConstraint arg0, PConstraint arg1) {

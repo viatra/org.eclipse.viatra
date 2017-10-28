@@ -38,6 +38,8 @@ import com.google.common.collect.Sets;
  */
 public class CompilerHelper {
 
+    private CompilerHelper() {/*Utility class constructor*/}
+    
     public static Map<PVariable, Integer> createVariableMapping(SubPlan plan) {
         Map<PVariable, Integer> variableMapping = Maps.newHashMap();
 

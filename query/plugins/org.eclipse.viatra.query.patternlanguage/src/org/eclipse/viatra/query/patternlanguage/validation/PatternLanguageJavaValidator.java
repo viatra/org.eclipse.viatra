@@ -224,7 +224,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             }
             List<VariableValue> values = AggregatorUtil.getAllAggregatorVariables(expression);
             if (AggregatorUtil.mustHaveAggregatorVariables(expression)) {
-                if (values.size() == 0) {
+                if (values.isEmpty()) {
                     error(String.format(MISSING_AGGREGATE_MESSAGE, aggregator.getSimpleName()), expression, PatternLanguagePackage.Literals.AGGREGATED_VALUE__CALL,
                             IssueCodes.INVALID_AGGREGATOR_PARAMETER);
                 }

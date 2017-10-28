@@ -17,6 +17,8 @@ package org.eclipse.viatra.query.tooling.core.preferences;
  */
 public class ToolingCorePreferenceConstants {
 
+    private ToolingCorePreferenceConstants() {/*Utility class constructor*/}
+    
     /**
      * This preference stores the user's preference to disable automatic target platform metamodel index updates.
      * 

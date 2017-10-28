@@ -33,6 +33,8 @@ public class MatcherProperties{
 
     private static final String SOURCE_MUST_BE_A_PATTERN_MATCH = "Source must be a Pattern Match";
     
+    private MatcherProperties() {/*Utility class constructor*/};
+    
     /**
      * Returns the array of observable values based on a VIATRA Query specification.
      * 

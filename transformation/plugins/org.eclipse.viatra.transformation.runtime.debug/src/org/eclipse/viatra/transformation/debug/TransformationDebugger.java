@@ -70,6 +70,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                 Thread.sleep(25);
             } catch (InterruptedException e) {
                 ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
         }
         
@@ -232,6 +233,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                         Thread.sleep(25);
                     } catch (InterruptedException e) {
                         ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+                        Thread.currentThread().interrupt();
                     }
                 }
                 actionSet = false;

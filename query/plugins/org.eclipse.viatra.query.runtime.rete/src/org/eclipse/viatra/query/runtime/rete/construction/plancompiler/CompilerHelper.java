@@ -62,6 +62,8 @@ import com.google.common.collect.ImmutableSet;
  */
 public class CompilerHelper {
 
+    private CompilerHelper() {/*Utility class constructor*/}
+    
     static final RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
 
     /**

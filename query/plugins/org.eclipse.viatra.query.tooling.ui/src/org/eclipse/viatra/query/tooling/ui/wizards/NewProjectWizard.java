@@ -81,6 +81,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
         try {
             getContainer().run(true, true, op);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return false;
         } catch (InvocationTargetException e) {
             // Removing project if it is partially created
