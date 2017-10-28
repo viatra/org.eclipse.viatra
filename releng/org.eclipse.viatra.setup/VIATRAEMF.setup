@@ -220,8 +220,6 @@
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         <repository
             url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
-        <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201709191305/"/>
       </repositoryList>
     </targlet>
   </setupTask>
@@ -1231,15 +1229,12 @@
           name="Eclipse Collections"
           activeRepositoryList="7.1.1">
         <requirement
-            name="org.eclipse.collections"/>
+            name="org.eclipse.collections"
+            versionRange="[7.0.0,8.0.0)"/>
         <requirement
             name="org.eclipse.collections.api"
+            versionRange="[7.0.0,8.0.0)"
             optional="true"/>
-        <repositoryList
-            name="8.2.0">
-          <repository
-              url="http://download.eclipse.org/collections/8.2.0/repository"/>
-        </repositoryList>
         <repositoryList
             name="7.1.1">
           <repository
