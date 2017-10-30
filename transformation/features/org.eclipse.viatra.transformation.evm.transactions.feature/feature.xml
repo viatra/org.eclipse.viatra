@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.transformation.evm.transactions.feature"
       label="EMF Transactions Integration for EVM"
-      version="1.6.1.qualifier"
+      version="1.6.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -20,7 +20,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.1" match="equivalent"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.2" match="equivalent"/>
       <import feature="org.eclipse.emf.transaction" version="1.4.0" match="greaterOrEqual"/>
    </requires>
 

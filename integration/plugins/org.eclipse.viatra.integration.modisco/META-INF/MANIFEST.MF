@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Facet Model Browser Integration for VIATRA (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.integration.modisco;singleton:=true
-Bundle-Version: 0.16.1.qualifier
+Bundle-Version: 0.16.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse VIATRA Project
-Require-Bundle: org.eclipse.viatra.query.tooling.ui;bundle-version="[1.6.1,1.7.0)",
- org.eclipse.viatra.query.runtime;bundle-version="[1.6.1,1.7.0)",
+Require-Bundle: org.eclipse.viatra.query.tooling.ui;bundle-version="[1.6.2,1.7.0)",
+ org.eclipse.viatra.query.runtime;bundle-version="[1.6.2,1.7.0)",
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.gmt.modisco.infra.browser;bundle-version="[0.13.0,2.0.0)",
  org.eclipse.gmt.modisco.infra.browser.uicore;bundle-version="[0.13.0,2.0.0)"

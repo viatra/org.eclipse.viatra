@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.integration.graphiti.feature"
       label="Graphiti Support for VIATRA (Incubation)"
-      version="0.16.1.qualifier"
+      version="0.16.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -21,7 +21,7 @@ for various Graphiti editors.
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.6.1" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.6.2" match="equivalent"/>
       <import feature="org.eclipse.graphiti.feature"/>
    </requires>
 

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
       label="VIATRA Viewers Runtime - Zest Integration (Incubation)"
-      version="0.16.1.qualifier"
+      version="0.16.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -20,7 +20,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.addon.viewers.runtime.feature" version="0.16.1" match="equivalent"/>
+      <import feature="org.eclipse.viatra.addon.viewers.runtime.feature" version="0.16.2" match="equivalent"/>
       <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.fx.jface" version="5.0.0" match="compatible"/>

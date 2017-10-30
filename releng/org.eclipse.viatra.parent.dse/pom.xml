@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.eclipse.viatra.parent.dse</artifactId>
     <name>VIATRA Design Space Exploration</name>
-    <version>0.16.1-SNAPSHOT</version>
+    <version>0.16.2-SNAPSHOT</version>
     <url>http://eclipse.org/viatra</url>
     <packaging>pom</packaging>
     <modules>
@@ -33,7 +33,7 @@
         <groupId>org.eclipse.viatra</groupId>
         <!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
         <artifactId>org.eclipse.viatra.parent.core</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.6.2-SNAPSHOT</version>
         <relativePath>../org.eclipse.viatra.parent.core/pom.xml</relativePath>
     </parent>
     <repositories>

@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Validation Framework Annotation Validation
 Bundle-SymbolicName: org.eclipse.viatra.addon.validation.runtime.validation;singleton:=true
-Bundle-Version: 1.6.1.qualifier
+Bundle-Version: 1.6.2.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
-Fragment-Host: org.eclipse.viatra.addon.validation.runtime;bundle-version="[1.6.1,1.7.0)"
+Fragment-Host: org.eclipse.viatra.addon.validation.runtime;bundle-version="[1.6.2,1.7.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.viatra.addon.validation.runtime.annotation
-Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.6.1,1.7.0)"
+Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.6.2,1.7.0)"
