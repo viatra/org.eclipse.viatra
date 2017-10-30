@@ -34,7 +34,7 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
 
     private final EDataType dataType;
     private final EDataTypeInSlotsKey type;
-    private final static TupleMask indexerMask = TupleMask.empty(1);
+    private static final TupleMask indexerMask = TupleMask.empty(1);
 
     public IterateOverEDatatypeInstances(int position, EDataType dataType) {
         super(position);

@@ -53,13 +53,13 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
     @Override
     protected void init() {
         super.init();
-        jfaceViewer.addSelectionChangedListener(selectionHelper.trickyListener);
+        jfaceViewer.addSelectionChangedListener(selectionHelper.getTrickyListener());
     }
     
     @Override
     public void dispose() {
         if (jfaceViewer != null) {
-            jfaceViewer.removeSelectionChangedListener(selectionHelper.trickyListener);
+            jfaceViewer.removeSelectionChangedListener(selectionHelper.getTrickyListener());
         }
         super.dispose();
     }
@@ -107,7 +107,7 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
 
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        selectionHelper.selectionChangedListeners.add(listener);
+        selectionHelper.addSelectionChangedListener(listener);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
     @Override
     public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {
-        selectionHelper.selectionChangedListeners.remove(listener);
+        selectionHelper.removeSelectionChangedListener(listener);
     }
 
     @Override

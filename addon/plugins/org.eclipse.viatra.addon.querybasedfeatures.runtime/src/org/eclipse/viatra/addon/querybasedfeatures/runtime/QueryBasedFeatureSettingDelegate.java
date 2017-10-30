@@ -59,7 +59,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
     
     /**
      * Constructs a new {@link QueryBasedFeatureSettingDelegate} instance based on the given parameters.
-     * The scope of the VIATRA Query engine in this case will be the one provided by {@link QueryBasedFeatureHelper.prepareNotifierForSource({@link InternalEObject})}.
+     * The scope of the VIATRA Query engine in this case will be the one provided by {@link QueryBasedFeatureHelper#prepareNotifierForSource(InternalEObject)}.
      *  
      * @param eStructuralFeature the parent structural feature of the setting delegate
      * @param factory the factory used to create VIATRA Query engine for the setting delegate
@@ -227,11 +227,11 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
     
     private class QueryBasedFeatureParameters{
         
-        public String sourceVar;
-        public String targetVar;
+        private String sourceVar;
+        private String targetVar;
         
-        public QueryBasedFeatureKind kind;
-        public boolean keepCache;
+        private QueryBasedFeatureKind kind;
+        private boolean keepCache;
 
         /**
          * @param querySpecification

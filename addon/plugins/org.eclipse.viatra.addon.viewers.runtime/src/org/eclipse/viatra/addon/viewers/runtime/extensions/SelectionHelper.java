@@ -35,9 +35,9 @@ import com.google.common.collect.Sets;
  */
 public class SelectionHelper {
 
-    public Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
+    private final Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
     
-    public ISelectionChangedListener trickyListener = new ISelectionChangedListener() {
+    private final ISelectionChangedListener trickyListener = new ISelectionChangedListener() {
         
         @Override
         public void selectionChanged(SelectionChangedEvent event) {
@@ -46,7 +46,23 @@ public class SelectionHelper {
             }
         }
     };
+
+    public Iterable<ISelectionChangedListener> getSelectionChangedListeners() {
+        return selectionChangedListeners;
+    }
+
+    public boolean addSelectionChangedListener(ISelectionChangedListener listener) {
+        return selectionChangedListeners.add(listener);
+    }
     
+    public boolean removeSelectionChangedListener(ISelectionChangedListener listener) {
+        return selectionChangedListeners.remove(listener);
+    }
+    
+    public ISelectionChangedListener getTrickyListener() {
+        return trickyListener;
+    }
+
     private Object getSourceObject(Item i) {
         if (i.getParamEObject() != null) {
             return i.getParamEObject();

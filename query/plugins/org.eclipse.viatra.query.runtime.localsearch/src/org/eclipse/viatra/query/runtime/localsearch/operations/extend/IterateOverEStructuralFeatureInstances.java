@@ -39,7 +39,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
     private final int targetPosition;
     private final EStructuralFeatureInstancesKey type;
     private Iterator<Tuple> it;
-    private final static TupleMask indexerMask = TupleMask.empty(2);
+    private static final TupleMask indexerMask = TupleMask.empty(2);
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         this.sourcePosition = sourcePosition;

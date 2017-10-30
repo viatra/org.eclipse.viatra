@@ -219,7 +219,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
                 ViewersMultiSandboxViewComponent target = getCurrentComponent();
                 setCurrentComponent(defaultComponent);
                 // remove selection changed listeners
-                for (ISelectionChangedListener l : defaultComponent.selectionHelper.selectionChangedListeners) {
+                for (ISelectionChangedListener l : defaultComponent.selectionHelper.getSelectionChangedListeners()) {
                     target.removeSelectionChangedListener(l);
                 }
                 target.dispose();
@@ -247,7 +247,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
             ViewersMultiSandboxViewComponent newC = new ViewersMultiSandboxViewComponent(ViewersMultiSandboxView.this);
             additionalComponents.add(newC);
             // add selection changed listeners
-            for (ISelectionChangedListener l : defaultComponent.selectionHelper.selectionChangedListeners) {
+            for (ISelectionChangedListener l : defaultComponent.selectionHelper.getSelectionChangedListeners()) {
                 newC.addSelectionChangedListener(l);
             }
             // set contents from default

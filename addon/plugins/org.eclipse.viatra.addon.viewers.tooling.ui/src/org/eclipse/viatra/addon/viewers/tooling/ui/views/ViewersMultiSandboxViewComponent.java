@@ -124,7 +124,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         for (IViewerSandboxTab tab : tabList) {
             tab.createPartControl(folder);
             // initialize our tricky listener to punch through unwrapped selections in a 2nd round
-            tab.addSelectionChangedListener(selectionHelper.trickyListener);
+            tab.addSelectionChangedListener(selectionHelper.getTrickyListener());
         }
 
         folder.setSelection(0);
@@ -160,7 +160,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     public void dispose() {
         
         for (IViewerSandboxTab tab : tabList) {
-            tab.removeSelectionChangedListener(selectionHelper.trickyListener);
+            tab.removeSelectionChangedListener(selectionHelper.getTrickyListener());
             tab.dispose();
         }
         if (state != null) {
@@ -343,7 +343,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        selectionHelper.selectionChangedListeners.add(listener);
+        selectionHelper.addSelectionChangedListener(listener);
         for (IViewerSandboxTab tab : tabList) {
             tab.addSelectionChangedListener(listener);
         }
@@ -351,7 +351,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
     @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-        selectionHelper.selectionChangedListeners.remove(listener);
+        selectionHelper.removeSelectionChangedListener(listener);
         for (IViewerSandboxTab tab : tabList) {
             tab.removeSelectionChangedListener(listener);
         }

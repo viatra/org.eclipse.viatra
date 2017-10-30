@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.IDeltaBag;
  */
 public class DefaultMailbox implements Mailbox {
     
-    private static int SIZE_THRESHOLD = 32; 
+    private static final int SIZE_THRESHOLD = 32; 
 
     protected IDeltaBag<Tuple> queue;
     protected IDeltaBag<Tuple> buffer;
