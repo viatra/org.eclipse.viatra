@@ -107,7 +107,7 @@ public class MatcherProperties{
 
         @Override
         public Object getValueType() {
-            //TODO if typed as object bindings are not displayed correctly
+            // XXX if typed as object, bindings are not displayed correctly
             return null;
         }
 

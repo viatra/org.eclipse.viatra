@@ -145,9 +145,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     
     @Override
     public Object getElementType() {
-        // XXX we cannot get the class of the generic parameter or the return type of the converter
         if (updater.converter != null) {
-            return Object.class;
+            // XXX we cannot get the class of the generic parameter or the return type of the converter
+            return null;
         }
         return IPatternMatch.class;
     }
