@@ -1,13 +1,15 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
 :imagesdir: {rootdir}/images
-= VIATRA 1.5 - New and Noteworthy
+= VIATRA 1.5 
 
-== Support for more number literals in query language ==
+== New and Noteworthy
+
+=== Support for more number literals in query language ==
 
 All number literals supported by Xtend (see https://eclipse.org/xtend/documentation/203_xtend_expressions.html#number-literals[documentation] for details) are now directly supported by the VIATRA Query language.
 
-[[app-listing]]
+[[v15-literals]]
 [source,vql]
 ----
 pattern circleConstantDiameter1(c : Circle) {
@@ -16,15 +18,15 @@ pattern circleConstantDiameter1(c : Circle) {
 }
 ----
 
-== Performance improvements ==
+=== Performance improvements ==
 
-=== Performance tuning with functional dependencies ===
+==== Performance tuning with functional dependencies ===
 
 Version 1.5 introduces greatly improved inference of functional dependencies among pattern variables, which may significantly influence query evaluation performance. 
 
 One can now also use the `@FunctionalDependency` annotation to manually specify additional dependency rules, in order to express domain-specific insight. See below for examples of the syntax:
 
-[[app-listing]]
+[[v15-functionaldependencies]]
 [source,vql]
 ----
 // Here the first annotation is superfluous, as it is inferred automatically anyway
@@ -49,23 +51,23 @@ pattern locatedOnThoroughfare(house: House, location: Thoroughfare) {
 
 More details available http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/AdvancedPatterns#Functional_dependencies[here].
 
-=== Further optimizations in the incremental query evaluator
+==== Further optimizations in the incremental query evaluator
 
 Constant values (more precisely constant-value filtering) within patterns are now handled more efficiently in many cases. In a proprietary code base, specifically for entire query packages where this feature is heavily used, we have observed a reduction between 15-30% in the memory footprint of Rete.
 
 As an additional minor memory improvement, the results of eval/check expressions are no longer cached in Rete by default. In case some such expressions involve particularly expensive computations, one can restore the original caching behaviour either globally or on a per-pattern basis using the appropriate hint option introduced into the `ReteHints` class.
 
-== Remote debugging support added to the VIATRA model transformation debugger
+=== Remote debugging support added to the VIATRA model transformation debugger
 
 The VIATRA model transformation debugger (introduced in VIATRA 1.3.0) has undergone a series of architectural  and backend-related changes. The current, 0.15.0 version of the debugger now enables the user to connect to remote VIATRA model transformations, while maintaining the user experience introduced in the previous version. This way, model transformations running on remote JVM instances can be analysed much more straightforward way.
 
 video::TaLvKgfxQNg#[youtube] 
 
-== Using project dependencies in Query Maven plugin
+=== Using project dependencies in Query Maven plugin
 
 You can now use ''useProjectDependencies'' in your configuration instead of adding metamodels as Maven dependencies. This is especially useful when the metamodels are not available as Maven artifacts.
 
-[[app-listing]]
+[[v15-maven]]
 [source,xml]
 ----
 <source lang="xml">
@@ -79,15 +81,15 @@ You can now use ''useProjectDependencies'' in your configuration instead of addi
 
 For more details, see the following http://wiki.eclipse.org/VIATRA/UserDocumentation/Build#viatra-maven-plugin[wiki page].
 
-= Migration to VIATRA 1.5
+== Migration to VIATRA 1.5
 
-== Internal API changes
+=== Internal API changes
 
-=== VQL abstract syntax
+==== VQL abstract syntax
 
 The `IntValue` and `DoubleValue` EClasses were removed from the patternlanguage metamodel. Its functionality is provided by the new `NumberValue` EClass that references Xbase number literals.
 
-=== Hint system compatibility break ===
+==== Hint system compatibility break ===
 
 The hint system was changed again in version 1.5. If you only used hints through the LocalSearchHints convenience class and the QueryEvaluationHint instances created by that class, then your existing code should remain compatible with version 1.5.
 

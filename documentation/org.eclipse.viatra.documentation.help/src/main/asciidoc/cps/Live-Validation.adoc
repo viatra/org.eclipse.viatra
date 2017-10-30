@@ -12,7 +12,7 @@ In the CPS demonstrator we defined a set of constraints for <<Domains#cyber-phys
 * Transitions must have target states, which must be in the same state machine as the source state
 * Actions of outgoing transitions from a given state must be unique
 
-### Definition of constraints
+## Definition of constraints
 
 Each constraint is defined using `@Constraint` annotations on patterns. The annotation has three required parameters:
 
@@ -41,15 +41,15 @@ private pattern actionOfTransition(transition, action) {
 
 The VIATRA Query generator fragment generates the required source code and other artefacts automatically when the builder is invoked by saving the query definition file. The code is placed in the `cps.queries.validation` project.
 
-### Usage of live validation
+## Usage of live validation
 
 The live validation can be demonstrated in the generated editor for CPS models:
 
-  1. Start a Runtime Eclipse
-  1. Open a CPS instance model (e.g. by importing the `cps.instances` project) in the generated editor
+  . Start a Runtime Eclipse
+  . Open a CPS instance model (e.g. by importing the `cps.instances` project) in the generated editor
     * Right click on a `.cyberphysicalsystem` file in the _Package explorer_, `Open with -> CyberPhysicalSystem Model Editor`
-  1. Initialize the validation
+  . Initialize the validation
     * Right click in the tree editor, `VIATRA Validation -> Initialize VIATRA Validators on Editor`
-  1. Violations of constraints are displayed in the _Problems_ view
+  . Violations of constraints are displayed in the _Problems_ view
     * Double clicking the violation will set the selection of the editor to the location element
     * Changes in the model will update problem markers immediately

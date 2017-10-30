@@ -11,7 +11,7 @@ Given the batch and event-driven transformations are really similar, this sectio
 
 Specific patterns have to be defined for event-driven rules; note that there are small differences to the batch definitions, e.g. there is an additional pattern called _allocatedDeploymentApplication_.
 
-[[app-listing]]
+[[emt-queries]]
 [source,vql]
 ----
 import "http://org.eclipse.viatra/model/cps"
@@ -56,7 +56,7 @@ image::eventdriven_transformation_wizard_type.png[]
 
 * Register used, domain-specific APIs as extensions, common APIs are already generated
 +
-[[app-listing]]
+[[emt-extensions]]
 [source,java]
 ----
 /*
@@ -75,7 +75,7 @@ val extension TraceabilityPackage trPackage = TraceabilityPackage::eINSTANCE
 ** It assumes that the output and trace models are already created
 ** The IModelManipulations implementation is used to make model access replaceable, this way the same transformation may be used for cases where the resource set is transactional
 +
-[[app-listing]]
+[[emt-init]]
 [source,java]
 ----
 val CPSToDeployment cps2dep
@@ -94,7 +94,7 @@ new(CPSToDeployment cps2dep, ViatraQueryEngine engine) {
 ** The EventDrivenTransformationRuleFactory extension provides a builder API for rule definition
 ** A VIATRA query pattern is used as precondition to the rule, which means the rule will be activated each time the given pattern changes allowing to update the output accordingly.
 +
-[[app-listing]]
+[[emt-rule-structure]]
 [source,java]
 ----
 val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
@@ -103,7 +103,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
 * Add action for each kind of changes in the pattern to update trace and output models:
 ** upon creation of a HostInstance
 +
-[[app-listing]]
+[[emt-hostrule]]
 [source,java]
 ----
 .action(CRUDActivationStateEnum.CREATED) [
@@ -124,7 +124,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
 
 ** upon the change of a HostInstance
 +
-[[app-listing]]
+[[emt-hostupdated]]
 [source,java]
 ----
 .action(CRUDActivationStateEnum.UPDATED) [
@@ -143,7 +143,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
 
 ** upon the removal of a HostInstance
 +
-[[app-listing]]
+[[emt-hostdeleted]]
 [source,java]
 ----
 .action(CRUDActivationStateEnum.DELETED) [
@@ -163,7 +163,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
 ** Add default activation lifecycle then build the rule:
 *** The lifecycle defines the state machine used to determine the possible states on which transition actions can defined.
 +
-[[app-listing]]
+[[emt-lifecycle]]
 [source,java]
 ----
 .addLifeCycle(Lifecycles.getDefault(true, true)).build
@@ -171,7 +171,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
 
 * The rule which create DeploymentApplication elements for ApplicationInstances, looks similar
 +
-[[app-listing]]
+[[emt-applicationrule]]
 [source,java]
 ----
 val applicationRule = createRule.precondition(ApplicationInstanceMatcher.querySpecification)
@@ -214,7 +214,7 @@ val applicationRule = createRule.precondition(ApplicationInstanceMatcher.querySp
 ** For cases when it is possible to have more than one rules activated (e.g. a new HostInstance is added to the model with already set allocated applications) a conflict resolver is used to provide a fixed ordering of rules to be executed.
 ** We use a priority-based resolver (lower priority rules will be executed first), which considers priority of disappearing rules to be inverted (a disappearing application's priority will be -2)
 +
-[[app-listing]]
+[[emt-create]]
 [source,java]
 ----
 private def createTransformation() {
@@ -239,7 +239,7 @@ private def createTransformation() {
 * Create UI plugin
 * Add dependencies:
 +
-[[app-listing]]
+[[emt-dependencies]]
 [source,java]
 .MANIFEST.MF
 ----
@@ -251,7 +251,7 @@ org.eclipse.viatra.query.runtime;bundle-version="1.2.0"
 
 * Create handler implementations:
 +
-[[app-listing]]
+[[emt-handler]]
 [source,java]
 .ToggleTransformationHandler.java
 ----
@@ -298,7 +298,7 @@ public class ToggleTransformationHandler extends AbstractHandler implements IHan
 
 * Register handler in the context menu of "CPSToDeployment" elements
 +
-[[app-listing]]
+[[emt-command]]
 [source,xml]
 .plugin.xml
 ----

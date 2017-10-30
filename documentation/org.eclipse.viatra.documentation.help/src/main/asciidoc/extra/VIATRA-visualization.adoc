@@ -19,7 +19,7 @@ VIATRA provides a simple data binding facility that can be used to bind pattern 
 ** _expression_ (String): the attribute to be observed definition without '$' marks. For example `@ObservableValue(name = "id", expression = "host.identifier")`
 ** _labelExpression_: this annotation makes it possible to create observable string properties, which are useful when presenting relations between objects inside a JFace viewer component.
 
-[[app-listing]]
+[[databinding-annotations]]
 [source,vql]
 ----
 @ObservableValue(name = "id", expression = "host.identifier")
@@ -46,7 +46,7 @@ pattern applicationInstances(app: ApplicationInstance) {
 
 === Using data binding to populate a table
 
-[[app-listing]]
+[[databinding-table]]
 [source,java]
 ----
 //Initialize VIATRA query engine
@@ -77,7 +77,7 @@ ViewerSupport.bind(
 
 The following code fragment is responsible for binding a list to the results of a VIATRA query, and also displays match details in text boxes. (Uses Master-detail binding)
 
-[[app-listing]]
+[[databinding-masterdetail]]
 [source,java]
 ----
 //Create new data binding context
@@ -134,7 +134,7 @@ In order to use the VIATRA Viewers addon the following steps need to be undertak
 
 === Pattern Annotations
 
-[[app-listing]]
+[[viewers-annotations]]
 [source,vql]
 ----
 //Host Type objects will be nodes of the displayed graph
@@ -160,7 +160,7 @@ pattern communications(i1, i2) {
 
 === Example initialization
 
-[[app-listing]]
+[[viewers-code]]
 [source,java]
 ----
 //Create the graph viewer component and add it to the containing SWT control

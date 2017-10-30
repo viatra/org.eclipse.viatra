@@ -11,7 +11,7 @@ The exercise also covers registering a menu command which initializes the transf
 
 For the transformation, we have to created a _VIATRA Query Project_ (the one from the <<_query_development,query development tutorial>> could also be reused), and create a new query file called _CpsXformM2M.vql_ to store the patterns we want to use in the transformation with the following contents:
 
-[[app-listing]]
+[[bmt-queries]]
 [source,vql]
 ----
 import "http://org.eclipse.viatra/model/cps"
@@ -63,7 +63,7 @@ image::batch_transformation_wizard_type.png[]
 
 In the created file we have to register a few extension methods, more specifically for our used queries (```CpsXformM2m```, the same name the VQL file uses) and the EMF EPackages we want to refer (here the deployment and traceability packages). A few additional extension methods are already registered, e.g. transformation rule builder and model manipulation API.
 
-[[app-listing]]
+[[bmt-codeextensions]]
 [source,java]
 ----
 /** VIATRA Query Pattern group **/
@@ -78,7 +78,7 @@ val extension TraceabilityPackage trPackage = TraceabilityPackage.eINSTANCE
 ** It assumes that the resource and trace models are already created
 ** The IModelManipulations implementation is used to make model access replaceable, this way the same transformation may be used for cases where the resource set is transactional. The initialization of this is generated automatically into the `createTransformation` method.
 +
-[[app-listing]]
+[[bmt-init]]
 [source,java]
 ----
 val CPSToDeployment cps2dep
@@ -97,7 +97,7 @@ new(CPSToDeployment cps2dep, ViatraQueryEngine engine) {
 ** The `BatchTransformationRuleFactory` extension provides a builder API for rule definition
 ** A VIATRA query is used as precondition to the rule, which means the rule will be activated each time the given pattern when changes allowing to update the output accordingly.
 +
-[[app-listing]]
+[[bmt-rule-structure]]
 [source,java]
 ----
 val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).action[/*Action part*/].build
@@ -105,7 +105,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).a
 
 * Specify which action to run when the rule fires. It will create the transformed `DeploymentHost` element in the output model as well as a trace element associating the source `HostInstance` and the target `DeploymentHost`:
 +
-[[app-listing]]
+[[bmt-hostrule]]
 [source,java]
 ----
 val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).action[
@@ -130,7 +130,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).a
 
 * The rule which creates `DeploymentApplication` elements for `ApplicationInstance` objects, looks similar. It has to find the `DeploymentHost` created from the `HostInstance` to which the source `ApplicationInstance` is allocated, so it assumes the `hostRule` has already fired:
 +
-[[app-listing]]
+[[bmt-apprule]]
 [source,java]
 ----
 val applicationRule = createRule.precondition(ApplicationInstanceMatcher.querySpecification).action[
@@ -160,7 +160,7 @@ val applicationRule = createRule.precondition(ApplicationInstanceMatcher.querySp
 ** Since we are using the non-incremental (the whole model is always retransformed on model changes), the output and trace models are to be cleared before the any rule can fire
 ** Pay attention to fire the rules in the proper order
 +
-[[app-listing]]
+[[bme-execute]]
 [source,java]
 ----
 def execute() {
@@ -178,7 +178,7 @@ def execute() {
 
 * Create a UI plugin with the following additional dependencies:
 +
-[[app-listing]]
+[[bmt-ui-dependencies]]
 [source,java]
 ----
 org.eclipse.ui,
@@ -189,7 +189,7 @@ org.eclipse.viatra.query.runtime;bundle-version="1.2.0"
 
 * Create handler implementation:
 +
-[[app-listing]]
+[[bmt-handler]]
 [source,java]
 .TransformHandler.java
 ----
@@ -227,7 +227,7 @@ public class TransformHandler extends AbstractHandler implements IHandler {
 
 * Register handler in the context menu of `CPSToDeployment` elements in `plugin.xml`:
 +
-[[app-listing]]
+[[bmt-command]]
 [source,xml]
 ----
 <extension point="org.eclipse.ui.commands">

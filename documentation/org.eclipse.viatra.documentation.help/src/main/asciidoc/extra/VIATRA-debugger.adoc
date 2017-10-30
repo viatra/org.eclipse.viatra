@@ -116,7 +116,7 @@ public class BatchTestHandler extends AbstractHandler {
 ----
 
 In order to properly initiate the VIATRA debugger runtime agent, the target Eclipse instance should be launched via using the following command line arguments:
-[[Transformation-handler]]
+[[Transformation-vmargs]]
 [source,Java]
 ----
 -Dcom.sun.management.jmxremote.port="port to be used, typically 1099"

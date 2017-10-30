@@ -19,7 +19,7 @@ To define queries, first a  _VIATRA Query Project_ has to be created with the st
 . Add `org.eclipse.viatra.examples.cps.model` to the Plug-in dependencies
 . Create a new query definition in a package named `org.eclipse.viatra.examples.cps.queries` and a file named `CPSQueries.vql`. In the wizard create an empty query. Fill the first query:
 +
-[[app-listing]]
+[[vql-first]]
 [source,vql]
 .queries.vql
 ----
@@ -68,7 +68,7 @@ In the following, we define a set of patterns that illustrate additional capabil
 * This pattern, similar to the first pattern, still consists of a single constraint. The pattern constraints can refer to Java literals, like empty strings or numbers directly. This pattern should have no matches in the example model, as by default all instances have a non-empty IP address set up.
 * Notice that if you create a new `HostInstance` element, it will not appear in the match results. This happens because in EMF unset an empty attributes are different. You can write a pattern that finds missing attribute values using the `neg find` construct (see later).
 +
-[[app-listing]]
+[[vql-emptyipaddress]]
 [source,vql]
 ----
 pattern emptyIpAddress(host: HostInstance) {
@@ -80,7 +80,7 @@ pattern emptyIpAddress(host: HostInstance) {
 . List all `HostInstance`-`HostInstance` pairs that share a common IP address
 * This pattern is more complex, as it has three parameters and three constraints. The first two describe similar type constraints we have seen. The pattern also compares the values of variables `host1` and `host2` with each other using the `!=` (_not equal_) operator (The `==` operator is also available).
 +
-[[app-listing]]
+[[vql-sameipaddress]]
 [source,vql]
 ----
 pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : java String) {
@@ -95,7 +95,7 @@ pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : jav
 * The well-formedness validation of the IP address strings requires specific validation blocks called `check` expressions where  you can write a wide range of _Xbase_ expressions, behaving similarly to Java and accessing Java classes from the classpath of the project. In this case, the well-formedness of the address values is represented with a regular expression evaluation.
 * It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables.
 +
-[[app-listing]]
+[[vql-ipformatinvalid]]
 [source,vql]
 ----
 pattern ipFormatInvalid(host : HostInstance, ip : java String) {
@@ -111,7 +111,7 @@ pattern ipFormatInvalid(host : HostInstance, ip : java String) {
 * A pattern body might use variables other than the pattern parameters, such as the variable `transition` in this example. These variables are called local variables.
 * It is important to note that if there are multiple transitions between two states, the match set will still include only a single pair of the states, because local variables are not included in the match tuples. If all edges are required, the corresponding transition variable should also be declared as a parameter.
 +
-[[app-listing]]
+[[vql-connectedto]]
 [source,vql]
 ----
 pattern connectedTo(state: State, other: State){
@@ -127,7 +127,7 @@ pattern connectedTo(state: State, other: State){
 * Patterns can be reused using `find` constraints meaning all conditions expressed by the called pattern must be matched from the source.
 * This pattern also includes _single-use_ (or don't care) variables, starting with the character '_'. Such a declaration describes a variable where we are only interested in its existence but not its value.
 +
-[[app-listing]]
+[[vql-badhost]]
 [source,vql]
 ----
 pattern badHost(host : HostInstance, ip : java String) {
@@ -145,7 +145,7 @@ pattern badHost(host : HostInstance, ip : java String) {
 * The negative pattern composition, expressed by the `neg find` keyword is used to define negative conditions. This works similar to the `find` constraints, with the notable exception that if there are any matches to the badHost with the selected parameters, the host pattern fails to match.
 * Those actual parameters of the negative pattern call that are not used elsewhere in the calling body are _universally quantified_, meaning that the calling pattern only matches if variables of the calling pattern cannot be bound to matching elements.
 +
-[[app-listing]]
+[[vql-goodhost]]
 [source,vql]
 ----
 pattern goodHost(host : HostInstance, ip : java String) {
@@ -159,7 +159,7 @@ pattern goodHost(host : HostInstance, ip : java String) {
 * Patterns can be marked as private, making the pattern itself only visible inside the source file it is defined. The generated code for these patterns is reduced (e.g. does not include generated Match and Matcher classes for easier access).
 * It is possible to calculate the matches of a pattern using the `count find` expressions. The value of such an expression is the number of matches found with the selected number of matches.
 +
-[[app-listing]]
+[[vql-countapplications]]
 [source,vql]
 ----
 private pattern applications(host : HostInstance, app : ApplicationInstance) {
@@ -174,7 +174,7 @@ pattern countApplications(host : HostInstance, m : java Integer) {
 . List all states of a state machine that are reachable from its initial state (either directly or indirectly)
 * The reachable states are calculated using the transitive closure of the previously introduced connectedTo pattern.
 +
-[[app-listing]]
+[[vql-reachablestate]]
 [source,vql]
 ----
 pattern reachableState(sm :StateMachine, state: State){
@@ -206,7 +206,7 @@ To find a specific editor id, we can use the _Plug-in Selection Spy_ tool with a
 
 For example:
 
-[[app-listing]]
+[[vql-constraint]]
 [source,vql]
 ----
 @Constraint(targetEditorId = "org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID",
