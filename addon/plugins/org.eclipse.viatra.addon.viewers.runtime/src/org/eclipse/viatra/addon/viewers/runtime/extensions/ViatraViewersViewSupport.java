@@ -13,6 +13,7 @@
 package org.eclipse.viatra.addon.viewers.runtime.extensions;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -22,10 +23,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
@@ -56,7 +61,88 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
      * The {@link ViewerState} that represents the stateful model behind the contents shown by the owner.
      */
     protected ViewerState state;
+    
+    protected boolean delayUpdates = false;
+    protected List<Object> currentSelection;
+    
+    protected final String ownerID;
+    
+    protected final IPartListener2 partListener = new IPartListener2() {
+        
+        private void updateModel() {
+            if (currentSelection != null) {
+                unbindModel();
+                final Display display = owner.getSite().getShell().getDisplay();
+                display.asyncExec(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        BusyIndicator.showWhile(display, new Runnable() {
 
+                            @Override
+                            public void run() {
+                                doUpdateDisplay();
+                            }
+                            
+                        });
+                    }
+                });
+            }
+            delayUpdates = false;
+        }
+        
+        @Override
+        public void partActivated(IWorkbenchPartReference partRef) {
+            if (Objects.equals(partRef.getId(), ownerID)) {
+                updateModel();
+            }
+        }
+        
+        @Override
+        public void partBroughtToTop(IWorkbenchPartReference partRef) {
+            if (Objects.equals(partRef.getId(), ownerID)) {
+                updateModel();
+            }
+        }
+        
+        @Override
+        public void partClosed(IWorkbenchPartReference partRef) {
+            if (Objects.equals(partRef.getId(), ownerID)) {
+                delayUpdates = true;
+            }
+        }
+        
+        @Override
+        public void partDeactivated(IWorkbenchPartReference partRef) {}
+        
+        @Override
+        public void partOpened(IWorkbenchPartReference partRef) {
+            if (Objects.equals(partRef.getId(), ownerID)) {
+                updateModel();
+            }
+        }
+        
+        @Override
+        public void partHidden(IWorkbenchPartReference partRef) {
+            if (Objects.equals(partRef.getId(), ownerID)) {
+                delayUpdates = true;
+            }
+        }
+        
+        @Override
+        public void partVisible(IWorkbenchPartReference partRef) {
+            if (Objects.equals(partRef.getId(), ownerID)) {
+                updateModel();
+            }
+        }
+        
+        @Override
+        public void partInputChanged(IWorkbenchPartReference partRef) {
+            
+        }
+        
+    };
+    
     /**
      * Constructs a new View support instance.
      */
@@ -64,6 +150,8 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
             IModelConnectorTypeEnum _scope) {
         super(_owner, _config);
         this.connectorType = _scope;
+        this.ownerID = _owner.getViewSite().getId();
+        _owner.getViewSite().getPage().addPartListener(partListener);
     }
 
     protected IViewPart getOwner() {
@@ -72,15 +160,26 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
 
     @Override
     public void dispose() {
+        getOwner().getViewSite().getPage().removePartListener(partListener);
         unbindModel();
         super.dispose();
     }
 
     @Override
     protected void onSelectionChanged(List<Object> objects) {
+        if (Objects.equals(objects, currentSelection)) {
+            return;
+        }
+        currentSelection = objects;
         // extract model source
+        if (!delayUpdates) {
+            doUpdateDisplay();
+        }
+    }
+
+    protected void doUpdateDisplay() {
         try {
-            EMFScope target = extractModelSource(objects);
+            EMFScope target = extractModelSource(currentSelection);
             if (target != null && !target.equals(this.modelSource)) {
                 // we have found a new target
                 unsetModelSource();
@@ -90,7 +189,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
             throw new RuntimeException("Failed to extract model source", e);
         }
     }
-
+    
     protected EMFScope extractModelSource(List<Object> objects) throws ViatraQueryException {
         Set<Notifier> notifiers = ImmutableSet.copyOf(Iterables.filter(objects, Notifier.class));
         // extract logic
