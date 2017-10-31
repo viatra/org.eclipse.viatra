@@ -44,6 +44,36 @@ pattern applicationInstances(app: ApplicationInstance) {
 }
 ----
 
+=== Listening to change via an Observable
+
+There are some usecases where you don’t want to follow every change of a pattern’s match, just gather them together and process them when you’re ready. VIATRA Query provides several means of doing this, but we recommend using JFace databinding for basic purposes. To this end, the *ViatraObservables* utility class can transform the result set of your matcher into an observable list or set that can be tracked and even data bound easily. 
+
+For headless (or non-UI thread) execution, please use the simple DefaultRealm implementation provided in the example (and invoke it on the appropriate thread). 
+
+[[query-api-databinding]]
+[source,java]
+----
+// (+) changes can also be tracked using JFace Databinding
+// this approach provides good performance, as the observable callbacks are guaranteed to be called
+//   in a consistent state, and only when there is a relevant change; anything
+//   can be written into the callback method
+// (-) * the databinding API introduces additional dependencies
+//     * is does not support generics, hence typesafe programming is not possible
+//     * a "Realm" needs to be set up for headless execution
+DefaultRealm realm = new DefaultRealm(); // this is necessary for headless execution (or when you
+// wish to execute outside of the UI thread. make sure to invoke it on the appropriate thread!
+IObservableSet set = ViatraObservables.observeMatchesAsSet(matcher);
+set.addSetChangeListener(new ISetChangeListener() {
+ @Override
+ public void handleSetChange(SetChangeEvent event) {
+  for (Object _o : event.diff.getAdditions()) {
+   if (_o instanceof EPackageMatch) {
+    results.append("\tNew EPackage found by changeset databinding: " + ((EPackageMatch)_o).getP().getName()+"\n");
+   }
+  }
+});
+---- 
+
 === Using data binding to populate a table
 
 [[databinding-table]]

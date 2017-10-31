@@ -11,7 +11,7 @@
        <topic href="html/tutorial/incremental-transformations.html" label="Getting Started with Event-driven Transformation">
        </topic>
    </topic>
-   <topic label="Reference">
+   <topic label="Reference Documentation">
        <topic href="html/language/vql-definition.html" label="The VIATRA Query Language">
           <topic href="html/language/vql-definition.html#vql-basics" label="Basic Concepts and Syntax">
           </topic>
@@ -27,6 +27,30 @@
        <topic href="html/extra/VIATRA-visualization.html" label="Displaying Query Results in the User Interface">
        </topic>
        <topic href="html/extra/VIATRA-debugger.html" label="Debugging Model Transformations">
+       </topic>
+       <topic href="html/runtime/query-api.html" label="The VIATRA Query Runtime">
+          <topic href="html/runtime/query-api.html#_most_important_classes_and_their_relationships" label="Matches and Matchers">
+          </topic>
+          <topic href="html/runtime/query-api.html#_lifecycle_management" label="Lifecycle Management">
+          </topic>
+          <topic href="html/runtime/query-api.html#_typical_programming_patterns" label="Programming Patterns">
+          </topic>
+          <topic href="html/runtime/query-api.html#_the_viatra_query_generic_api" label="The Generic Query API">
+          </topic>
+          <topic href="html/runtime/query-api.html#_viatra_query_base" label="The Base Indexer">
+          </topic>
+          <topic href="html/runtime/query-api.html#sec-query-scopes" label="Query Scopes">
+          </topic>
+          <topic href="html/runtime/query-api.html#_pattern_matching_with_local_search" label="Local Search">
+          </topic>
+          <topic href="html/runtime/query-api.html#sec-query-hints" label="Query Evaluation Hints">
+          </topic>
+          <topic href="html/runtime/query-api.html#_query_specification_registry" label="The Query Specification Registry">
+          </topic>
+          <topic href="html/runtime/query-api.html#_performance_tuning_and_special_engine_modes" label="Performance tuning and special engine modes">
+          </topic>
+          <topic href="html/runtime/query-api.html#_logging_in_viatra_query" label="Configure Logging">
+          </topic>
        </topic>
    </topic>
    <topic label="Release Information">

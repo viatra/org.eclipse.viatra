@@ -1,0 +1,779 @@
+= The VIATRA Query Runtime
+
+This document provides an overview of the Java API of VIATRA Query, describing the features that will help you to integrate it into any Java application. This page is a detailed technical documentation, for basic usage information consult the link:../tutorial/tutorial.html#_using_queries_programmatically[the getting started tutorial] instead.
+
+The most typical way of using the VIATRA Query API is to make use of the generated code that is found in the "src-gen" folder of your VIATRA Query project. This generated code provides easy and type-safe access to most of VIATRA Query's features from Java code.
+
+VIATRA Query also supports a "dynamic", generic API that allows to make use of patterns without relying on the generated code. The generic API shares functionality with the base classes of the "generated" API, and for most scenarios there is no performance difference between the two. A notable exception for this rule of thumb are `check() expressions`, where the generated code that is invoked through the generated API will execute the Java code instead of interpreting Xbase. 
+
+:toc: macro
+
+toc::[]
+
+== Most important classes and their relationships
+
+For every pattern definition, the VIATRA Query tooling generates a few classes:
+
+QuerySpecification:: represents a pattern from a VQL file for the API specification. Not required to use for basic querying, only for generic APIs and fine-tuning settings.
+Match:: binds the parameters of a query specification to elements from a model; represents a single result of a query or filters the results
+Matcher:: provides functionality to retrieve the results of the query
+MatchProcessor:: used to handle query results in a functional style (similar to Java Stream handling).
+
+=== Match
+
+A *Match object* represents a single match of the pattern, i.e. a tuple of objects whose members point to corresponding elements of the instance model (or scalar values) that the pattern is matched against. It is essentially a Data Transfer Object that is used to extract query result information from VIATRA Query, with an SQL analogy you could think of it as one "row" of the result set of a query. The generated fields correspond to the pattern header parameters. 
+
+You can also use *Match* objects to specify fixed input parameters to a query (while other fields can be left unspecified) - analogously to a "prepared" SQL statement that accepts input parameter bindings. In this case, the input Match will act as a filter (mask) and the results of you queries will also be instances of this class (where parameters already have the values given in the input). See TODO below for further details. 
+
+The code example below shows the `ApplicationInstancesMatch` class generated for the *applicationInstances* pattern (with a single parameter AI). The generated class implements the interface `IPatternMatch` through the `BasePatternMatch` internal implementation class. 
+
+[[query-api-match]]
+[source,java]
+----
+public abstract class ApplicationInstancesMatch extends BasePatternMatch {
+  /** getters and setters for each parameter */
+  public ApplicationInstance getAI();
+  public void setAI(final ApplicationInstance pAI);
+  
+  public String prettyPrint();
+  public int hashCode();
+  public boolean equals(final Object obj);
+  
+  /** "reflective" calls **/
+  public ApplicationInstancesQuerySpecification specification();
+  public String patternName();
+  public List<String> parameterNames();
+  public Object get(final String parameterName);
+  public boolean set(final String parameterName, final Object newValue);
+  public Object[] toArray();
+  public ApplicationInstancesMatch toImmutable();
+  
+  /* Mutable and immutable match instantiation */
+  public static ApplicationInstancesMatch newEmptyMatch();
+  public static ApplicationInstancesMatch newMutableMatch(final ApplicationInstance pAI);
+  public static ApplicationInstancesMatch newMatch(final ApplicationInstance pAI);
+}
+----
+
+[[sec-querymatcher]]
+=== Matcher
+
+The *Matcher* is the main entry point of the VIATRA Query API, with pattern-specific query methods. It provides access to the three key features of VIATRA Query: 
+
+* First of all it provides means to *initialize a pattern matcher* for a given Query engine.
+* After the initialization of the engine, the Matcher provides *getter methods to retrieve the contents of the match set*. For easy iteration over the match set it provides a convenience method (`forEachMatch`) as well, as this is the most frequent use case in our observation. Of course it contains other handy features (e.g.: `countMatches`, `hasMatch`) to help integration. 
+* Finally, it provides means to efficiently *track the changes in the match set* in an event-driven fashion.
+
+The example generated source code below demonstrates the *ApplicationInstancesMatcher* class generated for the *eClassNames* pattern from the running example. The matcher class implements the ViatraQueryMatcher generic interface, and its implementation code extends the `BaseGeneratedMatcher` internal class, inheriting several useful methods. In the listing below, we show some methods that are not actually part of generated code, but conform to the interface `ViatraQueryMatcher` and are accessible through inheritance from `BaseGeneratedMatcher`. 
+
+[[query-api-matcher]]
+[source,java]
+----
+public class EClassNamesMatcher implements ViatraQueryMatcher<EClassNamesMatch> {
+  /** factory method **/
+  public static ApplicationInstancesMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException;
+
+  /** access to match set **/
+    public Collection<ApplicationInstancesMatch> getAllMatches(); // inherited
+    public Collection<ApplicationInstancesMatch> getAllMatches(final ApplicationInstance pAI);
+    public ApplicationInstancesMatch getOneArbitraryMatch(); // inherited
+    public ApplicationInstancesMatch getOneArbitraryMatch(final ApplicationInstance pAI);
+  public boolean hasMatch(); // inherited
+  public boolean hasMatch(final ApplicationInstance pAI);
+  public int countMatches(); // inherited
+  public int countMatches(final ApplicationInstance pAI);
+
+  /** Retrieve the set of values that occur in matches.**/
+  public Set<ApplicationInstance> getAllValuesOfAI() {}
+
+  /** iterate over matches using a lambda **/
+  public void forEachMatch(IMatchProcessor<? super EClassNamesMatch> processor); // inherited
+  public void forEachMatch(final ApplicationInstance pAI, final IMatchProcessor<? super ApplicationInstancesMatch> processor);
+  public void forOneArbitraryMatch(IMatchProcessor<? super EClassNamesMatch> processor); // inherited
+  public boolean forOneArbitraryMatch(final ApplicationInstance pAI, final IMatchProcessor<? super ApplicationInstancesMatch> processor) {}
+
+  /** Returns a new (partial) Match object for the matcher. 
+   *  This can be used e.g. to call the matcher with a partial match. **/
+  public ApplicationInstancesMatch newMatch(final ApplicationInstance pAI);
+  
+  /** Access query specification */
+  public static IQuerySpecification<ApplicationInstancesMatcher> querySpecification() throws ViatraQueryException;
+}
+----
+
+=== Helper classes
+
+`MatchProcessor`
+
+The Matcher provides a function to iterate over the match set and invoke the process() method of the IMatchProcessor interface with every match. You can think of this as a "lambda" to ease typical query result processing tasks. To this end, an abstract processor class is generated, which you can override to implement the logic you would like to use. The abstract class unpacks the match variables so it can be used directly in the process() method. 
+
+`QuerySpecification`: A pattern-specific specification that can instantiate a Matcher class in a type-safe way. You can get an instance of it via the Matcher class’s specification() method. The recommended way to instantiate a Matcher is with an `ViatraQueryEngine`. In both cases if the pattern is already registered (with the same root in the case of the Notifier method) then only a lightweight reference is created which points to the existing engine.
+
+The code sample extends the BaseGeneratedQuerySpecification class.
+
+[[query-api-queryspecification]]
+[source,java]
+----
+/**
+ * A pattern-specific query specification that can instantiate EClassNamesMatcher in a type-safe way.
+ */
+public final class ApplicationInstancesQuerySpecification extends BaseGeneratedEMFQuerySpecification<ApplicationInstancesMatcher> {
+
+  /** Singleton instance access */
+  public static ApplicationInstancesQuerySpecification instance() throws ViatraQueryException;
+
+  /** Instantiate matches and matchers */
+  public ApplicationInstancesMatcher instantiate() throws ViatraQueryException;
+  public ApplicationInstancesMatch newEmptyMatch();
+  public ApplicationInstancesMatch newMatch(final Object... parameters);
+
+}
+----
+
+== Lifecycle management
+
+In VIATRA Query, all pattern matching (query evaluation) is carried out in *ViatraQueryEngine* instances that are accessed through the user-friendly generated classes of the public API. The *ViatraQueryEngine* associated to your patterns can be accessed and managed through the *EngineManager* singleton class, to track and manipulate their lifecycles.
+
+A ViatraQueryEngine is instantiated with a Scope implementation that describes the model the query should work with. By default, in case of EMF it is recommended to initialize an EMFScope instance with the ResourceSet containing the EMF model. For more details about scopes see <<sec-query-scopes,Query Scopes>>.
+
+By default, for each scope a single, managed *ViatraQueryEngine* is created, which is shared by all objects that access VIATRA Query's features through the generated API. The *ViatraQueryEngine* is attached to the scope and *it is retained on the heap as long as the model itself is there*. It will listen on update notifications stemming from the given model in order to maintain live results. If you release all references to the model (e.g. unload the resource), the *ViatraQueryEngine* can also be garbage collected (as long as there are no other inbound references on it). 
+
+In all, for most (basic) scenarios, the following workflow should be followed: 
+
+* initialize/load the model 
+* initialize your *ViatraQueryEngine* instance 
+* initialize pattern matchers, or groups of pattern matchers and use them 
+* if you release the model and your *ViatraQueryEngine* instance, all resources will be freed by the garbage collector.
+
+For advanced scenarios (if you wish to manage lifecycles at a more finegrained level), you have the option of creating *unmanaged* ViatraQueryEngines and dispose of them independently of your instance model. For most use-cases though, we recommend the use of managed engines, this is the default and optimized behavior, as these engines can share common indices and caches to save memory and CPU time. The *EngineManager* ensures that there will be no duplicated engine for the same model root (Notifier) object. Creating an unmanaged engine will give you certain additional benefits, however additional considerations should be applied.
+
+If you want to remove the matchers from the engine you can call the `wipe()` method on it. It discards any pattern matcher caches and forgets the known patterns. The base index built directly on the underlying EMF model, however, is kept in memory to allow reuse when new pattern matchers are built. If you don’t want to use it anymore call the `dispose()` instead, to completely disconnect and dismantle the engine.
+
+WARNING: Never call wipe or dispose on any engine that were not explicitly created by you; any created matcher over the engine becomes unusable.
+
+== Typical programming patterns
+
+In the followings, we provide short source code samples (with some explanations) that cover the most important use-cases supported by the VIATRA Query API. 
+
+=== Loading an instance model and executing a query
+
+[[query-api-loadmodelandquery]]
+[source,java]
+----
+// get all matches of the pattern
+// initialization
+// phase 1: (managed) ViatraQueryEngine
+ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(resource /* or resourceSet */)); 
+// phase 2: the matcher itself
+EObjectMatcher matcher = EObjectMatcher.on(engine);
+// get all matches of the pattern
+Collection<EObjectMatch> matches = matcher.getAllMatches();
+// process matches, produce some output
+StringBuilder results = new StringBuilder();
+prettyPrintMatches(results, matches);
+----
+
+=== Using the MatchProcessor
+
+With the MatchProcessor you can iterate over the matches of a pattern quite easily:
+
+[[query-api-matchprocessor]]
+[source,java]
+----
+matcher2.forEachMatch(new EClassNamesProcessor() {
+ @Override
+ public void process(EClass c, String n) {
+  results.append("\tEClass: " + c.toString() + "\n");
+ }
+});	
+----
+
+=== Matching with partially bound input parameters
+
+An important aspect of VIATRA Query queries is that they are *bidirectional* in the sense that they accept input bindings, to filter/project the result set with a given input constraint. The following example illustrates the usage of the match processor with an input binding that restricts the result set to the cases where the second parameter (the name of the EClass) takes the value "A": 
+
+[source,java]
+----
+matcher2.forEachMatch( matcher2.newMatch(null, "A") , new EClassNamesProcessor() {
+ @Override
+ public void process(EClass c, String n) {
+  results.append("\tEClass with name A: " + c.toString() + "\n");
+ }
+});	
+
+// alternatively:
+matcher2.forEachMatch(null, "A" , new EClassNamesProcessor() {
+ @Override
+ public void process(EClass c, String n) {
+  results.append("\tEClass with name A: " + c.toString() + "\n");
+ }
+});
+----
+The input bindings may be used for all match result set methods. 
+
+Additionally, the *getAllValuesOf...* methods allow you to perform projections of the result set to one of the parameters: 
+
+[source,java]
+----
+// projections
+for (EClass ec: matcher2.getAllValuesOfc(matcher2.newMatch(null,"A")))
+{
+ results.append("\tEClass with name A: " + ec.toString() + "\n");
+}
+----
+
+=== Initialization of pattern groups
+
+Using pattern groups is important for performance. By default, VIATRA Query performs a traversal of the instance model when a matcher is accessed through the *ViatraQueryEngine* for the first time. If you wish to use several pattern matchers, it is a good idea to make use of the generated pattern group class and prepare the ViatraQueryEngine to perform a combined traversal (with minimal additional overhead) so that any additional Matcher initializations avoid re-traversals. 
+
+[[query-api-groupinit]]
+[source,java]
+----
+// phase 1: (managed) ViatraQueryEngine
+ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(resource));
+// phase 2: the group of pattern matchers
+HeadlessQueries patternGroup = HeadlessQueries.instance();
+patternGroup.prepare(engine);
+// from here on everything is the same
+EObjectMatcher matcher = EObjectMatcher.on(engine);
+// get all matches of the pattern
+Collection<EObjectMatch> matches = matcher.getAllMatches();
+prettyPrintMatches(results, matches);
+// ... //
+// matching with partially bound input parameters
+// because EClassNamesMatcher is included in the patterngroup, *no new traversal* will be done here
+EClassNamesMatcher matcher2 = EClassNamesMatcher.on(engine);
+----
+
+== The VIATRA Query Generic API
+
+All features provided by the generated pattern matcher API can be executed using the generic pattern matcher API of VIATRA. This generic API differs from the generated one in two key aspects: 
+
+* it can be used to apply queries and use other VIATRA Query features *without* generating code and loading the resulting bundles into the running configuration. In other words, you just need to supply the EMF-based in-memory representation (an instance of the Pattern class) 
+* the generic API is not "type safe" in the sense that the Java types of your pattern variables is not known and needs to be handled dynamically (typically by type casting).
+
+[[query-api-genericapi]]
+[source,java]
+.Example using the generic API
+----
+public String executeDemo_GenericAPI_LoadFromEIQ(String modelPath, String patternFQN) {
+  final StringBuilder results = new StringBuilder();
+  Resource resource = loadModel(modelPath);
+  if (resource != null) {
+    try {
+      // get all matches of the pattern
+      // create an *unmanaged* engine to ensure that noone else is going
+      // to use our engine
+      AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(resource);
+      // instantiate a pattern matcher through the registry, by only knowing its FQN
+      // assuming that there is a pattern definition registered matching 'patternFQN'
+
+      Pattern p = null;
+				
+      // Initializing Xtext-based resource parser
+      // Do not use if VIATRA Query tooling is loaded!
+      EMFPatternLanguageStandaloneSetup.createInjectorAndDoEMFRegistration();
+
+      //Loading pattern resource from file
+      ResourceSet resourceSet = new ResourceSetImpl();
+      URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/src/headless/headlessQueries.vql", false);
+      Resource patternResource = resourceSet.getResource(fileURI, true);
+			    
+      // navigate to the pattern definition that we want
+      if (patternResource != null) {
+        if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
+          EObject topElement = patternResource.getContents().get(0);
+          if (topElement instanceof PatternModel) {
+            for (Pattern _p  : ((PatternModel) topElement).getPatterns()) {
+              if (patternFQN.equals(CorePatternLanguageHelper.getFullyQualifiedName(_p))) {
+                p = _p; break;
+              }
+            }
+          }
+        }
+      }
+      if (p == null) {
+        throw new RuntimeException(String.format("Pattern %s not found", patternFQN));
+      }
+      // A specification builder is used to translate patterns to query specifications
+      SpecificationBuilder builder = new SpecificationBuilder();
+			    
+      // attempt to retrieve a registered query specification		    
+      ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(builder.getOrCreateSpecification(p));
+				
+      if (matcher!=null) {
+        Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
+        prettyPrintMatches(results, matches);
+      }
+				
+      // wipe the engine
+      engine.wipe();
+      // after a wipe, new patterns can be rebuilt with much less overhead than 
+      // complete traversal (as the base indexes will be kept)
+
+      // completely dispose of the engine once's it is not needed
+      engine.dispose();
+      resource.unload();
+    } catch (ViatraQueryException e) {
+      e.printStackTrace();
+      results.append(e.getMessage());
+    }
+  } else {
+    results.append("Resource not found");
+  }
+  return results.toString();
+}
+----
+
+== VIATRA Query Base
+
+VIATRA Query provides a light-weight indexer library called Base that aims to provide several useful (some would even argue critical) features for querying EMF models: 
+
+* inverse navigation along EReferences 
+* finding and incrementally tracking all model elements by attribute value/type (i.e. inverse navigation along EAttributes) 
+* incrementally computing transitive reachability along given reference types (i.e. transitive closure of an EMF model) 
+* getting and tracking all the (direct) instances of a given EClass
+
+The point of VIATRA Query Base is to provide all of these in an incremental way, which means that once the query evaluator is attached to an EMF model, as long as it stays attached, the query results can be retrieved instantly (as the query result cache is automatically updated). VIATRA Query Base is a lightweight, small Java library that can be integrated easily to any EMF-based tool as it can be used in a stand-alone way, without the rest of VIATRA Query. 
+
+We are aware that some of the functionality can be found in some Ecore utility classes (for example ECrossReferenceAdapter). These standard implementations are non-incremental, and are thus do not scale well in scenarios where high query evaluation performance is necessary (such as e.g. on-the-fly well-formedness validation or live view maintenance). VIATRA Query Base has an additional important feature that is not present elsewhere: it contains very efficient implementations of transitive closure that can be used e.g. to maintain reachability regions incrementally, in very large EMF instance models.
+
+=== Extracting reachability paths from transitive closure
+
+Beyond the support for querying reachability information between nodes in the model, the TransitiveClosureHelper class also provides the functionality to retrieve paths between pairs of nodes. The `getPathFinder` method returns an `IGraphPathFinder` object, which exposes the following operations:
+
+ `Deque<V> getPath(V sourceNode, V targetNode)`:: Returns an arbitrary path from the source node to the target node (if such exists).
+ `Iterable<Deque<V>> getShortestPaths(V sourceNode, V targetNode)`:: Returns the collection of shortest paths from the source node to the target node (if such exists).
+ `Iterable<Deque<V>> getAllPaths(V sourceNode, V targetNode)`:: Returns the collection of paths from the source node to the target node (if such exists).
+ `Iterable<Deque<V>> getAllPathsToTargets(V sourceNode, Set<V> targetNodes)`:: Returns the collection of paths from the source node to any of the target nodes (if such exists).
+
+Internally these operations use a depth-first-search traversal and rely on the information which is incrementally maintained by the transitive closure component.
+
+[[sec-query-scopes]]
+== Query Scopes
+VIATRA Query uses the concept of *Scopes* to define the entire model to search for results. For queries over EMF models, the EMFScope class defines such scopes. When initializing a ViatraQueryEngine, it is required to specify this scope by creating a new instance of EMFScope.
+
+This instance might be created from one or more Notifier instances (ResourceSet: includes all model elements stored in the ResourceSet; Resource: includes all elements inside the corresponding Resource; EObject: includes all elements in the containment subtree of the object itself).
+
+In most cases, it is recommended to include the entire ResourceSet as the query scope; however, if required, it is possible to 
+
+=== Using Filtered Input Models During Pattern Matching
+
+In several cases it is beneficial to not include all Resources from a ResourceSet during pattern matching, but consider more than one. Such cases might include Xtext/Xbase languages or http://www.jamopp.org/index.php/JaMoPP[JaMoPP]-based instances that include resources representing the classes of the Java library.
+
+In case of EMF models, the EMFScope instance may also set some base index options to filter out containment subtrees from being indexed both by the Base Indexer and the Rete networks, by providing a filter implementation to the VIATRA Query Engine. These options include the IBaseIndexResourceFilter and IBaseIndexObjectFilter instances that can be used to filter out entire resources or containment subtrees, respectively.
+
+Sample usage (by filtering out Java classes referred by JaMoPP):
+
+[[query-runtime-filteredscope]]
+[source,java]
+----
+ResourceSet resourceSet = ...; //Use a Resource Set as the root of the engine 
+BaseIndexOptions options = new BaseIndexOptions().withResourceFilterConfiguration(new IBaseIndexResourceFilter() {
+
+  @Override
+  public boolean isResourceFiltered(Resource resource) {
+    // PathMap URI scheme is used to refer to JDK classes
+    return "pathmap".equals(resource.getURI().scheme());
+  }
+});
+//Initializing scope with custom options
+EMFScope scope = new EMFScope(resourceSet, options);
+ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+----
+
+NOTE: there are some issues to be considered while using this API:
+
+* If a Resource or containment subtree is filtered out, it is filtered out entirely. It is not possible to re-add some lower-level contents.
+*  In case of the query scope is set to a subset of the entire model (e.g only one EMF resource within the resource set), model elements within the scope of the engine may have references pointing to elements outside the scope; these are called *dangling edges*. Previous versions of VIATRA made the assumption that the model is self-contained and free of dangling edges; the behavior of the query engine was ''unspecified'' (potentially incorrect match sets) if the model did not have this property. In VIATRA 1.6, this behavior was cleaned up by adding a new indexer mode that drops this assumption, and (with a minor cost to performance) always checks both ends of all indexed edges to be in-scope. For backward compatibility, the old behavior is used by default, but you can manually change this using the corresponding base index option as below. For new code we suggest to use this option to drop the dangling-free assumption, as it provides more consistent and intuitive results in a lot of cases; in a future VIATRA release this will be the new default.
+
+[[query-runtime-danglingfree]]
+[source,java]
+----
+BaseIndexOptions options = new BaseIndexOptions().withDanglingFreeAssumption(false); 
+ResourceSet rSet = new ResourceSetImpl();
+EMFScope scope = new EMFScope(rSet, options);
+ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+----
+
+== Pattern matching with Local Search
+
+Since version 0.9, there is a possibility to refer to alternative search engines in addition to Rete-based incremental engines; version 1.0 includes a local search based search algorithm usable with the VIATRA Query matcher API.
+
+Since version 1.4, the Local Search engine is considered stable, and users are encuraged to use it in applications where incrementality is not crucial. The Local Search engine reuses the same matcher API used in VIATRA Query.
+
+* When is local search the most beneficial?
+** A single, batch evaluation of models
+** Memory limit is severe and the Rete network does not fit into the memory
+** When all calls have one or more parameters bound, resulting in simple traversal
+* Harder cases
+** Repeated model execution 
+** Query evaluation requires expensive model traversal (think about iterating over all instances in a model)
+
+[[sec-localsearch]]
+=== Using Local Search
+
+The most important steps to perform:
+
+* Add a dependency to the optional plug-in `org.eclipse.viatra.query.runtime.localsearch`
+* Explicitly ask for a local search-based matcher when initializing the matcher instance:
+[source,java]
+----
+IQuerySpecification<?> specification = ...;
+QueryEvaluationHint hint = LocalSearchHints.getDefault().build();
+AdvancedViatraQueryEngine.from(queryEngine).getMatcher(specification, hint);
+----
+* Or alternatively, set the local search as default for a query engine:
+[source,java]
+----
+// Access the default local search hint
+QueryEvaluationHint localSearchHint = LocalSearchHints.getDefault().build();
+		
+// Build an engine options with the local search hint
+ViatraQueryEngineOptions options = ViatraQueryEngineOptions.
+		defineOptions().
+		withDefaultHint(localSearchHint).
+                withDefaultBackend(localSearchHint.getQueryBackendFactory()). // this line is needed in 1.4 due to bug 507777
+		build();
+		
+//Access the query engine
+ViatraQueryEngine queryEngine = ViatraQueryEngine.on(scope, options);
+----
+* After initialization, the existing <<sec-querymatcher,pattern matcher API>> constructs can be used over the local search engine.
+
+It is also possible to declare specific patterns to be executed by Local Search in the VQL file using the `search`, although this setting may be overridden by the hints given at the matcher creation.
+
+[source,java]
+----
+search pattern minCPUs(n : java Integer) {
+	n == min find cpus(_hi1, #_);
+}
+----
+
+=== Parameterizing local search
+
+Parameterization of the planner algorithm is possible via <<sec-query-hints,the hint mechanism>>. Currently (version 1.7) the following hints are available by using the `LocalSearchHints` builder class:
+
+Use Base:: allow/disallow the usage of the index at runtime. Its value may be `true` or `false`. The default value is `true`.
+Row Count:: An internal parameter, bigger values often mean longer plan generation times, and potentially search plans with lower cost. Its value may be a positive `int`, the default value is 4.
+Cost Function:: The cost function to be used by the planner. Must implement org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction
+Flatten call predicate:: The predicate to control which pattern composition calls shall be flattened before planning. By deafult all called patterns are flattened.
+
+For example, to disable the use of base index:
+[source,java]
+----
+IQuerySpecification<?> specification = ...;
+QueryEvaluationHint hint = LocalSearchHints.getDefault().setUseBase(false).build();
+AdvancedViatraQueryEngine.from(queryEngine).getMatcher(specification, hint);
+----
+
+=== Cost function
+
+The default cost function estimates operation costs based on the statistical structure of the model, which is obtained using the base index. This is true even if USE_BASE_INDEX is set to false, in which case a plan is created which does not rely on the base index at execution time. Since 1.4.0 the base index is capable of providing only statistical information with much less overhead compared to instance indexing. To avoid using base index even in the planning phase, the cost function can be replaced to another implementation. For this purpose, two alternative implementations are provided:
+
+* `VariableBindingBasedCostFunction` estimates the operation costs using the number of variables it binds. This cost function usually results in lower performance executions.
+* The abstract class `StatisticsBasedConstraintCostFunction` can be used to provide model statistics from different sources, e.g. a previously populated map:
+
+[source,java]
+----
+final Map<IInputKey, Long> statistics = ..
+QueryEvaluationHint hint = LocalSearchHints.getDefault().setCostFunction(new StatisticsBasedConstraintCostFunction(){
+  public long countTuples(IConstraintEvaluationContext input, IInputKey supplierKey){
+    return statistics.get(supplierKey);
+  }
+}).build();
+----
+
+The latter is advised to be used if the model is expected to be changed after the planning phase to ensure that the planing is based on a realistic model statistics which resembles the actual structure which the pattern is executed on.
+
+NOTE: We plan on providing a simpler way of setting up model statistics in later versions; this kind of setup might be changed.
+
+=== Known limitations
+
+* A local search matcher cannot provide change notifications on pattern matches. If asked, an UnsupportedOperationException is thrown.
+* As of version 1.4, it is not possible to combine different pattern matching algorithms for the evaluation of a single pattern. Either the entire search must use Rete or Local search based algorithms.
+* The Local Search engine currently does not able to execute recursive queries. See http://bugs.eclipse.org/458278 for more details.
+
+
+[[sec-query-hints]]
+== Providing Query Evaluation Hints
+
+It is possible to pass extra information to the runtime of VIATRA Query using evaluation hints, such as information about the structure of the model or requirements for the evaluation. In version 1.4, the handling of such hints were greatly enhanced, allowing the following ways to pass hints:
+
+. The Query engine might be initialized with default hints using the static method `AdvancedQueryEngine#createUnmanagedEngine(QueryScope, ViatraQueryEngineOptions)`. The hints provided inside the query engine options are the default hints used by all matchers, but can be overridden using the following options.
+. A pattern definition can be extended with hints, e.g. for backend selection in the pattern language. Such hints will be generated into the generated query specification code.
+. When accessing a new pattern matcher through the Query Engine, further override hints might be presented using `AdvancedQueryEngine#getMatcher(IQuerySpecification, QueryEvaluationHint)`. Such hints override both the engine default and the pattern default hints.
+
+In version 1.4 the hints are mostly used to fine tune the <<sec-localsearch, local search based pattern matcher>>, but their usage is gradually being extended. See classes `ReteHintOptions` and `LocalSearchHints` for hint options provided by the query backends.
+
+== Query specification registry
+
+The query specification registry, available since ''VIATRA 1.3'' is used to manage query specifications provided by multiple connectors which can
+dynamically add and remove specifications. Users can read the contents of the registry through views that are also
+dynamically updated when the registry is changed by the connectors.
+
+=== Basic usage
+
+The most common usage of the registry will be to get a registered query specification based on its fully qualified name.
+You can access the registry through a singleton instance:
+
+[[query-runtime-registry-usage]]
+[source,java]
+----
+IQuerySpecificationRegistry registry = org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry.getInstance();
+IQuerySpecification<?> specification = registry.getDefaultView().getEntry("my.registered.query.fqn").get();
+----
+
+The default view lets you access the contents of the registry, the entry returned is a provider for the query specification that returns it when requested through the get() method.
+
+=== Advanced usage
+
+==== Views
+
+To get an always up to date view of the registry, you can either:
+* request a *default view* that will contain on specification marked to be included in this view (e.g. queries registered through the queryspecification extension point)
+* create a new *view* that may use either a filter or a factory for defining which specifications should be included in the view
+
+[[query-api-registry-views]]
+[source,java]
+----
+IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+// access default view
+IDefaultRegistryView defaultView = registry.getDefaultView();
+
+// create new view
+IRegistryView simpleView = registry.createView();
+
+// create filtered view
+IRegistryView filteredView = registry.createView(new IRegistryViewFilter() {
+  @Override
+  public boolean isEntryRelevant(IQuerySpecificationRegistryEntry entry) {
+    // return true to include in view
+  }
+});
+
+// create specific view instance
+boolean allowDuplicateFQNs = false;
+IRegistryView ownView = registry.createView(new IRegistryViewFactory() {
+  return new AbstractRegistryView(registry, allowDuplicateFQNs) {
+    @Override
+    protected boolean isEntryRelevant(IQuerySpecificationRegistryEntry entry) {
+      // return true to include in view
+    }
+  }
+);
+----
+
+Once you have a view instance, you can access the contents of the registry by requesting the entries from the view or adding a listener that will be notified when the view changes. 
+
+Default views add a few additional utilities that are made possible by also restricting what is included in them. Default views will only contain entries that are marked explicitly to be included and will not allow different specifications with the same fully qualified name. In return, you can request a single entry by its FQN (since at most one can exist) and also request a query group that contains all entries.
+
+==== Listening to view changes
+
+The contents of the registry may change after a view is created. When you access the view to get its entries, it will always return the current state of the registry.
+If you want to get notified when the contents of your view change, you can add a listener to the view:
+
+[[query-api-registry-listener]]
+[source,java]
+----
+IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+IRegistryView myView = registry.createView();
+IQuerySpecificationRegistryChangeListener listener = new IQuerySpecificationRegistryChangeListener() {
+  @Override
+  public void entryAdded(IQuerySpecificationRegistryEntry entry) {
+    // process addition
+  }
+  
+  @Override
+  public void entryRemoved(IQuerySpecificationRegistryEntry entry) {
+    // process removal
+  }
+});
+myView.addViewListener(listener);
+
+// when you don't need to get notifications any more
+myView.removeViewListener(listener);
+----
+
+*Important note:* your code has to keep a reference to your view otherwise it will be garbage collected. The registry uses weak references to created views in order to free users from having to manually dispose views.
+
+==== Adding specifications to the registry
+
+The registry is supplied with specifications through sources. You can add your own source connector as a source and dynamically add and remove your own specifications.
+
+[[query-api-registry-addspecification]]
+[source,java]
+----
+IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+// initialize your connector
+IRegistrySourceConnector connector;
+
+// add connector
+boolean sourceAdded = registry.addSource(connector);
+
+// [...]
+
+// remove your source when needed
+boolean sourceRemoved = registry.removeSource(connector);
+----
+
+We already have some connector implementations for the most common use cases. For example, you can create a connector with a simple add and remove method for query specifications:
+
+[[query-api-registry-connectors]]
+[source,java]
+----
+IRegistrySourceConnector connector = new SpecificationMapSourceConnector("my.source.identifier", false /* do not include these in default views */);
+
+IQuerySpecification<?> specification = /* available from somewhere */
+
+IQuerySpecificationProvider provider = new SingletonQuerySpecificationProvider(specification);
+
+// add specification to source
+connector.addQuerySpecificationProvider(provider);
+
+// remove specification by FQN
+connector.removeQuerySpecificationProvider(specification.getFullyQualifiedName());
+----
+
+
+== Performance tuning and special engine modes
+
+=== Query groups and coalescing model traversals
+If you initialize a new query that requires the indexing of some EMF types for which the current engine instance has not yet built an index, then the base index of the VIATRA engine will traverse the entire scope to build the index. It can make a great difference if such expensive re-traversals are avoided, and the engine traverses the model only once to build indexes for all queries.
+
+The easiest wax to do this would be to use <code>IQueryGroup.prepare(engine)</code> for a group of queries. Such a group is generated for every query file, and any other custom group can be manually assembled with <code>GenericQueryGroup</code>.
+
+[[query-api-group-prepare]]
+[source,java]
+----
+IQueryGroup queries = ...
+ViatraQueryEngine engine = ...
+queries.prepare(engine);
+----
+
+
+For advanced use cases, it is possible to directly control indexing traversals in an arbitrary code block, such that any index constructions are coalesced into a single traversal:
+
+[[query-api-coalesce]]
+[source,java]
+----
+ViatraQueryEngine engine = ...
+engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+    @Override
+    public Void call() throws Exception {
+        // obtain matchers, etc.
+        return null;
+    }
+});
+----
+
+
+
+=== Delaying query result updates
+As of version 1.6, the advanced query API now includes a feature that lets users temporarily "turn off" query result maintenance in the incremental query backend. During such a code block, only the base model indexer is updated, query results remain stale until the end of the block. The advantage is that it is possible to save significant execution time when changing the model in a way that partially undoes itself, e.g. a large part of the model is removed and then re-added.
+
+[[query-api-delayupdates]]
+[source,java]
+----
+AdvancedViatraQueryEngine engine = ...
+engine.delayUpdatePropagation(new Callable<Void>() {
+    @Override
+    public Void call() throws Exception {
+        // perform extensive changes in model that largely cancel each other out
+        return null;
+    }
+});
+----
+
+=== Run-once Query Engine
+
+This page describes how VIATRA Query can be used to carry out one-time query evaluation which is useful in the following cases:
+* You want less (steady-state) memory consumption instead of incremental evaluation.
+* You have derived features that are not [[VIATRA/Addon/Query_Based_Features#Well-behaving_structural_features|well-behaving]], but you want to include them in queries.
+* You like the query language of VIATRA Query, but you don't need incremental evaluation and the batch performance is better than the sum of model modification overheads between query usages.
+
+These scenarios are now supported by a "run-once" query engine that will perform the evaluation on a given query and return the match set then dispose of the Rete network and base index to free up memory.
+
+NOTE: The <<sec-localsearch,local search engine>> provided by VIATRA should perform better for these cases and it is recommended to use that instead. This functionality predates local search support and is kept for backward compatibility.
+
+==== Example
+
+The most up-to-date sample source code to this page is found in Git here: http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/minilibrary Most notably, 
+
+* the patterns are found in http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/minilibrary/org.eclipse.viatra.query.runtime.runonce.tests/src/org/eclipse/viatra/query/runtime/runonce/tests/eiqlibrary.vql[eiqlibrary.vql] 
+* and the API usage samples are found in http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/minilibrary/org.eclipse.viatra.query.runtime.runonce.tests/src/org/eclipse/viatra/query/runtime/runonce/tests/RunOnceTest.java[RunOnceTest.java]
+
+==== Usage
+
+===== Run-once then dispose
+
+The API of the run-once query engine is very simple, just instantiate the engine with the constructor using the proper scope (EObject, Resource or ResourceSet) and call the getAllMatches with a query specfication:
+
+[source,java]
+----
+RunOnceQueryEngine engine = new RunOnceQueryEngine(notifier);
+// using generated query specification
+Collection<SumOfPagesInLibraryMatch> allMatches = engine.getAllMatches(SumOfPagesInLibraryMatcher.querySpecification());
+// if you only have Pattern object
+IQuerySpecification<ViatraQueryMatcher<IPatternMatch>> specification = (IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getOrCreateQuerySpecification(BooksWithMultipleAuthorsMatcher.querySpecification().getPattern());
+Collection<IPatternMatch> matches = engine.getAllMatches(specification);
+----
+
+Note that each invocation of getAllMatches will traverse the model completely, index the classes, features and data types that are required for the query, collect the match set than dispose the indexes.
+
+==== Automatic re-sampling
+
+In many cases, the derived features are only a small part of the queries and it would be better to keep the indices once they are built. However, in this case, we need a way to update the values of all derived features that are indexed. 
+
+The run-once query engine supports automatic re-sampling by listening to model modifications and updating values before returning match results.The following example shows how you can enable this mode:
+
+[source,java]
+----
+RunOnceQueryEngine engine = new RunOnceQueryEngine(notifier);
+engine.setAutomaticResampling(true); // enable re-sampling mode
+Collection<SumOfPagesInLibraryMatch> allMatches = engine.getAllMatches(SumOfPagesInLibraryMatcher.querySpecification());
+// some model modification
+// only re-sampling of derived features, not complete traversal
+allMatches = engine.getAllMatches(SumOfPagesInLibraryMatcher.querySpecification());
+----
+
+If you no longer need automatic re-sampling, you can turn it off. In this case the engine that was kept incrementally updated is removed from memory.
+
+[source,java]
+----
+engine.setAutomaticResampling(false); // disable re-sampling mode, indices removed
+----
+
+Finally, if the value of derived features change without any model modifications (not recommended), you can tell the engine to run the re-sampling next time:
+
+[source,java]
+----
+engine.resampleOnNextCall();
+----
+
+== Logging in VIATRA Query
+
+VIATRA Query logs error messages and some trace information using log4j. If you need to debug your application and would like to see these messages, you can set the log level in different hierarchy levels.
+Since we use standard log4j, you can configure logging both with configuration files or through API calls.
+
+* All loggers are children of a top-level default logger, that can be accessed from `ViatraQueryLoggingUtil.getDefaultLogger()`, just call `setLevel(Level.DEBUG)` on the returned logger to see all messages (of course you can use other levels as well).
+* Each engine has it's own logger that is shared with the Base Index and the matchers as well. If you want to see all messages related to all engines, call `ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine.class)` and set the level.
+* Some other classes also use their own loggers and the same approach is used, they get the loggers based on their class, so retrieving that logger and setting the level will work as well.
+
+=== Configuration problems
+
+log4j uses a properties file as a configuration for its root logger. However, since this configuration is usually supplied by developers of applications, we do not package it in VIATRA Query.
+This means you may encounter the following on your console if no configuration was supplied:
+
+----
+ log4j:WARN No appenders could be found for logger (org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil).
+ log4j:WARN Please initialize the log4j system properly.
+----
+
+There are several cases where this can occur:
+
+* *You have Xtext SDK installed*, which has a plugin fragment called org.eclipse.xtext.logging that supplies a log4j configuration. Make sure that the fragment is selected in your Runtime Configuration.
+* *You are using the tooling of VIATRA Query without the Xtext SDK*, you will see the above warning, but since the patternlanguage.emf plugins also inject appenders to the loggers of VIATRA Query, log messages will be correctly displayed.
+* *You are using only the runtime part of VIATRA Query* that has no Xtext dependency. You have to provide your own properties file (standalone execution) or fragment (OSGi execution), see http://www.eclipsezone.com/eclipse/forums/t99588.html
+* Alternatively, if you just want to make sure that log messages appear in the console no matter what other configuration happens, you can call `ViatraQueryLoggingUtil.setupConsoleAppenderForDefaultLogger()` which will do exactly what its name says. Since appenders and log levels are separate, you will still have to set the log level on the loggers you want to see messages from.
+* If you wish to completely turn the logger of, call `ViatraQueryLoggingUtil.getDefaultLogger().setLevel(Level.OFF);`.
