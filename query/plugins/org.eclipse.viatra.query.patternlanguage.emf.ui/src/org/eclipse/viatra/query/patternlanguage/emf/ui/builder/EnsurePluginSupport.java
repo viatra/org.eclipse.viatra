@@ -192,7 +192,6 @@ public class EnsurePluginSupport {
 
     private void ensureSourceFolders(IProject modelProject, IProgressMonitor monitor) throws CoreException {
         // ensure classpath entries on the projects
-        ProjectGenerationHelper.ensureSourceFolder(modelProject, ViatraQueryNature.SRCGEN_DIR, monitor);
         for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {
             IProject fragmentProject = fragmentProvider.getFragmentProject(modelProject, fragment);
             if (fragmentProject.exists()) {
