@@ -1,7 +1,6 @@
 # CPS Application
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
 ////
 :toclevels: 3
 :toc:
@@ -10,15 +9,13 @@ ifndef::rootdir[:rootdir: ./]
 ////
 :icons: font
 
-
-
-This application shows the capabilities of VIATRA transformations on <<Domains#,CPS domain models>>.
+The CPS Demonstrator application include various features to demonstrate various capabilities of VIATRA using the <<Domains#,CPS domain models>>.
 
 ## How to start
 
-Start a CPS Application Eclipse instance (download from https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.application.product/target/products[here^]).
+Start a CPS Application Eclipse instance (https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.application.product/target/products[download from here]).
 
-WARNING: Starting other instances of this application causes `Java was started but returned exit code=1` error message. link:https://static.incquerylabs.com/projects/viatra/viatra-docs/ViatraAdvanced.html#_setting_up_the_transformation_under_debugging[Modify the port number.]
+WARNING: Starting multiple instances of this application causes `Java was started but returned exit code=1` error message caused by both applications opening port 1099 for the VIATRA debugger to connect to.  In order to support multiple instances, you link:../extra/VIATRA-debugger.html#_setting_up_the_transformation_under_debugging[modify the debug port number] in the corresponding eclipse.ini file.
 
 ## Initializing CPS models
 
@@ -30,7 +27,7 @@ This project contains an example CPS model __(example.cyberphysicalsystem)__ as 
 The CPS Transformations view allows starting or stopping <<CPS-to-Deployment-Transformation#,CPS-to-Deployment M2M transformations>> using <<Alternative-transformation-methods#,different strategies>> and displays the running transformations. +
 To open the view press CTRL+3 and type the name of the view.
 
-image::cps_transform_view.png[CPS Transformations view]
+image::images/cps_transform_view.png[CPS Transformations view]
 
 The view shows the details of the currently running transformations:
 
@@ -70,11 +67,11 @@ The following views help the debugging:
 * Transformation Browser view shows which activation of the transformation rules can be executed. Here you can set breakpoints to suspend if a certain rule or activation is to be executed or a condition is true.
 * Transformation Model Instance Viewer shows the current state of the models during the transformation.
 
-image::cps_debug.png[CPS Debug Configuration]
+image::images/cps_debug.png[CPS Debug Configuration]
 
 WARNING: Using the same Eclipse instance for debugging an incremental transformation and changing a model causes the program to freeze. Use a different Eclipse instance or run a new Eclipse Application instance from __Run/Run Configurations__ and run the debugger from it.
 
-Find more details on the debugger link:https://static.incquerylabs.com/projects/viatra/viatra-docs/ViatraAdvanced.html#_user_s_guide[here]. 
+Find more details on the debugger link:../extra/VIATRA-debugger.html[here]. 
 
 ### CPS Model Generator wizard
 
@@ -84,7 +81,7 @@ Select __File/New/Other__ and in the __CPS Demonstrator__ category select __Gene
 
 NOTE: In contrast to __CPS Demonstrator Example__ project, which generates a source CPS model, a target Deployment model and a connector Traceability model, the CPS Model Generator only generates the CPS model, which must be connected to the other models to use it in a transformation. To do this manually refer <<init-models-manual,this section>>.
 
-image::cps_wizard_type_page.png[Types of Models in CPS Model Generator]
+image::images/cps_wizard_type_page.png[Types of Models in CPS Model Generator]
 
 To create a simple model you can choose from a few preset models under the __Simple Test Models__ option.
 
@@ -98,7 +95,7 @@ WARNING: Opening large models can take a while. Switch off opening if it is not 
 
 #### Model by Detailed Constraints
 
-image::cps_wizard_details_page.png[Detailed Model Generator Constraints]
+image::images/cps_wizard_details_page.png[Detailed Model Generator Constraints]
 
 CPS Model Generator uses a detailed configuration during generation phase. (<<Model-Generator#,Here> described in detail.) A simple version of this configuration can be used if you select Model by Detailed Constraints.
 
