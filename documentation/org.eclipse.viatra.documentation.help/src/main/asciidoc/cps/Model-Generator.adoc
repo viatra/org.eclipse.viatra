@@ -1,6 +1,6 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 Since manually creating large instance models requires a lot of effort, we developed a <<Model-Generator#,CPS Model Generator>> that executes a number of generation phases defined in a <<Plan-Executor#,plan>> and based on simple configuration can output **arbitrarily large CPS models**. The model generator is built in Xtend and uses VIATRA Query patterns for gathering elements for complex operations.
 

@@ -1,7 +1,7 @@
 = VIATRA CPS Demonstrator
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-:rootdir: ..
-:imagesdir: {rootdir}/cps/images
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[{rootdir}/../images]
 :toclevels: 2
 :toc:
 :toc2:
@@ -17,7 +17,7 @@ The CPS Demonstrator is specified to cover a usual workflow in Model-driven Engi
 
 [fig:cps-overview]
 .CPS Demonstrator overview
-image::overview.png[CPS Demonstrator overview]
+image::cps/overview.png[CPS Demonstrator overview]
 
 === Domains
 

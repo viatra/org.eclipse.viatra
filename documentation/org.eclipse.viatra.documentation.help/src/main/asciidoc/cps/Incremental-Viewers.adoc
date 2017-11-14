@@ -1,7 +1,7 @@
 # Incremental Viewers
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 The VIATRA link:https://wiki.eclipse.org/index.php?title=VIATRA/Addon/VIATRA_Viewers[Viewers Framework] is applied to create custom views for the CPS demonstrator.
 

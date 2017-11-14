@@ -1,20 +1,19 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
+[[viatra-12]]
 = VIATRA 1.2
 
-== New and Noteworthy
-
-=== Combined EMF-IncQuery and VIATRA
+== Combined EMF-IncQuery and VIATRA
 VIATRA 1.2 includes both the high-performance query engine of EMF-IncQuery and includes an event-driven transformation engine. This shared stack supports the development of various tasks, including batch and event-driven transformations, complex event processing and design space exploration concepts.
 
 Having all elements in a single project allows a very tight integration between the various components, providing a better user experience.
 
-=== Graduation of the transformation engine
+== Graduation of the transformation engine
 
 In VIATRA 1.2 the transformation API supporting both batch and event-driven transformations have graduated: the API has been stabilized, usage documentation was added. For details, see https://wiki.eclipse.org/VIATRA/Transformation.
 
-=== Other issues
+== Other issues
 
 Not counting the merge of EMF-IncQuery, VIATRA 1.2 is mainly a bugfix release, with https://projects.eclipse.org/projects/modeling.viatra/releases/1.2.0/bugs[80+ different issues fixed], resulting a more stable environment to write model queries and transformations.
 

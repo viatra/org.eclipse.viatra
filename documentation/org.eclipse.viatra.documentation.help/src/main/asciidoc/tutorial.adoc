@@ -6,8 +6,7 @@ ifndef::highlightjs-theme[:highlightjs-theme: foundation]
 
 :imagesdir: {rootdir}/images
 :toclevels: 2
-:toc:
-:toc-placement: macro
+:toc: right
 :numbered:
 :icons: font
 :sectnums:
@@ -16,8 +15,6 @@ ifndef::highlightjs-theme[:highlightjs-theme: foundation]
 :sectlinks:
 
 include::tutorial/intro.adoc[leveloffset=+1]
-
-toc::[]
 
 <<<
 include::tutorial/environment.adoc[leveloffset=+1]

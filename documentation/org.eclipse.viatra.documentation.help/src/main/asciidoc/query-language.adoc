@@ -1,5 +1,18 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 :rootdir: .
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
+
+:imagesdir: {rootdir}/images
+:toclevels: 2
+:toc: macro
+:toc-placement: macro
+:numbered:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
 
 [[vql-basics]]
 = The VIATRA Query Language
@@ -15,6 +28,8 @@ For the query language, we reuse the concepts of graph patterns (which is a key 
 ** finding objects based on attribute value.
 
 The current version of the VIATRA Query Language (VQL) owes many of its syntax to the https://wiki.eclipse.org/VIATRA2/GettingStarted/Creating_Transformations[VTCL language] of model transformation framework VIATRA2. If you would like to read more on the foundations of the new language, we kindly point you to our http://www.inf.mit.bme.hu/en/research/publications/graph-query-language-emf-models[ICMT 2011] paper (important note: the most up-to-date VIATRA Query language syntax differs slightly from the examples of the ICMT paper).   
+
+toc::[]
 
 == References to Ecore metamodels
 

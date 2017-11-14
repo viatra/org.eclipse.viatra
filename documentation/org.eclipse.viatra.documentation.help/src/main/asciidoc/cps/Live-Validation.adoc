@@ -1,7 +1,7 @@
 # Live Validation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 The VIATRA link:https://wiki.eclipse.org/index.php?title=VIATRA/Addon/Validation[Validation Framework] offers a declarative approach for defining complex constraints on instance models that are evaluated incrementally during model editing.
 

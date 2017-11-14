@@ -58,7 +58,64 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <sourceDocumentName>tutorial/tutorial.adoc</sourceDocumentName>
+                            <sourceDocumentName>tutorial.adoc</sourceDocumentName>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>highlight.js</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>false</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-releases</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>releases.adoc</sourceDocumentName>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>highlight.js</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>false</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-query-api</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>query-api.adoc</sourceDocumentName>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>highlight.js</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>false</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-vql</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>query-language.adoc</sourceDocumentName>
                             <backend>html5</backend>	
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>

@@ -1,11 +1,10 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
+[[viatra-17]]
 = VIATRA 1.7
 
-== New and Noteworthy
-
-=== Optimizations in Query Runtime
+== Optimizations in Query Runtime
 
 The memory usage of the query engine was optimized in several ways during VIATRA 1.7, ensuring the new version requires up to 50% less stable memory to index its contents. This reduction was mainly achieved by using compact collections provided by the http://eclipse.org/collections[Eclipse Collections] framework and creating custom tuple implementations.
 
@@ -13,7 +12,7 @@ Further changes also helped to reduce the temporary objects created during searc
 
 *TODO* Execute and include a full performance measurement
 
-=== Updated generated code structure
+== Updated generated code structure
 
 Traditionally, VIATRA generates four different Java classes for each query: (1) a _query specification_ class, (2) a _matcher_ class, (3) a _match_ class and (4) a _match processor_ class, each into a separate file. In case of projects with many pattern definitions, generating these files can get expensive.
 
@@ -24,18 +23,18 @@ In order to reduce the number of files generated, VIATRA 1.7 provides two new co
 
 In VIATRA 1.7, for backward compatibility a third setting is used by default called *Generate into separate classes* that uses the previous structure. For VIATRA 2.0 it is planned to use nested classes as a default selection. This setting can be checked in the VIATRA Query Language compiler settings (available both as a global Eclipse Preference page or a Project Property page).
 
-image:17_viatra_compiler.png[]
+image::releases/17_viatra_compiler.png[]
 
 Additionally, the generation of pattern-specific match processors can be disabled if they are not used. This turns off the generation regardless whether it is generated into nested or separate classes.
 
-=== CPS Demonstrator Application
+== CPS Demonstrator Application
 
 VIATRA 1.7 includes a demonstrator application that can be used to see most features of the transformation framework in action. The application includes an example project and transformations included in editors. For more details about the transformation, have a look at the link:../cps/CPS-Application.html[corresponding documentation].
 
 * *TODO* Provide download links
 * *TODO* Add a few screenshots here
 
-=== Additional issues
+== Additional issues
 For a complete list of fixed issues for VIATRA 1.7 consult https://projects.eclipse.org/projects/modeling.viatra/releases/1.7.0/bugs
 
 == Migrating to VIATRA 1.7

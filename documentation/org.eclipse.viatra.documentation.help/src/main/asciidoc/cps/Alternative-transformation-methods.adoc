@@ -2,7 +2,7 @@
 
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 We provide multiple implementations for the <<CPS-to-Deployment-Transformation#,CPS-to-Deployment M2M transformation>>. The variants differ from each other in at least one characteristics to support comparison and evaluation. Characteristics include:
 

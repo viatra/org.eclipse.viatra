@@ -1,7 +1,7 @@
 # Query result traceability M2M transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 This gives a short introduction on the incremental query result traceability M2M transformation.
 

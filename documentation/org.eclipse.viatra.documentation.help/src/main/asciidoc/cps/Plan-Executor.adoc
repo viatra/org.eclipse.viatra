@@ -1,11 +1,11 @@
 # Plan Executor
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 The PlanExecutor is a simple workflow engine which is able to execute plans. The plan is separated by phases which consist of Operations. The other input of the PlanExecutor is one of the `Initializer` interface implementation. `Initializer` shall initialize the Fragment object and it is able to store extra information for phases and operations. During the execution operations working on the shared object, called fragment. The output of the process is the fragment.
 
-image::planexecutor.png[PlanExecutor]
+image::cps/planexecutor.png[PlanExecutor]
 
 ## Building blocks
 

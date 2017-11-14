@@ -1,7 +1,7 @@
 # CPS to Deployment Unit Tests
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 The `xform.m2m.tests` project specifies a high number of test cases that are independent of transformation implementations and are created for allowing Test Driven Development of transformations based on the specification.
 

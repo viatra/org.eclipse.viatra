@@ -1,11 +1,10 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
+[[viatra-16]]
 = VIATRA 1.6
 
-== New and Noteworthy
-
-=== Model Query Evaluation
+== Model Query Evaluation
 
 VIATRA 1.6 provides a few new features that aim for better compatibility in a wider range of use cases. In general, VIATRA should work out of the box the same way it worked before, but there are some settings that allow a more finely tuned behaviour for certain situations.
 
@@ -50,9 +49,9 @@ engine.delayUpdatePropagation(new Callable<Void>() {
 
 Finally, VIATRA 1.6 includes the http://dl.acm.org/citation.cfm?id=170066[Delete and REDerive (DRed)] algorithm as an experimental opt-in choice for evaluating recursive queries. Formerly, recursive queries were only fully supported under the condition that there can be circular dependencies between VQL patterns (or a pattern and itself), but not between individual matches of these patterns. Such circularity could lead to incorrect result maintenance after changes, even if all involved pattern calls are positive (simple `find` constraints). This restriction can now be relaxed by enabling DRed. With a small penalty in execution time, DRed guarantees correct result maintenance for arbitrary recursive pattern structures as long as all recursive calls are positive (i.e. no negation or aggregation along cycles of recursion). Note that for the very common special case of transitive closures, the dedicated language element (transitive pattern call) is still likely to be more efficient. DRed is still in an experimental phase, and is turned off by default; it can be manually enabled using the query evaluation hint `ReteHintOptions.deleteRederiveEvaluation`.
 
-=== Code generator updates
+== Code generator updates
 
-image:16_query_codegen_options.png[]
+image::releases/16_query_codegen_options.png[]
 
 For users targeting other environment than Eclipse plug-ins, it is now possible to disallow the *updating of MANIFEST.MF and plugin.xml* files. The bundle manifest is updated to ensure all packages that contain query specifications are exported, while plugin.xml files are used by the query specification registry to load all patterns during runtimes.
 
@@ -62,31 +61,31 @@ The other major change relates to *the handling of private patterns*. Given priv
 
 In complex metamodels described in Ecore and genmodel files there are often *cross-references between files* with absolute or workspace-relative urls. When compiling VIATRA queries using the maven compiler, these urls cannot be resolved automatically. EMF uses URI converters to define a mapping between such source and target model elements. Starting with VIATRA 1.6, you can now specify the location of metamodels referred to via `platform:/resource` URIs with the `uriMappings` configuration element. See http://wiki.eclipse.org/VIATRA/UserDocumentation/Build#viatra-maven-plugin[this wiki page] for more details.
 
-=== Query Test Framework updates
+== Query Test Framework updates
 
-image:16_query_coverage_report.png[]
+image::releases/16_query_coverage_report.png[]
 
 The query testing capabilities of VIATRA were extended to support a wider range of models and queries. This required new customization options for the test definition DSL, including support for non-default EMF resources as models and using more generic Java types in the query result snapshots. For a more detailed definitions of these features look http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryTestFramework[at the documentation].
 
 When testing your patterns, you can measure their *test coverage* (similar to what EclEmma does to Java code). This means you can see which constraints described in the patterns were used during the evaluation of the queries. The coverage can be reported as an HTML file which immediately shows which patterns need more testing. See http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryTestFramework#Coverage_analysis_and_reporting[the feature's documentation] for details.
 
-=== Documentation updates
+== Documentation updates
 
-image:16_query_explain_message.png[]
+image::releases/16_query_explain_message.png[]
 
 To make it easier to get started with VIATRA, a http://www.eclipse.org/viatra/documentation/tutorial.html[tutorial] is added that presents an example for query and transformation development. In order to make the tutorial available for even more users, this documentation is also included in the platform help. 
 
 A few *error messages* in the query editor related to enumerable and non-enumerable references had been reported to hard to understand. In this version the error messages have been updated, and a quick fix was also added that updates a detailed explanation for the message. In future versions we plan to extend this support to make other error messages more understandable.
 
-=== GEF5-based visualization
+== GEF5-based visualization
 
-image:16_rete_visualizer.png[]
+image::releases/16_rete_visualizer.png[]
 
 The graph-based components, specifically the http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/RETE_Visualizer[Rete visualizer], http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/LocalSearch_DebuggerTooling[Local search debugger] and the http://wiki.eclipse.org/VIATRA/Addon/VIATRA_Viewers[graph visualization support of Viewers], were updated to rely on the latest GEF version 5.0 (available with Eclipse Oxygen). This results in an updated, JavaFX based display and further bugfixes available for these components by default.
 
 Following the dependencies of GEF5 to use these features in the future, JavaFX (available from Java 8) and e(fx)clipse is required to be installed.
 
-=== Complex Event Processing
+== Complex Event Processing
 
 VIATRA CEP has previously supported *event parameters* for atomic events only. From now on, complex events can also be parameterized, with full support for event composition. Furthermore, query events are parameterized as well, the parameters being directly derived from the parameters of the referenced query.
 
@@ -113,7 +112,7 @@ complexEvent addContainer2(cned:EObject, container1:EObject, container2:EObject)
 }
 ----
 
-=== Design Space Exploration
+== Design Space Exploration
 
 VIATRA-DSE got a few incremental updates and bug fixes.
 

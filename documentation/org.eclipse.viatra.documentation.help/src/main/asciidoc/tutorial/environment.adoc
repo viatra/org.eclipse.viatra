@@ -1,6 +1,6 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 [[environment]]
 = Setting up the tutorial
@@ -10,7 +10,7 @@ This tutorial was written for version 1.6 (released on 28th June 2017).
 Starting with version 1.6 VIATRA is available from the Simultaneous Release Train (Oxygen version: http://download.eclipse.org/releases/oxygen); for older releases or for older version use the release p2 repository at http://download.eclipse.org/viatra/updates/release/
 
 .Install window
-image::install.png[Install window]
+image::tutorial/install.png[Install window]
 
 For a faster installation, you may deselect the _Contact all update sites during install\..._ field, but then it might be necessary to install the required _Xtext Runtime_ manually.
 

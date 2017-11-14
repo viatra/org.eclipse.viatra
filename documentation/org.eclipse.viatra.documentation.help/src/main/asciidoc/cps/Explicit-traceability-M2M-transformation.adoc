@@ -1,7 +1,7 @@
 # Explicit Traceability M2M Transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 This page contains the documentation of the incremental model transformation using Xtend and VIATRA Query with the  explicit traceability model used for identifying unsynchronized changes between the CPS and deployment models.
 

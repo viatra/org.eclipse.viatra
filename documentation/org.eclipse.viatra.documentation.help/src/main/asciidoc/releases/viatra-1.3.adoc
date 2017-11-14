@@ -1,11 +1,10 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
-= VIATRA 1.3 
+ifndef::imagesdir[{rootdir}/../images]
+[[viatra-13]]
+= VIATRA 1.3
 
-== New and Noteworthy
-
-=== Neon compatibility
+== Neon compatibility
 
 Previous versions of VIATRA were not 100% compatible the Eclipse Neon release for multiple reasons:
 
@@ -14,7 +13,7 @@ Previous versions of VIATRA were not 100% compatible the Eclipse Neon release fo
 
 However, VIATRA is still compatible with older platform versions up to the Indigo release.
 
-=== Query development environment update
+== Query development environment update
 
 We have introduced a *Transformation Development* perspective to make it easier for VIATRA users to focus on developing queries and transformations. The perspective opens and lays out the most important views and contains view and new wizard shortcuts for all VIATRA related functionality.
 
@@ -25,7 +24,7 @@ You can install the separate feature *VIATRA Query Browser* (Incubation) to try 
 * The Query Registry view shows all registered and workspace queries without the need to load them from the pattern editor directly.
 * Models and queries can be loaded into the Query Results view similarly to the Query Explorer.
 
-=== Query by Example: create queries based on selected model elements
+== Query by Example: create queries based on selected model elements
 
 Query by Example (QBE), a new feature to ease query development, was included in this version. This new tool is primarily aimed at users who want to define queries, but are only familiar with the concrete syntax of a modeling language (i.e. the view presented through a graphical or textual editor), not the intricate details of its abstract syntax (metamodel, EPackgage).
 
@@ -35,7 +34,7 @@ The newly introduced *Query by Example* view allows the user to control the proc
 
 The feature can be installed by selecting the _VIATRA Query-by-Example_ (Incubation) addon from the VIATRA repository. For further details, check the paper from CMSEBA'14 https://www.cs.york.ac.uk/es/cmseba/papers/Bergmann.pdf[Graph Query by Example].
 
-=== Model transformation debugger prototype
+== Model transformation debugger prototype
 
 VIATRA 1.3.0 now features the first prototype of a *Model Transformation Debugger*, which aims at helping the development and debugging of VIATRA-based model transformations. The debugger supports the following main features:
 
@@ -53,7 +52,7 @@ It should be noted, in its current state, the debugger only handles VIATRA trans
 
 A detailed user's guide is part of the main VIATRA documentation and can be accessed via the following link: http://static.incquerylabs.com/projects/viatra/viatra-docs/ViatraDocs.html#_viatra_debugger
 
-=== Other issues
+== Other issues
 
 Version 1.3 also features a large number of under-the-hood changes, the most important is a rewritten _type inferrer_ that works largely the same, but provides more precise error messages. Usually, this change should be invisible for existing users; for possible migration issues see the Migration Guide below.
 
@@ -61,7 +60,7 @@ Another important area of such changes are enhancements for local search. A numb
 
 In total more, than 70 issues were fixed in this release, see https://projects.eclipse.org/projects/modeling.viatra/releases/1.3.0/bugs for details.
 
-== Migrating to VIATRA 1.3 =
+== Migrating to VIATRA 1.3
 
 === Query specification registry
 

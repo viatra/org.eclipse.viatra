@@ -1,7 +1,7 @@
 = Batch Transformations
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}
+ifndef::imagesdir[{rootdir}/../images]
 
 This exercise helps the audience to create a simple batch transformation using the VIATRA Transformation API.
 The transformation will transform the hosts and applications in a CPS model to a deployment model.
@@ -49,17 +49,17 @@ pattern cps2depTrace(
 ** Create new _Model Transformation_ with the wizard
 +
 .Model Transformation Wizard - Create new transformation
-image::transformation_wizard.png[]
+image::tutorial/transformation_wizard.png[]
 
 ** Setup the name of the transformation and click Next
 +
 .Model Transformation Wizard - Name of the new batch transformation
-image::batch_transformation_wizard_name.png[]
+image::tutorial/batch_transformation_wizard_name.png[]
 
 ** Setup the type of the transformation to _BatchTransformation_ and click Finish
 +
 .Model Transformation Wizard - Type of the new transformation
-image::batch_transformation_wizard_type.png[]
+image::tutorial/batch_transformation_wizard_type.png[]
 
 In the created file we have to register a few extension methods, more specifically for our used queries (```CpsXformM2m```, the same name the VQL file uses) and the EMF EPackages we want to refer (here the deployment and traceability packages). A few additional extension methods are already registered, e.g. transformation rule builder and model manipulation API.
 
@@ -264,36 +264,36 @@ public class TransformHandler extends AbstractHandler implements IHandler {
 * Copy a `.cyberphysicalsystem` resource in it if you already have one, or create a new _CaberPhysicalSystem Model_
 +
 .Project with a .cyberphysicalsystem resource
-image::viatraIncr_example1.png[]
+image::tutorial/viatraIncr_example1.png[]
 
 * Create a Deployment model
 ** Root element shall be _Deployment_
 +
 .New Deployment Model
-image::viatraIncr_example2.png[]
+image::tutorial/viatraIncr_example2.png[]
 
 * Create a Traceability model
 ** Root element shall be _CPS To Deployment_
 +
 .New Traceability Model
-image::viatraIncr_example3.png[]
+image::tutorial/viatraIncr_example3.png[]
 
 * In the Traceability editor, load both CPS and Deployment models with _Load Resources\..._ in the context menu
 +
 .Load necessary resources into the Tracebility Model
-image::viatraIncr_example4.png[]
+image::tutorial/viatraIncr_example4.png[]
 
 * Set CPS and Deployment references of traceability model in the properties view
 +
 .Set the references of the Traceability Model
-image::viatraIncr_example5.png[]
+image::tutorial/viatraIncr_example5.png[]
 
 * Create a new _HostType_, _HostInstance_, _ApplicationType_ and _ApplicationInstance_ in the Deployment model
 
 * Execute transformation using the created command (on the context menu of the Traceability model root)
 +
 .Transformation command in the context menu
-image::viatrabatch.png[]
+image::tutorial/viatrabatch.png[]
 
 == References
 

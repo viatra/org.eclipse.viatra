@@ -1,6 +1,22 @@
 = The VIATRA Query Runtime
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
 
-This document provides an overview of the Java API of VIATRA Query, describing the features that will help you to integrate it into any Java application. This page is a detailed technical documentation, for basic usage information consult the link:../tutorial/tutorial.html#_using_queries_programmatically[the getting started tutorial] instead.
+:imagesdir: {rootdir}/images
+:toclevels: 2
+:toc:
+:toc-placement: macro
+:numbered:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
+
+
+This document provides an overview of the Java API of VIATRA Query, describing the features that will help you to integrate it into any Java application. This page is a detailed technical documentation, for basic usage information consult the link:tutorial.html#_using_queries_programmatically[the getting started tutorial] instead.
 
 The most typical way of using the VIATRA Query API is to make use of the generated code that is found in the "src-gen" folder of your VIATRA Query project. This generated code provides easy and type-safe access to most of VIATRA Query's features from Java code.
 

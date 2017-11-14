@@ -1,19 +1,19 @@
 = Using Queries Programmatically
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ../]
-:imagesdir: {rootdir}/images
+ifndef::rootdir[:rootdir: ./]
+ifndef::imagesdir[{rootdir}/../images]
 
 VIATRA Query provides an API to execute queries on various models, including support for listening to match set changes. However, as the incremental evaluation relies on indexes, the API also covers lifecycle management for the runtime. The central element of the API is the Query Engine that is responsible for loading query specifications, setting up indexes and providing match results. This approach is supported by code generators that create a runtime representation for graph patterns and provide a type-safe API to access VIATRA code.
 
 .Overview of the runtime components of VIATRA Query
-image::query_runtime.png[]
+image::tutorial/query_runtime.png[]
 
 To start working with the VIATRA Query API, we have to provide (1) a Scope representing the model and a (2) set of query specifications. The easiest way to initialize a scope, is to simply wrap an EMF ResourceSet inside a new EMFScope instace. For query specifications, the generated matcher classes can be used as an example, see as follows.
 
 In general, the generated code in a VIATRA Query project consists of a (1) query specification classes that represents the original VQL specifications for the runtime API, (2) a Match and Matcher class for each pattern definition (recommended for general usage) together with (3) a match processor class to execute some actions on pattern matches in a Java stream-like API. Finally, (4) a group class for each file that can be used to initialize all queries together.
 
 .Structure of the query generated code
-image::query_generated_code.png[]
+image::tutorial/query_generated_code.png[]
 
 == Initialize a headless Application
 
@@ -53,7 +53,7 @@ public class QueryRunner implements IApplication {
 The created application can be started as an Eclipse application by specifically selecting the previously created extension.
 
 .Running the Query Runner application
-image::run_headless_application.png[]
+image::tutorial/run_headless_application.png[]
 
 == Initializing a Query Engine
 

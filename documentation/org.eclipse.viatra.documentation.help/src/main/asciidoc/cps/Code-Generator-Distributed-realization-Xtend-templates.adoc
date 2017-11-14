@@ -1,14 +1,14 @@
 = Code Generator (Distributed realization, Xtend templates)
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
+ifndef::imagesdir[{rootdir}/../images]
 
 The `org.eclipse.viatra.query.examples.cps.m2t.distributed.generator` project implements a basic model-to-text transformation. It is a basic template based generator written in _Xtend_ .
 
 == Deployment realization
 The generated Java code realizes a "_distributed_" `Deployment` model where `Hosts` are the base elements of the distribution. Each host is a separated entity which can be run on `HostRunner` (threads). Hosts can communicate with each other via the `CommunicationNetwork` shared object.
 
-image::codegenerator.png[Code Generator]
+image::cps/codegenerator.png[Code Generator]
 
 `Hosts` and `Applications` are data objects with states. `HostRunner` is a simple engine which triggers its hosts to fire available transitions on every applications. The communication is asynchronous and realized with queues.
 

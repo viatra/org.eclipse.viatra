@@ -1,0 +1,24 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
+
+:imagesdir: {rootdir}/images
+:toclevels: 1
+:toc:
+:toc-placement: macro
+:icons: font
+:experimental:
+:sectlinks:
+
+= New and Noteworthy
+
+This page includes detailed information about the various releases of VIATRA, including major new features and notes of migration between various versions.
+
+toc::[]
+
+include::releases/viatra-1.6.adoc[leveloffset=+1]
+include::releases/viatra-1.5.adoc[leveloffset=+1]
+include::releases/viatra-1.4.adoc[leveloffset=+1]
+include::releases/viatra-1.3.adoc[leveloffset=+1]
+include::releases/viatra-1.2.adoc[leveloffset=+1]

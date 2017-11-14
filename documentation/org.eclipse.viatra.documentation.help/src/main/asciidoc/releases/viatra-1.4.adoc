@@ -1,23 +1,22 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
-:imagesdir: {rootdir}/images
-= VIATRA 1.4 
+ifndef::imagesdir[{rootdir}/../images]
+[[viatra-14]]
+= VIATRA 1.4
 
-== New and Noteworthy
-
-=== Local search support during query evaluation
+== Local search support during query evaluation
 
 In version 1.4 the previously introduced local search support was greatly enhanced: several bugs and performance issues were fixed, while better integration is provided with the rest of VIATRA Query. In version 1.4 the planner and runtime is considered ready for production use, while future enhancements are still planned for future versions.
 
 For this version, we already have performance benchmark that shows that local search based pattern matching can provide comparable performance during model transformation to Rete while requiring much less memory.
 
-image:14_benchmark_ls_time.png[]
+image::releases/14_benchmark_ls_time.png[]
 
 For more detailed documentation see http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/API/LocalSearch
 
-=== Query language improvements
+== Query language improvements
 
-==== Java type references
+=== Java type references
 
 The query language now allows _Java type constraints_, both as parameter types and as variable type constraints in pattern bodies. The recommended use case is that query parameters that are a result of (a) an `eval()` or (b) aggregation expression should be annotated with their Java types. Java type names can be referenced by prefixing them with the keyword `java`, and of course namespace imports are available. So, for example, a query parameter may be typed as follows: `no: java Integer`.  Usage basics are explained in the https://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryLanguage#Pattern_Structure[query language syntax guide].
 
@@ -29,7 +28,7 @@ pattern cpus(hi : HostInstance, no : java Integer) {
 }
 ----
 
-==== Aggregators
+=== Aggregators
 
 In addition to the previously supported `count` keyword, there are now several new *aggregators* available (including `sum`, `min` and `max`, as well as an API for user-defined aggregators) to compute an aggregated value from matches of a called pattern. Usage basics are explained in the https://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryLanguage#Advanced_Pattern_Constraints[query language syntax guide].
 
@@ -41,7 +40,7 @@ pattern sumCPUs(s : java Integer) {
 }
 ----
 
-==== Parameter direction support
+=== Parameter direction support
 
 Parameters can optionally be marked as incoming (`in`), outgoing (`out`). Incoming parameters *must* be bound when the pattern matcher initializes, while outgoing parameters *must not*. For backwards compatibility, unmarked parameters are neither incoming nor outgoing: they might be either bound or unbound when called. In version 1.4, parameter directions are ignored by the Rete engine, but used by the local search engine to decide the set of plans to create during matcher preparation.
 
@@ -53,7 +52,7 @@ pattern cpus(in hi : HostInstance, out no : java Integer) {
 }
 ----
 
-==== Search engine declaration
+=== Search engine declaration
 Patterns can optionally be declared either local search-only (`search`) or Rete-only (`incremental`), providing hints to the runtime what pattern matcher should be initialized for this pattern. If undefined, the default hints of the engine is used (by default, Rete); and can be redefined using the advanced query engine API.
 
 It is important to note that the Query Engine may override these declarations, e.g. if they cannot be executed.
@@ -70,7 +69,7 @@ incremental pattern sumCPUs(s : java Integer) {
 }
 ----
 
-=== Query development environment improvements
+== Query development environment improvements
 
 We have graduated the completely new query development views that replace the Query Explorer. These views were introduced as part of VIATRA 1.3 (http://viatra.net/news/2016/7/viatra-13-released[blog post with video]) together with the Transformation Development perspective. For this release, we aimed to include all important features in the new views that were only available through the Query Explorer before (http://bugs.eclipse.org/499995[bug 499995] lists the relevant issues). If you already have the perspective opened, we recommend resetting it (right click on the perspective icon and select "Reset") as we have moved the views around to make more sense.
 
@@ -81,17 +80,17 @@ The most important new features are as follows:
 * Show location works for queries, matchers, matches and parameter values
 * Improved labeling in the tree (reuse domain specific icons for EMF model elements)
 * Match set filtering is possible through the Properties view
-image:14_query-ui-matcher_filter.png[]
+image::releases/14_query-ui-matcher_filter.png[]
 * Drag-and-drop and double click for loading from Query Registry into Query Results
 * HiDPI icons for high-resolution, scaled displays.
 * Load existing managed query engines into the Query Results view
-image:14_query-ui-open_managed_engine.png[]
+image::releases/14_query-ui-open_managed_engine.png[]
 * Tree view for engine details including the model, engine options, base index options
-image:14_managed_engine_selection.png[]
+image::releases/14_managed_engine_selection.png[]
 * Remove individual matchers from Query Results
 
 
-=== Base indexer enhancements
+== Base indexer enhancements
 
 In version 1.4, the http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/API/BaseIndexer[Base Indexer] was enhanced in a few ways:
 
@@ -100,7 +99,7 @@ In version 1.4, the http://wiki.eclipse.org/VIATRA/Query/UserDocumentation/API/B
 
 These enhancements are mostly useful in the query runtime (and were motivated by the requirements of local search), but are available for external uses as well.
 
-=== Design Space Explorer enhancements
+== Design Space Explorer enhancements
 
 * Method for setting the logging level: `OFF`, `WARN`, `BASIC`, `VERBOSE_STRATEGY` and `VERBOSE_FULL`
 * If the exploration is started asynchronously, it can be stopped by these methods: stopExploration(), stopExplorationAsync(), waitForTerminaition().
@@ -109,13 +108,13 @@ These enhancements are mostly useful in the query runtime (and were motivated by
 * Minor performance enhancements.
 * Updated documentation on the wiki and also in the code: https://wiki.eclipse.org/VIATRA/DSE/UserGuide/API
 
-=== Other issues
+== Other issues
 
 Version 1.4 also features a large number of under-the-hood changes, the most important is an updated hint system to enable fine-grained parametrization of the query engines. Usually, this change should be invisible for existing users; for possible migration issues see the Migration Guide below.
 
 In total more, than 70 issues were fixed in this release, see https://projects.eclipse.org/projects/modeling.viatra/releases/1.4.0/bugs for details.
 
-== Migrating to VIATRA 1.4 = 
+== Migrating to VIATRA 1.4
 
 === Language updates
 
