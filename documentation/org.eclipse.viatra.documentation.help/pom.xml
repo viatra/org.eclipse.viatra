@@ -165,6 +165,25 @@
                             </attributes>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-addons</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>addons.adoc</sourceDocumentName>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>highlight.js</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>true</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

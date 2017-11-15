@@ -61,7 +61,17 @@
        </topic>
        <topic href="html/tooling/preferences.html" label="Preferences">
        </topic>
-       <topic href="html/extra/VIATRA-visualization.html" label="Displaying Query Results in the User Interface">
+       <topic href="html/addons.html" label="Addons and Integrations">
+           <topic href="html/addons.html#viatra-validation" label="VIATRA Validation Framework">
+           </topic>
+           <topic href="html/addons.html#viatra-qbf" label="Query Based Features">
+           </topic>
+           <topic href="html/addons.html#surrogate-queries" label="Surrogate Queries">
+           </topic>
+           <topic href="html/addons.html#databinding" label="JFace Data Binding Support">
+           </topic>
+           <topic href="html/addons.html#viewers" label="VIATRA Viewers">
+           </topic>
        </topic>
    </topic>
    <topic href="html/releases.html" label="Release Information">

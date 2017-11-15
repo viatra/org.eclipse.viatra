@@ -1,0 +1,153 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-validation]]
+= VIATRA Validation Framework
+
+VIATRA provides facilities to create validation rules based on the pattern language of the framework. These rules can be evaluated on various EMF instance models and upon violations of constraints, and the processed, e.g. markers can automatically be created in the Eclipse Problems View.
+
+== Main concepts
+
+=== Constraint specification
+
+A constraint specification represents a well-formedness or structural validation rule that is specified with concepts from metamodels and can be evaluated over instance models.
+
+E.g. a constraint specification is _"A terminated data port cannot be the end of a port connection"_, where _"terminated"_, _"data port"_, _"port connection"_ and _"connection end"_ are concepts in the metamodel.
+
+The constraint specification contains:
+
+* the converting mechanism for creating the location information for a violation
+* the format message that is used to create the message of a violation
+* the severity level (e.g. error, warning)
+
+When constraint specifications are represented by VIATRA patterns, the corresponding query specification is stored.
+
+=== Constraint
+
+We differentiate between *Constraint Specification* that represents the validation rule and *Constraint* that represents an instance of a constraint specification on a validation engine.
+
+Each constraint stores its specification and refers to a validation engine. It provides capabilities for:
+
+* listing the set of violations
+* registering listeners for notifications on the changes in the violation set and other events related to the life cycle of the constraint.
+
+For constraints specified by VIATRA patterns, the corresponding matcher is stored.
+
+=== Violation
+
+A violation is set of model elements in an instance model that satisfy the specification of a constraint.
+
+E.g. for the above constraint, a violation is a port P which is terminated and a port connection PC with "PC.end = P".
+
+Each violation has:
+
+* a corresponding constraint
+* a location (one or more model elements that are relevant for the violation (e.g. the port and the port connection in the example)
+* a formatted message.
+
+The violation should provide capabilities for registering listeners for notifications on life cycle events, e.g. a change in the message.
+
+For violation of constraints based on VIATRA patterns, the match is also stored.
+
+=== Validation Engine
+
+A validation engine is responsible for managing the constraints existing in the scope of a VIATRA Query Engine (e.g. resource set) for a set of constraint specifications added to the validation engine.
+
+The validation engine provides capabilities for
+
+* adding constraint specifications
+* listing the set of constraints
+* registering listeners for notifications on the changes in the constraint set and other events related to the life cycle of the validation engine.
+
+=== Validation Manager ===
+
+The validation manager is singleton that serves as a single entry point for using the validation that provides capabilities for
+
+* accessing the constraint specifications registered through extensions (see VIATRA `@Constraint` annotation)
+* initializing a new validation engine
+
+== Creating constraints from graph patterns
+
+The validation framework provides a `@Constraint` annotation that is used to provide the extra information required to create constraints from the pattern definition.
+
+.The parameters of the constraint annotation
+key:: (list of parameter names as strings) The keys of a constraint represent the parameters that together identify a given violation. Multiple matches of the same constraint pattern with the same parameter values for keys will be considered as a single violation. Non-key parameters can be accessed as tuples by the API. 
+message:: (format string): The message to display when the constraint violation is found. The message may refer the key variables between $ symbols, or their EMF features, such as in $keyParam1.name$.
+severity:: (string) "info", "warning" or "error"
+targetEditorId:: (string) An Eclipse editor ID where the validation framework should register itself to the context menu. Use * as a wildcard if the constraint should be used always when validation is started.
+symmetric:: (possibly multiple list of parameter names as strings) Parameters listed as symmetric are considered to correspond to the same violation for matches where the values are in a different permutation. Symmetric parameters can be either keys or non-keys, mixing is not allowed.
+
+.Example annotation
+[source,vql]
+----
+@Constraint(
+  key = {key1, sk1, sk2},
+  severity = "error",
+  symmetric = {sk1, sk2},
+  symmetric = {sp1, sp2},
+  message = "Some message $key1$ and $param$ and $sp2$"
+)
+pattern myPattern(key1, sk1, sk2, sp1, sp2, param) {...}
+----
+
+== Validation API
+
+Once you specified your constraints with patterns and the `@Constraint` annotation, you can either use the marker based validation as before, or use the API to process violations yourself:
+
+[source,java]
+----
+ResourceSet myModel; // already initialized
+Logger myLogger; // Log4J logger, use Logger.getLogger(this.class) if you need one
+IConstraintSpecification constraintSpec = new MyPatternNameConstraint0(); // generated for pattern called MyPatternName
+
+ValidationEngine validationEngine = new ValidationEngine(notifier, logger);
+IConstraint constraint = validationEngine.addConstraintSpecification(constraintSpecification);
+validationEngine.initialize();
+
+Collection<IViolation> violations = constraint.listViolations();
+for(IViolation violation : violations) {
+  System.out.println(violation.getMessage());
+  Map<String, Object> keyMap = violation.getKeyObjects()
+  for(String key : keyMap.keySet()){
+    System.out.println("Key " + key + " is " + keyMap.get(key));
+  }
+}
+
+// you can filter violations
+Collection<IViolation> filteredViolations = constraint.listViolations(new IViolationFilter(){
+  public boolean apply(IViolation violation){
+    return violation.getMessage().contains("MyFilterWord");
+  }
+});
+
+// you can add listeners on IConstraint to get notified on violation list changes
+constraint.addListener(new ConstraintListener(){
+  public void violationAppeared(IViolation violation){
+    System.out.println("Appeared: " + violation.getMessage());
+  }
+  public void violationDisappeared(IViolation violation){
+    System.out.println("Disappeared: " + violation.getMessage());
+  }
+});
+
+// or on IViolations to get notified of message and parameter changes
+violations.iterator().next().addListener(new ViolationListener(){
+  public void violationEntryAppeared(IViolation violation, IEntry entry){
+    System.out.println("Entry appeared: " + entry);
+  }
+
+  public void violationMessageUpdated(IViolation violation){
+    System.out.println("Message updated: " + violation.getMessage());
+  }
+
+  public void violationEntryDisappeared(IViolation violation, IEntry entry){
+    System.out.println("Entry disappeared: " + entry);
+  }
+});
+
+// you can also remove constraint specifications from an engine
+validationEngine.removeConstraintSpecification(constraintSpecification);
+
+// and dispose it when no longer needed
+validationEngine.dispose();
+----

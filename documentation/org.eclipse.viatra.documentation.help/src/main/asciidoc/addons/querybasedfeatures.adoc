@@ -1,0 +1,303 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+
+= Derived feature support
+
+Derived features in EMF models represent information (attribute values, references) computed from the rest of the model, such as the number of elements in a given collection or the set of elements satisfying some additional conditions. Such derived features can ease the handling of models significantly, as they appear in the same way as regular features. However, in order to achieve complete transparency for derived features, the developer must ensure that proper change notifications are sent when model modifications cause changes in the value of the derived feature as well. Finally, since the value of the derived feature might be retrieved often, complete recalculation of the value may impact application performance. Therefore, it is better to keep a cached version of the value and update it incrementally based on changes in the model.
+
+Usually, developers who use derived features in EMF have to manually solve each of these challenges for each derived feature they introduce into their model. Furthermore, although the derived features almost always represent the result of a model query (including type constraints, navigation, aggregation), they are implemented as imperative Java code.
+
+In order to help developers in using derived features, VIATRA supports the definition of model queries that provide the results for the derived feature value calculation and includes out-of-the-box change notification and incremental maintenance of results. Additionally, the automatic generation of the Ecore annotations or glue code between the EMF model code and VIATRA offers easy integration into any existing EMF application.
+
+VIATRA supports the definition of efficient, incrementally maintained, well-behaving derived features in EMF by using advanced model queries and incremental evaluation for calculating the value of derived features and providing automated code generation for integrating into existing applications.
+
+.Main scope of query-based features
+* Integrate model query results into EMF applications as structural features
+* Replace low performance derived feature implementations with incrementally evaluated model queries
+* Provide a flexible interlinking method for fragmented models
+* Support declarative definition of high-performance computed features with automatic code generation and validation
+
+== Well-behaving structural features
+
+The incremental approach of the VIATRA queries relies on change notifications from every object and every feature in the model that is used in the query definitions. Therefore, a regular volatile feature that has no field, therefore there it does not store the current value of the feature and usually does not send proper change notifications (e.g. SET oldValue to newValue). Such features are ignored by VIATRA, unless there is an explicit declaration, that the feature implementation sends proper change notifications at all times. These are called well-behaving structural features.
+
+If your application uses volatile (and often derived) features, you provide proper notifications for them and would like to include them in query definitions, you can explicitly tell VIATRA that the feature is well-behaving. There are two ways to do this:
+
+1. extend the `org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features` extension point as described link:https://github.com/FTSRG/publication-pages/wiki/Using-queries-for-derived-features-(ECMFA12)[here]
+2. provide a surrogate query, see later
+3. register your feature directly into the `org.eclipse.viatra.query.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry` using the various `registerX` methods. *Warning*: you must call this method before executing any queries (i.e. before the first `getMatcher()` or `getEngine()` call), since VIATRA checks the registry when it traverses the model.
+
+[[viatra-qbf]]
+== Query-based Features
+
+For demonstration, we will use the BPM metamodel from the link:https://github.com/IncQueryLabs/org.eclipse.viatra/tree/master/examples/bpm[examples repository].
+
+Other examples include the Simulink model in link:https://github.com/viatra/massif/[Massif] uses query based features for supporting library blocks, model references, port filtering and many more.
+
+=== User documentation
+
+VIATRA only provides the back-end for derived features, the developer must define the feature itself in the metamodel first. Once that is complete, the developer creates the query in a regular VIATRA query project in a query definition file and adds a specific annotation with the correct parameters to have the derived feature implementation generated. These steps are detailed in the following:
+
+==== Definition of the derived feature
+. In the Ecore model (.ecore file), create the desired EAttribute or EReference in the selected EClass and set the name, type and multiplicity information correctly.
+. Use the following configuration for the other attributes of the created EStructuralFeature:
+ * derived = true (to indicate that the value of the feature is computed from the model)
+ * changeable = false (to remove setter methods)
+ * transient = true (to avoid persisting the value into file)
+ * volatile = true (to remove the field declaration in the object)
+. In the Generator model (.genmodel), right-click on the top-level element and select Reload, click Next, Load, and Finish to update the Generator model with the changes done in the Ecore model.
+. Right-click on the top-level element and select Generate Model Code to ensure that the getters are properly generated into the EMF model code. You can regenerate the Edit and Editor code as well, though those are not necessary here.
+
+==== Definition of the model query ===
+* Create a VIATRA query project and query definition (.vql) file as described in the cheat sheet or this tutorial.
+* Make sure that you imported your metamodel into the query definition. Create the VIATRA generator model, if necessary (.vqlgen file).
+* Make sure that the project containing the Ecore model or generated code is in the same workspace as the VIATRA query project.
+* Create the query corresponding to your derived feature. For example, the tasks corresponding by identifiers to a given job feature would look like this: 
+[source,vql]
+----
+package org.eclipse.viatra.examples.bpm.queries.system
+
+import "http://process/1.0"
+import "http://system/1.0"
+
+@QueryBasedFeature(feature = "tasks")
+pattern JobTaskCorrespondence(Job : Job, Task : Task) = {
+ Job.taskIds(Job,TaskId);
+ Task.id(Task,TaskId);
+}
+----
+* When you save, the VIATRA query builder runs automatically and places the setting delegate annotations in the Ecore model.
+* If new query-based feature queries were introduced or the fully qualified name of the pattern for a given feature has changed, the EMF Generator must be invoked. This is needed since the generator uses the setting delegate annotations to create the model code.
+
+Note that the first parameter of the pattern is the source of the derived feature and the second is the target. Although not mandatory, is is good practice to use the `(This : EClass, Target)` format to ease understanding. The @QueryBasedFeature annotation indicates to the code generator that it should create the setting delegate annotations in the Ecore model.
+
+Saving the query definition initiates the code generation. After it completes, you can open the Ecore model to ensure that the new annotations were correctly created. Note that a well-behaving derived feature extension is also generated into the plugin.xml of the VIATRA Query project to indicate that the given derived feature correctly sends change notifications if the project is loaded.
+
+Once the annotations are generated and the EMF Generator is invoked, you can use the derived features by including the VIATRA Query project into your runtime together with the model project.
+
+==== Annotation parameters
+
+The @QueryBasedFeature annotation uses defaults for each possible parameters, which allows developers to avoid using any parameters if the query is correctly written.
+
+In short, parameters are not needed, if the following conditions are satisfied:
+
+* The name of the pattern is the same as the name of the derived feature (comparison uses String.equals())
+* The first parameter is the defining EClass and its type is correctly given (e.g. This : Course)
+* The second parameter is the target of the derived feature
+* The derived feature value is a single EObject or a collection of EObjects
+
+If the derived feature and its query does not satisfy the above conditions, the following parameters can be used in the annotation:
+
+* `feature ="featureName"` (default: pattern name) - indicates which derived feature is defined by the pattern
+* `source ="Src"` (default: first parameter) - indicates which query parameter (using its name) is the source EObject, the inferred type of this parameter indicates which EClass generated code has to be modified
+* `target ="Trg"` (default: second parameter) - indicates which query parameter (using its name) is the target of the derived feature
+* `kind ="single/many/counter/sum/iteration"` (default: feature.isMany?many:single) - indicates what kind of calculation should be done on the query results to map them to derived feature values
+
+==== Common issues
+
+===== Code generation fails for derived feature query
+
+Ensure that the .ecore file is available and writeable in the same workspace as the VIATRA query project with the query definitions.
+
+===== Multiple results for a query used in a single (upper bound = 1) feature
+
+If you define a query for a single feature that returns multiple results for a given source model element, the value of the derived feature will in most cases be the value from the last match that appeared. However, it is possible to change the values in a way that the feature will have no value, even though it might have exactly one. Therefore, it is important to define the queries for the feature in a way that only one result is possible. You can either make assumptions on your models and use other ways to ensure that there is only one match, or you can explicitly declare in the pattern, that it should only match once for a given source element. Additionally, you can use the Validation framework of VIATRA to create feedback for the user when the query would have multiple results indicating that the model is invalid.
+
+The following is an example for a validated, ensured single feature:
+
+[source,vql]
+----
+@QueryBasedFeature
+pattern singleFeature(This : SourceType, Target : TargetType){
+ find internalQuery(This, Target);
+ 1 == count find internalQuery(This, Target);
+}
+
+private pattern internalQuery(This : SourceType, Target : TargetType){
+ // actual query definition
+}
+
+@Constraint(location = "This", severity = "error",
+   message="Multiple values for $This.name$.singleFeature!")
+pattern singleFeatureInvalid(This : SourceType){
+ 1 < count find internalQuery(This, _Target);
+}
+----
+
+
+==== Overview of the implementation
+
+To support query-backed features captured as derived features, the outputs of the VIATRA query engine need to be integrated into the EMF model access layer at two points: (1) query results are provided in the getter functions of derived features, and (2) query result deltas are processed to generate EMF Notification objects that are passed through the standard EMF API so that application code can process them transparently.
+
+image::addons/qbf-overview.png[,600]
+
+The application accesses both the model and the query results through the standard EMF model access layer -- hence, no modification of application source code is necessary. In the background, our novel derived feature handlers are attached to the EMF model plugin that integrate the generated query components (pattern matchers).
+When an EMF application intends to read a soft link (B1), the current value is provided by the corresponding handler (B2) by simply retrieving the value from the cache of the related query. When the application modifies the EMF model (A1), this change is propagated to the generated query components of VIATRA along notifications (A2), which may update the delta monitors of the handlers (A3). Changes of derived features may in turn trigger further changes in the results sets of other derived features (A4).
+
+==== Using setting delegates
+
+The Query-based features relies on setting delegates instead of overwriting the generated code. Setting delegates are the recommended way of integrating derived feature computation into EMF models. This means that only the Ecore file is modified when the pattern definitions are changed, however that the code generation from the genmodel will have to be invoked as well.
+
+To set up setting delegates, the generator automatically puts annotations on the EPackage and EStructuralFeatures
+
+* on the EPackage, to declare which setting delegates to use:
+[source,xml]
+----
+<eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+  <details key="settingDelegates" value="org.eclipse.viatra.query.querybasedfeature"/>
+</eAnnotations>
+----
+* on the EStructuralFeature which is a query-based feature:
+[source,xml]
+----
+<eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
+  <details key="patternFQN" value="querypackage.patternName"/>
+</eAnnotations>
+----
+
+The setting delegate factory is registered by the query-based feature runtime plug-in and EMF will use the factory to create the setting delegate for query-based derived features.
+
+
+[[surrogate-queries]]
+== Surrogate queries for derived features
+
+Query-based features capture the definition of well-behaving derived features of Ecore models by queries, and allow the use of such derived features in the body of other queries. But when an Ecore model is not allowed to be modified, you could not use derived features in query bodies in the past. EMF-IncQuery 1.0.0 introduced *surrogate queries* for derived features, where a derived feature used in a query is replaced by a subpattern call during query execution time (runtime).
+
+=== Usage
+
+[source,vql]
+----
+@Surrogate
+pattern superClass(self : Classifier, super : Classifer) {
+  Classifier.generalization(self, generalization);
+  Generalization.general(generalization, classifier);
+}
+----
+
+In order to create a surrogate query, simply add a @Surrogate annotation for a pattern and the generator will take care of defining the correct extension points. When the query plug-in is included in the host, the VIATRA Query runtime will automatically replace path expressions including the feature with a subpattern call. In addition, if the plug-in is available in the host or target platform, the warning for a derived feature usage will be different (instead of warning about not representable feature, it will include the fully qualified name of the surrogate query). So the following will work correctly during runtime:
+
+[source,vql]
+----
+pattern superClassWithName(self : Classifier) {
+  Classifier.superClass(self, superClass);
+  Classifier.name(superClass, "mySuperClass");
+}
+----
+
+==== Important information on developing surrogate queries
+
+Surrogate queries defined in workspace projects are not yet visible to the Query Explorer, so loading queries that use those derived features will result in incorrect match results. If you want to try such queries in the Query Explorer, do the following:
+
+* If the surrogate query definition and the pattern using it are in different projects, simply start a runtime Eclipse where at least the defining query is included.
+* If the surrogate query definition and the pattern using it are in the same project, simply use a subpattern call (find) instead.
+
+=== Example
+
+The UML metamodel used in EMF-UML contains a large number of derived features (see <<uml-integration>> for details), most of which are not well-behaving, which significantly complicated the definition of patterns over UML models in the past.
+
+Consider the following pattern:
+
+[source,vql]
+----
+pattern superClassWithQualifiedName(self : Classifier) {
+  Classifier.superClass(self, superClass);
+  Classifier.qualifiedName(superClass, "my::favorite::package::SuperSuperClass");
+}
+----
+
+Both Classifer.superClass and NamedElement.qualifiedName are derived features, therefore
+
+* the pattern editor will display a warning about these features are not amenable to incremental evaluation;
+* the runtime will index the value of these features and no matches will be returned.
+
+Since the value of these feature can be computed from the rest of the model, users often manually defined helper patterns, for example:
+
+[source,vql]
+----
+pattern superClass(self : Classifier, super : Classifer) {
+  Classifier.generalization(self, generalization);
+  Generalization.general(generalization, classifier);
+}
+
+pattern superClassWithQualifiedName(self : Classifier) {
+  find superClass(self, superClass);
+  Classifier.qualifiedName(superClass, "my::favorite::package::SuperSuperClass");
+}
+----
+
+However, this approach has several drawbacks:
+
+* Reinventing the wheel: derived features are redefined over and over again.
+* Error-prone definition: you can easily overlook some detail in the computation and get unexpected results.
+* Disallowed use in patterns: the derived feature cannot be used directly in other pattern bodies, you need to explicitly call the helper pattern (by the ''find'' construct).
+
+Surrogate queries are introduced to help overcome these issues.
+
+=== Technical details
+
+Surrogate query support includes the `@Surrogate` annotation in the pattern editor, the corresponding code generator fragment, the runtime loading and usage of surrogate query registry, the runtime replacement of derived feature usage in queries. However, when running outside of Eclipse, some additional setup is required.
+
+==== Definition of surrogate queries
+
+The `@Surrogate` annotation has a single, optional parameter `feature` which specifies the name of the EStructuralFeature that the surrogate query replaces. If omitted, the name of the pattern must match the name of the feature. The first parameter of the pattern is always the source, and the second parameter is the target.
+
+Let us assume you want to surrogate a derived feature `someExternalModelFeature` in EClass `ExternalClass` with type `OtherExternalClass`.
+
+You can choose between:
+[source,vql]
+----
+@Surrogate(feature = "someExternalModelFeature")
+pattern mySurrogatePattern(this : ExternalClass, target : OtherExternalClass) {
+  [...] // pattern body
+}
+----
+
+and:
+
+[source,vql]
+----
+@Surrogate
+pattern someExternalModelFeature(this : ExternalClass, target : OtherExternalClass) {
+  [...] // pattern body
+}
+----
+
+The annotation is defined by the _querybasedfeatures.runtime_ plug-in together with a validator (also provided by the same plug-in), which checks several things:
+
+* the pattern has exactly two parameters
+* the feature specified by the pattern name or the parameter of the annotation exists in the source EClass
+* the target type of the feature is compatible with the second parameter of the pattern
+* there is only one Surrogate annotation for a pattern or each of them define different features
+
+The code generator fragment is defined by the _querybasedfeatures.tooling_ plug-in and it simply creates an extension for the surrogate query extension point in the plugin.xml:
+
+[source,xml]
+----
+<extension id="extension.surrogate.mySurrogates.mySurrogatePattern" point="org.eclipse.viatra.query.patternlanguage.emf.surrogatequeryemf">
+  <surrogate-query-emf class-name="ExternalClass" feature-name="someExternalModelFeature" package-nsUri="external.ecore.uri"
+    surrogate-query="org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory:mySurrogates.MySurrogatePatternQuerySpecification"/>
+</extension>
+----
+
+==== Runtime behavior
+
+During runtime, the surrogate queries are loaded into a surrogate query registry (defined in the ''runtime.matchers'' plug-in) by reading the extension registry of Eclipse.
+When a given pattern is loaded into an engine, path expressions including derived features with defined surrogate queries are replaced in the PSystem representation.
+
+This means that the surrogate queries are only used if they are available and registered. Additionally, for query backends that can handle non well-behaving derived features (e.g. the local search backend), this rewriting is skipped.
+
+==== Usage outside of Eclipse
+
+Since the extension registry is not available when running outside of Eclipse, users have to manually register surrogate queries before they can be used for query evaluation.
+
+In addition to basic infrastructure, the following setup is required for each surrogate query:
+
+[source,java]
+----
+SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(
+  new EStructuralFeatureInstancesKey(ExternalPackage.Literals.EXTERNAL_CLASS_SOME_EXTERNAL_MODEL_FEATURE),
+  MySurrogatePatternQuerySpecification.instance.getInternalQueryRepresentation());
+----
+
+See link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/integration/plugins/org.eclipse.viatra.integration.uml/src/org/eclipse/viatra/integration/uml/ViatraQueryUMLStandaloneSetup.java[the VIATRA UML standalone setup] for an example.

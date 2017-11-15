@@ -1,0 +1,338 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+
+[[uml-integration]]
+= UML support for VIATRA
+
+In order to work seamlessly with UML editors, VIATRA provides two relevant integration features: (1) The GMF integration feature is required for the Query Result view to work with GMF-based editors such as Papyrus; and (2) a set of surrogate queries for the UML metamodel. Both of these features are available from the link:https://eclipse.org/viatra/downloads.html[VIATRA update sites].
+
+== Surrogate queries for UML derived features
+
+The EMF metamodel for UML 2 contains several derived features which are not supported in VIATRA patterns by default. This optional integration component provides support for them via defining appropriate surrogate queries.
+
+. Add the ''org.eclipse.viatra.integration.uml'' plugin to your dependencies.
+image:addons/uml-integration-deps.png[]
+. Now you can use most of the derived features like every other feature.
+image:addons/uml-integration-surrogates.png[,815px]
+
+As of version 1.7.0, VIATRA does not provide support for all derived features defined in the UML model. In the following, the current status is detailed.
+
+.Status of derived features
+|===
+| Derived feature | Status | Remark
+
+| Action.context 
+| Done
+| Since 1.1.0
+
+| Action.input
+| Done 
+| Since 1.0.0
+
+| Action.output
+| Done
+| Since 1.0.0
+
+| Activity.group
+| Done 
+| Since 1.0.0
+
+| Activity.node
+| Done
+| Since 1.0.0
+
+| ActivityEdge.inGroup
+| Done
+| Since 1.0.0
+
+| ActivityGroup.containedEdge
+| Done
+| Since 1.0.0
+
+| ActivityGroup.containedNode
+|Done
+| Since 1.0.0
+
+| ActivityGroup.inActivity
+| Done
+| Since 1.1.0
+
+| ActivityGroup.subgroup
+| Done
+| Since 1.0.0
+
+| ActivityGroup.superGroup
+| Done
+| Since 1.0.0
+
+| ActivityNode.activity
+| Done
+| Since 1.1.0 
+
+| ActivityNode.inGroup
+| Done
+| Since 1.0.0 
+
+| Association.endType
+| Done
+| Since 1.0.0 
+
+| Behavior.context
+| Done
+| Since 1.1.0 
+
+| Class.extension
+| TODO
+| Buggy in 1.0.0, disabled in 1.1.0 (implementation checks Metaclass stereotype application, so it will be incorrect if used on classes that are _not_ metaclasses)
+
+| Class.superClass
+| Done
+| Since 1.0.0
+
+| Classifier.attribute
+| Done
+| Since 1.0.0 
+
+| Classifier.feature
+| Done
+| Since 1.0.0 
+
+| Classifier.general
+| Done
+| Since 1.0.0 
+
+| Classifier.inheritedMember
+| TODO 
+|
+
+| Component.provided
+| TODO 
+|
+
+| Component.required
+| TODO 
+|
+
+| ConnectableElement.end
+| Done
+| Since 1.0.0 
+
+| Connector.kind
+| Done
+| Since 1.0.0 
+
+| ConnectorEnd.definingEnd
+| TODO 
+|
+
+| DeploymentTarget.deployedElement
+| Done
+| Since 1.0.0 
+
+| DirectedRelationship.source
+| Done
+| Since 1.0.0 
+
+| DirectedRelationship.target
+| Done
+| Since 1.0.0
+
+| Element.ownedElement
+| Done
+| Since 1.0.0 
+
+| Element.owner
+| Done
+| Since 1.0.0 
+
+| EncapsulatedClassifier.ownedPort
+| Done
+| Since 1.0.0 
+
+| Extension.isRequired
+| TODO 
+|
+
+| Extension.metaclass
+| Done
+| Since 1.0.0 
+
+| Feature.featuringClassifier
+| Incorrect
+| Since 1.0.0, known problems (opposite of Classifier.feature according to specification, but implementation gives different result in some corner cases involving signals) 
+
+| Message.messageKind
+| Done
+| Since 1.0.0 
+
+| MultiplicityElement.lower
+| TODO 
+|
+
+| MultiplicityElement.upper
+| TODO 
+|
+
+| NamedElement.clientDependency
+| Done
+| Since 1.0.0 
+
+| NamedElement.namespace
+| Done
+| Since 1.0.0 
+
+| NamedElement.qualifiedName
+| Done
+| Incorrect in 1.0.0, fixed in 1.1.0
+
+| Namespace.importedMember
+| Incorrect
+| Since 1.0.0, known problems (imported members of Profiles are not fully correct)
+
+| Namespace.member
+| Incorrect
+| Since 1.0.0, known problems (inherited class members are not included)
+
+| Namespace.ownedMember
+| Done
+| Since 1.0.0 
+
+| OpaqueExpression.result
+| Done
+| Since 1.0.0 
+
+| Operation.isOrdered
+| TODO 
+|
+
+| Operation.isUnique
+| TODO 
+|
+
+| Operation.lower
+| TODO 
+|
+
+| Operation.type
+| TODO 
+|
+
+| Operation.upper
+| TODO 
+|
+
+| Package.nestedPackage
+| Done
+| Since 1.0.0 
+
+| Package.nestingPackage
+| Done
+| Since 1.1.0 
+
+| Package.ownedStereotype
+| Done
+| Since 1.0.0 
+
+| Package.ownedType
+| Done
+| Since 1.0.0 
+
+| Parameter.default
+| TODO 
+|
+
+| Port.provided
+| TODO 
+|
+
+| Port.required
+| TODO 
+|
+
+| Property.default
+| TODO
+|
+
+| Property.isComposite
+| Done 
+|
+
+| Property.opposite
+| TODO 
+|
+
+| ProtocolTransition.referred
+| Done
+| Since 1.0.0 
+
+| RedefinableElement.redefinedElement
+| Done
+| Since 1.0.0 
+
+| RedefinableElement.redefinitionContext
+| Done
+| Since 1.0.0 
+
+| RedefinableTemplateSignature.inheritedParameter
+| Done 
+| Since 1.0.0 
+
+| Relationship.relatedElement
+| Done
+| Since 1.0.0
+
+| State.isComposite 
+| Done
+| Since 1.0.0 
+
+| State.isOrthogonal
+| Done
+| Since 1.0.0 
+
+| State.isSimple
+| TODO 
+|
+
+| State.isSubmachineState
+| TODO 
+|
+
+| Stereotype.profile
+| TODO 
+|
+
+| StructuredClassifier.part
+| Done
+| Since 1.0.0
+
+| StructuredClassifier.role
+| Done
+| Since 1.0.0 
+
+| Type.package
+| Done
+| Since 1.0.0
+
+| Vertex.incoming
+| Done
+| Since 1.0.0 
+
+| Vertex.outgoing
+| Done
+| Since 1.0.0 
+|===
+
+NOTE: When using UML in a headless environment, make sure to call link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/integration/plugins/org.eclipse.viatra.integration.uml/src/org/eclipse/viatra/integration/uml/ViatraQueryUMLStandaloneSetup.java[ViatraQueryUMLStandaloneSetup.doSetup()] to ensure everything is registered.
+
+== Static profile support ==
+
+If you have an EMF-UML profile, you can query over applications of its stereotypes and their tagged values as if they were ordinary EClasses and EAttributes. As of 1.1.0, VIATRA only supports static profiles, so you have to define one as described in link:http://nyssen.blogspot.hu/2009/09/defining-static-profiles-with-eclipse.html[this blog post].
+
+On the example below continuing the blog post, in the started runtime Eclipse, we created a pattern that matches <tt>ExampleStereotype</tt> applications, and as we can see in the Query Explorer, it has matches on a simple UML instance model:
+
+[[File:Static-profile.png]]
+
+Note for Papyrus users: it is recommended to also register your profile with Papyrus. To accomplish this, add an extension for the `org.eclipse.papyrus.uml.extensionpoints.UMLProfile` extension point, pointing to the UML model file containing your profile. For more information, refer to link:https://www.eclipse.org/forums/index.php/t/604098/[this thread].
+
+The code for this example can be found in link:https://github.com/thSoft/viatra-uml-support[this repository].

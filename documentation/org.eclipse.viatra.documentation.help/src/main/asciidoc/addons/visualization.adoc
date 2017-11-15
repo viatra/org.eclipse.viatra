@@ -1,13 +1,14 @@
 = Displaying Query Results in the User Interface
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ../]
-:imagesdir: {rootdir}
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 As far as the visualization of VIATRA pattern matching results is concerned, the VIATRA framework provides two approaches:
 
 * _VIATRA Data Binding Addon_: Using this addon, VIATRA pattern matches can be directly incorporated in newly developed applications that utilize JFace Data Binding.
 * _VIATRA Viewers Addon_: The VIATRA Viewers component helps developing model-driven user interfaces by filling and updating model viewer results with the results of model queries. The implementation relies on (and is modeled after) the Event-driven Virtual Machine and JFace Viewers libraries.
 
+[[databinding]]
 == VIATRA Data Binding
 
 VIATRA provides a simple data binding facility that can be used to bind pattern matches to UI elements. The feature is mainly intended to be used to integrate VIATRA queries to newly developed user interfaces. In order to utilize this functionality, the source patterns need to be annotated, and the used UI components need to be bound to the Observables provided by the data binding API. In the following sections an example is shown which uses VIATRA Data Binding.
@@ -148,6 +149,7 @@ dataBindingContext.bindValue(dbUserTarget, adapter.getProperty("db_user").observ
     new EMFUpdateValueStrategy());
 ----
 
+[[viewers]]
 == VIATRA Viewers
 
 The VIATRA Viewers component can bind the results of queries to various JFace Viewers: JFace ListViewer and TreeViewers are currently supported. Additionally, by installing extra features from the extra update site GraphViewers (based on GEF4 Zest) are also supported. In the following example, and during the lab excersize as well, usage of GraphViewers will be presented. These GraphViewers are capable of displaying query results as graphs.
@@ -188,7 +190,16 @@ pattern communications(i1, i2) {
 }
 ----
 
-=== Example initialization
+=== Initializing a viewer programmatically
+
+. Add a dependency to `org.eclipse.viatra.addon.viewers.runtime` (and `org.eclipse.viatra.addon.viewers.runtime.zest` if necessary) to your plug-in.
+. Create a `ViewerState` instance from a group of query specification. Useful (static) helper methods are  available in the `ViatraViewerDataModel` class, that require a collection of query specifications; a data filter and the required features.
+ * Collection of query specifications: only the query specifications with the corresponding Viewers annotations will be used; other specifications will be ignored.
+ * ViewerDataFilter: it is used to filter the result of the queries by its parameters. For each pattern a separate filter can be initialized, that binds some of its parameters.
+ * Required features: The ViewerStateFeature enum can be used to list the features required by the visualization. List viewers need no specific features; tree viewers require containment relations; Zest viewer requires edge relations (and possibly containment relations). Features not required will not create
+. Use the corresponding bind methods from `ViatraViewers` or `ViatraGraphViewers` classes on a manually created `Viewer` together with the `ViewerState` and your instance model.
+ * The `ViewerState` instance can be re-used between different viewers.
+ * If the filters added to the `ViewerState` are changed, all the viewers will become obsolete, and have to be recreated.
 
 [[viewers-code]]
 [source,java]
@@ -205,3 +216,135 @@ viewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
 //Apply layout
 viewer.applyLayout();
 ----
+
+=== Examples
+
+==== UML visualization
+To illustrate the approach, a simple example was prepared in the link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/papyrus-uml[examples repository of the VIATRA project] based on UML class diagrams. The examples are relying on the notion of example classes: _UML classes that do not have operations or properties (neither in their parent classes)_.
+
+To present most features of the framework, four specific patterns are used (for the entire implementations visit the git repository):
+
+. `pattern emptyClass (cl : Class)` - for listing all empty classes in the model
+. `pattern nonEmptyClass(cl : Class)` - for listing all classes in the model, that are not empty
+. `pattern superClass(sub : Class, sup : Class)` - for listing all direct superclass relations between classes
+. `pattern transitiveSuperClass(sub : Class, sup : Class)` - for listing all indirect superclass relations between classes (but not the direct ones)
+
+The visualizer illustrations below correspond to the link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/papyrus-uml/org.eclipse.viatra.examples.uml.queries/testmodels/Testmodel.uml[test model] in the repository.
+
+===== JFace List Viewer example
+List Viewers can be used to display a collection of elements as a list. To define the list, only the `Item` annotation is used. Its `item` parameter selects a pattern parameter, representing the data to display, while its `label` parameter is used to define a label string (with the same syntax as the label features of Data Binding or the labels of Validation Framework.
+
+[source,vql]
+----
+@Item(item = cl, label="Empty class $cl$")
+pattern emptyClass(cl : Class) {
+...
+}
+
+@Item(item = cl, label = "Class $cl$")
+pattern nonEmptyClass(cl : Class) {
+...
+}
+----
+
+image::addons/viewers_uml_list.png[]
+
+==== Binding contents to a JFace Tree Viewer
+To support binding elements to a JFace Tree Viewer, in addition to the list of items, a set of containment relations needs also be specified using the <code>ContainsItem</code> annotation, that describes the container and contained items as pattern parameters. A containment reference is only displayed if both ends of the match result are present as Items in the viewer - otherwise it is simply ignored.
+
+A unique property of the Tree Viewer support is that a single Item of the Viewers framework may appear multiple times in the tree. This happens if an element has multiple parents.
+
+[source,vql]
+----
+@ContainsItem(container = sup, item = sub)
+pattern superClass(sub : Class, sup : Class) {
+...
+}
+@Item(item = cl, label="Empty class $cl$")
+pattern emptyClass(cl : Class) {
+...
+}
+@Item(item = cl, label = "Class $cl$")
+pattern nonEmptyClass(cl : Class) {
+...
+}
+----
+image:addons/viewers_uml_tree.png[]
+
+.Additional notes
+* In addition to basic binding support where all items appear both as root and child items as needed, it is possible to limit Items to appear only as root or only as child positions using the hierarchy parameter.
+* If creating a TreeViewer binding programmatically, and an item appear in multiple places, make sure you set up the `useHashLookup` property of your TreeViewer, otherwise the update of the TreeViewer would fail.
+
+==== Zest Graph Viewer example
+
+The definition of graph viewers requires a set of Items and a set of Edges. Edges are connecting two different Items; edges where the end points are not Items are not displayed. As opposed to the Tree Viewer support, a single item only appears once.
+
+Additionally, based upon the formatting capabilities of Zest some basic display options are available in the form of `Format` annotation. The various parameters can be used to depict colors, line width, etc. If a selected format is not applicable for the current element, it is simply ignored.
+
+[source,vql]
+----
+@Edge(source = sup, target = sub, label = "direct")
+@Format(color = "#7f004b", lineWidth = 2)
+pattern superClass(sub : Class, sup : Class) {
+...
+}
+@Edge(source = sup, target = sub)
+pattern transitiveSuperClass(sub : Class, sup : Class) {
+...
+}
+@Item(item = cl, label="Empty class $cl$")
+@Format(color="#3770d7", textColor = "#ffffff")
+pattern emptyClass(cl : Class) {
+...
+}
+@Item(item = cl, label = "Class $cl$")
+pattern nonEmptyClass(cl : Class) {
+...
+}
+----
+image:addons/viewers_uml_zest.png[]
+
+=== Ecore visualization
+We have developed another demonstrating example in the context of the headless example. As the queries of the headless example match against .ecore models (that is, EMF metamodels), the visualization example below can be used to visualize metamodels and containment relationships in a simple way. This example is focused mainly on the 2D graph visualization supported by the GEF5 Zest framework.
+
+==== Specification
+The example defines two graph node types and three graph edge types (link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/headless/org.eclipse.viatra.query.application.queries/src/org/eclipse/viatra/query/application/queries/headlessQueries.vql[code]):
+
+* Nodes are EPackage and EClass instances
+* Edges are *classes contained in a package*, *subpackage* relationships, and a special transitive containment relationship between packages and classes *classes in a package hierarchy* that enumerates all classes that are contained by a root package or some subpackage (transitively) below this root.
+
+[source,vql]
+----
+@Item(item = p, label = "P: $p.name$")
+@Format(color = "#791662", textColor = "#ffffff")
+pattern ePackage(p : EPackage) { EPackage(p); }
+
+@Item(item = ec, label = "EC: $ec.name$")
+@Format(color = "#e8da2c")
+pattern eClass(ec : EClass) { EClass(ec); }
+
+@Edge(source = p, target = ec, label = "classIn")
+pattern classesInPackage(p : EPackage, ec: EClass) { EPackage.eClassifiers(p,ec); }
+
+@Edge(source = p, target = sp, label = "sub")
+pattern subPackage(p: EPackage, sp: EPackage){ EPackage.eSubpackages(p,sp); }
+
+@Edge(source = rootP, target = containedClass, label = "classIn+")
+@Format(color = "#0033ff")
+pattern classesInPackageHierarchy(rootP: EPackage, containedClass: EClass)
+{
+	find classesInPackage(rootP,containedClass);
+} or {
+	find subPackage+(rootP,somePackage);
+	find classesInPackage(somePackage,containedClass);
+}
+----
+
+.The visualization of a simple test model (link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/headless/org.eclipse.viatra.query.application.queries/testmodels/Test.ecore[file])
+image:addons/viewers_ecore.png[Ecore metamodel visualization with VIATRA Viewers,700]
+
+Observe the following details:
+
+* EPackages and EClasses are shown in purple and yellow, respectively
+* direct relationships (subpackage and contained packages) are shown in grey
+* inferred transitive containment relationships are shown in blue
