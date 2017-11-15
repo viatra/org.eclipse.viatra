@@ -63,7 +63,7 @@
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
-                            <headerFooter>false</headerFooter>	
+                            <headerFooter>true</headerFooter>	
                             <attributes>
                                 <linkcss>true</linkcss>
                                 <last-update-label>false</last-update-label>
@@ -82,7 +82,7 @@
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
-                            <headerFooter>false</headerFooter>	
+                            <headerFooter>true</headerFooter>	
                             <attributes>
                                 <linkcss>true</linkcss>
                                 <last-update-label>false</last-update-label>
@@ -101,7 +101,7 @@
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
-                            <headerFooter>false</headerFooter>	
+                            <headerFooter>true</headerFooter>	
                             <attributes>
                                 <linkcss>true</linkcss>
                                 <last-update-label>false</last-update-label>
@@ -120,7 +120,45 @@
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
-                            <headerFooter>false</headerFooter>	
+                            <headerFooter>true</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-evm</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>evm.adoc</sourceDocumentName>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>highlight.js</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>true</headerFooter>	
+                            <attributes>
+                                <linkcss>true</linkcss>
+                                <last-update-label>false</last-update-label>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-transformations</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>transformations.adoc</sourceDocumentName>
+                            <backend>html5</backend>	
+                            <sourceHighlighter>highlight.js</sourceHighlighter>
+                            <preserveDirectories>true</preserveDirectories>
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>true</headerFooter>	
                             <attributes>
                                 <linkcss>true</linkcss>
                                 <last-update-label>false</last-update-label>

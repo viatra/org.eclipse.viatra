@@ -1,0 +1,315 @@
+= VIATRA Transformation Language
+
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
+
+:imagesdir: {rootdir}/images
+:toclevels: 2
+:toc:
+:toc-placement: macro
+:numbered:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
+
+The transformation language of VIATRA is developed as a set of internal DSLs over the link:https://eclipse.org/xtend/[Xtend language], making use of its features such as extension methods and closure support. The goal of these DSLs is to support creating specialized transformations over link:evm.html[EVM] while keeping the construction simple.
+
+All languages are based on similar concepts, and feature the same general structure. In VIATRA 1.7 there are two such languages available: *batch transformations* where the control flow, e.g. firing of rules is directed by the transformation developer and *event-driven transformations* where the transformation reacts to various model change events.
+
+For an introduction to the transformation languages consult the link:tutorial.html[Getting Started Tutorial]; this document focuses more on the capabilities of the transformation sublanguages instead of the basic structure.
+
+toc::[]
+
+[[batch-transformations]]
+== Batch Transformations
+
+Three extension classes used for transformations:
+
+BatchTransformation:: hides ViatraQueryEngine and RuleEngine; manages group initialization of rules - instead of an extension method, this can also be used as a base class
+BatchTransformationStatements:: control structure
+IModelManipulations:: generic model manipulation primitives; hides details of EditingDomains (if necessary); implementation not batch transformation specific
+
+=== Batch Transformation Rules
+
+* Special rule type
+** Precondition + action
+** Life cycle:
+*** Stateless
+**** rule does not maintain state whether an activation has fired or not
+**** Lifecycle: firing: active -> active
+*** Stateful
+**** rule maintains whether an an activation has fired or not
+**** Lifecycle: firing: active -> fired
+
+.Batch Transformation Statements
+|===
+| Name | Parameters | Description
+
+| *fireOne*
+| Batch Transformation Rule, (opt: filter) 
+| Fires a single activation
+
+| *fireAllCurrent*
+| Batch Transformation Rule, (opt: filter)
+| Fires all current activations. If the firings change the set of activations, it won't change the set of fired activations.
+
+| *fireWhilePossible*
+| Batch Transformation Rule, (opt: filter)
+| Fires  the activations one by one. Useful for iterate-choose scenarios. Break conditions are implemented using Match Predicates - functions that receive Match instances as parameters.
+
+| *fireUntil*
+| Batch Transformation Rule, break condition, (opt: filter)
+| After firing the first activation, it checks whether the break condition became true; if yes, exits, if not, it restarts. It does not store the initial set of activations. Useful for iterate-choose scenarios. Break conditions are implemented using Match Predicates - functions that receive Match instances as parameters.
+|===
+
+[[event-driven-transformations]]
+== Event-driven Transformations
+
+The event-driven API aims at defining and executing model transformations in an event-driven manner. In this case, the preconditions of the single transformations are checked on every related model change in an incremental fashion (using VIATRA Query) and the actions are fired once the preconditions are fulfilled. Model changes are captured as events, hence the naming of the basic concepts below.
+
+EventDrivenTransformation:: Similarly to the `BatchTransformation`, it hides the ViatraQueryEngine and RuleEngine and serves as the basic concept for this part of the API.
+EventContext:: We distinguish two types or contexts of events: point and interval. The former one is described with a single point of appearance on the timeline; the latter one is characterized by its appearance _and_ disappearance on the timeline. It's up to the user to select whether a transformation is associated with an event of point or interval context. In the background, the event context is translated into an EVM activation life cycle, which can be overridden by the user if required. This concept slightly resembles the concept of batch transformation rules of _stateless_ and _stateful_ life cycle.
+
+=== The event-driven transformation rule (EventDrivenTransformationRule)
+In contrast with the batch mode, in incremental mode, there are no arbitrarily assembled local conflict sets; instead: every transformation rule is handled in a global conflict set. _EventDrivenTransformationRuleFactory_ is a factory designed for instantiating the rules.
+
+=== The essential ideology behind the API structure
+When designing the API, we reused the concepts of the _fluent interface_ and the _builder pattern_. It heavily utilizes the capabilities of Xtend, resulting in a concise way for defining rules, transformations and transformation groups, as presented below.
+
+=== Example: model transformations for automaton simulation ===
+
+
+
+.Defining the event-driven transformation rule
+[source,xtend]
+----
+val createEnabledTransitionRule = ruleFactory.createRule.
+  precondition(EnabledTransitionMatcher.querySpecification).
+  action[
+   eventModelManager.strategy.fireTransition(t, et)
+  ].build
+----
+
+This is the precondition for your transformation. The above snippet assumes the _EnabledTransition_ VIATRA Query pattern to be defined, which the _EnabledTransitionMatcher_ has been generated from. The expression in the closure is the action and is totally up to you to define. (In this case, the manager class maintaining the model will fire a transition.) 
+You can also provide a name for the rule as well as override the default event context (point).
+
+.Optionally grouping the rules into rule groups
+[source,xtend]
+----
+def getRules() {
+  new EventDrivenTransformationRuleGroup(
+    createEnabledTransitionRule,
+    createFinishedStateMachineRule,
+    createTokenInTrapStateRule
+  )
+}
+----
+
+This one is pretty straightforward; just enumerate your rules in a closure.
+Remember, there is only one global conflict set for these rules to get conflicted. It does not really matter whether you group your rules or not, although it can make the further parts of code more concise.
+
+.Register the transformation rules
+[source,xtend]
+----
+def registerRules() {
+  EventDrivenTransformation.
+    forSource(eventModelManager.resourceSet).
+    addRules(rules).
+    build()
+}
+----
+
+Once you have your transformation rules, there are just a few steps to take in order to register the rules into the execution schema. Let's look at this snippet:
+
+The benefits of the fluent API approach are obvious here. Notice the mandatory `build()` method at the tail of the method chain as the essence of the builder pattern. This method chain will deal with the following:
+
+* it instantiates an EventDrivenTransformation;
+* the resource or resource set the transformations are executed upon is passed to the transformation (`forSource()`);
+* the transformation rules are registered (`addRules()`);
+* in the background, the default conflict resolver (arbitrary ConflictResolver) is selected to deal with global conflicts.
+
+.Using a conflict resolver
+[source,xtend]
+----
+def registerRulesWithCustomPriorities() {
+  val resolver = ConflictResolvers.createFixedPriorityResolver();
+  resolver.setPriority(createEnabledTransitionRule.ruleSpecification, 100)
+  resolver.setPriority(createFinishedStateMachineRule.ruleSpecification, 50)
+  resolver.setPriority(createTokenInTrapStateRule.ruleSpecification, 0)
+
+  EventDrivenTransformation.
+    forSource(eventModelManager.resourceSet).
+    addRules(rules).
+    setConflictResolver(resolver).
+    build()
+}
+----
+
+However, as a useful feature, the API is capable to construct a fixed priority resolver based on the _order of the rules_ handed over to the EventDrivenTransformation. So the results of the above code could be just achieved with this one:
+[source,xtend]
+----
+def registerRulesWithAutomatedPriorities() {
+  val resolver = new RuleOrderBasedFixedPriorityResolver()
+  resolver.setPrioritiesFromScratch(new ArrayList(rules.ruleSpecifications))
+
+  EventDrivenTransformation.
+    forSource(eventModelManager.resourceSet).
+    addRules(rules).
+    setConflictResolver(resolver).
+    create()
+  }
+----
+
+[[model-manipulation]]
+== Model Manipulation Primitives
+
+Model manipulation primitives are implemented by instances of IModelManipulations interface. Currently, two implementations are available:
+
+* SimpleModelManipulations - uses plain EMF API
+* ModelManipulationsWithEditingDomain - uses EMF Edit commands on EditingDomain instances
+
+If some transformation needs specific primitives (e.g. transaction support), new instances can introduce extra methods as required.
+
+.Model Manipulation Primitives
+|===
+| Name | Parameters | Description
+
+| create
+| Resource; EClass
+| Creates an object with the corresponding EClass type, and puts it into the root of the selected resource
+
+| createChild 
+| EObject (container); EReference; EClass
+| Creates an object with the corresponding EClass type, and puts it into the selected reference; the reference must be of containment type
+
+| addTo
+| EObject (container); EStructuralFeature; Object
+| Adds an existing object to the corresponding container with a reference; if using a reference it must *not* be of containment type
+
+| remove
+| EObject
+| Removes the EObject from the model
+
+| remove
+| EObject (container); EStructuralFeature; Object
+| Removes an object from the selected container; when using a containment EReference, also removes it from the resource set
+
+| remove
+| EObject (container); EStructuralFeature
+| Removes all objects from a multivalued feature; when using a containment EReference, also removes them from the resource set
+
+| set
+| EObject (container); EStructuralFeature; Object
+| Sets the value of a single-valued feature
+
+| moveTo
+| EObject(s), EObject (new container), EStructuralFeature
+| Moves elements to a new container, and removes them from an old one. *Remark*: The implementation here is specific, as it relies on features of the index.
+|===
+
+[[transformation-debugger]]
+== Allow Debugging and other Adapters
+
+Apart from the VIATRA transformation debugger, the VIATRA transformation adapter framework contains a number of default adapter implementations, that realize model transformation related use cases:
+
+=== VIATRA Transformation Debugger
+
+The VIATRA transformation debugger implements a breakpoint based debugging approach (similar to JDT). It utilizes the Eclipse Debug framework, as well as some custom debug-related views. It contains the logic for stopping the transformation execution if a breakpoint condition matches, and updating the Transformation Debug Model, based on which the current transformation state is displayed. To support various debugging use cases, the debugger supports various breakpoint implementations as well. The debugger consists of two main components:
+
+* _VIATRA Debugger Runtime_: It contains the debugger elements associated with the running model transformation instance. These elements are responsible for instrumenting the transformation instance and propagating the gathered information to the tooling elements. They also enable the tooling elements to control the instrumented transformation instance.
+
+* _VIATRA Debugger Tooling_: It contains elements associated with extending the _Eclipse Debug Framework_. They allow the information provided by the runtime elements to be displayed on the Eclipse debug UI, and enable the user to control the transformation under debugging.
+
+.Debug Adapter
+image::transformation/transformation_debugger.png[Debugger Overview]
+
+* _Debugger Runtime_
+** _Transformation Debugger_: Observes and manipulates the execution of a VIATRA transformation.
+** _Runtime Communication Agent_: Responsible for orchestrating the communication between the tooling and runtime components. Uses JMX-based communication.
+** _Debug Information_: Data that is propagated between the runtime and tooling components. I contains information about the state of the transformation under debugging, and the involved model instances as well. This information is displayed by debugger tooling components.
+*** _Transformation State_: It contains information about the transformation under debugging. Including the state of the transformation conflict set and the next activation to be executed.
+*** _Model Instance Representation_: Represents model instances that are associated with the transformation, using a generic, serializable meta-model.
+** _Debug Actions_: User actions that are sent from the tooling to the runtime components.
+*** _Breakpoints_: The debugger framework supports a set of different transformation breakpoints.
+**** _Rule Activation Breakpoints_: Identifies a transformation rule activation. If the given activation is about to be fired, the transformation execution will be halted.
+**** _Conditional Breakpoints_: These breakpoints are able to define global constraints that are not only affected by the current activation. A similar concept is available in the Eclipse Java Development Tools (JDT). The constraints are defined by using the VIATRA query language.
+**** _Rule Breakpoints_: These breakpoints identify a given VIATRA transformation rule. The execution is halted if an activation of this rule is about to be fired.
+*** _Debugger Commands_: User commands that are sent from the tooling components to the runtime components.
+* _Debugger Tooling_
+** _VIATRA Debugger UI Elements_: UI elements that display transformation-specific information that cannot be visualizes via using Eclipse debug UI elements.
+*** _VIATRA Transformation Browser_: Displays the current state of the model transformation. Shows the set of activations to be fired, and allows the user to control the execution of the transformation or define breakpoints as well. The activations displayed can either be grouped by their parent rule, or their position in the transformation conflict set.
+*** _VIATRA Transformation Model Instance Viewer_: Displays the current state of the model instances related to the transformation using a tree-view with properties support.
+** _Eclipse Debugger UI Elements_: Eclipse debugger UI elements that display transformation debugger-related information.
+
+=== Trace coder listener
+
+The transformation debug configuration contains a transformation debugger that follows the breakpoint-based approach. However, the execution sequence of VIATRA-based event-driven model transformations is typically non-deterministic. The trace coder is responsible for logging the transformation execution sequence (i.e.: order of transformation rule activation firings). This *transformation trace* can later be analyzed or used during re-execution of the transformation.
+
+Transformation traces are hierarchical object structures aiming at storing transformation execution sequences. Transformation traces consist of activation and rule parameter traces. Activation traces identify the fired rule, and rule parameter traces specify which elements have triggered the execution of the given rule. Based on this information, the transformation can be re-executed for further evaluation, or erroneous rules can be detected during post mortem analysis.
+
+image::transformation/coder_adapter.png[Trace Coder Adapter,1000]
+
+Similar to the previously introduced components, the trace coder listener utilizes interchangeable subcomponents:
+
+Activation coder:: Creates Activation Trace objects, using the parameters extracted from the activation object.
+Trace model serializer:: Responsible for saving and loading trace models
+
+=== Trace Executor adapter
+
+This adapter is responsible for re-executing a transformation sequence recorded by the trace coder adapter. Particularly useful during debugging, as it allows the determinization of the otherwise random execution sequence of VIATRA event-driven transformations. 
+It operates the following way: as the transformation is being executed, the activation at hand is compared to the upcoming entry in a previously loaded transformation trace. If the activation matches the trace record, it is executed, if not the executor finds the matching one.
+
+image::transformation/executor_adapter.png[Trace Executor Adapter,1000]
+
+As seen here, the trace executor component utilizes the same sub-components as the trace coder.
+
+Noteable information regarding the trace executor:
+
+* The usage of this adapter has a heavy effect on transformation performance, it is only advised to use it on small scale test models.
+* Also keep in mind that the trace executor needs an already existing transformation trace, hence it should not be used simultaneously with the trace coder.
+
+=== Usage Examples
+
+Adapters and listeners can be added to new or already existing VIATRA transformations in a simple and straightforward fashion. The VIATRA transformation API allows the transformation developer to attach these adapters and listeners directly to the model transformation, without needing to alter the transformation code itself. The transformation API classes create a modified, adapter supporting background structure, however this step is completely transparent to the transformation developer. Both Batch and event driven VIATRA transformations are supported, and will be presented in this section. The example shown here uses the VIATRA CPS example model transformations, to emphasize, that adding adapters does only require changes in the transformation setup, but does not require any change in the transformation code itself.
+
+Note that these examples only show the method for adding adapters to VIATRA transformations. The Adapters used in these examples will not work if used all together (especially true to the trace coder and executor components). In order to ensure that the adapters do not have adverse effects on each other use the predefined adapter configurations or individual adapters.
+
+.Adding adapters to a batch transformation
+[source,java]
+----
+transformation = BatchTransformation.forEngine(engine)   
+    //Create trace coder listener
+    //This listener is responsible for storing the transformation execution sequence (i.e.: order of transformation rule activation firings)
+    //This transformation trace can later be analyzed or used during re-execution 
+    //Transformation trace --> hierarchical object structure --> aiming at storing a transformation execution sequence.
+    //Consists of Activation and rule parameter traces --> activation traces identify the fired rule, and specify which elements have triggered the execution of the given rule. 
+    .addListener( new TraceCoder(URI.createURI("transformationtrace/batchtrace.transformationtrace")))
+        
+    //Create trace executor adapter
+    //This adapter is responsible for re-executing a transformation sequence recorded by the trace coder adapter.
+    //Particularly useful during debugging, as it allows the determinization of the otherwise random execution sequence of VIATRA event-driven transformations.
+    //Note, that the usage of this adapter has a heavy effect on transformation performance, it is only advised to use it on small scale test models.
+    //Also keep in mind that the trace executor needs an already existing transformation trace, hence it should not be used simultaneously with the trace coder.
+    .addAdapter(new TraceExecutor(URI.createURI("transformationtrace/trace.transformationtrace")))
+    
+    //This listener implements a basic logging functionality
+    .addListener(new LoggingEVMListener(logger))
+    .build
+----
+
+.Adding adapters to an event-driven transformation
+[source,java]
+----
+transformation = EventDrivenTransformation.forEngine(engine)
+    .setConflictResolver(createConflictResolver)
+    .addRule(hostRule)
+    .addRule(applicationRule)
+    .addListener( new TraceCoder(URI.createURI("transformationtrace/trace.transformationtrace")))
+    .addAdapter(new TraceExecutor(URI.createURI("transformationtrace/edtrace.transformationtrace")))
+    .addListener(new LoggingEVMListener(logger))
+    .build
+----

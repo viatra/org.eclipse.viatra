@@ -1,6 +1,6 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 link:http://www.eclipse.org/viatra/[VIATRA] is an open source model transformation framework, focusing on efficient evaluation of model queries and supports various transformation workflows. This document contains a tutorial for getting started with the query and transformation development.
 

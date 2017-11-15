@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <toc label="VIATRA" topic="html/tutorial/intro.html">
-   <anchor id="org.eclipse.viatra"/>
-   <topic href="html/tutorial/intro.html" label="Getting Started with VIATRA">
-       <topic href="html/tutorial/queries.html" label="Getting started with Query Development">
+   <topic href="html/tutorial.html" label="Getting Started with VIATRA">
+       <topic href="html/tutorial.html#_using_the_query_development_environment" label="Getting started with Query Development">
        </topic>
-       <topic href="html/tutorial/query-api.html" label="Using the Runtime API of VIATRA Query">
+       <topic href="html/tutorial.html#_using_queries_programmatically" label="Using the Runtime API of VIATRA Query">
        </topic>
-       <topic href="html/tutorial/batch-transformations.html" label="Getting Started with Batch Transformation Development">
+       <topic href="html/tutorial.html#_batch_transformations" label="Getting Started with Batch Transformation Development">
        </topic>
-       <topic href="html/tutorial/incremental-transformations.html" label="Getting Started with Event-driven Transformation">
+       <topic href="html/tutorial.html#_event_driven_transformations" label="Getting Started with Event-driven Transformation">
+       </topic>
+       <topic href="html/tutorial.html#_debugging_model_transformations" label="Debugging Model Transformation">
        </topic>
    </topic>
    <topic label="Reference Documentation">
@@ -21,12 +22,6 @@
           </topic>
           <topic href="html/query-language.html#extensibility" label="Extensibility">
           </topic>
-       </topic>
-       <topic href="html/tooling/preferences.html" label="Preferences">
-       </topic>
-       <topic href="html/extra/VIATRA-visualization.html" label="Displaying Query Results in the User Interface">
-       </topic>
-       <topic href="html/extra/VIATRA-debugger.html" label="Debugging Model Transformations">
        </topic>
        <topic href="html/query-api.html" label="The VIATRA Query Runtime">
           <topic href="html/query-api.html#_most_important_classes_and_their_relationships" label="Matches and Matchers">
@@ -52,19 +47,35 @@
           <topic href="html/query-api.html#_logging_in_viatra_query" label="Configure Logging">
           </topic>
        </topic>
+       <topic href="html/transformations.html" label="Developing Model Transformations">
+          <topic href="html/transformations.html#batch-transformations" label="Batch Model Transformations">
+          </topic>
+          <topic href="html/transformations.html#event-driven-transformations" label="Event-Driven Model Transformations">
+          </topic>
+          <topic href="html/transformations.html#model-manipulation" label="Model Manipulation Primitives">
+          </topic>
+          <topic href="html/transformations.html#transformation-debugger" label="Debugging Model Transformations">
+          </topic>
+       </topic>
+       <topic href="html/evm.html" label="The Event-Driven Virtual Machine">
+       </topic>
+       <topic href="html/tooling/preferences.html" label="Preferences">
+       </topic>
+       <topic href="html/extra/VIATRA-visualization.html" label="Displaying Query Results in the User Interface">
+       </topic>
    </topic>
-   <topic label="Release Information">
-      <topic href="html/releases/viatra-1.7.html" label="VIATRA 1.7">
+   <topic href="html/releases.html" label="Release Information">
+      <topic href="html/releases.html#viatra-17" label="VIATRA 1.7">
       </topic>
-      <topic href="html/releases/viatra-1.6.html" label="VIATRA 1.6">
+      <topic href="html/releases.html#viatra-16" label="VIATRA 1.6">
       </topic>
-      <topic href="html/releases/viatra-1.5.html" label="VIATRA 1.5">
+      <topic href="html/releases.html#viatra-15" label="VIATRA 1.5">
       </topic>
-      <topic href="html/releases/viatra-1.4.html" label="VIATRA 1.4">
+      <topic href="html/releases.html#viatra-14" label="VIATRA 1.4">
       </topic>
-      <topic href="html/releases/viatra-1.3.html" label="VIATRA 1.3">
+      <topic href="html/releases.html#viatra-13" label="VIATRA 1.3">
       </topic>
-      <topic href="html/releases/viatra-1.2.html" label="VIATRA 1.2">
+      <topic href="html/releases.html#viatra-12" label="VIATRA 1.2">
       </topic>
    </topic>
      <topic href="html/cps/Home.html" label="CPS Demonstrator">
@@ -105,4 +116,5 @@
        <topic href="html/cps/CPS-Application.html" label="CPS Application">
        </topic>
    </topic>
+   <anchor id="org.eclipse.viatra"/>
 </toc>

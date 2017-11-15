@@ -1,6 +1,6 @@
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-12]]
 = VIATRA 1.2
 

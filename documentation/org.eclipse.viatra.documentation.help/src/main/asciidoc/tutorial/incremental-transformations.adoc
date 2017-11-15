@@ -1,7 +1,7 @@
 = Event-driven Transformations
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 This exercise heps the audience to create a simple event-driven transformation using the VIATRA Transformation API. The transformation will create (and then incrementally update while active) a deployment model based on a CPS model. The exercise also covers registering a menu command which initializes the transformation.
 
@@ -369,5 +369,5 @@ image::tutorial/viatraIncr_example6.png[]
 
 == References
 
-* VIATRA Transformation API: https://wiki.eclipse.org/VIATRA/Transformation/Transformation_API
+* VIATRA Transformation API: link:transformations.html[]
 * Further transformation examples: https://wiki.eclipse.org/VIATRA/Transformation/Examples

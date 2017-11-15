@@ -1,7 +1,7 @@
 = Using the Query Development Environment
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 :experimental:
 
 Constraints and conditions in the VIATRA framework are expressed using a graph pattern-based language. This declarative formalism allows very compact definitions of complex conditions, while it is still possible to provide live query evaluation based on the Rete algorithm.

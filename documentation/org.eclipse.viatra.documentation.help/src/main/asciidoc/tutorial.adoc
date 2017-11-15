@@ -6,7 +6,8 @@ ifndef::highlightjs-theme[:highlightjs-theme: foundation]
 
 :imagesdir: {rootdir}/images
 :toclevels: 2
-:toc: right
+:toc:
+:toc-placement: macro
 :numbered:
 :icons: font
 :sectnums:
@@ -14,7 +15,10 @@ ifndef::highlightjs-theme[:highlightjs-theme: foundation]
 :experimental:
 :sectlinks:
 
+
 include::tutorial/intro.adoc[leveloffset=+1]
+
+toc::[]
 
 <<<
 include::tutorial/environment.adoc[leveloffset=+1]
@@ -40,3 +44,6 @@ include::tutorial/batch-transformations.adoc[leveloffset=+2]
 
 <<<
 include::tutorial/incremental-transformations.adoc[leveloffset=+2]
+
+<<<
+include::tutorial/transformation-debugger.adoc[leveloffset=+2]

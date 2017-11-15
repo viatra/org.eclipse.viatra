@@ -1,7 +1,7 @@
 = Batch Transformations
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 This exercise helps the audience to create a simple batch transformation using the VIATRA Transformation API.
 The transformation will transform the hosts and applications in a CPS model to a deployment model.
@@ -297,5 +297,5 @@ image::tutorial/viatrabatch.png[]
 
 == References
 
-* VIATRA Transformation API: https://wiki.eclipse.org/VIATRA/Transformation/Transformation_API
+* VIATRA Transformation API: link:transformations.html[]
 * Further transformation examples: https://wiki.eclipse.org/VIATRA/Transformation/Examples

@@ -1,7 +1,7 @@
 = Using Queries Programmatically
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 VIATRA Query provides an API to execute queries on various models, including support for listening to match set changes. However, as the incremental evaluation relies on indexes, the API also covers lifecycle management for the runtime. The central element of the API is the Query Engine that is responsible for loading query specifications, setting up indexes and providing match results. This approach is supported by code generators that create a runtime representation for graph patterns and provide a type-safe API to access VIATRA code.
 
