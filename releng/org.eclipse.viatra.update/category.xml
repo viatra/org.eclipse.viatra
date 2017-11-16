@@ -6,9 +6,6 @@
    <feature url="features/org.eclipse.viatra.addon.viewers.tooling.feature.source_0.20.0.qualifier.jar" id="org.eclipse.viatra.addon.viewers.tooling.feature.source" version="0.20.0.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.cep.feature.source_0.20.0.qualifier.jar" id="org.eclipse.viatra.cep.feature.source" version="0.20.0.qualifier">
-      <category name="org.eclipse.viatra"/>
-   </feature>
    <feature url="features/org.eclipse.viatra.dse.feature.source_0.20.0.qualifier.jar" id="org.eclipse.viatra.dse.feature.source" version="0.20.0.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>

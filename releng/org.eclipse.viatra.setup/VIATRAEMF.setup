@@ -811,30 +811,6 @@
       <description>The dynamic working sets for ${scope.project.label}</description>
     </setupTask>
     <stream
-        name="master">
-      <setupTask
-          xsi:type="setup:CompoundTask"
-          name="Generate query code">
-        <setupTask
-            xsi:type="projects:ProjectsBuildTask"
-            id="viatra.cep.prequerygen"
-            onlyNewProjects="true"
-            refresh="true">
-          <description></description>
-        </setupTask>
-        <setupTask
-            xsi:type="launching:LaunchTask"
-            launcher="org.eclipse.viatra.setup/GenerateCEPCoreQueryCode.mwe2.launch">
-          <description></description>
-        </setupTask>
-        <setupTask
-            xsi:type="launching:LaunchTask"
-            launcher="org.eclipse.viatra.setup/GenerateCEPMetamodelQueryCode.mwe2.launch">
-          <description></description>
-        </setupTask>
-      </setupTask>
-    </stream>
-    <stream
         name="1.2-maintenance"/>
     <stream
         name="1.3-maintenance"/>

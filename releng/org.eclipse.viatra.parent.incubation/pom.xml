@@ -25,20 +25,6 @@
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.tracer</module>
         <module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
         <module>../../transformation/features/org.eclipse.viatra.transformation.runtime.debug.feature</module>
-        
-        <!-- CEP -->
-        <module>../../cep/plugins/org.eclipse.viatra.cep.core</module>
-        <module>../../cep/plugins/org.eclipse.viatra.cep.core.metamodels</module>
-        <module>../../cep/plugins/org.eclipse.viatra.cep.emf.notification</module>
-        <module>../../cep/plugins/org.eclipse.viatra.cep.tooling.core</module>
-        <module>../../cep/plugins/org.eclipse.viatra.cep.tooling.ui</module>
-        <module>../../cep/plugins/org.eclipse.viatra.cep.vepl</module>
-        <module>../../cep/plugins/org.eclipse.viatra.cep.vepl.ui</module>
-        <module>../../cep/tests/org.eclipse.viatra.cep.core.tests.compiler</module>
-        <module>../../cep/tests/org.eclipse.viatra.cep.core.tests.compiler.testdata</module>
-        <module>../../cep/tests/org.eclipse.viatra.cep.vepl.tests</module>
-        <module>../../cep/tests/org.eclipse.viatra.cep.tests.integration</module>
-        <module>../../cep/features/org.eclipse.viatra.cep.feature</module>
 
         <!-- DSE -->
         <module>../../dse/features/org.eclipse.viatra.dse.feature</module>
