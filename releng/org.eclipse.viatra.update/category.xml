@@ -36,9 +36,6 @@
    <feature url="features/org.eclipse.viatra.transformation.debug.feature_0.20.0.qualifier.jar" id="org.eclipse.viatra.transformation.debug.feature" version="0.20.0.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.addon.querybyexample.feature_0.20.0.qualifier.jar" id="org.eclipse.viatra.addon.querybyexample.feature" version="0.20.0.qualifier">
-      <category name="org.eclipse.viatra.addons"/>
-   </feature>
    <feature url="features/org.eclipse.viatra.query.tooling.debug.feature_2.0.0.qualifier.jar" id="org.eclipse.viatra.query.tooling.debug.feature" version="2.0.0.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>
