@@ -1,0 +1,173 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+
+[[query-tests]]
+= Query Test Framework
+
+There is a test framework available specifically designed to test Viatra Queries. It was developed with the following use cases in mind:
+
+* Testing the Viatra Query Engine itself
+* Provide a regression testing framework for users to test patterns
+
+== Basic concepts
+
+The framework allows the user to compare the results of a pattern execution using different engine implementation or to a predefined result set (so-called snapshot). It defines a convenient link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/tests/org.eclipse.viatra.query.testing.core/src/org/eclipse/viatra/query/testing/core/api/ViatraQueryTest.xtend[internal DSL] to define test cases. A description of a test case consists of the following parts:
+
+* What to test
+** Generated query specifications
+** Pattern groups
+** Generic pattern groups (possible parsed directly from .vql files)
+* Input models
+* Execution methods
+** by Rete or LocalSearch engines
+** from snapshot
+* Assumption (optional)
+** Checks whether all given execution method supports the given patterns (i.e. the test case is applicable)
+* Assertion
+** Checks whether the results provided by all execution methods are the same for each patterns.
+
+.Example
+[source,xtend]
+----
+ViatraQueryTest. //Entry point
+  test(SomeQuerySpecification::instance).
+  and(AnotherQuerySpecification). // Patterns under test
+  on(modelURI). // Instance models (optional; snapshot model references the input model)
+  with(snapshot). // Compare prepared results stored by a snapshot model
+  with(new ReteBackendFactory). // Compare results produced by the Rete engine
+  assumeInputs. // checks whether the given snapshots and backend factories are valid for the patterns under test. Throws JUnit assumption error otherwise
+  assertEquals // compute difference of each given snapshot and pattern executions. Throws JUnit assertion failure if differences occur
+----
+
+== Incremental Scenarios
+
+The framework supports testing scenarios in which the results can be checked again after a model modification using the modify method:
+
+.Recheck after model manipulation
+[source,xtend]
+----
+ViatraQueryTest. //Entry point
+  test(SomeQuerySpecification::instance).
+  and(AnotherQuerySpecification). // Patterns under test
+  on(modelURI). // Instance models (optional; snapshot model references the input model)
+  with(snapshot). // Compare prepared results stored by a snapshot model
+  with(new ReteBackendFactory). // Compare results produced by the Rete engine
+  assertEqualsThen. // assertEqualsThen does not return void
+  modify(Type, [name=="John"], [age=35]). // The given operation is executed on each instance of the given type on which the given condition evaluates to true.
+  with(snapshotAfterModification). // Any modify operation causes all previously loaded snapshots to be invalidated.
+  assertEquals
+----
+
+== Supporting plain Java objects in substitutions
+
+In some cases plain Java objects need to be added to the Query Snapshot model. However, the serialization and comparison of such elements might be relevant on the domain in which the testing framework is used. In this case, the framework allows the user to define how certain plain Java types should be handled, through JavaObjectAccess elements.These elements enable the framework to serialize, deserialize and compare certain typed POJOs.
+The following example demonstrates how these Access objects should be registered into the framework.
+
+In this example, the metamodel contains a 'CustomInteger' typed attribute. 'CustomInteger' is a java type that extends 'Integer'. The following fragment shows how 'Access' type definition.
+
+.Accessing a Custom Attribute
+[source,java]
+----
+public class CustomIntegerAccess extends JavaObjectAccess{
+
+	public CustomIntegerAccess() {
+		super(CustomInteger.class);
+	}
+
+        //Create Substitution object based on the CustomInteger object
+	@Override
+	public SerializedJavaObjectSubstitution toSubstitution(Object value) {
+		SerializedJavaObjectSubstitution sub = SnapshotFactory.eINSTANCE.createSerializedJavaObjectSubstitution();
+		if(value instanceof CustomInteger){
+			sub.setType(getType().getName());
+			sub.setValue(((CustomInteger) value).integerValue()+"");
+		}
+		return sub;
+	}
+        
+        //Calculate hash code (needed for equality checking)
+	@Override
+	public int calculateHash(SerializedJavaObjectSubstitution substitution) {
+		return Objects.hashCode(Integer.parseInt(substitution.getValue()));
+	}
+
+        //Check if two substitutions are equal (assuming they each define a 'CustomInteger')
+	@Override
+	public boolean equals(SerializedJavaObjectSubstitution a, SerializedJavaObjectSubstitution b) {
+		if(a.getType().equals(getType().getName()) && b.getType().equals(getType().getName())){
+			int aVal = Integer.parseInt(a.getValue());
+			int bVal = Integer.parseInt(b.getValue());
+			return aVal == bVal;
+		}
+		return false;
+	}
+
+}
+----
+
+.Using CustomIntegerAccess
+[source,java]
+----
+    ...
+    Map<String, JavaObjectAccess> objectAccess = Maps.newHashMap();
+    map.put(CustomInteger.class.getName(),new CustomIntegerAccess());
+    ViatraQueryTest.test(specs, objectAccess).on(new EMFScope([MODEL])).with([SNAPSHOT]).assertEquals();
+    ...
+----
+
+=== Coverage analysis and reporting ===
+
+Since 1.6 (see {{bug|514628}}), you can add analyzers to a test object which measure various metrics of query execution. For example, you can analyze coverage during testing:
+
+[source,xtend]
+----  
+static var CoverageAnalyzer coverage;
+    
+@BeforeClass
+static def void before(){
+    coverage = new CoverageAnalyzer();
+}
+
+@Test
+def void testApplicationTypes() {
+    ViatraQueryTest.test(ApplicationTypesQuerySpecification.instance)
+        .analyzeWith(coverage) // Analyze coverage 
+        .with(new ReteBackendFactory) // First set of matches should come from query evaluation with Rete backend
+        .with(snapshot) // Second set of matches should come from a snapshot
+        .assertEquals // Assert that the match sets are equal
+    }
+----
+
+Then after running the tests, you can get the analyzed coverage with `CoverageAnalyzer#getCoverage()`, or report it with `CoverageReporter`:
+
+[source,xtend]
+----
+@AfterClass
+static def void after(){
+    CoverageReporter.reportHtml(coverage, new File("coverage.html"))
+}
+----
+
+For a complete example, see the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/frameworktests/org.eclipse.viatra.examples.cps.tests/src/org/eclipse/viatra/examples/cps/tests/BasicCpsTest.xtend[CPS Framework tests].
+
+==== Interpreting the coverage report ====
+
+A coverage report looks like this: link:https://hudson.eclipse.org/viatra/job/viatra-framework-tests/lastSuccessfulBuild/artifact/cps/frameworktests/org.eclipse.viatra.examples.cps.tests/BasicCpsTest_coverage.html[CPS Framework tests coverage report]
+
+An element (pattern, pattern body or a constraint) can be:
+
+Covered:: the Rete node which belongs to it had at least one match during the query executions
+Uncovered:: the Rete node which belongs to it had no matches during any query execution
+Not represented:: it is not represented in the Rete network, which usually means that the optimizer removed it because it is redundant.
+Not represented by error:: it should be represented in the Rete network, but it was removed for an unknown reason; if you encounter this, please report an issue, including your query file and the coverage report.
+
+Note that a pattern body can be uncovered although each of its constraints is covered, because the Rete nodes belonging to the constraints could have matches during _different_ query executions, which means that the constraints were not fulfilled at once.
+
+A pattern's aggregated coverage metric is calculated the following way: number of covered elements / number of represented (covered/uncovered) elements
+
+Known limitations in 1.6:
+
+* coverage measurement is supported only with the Rete backend
+* the results might be indeterministic because of the indeterminism of the Rete evaluation
+* the constraints are displayed in their internal PQuery representation (see http://bugs.eclipse.org/515723)

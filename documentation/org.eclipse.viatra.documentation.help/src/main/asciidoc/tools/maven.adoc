@@ -1,0 +1,241 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-maven-plugin]]
+= Maven integration
+
+VIATRA Query supports building VIATRA Query projects in a Maven-based builds by generating the pattern matcher code from the vql files.
+
+.Requirements
+* The maven compiler requires Maven 3.1 to function correctly. In some cases Maven 3.0.5 is enough, but there are some dependency issues that are problematic for this version. Versions before Maven 3.0 will not work at all. See http://bugs.eclipse.org/478437 for details.
+
+.Known limitations
+* Code generation for integration components (e.g. validation framework, derived features) is not supported. See http://bugs.eclipse.org/434794
+* The VIATRA Query project is not available from Maven Central, only from repo.eclipse.org.
+* There is no maven archetype support: it is not possible to generate an Eclipse-less project automatically, that works with VIATRA Query. However, manually created projects can be built with the existing compiler.
+
+== Repository
+
+Maven components are available from the Eclipse maven repository with the following urls:
+
+ * Releases: https://repo.eclipse.org/content/repositories/viatra-releases/ (kept indefinitely)
+ * Snapshot only: http://repo.eclipse.org/content/repositories/viatra-snapshots/ (cleared after 30 days)
+ * Combined repository: https://repo.eclipse.org/content/groups/viatra/
+
+The following maven projects are available for use:
+
+org.eclipse.viatra:viatra-query-runtime:: dependency for the VIATRA Query runtime, without support for generic API
+org.eclipse.viatra:viatra-query-language:: dependency for the VIATRA Query with support for generic API (requires many more dependencies - only use if required)
+org.eclipse.viatra:viatra-maven-plugin:: Maven code generator, should not be added to the compile classpath
+
+To use VIATRA Query features, add the repository and the required dependencies to your Maven project:
+
+[source,xml]
+----
+<!-- use this in your project's pom.xml file -->
+<properties>
+    <!-- It is a good idea to specify VIATRA framework version once as
+    a property (e.g. in the parent pom) and use that throughout the build -->
+	<viatra.version>1.2.1</viatra.version>
+</properties>
+
+<dependencies>
+	<dependency>
+		<groupId>org.eclipse.viatra</groupId>
+		<artifactId>viatra-query-runtime</artifactId>
+		<version>${viatra.version}</version>
+	</dependency>
+
+	<!-- requires many more dependencies - only use if required -->
+	<dependency>
+		<groupId>org.eclipse.viatra</groupId>
+		<artifactId>viatra-query-language</artifactId>
+		<version>${viatra.version}</version>
+	</dependency>
+</dependencies>
+
+<repositories>
+	<repository>
+		<id>viatra</id>
+		<url>https://repo.eclipse.org/content/groups/viatra2/</url>
+	</repository>
+</repositories>
+----
+
+== viatra-maven-plugin ==
+
+The maven plugin requires information from the used EMF packages and additionally the EMF packages should be able loaded as well. For this reason, it is important to add references to EPackages and Genmodels together with the corresponding dependencies.
+
+Since 1.5, it is possible to use the project dependencies without declaring them explicitly. This helps when the metamodels you are using are not available as Maven artifacts.
+
+.Additional notes
+* Package reference is added either by file path to the .genmodel file (typically by platform:/resource URI) or fully qualified name of the Ecore Package class that is available on the classpath. Note that if the class is in the same plugin as the query file, the class based reference will not work as compilation will happen at a later build phase than the generation. Also pay attention not to mix the package class-based and the genmodel-based mechanism in one reactor because it can lead to strange errors.
+* Each package that is imported must be listed in the metamodels section. The packages that are used transitively by the explicitly listed packages do not need to be listed.
+* Explicit dependency declarations are transitive, so you don't need to specify all dependencies in all POM.XML files. Note that in some cases you need to add extra dependencies with specific versions (e.g. emf.core) if your genmodel requires a higher version than what is provided by the viatra-maven-plugin. This way you can redefine the EMF versions used by the generator.
+* If a pattern file in a Maven project imports patterns from another project on which it depends, make sure that the files containing the imported patterns are included in the dependency's Maven artifact.
+
+.Example POM.XML (based on link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/frameworktests/org.eclipse.viatra.gui.tests.queries/pom.xml[CPS example])
+[source,xml]
+----
+<pluginRepositories>
+  <pluginRepository>
+    <id>viatra</id>
+    <url>https://repo.eclipse.org/content/groups/viatra/</url>
+  </pluginRepository>
+</pluginRepositories>
+<build>
+<plugins>
+<!-- Using maven-clean-plugin to remove previously generated code -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-clean-plugin</artifactId>
+  <version>2.5</version>
+  <executions>
+    <execution>
+      <phase>clean</phase>
+      <goals>
+        <goal>clean</goal>
+      </goals>
+      <configuration>
+        <filesets>
+          <fileset>
+            <!-- Generated code folder -->
+            <directory>src-gen</directory>
+            <includes>
+              <include>**/*</include>
+            </includes>
+          </fileset>
+        </filesets>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+<!-- Setting up generator -->
+<plugin>
+  <groupId>org.eclipse.viatra</groupId>
+  <artifactId>viatra-maven-plugin</artifactId>
+  <version>${viatra.version}</version>
+  <!-- Binding execution to the code generation lifecycle phase -->
+  <executions>
+    <execution>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <!-- Output directory - required -->
+    <outputDirectory>src-gen</outputDirectory>
+    <metamodels>
+      <metamodel>
+        <!-- Select one of the following depending on where is your metamodel defined -->
+
+        <!-- (a) Java class for the EMF EPackage - use this if generated EMF code is in the classpath -->
+        <packageClass>org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage</packageClass>
+        <!-- (b) genmodel file used for generating the EMF model classes - use this if EMF model is in the same project -->
+        <!-- <genmodelUri>model/model.genmodel</genmodelUri> -->
+      </metamodel>
+    </metamodels>
+    <!-- Since 1.5, you can use the project dependencies instead of specific Maven dependencies - optional -->
+    <useProjectDependencies>true</useProjectDependencies>
+  </configuration>
+  <dependencies>
+    <!-- Dependency required for the cps domain project (that contains the generated EPackage), unless you set useProjectDependencies -->
+    <dependency>
+      <groupId>org.eclipse.viatra.examples.cps</groupId>
+      <artifactId>org.eclipse.viatra.examples.cps.model</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+  </dependencies>
+</plugin>
+</plugins>
+</build>
+----
+
+=== Troubleshooting ===
+
+.Cyclic linking
+In a project that contains multiple pattern definition files, there is a slight chance you get an error message like follows:
+
+`ERROR:Cyclic linking detected : PatternCall.patternRef->PatternCall.patternRef`
+
+This is a known issue we are working to fix; see http://bugs.eclipse.org/464120 and http://bugs.eclipse.org/480652 for details about the underlying issues.
+
+As workaround, we suggest that you have added types for all parameters, because that avoids this issue.
+
+If that is not enough, you have to ensure that the vql files are processed in calling order: all patterns are to be processed before they are used in a pattern call. This can be achieved either by moving patterns between vql files, or by renaming your .vql files so that the files that call patterns from other files should have names lexicographically greater than the referenced files. 
+
+For example, let's suppose that you have a query file with two queries:
+
+[source,vql]
+----
+// util.vql
+
+pattern utilityPattern(...) {
+  find anotherUtilityPattern(...);
+}
+
+pattern anotherUtilityPattern(...) {
+  ...
+}
+----
+
+The cyclic linking occurs where `utilityPattern` calls `anotherUtilityPattern`. Search for callers of `utilityPattern`! Let's suppose it is in this file:
+
+[source,vql]
+----
+// logic.vql
+
+pattern myPattern(...) {
+  find utilityPattern(...);
+}
+----
+
+You have to rename `util.vql` to `a_util.vql` and `logic.vql` to `b_logic.vql`, so that the former is processed before the latter.
+
+.Ambyguous types
+
+If you get type errors during validation such as `ERROR:foo cannot be resolved.` or `ERROR:Ambiguous variable type defintions: [Foo, Bar], type cannot be selected` although the query files are valid in Eclipse, check the cross-references in your ecore/genmodel files by opening them with a text editor. If their URIs are workspace-based, i.e. they start with `platform:/resource`, you have to map those URIs to absolute `file:` URIs by including URI mappings in the viatra-maven-plugin configuration (since 1.6):
+
+[source,vql]
+----
+<plugin>
+	<groupId>org.eclipse.viatra</groupId>
+	<artifactId>viatra-maven-plugin</artifactId>
+	<configuration>
+...
+		<uriMappings>
+			<uriMapping>
+				<sourceUri>platform:/resource/school/model/school.ecore</sourceUri>
+				<targetUri>file:/${project.basedir}/school/model/school.ecore</targetUri>
+			</uriMapping>
+			<uriMapping>
+				<sourceUri>platform:/resource/school/model/school.genmodel</sourceUri>
+				<targetUri>file:/${project.basedir}/school/model/school.genmodel</targetUri>
+			</uriMapping>
+		</uriMappings>
+	</configuration>
+</plugin>
+----
+
+.Multiple definitions of a type
+
+If you get the error
+`ERROR:Variable foo has a type Foo which has multiple definitions: 'file://C:\project\model/../../anotherProject/model/usedMetamodel.ecore' --  'file://C:\project\../anotherProject/model/usedMetamodel.ecore'`
+make sure that the genmodelUri in the viatra-maven-plugin's configuration is *exactly* the same as the URI in your .genmodel file, e.g. if your `metamodel.ecore` resides in the `model` subfolder, this will be the configuration with the correct relative URI:
+
+<source lang="xml">
+<plugin>
+	<groupId>org.eclipse.viatra</groupId>
+	<artifactId>viatra-maven-plugin</artifactId>
+	<configuration>
+		<metamodels>
+			<metamodel>
+				<genmodelUri>model/../../anotherProject/model/usedMetamodel.genmodel</genmodelUri>
+			</metamodel>
+		</metamodels>
+	</configuration>
+</plugin>
+</source>
+
+NOTE: The URIs should be the same *after* URI mapping if used.

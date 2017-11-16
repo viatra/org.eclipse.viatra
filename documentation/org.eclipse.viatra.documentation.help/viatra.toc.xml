@@ -56,10 +56,20 @@
           </topic>
           <topic href="html/transformations.html#transformation-debugger" label="Debugging Model Transformations">
           </topic>
+          <topic href="html/evm.html" label="The Event-Driven Virtual Machine">
+          </topic>
        </topic>
-       <topic href="html/evm.html" label="The Event-Driven Virtual Machine">
-       </topic>
-       <topic href="html/tooling/preferences.html" label="Preferences">
+       <topic label="Development Tools">
+           <topic href="html/tools/preferences.html" label="Preferences">
+           </topic>
+           <topic href="html/tools/query-profiling#rete-visualizer" label="Rete Visualizer">
+           </topic>
+           <topic href="html/tools/query-profiling#local-search-debugger" label="Local Search Debugger">
+           </topic>
+           <topic href="html/tools/query-tests.html" label="Functional Testing of Model Queries">
+           </topic>
+           <topic href="html/tools/maven.html" label="Using VIATRA Query in Maven Projects">
+           </topic>
        </topic>
        <topic href="html/addons.html" label="Addons and Integrations">
            <topic href="html/addons.html#viatra-validation" label="VIATRA Validation Framework">

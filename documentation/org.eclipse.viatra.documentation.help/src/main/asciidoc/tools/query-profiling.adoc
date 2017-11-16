@@ -1,0 +1,48 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+
+[[query-optimization]]
+= Debugging and Profiling Graph Patterns
+
+[[rete-visualizer]]
+== Rete Visualizer =
+
+.Installation
+* Install the *Query Visualization* feature group from the VIATRA update site.
+** Before VIATRA 1.6 this feature relied on a pre-release version of GEF4 Zest; the version available from the GEF update sites did not work. Use the version from the VIATRA update sites.
+** Since VIATRA 1.6 GEF 5 is used
+*** JavaFX support is required
+*** e(fx)clipse runtime and GEF5 is required. They are both available from the Oxygen release train.
+
+.Usage
+* Go to *Window* | *Show View* | *Other...* and choose *Rete Visualizer*.
+* Load the instance model and the pattern in _Query Results_ view.
+* Click on the pattern name to visualize it.
+* To change the visualized Rete net, unload the pattern and load with the green start button.
+* You may change the layout by clicking the downward pointing triangle and going to the *Layout* menu.
+image:tools/rete_visualizer.png[]
+
+[[local-search-debugger]]
+== Local Search Debugger
+
+.Installation
+
+The Local Search Debugger Tooling is available in the Query Visualization feature group.
+
+.Usage
+* Open the Local Search Debugger view in Eclipse
+* Load the model and query definitions in the Query explorer
+* Select the the query in the Query explorer
+* Run the local search debugger by invoking the command on the toolbar of the Local Search Debugger view. The command reads the selection from the query explorer and initiates the matching: initializes and shows the plan.
+* Step or run the matching using the designated commands on the view's toolbar. Breakpoints can also be added when needed.
+* The state of the shown search plan shows the state of the execution, while the already found matches and the current variable substitutions can be seen in the view's provided Zest viewer.
+
+[[query-profiling]]
+== Memory Optimization of Rete Networks
+
+If you have a large number of patterns and you find that the incremental query evaluation seems very slow or uses more memory than expected, it is useful to take an instance model where the issue occurs and evaluate the footprint of each pattern independently. Of course, patterns that call other patterns will also incorporate the footprint of those patterns, but the difference can be seen nonetheless.
+
+We provide a simple JUnit test for performing this hotspot evaluation easily using the Testing Framework of VIATRA Query: link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/tests/org.eclipse.viatra.query.testing.core/src/org/eclipse/viatra/query/testing/core/QueryPerformanceTest.xtend[QueryPerformanceTest.xtend]. Read the JavaDoc for more details, while an example on its usage can be found here for our UML surrogate queries: link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/integration/tests/org.eclipse.viatra.integration.uml.test/src/org/eclipse/viatra/integration/uml/test/UMLSurrogateQueryPerformanceTest.java[UMLSurrogateQueryPerformanceTest.java]
+
+Note that if you run the test and use profilers, such as link:https://www.yourkit.com/java/profiler/index.jsp[YourKit] or link:http://www.oracle.com/technetwork/java/javaseproducts/mission-control/java-mission-control-1998576.html[Java Mission Control], the problematic patterns can be easily identified by looking at the heap size graphs, selecting the exceeding parts and looking at the current trace to see which query is being built.
