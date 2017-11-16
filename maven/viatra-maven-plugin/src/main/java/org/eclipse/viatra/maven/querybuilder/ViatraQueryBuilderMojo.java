@@ -91,7 +91,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
     /**
      * The project itself. This parameter is set by maven.
      * 
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @readonly
      * @required
      */
@@ -118,24 +118,25 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
     /**
      * Location of the generated source files.
      * 
-     * @parameter expression="${project.build.directory}/xtext-temp"
+     * @parameter default-value="${project.build.directory}/xtext-temp"
+     * @readonly
      */
     private String tmpClassDirectory;
 
     /**
      * File encoding argument for the generator.
      * 
-     * @parameter expression="${xtext.encoding}" default-value="${project.build.sourceEncoding}"
+     * @parameter property="xtext.encoding" default-value="${project.build.sourceEncoding}"
      */
     protected String encoding;
 
     /**
-     * @parameter expression="${maven.compiler.source}" default-value="1.7"
+     * @parameter property="maven.compiler.source" default-value="1.7"
      */
     private String compilerSourceLevel;
 
     /**
-     * @parameter expression="${maven.compiler.target}" default-value="1.7"
+     * @parameter property="maven.compiler.target" default-value="1.7"
      */
     private String compilerTargetLevel;
     
