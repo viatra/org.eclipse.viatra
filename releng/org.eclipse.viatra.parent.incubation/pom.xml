@@ -40,13 +40,11 @@
         <module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.feature</module>
 
         <!-- Integration -->
-        <module>../../integration/plugins/org.eclipse.viatra.integration.evm.jdt</module>
         <module>../../integration/plugins/org.eclipse.viatra.integration.graphiti</module>
         <module>../../integration/plugins/org.eclipse.viatra.integration.modisco</module>
         <module>../../integration/plugins/org.eclipse.viatra.integration.mwe2</module>
         <module>../../integration/plugins/org.eclipse.viatra.integration.zest</module>
         <module>../../integration/tests/org.eclipse.viatra.integration.mwe2.test</module>
-        <module>../../integration/features/org.eclipse.viatra.integration.evm.jdt.feature</module>
         <module>../../integration/features/org.eclipse.viatra.integration.modisco.feature</module>
         <module>../../integration/features/org.eclipse.viatra.integration.graphiti.feature</module>
         <module>../../integration/features/org.eclipse.viatra.integration.mwe2.feature</module>

@@ -45,9 +45,6 @@
    <feature url="features/org.eclipse.viatra.transformation.runtime.debug.feature_0.20.0.qualifier.jar" id="org.eclipse.viatra.transformation.runtime.debug.feature" version="0.20.0.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.integration.evm.jdt.feature.source_0.20.0.qualifier.jar" id="org.eclipse.viatra.integration.evm.jdt.feature.source" version="0.20.0.qualifier">
-      <category name="org.eclipse.viatra.integrations"/>
-   </feature>
    <feature url="features/org.eclipse.viatra.transformation.runtime.debug.feature.source_0.20.0.qualifier.jar" id="org.eclipse.viatra.transformation.runtime.debug.feature.source" version="0.20.0.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>
