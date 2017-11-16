@@ -84,14 +84,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/backend/CommonQueryHintOptions.java" type="org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions">
-        <filter comment="Hiding constructor for utility class" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions"/>
-                <message_argument value="CommonQueryHintOptions()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/context/AbstractQueryMetaContext.java" type="org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryMetaContext">
         <filter comment="Internal API implementation" id="576725006">
             <message_arguments>
@@ -105,38 +97,6 @@
             <message_arguments>
                 <message_argument value="IQueryRuntimeContext"/>
                 <message_argument value="AbstractQueryRuntimeContext"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/planning/helpers/BuildHelper.java" type="org.eclipse.viatra.query.runtime.matchers.planning.helpers.BuildHelper">
-        <filter comment="Hiding constructor for utility class" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.planning.helpers.BuildHelper"/>
-                <message_argument value="BuildHelper()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/planning/helpers/FunctionalDependencyHelper.java" type="org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper">
-        <filter comment="Hiding constructor for utility class" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper"/>
-                <message_argument value="FunctionalDependencyHelper()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/planning/helpers/TypeHelper.java" type="org.eclipse.viatra.query.runtime.matchers.planning.helpers.TypeHelper">
-        <filter comment="Hiding constructor for utility class" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.planning.helpers.TypeHelper"/>
-                <message_argument value="TypeHelper()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/ITypeConstraint.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.ITypeConstraint$TypeConstraintUtil">
-        <filter comment="Hiding constructor for utility class" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.psystem.ITypeConstraint.TypeConstraintUtil"/>
-                <message_argument value="TypeConstraintUtil()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -177,55 +137,6 @@
             <message_arguments>
                 <message_argument value="IPTraceableTraceProvider"/>
                 <message_argument value="IRewriterTraceCollector"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/FlatTuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple">
-        <filter comment="Internal API update" id="337768515">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/LeftInheritanceTuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple">
-        <filter id="337768515">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/Tuple.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple">
-        <filter comment="Method inherited from base class" id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
-                <message_argument value="get(int)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method inherited from base class" id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
-                <message_argument value="getSize()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method inherited from base class" id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.Tuple"/>
-                <message_argument value="internalEquals(Tuple)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/tuple/TupleMask.java" type="org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask">
-        <filter comment="Minor update" id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask"/>
-                <message_argument value="transform(Tuple)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/util/CollectionsFactory.java" type="org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory">
-        <filter id="337768515">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory"/>
             </message_arguments>
         </filter>
     </resource>

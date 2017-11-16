@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.viewers.tooling.feature"
       label="VIATRA Viewers Tooling (Incubation)"
-      version="0.17.0.qualifier"
+      version="0.20.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -21,16 +21,16 @@
 
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-         version="0.17.0.qualifier"
+         version="0.20.0.qualifier"
          name="VIATRA Viewers Runtime - GEF4 Zest Support"/>
 
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.feature"
-         version="0.17.0.qualifier"
+         version="0.20.0.qualifier"
          name="VIATRA Viewers Runtime"/>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.7.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.0.0" match="equivalent"/>
    </requires>
 
    <plugin

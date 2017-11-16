@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter id="923795461">
-            <message_arguments>
-                <message_argument value="1.7.0"/>
-                <message_argument value="1.6.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory">
-        <filter id="305422471">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.TupleMemory"/>
-                <message_argument value="org.eclipse.viatra.query.runtime_1.6.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider">
-        <filter id="305422471">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider"/>
-                <message_argument value="org.eclipse.viatra.query.runtime_1.6.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/api/impl/BaseMatcher.java" type="org.eclipse.viatra.query.runtime.api.impl.BaseMatcher">
         <filter comment="QueryResultWrapper has no API methods" id="576720909">
             <message_arguments>
@@ -37,14 +13,6 @@
             <message_arguments>
                 <message_argument value="EngineContextFactory"/>
                 <message_argument value="QueryScope"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/emf/helper/ViatraQueryRuntimeHelper.java" type="org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper">
-        <filter comment="Utility class constructor" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper"/>
-                <message_argument value="ViatraQueryRuntimeHelper()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -71,14 +39,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl.getQueryBackend(IQueryBackendFactory)"/>
                 <message_argument value="IQueryBackendContext"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/util/ViatraQueryLoggingUtil.java" type="org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil">
-        <filter comment="Utility class constructor" id="354463860">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil"/>
-                <message_argument value="ViatraQueryLoggingUtil()"/>
             </message_arguments>
         </filter>
     </resource>
