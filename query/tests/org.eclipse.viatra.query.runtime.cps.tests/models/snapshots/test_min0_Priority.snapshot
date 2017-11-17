@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<vqSnapshot:QuerySnapshot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vqSnapshot="http://www.eclipse.org/viatra/query/snapshot" inputSpecification="ResourceSet">
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.minPriority">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:IntSubstitution" parameterName="m"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <modelRoots href="../instances/aggregators/aggregators_baseLine.cyberphysicalsystem#testModel6504822858552"/>
+</vqSnapshot:QuerySnapshot>

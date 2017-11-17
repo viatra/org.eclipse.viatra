@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps" identifier="testModel6504822858552">
+  <appTypes identifier="AT1">
+    <instances identifier="A1" allocatedTo="H1" priority="1"/>
+    <instances identifier="A2" allocatedTo="H2" priority="2"/>
+    <instances identifier="A3" allocatedTo="H3" priority="3"/>
+  </appTypes>
+  <appTypes identifier="AT2">
+    <instances identifier="A4" allocatedTo="H4" priority="4"/>
+    <instances identifier="A5" allocatedTo="H5" priority="5"/>
+    <instances identifier="A6" allocatedTo="H6" priority="6"/>
+  </appTypes>
+  <appTypes identifier="AT3"/>
+  <appTypes identifier="AT4"/>
+  <appTypes identifier="AT5"/>
+  <hostTypes identifier="HT1">
+    <instances identifier="H1" nodeIp="simple.cps.host.FirstHostClass0.inst0" applications="A1"/>
+    <instances identifier="H2" nodeIp="simple.cps.host.FirstHostClass0.inst1" applications="A2"/>
+    <instances identifier="H3" nodeIp="simple.cps.host.FirstHostClass0.inst2" applications="A3"/>
+    <instances identifier="H4" nodeIp="simple.cps.host.FirstHostClass0.inst3" applications="A4"/>
+    <instances identifier="H5" nodeIp="simple.cps.host.FirstHostClass0.inst4" applications="A5"/>
+    <instances identifier="H6" applications="A6"/>
+  </hostTypes>
+</cps:CyberPhysicalSystem>

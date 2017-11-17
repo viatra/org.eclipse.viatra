@@ -1,0 +1,12 @@
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern evalDivisionByZero(n : java Integer) {
+	n == eval(1/0);
+}
+
+pattern checkDivisionByZero(n : EInt) {
+	check(n / 0 > 0);
+}

@@ -1,0 +1,270 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Tamas Borbas - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+// Step 1: Simple patterns
+
+pattern applicationTypes(
+	AT : ApplicationType
+) {
+	ApplicationType(AT);
+}
+
+pattern applicationInstances(
+	AI : ApplicationInstance
+) {
+	ApplicationInstance(AI);
+}
+
+pattern applicationTypesIdentifiers(
+	ATIdentifier
+) {
+	ApplicationType.identifier(_, ATIdentifier);
+}
+
+pattern applicationInstancesIdentifiers(
+	AIIdentifier
+) {
+	ApplicationInstance.identifier(_, AIIdentifier);
+}
+
+/*
+ * A sample query along a reference.
+ * 
+ * AI is an instance of application type AT.
+ */
+pattern applicationInstancesOfApplicationType(
+	AI : ApplicationInstance,
+	AT : ApplicationType
+) {
+	ApplicationType.instances(AT, AI);
+	// Note: There is no restriction on the direction of navigation,
+	// so all "AT"s can be queried from "AI"s and vice-versa
+}
+
+pattern applicationInstancesOfApplicationTypeIdentifiers(
+	AIIdentifier,
+	ATIdentifier
+) {
+	ApplicationType.instances(aT, aI);
+	ApplicationInstance.identifier(aI, AIIdentifier);
+	ApplicationType.identifier(aT, ATIdentifier);
+}
+
+// Step 2: pattern calls, negative application conditions
+
+pattern applicationTypeWithHostedInstances(
+	AT : ApplicationType,
+	HI : HostInstance
+) {
+	find applicationInstancesOfApplicationType(aI, AT);
+	HostInstance.applications(HI, aI);
+}
+
+pattern applicationTypeWithHostedInstanceIdentifiers(
+	HIIdentifier,
+	ATIdentifier
+) {
+	find applicationTypeWithHostedInstances(aT, hI);
+	HostInstance.identifier(hI, HIIdentifier);
+	ApplicationType.identifier(aT, ATIdentifier);
+}
+
+/*
+ * Application type AT is an application type which has no hosted instance.
+ */
+pattern applicationTypeWithoutHostedInstance(
+	AT : ApplicationType
+) {
+	neg find applicationTypeWithHostedInstances(AT, _);
+}
+
+pattern applicationTypeWithoutHostedInstanceIdentifiers(
+	ATIdentifier
+) {
+	neg find applicationTypeWithHostedInstances(aT, _);
+	ApplicationType.identifier(aT, ATIdentifier);
+}
+
+// Step 3: path expressions
+
+pattern transitionsOfApplicationType(
+	T : Transition,
+	AT : ApplicationType
+) {
+	ApplicationType.behavior.states.outgoingTransitions(AT, T);
+}
+
+pattern transitionsOfApplicationTypeIdentifiers(
+	TIdentifier,
+	ATIdentifier
+) {
+	ApplicationType.behavior.states.outgoingTransitions(aT, t);
+	ApplicationType.identifier(aT, ATIdentifier);
+	Transition.identifier(t, TIdentifier);
+}
+
+// Step 4: check condition
+
+/*
+ * Attribute value constraint with a constant:
+ * 
+ * Host instance HI has total RAM 0.
+ */
+pattern hostInstancesWithZeroTotalRam(
+	HI : HostInstance
+) {
+	HostInstance.totalRam(HI, 0);
+}
+
+/*
+ * A bit more complicated check expression:
+ * 
+ * Host instance HI has at least as much total RAM as total HDD.
+ */
+pattern hostInstanceWithAtLeastAsMuchTotalRamAsTotalHdd(
+	HI : HostInstance
+) {
+	HostInstance.totalRam(HI, ram);
+	HostInstance.totalHdd(HI, hdd);
+	check(ram >= hdd);
+}
+
+/*
+ * A check condition with some code:
+ * 
+ * Host instance HI has total ram which is a prime number.
+ */
+pattern hostInstanceWithPrimeTotalRam(
+	HI : HostInstance
+) {
+	HostInstance.totalRam(HI, ram);
+	check( {
+		if((ram > 2 && ram%2 == 0) || ram < 1) {
+			return false;
+		} else {
+			var maxValue = Math::round(new Float(Math::sqrt(ram)));
+			var divisor = 3;
+			while(divisor <= maxValue) {
+				if(ram % divisor == 0) {
+					return false;
+				} else {
+					divisor = divisor + 2;
+				}
+			}
+			return true;
+		}
+	});
+}
+
+// Step 5: counting (match cardinalities)
+
+pattern hasMoreHostedApplicationInstances(
+	AT1 : ApplicationType,
+	AT2 : ApplicationType
+) {
+	N == count find applicationTypeWithHostedInstances(AT1, _Hx1);
+	M == count find applicationTypeWithHostedInstances(AT2, _Hx2);
+	check(N > M);
+}
+
+pattern hasTheMostHostedApplicationInstances(
+	AT : ApplicationType
+) {
+	neg find hasMoreHostedApplicationInstances(_, AT);
+}
+
+// Step 6: disjunction, recursion, transitive closure
+
+@QueryExplorer(checked = false)
+pattern communicateWith(
+	HI1 : HostInstance,
+	HI2 : HostInstance
+) {
+	HostInstance.communicateWith(HI1, HI2);
+} or {
+	HostInstance.communicateWith(HI2, HI1);
+}
+
+pattern inTheCommunicationChains(
+	HI1 : HostInstance,
+	HI2 : HostInstance
+) {
+	find communicateWith+(HI1, HI2);
+	HI1 != HI2;
+}
+
+pattern hasMoreCommunicationPartner(
+	HI1 : HostInstance,
+	HI2 : HostInstance
+) {
+	N == count find inTheCommunicationChains(HI1, _Hx1);
+	M == count find inTheCommunicationChains(HI2, _Hx2);
+	check(N > M);
+}
+
+pattern hasTheMostCommunicationPartner(
+	HI : HostInstance
+) {
+	neg find hasMoreCommunicationPartner(_, HI);
+}
+
+// Step 7: combinations
+
+pattern hostedApplications(
+	HI : HostInstance,
+	AI : ApplicationInstance
+) {
+	HostInstance.applications(HI, AI);
+}
+
+pattern hasMoreHostedApplications(
+	HI1 : HostInstance,
+	HI2 : HostInstance
+) {
+	N == count find hostedApplications(HI1, _AI1);
+	M == count find hostedApplications(HI2, _AI2);
+	check(N > M);
+}
+
+pattern hasTheMostHostedApplications(
+	HI : HostInstance
+) {
+	neg find hasMoreHostedApplications(_, HI);
+}
+
+@QueryExplorer(message = "The host instance $HI.identifier$ - which has the most hosted applications - has $CPU$ available CPU, $RAM$ available RAM and $HDD$ available HDD")
+@ObservableValue(name = "HostInstance", expression = "HI.identifier")
+@ObservableValue(name = "CPU", expression = "CPU")
+@ObservableValue(name = "RAM", expression = "RAM")
+@ObservableValue(name = "HDD", expression = "HDD")
+pattern finalPattern(
+	HI : HostInstance,
+	CPU,
+	RAM,
+	HDD
+) {
+	find hasTheMostHostedApplications(HI);
+	
+	HostInstance.availableCpu(HI, CPU);
+	HostInstance.availableRam(HI, RAM);
+	HostInstance.availableHdd(HI, HDD);
+}
+
+// Step 8: advanced type inference features
+
+pattern instances(I) {
+	HostInstance(I);
+} or {
+	ApplicationInstance(I);
+}

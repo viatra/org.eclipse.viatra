@@ -1,0 +1,31 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Tamas Borbas - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+// This tests the 398745 bug
+
+import "http://org.eclipse.viatra/model/cps"
+
+pattern hostInstancesTypeWithDefaultRam(
+	HI : HostInstance,
+	HT : HostType,
+	DR
+) {
+	HostType.instances(HT, HI);
+	HostType.defaultRam(HT, DR);
+}
+
+pattern allVariablesNamed(HI : HostInstance) {
+	find hostInstancesTypeWithDefaultRam(HI, _HT, _DR);
+}
+
+pattern anonymousVariables(HI : HostInstance) {
+	find hostInstancesTypeWithDefaultRam(HI, _, _);
+}

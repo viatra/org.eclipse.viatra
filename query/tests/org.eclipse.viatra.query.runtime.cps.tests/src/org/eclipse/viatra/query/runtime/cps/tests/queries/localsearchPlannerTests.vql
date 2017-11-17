@@ -1,0 +1,66 @@
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+/*
+ * Test pattern to check
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=495677
+ */
+pattern partiallyUnboundUnifiedExportedParameters(at, ai){
+    ApplicationType.instances(at, ai);
+    neg find multipleExportedSame(at, _, ai);
+}
+
+pattern multipleExportedSame(at1: ApplicationType, at2: ApplicationType, ai: ApplicationInstance){
+    ApplicationType.instances(at1, ai);
+    at1 == at2;
+}
+
+pattern multiInstanceTypes(at1: ApplicationType, at2: ApplicationType, ai: ApplicationInstance){
+    c == count find applicationInstancesOfApplicationType(ai, at1);
+    check(c > 1);
+    at1 == at2;
+}
+
+pattern unifiedParametersWithDifferentValues2(at1, ai, c){
+    ApplicationType.instances(at1, ai);
+    ApplicationType(at2);
+    c == count find multiInstanceTypes(at1, at2, ai);
+}
+
+/*
+ * Test pattern to check
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=495677
+ */
+pattern unifiedParametersWithDifferentValues(at1, ai, c){
+    ApplicationType.instances(at1, ai);
+    ApplicationType(at2);
+    c == count find multipleExportedSame(at1, at2, _);
+}
+
+/*
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=495764
+ */
+pattern multipleEvals(at: ApplicationType){
+    c == count find applicationInstancesOfApplicationType(_ai, at);
+    d == eval(Integer.parseInt("1"));
+    check(c > d);
+}
+
+private pattern countInstances(at: ApplicationType, value){
+    value == count find applicationInstancesOfApplicationType(_ai, at);
+}
+
+private pattern useVarInEvalUtil(at: ApplicationType){
+    find countInstances(at, value);
+    d == eval(value+2);
+    check(d == 1);
+}
+
+/*
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=495792
+ */
+pattern useVarInEval(at1: ApplicationType, at2: ApplicationType){
+    find useVarInEvalUtil(at1);
+    find useVarInEvalUtil(at2);
+}

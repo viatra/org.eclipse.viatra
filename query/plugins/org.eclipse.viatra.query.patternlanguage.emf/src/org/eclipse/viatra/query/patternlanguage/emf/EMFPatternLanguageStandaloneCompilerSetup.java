@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * Copyright (c) 2010-2017, Zoltan Ujhelyi, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,20 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.maven.querybuilder.setup;
+package org.eclipse.viatra.query.patternlanguage.emf;
 
-import org.eclipse.xtext.xbase.resource.BatchLinkableResource;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-public class EagerBatchLinkableResource extends BatchLinkableResource {
-
-    public EagerBatchLinkableResource() {
-        super();
-        setEagerLinking(true);
-    }
+/**
+ * @author Zoltan Ujhelyi
+ * @since 2.0
+ *
+ */
+public class EMFPatternLanguageStandaloneCompilerSetup extends EMFPatternLanguageStandaloneSetup {
 
     @Override
-    public boolean isEagerLinking() {
-        return true;
+    public Injector createInjector() {
+        return Guice.createInjector(new EMFPatternLanguageStandaloneCompilerModule());
     }
-
 }

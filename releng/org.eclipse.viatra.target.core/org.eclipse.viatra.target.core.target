@@ -20,10 +20,10 @@
       <unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
       <unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
       <unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
-      <unit id="org.junit" version="4.11.0.v201303080030"/>
+      <unit id="org.junit" version="4.12.0.v201504281640"/>
       <unit id="org.mockito" version="1.9.5.v201311280930"/>
       <unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
-      <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+      <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>

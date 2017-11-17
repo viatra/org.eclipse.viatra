@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ASCII"?>
+<vqSnapshot:QuerySnapshot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vqSnapshot="http://www.eclipse.org/viatra/query/snapshot" inputSpecification="ResourceSet">
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.allDependencies">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A5"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A5"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A5"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A5"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A5"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A5"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependant">
+        <value href="../instances/dred.cyberphysicalsystem#A3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="dependee">
+        <value href="../instances/dred.cyberphysicalsystem#A2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <modelRoots href="../instances/dred.cyberphysicalsystem#testModel6504822858552"/>
+</vqSnapshot:QuerySnapshot>

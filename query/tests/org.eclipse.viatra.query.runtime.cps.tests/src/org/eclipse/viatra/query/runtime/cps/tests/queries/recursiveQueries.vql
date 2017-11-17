@@ -1,0 +1,60 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Tamas Borbas - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+pattern alphabeticallyAfterCommunicationPartner(
+	HI0 : HostInstance,
+	HI1 : HostInstance
+) {
+	find communicateWith(HI0, HI1);
+	HostInstance.identifier(HI0, HI0Id);
+	HostInstance.identifier(HI1, HI1Id);
+	check(HI0Id < HI1Id);
+}
+
+pattern increasingAlphabeticalCommunicationChainRec(
+	HI0 : HostInstance,
+	HI1 : HostInstance
+) {
+	find alphabeticallyAfterCommunicationPartner(HI0, HI1);
+} or {
+	find alphabeticallyAfterCommunicationPartner(HI0, HI2);
+	find increasingAlphabeticalCommunicationChainRec(HI2, HI1);
+}
+
+pattern increasingAlphabeticalCommunicationChainTC(
+	HI0 : HostInstance,
+	HI1 : HostInstance
+) {
+	find alphabeticallyAfterCommunicationPartner+(HI0, HI1);
+}
+
+pattern communicationPartners(
+	HI0 : HostInstance,
+	HI1 : HostInstance
+) {
+	find communicateWith(HI0, HI2);	
+	find communicationPartners(HI2, HI1);
+} or {
+	find communicateWith(HI0, HI1);	
+}
+
+pattern communicateWithInstanceOfHostType(
+	HT : HostType,
+	HI : HostInstance
+) {
+	HostType.instances(HT, HI0);
+	find communicationPartners(HI0, HI);
+} or {
+	HostType.instances(HT, HI);
+}

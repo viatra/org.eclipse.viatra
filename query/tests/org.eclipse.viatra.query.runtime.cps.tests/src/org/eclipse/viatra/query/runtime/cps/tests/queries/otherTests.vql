@@ -1,0 +1,39 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Balazs Grill, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Balazs Grill, Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+/**
+ * Reproduction case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=506253
+ * 
+ * <br /> If the inferred type is ApplicationInstance, the use of LS throws an exception. 
+ */
+pattern notApplicationInstanceIdentifiable(notApplicationInstance){
+    Identifiable(notApplicationInstance);
+    neg find applicationInstances(notApplicationInstance);
+}
+
+/**
+ * If the parameter is explicitly typed, the result should be the same for both matchers.
+ */
+pattern notApplicationInstanceIdentifiable2(notApplicationInstance : Identifiable){
+    Identifiable(notApplicationInstance);
+    neg find applicationInstances(notApplicationInstance);
+}
+
+/**
+ * If the parameters is explicitly downcast, the result should still be the same (but empty) for both matchers..
+ */
+pattern notApplicationInstanceIdentifiable3(notApplicationInstance : ApplicationInstance){
+    Identifiable(notApplicationInstance);
+    neg find applicationInstances(notApplicationInstance);
+}

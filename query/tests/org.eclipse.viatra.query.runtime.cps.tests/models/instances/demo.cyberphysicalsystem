@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps" identifier="testModel6504822858552">
+  <appTypes identifier="simple.cps.app.FirstAppClass0">
+    <instances identifier="simple.cps.app.FirstAppClass0.inst0" allocatedTo="simple.cps.host.SecondHostClass0.inst1"/>
+    <instances identifier="simple.cps.app.FirstAppClass0.inst1" allocatedTo="simple.cps.host.SecondHostClass0.inst1"/>
+    <behavior identifier="simple.cps.app.FirstAppClass0.sm0" initial="simple.cps.app.FirstAppClass0.sm0.s0">
+      <states identifier="simple.cps.app.FirstAppClass0.sm0.s0">
+        <outgoingTransitions identifier="simple.cps.app.FirstAppClass0.sm0.s0.t0" targetState="simple.cps.app.FirstAppClass0.sm0.s3" action="waitForSignal(6)"/>
+        <outgoingTransitions identifier="simple.cps.app.FirstAppClass0.sm0.s0.t3" targetState="simple.cps.app.FirstAppClass0.sm0.s4" action="waitForSignal(3)"/>
+      </states>
+      <states identifier="simple.cps.app.FirstAppClass0.sm0.s1"/>
+      <states identifier="simple.cps.app.FirstAppClass0.sm0.s2">
+        <outgoingTransitions identifier="simple.cps.app.FirstAppClass0.sm0.s2.t1" targetState="simple.cps.app.FirstAppClass0.sm0.s1" action="waitForSignal(7)"/>
+      </states>
+      <states identifier="simple.cps.app.FirstAppClass0.sm0.s3">
+        <outgoingTransitions identifier="simple.cps.app.FirstAppClass0.sm0.s3.t2" targetState="simple.cps.app.FirstAppClass0.sm0.s2" action="waitForSignal(7)"/>
+      </states>
+      <states identifier="simple.cps.app.FirstAppClass0.sm0.s4"/>
+      <states identifier="simple.cps.app.FirstAppClass0.sm0.s5"/>
+    </behavior>
+  </appTypes>
+  <appTypes identifier="simple.cps.app.SecondAppClass0">
+    <instances identifier="simple.cps.app.SecondAppClass0.inst0" allocatedTo="simple.cps.host.SecondHostClass0.inst2"/>
+    <behavior identifier="simple.cps.app.SecondAppClass0.sm0" initial="simple.cps.app.SecondAppClass0.sm0.s0">
+      <states identifier="simple.cps.app.SecondAppClass0.sm0.s0">
+        <outgoingTransitions identifier="simple.cps.app.SecondAppClass0.sm0.s0.t1" targetState="simple.cps.app.SecondAppClass0.sm0.s2" action="waitForSignal(7)"/>
+        <outgoingTransitions identifier="simple.cps.app.SecondAppClass0.sm0.s0.t2" targetState="simple.cps.app.SecondAppClass0.sm0.s1" action="waitForSignal(7)"/>
+      </states>
+      <states identifier="simple.cps.app.SecondAppClass0.sm0.s1">
+        <outgoingTransitions identifier="simple.cps.app.SecondAppClass0.sm0.s1.t4" targetState="simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </states>
+      <states identifier="simple.cps.app.SecondAppClass0.sm0.s2">
+        <outgoingTransitions identifier="simple.cps.app.SecondAppClass0.sm0.s2.t0" targetState="simple.cps.app.SecondAppClass0.sm0.s0"/>
+        <outgoingTransitions identifier="simple.cps.app.SecondAppClass0.sm0.s2.t3" targetState="simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </states>
+    </behavior>
+  </appTypes>
+  <requests identifier="">
+    <requirements identifier="ReqMandatory" count="1" type="simple.cps.app.FirstAppClass0" applications="simple.cps.app.FirstAppClass0.inst0"/>
+    <requirements identifier="ReqOptional" type="simple.cps.app.FirstAppClass0" applications="simple.cps.app.FirstAppClass0.inst1" mandatory="false"/>
+  </requests>
+  <hostTypes identifier="simple.cps.host.FirstHostClass0">
+    <instances identifier="simple.cps.host.FirstHostClass0.inst0" nodeIp="simple.cps.host.FirstHostClass0.inst0"/>
+    <instances identifier="simple.cps.host.FirstHostClass0.inst1" nodeIp="simple.cps.host.FirstHostClass0.inst1"/>
+    <instances identifier="simple.cps.host.FirstHostClass0.inst2" nodeIp="simple.cps.host.FirstHostClass0.inst2"/>
+    <instances identifier="simple.cps.host.FirstHostClass0.inst3" nodeIp="simple.cps.host.FirstHostClass0.inst3"/>
+    <instances identifier="simple.cps.host.FirstHostClass0.inst4" nodeIp="simple.cps.host.FirstHostClass0.inst4"/>
+  </hostTypes>
+  <hostTypes identifier="simple.cps.host.SecondHostClass0">
+    <instances identifier="simple.cps.host.SecondHostClass0.inst0" nodeIp="simple.cps.host.SecondHostClass0.inst0" communicateWith="simple.cps.host.FirstHostClass0.inst3 simple.cps.host.FirstHostClass0.inst1 simple.cps.host.FirstHostClass0.inst2 simple.cps.host.FirstHostClass0.inst0 simple.cps.host.FirstHostClass0.inst4"/>
+    <instances identifier="simple.cps.host.SecondHostClass0.inst1" nodeIp="simple.cps.host.SecondHostClass0.inst1" applications="simple.cps.app.FirstAppClass0.inst0 simple.cps.app.FirstAppClass0.inst1" communicateWith="simple.cps.host.FirstHostClass0.inst4 simple.cps.host.FirstHostClass0.inst1 simple.cps.host.FirstHostClass0.inst2 simple.cps.host.FirstHostClass0.inst0 simple.cps.host.FirstHostClass0.inst3"/>
+    <instances identifier="simple.cps.host.SecondHostClass0.inst2" nodeIp="simple.cps.host.SecondHostClass0.inst2" applications="simple.cps.app.SecondAppClass0.inst0" communicateWith="simple.cps.host.FirstHostClass0.inst3 simple.cps.host.FirstHostClass0.inst2 simple.cps.host.FirstHostClass0.inst0 simple.cps.host.FirstHostClass0.inst4 simple.cps.host.FirstHostClass0.inst1"/>
+    <instances identifier="simple.cps.host.SecondHostClass0.inst3" nodeIp="simple.cps.host.SecondHostClass0.inst3" communicateWith="simple.cps.host.FirstHostClass0.inst2 simple.cps.host.FirstHostClass0.inst1 simple.cps.host.FirstHostClass0.inst0 simple.cps.host.FirstHostClass0.inst4 simple.cps.host.FirstHostClass0.inst3"/>
+    <instances identifier="simple.cps.host.SecondHostClass0.inst4" nodeIp="simple.cps.host.SecondHostClass0.inst4" communicateWith="simple.cps.host.FirstHostClass0.inst3 simple.cps.host.FirstHostClass0.inst2 simple.cps.host.FirstHostClass0.inst1 simple.cps.host.FirstHostClass0.inst4 simple.cps.host.FirstHostClass0.inst0"/>
+  </hostTypes>
+</cps:CyberPhysicalSystem>

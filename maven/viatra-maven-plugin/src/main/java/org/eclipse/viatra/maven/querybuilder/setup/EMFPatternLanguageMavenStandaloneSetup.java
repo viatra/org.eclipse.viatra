@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.maven.querybuilder.setup;
 
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageRuntimeModule;
+import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneCompilerModule;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
@@ -27,7 +27,7 @@ public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageSt
 
     @Override
     public Injector createInjector() {
-        return Guice.createInjector(new EMFPatternLanguageRuntimeModule() {
+        return Guice.createInjector(new EMFPatternLanguageStandaloneCompilerModule() {
 
             @SuppressWarnings("unused")
             public void configureIGenmodelMappingLoader(Binder bind) {
@@ -44,10 +44,6 @@ public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageSt
                 return MavenGeneratorConfigProvider.class;
             }
             
-            @Override
-            public Class<? extends XtextResource> bindXtextResource() {
-                return EagerBatchLinkableResource.class;
-            }
         });
     }
 

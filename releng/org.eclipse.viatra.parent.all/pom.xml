@@ -27,6 +27,7 @@
         <module>../../query/tests/org.eclipse.viatra.query.patternlanguage.emf.tests</module>
         <module>../../query/tests/org.eclipse.viatra.query.patternlanguage.emf.ui.tests</module>
         <module>../../query/tests/org.eclipse.viatra.query.runtime.tests</module>
+        <module>../../query/tests/org.eclipse.viatra.query.runtime.cps.tests</module>
         <module>../../query/tests/org.eclipse.viatra.query.runtime.base.itc.tests</module>
         <module>../../query/tests/org.eclipse.viatra.query.testing.snapshot</module>
         <module>../../query/tests/org.eclipse.viatra.query.testing.core</module>

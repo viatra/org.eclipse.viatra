@@ -1,0 +1,46 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Tamas Borbas - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+// This tests the 481265 bug
+
+import "http://org.eclipse.viatra/model/cps"
+
+pattern called(a) {
+    HostInstance(a);
+}
+
+pattern callee(a1, a2) {
+    find called(a1);
+    find called(a2);
+    HostInstance.communicateWith(a1, a2);
+}
+
+pattern flattened(a1, a2) {
+    //find called(a1);
+    HostInstance(called_a1);
+    a1 == called_a1;
+    //find called(a2);
+    HostInstance(called_a2);
+    a2 == called_a2;
+    HostInstance.communicateWith(a1, a2);
+}
+
+pattern called2(a1) {
+    HostInstance(a1);
+} or {
+    HostInstance(a1);
+}
+
+pattern callee2(a1, a2) {
+    find called2(a1);
+    find called2(a2);
+    HostInstance.communicateWith(a1, a2);
+}

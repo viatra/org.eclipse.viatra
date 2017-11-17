@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="ASCII"?>
+<vqSnapshot:QuerySnapshot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vqSnapshot="http://www.eclipse.org/viatra/query/snapshot" inputSpecification="ResourceSet">
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.stateTransition">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="source">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="target">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.statesTC">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.sm0.s1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="s2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <modelRoots href="../instances/demo.cyberphysicalsystem#testModel6504822858552"/>
+</vqSnapshot:QuerySnapshot>

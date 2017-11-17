@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.Aggregators" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.Aggregators" id="org.eclipse.viatra.query.runtime.cps.tests.queries.Aggregators">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sumPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.minPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.maxPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sumCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.countHost"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.minCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithMinCPU1"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithMinCPU2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasOddApplications"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.availableCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstance"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.manyParams"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.CpsValidationRules" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.CpsValidationRules" id="org.eclipse.viatra.query.runtime.cps.tests.queries.CpsValidationRules">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.ReachableStates"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.AllReachableStates"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.UnreachableStatesOfStateMachines"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.CrossResourceContainmentTestQuery" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.CrossResourceContainmentTestQuery" id="org.eclipse.viatra.query.runtime.cps.tests.queries.CrossResourceContainmentTestQuery">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstancesPerHostTypes"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstances"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostTypes"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.CrossResourceReferenceTestQuery" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.CrossResourceReferenceTestQuery" id="org.eclipse.viatra.query.runtime.cps.tests.queries.CrossResourceReferenceTestQuery">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.AppInstanceAllocatedToHostInstance"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.DanglingTestQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.DanglingTestQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.DanglingTestQueries">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.stateToState1"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.stateToState2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.stateToState3"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.transitionToTransition1"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.transitionToTransition2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.stateIdentifier"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.Dred" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.Dred" id="org.eclipse.viatra.query.runtime.cps.tests.queries.Dred">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.dependOn"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.allDependencies"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.FlattenedPatternCall" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.FlattenedPatternCall" id="org.eclipse.viatra.query.runtime.cps.tests.queries.FlattenedPatternCall">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.called"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.callee"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.flattened"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.called2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.callee2"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.FunctionalDependencies" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.FunctionalDependencies" id="org.eclipse.viatra.query.runtime.cps.tests.queries.FunctionalDependencies">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.toOneFeature"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.toOneFeatureWithSoftDep"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasCall"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.compositeKey"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.relativeID"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.evaluation"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.transitiveDep"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.constant"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.constantWithSoft"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.disjunctiveDependencies"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.LiteralUsage" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.LiteralUsage" id="org.eclipse.viatra.query.runtime.cps.tests.queries.LiteralUsage">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.mandatoryRequirements"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.optionalRequirements"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.runningAppInstances"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueConstant"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueConstantWithCheck"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.OtherTests" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.OtherTests" id="org.eclipse.viatra.query.runtime.cps.tests.queries.OtherTests">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiable"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiable2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiable3"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.RecursiveQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.RecursiveQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.RecursiveQueries">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.alphabeticallyAfterCommunicationPartner"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.increasingAlphabeticalCommunicationChainRec"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.increasingAlphabeticalCommunicationChainTC"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.communicationPartners"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.communicateWithInstanceOfHostType"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.SimpleCpsQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.SimpleCpsQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.SimpleCpsQueries">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypes"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstances"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypesIdentifiers"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstancesIdentifiers"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstancesOfApplicationType"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstancesOfApplicationTypeIdentifiers"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithHostedInstances"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithHostedInstanceIdentifiers"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithoutHostedInstance"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithoutHostedInstanceIdentifiers"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.transitionsOfApplicationType"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.transitionsOfApplicationTypeIdentifiers"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstancesWithZeroTotalRam"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithAtLeastAsMuchTotalRamAsTotalHdd"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithPrimeTotalRam"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplicationInstances"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostHostedApplicationInstances"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.communicateWith"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.inTheCommunicationChains"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreCommunicationPartner"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostCommunicationPartner"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostedApplications"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplications"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostHostedApplications"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.finalPattern"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.instances"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesTC"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.TrickyJoin" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.TrickyJoin" id="org.eclipse.viatra.query.runtime.cps.tests.queries.TrickyJoin">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.trickyJoin1"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.trickyJoin2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.trickyJoin3"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.trickyJoin4"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.trickyJoin5"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.trickyJoin6"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.helper"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.helper2"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.UnnamedVariables" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.UnnamedVariables" id="org.eclipse.viatra.query.runtime.cps.tests.queries.UnnamedVariables">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstancesTypeWithDefaultRam"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.allVariablesNamed"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.anonymousVariables"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.VariablesEquality" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.VariablesEquality" id="org.eclipse.viatra.query.runtime.cps.tests.queries.VariablesEquality">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sameVariables"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.enumNotEqual"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notOneInstance"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.cartesianProduct"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.argumentsUnifiedByCaller"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.A_third" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.A_third" id="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.A_third">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.thirdPattern"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.B_second" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.B_second" id="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.B_second">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.secondPattern"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.C_first" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.C_first" id="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.C_first">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.firstPattern"/>
+    </group>
+  </extension>
+</plugin>

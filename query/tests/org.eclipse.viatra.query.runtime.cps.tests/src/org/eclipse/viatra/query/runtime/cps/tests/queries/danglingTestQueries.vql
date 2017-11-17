@@ -1,0 +1,29 @@
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+pattern stateToState1(state1, state2) = {
+	State.outgoingTransitions.targetState(state1, state2);
+}
+
+pattern stateToState2(state1: State, state2: State) = {
+	State.outgoingTransitions.targetState(state1, state2);
+}
+
+pattern stateToState3(state1, state2) = {
+	State.outgoingTransitions.targetState(state1, state2);
+	Identifiable.identifier(state2, _);
+}
+
+pattern transitionToTransition1(transition1, transition2) = {
+	Transition.targetState.outgoingTransitions(transition1, transition2);
+}
+
+pattern transitionToTransition2(transition1 : Transition, transition2 : Transition) = {
+	Transition.targetState.outgoingTransitions(transition1, transition2);
+}
+
+pattern stateIdentifier(state: State, id: java String) = {
+	State.identifier(state, id);
+}
+

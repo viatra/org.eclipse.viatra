@@ -1,0 +1,12 @@
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+private pattern stateTransition(source : State, target : State) {
+	State.outgoingTransitions(source, tr);
+	Transition.targetState(tr, target);
+}
+
+pattern statesTC(s1 : State, s2 : State) {
+	find stateTransition+(s1, s2);
+}

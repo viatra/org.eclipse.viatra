@@ -14,6 +14,7 @@ Workflow {
         registerGeneratedEPackage = "org.eclipse.viatra.transformation.views.traceability.TraceabilityPackage"
         registerGeneratedEPackage = "org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"
         registerGeneratedEPackage = "org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"
+        registerGeneratedEPackage = "org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage"
         registerGeneratedEPackage = "org.eclipse.uml2.uml.UMLPackage"
     }
  
@@ -30,9 +31,9 @@ Workflow {
         // or define search scope explicitly
         uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
             extension = "vql"
-            regularExpression = ".*${escapedProjectName}/.*vql"
+            regularExpression = ".*${escapedProjectName}.*vql"
         }
-        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup {}
+        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneCompilerSetup {}
         loadResource = {
             uri = ".*${escapedProjectName}/.*vql"
             slot = "query"
@@ -40,7 +41,7 @@ Workflow {
     }
     
     component = org.eclipse.xtext.generator.GeneratorComponent {
-        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup {}
+        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneCompilerSetup {}
         slot = 'query'
         outlet = {
             path = "../../${projectPath}/${projectName}/src-gen"

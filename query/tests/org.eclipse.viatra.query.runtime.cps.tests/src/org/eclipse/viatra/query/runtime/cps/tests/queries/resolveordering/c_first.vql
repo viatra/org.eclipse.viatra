@@ -1,0 +1,8 @@
+package org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering
+
+import "http://org.eclipse.viatra/model/cps"
+
+pattern firstPattern(AT : ApplicationType, identifier: java String) {
+    ApplicationType(AT);
+    Identifiable.identifier(AT, identifier);
+}

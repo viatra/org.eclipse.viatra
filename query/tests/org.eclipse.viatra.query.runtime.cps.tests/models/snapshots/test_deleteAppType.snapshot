@@ -1,0 +1,1606 @@
+<?xml version="1.0" encoding="ASCII"?>
+<vqSnapshot:QuerySnapshot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vqSnapshot="http://www.eclipse.org/viatra/query/snapshot" inputSpecification="ResourceSet">
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypes">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstances">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypesIdentifiers">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstancesIdentifiers">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="AIIdentifier" value="simple.cps.app.SecondAppClass0.inst0"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstancesOfApplicationType">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationInstancesOfApplicationTypeIdentifiers">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="AIIdentifier" value="simple.cps.app.SecondAppClass0.inst0"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithHostedInstances">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithHostedInstanceIdentifiers">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="HIIdentifier" value="simple.cps.host.SecondHostClass0.inst2"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithoutHostedInstance">
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.applicationTypeWithoutHostedInstanceIdentifiers">
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.transitionsOfApplicationType">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="T">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0.t2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="T">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s1.t4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="T">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2.t0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="T">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s0.t1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="T">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.sm0.s2.t3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.transitionsOfApplicationTypeIdentifiers">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="TIdentifier" value="simple.cps.app.SecondAppClass0.sm0.s2.t0"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="TIdentifier" value="simple.cps.app.SecondAppClass0.sm0.s2.t3"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="TIdentifier" value="simple.cps.app.SecondAppClass0.sm0.s0.t2"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="TIdentifier" value="simple.cps.app.SecondAppClass0.sm0.s1.t4"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="TIdentifier" value="simple.cps.app.SecondAppClass0.sm0.s0.t1"/>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="ATIdentifier" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstancesWithZeroTotalRam">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithAtLeastAsMuchTotalRamAsTotalHdd">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithPrimeTotalRam">
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplicationInstances">
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostHostedApplicationInstances">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AT">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.communicateWith">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.inTheCommunicationChains">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreCommunicationPartner">
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostCommunicationPartner">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hostedApplications">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="AI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplications">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI1">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI2">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostHostedApplications">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.finalPattern">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="HI">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:IntSubstitution" parameterName="CPU"/>
+      <substitutions xsi:type="vqSnapshot:IntSubstitution" parameterName="RAM"/>
+      <substitutions xsi:type="vqSnapshot:IntSubstitution" parameterName="HDD"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.instances">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst4"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst3"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.FirstHostClass0.inst1"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst2"/>
+      </substitutions>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="I">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.host.SecondHostClass0.inst0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <modelRoots href="../instances/demo.cyberphysicalsystem#testModel6504822858552"/>
+  <modelRoots href="test_deleteAppInstance.snapshot#/"/>
+</vqSnapshot:QuerySnapshot>
