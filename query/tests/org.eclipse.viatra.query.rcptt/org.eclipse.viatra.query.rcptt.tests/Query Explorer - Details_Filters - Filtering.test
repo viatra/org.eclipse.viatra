@@ -1,0 +1,56 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _LipjoO9FEeWazOws8qE-Nw,_NN2OQO9SEeW7SP0a5rPzzg,_j6aQcPA8EeWlEbYJ7IoFCQ,_e2hgwPD1EeW0yqPNDxWanA,_e26iUPD1EeW0yqPNDxWanA
+Element-Name: Query Explorer - Details/Filters - Filtering
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _LKY_APGSEeW7irRH823xbw
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/13/16 11:55 AM
+Testcase-Type: ecl
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+This test case is testing the Filtering feature.
+
+Asserts:
+* at first org.eclipse.viatra.examples.cps.queries.applicationInstancesOfApplicationTypeIdentifiers have 3 matches
+* org.eclipse.viatra.examples.cps.queries.applicationInstancesOfApplicationTypeIdentifiers only have 1 match with "simple.cps.app.SecondAppClass0" filter
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *******************************************************************************/
+
+get-view "Query Explorer" | get-tree -index 1 
+    | select "[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem][org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID]/org.eclipse.viatra.examples.cps.queries.applicationInstancesOfApplicationTypeIdentifiers.*$"
+get-view "Query Explorer" | get-tree -index 1 
+    | get-item "\\[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem\\]\\[org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID\\]/org.eclipse.viatra.examples.cps.queries.applicationInstancesOfApplicationTypeIdentifiers.*$" 
+    | get-property childCount | equals 3 | verify-true
+with [get-view "Query Explorer"] {
+    with [get-table] {
+        select ATIdentifier | activate-cell-edit -column 1
+        get-editbox | set-text "simple.cps.app.SecondAppClass0"
+    }
+}
+with [get-view "Query Explorer" | get-table | get-editbox] {
+    click-text 1
+    key-type Enter
+}
+get-view "Query Explorer" | get-tree -index 1 
+    | get-item "\\[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem\\]\\[org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID\\]/org.eclipse.viatra.examples.cps.queries.applicationInstancesOfApplicationTypeIdentifiers.*$" 
+    | get-property childCount | equals 1 | verify-true
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

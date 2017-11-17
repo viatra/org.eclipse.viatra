@@ -1,0 +1,34 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Element-Name: VIATRA Preferences
+Element-Type: testsuite
+Element-Version: 2.0
+Id: _tvOEYO92EeW7SP0a5rPzzg
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
+Content-Type: text/testcase
+Entry-Name: testcase-items
+
+_RrM1QO9QEeW7SP0a5rPzzg	// kind: 'test' name: 'Preferences - Query Explorer' path: 'Preferences - Query Explorer.test'
+_RrCdMO9QEeW7SP0a5rPzzg	// kind: 'test' name: 'Preferences - VIATRA exists in preferences' path: 'Preferences - VIATRA exists in preferences.test'
+_I6CXEO9PEeW7SP0a5rPzzg	// kind: 'test' name: 'Preferences - VQL Compiler' path: 'Preferences - VQL Compiler.test'
+_RrV_MO9QEeW7SP0a5rPzzg	// kind: 'test' name: 'Preferences - VQL Refactoring' path: 'Preferences - VQL Refactoring.test'
+_RrgXQO9QEeW7SP0a5rPzzg	// kind: 'test' name: 'Preferences - VQL Syntax Coloring' path: 'Preferences - VQL Syntax Coloring.test'
+_RrphMO9QEeW7SP0a5rPzzg	// kind: 'test' name: 'Preferences - VQL Templates' path: 'Preferences - VQL Templates.test'
+
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--

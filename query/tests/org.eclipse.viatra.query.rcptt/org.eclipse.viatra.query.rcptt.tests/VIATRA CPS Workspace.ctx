@@ -1,0 +1,66 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.workspace
+Element-Name: VIATRA CPS Workspace
+Element-Type: context
+Element-Version: 2.0
+Id: _E-YjgPBEEeWlEbYJ7IoFCQ
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_contents/org.eclipse.viatra.examples.cps.instances/.project-3e764c88-faca-3de7-a6b8-b784cc705139
+Content-Type: q7/binary
+Entry-Name: contents/org.eclipse.viatra.examples.cps.instances/.project
+
+UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAAIAAkALmNvbnRlbnRVVAUAAQAAAABVjjEOwjAMRWeQuEOV
+nRQ2hrQsiAsABwiuVRklThSnVY9PWwqom9/3//4258G7osckFLhSR31QBTKEhrit1ON+3Z/Uud5tTUzh
+hZAvKJAo5tE9qhvD1mMdUqsRHEVB3ZPNyWocrI8ORUMUTSzZMqCYcvZPQQjeI+falN9pUpcWmaFc0bMj
+19wiwme3Rra5S7jE/vA7sX77DVBLBwi1MmgtmAAAAPUAAABQSwECFAAUAAgICAAAACEAtTJoLZgAAAD1
+AAAACAAJAAAAAAAAAAAAAAAAAAAALmNvbnRlbnRVVAUAAQAAAABQSwUGAAAAAAEAAQA/AAAA1wAAAAAA
+
+------=_contents/org.eclipse.viatra.examples.cps.instances/.project-3e764c88-faca-3de7-a6b8-b784cc705139--
+------=_contents/org.eclipse.viatra.examples.cps.instances/demo.cyberphysicalsystem-152f0c9b-b0fa-359d-967a-9aae99e8abfc
+Content-Type: q7/binary
+Entry-Name: contents/org.eclipse.viatra.examples.cps.instances/demo.cyberphysicalsystem
+
+UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAAIAAkALmNvbnRlbnRVVAUAAQAAAADNWF1v2jAUfZ+0/xDl
+aXuxiRM6hMKqCqkaD5UmgdS9usENlhLbil0o/34OKEBRTOxgtr4hfD/PPT7XkN6/l0WwJpWknE3CCAzC
+gLCMLynLJ+HDfDqbhfc/v35JMyHH0+0LqX6vtpJmuJhvpSJl8F7S8cEd1e46IJNj/f0kXCklxhBuNhvA
+yxzwKod/nmaNiQ55MNFHgGQFFZKANcWqwrDkS1JAbRQGdEmYoq+UVJNQEame6qO74SAZITQajoZDFOoa
+gyDFQiy2gsgPHpKWoiBARwL6HDzSSqoHIaYFlnKwd9SulEmFWebiC2of3TEuCp5hRZYL/sFjxaUCc5Jx
+tvylP544RSFs8r6QFV5TXjmklaVOShlVFBcWtuDYpc6nu1ROTZ5H0DH4m8q5ZsiiwkzqMjhzDwhq5BSu
+cqLmdUlWXrEGO1M7rm0wVY+8mtOc4eLb3fcDoh4rjN0rTEwVxqcVpnA/hmvHEp3G7BcC+Z4sAprezrhF
+Jtx+3AK32HfTMVDIvWn0T5tOrifL8KhbsBGuvfLCRnrthXivjD2V+My5vxQjNyk+z3tRi1uMXcW4K4Q7
+fdsjdl7aVjc7AvurseOOtbrdTlkM6Xz3HQGV9JrNDbq7alu0R+x8CBiugHd+oc6Fbxi4EecOkaxF6aJK
+7lRrp8NH0bKXyTbvRieZfkHPhK05vD5n5JYz8pETueVEPnLGbjljHzkTt5zNOyCFBwK68PF8izoSsnUJ
+X2CkyT7jZfnGaL3sn6laWcIdWJHPygpZWQ2srBJXGhh+VbqhWG9GIYoaw1owLX/t9gI++aTAO98/wxvS
+DXjUAbzhcXtDynsls92svSB/QW5N9r1QtMPHjr8+UfTD3wsLxGT/37loh7UdioPWjZhCw5+e+uwvUEsH
+CPAOtNyeAgAAOBUAAFBLAQIUABQACAgIAAAAIQDwDrTcngIAADgVAAAIAAkAAAAAAAAAAAAAAAAAAAAu
+Y29udGVudFVUBQABAAAAAFBLBQYAAAAAAQABAD8AAADdAgAAAAA=
+------=_contents/org.eclipse.viatra.examples.cps.instances/demo.cyberphysicalsystem-152f0c9b-b0fa-359d-967a-9aae99e8abfc--
+------=_.q7.content-3d2e0690-ce48-3609-83e0-c704d49f1eaf
+Content-Type: q7/binary
+Entry-Name: .q7.content
+
+UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAAIAAkALmNvbnRlbnRVVAUAAQAAAACVkctOwzAQRfdI/IPl
+fW1gA4oSqhIFKUhI5SFKV8h1p6lL/JA9NOnf47ZJygIJsfN4zr1zR5OOW12TLfigrMnoJbugBIy0S2Wq
+jH7hanRDx7fnZ6n1FQNZKxeAeekQmcSWNdZ/BickJLP+lVuD0CJptUoG36u9b5xkQhL/M7pGdAnnTdMw
+qysWzfn7Y9kjf8wa5D2zlx84Hjk+cJQYoSP9Vk5enyckn76Q2amnlhn9KEbzTTW9KwqY1cVi/nBd2vv8
+icaFCUnlfhODhyKWztsNSAyd68+QWyXQCwat0K6GwKQLTJmAwkgItDOIFisVu52edX6U/95fgrZM7hbg
+3XoXlBR12AUEPfAp7xMd4/JT3pT/91xR9A1QSwcIolg/VxcBAAALAgAAUEsBAhQAFAAICAgAAAAhAKJY
+P1cXAQAACwIAAAgACQAAAAAAAAAAAAAAAAAAAC5jb250ZW50VVQFAAEAAAAAUEsFBgAAAAABAAEAPwAA
+AFYBAAAAAA==
+------=_.q7.content-3d2e0690-ce48-3609-83e0-c704d49f1eaf--

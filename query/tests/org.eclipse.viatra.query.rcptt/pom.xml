@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>org.eclipse.viatra.parent.all</artifactId>
+		<groupId>org.eclipse.viatra</groupId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+	</parent>
+	<artifactId>org.eclipse.viatra.query.rcptt</artifactId>
+	<name>VIATRA CPS Tests</name>
+	<packaging>pom</packaging>
+	<modules>
+	    <module>org.eclipse.viatra.query.rcptt.target</module>
+		
+		<!-- CPS based RCPTT tests with product -->
+		<module>org.eclipse.viatra.query.rcptt.queries</module>
+		<module>org.eclipse.viatra.query.rcptt.queries.validation</module>
+		<module>org.eclipse.viatra.query.rcptt.queries.feature</module>
+		<module>org.eclipse.viatra.query.rcptt.product</module>
+		<module>org.eclipse.viatra.query.rcptt.tests</module>
+	</modules>
+	
+	<properties>
+    	    <rcptt.version>2.1.0</rcptt.version>
+        <jacoco.targetdir>${project.basedir}/../target</jacoco.targetdir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+		<target.classifier>neon</target.classifier>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<strictBinIncludes>false</strictBinIncludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/queries/*.java</exclude>
+		            </excludes>
+				</configuration>
+			</plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <destFile>${jacoco.targetdir}/jacoco.exec</destFile>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals> 
+                        <goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile> 
+                        <outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
+                        </configuration> </execution> -->
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>target-platform-configuration</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <resolver>p2</resolver>
+                    <target>
+                        <artifact>
+                            <groupId>org.eclipse.viatra</groupId>
+                            <artifactId>org.eclipse.viatra.query.rcptt.target</artifactId>
+                            <version>${project.version}</version>
+                            <classifier>${target.classifier}</classifier>
+                        </artifact>
+                        <dependency-resolution>
+                        <extraRequirements>
+                            <requirement>
+                                <type>eclipse-plugin</type>
+                                <id>com.google.inject.multibindings</id>
+                                <versionRange>[3.0.0,4.0.0)</versionRange>
+                            </requirement>
+                        </extraRequirements>
+                    </dependency-resolution>
+                    </target>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>rcptt-releases</id>
+			<name>RCPTT Maven repository</name>
+			<url>https://repo.eclipse.org/content/repositories/rcptt-releases</url>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

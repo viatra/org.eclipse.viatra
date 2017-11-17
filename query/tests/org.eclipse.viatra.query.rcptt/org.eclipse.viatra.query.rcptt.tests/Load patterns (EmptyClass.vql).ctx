@@ -1,0 +1,29 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.ecl
+Element-Name: Load patterns (EmptyClass.vql)
+Element-Type: context
+Element-Version: 2.0
+Id: _UBBLMO9SEeW7SP0a5rPzzg
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+
+------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998
+Content-Type: text/ecl
+Entry-Name: .ecl.context
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *******************************************************************************/
+
+get-view "Project Explorer" | get-tree | select "org.eclipse.viatra.examples.uml.viatra/src/uml.emptyclass/EmptyClass.vql" 
+    | get-menu "VIATRA/Register patterns in Query Explorer" | click
+
+------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998--

@@ -1,0 +1,184 @@
+/*******************************************************************************
+ * Copyright (c) 2014-2016, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Akos Horvath, Abel Hegedus, Tamas Borbas, Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.gui.tests.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+@Constraint(
+	key = {"app"},
+	message = "$app.identifier$ is not allocated but it is running",
+	severity = "error"
+)
+pattern notAllocatedButRunning(app : ApplicationInstance) {
+	ApplicationInstance.state(app, ::Running);
+	neg find allocatedApplication(app);
+}
+
+private pattern allocatedApplication(app : ApplicationInstance) {
+	ApplicationInstance.allocatedTo(app, _);
+}
+
+@Constraint(
+	key = {"host"},
+	message = "The available CPU ($host.availableCpu$) of $host.identifier$ is greater than the total ($host.totalCpu$)",
+	severity = "error"
+)
+pattern availableGreaterThanTotalCpu(host : HostInstance) {
+	HostInstance.availableCpu(host, aCpu);
+	HostInstance.totalCpu(host, tCpu);
+
+	check(aCpu > tCpu);
+}
+
+@Constraint(
+	key = {"host"},
+	message = "The available HDD ($host.availableHdd$) of $host.identifier$ is greater than the total ($host.totalHdd$)",
+	severity = "error"
+)
+pattern availableGreaterThanTotalHdd(host : HostInstance) {
+	HostInstance.availableHdd(host, aHdd);
+	HostInstance.totalHdd(host, tHdd);
+
+	check(aHdd > tHdd);
+}
+
+@Constraint(
+	key = {"host"},
+	message = "The available RAM ($host.availableRam$) of $host.identifier$ is greater than the total ($host.totalRam$)",
+	severity = "error"
+)
+pattern availableGreaterThanTotalRam(host : HostInstance) {
+	HostInstance.availableRam(host, aRam);
+	HostInstance.totalRam(host, tRam);
+
+	check(aRam > tRam);
+}
+
+@Constraint(
+	key = {"host"},
+	message = "The IP address $host.nodeIp$ of $host.identifier$ is not unique",
+	severity = "error"
+)
+pattern nodeIpIsNotUnique(host : HostInstance){
+	find nodeIpOfHost(host, ip);
+	find nodeIpOfHost(otherHost, ip);
+	host != otherHost;
+}
+
+private pattern nodeIpOfHost(host : HostInstance, ip){
+	HostInstance.nodeIp(host, ip);
+}
+
+@Constraint(
+	key = {"identifiable"},
+	message = "The ID of $identifiable.identifier$ is not unique",
+	severity = "error"
+)
+pattern idIsNotUnique(identifiable : Identifiable) {
+	find identifiableId(identifiable, id);
+	find identifiableId(otherIdentifiable, id);
+	identifiable != otherIdentifiable; 
+}
+
+private pattern identifiableId(identifiable : Identifiable, id) {
+	Identifiable.identifier(identifiable, id);
+}
+
+@Constraint(
+	key = {"statemachine"},
+	message = "The initial state $state.identifier$ of $statemachine.identifier$ is not included in its states",
+	severity = "error"
+)
+pattern initialStateNotContainedByStateMachine(statemachine : StateMachine, state : State) {
+	StateMachine.initial(statemachine, state);
+	neg find statemachineState(statemachine, state);
+}
+
+private pattern statemachineState(statemachine : StateMachine, state : State) {
+	StateMachine.states(statemachine, state);
+}
+
+@Constraint(
+	key = {"transition"},
+	message = "No target state set for $transition.identifier$",
+	severity = "error"
+)
+pattern transitionWithoutTargetState(transition : Transition) {
+	State.outgoingTransitions(source, transition);
+	neg find stateTransition(source, transition, _);
+}
+
+private pattern stateTransition(source : State, transition : Transition, target : State) {
+	State.outgoingTransitions(source, transition);
+	Transition.targetState(transition, target);
+}
+
+@Constraint(
+	key = {"transition"},
+	message = "The target state $target.identifier$ of $transition.identifier$ is not in the same state machine",
+	severity = "error"
+)
+pattern targetStateNotContainedBySameStateMachine(transition : Transition, target : State) {
+	find stateTransition(source, transition, target);
+	find statemachineState(statemachine, source);
+	neg find statemachineState(statemachine, target);
+}
+
+@Constraint(
+	key = {"state"},
+	message = "Multiple outgoing transitions of $state.identifier$ define the same action ($action$)",
+	severity = "error"
+)
+pattern multipleTransitionsWithSameAction(state : State, action) {
+	State.outgoingTransitions(state, transition);
+	State.outgoingTransitions(state, otherTransition);
+	find actionOfTransition(transition, action);
+	find actionOfTransition(otherTransition, action);
+	transition != otherTransition;
+}
+
+private pattern actionOfTransition(transition : Transition, action) {
+	Transition.action(transition, action);
+}
+
+@Constraint(
+	key = {"sourceHostInstance"},
+	message = "Multiple instances of $app.identifier$ are reachable from $sourceHostInstance.identifier$",
+	severity = "error"
+)
+pattern multipleApplicationInstanceInCommunicationGroup(sourceHostInstance : HostInstance, app : ApplicationType) {
+	find reachableAppInstance(sourceHostInstance, app, appInstance);
+	find reachableAppInstance(sourceHostInstance, app, otherAppInstance);
+	appInstance != otherAppInstance;
+}
+
+private pattern appTypeInstanceAndHost(app : ApplicationType, appInstance : ApplicationInstance, hostInstance : HostInstance) {
+	ApplicationInstance.type(appInstance, app);
+	ApplicationInstance.allocatedTo(appInstance, hostInstance);
+}
+
+private pattern hostCommunication(fromHost : HostInstance, toHost : HostInstance) {
+	HostInstance.communicateWith(fromHost, toHost);
+}
+
+private pattern reachableHosts(source : HostInstance, target : HostInstance) {
+	find hostCommunication+(source, target);
+} or {
+	HostInstance(source);
+	HostInstance(target);
+	source == target;
+}
+
+private pattern reachableAppInstance(sourceHostInstance : HostInstance, app : ApplicationType, appInstance : ApplicationInstance) {
+	find appTypeInstanceAndHost(app, appInstance, targetHostInstance);
+	// there is a source hostInstance that could communicate with either hostInstance
+	find reachableHosts(sourceHostInstance, targetHostInstance);
+}

@@ -1,0 +1,47 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Element-Name: VIATRA Query Explorer
+Element-Type: testsuite
+Element-Version: 2.0
+Id: _kTJEAPEBEeW0yqPNDxWanA
+Manually-Ordered: true
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
+Content-Type: text/testcase
+Entry-Name: testcase-items
+
+_LKY_APGSEeW7irRH823xbw	// kind: 'test' name: 'Query Explorer - Details/Filters - Filtering' path: 'Query Explorer - Details_Filters - Filtering.test'
+_LK4HMPGSEeW7irRH823xbw	// kind: 'test' name: 'Query Explorer - Details/Filters - Popup window' path: 'Query Explorer - Details_Filters - Popup window.test'
+_q7X3APHXEeW7irRH823xbw	// kind: 'test' name: 'Query Explorer - LocalSearchBackend' path: 'Query Explorer - LocalSearchBackend.test'
+_Zk7IQPDJEeWxTPL9mFtYmQ	// kind: 'test' name: 'Query Explorer - Magic Green Button - Load ResourceSet' path: 'Query Explorer - Magic Green Button - Load ResourceSet.test'
+_ZkcnIPDJEeWxTPL9mFtYmQ	// kind: 'test' name: 'Query Explorer - Magic Green Button - Load pattern(s)' path: 'Query Explorer - Magic Green Button - Load pattern(s).test'
+_VMHQ8PD1EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Pattern Registry - Checkbox filtering' path: 'Query Explorer - Pattern Registry - Checkbox filtering.test'
+_VMnAMPD1EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Pattern Registry - Plugins can not unloaded' path: 'Query Explorer - Pattern Registry - Plugins can not unloaded.test'
+_VM57IPD1EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Pattern Registry - Show location' path: 'Query Explorer - Pattern Registry - Show location.test'
+_VNGvcPD1EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Pattern Registry - Unregister pattern' path: 'Query Explorer - Pattern Registry - Unregister pattern.test'
+_Mv918PDzEeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Register patterns in Query Explorer' path: 'Query Explorer - Register patterns in Query Explorer.test'
+_MwD8kPDzEeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Register patterns in Query Explorer (Right clicked in editor)' path: 'Query Explorer - Register patterns in Query Explorer (Right clicked in editor).test'
+_sz79MPD9EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Result Viewer - Data binding' path: 'Query Explorer - Result Viewer - Data binding.test'
+_s0NC8PD9EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Result Viewer - Query Results' path: 'Query Explorer - Result Viewer - Query Results.test'
+_s0ZQMPD9EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Result Viewer - Show location (to .vql file)' path: 'Query Explorer - Result Viewer - Show location (to .vql file).test'
+_s0kPUPD9EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Result Viewer - Show location (to instance model)' path: 'Query Explorer - Result Viewer - Show location (to instance model).test'
+_s0tZQPD9EeW0yqPNDxWanA	// kind: 'test' name: 'Query Explorer - Result Viewer - Unload instance model' path: 'Query Explorer - Result Viewer - Unload instance model.test'
+_wpZaUPGWEeW7irRH823xbw	// kind: 'test' name: 'Query Explorer - View menu - Change package representation' path: 'Query Explorer - View menu - Change package representation.test'
+_wpzC8PGWEeW7irRH823xbw	// kind: 'test' name: 'Query Explorer - View menu - Reset UI' path: 'Query Explorer - View menu - Reset UI.test'
+
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--

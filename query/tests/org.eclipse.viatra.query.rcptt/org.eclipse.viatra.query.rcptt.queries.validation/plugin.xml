@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalCpu" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.AvailableGreaterThanTotalCpuConstraint0" name="org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalCpu"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalHdd" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.AvailableGreaterThanTotalHddConstraint0" name="org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalHdd"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.multipleTransitionsWithSameAction" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.MultipleTransitionsWithSameActionConstraint0" name="org.eclipse.viatra.gui.tests.queries.multipleTransitionsWithSameAction"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.initialStateNotContainedByStateMachine" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.InitialStateNotContainedByStateMachineConstraint0" name="org.eclipse.viatra.gui.tests.queries.initialStateNotContainedByStateMachine"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.notAllocatedButRunning" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.NotAllocatedButRunningConstraint0" name="org.eclipse.viatra.gui.tests.queries.notAllocatedButRunning"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.transitionWithoutTargetState" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.TransitionWithoutTargetStateConstraint0" name="org.eclipse.viatra.gui.tests.queries.transitionWithoutTargetState"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.idIsNotUnique" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.IdIsNotUniqueConstraint0" name="org.eclipse.viatra.gui.tests.queries.idIsNotUnique"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.multipleApplicationInstanceInCommunicationGroup" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.MultipleApplicationInstanceInCommunicationGroupConstraint0" name="org.eclipse.viatra.gui.tests.queries.multipleApplicationInstanceInCommunicationGroup"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalRam" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.AvailableGreaterThanTotalRamConstraint0" name="org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalRam"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.targetStateNotContainedBySameStateMachine" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.TargetStateNotContainedBySameStateMachineConstraint0" name="org.eclipse.viatra.gui.tests.queries.targetStateNotContainedBySameStateMachine"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.gui.tests.queries.nodeIpIsNotUnique" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.gui.tests.queries.NodeIpIsNotUniqueConstraint0" name="org.eclipse.viatra.gui.tests.queries.nodeIpIsNotUnique"/>
+  </extension>
+</plugin>

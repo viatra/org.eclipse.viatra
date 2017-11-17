@@ -1,0 +1,35 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Element-Name: VIATRA All GUI Tests
+Element-Type: testsuite
+Element-Version: 2.0
+Id: _o6SgUO93EeW7SP0a5rPzzg
+Manually-Ordered: true
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 4/21/17 5:56 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
+Content-Type: text/testcase
+Entry-Name: testcase-items
+
+_tvOEYO92EeW7SP0a5rPzzg	// kind: 'suite' name: 'VIATRA Preferences' path: 'VIATRA Preferences.suite'
+_eAbv0PEBEeW0yqPNDxWanA	// kind: 'suite' name: 'VIATRA Basic Creations' path: 'VIATRA Basic Creations.suite'
+_kTJEAPEBEeW0yqPNDxWanA	// kind: 'suite' name: 'VIATRA Query Explorer' path: 'VIATRA Query Explorer.suite'
+_gRUfYO93EeW7SP0a5rPzzg	// kind: 'suite' name: 'VIATRA Viewers' path: 'VIATRA Viewers.suite'
+_4XrwIPGgEeW7irRH823xbw	// kind: 'suite' name: 'VIATRA Testing Framework' path: 'VIATRA Testing Framework.suite'
+_-MEJkPGgEeW7irRH823xbw	// kind: 'suite' name: 'VIATRA Validation Framework' path: 'VIATRA Validation Framework.suite'
+
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--

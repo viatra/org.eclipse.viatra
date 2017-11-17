@@ -1,0 +1,101 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _LipjoO9FEeWazOws8qE-Nw,_E-YjgPBEEeWlEbYJ7IoFCQ
+Element-Name: Create Pattern with Template
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _H8xyEJqMEeab4oboKsBTUA
+Runtime-Version: 2.2.0.201610242327
+Save-Time: 10/26/16 1:46 PM
+Testcase-Type: ecl
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+This test case creates a "test.vql" pattern file and fills it with AllocatedApplicationInstances pattern.
+
+Asserts:
+ * A match and matcher has been generated for the pattern
+ * "Test.java" has been generated for the vql file
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi
+ *******************************************************************************/
+
+// Create Query Project
+get-menu "File/New/Query Project" | click
+with [get-window -class WizardDialog] {
+    get-editbox -after [get-label "Project name:"] | set-text "org.eclipse.viatra.examples.cps.testqueries"
+    get-button Finish | click
+}
+
+// Create pattern
+get-view "Project Explorer" | get-tree | select "org.eclipse.viatra.examples.cps.testqueries" | get-menu "New/Other..." | click
+with [get-window New] {
+    get-tree | select "VIATRA/Query Definition"
+    get-button "Next >" | click
+}
+with [get-window -class WizardDialog] {
+    get-editbox -after [get-label "Package:"] | set-text "org.eclipse.viatra.examples.cps.testqueries"
+    get-editbox -after [get-label "File name:"] | set-text "test.vql"
+    get-button "Next >" | click
+    get-button Add | click
+}
+with [get-window "Select packages to import"] {
+    get-editbox -after [get-label "Select one or more package(s) (* = any string, ? = any char):"] | set-text cps
+    get-table | get-cell 0 0 | click
+    get-button OK | click
+}
+
+// Define a pattern
+with [get-window -class WizardDialog] {
+    get-editbox -after [get-label "Pattern name:"] | set-text AllocatedApplicationInstances
+    get-button Add -after [get-label "Pattern parameters:"] | click
+}
+
+with [get-window -class ObjectParameterConfigurationDialog] {
+    get-editbox -after [get-label "Parameter name:"] | set-text instance
+    get-button "Browse..." | click
+}
+get-window "Parameter type selection" | get-table | select ApplicationInstance
+get-window "Parameter type selection" | get-button OK | click
+
+get-window -class ObjectParameterConfigurationDialog | get-button OK | click
+get-window -class WizardDialog | get-button Finish | click
+with [get-editor "test.vql" | get-text-viewer] {
+    set-caret-pos 5 72
+    key-type Enter
+    type-text "ApplicationInstance(instance);"
+}
+
+// Use quick fix to fix missing CPS dependency
+with [get-editor "test.vql" | get-text-viewer] {
+    set-caret-pos 3 10
+    key-type "M1+1"
+    key-type Enter
+}
+
+// Verify generated code
+get-button "Save (M1+S)" | click
+with [get-view "Project Explorer" | get-tree] {
+    get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/AllocatedApplicationInstancesMatch.java" 
+        | get-property caption | equals "AllocatedApplicationInstancesMatch.java" | verify-true
+    get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/AllocatedApplicationInstancesMatcher.java" 
+        | get-property caption | equals "AllocatedApplicationInstancesMatcher.java" | verify-true
+    get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/Test.java" 
+        | get-property caption | equals "Test.java" | verify-true
+}
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

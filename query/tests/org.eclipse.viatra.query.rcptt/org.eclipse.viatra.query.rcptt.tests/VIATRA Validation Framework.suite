@@ -1,0 +1,30 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Element-Name: VIATRA Validation Framework
+Element-Type: testsuite
+Element-Version: 2.0
+Id: _-MEJkPGgEeW7irRH823xbw
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
+Content-Type: text/testcase
+Entry-Name: testcase-items
+
+_wdMU4PGXEeW7irRH823xbw	// kind: 'test' name: 'Validation framework - Generate validation project' path: 'Validation framework - Generate validation project.test'
+_avcUYPGqEeW7irRH823xbw	// kind: 'test' name: 'Validation framework - Validate CPS model' path: 'Validation framework - Validate CPS model.test'
+
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--

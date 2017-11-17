@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.viatra.gui.tests.queries.ValidationRules" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.gui.tests.queries.ValidationRules" id="org.eclipse.viatra.gui.tests.queries.ValidationRules">
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.notAllocatedButRunning"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalCpu"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalHdd"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.availableGreaterThanTotalRam"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.nodeIpIsNotUnique"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.idIsNotUnique"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.initialStateNotContainedByStateMachine"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.transitionWithoutTargetState"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.targetStateNotContainedBySameStateMachine"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.multipleTransitionsWithSameAction"/>
+      <query-specification fqn="org.eclipse.viatra.gui.tests.queries.multipleApplicationInstanceInCommunicationGroup"/>
+    </group>
+  </extension>
+</plugin>

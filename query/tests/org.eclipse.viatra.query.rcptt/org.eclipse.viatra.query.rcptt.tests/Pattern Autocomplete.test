@@ -1,0 +1,158 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _LipjoO9FEeWazOws8qE-Nw,_E-YjgPBEEeWlEbYJ7IoFCQ
+Element-Name: Pattern Autocomplete
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _DHI3kPBQEeWlEbYJ7IoFCQ
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/13/16 8:47 AM
+Testcase-Type: ecl
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+This test case creates a "test.vql" pattern file and fills it with AllocatedApplicationInstances, NotAllocatedApplicationInstances and ApplicationsWithAllocatedInstances pattern.
+
+Asserts:
+ * Some java file has been generated into the "src-gen" folder.
+ * 7 file has been generated into "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries".
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *******************************************************************************/
+
+// Create Query Project
+get-menu "File/New/Other..." | click
+with [get-window New] {
+    get-tree | select "VIATRA/Query Project"
+    get-button "Next >" | click
+}
+with [get-window -class WizardDialog] {
+    get-editbox -after [get-label "Project name:"] | set-text "org.eclipse.viatra.examples.cps.testqueries"
+    get-button Finish | click
+}
+get-view "Project Explorer" | get-tree | select "org.eclipse.viatra.examples.cps.testqueries/META-INF/MANIFEST.MF" 
+    | double-click
+with [get-editor "org.eclipse.viatra.examples.cps.testqueries"] {
+    get-tab-folder | get-tab-item Dependencies | click
+    get-section "Required Plug-ins" | get-button "Add..." | click
+}
+with [get-window "Plug-in Selection"] {
+    get-editbox -after [get-label "Select a Plug-in:"] | set-text cps
+    get-table | select "org.eclipse.viatra.examples.cps.model.*$"
+    get-button OK | click
+}
+get-button "Save (M1+S)" | click
+get-editor "org.eclipse.viatra.examples.cps.testqueries" | close
+
+// Create pattern
+get-view "Project Explorer" | get-tree | select "org.eclipse.viatra.examples.cps.testqueries" | get-menu "New/Other..." | click
+with [get-window New] {
+    get-tree | select "VIATRA/Query Definition"
+    get-button "Next >" | click
+}
+with [get-window -class WizardDialog] {
+    get-editbox -after [get-label "Package:"] | set-text "org.eclipse.viatra.examples.cps.testqueries"
+    get-editbox -after [get-label "File name:"] | set-text "test.vql"
+    get-button "Next >" | click
+    get-button Add | click
+}
+with [get-window "Select packages to import"] {
+    get-editbox -after [get-label "Select one or more package(s) (* = any string, ? = any char):"] | set-text cps
+    get-table | get-cell 0 0 | click
+    get-button OK | click
+}
+get-window -class WizardDialog | get-button Finish | click
+with [get-editor "test.vql" | get-text-viewer] {
+    set-caret-pos 3 1
+    key-type End
+    key-type Enter -times 2
+    type-text "pattern AllocatedApplicationInstances("
+    key-type Enter
+    type-text "inst : ApplicationInstance"
+    key-type Down
+    type-text " {"
+    key-type Enter
+    type-text "ApplicationInstance.allocatedTo(inst, _);"
+    key-type Down
+    key-type Enter -times 2
+    type-text "pattern NotAllocatedApplicationInstances("
+    key-type Enter
+    type-text "inst : "
+    key-type "M1+SPACE"
+    key-type Down
+    key-type Up
+    key-type Enter
+    key-type Down
+    type-text " {"
+    key-type Enter
+    type-text "neg fin"
+    key-type "M1+SPACE"
+    type-text " "
+    key-type "M1+SPACE"
+    key-type Enter
+    key-type Left
+    type-text inst
+    key-type Down
+    key-type Enter -times 2
+    type-text "pattern ApplicationsWithAllocatedInstances("
+    key-type Enter
+    type-text "app : "
+    key-type "M1+SPACE"
+}
+get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select ApplicationType | click 
+    -default
+with [get-editor "test.vql" | get-text-viewer] {
+    key-type Down
+    type-text " {"
+    key-type Enter
+    type-text App
+    key-type "M1+SPACE"
+}
+get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select ApplicationType | click 
+    -default
+with [get-editor "test.vql" | get-text-viewer] {
+    type-text "."
+    show-content-assist
+}
+get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select instances | click -default
+with [get-editor "test.vql" | get-text-viewer] {
+    type-text "(app, inst"
+    key-type Right
+    type-text ";"
+    key-type Enter
+    key-type "M1+SPACE"
+}
+get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select find | click -default
+with [get-editor "test.vql" | get-text-viewer] {
+    type-text " "
+    key-type "M1+SPACE"
+}
+get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table 
+    | select "AllocatedApplicationInstances - org.eclipse.viatra.examples.cps.testqueries.AllocatedApplicationInstances" 
+    | click -default
+with [get-editor "test.vql" | get-text-viewer] {
+    key-type Left
+    type-text inst
+}
+get-button "Save (M1+S)" | click
+get-view "Project Explorer" | get-tree 
+    | select "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/.*.java$"
+get-view "Project Explorer" | get-tree 
+    | get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries" 
+    | get-property childCount | equals 7 | verify-true
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

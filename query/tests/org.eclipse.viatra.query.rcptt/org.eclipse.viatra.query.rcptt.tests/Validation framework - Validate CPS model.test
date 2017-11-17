@@ -1,0 +1,44 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _LipjoO9FEeWazOws8qE-Nw,_E-YjgPBEEeWlEbYJ7IoFCQ
+Element-Name: Validation framework - Validate CPS model
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _avcUYPGqEeW7irRH823xbw
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *******************************************************************************/
+
+get-view "Project Explorer" | get-tree | select "org.eclipse.viatra.examples.cps.instances/demo.cyberphysicalsystem" 
+    | get-menu "Open With/Other..." | click
+with [get-window "Editor Selection"] {
+    get-tree | select "Sample Reflective Ecore Model Editor"
+    get-button OK | click
+}
+with [get-editor "demo.cyberphysicalsystem" | get-tree] {
+    get-item "platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem" | click
+    select "platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem" 
+        | get-menu "VIATRA Validation/Initialize VIATRA Validators on Editor" | click
+}
+get-view Problems | get-tree 
+    | get-item "Errors \\(1 item\\)/Multiple outgoing transitions of simple.cps.app.SecondAppClass0.sm0.s0 define the same action \\(waitForSignal\\(7\\)\\)" 
+    | get-property caption 
+    | equals "Multiple outgoing transitions of simple.cps.app.SecondAppClass0.sm0.s0 define the same action (waitForSignal(7))" 
+    | verify-true
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

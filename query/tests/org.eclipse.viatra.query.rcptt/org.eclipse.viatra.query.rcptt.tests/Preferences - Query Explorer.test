@@ -1,0 +1,40 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _LipjoO9FEeWazOws8qE-Nw
+Element-Name: Preferences - Query Explorer
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _RrM1QO9QEeW7SP0a5rPzzg
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/13/16 8:47 AM
+Testcase-Type: ecl
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+This test case is testing the VIATRA - Preferences - Query Explorer page.
+
+Asserts:
+* Query Explorer page exists
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *******************************************************************************/
+
+get-preferences-menu | click
+get-window Preferences | get-tree | select "VIATRA/Query Explorer"
+get-window Preferences | get-label "Query Explorer" | get-property caption | equals "Query Explorer" | verify-true
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

@@ -1,0 +1,54 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _LipjoO9FEeWazOws8qE-Nw,_j6aQcPA8EeWlEbYJ7IoFCQ,_NN2OQO9SEeW7SP0a5rPzzg,_e2hgwPD1EeW0yqPNDxWanA,_e26iUPD1EeW0yqPNDxWanA
+Element-Name: Query Explorer - Pattern Registry - Checkbox filtering
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _VMHQ8PD1EeW0yqPNDxWanA
+Runtime-Version: 2.0.2.201511100828
+Save-Time: 4/11/16 2:39 PM
+Testcase-Type: ecl
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Checkbox filtering has effect on viewer (checked patterns are in the viewer)
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *******************************************************************************/
+
+get-view "Query Explorer" | get-tree -index 1 
+    | select "\\[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem\\]\\[org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID\\]/org.eclipse.viatra.examples.cps.queries.applicationTypes.*$" 
+    | double-click
+get-view "Query Explorer" | get-tree -index 1 
+    | get-item "\\[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem\\]\\[org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID\\]/org.eclipse.viatra.examples.cps.queries.applicationTypes.*$" 
+    | get-property caption 
+    | equals "org.eclipse.viatra.examples.cps.queries.applicationTypes - 2 matches  (Runtime ReteEngine)" | verify-true
+with [get-view "Query Explorer"] {
+    get-tree | get-item "Runtime/org.eclipse.viatra.examples.cps.queries/applicationTypes" | get-property checked | equals true | verify-true
+    get-tree -index 1 
+        | get-item "\\[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem\\]\\[org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID\\]" 
+        | get-property "getItemCount()" | equals 24 | verify-true
+}
+get-view "Query Explorer" | get-tree | get-item "Runtime/org.eclipse.viatra.examples.cps.queries/applicationTypes" | uncheck
+with [get-view "Query Explorer"] {
+    get-tree | get-item "Runtime/org.eclipse.viatra.examples.cps.queries/applicationTypes" | get-property checked | equals false | verify-true
+    get-tree -index 1 
+        | get-item "\\[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem\\]\\[org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID\\]" 
+        | get-property "getItemCount()" | equals 23 | verify-true
+}
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--
