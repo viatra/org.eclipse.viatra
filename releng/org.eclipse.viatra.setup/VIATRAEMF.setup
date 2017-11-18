@@ -19,12 +19,6 @@
     label="VIATRA">
   <setupTask
       xsi:type="jdt:JRETask"
-      version="JavaSE-1.7"
-      location="${jre.location-1.7}">
-    <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
-  </setupTask>
-  <setupTask
-      xsi:type="jdt:JRETask"
       version="JavaSE-1.8"
       location="${jre.location-1.8}">
     <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
@@ -345,7 +339,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.10"
+          predecessor="//@setupTasks.9"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -769,7 +763,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -1221,21 +1215,21 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.2"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0"/>
         </repositoryList>
         <repositoryList
             name="Neon">
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0"/>
         </repositoryList>
         <repositoryList
             name="Oxygen">
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0"/>
         </repositoryList>
         <repositoryList
             name="Photon">
@@ -1288,15 +1282,11 @@
           activeRepositoryList="7.1.1">
         <requirement
             name="org.eclipse.collections"
-            versionRange="[7.0.0,8.0.0)"/>
-        <requirement
-            name="org.eclipse.collections.api"
-            versionRange="[7.0.0,8.0.0)"
-            optional="true"/>
+            versionRange="[9.0.0,10.0.0)"/>
         <repositoryList
-            name="7.1.1">
+            name="9.0.0">
           <repository
-              url="http://download.eclipse.org/viatra/dependency/collections-71"/>
+              url="http://download.eclipse.org/collections/9.0.0/repository"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -1383,6 +1373,12 @@
         </repositoryList>
       </targlet>
     </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.7"
+        location="${jre.location-1.7}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
   </stream>
   <stream name="1.3-maintenance">
     <setupTask
@@ -1466,6 +1462,12 @@
         </repositoryList>
       </targlet>
     </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.7"
+        location="${jre.location-1.7}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
   </stream>
   <stream name="1.4-maintenance">
     <setupTask
@@ -1536,6 +1538,12 @@
         version="1.3"
         location="${installation.location}/api/v1.3/"
         remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.3.0.zip"/>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.7"
+        location="${jre.location-1.7}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
   </stream>
   <stream name="1.5-maintenance">
     <setupTask
@@ -1603,6 +1611,12 @@
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.7"
+        location="${jre.location-1.7}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
   </stream>
   <stream name="1.6-maintenance">
@@ -1718,6 +1732,12 @@
               url="http://download.eclipse.org/releases/oxygen"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.7"
+        location="${jre.location-1.7}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
   </stream>
   <stream name="1.7-maintenance"
@@ -1864,6 +1884,12 @@
               url="http://download.eclipse.org/viatra/dependency/collections-71"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.7"
+        location="${jre.location-1.7}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
   </stream>
   <logicalProjectContainer

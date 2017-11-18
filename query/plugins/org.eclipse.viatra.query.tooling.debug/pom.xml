@@ -11,7 +11,4 @@
     </parent>
     <artifactId>org.eclipse.viatra.query.tooling.debug</artifactId>
     <packaging>eclipse-plugin</packaging>
-    <properties>
-       <target.classifier>juno</target.classifier>
-    </properties>
 </project>

@@ -13,9 +13,6 @@
 	<name>VIATRA CPS Tests</name>
 	<packaging>pom</packaging>
 	<modules>
-	    <module>org.eclipse.viatra.query.rcptt.target</module>
-		
-		<!-- CPS based RCPTT tests with product -->
 		<module>org.eclipse.viatra.query.rcptt.queries</module>
 		<module>org.eclipse.viatra.query.rcptt.queries.validation</module>
 		<module>org.eclipse.viatra.query.rcptt.queries.feature</module>
@@ -73,31 +70,6 @@
                         <outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
                         </configuration> </execution> -->
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>target-platform-configuration</artifactId>
-                <version>${tycho.version}</version>
-                <configuration>
-                    <resolver>p2</resolver>
-                    <target>
-                        <artifact>
-                            <groupId>org.eclipse.viatra</groupId>
-                            <artifactId>org.eclipse.viatra.query.rcptt.target</artifactId>
-                            <version>${project.version}</version>
-                            <classifier>${target.classifier}</classifier>
-                        </artifact>
-                        <dependency-resolution>
-                        <extraRequirements>
-                            <requirement>
-                                <type>eclipse-plugin</type>
-                                <id>com.google.inject.multibindings</id>
-                                <versionRange>[3.0.0,4.0.0)</versionRange>
-                            </requirement>
-                        </extraRequirements>
-                    </dependency-resolution>
-                    </target>
-                </configuration>
             </plugin>
 		</plugins>
 	</build>

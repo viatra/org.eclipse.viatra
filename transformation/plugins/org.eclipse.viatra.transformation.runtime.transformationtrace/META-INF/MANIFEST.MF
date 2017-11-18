@@ -9,7 +9,7 @@ Export-Package: org.eclipse.viatra.transformation.debug.transformationtrace.mode
  org.eclipse.viatra.transformation.debug.transformationtrace.serializer,
  org.eclipse.viatra.transformation.debug.transformationtrace.util
 Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.11.0",
- org.eclipse.xtend.lib;bundle-version="[2.9.0,3.0.0)"
+ org.eclipse.xtend.lib;bundle-version="[2.13.0,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin

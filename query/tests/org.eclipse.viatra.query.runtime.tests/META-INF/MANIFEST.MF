@@ -6,18 +6,18 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.junit;bundle-version="4.8.0",
- org.eclipse.viatra.query.runtime;bundle-version="0.8.0",
- org.eclipse.viatra.query.patternlanguage;bundle-version="0.8.0",
- org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8.0",
- org.eclipse.xtext.common.types;bundle-version="[2.9.0,3.0.0)",
+ org.eclipse.viatra.query.runtime;bundle-version="[2.0.0,2.1.0)",
+ org.eclipse.viatra.query.patternlanguage;bundle-version="[2.0.0,2.1.0)",
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.0.0,2.1.0)",
+ org.eclipse.xtext.common.types;bundle-version="[2.13.0,3.0.0)",
  com.google.guava,
- org.eclipse.xtext;bundle-version="[2.9.0,3.0.0)",
- org.eclipse.xtext.xbase;bundle-version="[2.9.0,3.0.0)",
+ org.eclipse.xtext;bundle-version="[2.13.0,3.0.0)",
+ org.eclipse.xtext.xbase;bundle-version="[2.13.0,3.0.0)",
  org.mockito;bundle-version="1.9.5",
  org.hamcrest;bundle-version="1.1.0",
- org.eclipse.xtext.junit4,
- org.eclipse.viatra.query.testing.core,
- org.eclipse.viatra.query.runtime.localsearch;bundle-version="1.4.0"
+ org.eclipse.xtext.junit4;bundle-version="[2.13.0,3.0.0)",
+ org.eclipse.viatra.query.testing.core;bundle-version="[2.0.0,2.1.0)",
+ org.eclipse.viatra.query.runtime.localsearch;bundle-version="[2.0.0,2.1.0)"
 Import-Package: org.apache.log4j,
  com.google.inject,
  com.google.inject.multibindings

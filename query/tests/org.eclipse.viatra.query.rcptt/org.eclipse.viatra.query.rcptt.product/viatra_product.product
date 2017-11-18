@@ -3,6 +3,7 @@
 
 <product name="VIATRA Product" uid="org.eclipse.viatra.query.rcptt.product" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="2.0.0" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -15,11 +16,13 @@
 
    <windowImages/>
 
+
    <launcher>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
@@ -50,8 +53,6 @@
       <feature id="org.eclipse.viatra.transformation.debug.feature" version="0.20.0.qualifier"/>
       <feature id="org.eclipse.viatra.transformation.evm.transactions.feature" version="2.0.0.qualifier"/>
       <feature id="org.eclipse.viatra.transformation.runtime.emf.feature" version="2.0.0.qualifier"/>
-      <feature id="org.eclipse.viatra.examples.cps.metamodel.feature" version="0.1.0.qualifier"/>
-      <feature id="org.eclipse.viatra.gui.tests.queries.feature" version="0.1.0.qualifier"/>
       <feature id="org.eclipse.pde"/>
       <feature id="org.eclipse.xtext.xbase.lib"/>
       <feature id="org.eclipse.jdt"/>
@@ -64,13 +65,8 @@
       <feature id="org.eclipse.platform"/>
       <feature id="org.eclipse.emf.common"/>
       <feature id="org.eclipse.rcp"/>
-      <feature id="org.eclipse.xtext.sdk" version="2.10.0.v201605250459"/>
+      <feature id="org.eclipse.xtext.sdk"/>
       <feature id="org.eclipse.xtext.xbase"/>
-      <feature id="org.eclipse.xtext.xtext.ui.source"/>
-      <feature id="org.eclipse.xtext.xbase.lib.source"/>
-      <feature id="org.eclipse.xtext.ui.source"/>
-      <feature id="org.eclipse.xtext.examples.source"/>
-      <feature id="org.eclipse.xtext.runtime.source"/>
       <feature id="org.eclipse.xtext.docs"/>
       <feature id="org.eclipse.xtext.xtext.ui"/>
       <feature id="org.eclipse.xtend.sdk"/>
@@ -95,8 +91,19 @@
       <feature id="org.eclipse.emf.mapping.ecore"/>
       <feature id="org.eclipse.emf.mapping"/>
       <feature id="org.eclipse.gef.geometry"/>
-      <feature id="org.eclipse.gef.zest.sdk"/>
       <feature id="org.eclipse.fx.runtime.min.feature"/>
+      <feature id="org.eclipse.viatra.query.rcptt.queries.feature" version="2.0.0.qualifier"/>
+      <feature id="org.eclipse.gef.zest.fx"/>
+      <feature id="org.eclipse.gef.common"/>
+      <feature id="org.eclipse.gef.graph"/>
+      <feature id="org.eclipse.gef.fx"/>
+      <feature id="org.eclipse.gef.geometry.convert.fx"/>
+      <feature id="org.eclipse.gef.layout"/>
+      <feature id="org.eclipse.gef.mvc.fx"/>
+      <feature id="org.eclipse.gef.fx.jface"/>
+      <feature id="org.eclipse.gef.fx.swt"/>
+      <feature id="org.eclipse.gef.zest.fx.jface"/>
+      <feature id="org.eclipse.viatra.examples.cps.metamodel.feature" version="0.1.0.qualifier"/>
    </features>
 
    <configurations>
@@ -105,6 +112,7 @@
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
 
    <preferencesInfo>

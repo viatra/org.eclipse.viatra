@@ -4,16 +4,12 @@
 <target name="VIATRA-Core" sequenceNumber="1498492908">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.8.2.v201511170833"/>
-      <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170833/mwe/"/>
-    </location>
-    <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
       <repository location="http://download.itemis.com/updates/releases/2.1.1/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.9.2.v201603040440"/>
-      <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.2"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.13.0.v20171020-0920"/>
+      <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="com.google.inject" version="3.0.0.v201312141243"/>
@@ -34,28 +30,28 @@
       <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/xpand/R201406030414"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.8.2.v201511170842"/>
-      <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170842/mwe2lang/"/>
+      <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.9.1.201705291011"/>
+      <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.9.1.201705291011"/>
+      <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.1"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
       <repository location="http://download.eclipse.org/cbi/updates/license/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.collections" version="7.1.1"/>
-      <unit id="org.eclipse.collections.api" version="7.1.1"/>
-      <repository location="http://download.eclipse.org/viatra/dependency/collections-71"/>
+      <unit id="org.eclipse.collections" version="9.0.0.v20170920-0536"/>
+      <repository location="http://download.eclipse.org/collections/9.0.0/repository"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.jdt.feature.group" version="3.7.2.v20120120-1414-7z8gFcuFMP7BW5XTz0jLTnz0l9B1"/>
-      <unit id="org.eclipse.platform.sdk" version="3.7.2.M20120208-0800"/>
-      <unit id="org.eclipse.pde.feature.group" version="3.7.2.v20120120-1420-7b7rFUOFEx2Xnqafnpz0E--0"/>
-      <unit id="org.eclipse.platform.feature.group" version="3.7.2.v20120207-1839-9gF7UHPDFxGjd-PqDr2jX_4yKaumkoHTz04_q-q"/>
-      <repository location="http://download.eclipse.org/eclipse/updates/3.7/R-3.7.2-201202080800/"/>
+      <unit id="org.eclipse.jdt.feature.group" version="3.11.2.v20160212-1500"/>
+      <unit id="org.eclipse.platform.sdk" version="4.5.2.M20160212-1500"/>
+      <unit id="org.eclipse.pde.feature.group" version="3.11.2.v20160212-1500"/>
+      <unit id="org.eclipse.platform.feature.group" version="4.5.2.v20160212-1500"/>
+      <repository location="http://download.eclipse.org/eclipse/updates/4.5/R-4.5.2-201602121500"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.draw2d" version="3.7.2.v20111017-2020"/>
-      <repository location="http://download.eclipse.org/releases/indigo/201202240900/"/>
+      <unit id="org.eclipse.draw2d" version="3.10.1.201508170204"/>
+      <repository location="http://download.eclipse.org/releases/mars/201602261000"/>
     </location>
   </locations>
   <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
