@@ -17,8 +17,8 @@ import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.ApplicationType
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemFactory
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
-import org.eclipse.xtext.xbase.lib.Functions.Function1
-import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
+import java.util.function.Predicate
+import java.util.function.Consumer
 
 abstract class ModelManipulationAggregatorTest {
 
@@ -44,11 +44,11 @@ abstract class ModelManipulationAggregatorTest {
 
 	protected static class Modification<T> {
 		Class<T> clazz
-		Function1<? super T, ? extends Boolean> condition
-		Procedure1<? super T> operation
+		Predicate<T> condition
+		Consumer<T> operation
 		String expected
 
-		new(Class<T> clazz, Function1<? super T, ? extends Boolean> condition, Procedure1<? super T> operation,
+		new(Class<T> clazz, Predicate<T> condition, Consumer<T> operation,
 			String expected) {
 			this.clazz = clazz
 			this.condition = condition

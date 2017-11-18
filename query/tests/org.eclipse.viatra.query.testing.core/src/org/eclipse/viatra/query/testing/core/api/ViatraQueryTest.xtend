@@ -38,6 +38,8 @@ import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOpt
 import org.eclipse.viatra.query.testing.core.internal.AnalyzedPatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
+import java.util.function.Predicate
+import java.util.function.Consumer
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -275,7 +277,7 @@ class ViatraQueryTest {
     /**
      * Execute the given operation on the model. This call will also remove every non-incremental result set.
      */
-    def <T extends EObject> modify(Class<T> clazz, (T)=>boolean condition, (T)=>void operation) {
+    def <T extends EObject> modify(Class<T> clazz, Predicate<T> condition, Consumer<T> operation) {
         testCase.modifyModel(clazz, condition, operation)
         this
     }

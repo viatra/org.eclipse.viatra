@@ -35,6 +35,8 @@ import org.junit.Assert
 import org.junit.Assume
 import org.junit.ComparisonFailure
 import com.google.common.collect.Maps
+import java.util.function.Predicate
+import java.util.function.Consumer
 
 /** 
  * @author Grill Balazs
@@ -117,7 +119,7 @@ class ViatraQueryTestCase {
         }
     }
 
-    def <T extends EObject> modifyModel(Class<T> clazz, (T)=>boolean condition, (T)=>void operation) {
+    def <T extends EObject> modifyModel(Class<T> clazz, Predicate<T> condition, Consumer<T> operation) {
         val nonIncrementals = modelProviders.filter[!updatedByModify]
         modelProviders.removeAll(nonIncrementals)
         nonIncrementals.forEach[dispose]
@@ -134,7 +136,7 @@ class ViatraQueryTestCase {
                 val element = iterator.next
                 if (clazz.isInstance(element)) {
                     val cast = clazz.cast(element)
-                    if (condition.apply(cast)) {
+                    if (condition.test(cast)) {
                         elementsToModify += clazz.cast(element)
                     }
                 }
@@ -142,7 +144,7 @@ class ViatraQueryTestCase {
         }
         
         for (element : elementsToModify) {
-            operation.apply(element)
+            operation.accept(element)
         }
         appender.clear
     }
