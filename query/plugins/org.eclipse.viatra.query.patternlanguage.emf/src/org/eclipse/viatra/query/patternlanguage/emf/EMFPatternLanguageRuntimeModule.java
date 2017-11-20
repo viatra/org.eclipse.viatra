@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.formatting.EMFPatternLanguageFormatter;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.CompoundMetamodelProviderService;
@@ -40,6 +41,8 @@ import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.xtext.formatting.IFormatter;
+import org.eclipse.xtext.formatting2.IFormatter2;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
@@ -182,5 +185,12 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
      */
     public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
         return EMFPatternLanguageGeneratorConfigProvider.class;
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public Class<? extends IFormatter> bindIFormatter() {
+        return EMFPatternLanguageFormatter.class;
     }
 }

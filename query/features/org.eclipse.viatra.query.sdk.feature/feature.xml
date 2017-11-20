@@ -54,7 +54,7 @@
    <requires>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
-      <import feature="org.eclipse.xtext.ui" version="2.9.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.redist"/>
    </requires>
 
    <plugin
