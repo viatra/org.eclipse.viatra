@@ -7,13 +7,13 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
-   <license url="%licenseURL">
-      %license
-   </license>
-
    <description>
       VIATRA Query runtime feature. This is the minimum dependency to execute VIATRA Query matchers.
    </description>
+
+   <license url="%licenseURL">
+      %license
+   </license>
 
    <url>
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
@@ -69,6 +69,13 @@
 
    <plugin
          id="org.eclipse.viatra.query.runtime.localsearch"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.collections"
          download-size="0"
          install-size="0"
          version="0.0.0"
