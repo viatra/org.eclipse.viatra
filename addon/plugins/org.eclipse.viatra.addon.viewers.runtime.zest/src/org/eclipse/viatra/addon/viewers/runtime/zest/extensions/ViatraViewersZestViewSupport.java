@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.zest.extensions;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.gef.layout.algorithms.CompositeLayoutAlgorithm;
@@ -34,8 +36,6 @@ import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Support class for {@link ViewPart}s based on a single Zest {@link GraphViewer}.
@@ -81,7 +81,7 @@ public class ViatraViewersZestViewSupport extends
                     engine, 
                     this.configuration.getPatterns(), 
                     this.configuration.getFilter(),  
-                    ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+                    Arrays.asList(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             ViatraGraphViewers.bind((graphViewer), state);
         }
     }

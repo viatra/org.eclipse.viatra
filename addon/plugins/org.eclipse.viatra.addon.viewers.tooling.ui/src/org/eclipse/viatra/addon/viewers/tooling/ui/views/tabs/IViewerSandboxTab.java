@@ -52,13 +52,11 @@ public interface IViewerSandboxTab extends ISelectionProvider {
     
     /**
      * A list of items that this tab will contribute to the dropdown menu of the Sandbox view.
-     * @return
      */
     List<IContributionItem> getDropDownMenuContributions();
     
     /**
      * A list of items that this tab will contribute to the toolbar of the Sandbox view.
-     * @return
      */
     List<IContributionItem> getToolBarContributions();
     

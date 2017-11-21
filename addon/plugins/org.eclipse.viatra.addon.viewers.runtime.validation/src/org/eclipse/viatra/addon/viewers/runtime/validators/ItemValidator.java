@@ -12,6 +12,7 @@ package org.eclipse.viatra.addon.viewers.runtime.validators;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.addon.viewers.runtime.notation.HierarchyPolicy;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
@@ -20,10 +21,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageP
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 
 /**
@@ -47,19 +44,13 @@ public class ItemValidator extends AbstractAnnotationValidator {
         if (hierarchyRef instanceof StringValue) {
             String value = ((StringValue) hierarchyRef).getValue();
             
-            
-            final List<String> valueList = Lists.transform(Arrays.asList(HierarchyPolicy.values()),  new Function<HierarchyPolicy, String>() {
-                
-                @Override
-                public String apply(HierarchyPolicy policy) {
-                    return policy.name().toLowerCase();
-                }
-            });
+            final List<String> valueList = Arrays.stream(HierarchyPolicy.values())
+                    .map(policy -> policy.name().toLowerCase()).collect(Collectors.toList());
                     
             if (!valueList.contains(value.toLowerCase())) {
                 validator.error(
                         String.format("Invalid hierarchy literal %s. Possible values are %s.", value,
-                                Iterables.toString(valueList)), hierarchyRef,
+                                valueList.stream().collect(Collectors.joining(", "))), hierarchyRef,
                         PatternLanguagePackage.Literals.STRING_VALUE__VALUE, HIERARCHY_LITERAL_ISSUE);
             }
         }

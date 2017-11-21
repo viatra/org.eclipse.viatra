@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
@@ -60,13 +59,7 @@ public class ViatraViewerDataModel extends ViewerDataModel {
     }
 
     public Collection<IQuerySpecification<?>> getPatterns(final String annotation) {
-        return Collections2.filter(patterns, new Predicate<IQuerySpecification<?>>() {
-
-            @Override
-            public boolean apply(IQuerySpecification<?> pattern) {
-                return !pattern.getAnnotationsByName(annotation).isEmpty();
-            }
-        });
+        return Collections2.filter(patterns, pattern -> !pattern.getAnnotationsByName(annotation).isEmpty());
     }
 
     public Logger getLogger() {

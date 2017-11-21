@@ -11,8 +11,10 @@
 package org.eclipse.viatra.addon.viewers.tooling.ui.views;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -55,10 +57,6 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 /**
  * A component for the {@link ViewersMultiSandboxView}.
  * 
@@ -90,7 +88,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     }
 
     public void initializeTabList() {
-        tabList = Lists.newArrayList();
+        tabList = new ArrayList<>();
         IConfigurationElement[] providers = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(
                         ViewersToolingViewsUtil.SANDBOX_TAB_EXTENSION_ID);
@@ -286,7 +284,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
             // dispose any previous viewerstate
             state.dispose();
         }
-        state = ViatraViewerDataModel.newViewerState(getEngine(scope), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+        state = ViatraViewerDataModel.newViewerState(getEngine(scope), getPatternsWithProperAnnotations(patterns), filter, Arrays.asList(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
         for (IViewerSandboxTab tab : tabList) {
             tab.bindState(state);
         }
@@ -309,15 +307,9 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     }
 
     private static Collection<IQuerySpecification<?>> getPatternsWithProperAnnotations(Collection<IQuerySpecification<?>> input) {
-        List<IQuerySpecification<?>> res = Lists.newArrayList();
-        for (IQuerySpecification<?> p : input) {
-            if (Iterables.any(p.getAllAnnotations(), new ViewersAnnotatedPatternTester())) {
-                res.add(p);
-            }
-        }
-        return res;
+        return input.stream().filter(p -> p.getAllAnnotations().stream().anyMatch(new ViewersAnnotatedPatternTester()))
+                .collect(Collectors.toList());
     }
-    
     
     @Override
     public void setSelection(ISelection selection) {

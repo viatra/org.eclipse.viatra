@@ -59,24 +59,12 @@ public class ListContentProvider extends AbstractViewerStateListener implements 
 
     @Override
     public void itemAppeared(final Item item) {
-        viewer.getControl().getDisplay().syncExec(new Runnable() {
-            
-            @Override
-            public void run() {
-                viewer.add(item);
-            }
-        });
+        viewer.getControl().getDisplay().syncExec(() -> viewer.add(item));
     }
 
     @Override
     public void itemDisappeared(final Item item) {
-        viewer.getControl().getDisplay().syncExec(new Runnable() {
-            
-            @Override
-            public void run() {
-                viewer.remove(item);
-            }
-        });
+        viewer.getControl().getDisplay().syncExec(() -> viewer.remove(item));
     }
 
     @Override

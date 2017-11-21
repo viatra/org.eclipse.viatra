@@ -73,20 +73,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
             if (currentSelection != null) {
                 unbindModel();
                 final Display display = owner.getSite().getShell().getDisplay();
-                display.asyncExec(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        BusyIndicator.showWhile(display, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                doUpdateDisplay();
-                            }
-                            
-                        });
-                    }
-                });
+                display.asyncExec(() -> BusyIndicator.showWhile(display, () -> doUpdateDisplay()));
             }
             delayUpdates = false;
         }

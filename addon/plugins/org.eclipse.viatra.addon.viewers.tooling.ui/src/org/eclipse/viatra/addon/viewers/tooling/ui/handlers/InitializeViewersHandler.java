@@ -11,6 +11,7 @@
 package org.eclipse.viatra.addon.viewers.tooling.ui.handlers;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -30,10 +31,6 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection;
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 public abstract class InitializeViewersHandler extends AbstractHandler {
 
@@ -83,13 +80,13 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
         
         // collect specifications from matchers
         // construct viewer filter from filters 
-        Set<IQuerySpecification<?>> specifications = Sets.newHashSet();
+        Set<IQuerySpecification<?>> specifications = new HashSet<>();
         ViewerDataFilter dataFilter = new ViewerDataFilter();
         for (IFilteredMatcherContent<?> filteredMatcherContent : filteredMatchers) {
             IQuerySpecification<?> specification = filteredMatcherContent.getMatcher().getSpecification();
             specifications.add(specification);
             IPatternMatch filter = filteredMatcherContent.getFilterMatch();
-            if (Iterables.any(Arrays.asList(filter.toArray()), Predicates.notNull())) {
+            if (Arrays.stream(filter.toArray()).anyMatch(el -> el != null)) {
                 dataFilter.addSingleFilter(specification, filter);
             }
         }

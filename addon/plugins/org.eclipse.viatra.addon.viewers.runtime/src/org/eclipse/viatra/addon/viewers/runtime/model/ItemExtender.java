@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.model;
 
+import java.util.function.Predicate;
+
 import org.eclipse.viatra.addon.viewers.runtime.notation.HierarchyPolicy;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
-
-import com.google.common.base.Predicate;
 
 public final class ItemExtender {
 
@@ -22,7 +22,7 @@ public final class ItemExtender {
     public static final class RootItem implements Predicate<Item> {
 
         @Override
-        public boolean apply(Item item) {
+        public boolean test(Item item) {
             if (item == null) {
                 return false;
             }
@@ -34,7 +34,7 @@ public final class ItemExtender {
     public static final class ChildItem implements Predicate<Item> {
 
         @Override
-        public boolean apply(Item item) {
+        public boolean test(Item item) {
             if (item == null) {
                 return false;
             }

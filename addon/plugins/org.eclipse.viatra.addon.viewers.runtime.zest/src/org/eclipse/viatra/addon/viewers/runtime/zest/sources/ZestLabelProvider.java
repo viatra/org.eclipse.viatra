@@ -11,6 +11,7 @@
 package org.eclipse.viatra.addon.viewers.runtime.zest.sources;
 
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,8 +26,6 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
 import org.eclipse.viatra.integration.zest.viewer.IGraphAttributesProvider2;
-
-import com.google.common.collect.Maps;
 
 import javafx.scene.shape.Polygon;
 
@@ -45,7 +44,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
         }
     }
     
-    private Map<RGB, Color> colorMap = Maps.newHashMap();
+    private Map<RGB, Color> colorMap = new HashMap<>();
 
     public ZestLabelProvider(ViewerState state, Display display) {
         super(state, display);
@@ -100,31 +99,31 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
 
     @Override
     public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
-        Map<String, Object> attributes = Maps.newHashMap();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
         return attributes;
     }
     
     @Override
     public Map<String, Object> getEdgeAttributes(Object edge) {
-        Map<String, Object> attributes = Maps.newHashMap();
+        Map<String, Object> attributes = new HashMap<>();
         attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
         return attributes;
     }
 
     @Override
     public Map<String, Object> getGraphAttributes() {
-        return Maps.newHashMap();
+        return new HashMap<>();
     }
 
     @Override
     public Map<String, Object> getNestedGraphAttributes(Object nestingNode) {
-        return Maps.newHashMap();
+        return new HashMap<>();
     }
 
     @Override
     public Map<String, Object> getNodeAttributes(Object node) {
-        return Maps.newHashMap();
+        return new HashMap<>();
     }
 
 

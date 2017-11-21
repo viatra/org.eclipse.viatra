@@ -12,7 +12,6 @@ package org.eclipse.viatra.addon.viewers.runtime.extensions;
 
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -67,13 +66,10 @@ public abstract class ViatraViewersPartSupport {
     /**
      * Selection listener for the "forward reveal" feature.
      */
-    private final ISelectionListener forwardRevealListener = new ISelectionListener() {
-        @Override
-        public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-            if (!owner.equals(part) && selection instanceof IStructuredSelection) {
-                IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-                onSelectionChanged(structuredSelection.toList());
-            }
+    private final ISelectionListener forwardRevealListener = (part, selection) -> {
+        if (!owner.equals(part) && selection instanceof IStructuredSelection) {
+            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+            onSelectionChanged(structuredSelection.toList());
         }
     };
     

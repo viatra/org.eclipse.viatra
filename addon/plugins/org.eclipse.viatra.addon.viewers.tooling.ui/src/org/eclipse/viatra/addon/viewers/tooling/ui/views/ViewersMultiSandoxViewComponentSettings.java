@@ -11,6 +11,7 @@
 package org.eclipse.viatra.addon.viewers.tooling.ui.views;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -37,8 +38,6 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewersRuntimeModelUtil;
 import org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 
-import com.google.common.collect.Maps;
-
 /**
  * A helper class for maintaining the settings UI for a {@link ViewersMultiSandboxViewComponent}.
  * 
@@ -55,7 +54,7 @@ public class ViewersMultiSandoxViewComponentSettings {
     
     private final ViewersMultiSandboxViewComponent owner;
     
-    private final Map<IQuerySpecification<?>, Boolean> checkedPatterns = Maps.newHashMap();
+    private final Map<IQuerySpecification<?>, Boolean> checkedPatterns = new HashMap<>();
     
     private ViewersComponentConfiguration currentConfiguration;
 

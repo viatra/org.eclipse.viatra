@@ -22,7 +22,6 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Zoltan Ujhelyi
@@ -59,7 +58,8 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
         if (state == null) {
             return new Object[0];
         }
-        return Iterables.toArray(Iterables.filter(state.getItems(), filter), Item.class);
+        
+        return state.getItems().stream().filter(filter).toArray(Item[]::new);
     }
 
     @Override
@@ -80,51 +80,31 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
 
     @Override
     public void itemAppeared(final Item item) {
-        if (filter.apply(item)) {
-            viewer.getControl().getDisplay().syncExec(new Runnable() {
-                
-                @Override
-                public void run() {
-                    viewer.add(viewer.getInput(), item);
-                }
-            });
+        if (filter.test(item)) {
+            viewer.getControl().getDisplay().syncExec(() -> viewer.add(viewer.getInput(), item));
         }
     }
 
     @Override
     public void itemDisappeared(final Item item) {
-        viewer.getControl().getDisplay().syncExec(new Runnable() {
-            
-            @Override
-            public void run() {
-                viewer.remove(item);
-            }
-        });
+        viewer.getControl().getDisplay().syncExec(() -> viewer.remove(item));
     }
 
     @Override
     public void containmentAppeared(final Containment edge) {
-        viewer.getControl().getDisplay().syncExec(new Runnable() {
+        viewer.getControl().getDisplay().syncExec(() -> {
+            viewer.add(edge.getSource(), edge.getTarget());
+            viewer.setExpandedState(edge.getSource(), true);
+            viewer.refresh(edge.getTarget());
             
-            @Override
-            public void run() {
-                viewer.add(edge.getSource(), edge.getTarget());
-                viewer.setExpandedState(edge.getSource(), true);
-                viewer.refresh(edge.getTarget());
-                
-            }
         });
     }
 
     @Override
     public void containmentDisappeared(final Containment edge) {
-        viewer.getControl().getDisplay().syncExec(new Runnable() {
-            
-            @Override
-            public void run() {
-                viewer.remove(edge.getSource(), new Object[] { edge.getTarget() });
-                viewer.refresh(edge.getSource());
-            }
+        viewer.getControl().getDisplay().syncExec(() -> {
+            viewer.remove(edge.getSource(), new Object[] { edge.getTarget() });
+            viewer.refresh(edge.getSource());
         });
     }
 

@@ -11,13 +11,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.model;
 
+import java.util.function.Predicate;
+
 import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.specifications.ContainmentQuerySpecificationDescriptor;
 import org.eclipse.viatra.addon.viewers.runtime.specifications.EdgeQuerySpecificationDescriptor;
 import org.eclipse.viatra.addon.viewers.runtime.specifications.ItemQuerySpecificationDescriptor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
-
-import com.google.common.base.Predicate;
 
 /**
  * Helper predicate to decide whether a pattern is annotated with one of the Viewers framework annotations (
@@ -29,7 +29,7 @@ import com.google.common.base.Predicate;
 public class ViewersAnnotatedPatternTester implements Predicate<PAnnotation> {
 
     @Override
-    public boolean apply(PAnnotation annotation) {
+    public boolean test(PAnnotation annotation) {
         String name = annotation.getName();
         if (name == null) {
             return false;

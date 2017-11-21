@@ -46,8 +46,6 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
-import com.google.common.collect.Lists;
-
 /**
  * 
  * View to aid developing queries for VIATRA Viewers.
@@ -88,7 +86,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     
     
     private ViewersMultiSandboxViewComponent defaultComponent;
-    private List<ViewersMultiSandboxViewComponent> additionalComponents = Lists.newArrayList();
+    private List<ViewersMultiSandboxViewComponent> additionalComponents = new ArrayList<>();
     private ViewersMultiSandboxViewComponent currentComponent;
     SashForm container;
     
@@ -174,14 +172,13 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
         }
     }
     
-    @SuppressWarnings("rawtypes")
     @Override
-    public Object getAdapter(Class adapter) {
+    public <T> T getAdapter(Class<T> adapter) {
         if (adapter.equals(IPropertySheetPage.class)) {
             PropertySheetPage propertySheetPage = new PropertySheetPage();
             propertySheetPage.setPropertySourceProvider(new AdapterFactoryContentProvider(new ComposedAdapterFactory(
                     ComposedAdapterFactory.Descriptor.Registry.INSTANCE)));
-            return propertySheetPage;
+            return adapter.cast(propertySheetPage);
         }
         return super.getAdapter(adapter);
     }
@@ -228,12 +225,6 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
             }
         }
         
-//    	public boolean isEnabled() {
-//    		if (defaultComponent!=null && currentComponent!=null) {
-//    			return (!defaultComponent.equals(currentComponent));
-//    		}
-//    		else return false;
-//    	};
     };
     
     private Action getAddNewComponentAction = new Action("Create new component") {

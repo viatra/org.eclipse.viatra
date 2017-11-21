@@ -21,7 +21,6 @@ import org.eclipse.viatra.addon.viewers.runtime.specifications.ItemQuerySpecific
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
 import org.eclipse.viatra.addon.viewers.runtime.util.LabelParser;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -64,74 +63,60 @@ public class ItemRule extends ViewModelRule {
     @Override
     public Job<GenericPatternMatch> getAppearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED,
-                new IMatchProcessor<GenericPatternMatch>() {
+                match -> {
 
-                    @Override
-                    public void process(GenericPatternMatch match) {
+                    Object param = match.get(descriptor.getSource());
+                    EObject eObject = ViewModelUtil.<Item> create(NotationPackage.eINSTANCE.getItem(),
+                            state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Items());
 
-                        Object param = match.get(descriptor.getSource());
-                        EObject eObject = ViewModelUtil.<Item> create(NotationPackage.eINSTANCE.getItem(),
-                                state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Items());
+                    ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
+                            Collections.singleton(eObject), param);
 
-                        ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
-                                Collections.singleton(eObject), param);
+                    Item item = (Item) eObject;
+                    if (param instanceof EObject)
+                        item.setParamEObject((EObject) param);
+                    else
+                        item.setParamObject(param);
+                    item.setPolicy(descriptor.getPolicy());
+                    item.setLabel(LabelParser.calculateLabel(match, descriptor.getLabel()));
 
-                        Item item = (Item) eObject;
-                        if (param instanceof EObject)
-                            item.setParamEObject((EObject) param);
-                        else
-                            item.setParamObject(param);
-                        item.setPolicy(descriptor.getPolicy());
-                        item.setLabel(LabelParser.calculateLabel(match, descriptor.getLabel()));
-
-                        if (descriptor.isFormatted()) {
-                            FormatSpecification formatSpecification = FormatParser.parseFormatAnnotation(descriptor
-                                    .getFormatAnnotation());
-                            item.setFormat(formatSpecification);
-                        }
-
-                        state.itemAppeared(item);
-                        logger.debug("Item appeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + item.toString());
+                    if (descriptor.isFormatted()) {
+                        FormatSpecification formatSpecification = FormatParser.parseFormatAnnotation(descriptor
+                                .getFormatAnnotation());
+                        item.setFormat(formatSpecification);
                     }
 
+                    state.itemAppeared(item);
+                    logger.debug("Item appeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + item.toString());
                 }));
     }
 
     @Override
     public Job<GenericPatternMatch> getDisappearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
-                new IMatchProcessor<GenericPatternMatch>() {
-
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        if (ViewModelUtil.target(match) instanceof Item) {
-                            Collection<EObject> deletedItems = ViewModelUtil.delete(match);
-                            for (EObject item : deletedItems) {
-                                state.itemDisappeared((Item) item);
-                                logger.debug("Item disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + item.toString());
-                            }
+                match -> {
+                    if (ViewModelUtil.target(match) instanceof Item) {
+                        Collection<EObject> deletedItems = ViewModelUtil.delete(match);
+                        for (EObject item : deletedItems) {
+                            state.itemDisappeared((Item) item);
+                            logger.debug("Item disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + item.toString());
                         }
                     }
-
                 }));
     }
 
     @Override
     public Job<GenericPatternMatch> getUpdatedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED,
-                new IMatchProcessor<GenericPatternMatch>() {
-
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        if (ViewModelUtil.target(match) instanceof Item) {
-                            Item item = (Item) ViewModelUtil.target(match);
-                            String oldLabel = item.getLabel();
-                            String newLabel = LabelParser.calculateLabel(match, descriptor.getLabel());
-                            if (!oldLabel.equals(newLabel)) {
-                                item.setLabel(newLabel);
-                                state.labelUpdated(item, newLabel);
-                                logger.debug("Item updated: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + item.toString());
-                            }
+                match -> {
+                    if (ViewModelUtil.target(match) instanceof Item) {
+                        Item item = (Item) ViewModelUtil.target(match);
+                        String oldLabel = item.getLabel();
+                        String newLabel = LabelParser.calculateLabel(match, descriptor.getLabel());
+                        if (!oldLabel.equals(newLabel)) {
+                            item.setLabel(newLabel);
+                            state.labelUpdated(item, newLabel);
+                            logger.debug("Item updated: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + item.toString());
                         }
                     }
                 }));

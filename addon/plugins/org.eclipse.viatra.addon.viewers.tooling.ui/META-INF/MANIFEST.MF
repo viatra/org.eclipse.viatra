@@ -17,5 +17,3 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs
 Bundle-Activator: org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin
 Bundle-ClassPath: .
-Import-Package: com.google.common.base;version="15.0.0",
- com.google.common.collect;version="15.0.0"

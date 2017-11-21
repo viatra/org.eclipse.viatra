@@ -22,7 +22,6 @@ import org.eclipse.viatra.addon.viewers.runtime.specifications.EdgeQuerySpecific
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
 import org.eclipse.viatra.addon.viewers.runtime.util.LabelParser;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -64,53 +63,45 @@ public class EdgeRule extends ViewModelRule {
     @Override
     public Job<GenericPatternMatch> getAppearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED,
-                new IMatchProcessor<GenericPatternMatch>() {
+                match -> {
+                    String sourceParam = "trace<" + descriptor.getSource() + ">";
+                    String targetParam = "trace<" + descriptor.getTarget() + ">";
 
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        String sourceParam = "trace<" + descriptor.getSource() + ">";
-                        String targetParam = "trace<" + descriptor.getTarget() + ">";
+                    Item source = (Item) match.get(sourceParam);
+                    Item target = (Item) match.get(targetParam);
 
-                        Item source = (Item) match.get(sourceParam);
-                        Item target = (Item) match.get(targetParam);
+                    EObject eObject = ViewModelUtil.create(NotationPackage.eINSTANCE.getEdge(),
+                            state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Edges());
+                    ViewModelUtil.trace(state.getManager(), getBaseSpecification().getFullyQualifiedName(),
+                            Collections.singleton(eObject), match.get(descriptor.getSource()),
+                            match.get(descriptor.getTarget()));
 
-                        EObject eObject = ViewModelUtil.create(NotationPackage.eINSTANCE.getEdge(),
-                                state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Edges());
-                        ViewModelUtil.trace(state.getManager(), getBaseSpecification().getFullyQualifiedName(),
-                                Collections.singleton(eObject), match.get(descriptor.getSource()),
-                                match.get(descriptor.getTarget()));
+                    Edge edge = (Edge) eObject;
+                    edge.setSource(source);
+                    edge.setTarget(target);
+                    edge.setLabel(LabelParser.calculateLabel(match, descriptor.getLabel()));
 
-                        Edge edge = (Edge) eObject;
-                        edge.setSource(source);
-                        edge.setTarget(target);
-                        edge.setLabel(LabelParser.calculateLabel(match, descriptor.getLabel()));
-
-                        if (descriptor.isFormatted()) {
-                            FormatSpecification formatSpecification = FormatParser.parseFormatAnnotation(descriptor
-                                    .getFormatAnnotation());
-                            edge.setFormat(formatSpecification);
-                        }
-
-                        state.edgeAppeared(edge);
-                        logger.debug("Edge appeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
-
+                    if (descriptor.isFormatted()) {
+                        FormatSpecification formatSpecification = FormatParser.parseFormatAnnotation(descriptor
+                                .getFormatAnnotation());
+                        edge.setFormat(formatSpecification);
                     }
+
+                    state.edgeAppeared(edge);
+                    logger.debug("Edge appeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
+
                 }));
     }
 
     @Override
     public Job<GenericPatternMatch> getDisappearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
-                new IMatchProcessor<GenericPatternMatch>() {
-
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        if (ViewModelUtil.target(match) instanceof Edge) {
-                            Collection<EObject> edges = ViewModelUtil.delete(match);
-                            for (EObject edge : edges) {
-                                state.edgeDisappeared((Edge) edge);
-                                logger.debug("Edge disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
-                            }
+                match -> {
+                    if (ViewModelUtil.target(match) instanceof Edge) {
+                        Collection<EObject> edges = ViewModelUtil.delete(match);
+                        for (EObject edge : edges) {
+                            state.edgeDisappeared((Edge) edge);
+                            logger.debug("Edge disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
                         }
                     }
                 }));
@@ -119,19 +110,15 @@ public class EdgeRule extends ViewModelRule {
     @Override
     public Job<GenericPatternMatch> getUpdatedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED,
-                new IMatchProcessor<GenericPatternMatch>() {
-
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        if (ViewModelUtil.target(match) instanceof Edge) {
-                            Edge edge = (Edge) ViewModelUtil.target(match);
-                            String oldLabel = edge.getLabel();
-                            String newLabel = LabelParser.calculateLabel(match, descriptor.getLabel());
-                            if (!oldLabel.equals(newLabel)) {
-                                edge.setLabel(newLabel);
-                                state.labelUpdated(edge, newLabel);
-                                logger.debug("Edge updated: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
-                            }
+                match -> {
+                    if (ViewModelUtil.target(match) instanceof Edge) {
+                        Edge edge = (Edge) ViewModelUtil.target(match);
+                        String oldLabel = edge.getLabel();
+                        String newLabel = LabelParser.calculateLabel(match, descriptor.getLabel());
+                        if (!oldLabel.equals(newLabel)) {
+                            edge.setLabel(newLabel);
+                            state.labelUpdated(edge, newLabel);
+                            logger.debug("Edge updated: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
                         }
                     }
                 }));

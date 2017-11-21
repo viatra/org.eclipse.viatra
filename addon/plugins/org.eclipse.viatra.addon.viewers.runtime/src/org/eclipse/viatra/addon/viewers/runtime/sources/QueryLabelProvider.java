@@ -29,24 +29,12 @@ public class QueryLabelProvider extends LabelProvider {
 
         @Override
         public void labelUpdated(final Item item, String newLabel) {
-            display.asyncExec(new Runnable() {
-                
-                @Override
-                public void run() {
-                    fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, item));
-                }
-            });
+            display.asyncExec(() -> fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, item)));
         }
 
         @Override
         public void labelUpdated(final Edge edge, String newLabel) {
-            display.asyncExec(new Runnable() {
-                
-                @Override
-                public void run() {
-                    fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, edge));			
-                }
-            });
+            display.asyncExec(() -> fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, edge)));
         }
         
     };

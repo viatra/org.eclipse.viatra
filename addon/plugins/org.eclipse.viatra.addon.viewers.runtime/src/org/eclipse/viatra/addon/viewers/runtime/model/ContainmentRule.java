@@ -21,7 +21,6 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage;
 import org.eclipse.viatra.addon.viewers.runtime.specifications.ContainmentQuerySpecificationDescriptor;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -65,64 +64,50 @@ public class ContainmentRule extends ViewModelRule {
     @Override
     public Job<GenericPatternMatch> getAppearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED,
-                new IMatchProcessor<GenericPatternMatch>() {
+                match -> {
+                    String sourceParam = "trace<" + descriptor.getContainer() + ">";
+                    String targetParam = "trace<" + descriptor.getItem() + ">";
 
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        String sourceParam = "trace<" + descriptor.getContainer() + ">";
-                        String targetParam = "trace<" + descriptor.getItem() + ">";
+                    Item source = (Item) match.get(sourceParam);
+                    Item target = (Item) match.get(targetParam);
 
-                        Item source = (Item) match.get(sourceParam);
-                        Item target = (Item) match.get(targetParam);
+                    EObject eObject = ViewModelUtil.create(NotationPackage.eINSTANCE.getContainment(),
+                            state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Containments());
+                    ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
+                            Collections.singleton(eObject), match.get(descriptor.getContainer()),
+                            match.get(descriptor.getItem()));
 
-                        EObject eObject = ViewModelUtil.create(NotationPackage.eINSTANCE.getContainment(),
-                                state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Containments());
-                        ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
-                                Collections.singleton(eObject), match.get(descriptor.getContainer()),
-                                match.get(descriptor.getItem()));
+                    Containment edge = (Containment) eObject;
+                    edge.setSource(source);
+                    edge.setTarget(target);
 
-                        Containment edge = (Containment) eObject;
-                        edge.setSource(source);
-                        edge.setTarget(target);
-
-                        state.containmentAppeared(edge);
-                        logger.debug("Containment appeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
-
-                    }
+                    state.containmentAppeared(edge);
+                    logger.debug("Containment appeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
 
                 }));
     }
 
     @Override
     protected Job<GenericPatternMatch> getUpdatedJob() {
-        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED,
-                new IMatchProcessor<GenericPatternMatch>() {
-
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        return;
-                    }
-                }));
+        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED, match -> {
+            return;
+        }));
     }
     
     @Override
     public Job<GenericPatternMatch> getDisappearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
-                new IMatchProcessor<GenericPatternMatch>() {
-
-                    @Override
-                    public void process(GenericPatternMatch match) {
-                        if (ViewModelUtil.target(match) instanceof Containment) {
-                            Collection<EObject> edges = ViewModelUtil.delete(match);
-                            Iterator<EObject> iterator = edges.iterator();
-                            while(iterator.hasNext()) {
-                                EObject edge = iterator.next();
-                                EcoreUtil.delete(edge);
-                                state.containmentDisappeared((Containment) edge);
-                                logger.debug("Containment disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
-                            }
-                            
+                match -> {
+                    if (ViewModelUtil.target(match) instanceof Containment) {
+                        Collection<EObject> edges = ViewModelUtil.delete(match);
+                        Iterator<EObject> iterator = edges.iterator();
+                        while(iterator.hasNext()) {
+                            EObject edge = iterator.next();
+                            EcoreUtil.delete(edge);
+                            state.containmentDisappeared((Containment) edge);
+                            logger.debug("Containment disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
                         }
+                        
                     }
                 }));
     }

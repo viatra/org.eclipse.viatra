@@ -37,13 +37,9 @@ public class SelectionHelper {
 
     private final Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
     
-    private final ISelectionChangedListener trickyListener = new ISelectionChangedListener() {
-        
-        @Override
-        public void selectionChanged(SelectionChangedEvent event) {
-            for (ISelectionChangedListener l : selectionChangedListeners) {
-                l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements_ViewersElementsToEObjects(event.getSelection())));
-            }
+    private final ISelectionChangedListener trickyListener = event -> {
+        for (ISelectionChangedListener l : selectionChangedListeners) {
+            l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements_ViewersElementsToEObjects(event.getSelection())));
         }
     };
 
