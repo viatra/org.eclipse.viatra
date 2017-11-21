@@ -31,11 +31,6 @@
     <description>Set the heap space needed to work with the projects of ${scope.project.label}</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:EclipseIniTask"
-      option="-XX:MaxPermSize="
-      value="256M"
-      vm="true"/>
-  <setupTask
       xsi:type="setup:VariableTask"
       name="viatra.copyright.holder"
       label="Additional copyright owners (VIATRA)">
@@ -251,11 +246,6 @@
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/integration"
           locateNestedProjects="true">
-        <excludedPath>plugins/org.eclipse.viatra.integration.xcore</excludedPath>
-        <excludedPath>plugins/org.eclipse.viatra.integration.xcore.model</excludedPath>
-        <excludedPath>plugins/org.eclipse.viatra.integration.xcore.modeleditor</excludedPath>
-        <excludedPath>features/org.eclipse.viatra.integration.xcore.feature</excludedPath>
-        <excludedPath>plugins/org.eclipse.viatra.integration.xcore.ui</excludedPath>
       </sourceLocator>
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/query"
@@ -339,7 +329,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.9"
+          predecessor="//@setupTasks.8"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -382,28 +372,59 @@
         <description></description>
       </setupTask>
       <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.xtext.postgen"
+          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.8"
+          launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.7"
+          launcher="org.eclipse.viatra.setup/GeneratePatternLanguageTestMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.xtext.postgen"
           onlyNewProjects="true"
           refresh="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
-          predecessor="viatra.xtext.postgen"
-          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.9"
-          launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
-        <description></description>
-      </setupTask>
-      <setupTask
-          xsi:type="launching:LaunchTask"
-          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.8"
-          launcher="org.eclipse.viatra.setup/GeneratePatternLanguageTestMetamodel.mwe2.launch">
-        <description></description>
-      </setupTask>
-      <setupTask
-          xsi:type="launching:LaunchTask"
           predecessor="viatra.pregen"
           successor="viatra.xtext.pregen"
           launcher="org.eclipse.viatra.setup/GenerateTestSnapshotMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.query.prequerygen"
+          launcher="org.eclipse.viatra.setup/GenerateRetevisQueryCode.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.query.prequerygen"
+          filter=""
+          launcher="org.eclipse.viatra.setup/GenerateUMLIntegrationQueryCode.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.query.prequerygen"
+          launcher="org.eclipse.viatra.setup/GenerateViewersRuntimeQueryCode.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.query.prequerygen"
+          launcher="org.eclipse.viatra.setup/GenerateCPSFrameworkQueries.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.query.prequerygen"
+          launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
         <description></description>
       </setupTask>
     </setupTask>
@@ -763,7 +784,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.9"
+        predecessor="//@setupTasks.8"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -1289,6 +1310,19 @@
               url="http://download.eclipse.org/collections/9.0.0/repository"/>
         </repositoryList>
       </targlet>
+      <targlet
+          name="CPS metamodels"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.viatra.examples.cps.metamodel.feature"
+            namespace="org.eclipse.update.feature"
+            filter="(org.eclipse.update.install.features=true)"/>
+        <repositoryList
+            name="">
+          <repository
+              url="http://download.eclipse.org/viatra/examples/cps/0.1.0.201707100825"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <stream name="1.2-maintenance">
@@ -1379,6 +1413,11 @@
         location="${jre.location-1.7}">
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-XX:MaxPermSize="
+        value="256M"
+        vm="true"/>
   </stream>
   <stream name="1.3-maintenance">
     <setupTask
@@ -1468,6 +1507,11 @@
         location="${jre.location-1.7}">
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-XX:MaxPermSize="
+        value="256M"
+        vm="true"/>
   </stream>
   <stream name="1.4-maintenance">
     <setupTask
@@ -1544,6 +1588,11 @@
         location="${jre.location-1.7}">
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-XX:MaxPermSize="
+        value="256M"
+        vm="true"/>
   </stream>
   <stream name="1.5-maintenance">
     <setupTask
@@ -1618,6 +1667,11 @@
         location="${jre.location-1.7}">
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-XX:MaxPermSize="
+        value="256M"
+        vm="true"/>
   </stream>
   <stream name="1.6-maintenance">
     <setupTask
@@ -1739,6 +1793,11 @@
         location="${jre.location-1.7}">
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-XX:MaxPermSize="
+        value="256M"
+        vm="true"/>
   </stream>
   <stream name="1.7-maintenance"
       label="">
@@ -1891,6 +1950,11 @@
         location="${jre.location-1.7}">
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-XX:MaxPermSize="
+        value="256M"
+        vm="true"/>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
