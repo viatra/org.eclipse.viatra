@@ -21,7 +21,6 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints
-import org.eclipse.viatra.query.runtime.localsearch.plan.CachingPlanProvider
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
@@ -30,6 +29,8 @@ import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOpt
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.EMFOperationCompiler
+import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider
 
 class LocalSearchPlanCostOverflowTest {
  
@@ -69,9 +70,10 @@ class LocalSearchPlanCostOverflowTest {
        
        val backend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE) as LocalSearchBackend
        
-       val planner = new CachingPlanProvider(null);
+       val planner = new SimplePlanProvider(null);
        val adornment = #{}
-       val plan = planner.getPlan(backend, hints, new MatcherReference(pattern.internalQueryRepresentation, adornment))
+       val compiler = new EMFOperationCompiler(backend.getRuntimeContext(), hints.isUseBase());
+       val plan = planner.getPlan(backend.backendContext, compiler, hints, new MatcherReference(pattern.internalQueryRepresentation, adornment))
        
        Assert.assertEquals(1,plan.iteratedKeys.size)
        engine.dispose

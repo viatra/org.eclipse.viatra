@@ -44,8 +44,7 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
     @Override
     public QueryEvaluationHint configure(QueryEvaluationHint hints) {
         if (hints.getQueryBackendFactory() instanceof ReteBackendFactory){
-            @SuppressWarnings("rawtypes")
-            Map<QueryHintOption, Object> values = new HashMap<>(1);
+            Map<QueryHintOption<?>, Object> values = new HashMap<>(1);
             values.put(CommonQueryHintOptions.normalizationTraceCollector, traceCollector);
             return hints.overrideBy(new QueryEvaluationHint(values, null));
         }

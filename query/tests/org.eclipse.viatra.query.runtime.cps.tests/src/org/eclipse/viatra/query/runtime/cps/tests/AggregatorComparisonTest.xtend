@@ -30,6 +30,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 @RunWith(Parameterized)
 class AggregatorComparisonTest {
@@ -50,7 +52,7 @@ class AggregatorComparisonTest {
     @Parameter(1)
     public String modelPath
     @Parameter(2)
-    public List<IQuerySpecification> queries
+    public List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> queries
     ResourceSet rs
     
     

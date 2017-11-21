@@ -46,19 +46,6 @@ class ModelLoadHelper {
     }
 
     /**
-     * Try to resolve a given platform URI first as a resource than as a plugin URI.
-     */
-    /*def private resolvePlatformUri(String platformUri){
-     * 	val resourceURI = URI::createPlatformResourceURI(platformUri, true)
-     * 	if (URIConverter::INSTANCE.exists(resourceURI, null)) {
-     * 		return resourceURI
-     * 	}
-     * 	val pluginURI = URI::createPlatformPluginURI(platformUri, true)
-     * 	if (URIConverter::INSTANCE.exists(pluginURI, null)) {
-     * 		return pluginURI
-     * 	}
-     }*/
-    /**
      * Load an additional resource into the resource set from a given file.
      * Works for both pattern and target model resource sets.
      */
@@ -152,14 +139,14 @@ class ModelLoadHelper {
     /**
      * Load the recorded match set into a new resource set form the given file.
      */
-    def loadExpectedResultsFromFile(IFile file) {
+    def QuerySnapshot loadExpectedResultsFromFile(IFile file) {
         file.fullPath.toString.loadExpectedResultsFromUri
     }
 
     /**
      * Load the recorded match set into a new resource set form the given platform URI.
      */
-    def loadExpectedResultsFromUri(String platformUri) {
+    def QuerySnapshot loadExpectedResultsFromUri(String platformUri) {
         val resource = loadModelFromUri(platformUri);
         if (resource !== null) {
             if (resource.contents.size > 0) {

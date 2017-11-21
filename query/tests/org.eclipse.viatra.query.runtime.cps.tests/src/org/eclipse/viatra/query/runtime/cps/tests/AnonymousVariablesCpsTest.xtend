@@ -28,6 +28,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption
 
 // This test is necessary because of 398745 bug
 @RunWith(Parameterized)
@@ -62,7 +63,7 @@ class AnonymousVariablesCpsTest {
 
     @Test
     def void anonymousVariablesTest() {
-        val hint = new QueryEvaluationHint(emptyMap, queryBackendFactory)
+        val hint = new QueryEvaluationHint(<QueryHintOption<?>, Object>emptyMap, queryBackendFactory)
         val modelProvider = new PatternBasedMatchSetModelProvider(hint)
         val anonymousMatchSet = modelProvider.getMatchSetRecord(rs, AnonymousVariablesQuerySpecification.instance, null)
         val namedMatchSet = modelProvider.getMatchSetRecord(rs, AllVariablesNamedQuerySpecification.instance, null)

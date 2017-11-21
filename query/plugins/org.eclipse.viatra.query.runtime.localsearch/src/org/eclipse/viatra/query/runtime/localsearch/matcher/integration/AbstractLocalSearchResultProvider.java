@@ -246,8 +246,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                 return Collections.emptySet();
             }
         };
-        @SuppressWarnings("rawtypes")
-        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
+        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
         for(PQuery dep : getDirectPositiveDependencies()){
             backendContext.getResultProviderAccess().getResultProvider(dep, hints);
         }

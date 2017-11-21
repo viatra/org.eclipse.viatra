@@ -29,6 +29,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 // This test is necessary because of 481265 bug
 @RunWith(Parameterized)
@@ -47,7 +49,7 @@ class FlattenedPatternCallCpsTest {
     @Parameter(1)
     public String modelPath
     @Parameter(2)
-    public IQuerySpecification queryToFlatten //XXX type parameter does not work correctly
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> queryToFlatten
     ResourceSet rs
     
     

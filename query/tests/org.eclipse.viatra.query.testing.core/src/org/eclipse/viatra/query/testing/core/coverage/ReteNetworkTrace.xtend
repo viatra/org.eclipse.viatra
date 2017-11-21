@@ -24,7 +24,6 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine
 import org.eclipse.viatra.query.runtime.rete.network.Node
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 /** 

@@ -31,15 +31,17 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.viatra.query.testing.core.coverage.CoverageState
 import org.eclipse.viatra.query.testing.core.coverage.ReteCoverage
 import org.eclipse.viatra.query.testing.core.coverage.ReteNetworkTrace
-import org.eclipse.viatra.query.testing.core.injector.EMFPatternLanguageInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.xtext.testing.util.ParseHelper
 
-@RunWith(XtextRunner) @InjectWith(EMFPatternLanguageInjectorProvider) class CoverageTest {
+@RunWith(XtextRunner) 
+@InjectWith(EMFPatternLanguageInjectorProvider)
+class CoverageTest {
     @Inject package ParseHelper<PatternModel> parseHelper
 
     /** 
@@ -48,7 +50,7 @@ import org.junit.runner.RunWith
     @Test def void coverageTest() throws Exception {
         val ResourceSetImpl rs = new ResourceSetImpl()
          val IRewriterTraceCollector traceCollector = new MappingTraceCollector();
-        val Map<QueryHintOption, Object> hints = newHashMap(CommonQueryHintOptions.normalizationTraceCollector -> traceCollector);
+        val Map<QueryHintOption<?>, Object> hints = newHashMap(CommonQueryHintOptions.normalizationTraceCollector -> traceCollector);
         
         val engineOptions = ViatraQueryEngineOptions.defineOptions.withDefaultHint(new QueryEvaluationHint(hints, new ReteBackendFactory)).build
         val ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(rs), engineOptions)

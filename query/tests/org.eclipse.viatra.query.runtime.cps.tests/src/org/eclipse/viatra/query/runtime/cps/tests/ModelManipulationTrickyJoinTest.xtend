@@ -19,6 +19,8 @@ import org.junit.runners.Parameterized
 import org.eclipse.viatra.query.runtime.cps.tests.queries.TrickyJoin
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.junit.runners.Parameterized.Parameter
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 @RunWith(Parameterized)
 class ModelManipulationTrickyJoinTest {
@@ -33,7 +35,7 @@ class ModelManipulationTrickyJoinTest {
     }    
     
     @Parameter(0) 
-    public var IQuerySpecification query;
+    public var IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> query;
     @Parameter(1) 
     public var String fqn;
     

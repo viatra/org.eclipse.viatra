@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.matchers.tuple.BaseFlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.BaseLeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
@@ -98,7 +99,7 @@ public class TupleTest {
         for (int i=0; i<arity; ++i) {
             frame.set(i, values[i]);
         }
-        Tuple tuple = Tuples.flatTupleOf(values);
+        ITuple tuple = Tuples.flatTupleOf(values);
         
         assertTrue("equality", Objects.equals(tuple, frame));
         assertEquals("hashCode", tuple.hashCode(), frame.hashCode());
@@ -118,8 +119,8 @@ public class TupleTest {
         }
         Tuple tuple = Tuples.flatTupleOf(values);
         
-        Tuple tupleFromTuple = tuple.toImmutable();
-        Tuple tupleFromFrame = frame.toImmutable();
+        ITuple tupleFromTuple = tuple.toImmutable();
+        ITuple tupleFromFrame = frame.toImmutable();
         assertTrue("equality tuple", Objects.equals(tuple, tupleFromTuple));
         assertTrue("equality tuple", Objects.equals(tupleFromTuple, tuple));
         assertTrue("equality frame", Objects.equals(frame, tupleFromFrame));

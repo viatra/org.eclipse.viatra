@@ -27,14 +27,14 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.MappingTraceCollector
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
-import org.eclipse.viatra.query.testing.core.injector.EMFPatternLanguageInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.xtext.testing.util.ParseHelper
 
 @RunWith(XtextRunner) 
 @InjectWith(EMFPatternLanguageInjectorProvider) 
@@ -45,7 +45,7 @@ class RewriterTraceTest {
     @Test def void traceTest() throws Exception {
         var ResourceSetImpl rs = new ResourceSetImpl()
         val IRewriterTraceCollector traceCollector = new MappingTraceCollector();
-        val Map<QueryHintOption, Object> hints = newHashMap(CommonQueryHintOptions.normalizationTraceCollector -> traceCollector);
+        val Map<QueryHintOption<?>, Object> hints = newHashMap(CommonQueryHintOptions.normalizationTraceCollector -> traceCollector);
         
         var ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(rs), ViatraQueryEngineOptions.defineOptions.withDefaultHint(new QueryEvaluationHint(hints, new ReteBackendFactory)).build)
         var String patternCode = 

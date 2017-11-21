@@ -13,8 +13,6 @@ package org.eclipse.viatra.query.runtime.cps.tests
 import java.util.Collection
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AvgCPUQuerySpecification
-import org.eclipse.viatra.query.testing.core.XmiModelUtil
-import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,6 +20,11 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import org.apache.log4j.Level
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.testing.core.ModelLoadHelper
+import org.junit.Before
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 @RunWith(Parameterized)
 class ModelManipulationAvgAggregatorTest {
@@ -38,12 +41,24 @@ class ModelManipulationAvgAggregatorTest {
 	@Parameter(0)
 	public String modelPath
 	
+    var ResourceSet set
+    var EMFScope scope
+
+    extension ModelLoadHelper = new ModelLoadHelper
+    
+    @Before
+    def void initialize() {
+        set = new ResourceSetImpl
+        scope = new EMFScope(set)
+    }
+	
 	@Test
 	def void test_avgCPU() {
+	    set.loadAdditionalResourceFromUri(modelPath)
+        val snapshot = set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_avgCPU.snapshot")
 		ViatraQueryTest.test(AvgCPUQuerySpecification.instance).with(BackendType.Rete.newBackendInstance)
-			.on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath)).
-			modify(HostInstance, [true], [host|host.availableCpu = 10]).with(
-				"org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_avgCPU.snapshot")
+			.on(scope).
+			modify(HostInstance, [true], [host|host.availableCpu = 10]).with(snapshot)
 				//Divison by zero happens in an eval
 				.assertEquals(Level::WARN)
 	}

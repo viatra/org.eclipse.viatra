@@ -39,7 +39,6 @@ public enum BackendType {
         }
     }
     
-    @SuppressWarnings("rawtypes")
     public QueryEvaluationHint getHints(){
         switch(this){
         case LocalSearch:
@@ -51,7 +50,7 @@ public enum BackendType {
         case LocalSearch_Generic:
             return LocalSearchHints.getDefaultGeneric().build();
         default:
-            return new QueryEvaluationHint(Collections.<QueryHintOption, Object>emptyMap(), getNewBackendInstance());
+            return new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>emptyMap(), getNewBackendInstance());
         }
     }
 }

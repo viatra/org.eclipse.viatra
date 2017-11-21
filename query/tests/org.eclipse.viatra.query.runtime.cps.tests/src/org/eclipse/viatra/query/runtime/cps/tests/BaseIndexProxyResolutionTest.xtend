@@ -59,9 +59,9 @@ class BaseIndexProxyResolutionTest {
         baseIndex.registerEStructuralFeatures(#{HOST_INSTANCE__APPLICATIONS}, IndexingLevel.FULL)
         
         // Base index should contain proxy at this point
-        baseIndex.getFeatureInstances(HOST_INSTANCE__APPLICATIONS).forEach[k,v|
-            Assert.assertEquals(1, v.size)
-            Assert.assertTrue((v.head as EObject).eIsProxy)
+        baseIndex.processAllFeatureInstances(HOST_INSTANCE__APPLICATIONS)[k,v|
+            Assert.assertEquals(1, baseIndex.countFeatureTargets(k, HOST_INSTANCE__APPLICATIONS))
+            Assert.assertTrue((v as EObject).eIsProxy)
         ]
         
         // Remove failed loaded resource
@@ -72,9 +72,9 @@ class BaseIndexProxyResolutionTest {
         EcoreUtil.resolveAll(rs)
         
         // Base index should NOT contain proxy at this point
-        baseIndex.getFeatureInstances(HOST_INSTANCE__APPLICATIONS).forEach[k,v|
-            Assert.assertEquals(1, v.size)
-            Assert.assertFalse((v.head as EObject).eIsProxy)
+        baseIndex.processAllFeatureInstances(HOST_INSTANCE__APPLICATIONS)[k,v|
+            Assert.assertEquals(1, baseIndex.countFeatureTargets(k, HOST_INSTANCE__APPLICATIONS))
+            Assert.assertFalse((v as EObject).eIsProxy)
         ]
     }
     

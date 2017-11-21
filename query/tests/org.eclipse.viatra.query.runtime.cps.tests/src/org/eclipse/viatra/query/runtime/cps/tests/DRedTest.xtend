@@ -16,10 +16,13 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AllDependenciesQu
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption
 import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions
-import org.eclipse.viatra.query.testing.core.XmiModelUtil
-import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import org.junit.Test
+import org.eclipse.viatra.query.testing.core.ModelLoadHelper
+import org.junit.Before
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 class DRedTest {
 
@@ -30,44 +33,52 @@ class DRedTest {
 	val snapshot_dred_deps_all = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_dred_deps_all.snapshot"
 	val snapshot_dred_deps_components = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_dred_deps_components.snapshot"
 
+    var ResourceSet set
+    var EMFScope scope
+
+    extension ModelLoadHelper = new ModelLoadHelper
+    
+    @Before
+    def void initialize() {
+        set = new ResourceSetImpl
+        scope = new EMFScope(set)
+    }
+
 	@Test
 	def void testInitialDependencies() {
-		val initial_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, initial)
-		val snapshot_dred_deps_init_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH,
-			snapshot_dred_deps_init)
+        set.loadAdditionalResourceFromUri(initial)
+        val snapshot = set.loadExpectedResultsFromUri(snapshot_dred_deps_init)
 
-		ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(initial_URI).with(
-			BackendType.Rete.newBackendInstance).with(snapshot_dred_deps_init_URI).assertEquals
+		ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(scope).with(
+			BackendType.Rete.newBackendInstance).with(snapshot).assertEquals
 	}
 
 	@Test
 	def void testOutsideOfCycleDelete() {
-		val initial_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, initial)
-		val snapshot_dred_deps_a3a2_del_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH,
-			snapshot_dred_deps_a3a2_del)
+		set.loadAdditionalResourceFromUri(initial)
+		val snapshot = set.loadExpectedResultsFromUri(snapshot_dred_deps_a3a2_del)
 
-		val mappings = new HashMap<QueryHintOption, Object>()
+		val mappings = new HashMap<QueryHintOption<?>, Object>()
 		mappings.put(ReteHintOptions.deleteRederiveEvaluation, true)
 		val factory = BackendType.Rete.newBackendInstance
 		val engineHints = new QueryEvaluationHint(mappings, factory)
 
-		ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(initial_URI).with(engineHints).assumeInputs.modify(
+		ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(scope).with(engineHints).assumeInputs.modify(
 			ApplicationInstance,
 			[it.identifier.equals("A3")],
 			[ app |
 				val toRemove = app.dependOn.findFirst[it.identifier.equals("A2")]
 				app.dependOn.remove(toRemove)
 			]
-		).with(snapshot_dred_deps_a3a2_del_URI).assertEquals
+		).with(snapshot).assertEquals
 	}
 
 	@Test
 	def void testInsideCycleDelete() {
-		val initial_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, initial)
-		val snapshot_dred_deps_a3a5_del_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH,
-			snapshot_dred_deps_a3a5_del)
+	    set.loadAdditionalResourceFromUri(initial)
+        val snapshot = set.loadExpectedResultsFromUri(snapshot_dred_deps_a3a5_del)
 
-		ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(initial_URI).with(
+		ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(scope).with(
 			BackendType.Rete.newBackendInstance).assumeInputs.modify(
 			ApplicationInstance,
 			[it.identifier.equals("A3")],
@@ -75,23 +86,21 @@ class DRedTest {
 				val toRemove = app.dependOn.findFirst[it.identifier.equals("A5")]
 				app.dependOn.remove(toRemove)
 			]
-		).with(snapshot_dred_deps_a3a5_del_URI).assertEquals
+		).with(snapshot).assertEquals
 	}
 
 	@Test
 	def void testComponentsBuildUpBreakDown() {
-		val initial_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, initial)
-		val snapshot_dred_deps_components_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH,
-			snapshot_dred_deps_components)
-		val snapshot_dred_deps_all_URI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH,
-			snapshot_dred_deps_all)
+	    set.loadAdditionalResourceFromUri(initial)
+        val snapshot_components = set.loadExpectedResultsFromUri(snapshot_dred_deps_components)
+        val snapshot_all = set.loadExpectedResultsFromUri(snapshot_dred_deps_all)
 
-		val mappings = new HashMap<QueryHintOption, Object>()
+		val mappings = new HashMap<QueryHintOption<?>, Object>()
 		mappings.put(ReteHintOptions.deleteRederiveEvaluation, true)
 		val factory = BackendType.Rete.newBackendInstance
 		val engineHints = new QueryEvaluationHint(mappings, factory)
 
-		val buildUp = ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(initial_URI).with(engineHints).assumeInputs.modify(
+		val buildUp = ViatraQueryTest.test(AllDependenciesQuerySpecification.instance).on(scope).with(engineHints).assumeInputs.modify(
 			ApplicationInstance,
 			[it.identifier.equals("A3")],
 			[ A3 |
@@ -107,7 +116,7 @@ class DRedTest {
 			]
 		)
 
-		buildUp.with(snapshot_dred_deps_all_URI).assertEquals
+		buildUp.with(snapshot_all).assertEquals
 
 		val breakDown = buildUp.modify(
 			ApplicationInstance,
@@ -125,7 +134,7 @@ class DRedTest {
 			]
 		)
 
-		breakDown.with(snapshot_dred_deps_components_URI).assertEquals
+		breakDown.with(snapshot_components).assertEquals
 	}
 
 }

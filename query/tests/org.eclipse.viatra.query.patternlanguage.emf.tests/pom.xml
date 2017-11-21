@@ -12,7 +12,7 @@
 	<artifactId>org.eclipse.viatra.query.patternlanguage.emf.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
-		<vmargs>${tycho.testArgLine} -Xmx1024m -XX:MaxPermSize=512m</vmargs>
+		<vmargs>${tycho.testArgLine} -Xmx1024m</vmargs>
 		<emf.workspace.location>${project.basedir}/../../target/workspace</emf.workspace.location>
 	</properties>
 	<build>

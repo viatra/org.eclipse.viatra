@@ -35,8 +35,7 @@ import com.google.common.collect.ImmutableMap;
 public class QueryEvaluationHint {
     
     final IQueryBackendFactory queryBackendFactory; 
-    @SuppressWarnings("rawtypes")
-    final Map<QueryHintOption, Object> backendHintSettings;
+    final Map<QueryHintOption<?>, Object> backendHintSettings;
     
     /**
      * Specifies the suggested query backend, and value settings for additional backend-specific options. Both parameters are optional (can be null).
@@ -45,14 +44,13 @@ public class QueryEvaluationHint {
      * @param queryBackendFactory overrides the query evaluator algorithm; passing null retains the default algorithm associated with the query
      * @since 1.5
      */
-    @SuppressWarnings("rawtypes") 
     public QueryEvaluationHint(
-            Map<QueryHintOption, Object> backendHintSettings, 
+            Map<QueryHintOption<?>, Object> backendHintSettings, 
             IQueryBackendFactory queryBackendFactory) {
         super();
         this.queryBackendFactory = queryBackendFactory;
         this.backendHintSettings = backendHintSettings == null ? 
-                Collections.<QueryHintOption, Object>emptyMap() : 
+                Collections.<QueryHintOption<?>, Object>emptyMap() : 
                     ImmutableMap.copyOf(backendHintSettings);
     }
     
@@ -96,8 +94,7 @@ public class QueryEvaluationHint {
      * 
      * @since 1.5
      */
-    @SuppressWarnings("rawtypes")
-    public Map<QueryHintOption, Object> getBackendHintSettings() {
+    public Map<QueryHintOption<?>, Object> getBackendHintSettings() {
         return backendHintSettings;
     }
 
@@ -115,8 +112,7 @@ public class QueryEvaluationHint {
         if (overridingHint.getQueryBackendFactory() != null)
             factory = overridingHint.getQueryBackendFactory();
         
-        @SuppressWarnings("rawtypes")
-        Map<QueryHintOption, Object> hints = new HashMap<>(this.getBackendHintSettings());
+        Map<QueryHintOption<?>, Object> hints = new HashMap<>(this.getBackendHintSettings());
         if (overridingHint.getBackendHintSettings() != null)
             hints.putAll(overridingHint.getBackendHintSettings());
         

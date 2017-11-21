@@ -94,7 +94,7 @@ public class QueryHintOption<HintValue> {
      * @return the hint value that was previously present in the map under this hint option, carrying over the semantics of {@link Map#put(Object, Object)}.  
      */
     @SuppressWarnings("unchecked")
-    public HintValue insertOverridingValue(@SuppressWarnings("rawtypes") Map<QueryHintOption, Object> hints, HintValue overridingValue) {
+    public HintValue insertOverridingValue(Map<QueryHintOption<?>, Object> hints, HintValue overridingValue) {
         return (HintValue) hints.put(this, overridingValue);
     }
     

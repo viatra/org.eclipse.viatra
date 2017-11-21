@@ -21,8 +21,6 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.util.SameVariablesQuer
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.UnifiedParametersWithDifferentValues2QuerySpecification
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.UnifiedParametersWithDifferentValuesQuerySpecification
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.UseVarInEvalQuerySpecification
-import org.eclipse.viatra.query.testing.core.XmiModelUtil
-import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +29,11 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.NotApplicationInstanceIdentifiable3QuerySpecification
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.NotApplicationInstanceIdentifiable2QuerySpecification
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.testing.core.ModelLoadHelper
+import org.junit.Before
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 // This test is necessary because of 481263 and 491248 bugs
 @RunWith(Parameterized)
@@ -49,11 +52,22 @@ class VariableEqualityCpsTest {
     @Parameter(0)
     public String modelPath
     
+    var ResourceSet set
+    var EMFScope scope
+
+    extension ModelLoadHelper = new ModelLoadHelper
+    
+    @Before
+    def void initialize() {
+        set = new ResourceSetImpl
+        set.loadAdditionalResourceFromUri(modelPath)
+        scope = new EMFScope(set)
+    }
     
     @Test
     def void variableEqualityTest() {
         ViatraQueryTest.test(SameVariablesQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -61,7 +75,7 @@ class VariableEqualityCpsTest {
     @Test
     def void enumNotEqualsTest() {
         ViatraQueryTest.test(EnumNotEqualQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -69,7 +83,7 @@ class VariableEqualityCpsTest {
     @Test
     def void partiallyUnboundUnifiedExportedParametersTest(){
         ViatraQueryTest.test(PartiallyUnboundUnifiedExportedParametersQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -77,7 +91,7 @@ class VariableEqualityCpsTest {
     @Test
     def void unifiedParametersWithDifferentValues2Test(){
         ViatraQueryTest.test(UnifiedParametersWithDifferentValues2QuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -85,7 +99,7 @@ class VariableEqualityCpsTest {
     @Test
     def void unifiedParametersWithDifferentValuesTest(){
         ViatraQueryTest.test(UnifiedParametersWithDifferentValuesQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -93,7 +107,7 @@ class VariableEqualityCpsTest {
     @Test
     def void multipleEvals(){
         ViatraQueryTest.test(MultipleEvalsQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -101,7 +115,7 @@ class VariableEqualityCpsTest {
     @Test
     def void useVarInEval(){
         ViatraQueryTest.test(UseVarInEvalQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -109,7 +123,7 @@ class VariableEqualityCpsTest {
     @Test
     def void notOneInstance(){
         ViatraQueryTest.test(NotOneInstanceQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -117,7 +131,7 @@ class VariableEqualityCpsTest {
     @Test
     def void argumentsUnifiedByCaller(){
         ViatraQueryTest.test(ArgumentsUnifiedByCallerQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
@@ -125,21 +139,21 @@ class VariableEqualityCpsTest {
     @Test
     def void invalidInferredParameterType(){
         ViatraQueryTest.test(NotApplicationInstanceIdentifiableQuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
     @Test
     def void invalidInferredParameterType2(){
         ViatraQueryTest.test(NotApplicationInstanceIdentifiable2QuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }
     @Test
     def void invalidInferredParameterType3(){
         ViatraQueryTest.test(NotApplicationInstanceIdentifiable3QuerySpecification.instance)
-                        .on(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath))
+                        .on(scope)
                         .withAll
                         .assertEquals
     }

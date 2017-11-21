@@ -19,6 +19,7 @@ import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import java.util.function.Predicate
 import java.util.function.Consumer
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 abstract class ModelManipulationAggregatorTest {
 
@@ -43,13 +44,12 @@ abstract class ModelManipulationAggregatorTest {
 	}
 
 	protected static class Modification<T> {
-		Class<T> clazz
-		Predicate<T> condition
-		Consumer<T> operation
-		String expected
+		val Class<T> clazz
+		val Predicate<T> condition
+		val Consumer<T> operation
+		val QuerySnapshot expected
 
-		new(Class<T> clazz, Predicate<T> condition, Consumer<T> operation,
-			String expected) {
+		new(Class<T> clazz, Predicate<T> condition, Consumer<T> operation, QuerySnapshot expected) {
 			this.clazz = clazz
 			this.condition = condition
 			this.operation = operation
