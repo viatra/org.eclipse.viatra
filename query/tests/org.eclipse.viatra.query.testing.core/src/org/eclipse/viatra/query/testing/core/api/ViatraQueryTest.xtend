@@ -31,10 +31,8 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.IMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.InitializedSnapshotMatchSetModelProvider
-import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
-import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.core.internal.AnalyzedPatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
@@ -216,17 +214,6 @@ class ViatraQueryTest {
         val QueryEvaluationHint hint = new QueryEvaluationHint(null, queryBackendFactory);
         with(hint)
     }
-
-    /**
-     * Add match result set loaded from the given snapshot
-     * 
-     * @deprecated This method is deprecated, use with(QuerySnapshot ... snapshot) instead to add snapshot providers.
-     */
-     @Deprecated
-    def with(URI snapshotURI) {
-        testCase.addMatchSetModelProvider(new SnapshotMatchSetModelProvider(snapshotURI))
-        this
-    }
     
     /**
      * Add match result set loaded from the given snapshots.
@@ -244,24 +231,6 @@ class ViatraQueryTest {
      */
     def with(QuerySnapshot ... snapshot) {
         testCase.addMatchSetModelProvider(new InitializedSnapshotMatchSetModelProvider(snapshot))
-        this
-    }
-
-    /**
-     * Add match result set loaded from the given snapshot.
-     */
-    def with(String snapshotURI) {
-        with(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, snapshotURI))
-    }
-
-    /**
-     * Load input model
-     * 
-     * @deprecated use on(EMFScope scope) instead
-     */
-     @Deprecated
-    def on(URI inputURI) {
-        testCase.loadModel(inputURI)
         this
     }
 

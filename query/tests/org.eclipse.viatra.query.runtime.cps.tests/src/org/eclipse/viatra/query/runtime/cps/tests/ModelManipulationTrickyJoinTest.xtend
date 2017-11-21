@@ -21,6 +21,11 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.junit.runners.Parameterized.Parameter
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.viatra.query.testing.core.ModelLoadHelper
+import org.junit.Before
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 @RunWith(Parameterized)
 class ModelManipulationTrickyJoinTest {
@@ -38,13 +43,25 @@ class ModelManipulationTrickyJoinTest {
     public var IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> query;
     @Parameter(1) 
     public var String fqn;
+
+    var ResourceSet set
+    var EMFScope scope
+
+    extension ModelLoadHelper = new ModelLoadHelper
+    
+    @Before
+    def void initialize() {
+        set = new ResourceSetImpl
+        scope = new EMFScope(set)
+    }
     
     @Test
     def void test_trickyJoin() {
         ViatraQueryTest.test(query)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostInstance,
@@ -58,7 +75,7 @@ class ModelManipulationTrickyJoinTest {
                             	val newIdentifier = identifier.substring(0, lastCharIndex) + replacement
                             	identifier = newIdentifier
 							])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_trickyJoin.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_trickyJoin.snapshot"))
                         .assertEquals
     }
     

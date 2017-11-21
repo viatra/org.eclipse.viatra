@@ -246,7 +246,7 @@ public class QueryResultTreeTabDescriptorProvider implements ITabDescriptorProvi
                             return;
                         }
                     } else if (firstElement instanceof QueryResultTreeMatcher && kind == PropertyKind.QUERY) {
-                        IQuerySpecificationRegistryEntry entry = ((QueryResultTreeMatcher) firstElement).getEntry();
+                        IQuerySpecificationRegistryEntry entry = ((QueryResultTreeMatcher<?>) firstElement).getEntry();
                         StructuredSelection structuredSelection = new StructuredSelection(entry);
                         super.setInput(part, structuredSelection);
                         return;

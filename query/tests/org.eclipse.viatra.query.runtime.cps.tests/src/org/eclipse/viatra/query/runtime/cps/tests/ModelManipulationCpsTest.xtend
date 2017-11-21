@@ -37,16 +37,35 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.util.TransitionsOfAppl
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.TransitionsOfApplicationTypeQuerySpecification
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import org.junit.Test
+import org.eclipse.viatra.query.testing.core.ModelLoadHelper
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.junit.Before
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 class ModelManipulationCpsTest {
     public static val SNAPSHOT_PATH = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test.snapshot"
+    
+    
+    var ResourceSet set
+    var EMFScope scope
+
+    extension ModelLoadHelper = new ModelLoadHelper
+    
+    @Before
+    def void initialize() {
+        set = new ResourceSetImpl
+        set.loadAdditionalResourceFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem")
+        scope = new EMFScope(set)
+    }
 
     @Test
     def void test_newAppInstance() {
         ViatraQueryTest.test(ApplicationInstancesQuerySpecification.instance)
                         .and(ApplicationInstancesOfApplicationTypeQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationType,
@@ -59,16 +78,17 @@ class ModelManipulationCpsTest {
                                     it.type = appType
                                 ]
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newAppInstance.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newAppInstance.snapshot"))
                         .assertEquals
     }
 
     @Test
     def void test_changeAppInstanceIdentifier() {
         ViatraQueryTest.test(ApplicationInstancesIdentifiersQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationInstance,
@@ -79,16 +99,17 @@ class ModelManipulationCpsTest {
                                 // identifier to "simple.cps.app.FirstAppClass0.instModified"
                                 appInst.identifier = "simple.cps.app.FirstAppClass0.instModified"
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppInstanceIdentifier.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppInstanceIdentifier.snapshot"))
                         .assertEquals
     }
 
     @Test
     def void test_changeAppTypeIdentifier() {
         ViatraQueryTest.test(ApplicationTypesIdentifiersQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationType,
@@ -99,16 +120,17 @@ class ModelManipulationCpsTest {
                                 // identifier to "simple.cps.app.FirstAppClassModified"
                                 appType.identifier = "simple.cps.app.FirstAppClassModified"
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppTypeIdentifier.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppTypeIdentifier.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_deleteAppInstance() {
         ViatraQueryTest.test(ApplicationInstancesQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationInstance,
@@ -118,16 +140,17 @@ class ModelManipulationCpsTest {
                                 // delete the Application Instance "simple.cps.app.FirstAppClass0.inst1"
                                 EcoreUtil.delete(appInst)
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAppInstance.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAppInstance.snapshot"))
                         .assertEquals
     }
 
     @Test
     def void test_deleteAppType() {
         ViatraQueryTest.test(ApplicationTypesIdentifiersQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationType,
@@ -137,16 +160,17 @@ class ModelManipulationCpsTest {
                                 // delete the Application Type "simple.cps.app.FirstAppClass0"
                                 EcoreUtil.delete(appType)
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAppType.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAppType.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_newHostInstance() {
         ViatraQueryTest.test(CommunicateWithQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostInstance,
@@ -162,16 +186,17 @@ class ModelManipulationCpsTest {
                                     it.communicateWith += hostInst
                                 ]
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newHostInstance.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newHostInstance.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_changeAppInstanceAllocationLocation() {
         ViatraQueryTest.test(HostedApplicationsQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationInstance,
@@ -184,16 +209,17 @@ class ModelManipulationCpsTest {
                                                         .findFirst[it.identifier == "simple.cps.host.SecondHostClass0.inst0"]
                                 appInst.allocatedTo = hostInst
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppInstanceAllocationLocation.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppInstanceAllocationLocation.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_changeAppInstanceType() {
         ViatraQueryTest.test(ApplicationTypeWithHostedInstancesQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(ApplicationInstance,
@@ -206,16 +232,17 @@ class ModelManipulationCpsTest {
                                                         .findFirst[it.identifier == "simple.cps.app.SecondAppClass0"]
                                 appInst.type = appType
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppInstanceType.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_changeAppInstanceType.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_newTransition() {
         ViatraQueryTest.test(TransitionsOfApplicationTypeIdentifiersQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(State,
@@ -228,31 +255,33 @@ class ModelManipulationCpsTest {
                                     state.outgoingTransitions += it
                                 ]
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newTransition.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newTransition.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_deleteHostType() {
         ViatraQueryTest.test(InTheCommunicationChainsQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostType,
                             [it.identifier == "simple.cps.host.FirstHostClass0"],
                             [ EcoreUtil.delete(it, true) ] )
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteHostType.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteHostType.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_newHostInstanceWithMoreRamThanHdd() {
         ViatraQueryTest.test(HostInstanceWithAtLeastAsMuchTotalRamAsTotalHddQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostType,
@@ -266,16 +295,17 @@ class ModelManipulationCpsTest {
                                     hostType.instances += it
                                 ]
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newHostInstanceWithMoreRamThanHdd.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newHostInstanceWithMoreRamThanHdd.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_newHostInstanceWithMoreHddThanRam() {
         ViatraQueryTest.test(HostInstanceWithAtLeastAsMuchTotalRamAsTotalHddQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostType,
@@ -290,22 +320,23 @@ class ModelManipulationCpsTest {
                                     hostType.instances += it
                                 ]
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newHostInstanceWithMoreHddThanRam.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newHostInstanceWithMoreHddThanRam.snapshot"))
                         .assertEquals
     }
     
     @Test
     def void test_deleteHostInstanceWithTheMostHostedApplication() {
         ViatraQueryTest.test(FinalPatternQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostInstance,
                             [it.identifier == "simple.cps.host.SecondHostClass0.inst1"],
                             [ EcoreUtil.delete(it) ] )
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteHostInstanceWithTheMostHostedApplication.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteHostInstanceWithTheMostHostedApplication.snapshot"))
                         .assertEquals
     }
     
@@ -315,15 +346,16 @@ class ModelManipulationCpsTest {
         .and(HostInstancesWithZeroTotalRamQuerySpecification.instance)
         .and(InTheCommunicationChainsQuerySpecification.instance)
         .and(HasTheMostHostedApplicationsQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostType,
                             [true],
                             [ EcoreUtil.delete(it) ] )
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAllHostType.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAllHostType.snapshot"))
                         .assertEquals
     }
     
@@ -331,15 +363,16 @@ class ModelManipulationCpsTest {
     def void test_deleteAllHostInstance() {
         ViatraQueryTest.test(ApplicationTypeWithoutHostedInstanceQuerySpecification.instance)
         .and(HasTheMostHostedApplicationsQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(HostInstance,
                             [true],
                             [ EcoreUtil.delete(it) ] )
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAllHostInstance.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_deleteAllHostInstance.snapshot"))
                         .assertEquals
     }
     
@@ -348,9 +381,10 @@ class ModelManipulationCpsTest {
         ViatraQueryTest.test(HasTheMostHostedApplicationInstancesQuerySpecification.instance)
         .and(TransitionsOfApplicationTypeQuerySpecification.instance)
         .and(InstancesQuerySpecification.instance)
+                        .on(scope)
                         .with(BackendType.Rete.newBackendInstance)
                         .with(BackendType.LocalSearch.newBackendInstance)
-                        .with(SNAPSHOT_PATH)
+                        .with(set.loadExpectedResultsFromUri(SNAPSHOT_PATH))
                         .assumeInputs
                         .assertEqualsThen
                         .modify(CyberPhysicalSystem,
@@ -399,7 +433,7 @@ class ModelManipulationCpsTest {
                                     ]
                                 ]
                             ])
-                        .with("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newComplexStructure.snapshot")
+                        .with(set.loadExpectedResultsFromUri("org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_newComplexStructure.snapshot"))
                         .assertEquals
     }
 }

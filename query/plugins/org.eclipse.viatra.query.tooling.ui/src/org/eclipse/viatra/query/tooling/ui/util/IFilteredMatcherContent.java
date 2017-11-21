@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.util;
 
+import java.util.Collection;
+
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
@@ -21,11 +23,35 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
  * @since 1.4
  *
  */
-public interface IFilteredMatcherContent {
+public interface IFilteredMatcherContent<MATCH extends IPatternMatch> {
 
-    ViatraQueryMatcher<?> getMatcher();
+    ViatraQueryMatcher<MATCH> getMatcher();
     
-    IPatternMatch getFilterMatch();
+    MATCH getFilterMatch();
     
     IFilteredMatcherCollection getParent();
+    
+    /**
+     * Collects the filtered matches defined by the {@link #getFilterMatch()}
+     * @since 2.0
+     */
+    default Collection<MATCH> getFilteredMatches() {
+        return getMatcher().getAllMatches(getFilterMatch());
+    }
+    
+    /**
+     * Counts the number of filtered matches defined by {@link #getFilterMatch()}
+     * @since 2.0
+     */
+    default int countFilteredMatches() {
+        return getMatcher().countMatches(getFilterMatch());
+    }
+    
+    /**
+     * Returns whethere there is a filtered match defined by {@link #getFilterMatch()}
+     * @since 2.0
+     */
+    default boolean hasFilteredMatch() {
+        return getMatcher().hasMatch(getFilterMatch());
+    }
 }

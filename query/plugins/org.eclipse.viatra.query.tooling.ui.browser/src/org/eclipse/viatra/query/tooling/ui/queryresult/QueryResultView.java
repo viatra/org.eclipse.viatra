@@ -221,7 +221,7 @@ public class QueryResultView extends ViewPart {
             @Override
             public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if(parentElement instanceof QueryResultTreeMatcher && element instanceof IPatternMatch) {
-                    QueryResultTreeMatcher queryResultTreeMatcher = (QueryResultTreeMatcher) parentElement;
+                    QueryResultTreeMatcher<?> queryResultTreeMatcher = (QueryResultTreeMatcher<?>) parentElement;
                     IPatternMatch patternMatch = (IPatternMatch) element;
                     boolean compatibleWith = queryResultTreeMatcher.getFilterMatch().isCompatibleWith(patternMatch);
                     return compatibleWith;

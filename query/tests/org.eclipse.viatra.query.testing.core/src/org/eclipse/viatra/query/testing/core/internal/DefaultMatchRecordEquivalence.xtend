@@ -34,9 +34,6 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
         super(Maps.newHashMap)
     }
         
-    /* (non-Javadoc)
-     * @see Equivalence#doEquivalent(java.lang.Object, java.lang.Object)
-     */
     override protected boolean doEquivalent(MatchRecord a, MatchRecord b) {
         Maps.difference(a.toMap, b.toMap, new Equivalence<Object> {
 
@@ -69,20 +66,17 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
         }).areEqual
     }
 
-    /* (non-Javadoc)
-     * @see Equivalence#doHash(java.lang.Object)
-     */
     override protected int doHash(MatchRecord t) {
         t.substitutions.map[
             val value = it.derivedValue
             
             if (value instanceof InternalEObject && (value as InternalEObject).eIsProxy) {
                 (value as InternalEObject).eProxyURI.hashCode
-            } else if (it.derivedValue instanceof SerializedJavaObjectSubstitution) {
-                val access = accessMap.get((it.derivedValue as SerializedJavaObjectSubstitution).type)
-                return access.calculateHash((it.derivedValue as SerializedJavaObjectSubstitution))
+            } else if (value instanceof SerializedJavaObjectSubstitution) {
+                val access = accessMap.get((value as SerializedJavaObjectSubstitution).type)
+                return access.calculateHash((value as SerializedJavaObjectSubstitution))
             } else {
-                it.derivedValue?.hashCode
+                value?.hashCode
             }
                 
         ].fold(0, [r, e | r+e])

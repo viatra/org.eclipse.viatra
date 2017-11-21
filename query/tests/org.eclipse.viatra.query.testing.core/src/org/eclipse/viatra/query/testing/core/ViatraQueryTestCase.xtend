@@ -264,8 +264,7 @@ class ViatraQueryTestCase {
         }
         // If the scope is set explicitly by the test case, or a snapshot model provider is added, there exists a test model
         if (!isScopeSet && !modelProviders.exists[
-               it instanceof SnapshotMatchSetModelProvider
-            || it instanceof InitializedSnapshotMatchSetModelProvider
+            it instanceof InitializedSnapshotMatchSetModelProvider
         ]) {
             throw new IllegalArgumentException("Always include a model in the test specification")
         }

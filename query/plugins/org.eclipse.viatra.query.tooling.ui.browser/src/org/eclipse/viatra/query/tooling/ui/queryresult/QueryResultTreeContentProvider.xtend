@@ -64,11 +64,11 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         inputElement.matchers.values
     }
     
-    def dispatch Object[] getChildrenInternal(QueryResultTreeMatcher inputElement) {
+    def dispatch Object[] getChildrenInternal(QueryResultTreeMatcher<?> inputElement) {
         if(inputElement.exception !== null) {
             return null
         }
-        return inputElement.matcher.getAllMatches(inputElement.filterMatch)
+        return inputElement.filteredMatches
     }
     
     def dispatch Object[] getChildrenInternal(IPatternMatch inputElement) {
@@ -90,7 +90,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         return null
     }
     
-    def dispatch Object getParentInternal(QueryResultTreeMatcher inputElement) {
+    def dispatch Object getParentInternal(QueryResultTreeMatcher<?> inputElement) {
         return inputElement.parent
     }
 
@@ -110,11 +110,11 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         return !inputElement.matchers.empty
     }
     
-    def dispatch boolean hasChildrenInternal(QueryResultTreeMatcher inputElement) {
+    def dispatch boolean hasChildrenInternal(QueryResultTreeMatcher<?> inputElement) {
         if(inputElement.exception !== null) {
             return false
         }
-        return inputElement.matcher.countMatches(inputElement.filterMatch) > 0
+        return inputElement.hasFilteredMatch
     }
     
     def dispatch boolean hasChildrenInternal(IPatternMatch inputElement) {
@@ -129,7 +129,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         return false
     }
     
-    override matcherAdded(QueryResultTreeMatcher matcher) {
+    override matcherAdded(QueryResultTreeMatcher<?> matcher) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.add(matcher.parent, matcher)
@@ -137,7 +137,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         ]
     }
      
-    override matcherFilterUpdated(QueryResultTreeMatcher matcher) {
+    override matcherFilterUpdated(QueryResultTreeMatcher<?> matcher) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.refresh(matcher)
@@ -145,7 +145,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         ]
     }
     
-    override matcherRemoved(QueryResultTreeMatcher matcher) {
+    override matcherRemoved(QueryResultTreeMatcher<?> matcher) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.remove(matcher)
@@ -153,7 +153,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         ]
     }
     
-    override matchAdded(QueryResultTreeMatcher matcher, IPatternMatch match) {
+    override matchAdded(QueryResultTreeMatcher<?> matcher, IPatternMatch match) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.add(matcher, match)
@@ -162,7 +162,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         ]
     }
     
-    override matchUpdated(QueryResultTreeMatcher matcher, IPatternMatch match) {
+    override matchUpdated(QueryResultTreeMatcher<?> matcher, IPatternMatch match) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.refresh(match)
@@ -171,7 +171,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         ]
     }
     
-    override matchRemoved(QueryResultTreeMatcher matcher, IPatternMatch match) {
+    override matchRemoved(QueryResultTreeMatcher<?> matcher, IPatternMatch match) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.remove(match)

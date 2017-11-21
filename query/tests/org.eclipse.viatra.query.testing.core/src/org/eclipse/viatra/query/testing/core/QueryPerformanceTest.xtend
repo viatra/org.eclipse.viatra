@@ -30,6 +30,7 @@ import org.junit.Test
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
 import com.google.common.base.Function
 import org.eclipse.viatra.query.testing.core.QueryPerformanceTest.QueryPerformanceData
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
@@ -155,7 +156,7 @@ abstract class QueryPerformanceTest {
             current++
             debug("Measuring query " + _specification.getFullyQualifiedName + "(" + current + "/" + numOfSpecifications + ")")
             val usedHeapBefore = _specification.wipe
-            performMeasurements(_specification, current, usedHeapBefore)
+            performMeasurements(_specification as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>, current, usedHeapBefore)
         }
     }
 
@@ -178,9 +179,8 @@ abstract class QueryPerformanceTest {
     /**
      * @since 1.3
      */
-    def performMeasurements(IQuerySpecification<?> specification, int current, long usedHeapBefore) {
-        val _specification = specification as IQuerySpecification
-        return performMeasurements(specification.getFullyQualifiedName, current, usedHeapBefore) [getMatcher(_specification)]
+    def <MATCH extends IPatternMatch, MATCHER extends ViatraQueryMatcher<MATCH>> performMeasurements(IQuerySpecification<MATCHER> specification, int current, long usedHeapBefore) {
+        return performMeasurements(specification.getFullyQualifiedName, current, usedHeapBefore) [getMatcher(specification)]
     }
     
     /**
@@ -188,7 +188,7 @@ abstract class QueryPerformanceTest {
      * @since 1.5
      */
     def performMeasurements(String queryName, int sequence, long usedHeapBefore, 
-        Function<AdvancedViatraQueryEngine,ViatraQueryMatcher> measuredAction
+        Function<AdvancedViatraQueryEngine, ViatraQueryMatcher<?>> measuredAction
     ) {
         debug("Building Rete")
         val watch = Stopwatch.createStarted

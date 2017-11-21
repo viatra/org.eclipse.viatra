@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.emf.ecore.EObject
 
 /**
  * @author Abel Hegedus
@@ -43,7 +44,7 @@ class MatchParameterPropertyDescriptor implements IPropertyDescriptor {
     
     String category = "Filters"
     val PParameter parameter
-    val QueryResultTreeMatcher matcher
+    val QueryResultTreeMatcher<?> matcher
     final val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory();
     final val adapterFactoryItemDelegator = new AdapterFactoryItemDelegator(adapterFactory)
     final val adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory)
@@ -148,7 +149,7 @@ class MatchParameterPropertyDescriptor implements IPropertyDescriptor {
             val allInstances = navigationHelper.getAllInstances(eClass)
             choiceOfValues += allInstances
         } else {
-            choiceOfValues += matcher.matcher.getAllValues(parameter.name)
+            choiceOfValues += matcher.matcher.getAllValues(parameter.name).filter(EObject)
         }
         return choiceOfValues
     }

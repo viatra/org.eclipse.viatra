@@ -39,7 +39,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
         imageRegistry.get(ViatraQueryGUIPlugin.ICON_ROOT)
     }
 
-    dispatch def Image getImageInternal(QueryResultTreeMatcher element) {
+    dispatch def Image getImageInternal(QueryResultTreeMatcher<?> element) {
         if(element.exception !== null){
             imageRegistry.get(ViatraQueryGUIPlugin.ICON_ERROR)
         } else {
@@ -63,12 +63,12 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
         return element.engine.toString
     }
     
-    dispatch def String getTextInternal(QueryResultTreeMatcher element) {
+    dispatch def String getTextInternal(QueryResultTreeMatcher<?> element) {
         if(element.exception !== null) {
             return '''«element.entry?.fullyQualifiedName» - «element.exception.message»'''
         }
         val matcher = element.matcher
-        val count = matcher.countMatches(element.filterMatch)
+        val count = element.countFilteredMatches
         val countMsg = switch count {
             case 0 : "No matches"
             case 1 : "1 match"

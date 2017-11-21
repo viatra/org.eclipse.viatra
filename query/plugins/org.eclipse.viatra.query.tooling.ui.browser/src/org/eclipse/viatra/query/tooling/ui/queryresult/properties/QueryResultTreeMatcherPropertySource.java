@@ -13,20 +13,21 @@ package org.eclipse.viatra.query.tooling.ui.queryresult.properties;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher;
 
 /**
  * @author Abel Hegedus
  *
  */
-public class QueryResultTreeMatcherPropertySource implements IPropertySource {
+public class QueryResultTreeMatcherPropertySource<MATCH extends IPatternMatch> implements IPropertySource {
 
     private static final String FILTERS_ID = "filters";
     private static final String BACKEND_ID = "backend";
     private static final String HINTS_ID = "hints";
-    private QueryResultTreeMatcher matcher;
+    private QueryResultTreeMatcher<MATCH> matcher;
 
-    public QueryResultTreeMatcherPropertySource(QueryResultTreeMatcher matcher) {
+    public QueryResultTreeMatcherPropertySource(QueryResultTreeMatcher<MATCH> matcher) {
         this.matcher = matcher;
     }
 
@@ -65,7 +66,7 @@ public class QueryResultTreeMatcherPropertySource implements IPropertySource {
             return "Unknown";
         }
         if (id.equals(FILTERS_ID)) {
-            return new MatcherFiltersPropertySource(matcher);
+            return new MatcherFiltersPropertySource<MATCH>(matcher);
         }
         return null;
     }

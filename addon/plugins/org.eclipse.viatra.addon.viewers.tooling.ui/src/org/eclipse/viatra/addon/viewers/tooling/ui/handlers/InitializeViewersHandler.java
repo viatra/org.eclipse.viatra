@@ -49,7 +49,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
             Object firstElement = ((TreeSelection) selection).getFirstElement();
             try {
                 if (firstElement instanceof IFilteredMatcherContent) {
-                    IFilteredMatcherContent matcherContent = (IFilteredMatcherContent) firstElement;
+                    IFilteredMatcherContent<?> matcherContent = (IFilteredMatcherContent<?>) firstElement;
                     ViatraQueryMatcher<?> matcher = matcherContent.getMatcher();
                     EMFScope scope = (EMFScope) matcher.getEngine().getScope();
                     
@@ -58,11 +58,11 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
                 } else if(firstElement instanceof IFilteredMatcherCollection) {
                     IFilteredMatcherCollection parent = (IFilteredMatcherCollection) firstElement;
                     
-                    Iterable<IFilteredMatcherContent> filteredMatchers = parent.getFilteredMatchers();
+                    Iterable<IFilteredMatcherContent<?>> filteredMatchers = parent.getFilteredMatchers();
                     if(filteredMatchers != null){
-                        Iterator<IFilteredMatcherContent> iterator = filteredMatchers.iterator();
+                        Iterator<IFilteredMatcherContent<?>> iterator = filteredMatchers.iterator();
                         if(iterator != null && iterator.hasNext()) {
-                            IFilteredMatcherContent matcherContent = iterator.next();
+                            IFilteredMatcherContent<?> matcherContent = iterator.next();
                             EMFScope scope = (EMFScope) matcherContent.getMatcher().getEngine().getScope();
                             initializeViewersSandboxOnCollection(scope, parent);
                         }
@@ -79,13 +79,13 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
     }
 
     private void initializeViewersSandboxOnCollection(EMFScope scope, IFilteredMatcherCollection parent) throws ViatraQueryException {
-        Iterable<IFilteredMatcherContent> filteredMatchers = parent.getFilteredMatchers();
+        Iterable<IFilteredMatcherContent<?>> filteredMatchers = parent.getFilteredMatchers();
         
         // collect specifications from matchers
         // construct viewer filter from filters 
         Set<IQuerySpecification<?>> specifications = Sets.newHashSet();
         ViewerDataFilter dataFilter = new ViewerDataFilter();
-        for (IFilteredMatcherContent filteredMatcherContent : filteredMatchers) {
+        for (IFilteredMatcherContent<?> filteredMatcherContent : filteredMatchers) {
             IQuerySpecification<?> specification = filteredMatcherContent.getMatcher().getSpecification();
             specifications.add(specification);
             IPatternMatch filter = filteredMatcherContent.getFilterMatch();

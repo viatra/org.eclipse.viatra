@@ -16,15 +16,16 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor
 import org.eclipse.ui.views.properties.IPropertySource
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 /** 
  * @author Abel Hegedus
  */
-class MatcherFiltersPropertySource implements IPropertySource {
-    val QueryResultTreeMatcher matcher
+class MatcherFiltersPropertySource<MATCH extends IPatternMatch> implements IPropertySource {
+    val QueryResultTreeMatcher<MATCH> matcher
     val Map<PParameter, IPropertyDescriptor> descriptors = newHashMap()
         
-    new(QueryResultTreeMatcher matcher) {
+    new(QueryResultTreeMatcher<MATCH> matcher) {
         this.matcher = matcher
     }
 

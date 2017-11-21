@@ -26,6 +26,8 @@ import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 import static org.junit.Assert.*
+import org.apache.log4j.ConsoleAppender
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 /**
  * Primitive methods for executing a functional test for VIATRA Queries.
@@ -52,7 +54,7 @@ class TestExecutor {
      *
      * Returns true if further comparison is allowed, false otherwise.
      */
-    def validateMatcherBeforeCompare(ViatraQueryMatcher matcher, MatchSetRecord expected, Set diff){
+    def validateMatcherBeforeCompare(ViatraQueryMatcher<?> matcher, MatchSetRecord expected, Set<String> diff){
 
         // 1. Check match set record pattern name against matcher pattern name
         if(!matcher.patternName.equals(expected.patternQualifiedName)){
@@ -82,7 +84,7 @@ class TestExecutor {
      * Therefore the comparison depends on correct VIATRA Query query evaluation
      *  (for a given limited pattern language feature set).
      */
-    def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected){
+    def <MATCH extends IPatternMatch> compareResultSetsAsRecords(ViatraQueryMatcher<MATCH> matcher, MatchSetRecord expected){
         compareResultSetsAsRecords(matcher, expected, new DefaultMatchRecordEquivalence())
     }
 
@@ -94,7 +96,7 @@ class TestExecutor {
      * 
      * @since 1.6
      */
-    def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected, MatchRecordEquivalence equivalence){
+    def <MATCH extends IPatternMatch> compareResultSetsAsRecords(ViatraQueryMatcher<MATCH> matcher, MatchSetRecord expected, MatchRecordEquivalence equivalence){
         val diff = newHashSet
 
         // 1. Validate match set record against matcher
@@ -110,8 +112,8 @@ class TestExecutor {
         val snapshot = expected.eContainer as QuerySnapshot
 
         // 2. Save match results into snapshot
-        val partialMatch = matcher.createMatchForMachRecord(expected.filter)
-        val actual = matcher.saveMatchesToSnapshot(partialMatch,snapshot)
+        val partialMatch = matcher.specification.createMatchForMatchRecord(expected.filter)
+        val actual = matcher.saveMatchesToSnapshot(partialMatch, snapshot)
 
         // 3. Compute diff
         val matchdiff = MatchSetRecordDiff::compute(expected, actual, equivalence)
@@ -130,7 +132,7 @@ class TestExecutor {
      *  records as partial matches on the matcher.
      * Therefore the comparison does not depend on correct VIATRA Query query evaluation.
      */
-    def compareResultSets(ViatraQueryMatcher matcher, MatchSetRecord expected){
+    def <MATCH extends IPatternMatch> compareResultSets(ViatraQueryMatcher<MATCH> matcher, MatchSetRecord expected){
         val diff = newHashSet
 
         // 1. Validate match set record against matcher
@@ -143,7 +145,7 @@ class TestExecutor {
         // 2/a. expected match records are used as partial matches
         val foundMatches = newArrayList()
         for(MatchRecord matchRecord : expected.matches){
-            val partialMatch = 	matcher.createMatchForMachRecord(matchRecord)
+            val partialMatch = 	matcher.specification.createMatchForMatchRecord(matchRecord)
             val numMatches = matcher.countMatches(partialMatch)
             if(numMatches == 0){
                 diff.add(EXPECTED_NOT_FOUND + " ("+matchRecord.printMatchRecord+")")
@@ -159,7 +161,7 @@ class TestExecutor {
 
         // 2/b. check for unexpected matches
         //val notFoundMatches = newArrayList()
-        matcher.forEachMatch(matcher.createMatchForMachRecord(expected.filter)) [
+        matcher.forEachMatch(matcher.specification.createMatchForMatchRecord(expected.filter)) [
             if(!foundMatches.contains(it)){
                 //notFoundMatches.add(it)
                 diff.add(UNEXPECTED_MATCH + " ("+it.prettyPrint+")")
@@ -231,7 +233,7 @@ class TestExecutor {
     }
 
     def registerLogger(ViatraQueryEngine engine){
-        logger.addAppender(new TestingLogAppender)
+        logger.addAppender(new ConsoleAppender)
     }
 
     def retrieveLoggerOutput(ViatraQueryEngine engine){

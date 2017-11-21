@@ -26,8 +26,7 @@ import org.apache.log4j.varia.LevelRangeFilter;
  * @author Abel Hegedus
  * @deprecated use {@link TestingSeverityAggregatorLogAppender} or {@link ConsoleAppender} instead
  */
-@Deprecated
-public class TestingLogAppender extends AppenderSkeleton implements Appender {
+class TestingLogAppender extends AppenderSkeleton implements Appender {
 
     private static final String FORMAT_LAYOUT = "%m%n";
     private static final Level LEVEL_MIN = Level.WARN;

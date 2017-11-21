@@ -245,8 +245,8 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
      * @since 1.4
      */
     @Override
-    public Iterable<IFilteredMatcherContent> getFilteredMatchers() {
-        Builder<IFilteredMatcherContent> builder = ImmutableSet.<IFilteredMatcherContent>builder();
+    public Iterable<IFilteredMatcherContent<?>> getFilteredMatchers() {
+        Builder<IFilteredMatcherContent<?>> builder = ImmutableSet.<IFilteredMatcherContent<?>>builder();
         for (PatternMatcherContent matcher : children.getElements()) {
             builder.add(matcher);
         }

@@ -17,6 +17,6 @@ package org.eclipse.viatra.query.tooling.ui.util;
  */
 public interface IFilteredMatcherCollection {
 
-    Iterable<IFilteredMatcherContent> getFilteredMatchers();
+    Iterable<IFilteredMatcherContent<?>> getFilteredMatchers();
     
 }

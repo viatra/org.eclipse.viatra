@@ -69,7 +69,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     boolean engineOperational
     
     @Accessors(PUBLIC_GETTER)
-    Map<String, QueryResultTreeMatcher> matchers
+    Map<String, QueryResultTreeMatcher<?>> matchers
     
     /**
      * @since 1.4
@@ -139,25 +139,25 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         this.hint = hint;
     }
     
-    def createMatcher(ViatraQueryMatcher matcher) {
+    def <MATCH extends IPatternMatch> createMatcher(ViatraQueryMatcher<MATCH> matcher) {
         val treeMatcher = new QueryResultTreeMatcher(this, matcher)
-        val matchCreatedJob = Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED, [ match |
+        val matchCreatedJob = Jobs.<MATCH>newStatelessJob(CRUDActivationStateEnum.CREATED, [ match |
             listeners.forEach[
                 it.matchAdded(treeMatcher, match)
             ]
         ])
-        val matchUpdatedJob = Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED, [ match |
+        val matchUpdatedJob = Jobs.<MATCH>newStatelessJob(CRUDActivationStateEnum.UPDATED, [ match |
             listeners.forEach[
                 it.matchUpdated(treeMatcher, match)
             ]
         ])
-        val matchDeletedJob = Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED, [ match |
+        val matchDeletedJob = Jobs.<MATCH>newStatelessJob(CRUDActivationStateEnum.DELETED, [ match |
             listeners.forEach[
                 it.matchRemoved(treeMatcher, match)
             ]
         ])
         val ruleSpec = Rules.newMatcherRuleSpecification(
-            matcher as ViatraQueryMatcher<IPatternMatch>,
+            matcher as ViatraQueryMatcher<MATCH>,
             Lifecycles.getDefault(true, true),
             #{matchCreatedJob, matchUpdatedJob, matchDeletedJob}
         )
@@ -193,7 +193,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         return null
     }
     
-    def removeMatcher(QueryResultTreeMatcher matcher) {
+    def removeMatcher(QueryResultTreeMatcher<?> matcher) {
         matchers.remove(matcher.entry.fullyQualifiedName)
         listeners.forEach[
             it.matcherRemoved(matcher)
@@ -377,10 +377,10 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     }
     
     override getFilteredMatchers() {
-        return matchers.values.filter(IFilteredMatcherContent)
+        return matchers.values.filter(IFilteredMatcherContent).map[Object matcher | matcher as IFilteredMatcherContent<?>]
     }
     
-    def matcherFilterUpdated(QueryResultTreeMatcher matcher) {
+    def matcherFilterUpdated(QueryResultTreeMatcher<?> matcher) {
         listeners.forEach[
             it.matcherFilterUpdated(matcher)
         ]
@@ -391,16 +391,16 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
  * @author Abel Hegedus
  */
 @FinalFieldsConstructor
-class QueryResultTreeMatcher implements IFilteredMatcherContent {
+class QueryResultTreeMatcher <MATCH extends IPatternMatch> implements IFilteredMatcherContent<MATCH> {
     
     @Accessors(PUBLIC_GETTER)
     final QueryResultTreeInput parent
     
     @Accessors(PUBLIC_GETTER)
-    final ViatraQueryMatcher matcher
+    final ViatraQueryMatcher<MATCH> matcher
     
     @Accessors(PROTECTED_SETTER)
-    IPatternMatch filterMatch
+    MATCH filterMatch
 
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     QueryEvaluationHint hint
@@ -409,7 +409,7 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
     IQuerySpecificationRegistryEntry entry
     
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
-    RuleSpecification ruleSpec
+    RuleSpecification<MATCH> ruleSpec
     
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     Exception exception;
@@ -426,7 +426,7 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
         filterMatch.filterUpdated
     }
     
-    def filterUpdated(IPatternMatch filterMatch) {
+    def filterUpdated(MATCH filterMatch) {
         if(filterMatch !== this.filterMatch){
             this.filterMatch = filterMatch
         }
@@ -447,15 +447,15 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
  */
 interface IQueryResultViewModelListener {
     
-    def void matcherAdded(QueryResultTreeMatcher matcher)
+    def void matcherAdded(QueryResultTreeMatcher<?> matcher)
     
-    def void matcherFilterUpdated(QueryResultTreeMatcher matcher)
+    def void matcherFilterUpdated(QueryResultTreeMatcher<?> matcher)
 
-    def void matcherRemoved(QueryResultTreeMatcher matcher)
+    def void matcherRemoved(QueryResultTreeMatcher<?> matcher)
     
-    def void matchAdded(QueryResultTreeMatcher matcher, IPatternMatch match)
+    def void matchAdded(QueryResultTreeMatcher<?> matcher, IPatternMatch match)
     
-    def void matchUpdated(QueryResultTreeMatcher matcher, IPatternMatch match)
+    def void matchUpdated(QueryResultTreeMatcher<?> matcher, IPatternMatch match)
     
-    def void matchRemoved(QueryResultTreeMatcher matcher, IPatternMatch match)
+    def void matchRemoved(QueryResultTreeMatcher<?> matcher, IPatternMatch match)
 }

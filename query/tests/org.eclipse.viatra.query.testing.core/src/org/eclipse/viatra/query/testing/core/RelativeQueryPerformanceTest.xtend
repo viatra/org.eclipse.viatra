@@ -16,6 +16,8 @@ import java.util.Map
 import java.util.concurrent.TimeUnit
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements 
@@ -47,7 +49,7 @@ abstract class RelativeQueryPerformanceTest extends QueryPerformanceTest {
     Map<String, Long> absoluteHeapResults = Maps.newTreeMap()
     Map<String, Long> relativeHeapResults = Maps.newTreeMap()
 
-    override performMeasurements(IQuerySpecification<?> specification, int current, long usedHeapBefore) {
+    override <MATCH extends IPatternMatch, MATCHER extends ViatraQueryMatcher<MATCH>> performMeasurements(IQuerySpecification<MATCHER> specification, int current, long usedHeapBefore) {
 
         val prerequisites = specification.directPrerequisites
         var prerequisitesHeap = 0L

@@ -18,6 +18,11 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.viatra.query.testing.core.ModelLoadHelper
+import org.junit.Before
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 @RunWith(Parameterized)
 class TransitiveClosureTest {
@@ -34,12 +39,23 @@ class TransitiveClosureTest {
     @Parameter(0)
     public String snapshot
     
+    var ResourceSet set
+    var EMFScope scope
+
     extension org.eclipse.viatra.query.runtime.cps.tests.AllBackendTypes = new org.eclipse.viatra.query.runtime.cps.tests.AllBackendTypes
+    extension ModelLoadHelper = new ModelLoadHelper
+    
+    @Before
+    def void initialize() {
+        set = new ResourceSetImpl
+        scope = new EMFScope(set)
+    }
     
     @Test
     def void simpleTransitiveClosure() {
         ViatraQueryTest.test(StatesTCQuerySpecification.instance)
-                        .with(snapshot)
+                        .on(scope)
+                        .with(set.loadExpectedResultsFromUri(snapshot))
                         .withAll
                         .assertEquals
     }

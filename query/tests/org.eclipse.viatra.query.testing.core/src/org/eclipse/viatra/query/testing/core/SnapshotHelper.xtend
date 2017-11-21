@@ -122,7 +122,7 @@ class SnapshotHelper {
     /**
      * Returns the input specification for the given matcher.
      */
-    def getInputSpecificationForMatcher(ViatraQueryMatcher matcher){
+    def getInputSpecificationForMatcher(ViatraQueryMatcher<?> matcher){
         switch scope : matcher.engine.scope {
             EMFScope: {
                 switch scope.scopeRoots.head {
@@ -139,7 +139,7 @@ class SnapshotHelper {
      * Saves the matches of the given matcher (using the partial match) into the given snapshot.
      * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
      */
-    def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IPatternMatch partialMatch, QuerySnapshot snapshot){
+    def <MATCH extends IPatternMatch> saveMatchesToSnapshot(ViatraQueryMatcher<MATCH> matcher, MATCH partialMatch, QuerySnapshot snapshot){
         val patternFQN = matcher.patternName
         val actualRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
         actualRecord.patternQualifiedName = patternFQN
@@ -189,31 +189,9 @@ class SnapshotHelper {
     /**
      * Creates a partial match that corresponds to the given match record.
      *  Each substitution is used as a value for the parameter with the same name.
-     * 
-     * @deprecated use createMatchForMatchRecord(IQuerySpecification, MatchRecord) instead
      */
-    @Deprecated
-    def createMatchForMachRecord(ViatraQueryMatcher matcher, MatchRecord matchRecord){
-        val match = matcher.newEmptyMatch
-        matchRecord.substitutions.forEach()[
-            var target = derivedValue
-            /*if(target instanceof EObject){
-                var etarget = target as EObject
-                if(etarget.eIsProxy){
-                    target = EcoreUtil::resolve(etarget, matchRecord)
-                }
-            }*/
-            match.set(parameterName,target)
-        ]
-        return match
-    }
-
-    /**
-     * Creates a partial match that corresponds to the given match record.
-     *  Each substitution is used as a value for the parameter with the same name.
-     */
-    def <Match extends IPatternMatch> Match createMatchForMatchRecord(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, MatchRecord matchRecord){
-        val match = querySpecification.newEmptyMatch as Match
+    def <MATCH extends IPatternMatch> MATCH createMatchForMatchRecord(IQuerySpecification<? extends ViatraQueryMatcher<MATCH>> querySpecification, MatchRecord matchRecord){
+        val match = querySpecification.newEmptyMatch as MATCH
         matchRecord.substitutions.forEach()[
             var target = derivedValue
             match.set(parameterName,target)
@@ -226,7 +204,7 @@ class SnapshotHelper {
      * Saves all matches of the given matcher into the given snapshot.
      * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
      */
-    def saveMatchesToSnapshot(ViatraQueryMatcher matcher, QuerySnapshot snapshot){
+    def <MATCH extends IPatternMatch> saveMatchesToSnapshot(ViatraQueryMatcher<MATCH> matcher, QuerySnapshot snapshot){
         matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
     }
 
