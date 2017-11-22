@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.BasePQuery;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
@@ -26,7 +27,18 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  *
  */
 public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
-        
+
+    public BaseGeneratedEMFPQuery() {
+        this(PVisibility.PUBLIC);
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public BaseGeneratedEMFPQuery(PVisibility visibility) {
+        super(visibility);
+    }
+    
     protected QueryInitializationException processDependencyException(ViatraQueryException ex) {
         if (ex.getCause() instanceof QueryInitializationException) 
             return (QueryInitializationException) ex.getCause();

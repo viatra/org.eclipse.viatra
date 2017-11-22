@@ -56,6 +56,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -200,6 +201,11 @@ class PatternQuerySpecificationClassInferrer {
             final = true
             visibility = JvmVisibility::PRIVATE
             initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.PParameterName»«ENDFOR»)'''
+        ]
+
+        pQueryClass.members += pattern.toConstructor[
+            visibility = JvmVisibility::PRIVATE
+            body = '''super(«PVisibility».«CorePatternLanguageHelper.calculatePVisibility(pattern)»);'''
         ]
 
         pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(String)) [

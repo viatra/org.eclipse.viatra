@@ -80,7 +80,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
      * @throws QueryInitializationException
      */
     public GenericEMFPatternPQuery(Pattern pattern, boolean delayedInitialization) throws QueryInitializationException {
-        super();
+        super(CorePatternLanguageHelper.calculatePVisibility(pattern));
         this.pattern = pattern;
         if (delayedInitialization) {
             setStatus(PQueryStatus.UNINITIALIZED);

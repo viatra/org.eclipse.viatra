@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.api;
 import org.eclipse.viatra.query.runtime.api.impl.BaseQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 
 /**
  * This is a generic query specification for VIATRA pattern matchers, for "interpretative" query execution. 
@@ -63,6 +64,14 @@ public abstract class GenericQuerySpecification<Matcher extends GenericPatternMa
      */
     protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws ViatraQueryException {
         return GenericPatternMatcher.instantiate(engine, this);
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public PVisibility getVisibility() {
+        return getInternalQueryRepresentation().getVisibility();
     }
 
 }

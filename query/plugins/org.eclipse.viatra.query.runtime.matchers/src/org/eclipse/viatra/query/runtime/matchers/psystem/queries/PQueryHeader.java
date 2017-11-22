@@ -74,5 +74,11 @@ public interface PQueryHeader {
      * @return the found annotation, or null if non is available
      */
     public PAnnotation getFirstAnnotationByName(String annotationName);
+    
+    /**
+     * Returns the visibility information about the query.
+     * @return
+     */
+    public PVisibility getVisibility();
 
 }

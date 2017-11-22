@@ -37,6 +37,10 @@ import com.google.common.collect.Lists;
 public abstract class BasePQuery implements PQuery {
 
 	protected PQueryStatus status = PQueryStatus.UNINITIALIZED;
+	/**
+     * @since 2.0
+     */
+	protected final PVisibility visibility;
 	protected List<PProblem> pProblems = new ArrayList<PProblem>();
 	private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
 	private QueryEvaluationHint evaluationHints = new QueryEvaluationHint(null, (IQueryBackendFactory)null);
@@ -174,10 +178,11 @@ public abstract class BasePQuery implements PQuery {
 	}
 	
 	/**
-	 * 
-	 */
-	public BasePQuery() {
+     * @since 2.0
+     */
+	public BasePQuery(PVisibility visibility) {
 		super();
+		this.visibility = visibility;
 	}
 
 	@Override
@@ -228,5 +233,13 @@ public abstract class BasePQuery implements PQuery {
 	public String toString() {
 	    return String.format("PQuery<%s>=%s", getFullyQualifiedName(), super.toString());
 	}
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public PVisibility getVisibility() {
+        return visibility;
+    }
 	
 }

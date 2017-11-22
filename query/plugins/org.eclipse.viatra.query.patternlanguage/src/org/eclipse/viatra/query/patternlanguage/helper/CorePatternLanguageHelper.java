@@ -54,6 +54,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.xbase.XExpression;
@@ -128,7 +129,19 @@ public final class CorePatternLanguageHelper {
         }
         return false;
     }
+    
+    /**
+     * @since 2.0
+     */
+    public static PVisibility calculatePVisibility(Pattern pattern) {
+        Modifiers mod = pattern.getModifiers();
+        if (mod != null && mod.isPrivate()){
+            return PVisibility.PRIVATE;
+        }
+        return PVisibility.PUBLIC;
+    }
 
+    
     /**
      * @param pattern
      * @return true if the pattern contains xbase check() or eval() expressions, false otherwise.

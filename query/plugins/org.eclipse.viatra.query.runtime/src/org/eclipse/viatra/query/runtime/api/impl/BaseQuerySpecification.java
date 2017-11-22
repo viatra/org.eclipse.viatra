@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -178,6 +179,14 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     @Override
     public Integer getPositionOfParameter(String parameterName) {
         return wrappedPQuery.getPositionOfParameter(parameterName);
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public PVisibility getVisibility() {
+        return wrappedPQuery.getVisibility();
     }
 
 }
