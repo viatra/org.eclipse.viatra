@@ -22,9 +22,7 @@
 	
 	<properties>
     	    <rcptt.version>2.1.0</rcptt.version>
-        <jacoco.targetdir>${project.basedir}/../target</jacoco.targetdir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
 		<target.classifier>neon</target.classifier>
 	</properties>
 	<build>
@@ -43,34 +41,6 @@
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-surefire-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/queries/*.java</exclude>
-		            </excludes>
-				</configuration>
-			</plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration>
-                    <destFile>${jacoco.targetdir}/jacoco.exec</destFile>
-
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals> 
-                        <goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile> 
-                        <outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
-                        </configuration> </execution> -->
-                </executions>
-            </plugin>
 		</plugins>
 	</build>
 	<pluginRepositories>

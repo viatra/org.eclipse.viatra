@@ -82,7 +82,7 @@
 		<target.classifier>mars</target.classifier>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.reportPaths>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPaths>
 	</properties>
 	<repositories>
 		<repository>
