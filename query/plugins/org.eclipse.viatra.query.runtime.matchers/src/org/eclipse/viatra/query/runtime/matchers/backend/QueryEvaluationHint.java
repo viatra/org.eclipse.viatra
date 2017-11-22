@@ -55,35 +55,12 @@ public class QueryEvaluationHint {
     }
     
     /**
-     * @deprecated As of 1.5, use {@link #QueryEvaluationHint(Map, IQueryBackendFactory)} instead. 
-     * String-keyed hint setting map will be ignored.
-     */
-    @Deprecated
-    public QueryEvaluationHint(
-            IQueryBackendFactory queryBackendFactory, 
-            Map<String, Object> backendHints) {
-        this(null, queryBackendFactory);
-    }
-    
-    /**
      * A suggestion for choosing the query evaluator algorithm. 
      * 
      * <p> Can be null.
      */
     public IQueryBackendFactory getQueryBackendFactory() {
         return queryBackendFactory;
-    }
-
-    /**
-     * Each entry in the map overrides backend-specific options regarding query evaluation. 
-     * 
-     * <p>The map can be null if empty. Null-valued map entries are also permitted to erase hints. 
-     * 
-     * @deprecated As of 1.5, string keys are no longer available. Use {@link QueryHintOption} instead
-     */
-    @Deprecated
-    public Map<String, Object> getBackendHints() {
-        return Collections.emptyMap();
     }
     
     /**

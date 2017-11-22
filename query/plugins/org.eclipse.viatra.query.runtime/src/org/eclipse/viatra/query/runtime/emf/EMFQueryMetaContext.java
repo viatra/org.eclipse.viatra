@@ -58,12 +58,6 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
      * @since 1.6
      */
     public static final EMFQueryMetaContext DEFAULT = new EMFQueryMetaContext(false, true);
-    
-    /**
-     * @deprecated use {@link #DEFAULT}
-     */
-    @Deprecated
-    public static final EMFQueryMetaContext INSTANCE = DEFAULT;
 
     
     private static final EClass EOBJECT_CLASS = 

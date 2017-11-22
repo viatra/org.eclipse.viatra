@@ -31,7 +31,6 @@ import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
@@ -419,7 +418,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     }
     
     def JvmType findInferredSpecification(Pattern pattern) {
-        pattern.findInferredClass(BaseGeneratedEMFQuerySpecification, BaseGeneratedPrivateEMFQuerySpecification, BaseGeneratedEMFQuerySpecificationWithGenericMatcher)
+        pattern.findInferredClass(BaseGeneratedEMFQuerySpecification, BaseGeneratedEMFQuerySpecificationWithGenericMatcher)
     }
     
     /**

@@ -144,11 +144,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         }
     }
     
-    @Override
-    public void ensureIndexed(IInputKey key) {
-        this.ensureIndexed(key, IndexingService.INSTANCES);
-    }
-    
     /**
      * Retrieve the current registered indexing services for the given key. May not return null,
      * returns an empty set if no indexing is registered.
@@ -181,26 +176,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     }
     
     @Override
-    public boolean isIndexed(IInputKey key) {
-        return isIndexed(key, IndexingService.INSTANCES);
-    }
-    
-    /**
-     * @deprecated use {@link #containsTuple(IInputKey, TupleMask, ITuple)} instead
-     */
-    @Override
-    @Deprecated
-    public boolean containsTuple(IInputKey key, Tuple seed) {
-        if (seed == null) {
-            return containsTuple(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
-        } else {
-            TupleMask mask = TupleMask.fromNonNullIndices(seed);
-            return containsTuple(key, mask, mask.transform(seed));
-        }
-    }
-    
-    @Override
-    public boolean containsTuple(IInputKey key, TupleMask seedMask, ITuple seed) {
+    public boolean containsTuple(IInputKey key, ITuple seed) {
         // TODO seedMask is considered to be IdentityMask; it should be removed in version 2.0 
         ensureValidKey(key);
         if (key instanceof JavaTransitiveInstancesKey) {
@@ -212,7 +188,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             return candidateInstance instanceof EObject
                     && baseIndex.isInstanceOfUnscoped((EObject) candidateInstance, emfKey);
         } else {
-            ensureIndexed(key);
+            ensureIndexed(key, IndexingService.INSTANCES);
             if (key instanceof EClassTransitiveInstancesKey) {
                 EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
                 // instance check not enough to satisfy scoping, must lookup from index
@@ -245,23 +221,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return instanceClass;
     }
     
-    /**
-     * @deprecated use {@link #enumerateTuples(IInputKey, TupleMask, ITuple)} instead
-     */
-    @Override
-    @Deprecated
-    public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed) {
-        if (seed == null) {
-            return enumerateTuples(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
-        } else {
-            TupleMask mask = TupleMask.fromNonNullIndices(seed);
-            return enumerateTuples(key, mask, mask.transform(seed));
-        }
-    }
-    
     @Override
     public Iterable<Tuple> enumerateTuples(IInputKey key, TupleMask seedMask, ITuple seed) {
-        ensureIndexed(key);
+        ensureIndexed(key, IndexingService.INSTANCES);
         final Collection<Tuple> result = new HashSet<Tuple>();
         
         if (key instanceof EClassTransitiveInstancesKey) {
@@ -271,7 +233,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
             } else { // fully seeded
                 Object seedInstance = seedMask.getValue(seed, 0);
-                if (containsTuple(key, seedMask, seed)) 
+                if (containsTuple(key, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedInstance));
             }
         } else if (key instanceof EDataTypeInSlotsKey) {
@@ -281,7 +243,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
             } else { // fully seeded
                 Object seedInstance = seedMask.getValue(seed, 0);
-                if (containsTuple(key, seedMask, seed)) 
+                if (containsTuple(key, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedInstance));
             }
         } else if (key instanceof EStructuralFeatureInstancesKey) {
@@ -314,7 +276,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             } else if (isSourceBound && isTargetBound) { // fully seeded
                 final Object seedSource = seed.get(sourceIndex);
                 final Object seedTarget = seed.get(targetIndex);
-                if (containsTuple(key, seedMask, seed)) 
+                if (containsTuple(key, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedSource, seedTarget));
             } else if (!isSourceBound && !isTargetBound) { // fully unseeded
                 baseIndex.processAllFeatureInstances(feature, new IStructuralFeatureInstanceProcessor() {
@@ -345,24 +307,10 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             return Tuples.staticArityFlatTupleOf(obj);
         }
     };
-    
-    /**
-     * @deprecated use {@link #enumerateValues(IInputKey, TupleMask, ITuple)} instead
-     */
-    @Override
-    @Deprecated
-    public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed) {
-        if (seed == null) {
-            return enumerateValues(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
-        } else {
-            TupleMask mask = TupleMask.fromNonNullIndices(seed);
-            return enumerateValues(key, mask, mask.transform(seed));
-        }
-    }
 
     @Override
     public Iterable<? extends Object> enumerateValues(IInputKey key, TupleMask seedMask, ITuple seed) {
-        ensureIndexed(key);
+        ensureIndexed(key, IndexingService.INSTANCES);
         
         if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
@@ -416,20 +364,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return null;
     }
     
-    /**
-     * @deprecated use {@link #countTuples(IInputKey, TupleMask, ITuple)} instead
-     */
-    @Override
-    @Deprecated
-    public int countTuples(IInputKey key, Tuple seed) {
-        if (seed == null) {
-            return countTuples(key, TupleMask.empty(key.getArity()), Tuples.staticArityFlatTupleOf());
-        } else {
-            TupleMask mask = TupleMask.fromNonNullIndices(seed);
-            return countTuples(key, mask, mask.transform(seed));
-        }
-    }
-    
     @Override
     public int countTuples(IInputKey key, TupleMask seedMask, ITuple seed) {
         ensureIndexed(key, IndexingService.STATISTICS);
@@ -440,7 +374,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (seedMask.indices.length == 0) { // unseeded
                 return baseIndex.countAllInstances(eClass);
             } else { // fully seeded
-                return (containsTuple(key, seedMask, seed)) ? 1 : 0;
+                return (containsTuple(key, seed)) ? 1 : 0;
             }
         } else if (key instanceof EDataTypeInSlotsKey) {
             EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
@@ -448,7 +382,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (seedMask.indices.length == 0) { // unseeded
                 return baseIndex.countDataTypeInstances(dataType);
             } else { // fully seeded
-                return (containsTuple(key, seedMask, seed)) ? 1 : 0;
+                return (containsTuple(key, seed)) ? 1 : 0;
             }
         } else if (key instanceof EStructuralFeatureInstancesKey) {
             EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
@@ -472,7 +406,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                 final Object seedTarget = seed.get(targetIndex);
                 return baseIndex.findByFeatureValue(seedTarget, feature).size();
             } else if (isSourceBound && isTargetBound) { // fully seeded
-                return (containsTuple(key, seedMask, seed)) ? 1 : 0;
+                return (containsTuple(key, seed)) ? 1 : 0;
             } else if (!isSourceBound && !isTargetBound) { // fully unseeded
                 return baseIndex.countFeatures(feature);
             } else if (isSourceBound && !isTargetBound) { 
@@ -503,15 +437,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     public void illegalEnumerateValues(Tuple seed) {
         throw new IllegalArgumentException("Must have exactly one unseeded element in enumerateValues() invocation, received instead: " + seed);
     }
-
-    /**
-     * @deprecated use {@link #ensureIndexed(EClass, IndexingService)} instead
-     * @param eClass
-     */
-    @Deprecated
-    public void ensureIndexed(EClass eClass){
-        ensureIndexed(eClass, IndexingService.INSTANCES);
-    }
     
     /**
      * @since 1.4
@@ -526,15 +451,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             //baseIndex.addInstanceListener(newClasses, listener);
         }
     }
-
-    /**
-     * @deprecated use {@link #ensureIndexed(EDataType, IndexingService)} instead
-     * @param eDataType
-     */
-    @Deprecated
-    public void ensureIndexed(EDataType eDataType){
-        ensureIndexed(eDataType, IndexingService.INSTANCES);
-    }
     
     /**
      * @since 1.4
@@ -548,15 +464,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             }
             //baseIndex.addDataTypeListener(newDataTypes, listener);
         }
-    }
-
-    /**
-     * @deprecated use {@link #ensureIndexed(EStructuralFeature, IndexingService)} instead
-     * @param feature
-     */
-    @Deprecated
-    public void ensureIndexed(EStructuralFeature feature){
-        ensureIndexed(feature, IndexingService.INSTANCES);
     }
     
     /**
@@ -710,7 +617,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         // stateless, so NOP
         if (key instanceof JavaTransitiveInstancesKey) return;
 
-        ensureIndexed(key);
+        ensureIndexed(key, IndexingService.INSTANCES);
         if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             baseIndex.addInstanceListener(Collections.singleton(eClass), 
@@ -732,7 +639,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         // stateless, so NOP
         if (key instanceof JavaTransitiveInstancesKey) return;
 
-        ensureIndexed(key);
+        ensureIndexed(key, IndexingService.INSTANCES);
         if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             baseIndex.removeInstanceListener(Collections.singleton(eClass), 

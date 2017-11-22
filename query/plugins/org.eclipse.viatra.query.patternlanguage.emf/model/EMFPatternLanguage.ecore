@@ -36,9 +36,4 @@
   <eClassifiers xsi:type="ecore:EClass" name="ReferenceType" eSuperTypes="../../org.eclipse.viatra.query.patternlanguage/model/PatternLanguage.ecore#//RelationType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="refname" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="XImportSection" eSuperTypes="#//VQLImportSection">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="@deprecated use {@link VQLImportSection} instead"/>
-    </eAnnotations>
-  </eClassifiers>
 </ecore:EPackage>

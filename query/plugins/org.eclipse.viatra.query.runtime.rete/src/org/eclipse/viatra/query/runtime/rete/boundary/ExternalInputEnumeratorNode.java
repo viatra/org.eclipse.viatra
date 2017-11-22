@@ -18,6 +18,8 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
 import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
@@ -108,7 +110,16 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
     @Override
     public void pullInto(Collection<Tuple> collector) {
         if (context != null) { // if connected
-            for (Tuple tuple : context.enumerateTuples(inputKey, globalSeed)) {
+            
+            Iterable<Tuple> tuples;
+            if (globalSeed == null) {
+                tuples = context.enumerateTuples(inputKey, TupleMask.empty(inputKey.getArity()), Tuples.staticArityFlatTupleOf());
+            } else {
+                TupleMask mask = TupleMask.fromNonNullIndices(globalSeed);
+                tuples = context.enumerateTuples(inputKey, mask, mask.transform(globalSeed));
+            }
+            
+            for (Tuple tuple : tuples) {
                 collector.add(tuple);
             }
         }

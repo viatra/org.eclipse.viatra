@@ -10,13 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.eval;
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.matchers.tuple.TupleValueProvider;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
@@ -55,99 +48,5 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode implements I
     public String prettyPrintTraceInfoPatternList() {
         return getTraceInfoPatternsEnumerated();
     }
-    
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected abstract Tuple tupleFromResult(Tuple incoming, Object evaluationresult); 
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected abstract String logNodeName(); 
-    
-
-    
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected Logger logger;
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected IExpressionEvaluator evaluator;    
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    int sourceTupleWidth;
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    private Map<String, Integer> parameterPositions;
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected IQueryRuntimeContext runtimeContext;
-    
-    
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    public AbstractEvaluatorNode(ReteContainer reteContainer, Logger logger, IExpressionEvaluator evaluator,
-            Map<String, Integer> parameterPositions, int sourceTupleWidth) {
-        super(reteContainer);
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected Object evaluateTerm(Tuple ps) {
-        // actual evaluation
-        Object result = null;
-        try {
-            TupleValueProvider tupleParameters = new TupleValueProvider(runtimeContext.unwrapTuple(ps), parameterPositions);
-            result = evaluator.evaluateExpression(tupleParameters);
-        } catch (Exception e) {
-            logger.warn(
-                    String.format(
-                            "The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
-                            logNodeName(), 
-                            getTraceInfoPatternsEnumerated(), 
-                            prettyPrintTuple(ps), 
-                            e.getMessage(), e.getClass().getSimpleName(), 
-                            this
-                    ), 
-            e);
-            // engine.logEvaluatorException(e);
-
-            result = errorResult();
-        }
-
-        return result;
-    }
-    
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected String prettyPrintTuple(Tuple ps) {
-        return ps.toString();
-    }
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    protected Object errorResult() {return null; }
-    
-
     
 }

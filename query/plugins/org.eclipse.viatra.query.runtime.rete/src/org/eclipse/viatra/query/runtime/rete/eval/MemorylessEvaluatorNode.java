@@ -12,10 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.eval;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -50,38 +47,5 @@ public class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
         if (evaluated != null) 
             propagateUpdate(direction, evaluated);
     }
-
-
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    public MemorylessEvaluatorNode(ReteContainer reteContainer,
-            Logger logger, IExpressionEvaluator evaluator,
-            Map<String, Integer> parameterPositions, int tupleWidth) {
-        super(reteContainer, logger, evaluator, parameterPositions, tupleWidth);
-    }
-
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    @Override
-    protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    @Override
-    protected String logNodeName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    
 
 }

@@ -65,20 +65,6 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
     }
     
     /**
-     * This constructor is deprecated as it performs a copy without allowing callers
-     * to set the trace collector before.
-     * 
-     * @deprecated use {@link #PBodyCopier(PBody, IRewriterTraceCollector)} instead
-     */
-    @Deprecated
-    public PBodyCopier(PBody body){
-        this.body = new PBody(body.getPattern());
-        
-        // do the actual copying
-        mergeBody(body);
-    }
-    
-    /**
      * @since 1.6
      */
     public PBodyCopier(PBody body, IRewriterTraceCollector traceCollector) {
@@ -185,11 +171,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         PVariable mappedPVariable = variableMapping.get(exportedParameter.getParameterVariable());
         PParameter parameter = exportedParameter.getPatternParameter();
         ExportedParameter newExportedParameter;
-        if (parameter == null) {
-            newExportedParameter = new ExportedParameter(body, mappedPVariable, exportedParameter.getParameterName());
-        } else {
-            newExportedParameter = new ExportedParameter(body, mappedPVariable, parameter);
-        }
+        newExportedParameter = new ExportedParameter(body, mappedPVariable, parameter);
         body.getSymbolicParameters().add(newExportedParameter);
         addTrace(exportedParameter, newExportedParameter);
         return newExportedParameter;

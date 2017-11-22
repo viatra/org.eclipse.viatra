@@ -29,11 +29,9 @@ public final class FlatTuple extends BaseFlatTuple {
      * <p> Users should consider calling {@link Tuples#flatTupleOf(Object...)} instead to save memory on low-arity tuples.
      * 
      * @param elements
-     *            array of substitution values
-     * @deprecated obtain instances from {@link Tuples} instead 
+     *            array of substitution values 
      */
-    @Deprecated
-    public FlatTuple(Object... elements) {
+    protected FlatTuple(Object... elements) {
         this.elements = Arrays.copyOf(elements, elements.length);
         calcHash();
     }

@@ -35,13 +35,6 @@
                name="kind"
                type="string">
          </annotationparameter>
-         <annotationparameter
-               description="If true, the old behavior is used, where the getter of the derived feature is overridden in the generated model code. Do not use, unless you really know what you are doing!"
-               mandatory="false"
-               multiple="false"
-               name="generateIntoModelCode"
-               type="boolean">
-         </annotationparameter>
       </annotation>
       <annotation
             additionalValidator="org.eclipse.viatra.addon.querybasedfeatures.runtime.validation.SurrogatePatternValidator"

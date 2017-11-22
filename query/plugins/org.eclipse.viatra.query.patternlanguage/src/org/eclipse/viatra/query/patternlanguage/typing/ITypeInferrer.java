@@ -15,7 +15,6 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
@@ -46,14 +45,6 @@ public interface ITypeInferrer {
      */
     IInputKey getInferredType(Expression ex);
     
-    
-    /**
-     * 
-     * @deprecated, use {@link #getInferredType(Expression)} instead.
-     */
-    @Deprecated
-    IInputKey getInferredVariableType(Variable ex);
-    
     /**
      * Returns a collection of possible inferred types. Used for validating inputs; not recommended to use when
      * processing the patterns
@@ -71,17 +62,6 @@ public interface ITypeInferrer {
     IInputKey getType(Expression ex);
     
     /**
-     * @deprecated use {@link #getType(Expression)} instead
-     */
-    @Deprecated
-    IInputKey getVariableReferenceType(VariableReference ref);
-    /**
-     * @deprecated use {@link #getType(Expression)} instead
-     */
-    @Deprecated
-    IInputKey getVariableType(Variable var);
-
-    /**
      * Creates a Jvm Type Reference for a selected expression. Useful during Jvm Model Inference
      * @param ex
      * @param context
@@ -89,12 +69,6 @@ public interface ITypeInferrer {
      */
     JvmTypeReference getJvmType(Expression ex, EObject context);
     
-    /**
-     * @deprecated use {@link #getJvmType(Expression, EObject)} instead
-     */
-    @Deprecated
-    JvmTypeReference getVariableJvmType(Variable ex, EObject context);
-
     /**
      * An empty implementation of {@link ITypeInferrer} that can be used by the abstract pattern language module.
      * @since 1.3

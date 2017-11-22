@@ -58,14 +58,6 @@ public interface IQueryRuntimeContext {
     public boolean isIndexed(IInputKey key, IndexingService service);
     
     /**
-     * @return true iff the given input key is already indexed, and contents are available without costly model traversal.
-     * @deprecated use {@link #isIndexed(IInputKey, IndexingService)} instead
-     * @throws IllegalArgumentException if key is not enumerable or an unknown type, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     */
-    @Deprecated
-    public boolean isIndexed(IInputKey key);
-    
-    /**
      * If the given (enumerable) input key is not yet indexed, the model will be traversed 
      * (after the end of the outermost coalescing block, see {@link IQueryRuntimeContext#coalesceTraversals(Callable)}) 
      * so that the index can be built. It is possible that the base indexer will select a higher indexing level merging
@@ -79,39 +71,6 @@ public interface IQueryRuntimeContext {
      * @since 1.4
      */
     public void ensureIndexed(IInputKey key, IndexingService service);
-    
-    /**
-     * If the given (enumerable) input key is not yet indexed, the model will be traversed 
-     * (after the end of the outermost coalescing block, see {@link IQueryRuntimeContext#coalesceTraversals(Callable)}) 
-     * so that the index can be built.
-     * 
-     * <p><b>Postcondition:</b> After invoking this method, {@link #isIndexed(IInputKey)} for the same key 
-     * will be guaranteed to return true as soon as {@link #isCoalescing()} first returns false.
-     * 
-     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @throws IllegalArgumentException if key is not enumerable or an unknown type, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * 
-     * @deprecated use ensureIndexed(IInputKey, IndexingServices) instead
-     */
-    @Deprecated
-    public void ensureIndexed(IInputKey key);
-    
-    
-    /**
-     * Returns the number of tuples in the extensional relation identified by the input key, optionally seeded with the given tuple.
-     * 
-     * @param key an input key
-     * @param seed can be null or a tuple with matching arity; 
-     * 	if non-null, only those tuples in the model are counted 
-     * 	that match the seed at positions where the seed is non-null. 
-     * @return the number of tuples in the model for the given key and seed
-     * 
-     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @deprecated use {@link #countTuples(IInputKey, ITuple)} instead
-     */
-    @Deprecated
-    public int countTuples(IInputKey key, Tuple seed);
     
     /**
      * Returns the number of tuples in the extensional relation identified by the input key seeded with the given mask and tuple.
@@ -132,22 +91,7 @@ public interface IQueryRuntimeContext {
      * @since 1.7
      */
     public int countTuples(IInputKey key, TupleMask seedMask, ITuple seed);
-    
-    /**
-     * Returns the tuples in the extensional relation identified by the input key seeded with the given mask and tuple.
-     * 
-     * @param key an input key
-     * @param seed can be null or a tuple with matching arity; 
-     * 	if non-null, only those tuples in the model are enumerated 
-     * 	that match the seed at positions where the seed is non-null. 
-     * @return the tuples in the model for the given key and seed
-     * 
-     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @deprecated use {@link #enumerateTuples(IInputKey, ITuple)} instead
-     */
-    @Deprecated
-    public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed);
+
     
     /**
      * Returns the tuples in the extensional relation identified by the input key, optionally seeded with the given tuple.
@@ -167,26 +111,6 @@ public interface IQueryRuntimeContext {
      * @since 1.7
      */
     public Iterable<Tuple> enumerateTuples(IInputKey key, TupleMask seedMask, ITuple seed);
-    
-    /**
-     * Simpler form of {@link #enumerateTuples(IInputKey, Tuple)} in the case where all values of the tuples are bound by the seed except for one. 
-     * 
-     * <p> Selects the tuples in the extensional relation identified by the input key, optionally seeded with the given tuple, 
-     * 	and then returns the single value from each tuple which corresponds to the only null value in the seed.
-     * 
-     * @param key an input key
-     * @param seed can be null (if key is unary) or a tuple with matching arity; 
-     * 	if non-null, only those tuples in the model are enumerated 
-     * 	that match the seed at positions where the seed is non-null;
-     *  the seed is null at exactly one position. 
-     * @return the objects in the model for the given key and seed
-     * 
-     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
-     * @deprecated use {@link #enumerateValues(IInputKey, ITuple)} instead
-     */
-    @Deprecated
-    public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed);
     
     /**
      * Simpler form of {@link #enumerateTuples(IInputKey, TupleMask, Tuple)} in the case where all values of the tuples
@@ -217,21 +141,6 @@ public interface IQueryRuntimeContext {
     public Iterable<? extends Object> enumerateValues(IInputKey key, TupleMask seedMask, ITuple seed);
     
     /**
-     * Simpler form of {@link #enumerateTuples(IInputKey, Tuple)} in the case where all values of the tuples are bound by the seed. 
-     * 
-     * <p> Returns whether the given tuple is in the extensional relation identified by the input key.
-     * 
-     * <p> Note: this call works for non-enumerable input keys as well.
-     * 
-     * @param key an input key
-     * @param seed a tuple with matching arity, consisting of non-null elements (null can be used in the 0-ary case). 
-     * @return true iff the seed tuple is contained in the relation
-     * @deprecated use {@link #containsTuple(IInputKey, ITuple)} instead
-     */
-    @Deprecated
-    public boolean containsTuple(IInputKey key, Tuple seed);
-    
-    /**
      * Simpler form of {@link #enumerateTuples(IInputKey, TupleMask, Tuple)} in the case where all values of the tuples
      * are bound by the seed.
      * 
@@ -243,21 +152,14 @@ public interface IQueryRuntimeContext {
      * 
      * @param key
      *            an input key
-     * @param seedMask
-     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
-     *            bound to a fixed value; must not be null. <strong>Note</strong>: this mask is expected to be
-     *            TupleMask.identity(type.getArity()); the parameter is entirely ignored. The parameter is only
-     *            introduced to avoid potential confusion between the deprecated
-     *            {@link #containsTuple(IInputKey, Tuple)} method and this. For version 2.0 this conflict will be
-     *            resolved by having only a single containsTuple(IInputKey, ITuple) method.
      * @param seed
      *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
      *            parameterSeedMask, so that for each considered match tuple,
      *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold. Must not be null.
      * @return true iff there is at least a single tuple contained in the relation that corresponds to the seed tuple
-     * @since 1.7
+     * @since 2.0
      */
-    public boolean containsTuple(IInputKey key, TupleMask seedMask, ITuple seed);
+    public boolean containsTuple(IInputKey key, ITuple seed);
 
     
     /**

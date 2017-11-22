@@ -224,14 +224,6 @@ public final class LocalSearchHints implements IMatcherCapability {
         return traceCollector == null ? normalizationTraceCollector.getDefaultValue() : traceCollector;
     }
     
-    /**
-     * @deprecated allow inverse was deprecated in 1.4; its uses are ignored 
-     */
-    @Deprecated
-    public LocalSearchHints setAllowInverse(boolean allowInverse) {
-        return this;
-    }
-    
     public LocalSearchHints setUseBase(boolean useBase) {
         this.useBase = useBase;
         return this;
@@ -270,14 +262,6 @@ public final class LocalSearchHints implements IMatcherCapability {
     
     public static LocalSearchHints customizeUseBase(boolean useBase){
         return new LocalSearchHints().setUseBase(useBase);
-    }
-    
-    /**
-     * @deprecated This allowInverse hint is ignored by the runtime, do not use it
-     */
-    @Deprecated
-    public static LocalSearchHints customizeAllowInverse(boolean allowInverse){
-        return new LocalSearchHints();
     }
     
     public static LocalSearchHints customizeRowCount(int rowCount){

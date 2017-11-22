@@ -43,15 +43,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 class GenericPatternMatcher extends
         org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
 
-    /**
-     * @deprecated use {@link #GenericPatternMatcher(GenericQuerySpecification)} instead
-     */
-    @Deprecated
-    protected GenericPatternMatcher(ViatraQueryEngine engine,
-            GenericQuerySpecification specification) throws ViatraQueryException {
-        super(engine, specification);
-    }
-
     protected GenericPatternMatcher(GenericQuerySpecification specification) throws ViatraQueryException {
         super(specification);
     }

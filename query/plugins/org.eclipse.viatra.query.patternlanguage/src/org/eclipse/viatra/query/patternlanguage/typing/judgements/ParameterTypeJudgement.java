@@ -25,13 +25,6 @@ import com.google.common.collect.ImmutableSet;
 public class ParameterTypeJudgement extends TypeConformJudgement {
 
     /**
-     * @deprecated Use {@link #ParameterTypeJudgement(Expression, Variable)} instead
-     */
-    @Deprecated
-    public ParameterTypeJudgement(Expression expression, Expression conformsTo) {
-        super(expression, conformsTo);
-    }
-    /**
      * @since 1.4
      */
     public ParameterTypeJudgement(Expression expression, Variable conformsTo) {

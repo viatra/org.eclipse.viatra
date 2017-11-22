@@ -11,6 +11,8 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime.validation;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -18,7 +20,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -27,6 +30,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.inject.Inject;
 
@@ -44,7 +48,9 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
     public static final String ANNOTATION_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_annotation";
 
     @Inject
-    private IEMFTypeProvider typeProvider;
+    private EMFTypeInferrer typeInferrer;
+    @Inject
+    private EMFTypeSystem typeSystem;
 
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
@@ -65,16 +71,17 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
         }
         // 2. first parameter is EClassifier -> Source
         Variable source = pattern.getParameters().get(0);
-        EClassifier sourceClassifier = null;
+        IInputKey sourceTypeKey = null;
+        EClass sourceClass = null;
         if (source != null) {
-            sourceClassifier = typeProvider.getClassifierForVariable(source);
+            sourceTypeKey = typeInferrer.getType(source);
+            sourceClass = (EClass) typeSystem.inputKeyToClassifier(sourceTypeKey).filter(input -> input instanceof EClass).orElse(null);
         }
-        if (!(sourceClassifier instanceof EClass)) {
+        if (sourceClass != null) {
             validator.error("The 'source' parameter must be EClass.", source,
                     PatternLanguagePackage.Literals.VARIABLE__TYPE, PATTERN_ISSUE_CODE);
             return;
         }
-        EClass sourceClass = (EClass) sourceClassifier;
 
         // 3. pattern name or "feature" is a feature of Source
         String featureName = null;
@@ -138,13 +145,12 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
         
         // 4. second parameter is compatible(?) with feature type -> Target
         Variable target = pattern.getParameters().get(1);
-        EClassifier targetClassifier = typeProvider.getClassifierForVariable(target);
-        if (targetClassifier == null) {
+        //EClassifier targetClassifier = typeProvider.getClassifierForVariable(target);
+        Optional<EClassifier> targetClassifier = typeSystem.inputKeyToClassifier(typeInferrer.getType(target));
+        if (!targetClassifier.isPresent()) {
             validator.warning("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
-        }
-        
-        if (!classifier.equals(targetClassifier)) {
+        } else if (!Objects.equals(classifier, targetClassifier.get())) {
             validator.warning(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
                     featureName, sourceClass.getName()), target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);

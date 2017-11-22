@@ -24,10 +24,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderIn
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.MetamodelProviderService;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.ResourceSetMetamodelProviderService;
 import org.eclipse.viatra.query.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
-import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.ResourceDiagnosticFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfigProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
@@ -42,7 +40,6 @@ import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvide
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.xtext.formatting.IFormatter;
-import org.eclipse.xtext.formatting2.IFormatter2;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
@@ -99,15 +96,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     @Override
     public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
         return PatternLanguageResourceDescriptionStrategy.class;
-    }
-
-    /**
-     * 
-     * @deprecated this injection is only kept for backward compatibility, use {@link ITypeSystem} or {@link ITypeInferrer} instead
-     */
-    @Deprecated
-    public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
-        return EMFPatternTypeProvider.class;
     }
 
     public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {

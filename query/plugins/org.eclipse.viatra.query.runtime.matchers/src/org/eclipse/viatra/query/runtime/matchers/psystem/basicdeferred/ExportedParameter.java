@@ -40,17 +40,6 @@ public class ExportedParameter extends VariableDeferredPConstraint {
         parameterName = patternParameter.getName();
     }
 
-    /**
-     * @deprecated Use {@link #ExportedParameter(PBody, PVariable, PParameter)} instead
-     */
-    @Deprecated
-    public ExportedParameter(PBody pBody, PVariable parameterVariable, String parameterName) {
-        super(pBody, Collections.singleton(parameterVariable));
-        this.parameterVariable = parameterVariable;
-        this.parameterName = parameterVariable.getName();
-        this.patternParameter = null;
-    }
-
     @Override
     public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
         if (obsolete.equals(parameterVariable))

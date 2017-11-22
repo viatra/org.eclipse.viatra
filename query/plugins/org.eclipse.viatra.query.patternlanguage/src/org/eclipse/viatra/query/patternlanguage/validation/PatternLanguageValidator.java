@@ -753,7 +753,7 @@ public class PatternLanguageValidator extends AbstractPatternLanguageValidator i
         for (Variable var1 : body.getVariables()) {
             Variable otherVar = null;
             for (Variable var2 : body.getVariables()) {
-                if (isNamedSingleUse(var1) && var1.getSimpleName().substring(1).equals(var2.getName())) {
+                if (CorePatternLanguageHelper.isNamedSingleUse(var1) && var1.getSimpleName().substring(1).equals(var2.getName())) {
                     otherVar = var2;
                 }
             }
@@ -891,23 +891,5 @@ public class PatternLanguageValidator extends AbstractPatternLanguageValidator i
     @Override
     public void error(String message, EObject source, EStructuralFeature feature, String code, String... issueData) {
         super.error(message, source, feature, code, issueData);
-    }
-    
-    /**
-     * @return true if the variable is single-use a named variable
-     * @deprecated use {@link CorePatternLanguageHelper#isNamedSingleUse(Variable)} instead
-     */
-    @Deprecated
-    public boolean isNamedSingleUse(Variable variable) {
-        return CorePatternLanguageHelper.isNamedSingleUse(variable);
-    }
-
-    /**
-     * @return true if the variable is an unnamed single-use variable
-     * @deprecated use {@link CorePatternLanguageHelper#isUnnamedSingleUse(Variable)} instead
-     */
-    @Deprecated
-    public boolean isUnnamedSingleUseVariable(Variable variable) {
-        return CorePatternLanguageHelper.isUnnamedSingleUseVariable(variable);
     }
 }

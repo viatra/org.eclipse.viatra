@@ -79,7 +79,7 @@ public class ViatraBaseFactory {
      */
     public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, Logger logger)
             throws ViatraBaseException {
-        BaseIndexOptions options = new BaseIndexOptions(false, wildcardMode);
+        BaseIndexOptions options = new BaseIndexOptions(false, wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE);
         return createNavigationHelper(emfRoot, options, logger);
     }
     
@@ -113,7 +113,7 @@ public class ViatraBaseFactory {
      */
     public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger)
             throws ViatraBaseException {
-        BaseIndexOptions options = new BaseIndexOptions(dynamicModel, wildcardMode);
+        BaseIndexOptions options = new BaseIndexOptions(dynamicModel, wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE);
         return createNavigationHelper(emfRoot, options, logger);
     }
     

@@ -16,14 +16,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/ReteRecipeCompiler.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecipeCompiler">
-        <filter id="572522506">
-            <message_arguments>
-                <message_argument value="QueryAnalyzer"/>
-                <message_argument value="ReteRecipeCompiler"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/matcher/HintConfigurator.java" type="org.eclipse.viatra.query.runtime.rete.matcher.HintConfigurator">
         <filter id="574619656">
             <message_arguments>

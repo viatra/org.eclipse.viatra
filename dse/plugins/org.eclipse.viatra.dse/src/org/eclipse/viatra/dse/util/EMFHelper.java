@@ -11,8 +11,6 @@
 package org.eclipse.viatra.dse.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,7 +28,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -138,18 +135,6 @@ public final class EMFHelper {
         } else {
             throw new EmfHelperException("Not supported argument type.");
         }
-    }
-
-    /**
-     * Saves the EMF model into the given file. An {@link XMIResourceFactoryImpl} will be registered if not already.
-     * @param root The root of model.
-     * @param name The name or path of the file. 
-     * @param ext The extension of the file.
-     * @deprecated Use {@link #saveModel(Notifier, String)} instead.
-     */
-    @Deprecated
-    public static void serializeModel(EObject root, String name, String ext) {
-        saveModel(root, name +ext);
     }
 
     /**
@@ -320,32 +305,6 @@ public final class EMFHelper {
         }
     }
 
-    /**
-     * Collects all the classes and references from the given {@link EPackage}s.
-     * 
-     * @deprecated Use {@link #getAllMetaModelElements(Set)} instead.
-     */
-    @Deprecated
-    public static List<EModelElement> getClassesAndReferences(Collection<EPackage> metaModelPackages) {
-        List<EModelElement> result = new ArrayList<EModelElement>();
-        for (EPackage ePackage : metaModelPackages) {
-            // Add all classes and references from the package
-            for (EClassifier eClassifier : ePackage.getEClassifiers()) {
-                if (eClassifier instanceof EClass) {
-                    EClass eClass = ((EClass) eClassifier);
-                    addToListIfNotContains(result, eClass);
-                    for (EClass c : eClass.getEAllSuperTypes()) {
-                        addToListIfNotContains(result, c);
-                    }
-                    for (EReference eReference : eClass.getEAllReferences()) {
-                        addToListIfNotContains(result, eReference);
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
     public static class ENamedElementComparator implements Comparator<ENamedElement> {
         @Override
         public int compare(ENamedElement eClass1, ENamedElement eClass2) {
@@ -466,9 +425,4 @@ public final class EMFHelper {
         return result;
     }
 
-    private static <T, E extends T> void addToListIfNotContains(List<T> list, E element) {
-        if (!list.contains(element)) {
-            list.add(element);
-        }
-    }
 }

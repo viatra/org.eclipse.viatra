@@ -35,18 +35,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     
     /**
-     * @deprecated use {@link #GenericPatternMatcher(GenericQuerySpecification)} instead
-     */
-    @Deprecated
-    protected GenericPatternMatcher(
-            ViatraQueryEngine engine, 
-            GenericQuerySpecification<? extends GenericPatternMatcher> specification) 
-            throws ViatraQueryException 
-    {
-        super(engine, specification);
-    }    
-    
-    /**
      * @since 1.4
      */
     public GenericPatternMatcher(GenericQuerySpecification<? extends GenericPatternMatcher> specification) 

@@ -53,30 +53,10 @@ import com.google.common.collect.Sets;
  */
 public class PBodyNormalizer extends PDisjunctionRewriter {
 
-    /**
-     * If set to true, reduces the PQuery by avoiding unnecessary typechecks.
-     * 
-     * @deprecated redefine in a subclass {@link #shouldCalculateImpliedTypes(PQuery)} instead
-     */
-    @Deprecated
-    public boolean calcImpliedTypes;
     private IQueryMetaContext context;
 
     public PBodyNormalizer(IQueryMetaContext context) {
         this.context = context;
-        calcImpliedTypes = true;
-    }
-
-    /**
-     * 
-     * @param calculateImpliedTypes
-     *            If set to true, shrinks the net by avoiding unnecessary typechecks
-     * @deprecated redefine in a subclass {@link #shouldCalculateImpliedTypes(PQuery)} instead
-     */
-    @Deprecated
-    public PBodyNormalizer(IQueryMetaContext context, boolean calculateImpliedTypes) {
-        this.context = context;
-        calcImpliedTypes = calculateImpliedTypes;
     }
 
     /**
@@ -86,7 +66,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * @since 1.6
      */
     protected boolean shouldCalculateImpliedTypes(PQuery query) {
-        return calcImpliedTypes;
+        return true;
     }
 
     /**

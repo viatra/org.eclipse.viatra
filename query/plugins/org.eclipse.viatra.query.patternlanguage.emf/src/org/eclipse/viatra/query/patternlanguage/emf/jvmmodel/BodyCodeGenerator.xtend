@@ -40,7 +40,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Binary
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint
-import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtend2.lib.StringConcatenationClient.TargetStringConcatenation
@@ -173,9 +172,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override acceptTypeCheckConstraint(List<String> variableNames, IInputKey key) {
                 target.append('''new ''')
                 target.append(TypeFilterConstraint)
-                target.append('''(body, new ''')
-                target.append(FlatTuple)
-                target.append('''(«variableNames.output»), ''')
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«variableNames.output»), ''')
                 target.appendInputKey(key, false)
                 target.append(''');
                 ''')
@@ -188,9 +187,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override acceptPositivePatternCall(List<String> argumentVariableNames, Pattern calledPattern) {
                 target.append('''new ''')
                 target.append(PositivePatternCall)
-                target.append('''(body, new ''')
-                target.append(FlatTuple)
-                target.append('''(«argumentVariableNames.output»), ''')
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
                 referPQuery(calledPattern, pattern, target)
                 target.append(''');
                 ''')
@@ -208,9 +207,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override acceptNegativePatternCall(List<String> argumentVariableNames, Pattern calledPattern) {
                 target.append('''new ''')
                 target.append(NegativePatternCall)
-                target.append('''(body, new ''')
-                target.append(FlatTuple)
-                target.append('''(«argumentVariableNames.output»), ''')
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
                 referPQuery(calledPattern, pattern, target)
                 target.append(''');
                 ''')
@@ -219,9 +218,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override acceptBinaryTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern) {
                 target.append('''new ''')
                 target.append(BinaryTransitiveClosure)
-                target.append('''(body, new ''')
-                target.append(FlatTuple)
-                target.append('''(«argumentVariableNames.output»), ''')
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
                 referPQuery(calledPattern, pattern, target)
                 target.append(''');
                 ''')
@@ -319,9 +318,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 String resultVariableName) {
                 target.append('''new ''')
                 target.append(PatternMatchCounter)
-                target.append('''(body, new ''')
-                target.append(FlatTuple)
-                target.append('''(«argumentVariableNames.output»), ''')
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
                 referPQuery(calledPattern, pattern, target)
                 target.append(''', «resultVariableName.escape»);
                 ''')
@@ -341,9 +340,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
                     } else {
                         target.append(aggregatorParameterType)
                     }
-                    target.append('''.class), body, new ''')
-                    target.append(FlatTuple)
-                    target.append('''(«argumentVariableNames.output»), ''')
+                    target.append('''.class), body, ''')
+                    target.append(Tuples)
+                    target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
                     referPQuery(calledPattern, pattern, target)
                     target.append(''', «resultVariableName.escape», «aggregatedColumn»);
                     ''')

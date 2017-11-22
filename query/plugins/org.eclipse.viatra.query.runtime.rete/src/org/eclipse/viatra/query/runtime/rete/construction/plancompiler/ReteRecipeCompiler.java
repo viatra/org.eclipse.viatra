@@ -143,16 +143,6 @@ public class ReteRecipeCompiler {
         this.hintProvider = hintProvider;
     }
 
-    /**
-     * @deprecated use
-     *             {@link #ReteRecipeCompiler(IQueryPlannerStrategy, Logger, IQueryMetaContext, IQueryCacheContext, IQueryBackendHintProvider, QueryAnalyzer)}
-     */
-    @Deprecated
-    public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, Logger logger, IQueryMetaContext metaContext,
-            IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider) {
-        this(plannerStrategy, logger, metaContext, queryCacheContext, hintProvider, new QueryAnalyzer(metaContext));
-    }
-
     static final RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
 
     // INTERNALLY CACHED

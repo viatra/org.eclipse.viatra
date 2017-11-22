@@ -24,15 +24,10 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.QueryResultWrapper;
-import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Base implementation of ViatraQueryMatcher.
@@ -70,39 +65,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
         this.backend = resultProvider;
         this.engine = engine;
         this.capabilities = capabilities;
-    }
-    
-    /**
-     * @deprecated Since 1.4, generated code uses {@link #BaseMatcher(IQuerySpecification)}
-     */
-    @Deprecated
-    public BaseMatcher(ViatraQueryEngine engine,
-            IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
-            throws ViatraQueryException {
-        super();
-        this.engine = engine;
-        ViatraQueryEngineImpl engineImpl = (ViatraQueryEngineImpl) engine;
-        this.querySpecification = querySpecification;
-        try {
-            this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
-        } catch (QueryInitializationException e) {
-            throw new ViatraQueryException(e);
-        }
-        this.backend = accessMatcher(engineImpl, querySpecification);
-        engineImpl.reportMatcherInitialized(querySpecification, this);
-        this.capabilities = engineImpl.getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
-    }
-
-    // HELPERS
-
-    private IQueryResultProvider accessMatcher(ViatraQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws ViatraQueryException {
-        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification %s", specification.getFullyQualifiedName());
-        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().isMutable(), "Cannot load uninitialized query specification %s", specification.getFullyQualifiedName());
-        try {
-            return engine.getResultProvider(specification);
-        } catch (QueryProcessingException e) {
-            throw new ViatraQueryException(e);
-        }
     }
 
     // ARRAY-BASED INTERFACE

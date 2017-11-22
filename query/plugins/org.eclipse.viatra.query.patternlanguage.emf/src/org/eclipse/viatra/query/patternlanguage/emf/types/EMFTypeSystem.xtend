@@ -52,6 +52,8 @@ import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType
 import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider
+import java.util.Optional
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
 
 /** 
  * @author Zoltan Ujhelyi
@@ -106,6 +108,20 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             EClass: new EClassTransitiveInstancesKey(classifier as EClass)
             EDataType: new EDataTypeInSlotsKey(classifier as EDataType)
             default: BottomTypeKey.INSTANCE
+        }
+    }
+
+    /**
+     * Returns the EClassifier stored in the IInputKey. If no EClassifier is represented in the key, 
+     * the optional will be empty.
+     * @since 2.0
+     */
+    def Optional<EClassifier> inputKeyToClassifier(IInputKey key) {
+        switch(key) {
+            EClassTransitiveInstancesKey: Optional.ofNullable(key.emfKey)
+            EClassUnscopedTransitiveInstancesKey: Optional.ofNullable(key.emfKey)
+            EDataTypeInSlotsKey: Optional.ofNullable(key.emfKey)
+            default: Optional.empty
         }
     }
 

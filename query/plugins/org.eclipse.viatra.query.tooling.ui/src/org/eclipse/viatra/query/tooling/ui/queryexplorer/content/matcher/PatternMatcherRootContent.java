@@ -30,6 +30,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -89,7 +90,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
 
         try {
-            BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardMode);
+            BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE);
             QueryScope scope = new EMFScope(key.getNotifier(), options);
             AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
             return engine;

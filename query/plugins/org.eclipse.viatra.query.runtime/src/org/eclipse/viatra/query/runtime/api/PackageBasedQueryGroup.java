@@ -80,15 +80,6 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
         return packageName;
     }
 
-    /**
-     * @return the querySpecifications
-     * @deprecated Use {@link #getSpecifications()} instead
-     */
-    @Deprecated
-    public Set<IQuerySpecification<?>> getQuerySpecifications() {
-        return getSpecifications();
-    }
-
     public boolean isIncludeSubPackages() {
         return includeSubPackages;
     }

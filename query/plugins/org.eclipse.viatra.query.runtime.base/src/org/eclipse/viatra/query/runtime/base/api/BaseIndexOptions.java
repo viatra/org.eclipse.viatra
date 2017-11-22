@@ -98,16 +98,6 @@ public class BaseIndexOptions {
      */
     public BaseIndexOptions() {
     }
-
-    /**
-     * Creates a base index options using the provided values for dynamic EMF mode and wildcard mode.
-     * @deprecated use {@link #BaseIndexOptions(boolean, IndexingLevel)} instead. Use {@link IndexLevel.FULL} for wildcardMode equivalent to true. 
-     */
-    @Deprecated
-    public BaseIndexOptions(boolean dynamicEMFMode, boolean wildcardMode) {
-        this.dynamicEMFMode = dynamicEMFMode;
-        this.wildcardMode = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
-    }
     
     /**
      * Creates a base index options using the provided values for dynamic EMF mode and wildcard mode.
@@ -224,19 +214,6 @@ public class BaseIndexOptions {
     public boolean isTraverseOnlyWellBehavingDerivedFeatures() {
         return traverseOnlyWellBehavingDerivedFeatures;
     }
-    
-    /**
-     * 
-     * @param wildcardMode
-     * @since 0.9
-     * @deprecated use {@link #withWildcardLevel(IndexingLevel)} instead.
-     */
-    @Deprecated
-    public BaseIndexOptions withWildcardMode(boolean wildcardMode) {
-        BaseIndexOptions result = copy();
-        result.wildcardMode = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
-        return result;
-   }
     
     /**
      * 

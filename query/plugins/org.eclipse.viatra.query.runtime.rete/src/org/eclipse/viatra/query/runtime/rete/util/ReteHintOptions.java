@@ -38,19 +38,6 @@ public final class ReteHintOptions {
             hintOption("deleteRederiveEvaluation", false);
     
     /**
-     * This hint disallows the Rete network to remove type checks that can be inferred from other constraints but might leave the model scope. In general,
-     * this might result in larger Rete networks, but can avoid hard to debug issues. </p>
-     * 
-     * Was related to the dangling edges issue http://bugs.eclipse.org/512752, but is now entirely ignored.
-     * 
-     * @deprecated Use the base index option <code>DANGLING_FREE_ASSUMPTION_DEFAULT</code> instead.
-     * @since 1.6
-     */
-    @Deprecated
-    public static final QueryHintOption<Boolean> checkScopeBoundaries =
-            hintOption("checkScopeBoundaries", true);
-    
-    /**
      * This hint allows the query planner to take advantage of "weakened alternative" suggestions of the meta context.
      * For instance, enumerable unary type constraints may be substituted with a simple type filtering where sufficient.
      * 

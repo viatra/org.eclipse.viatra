@@ -13,8 +13,6 @@ package org.eclipse.viatra.query.runtime.rete.eval;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
@@ -25,19 +23,7 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  * @author Bergmann Gabor
  *
  */
-public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements Clearable {
-    
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    public OutputCachingEvaluatorNode(ReteContainer reteContainer,
-            Logger logger, IExpressionEvaluator evaluator,
-            Map<String, Integer> parameterPositions, int sourceTupleWidth) {
-        super(reteContainer, logger, evaluator, parameterPositions, sourceTupleWidth);
-        reteContainer.registerClearable(this);
-    }
-    
+public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements Clearable {    
     
     /**
      * @since 1.5
@@ -86,28 +72,6 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
                     propagateUpdate(direction, revokedOutput);
                 }				
         }
-    }
-
-
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    @Override
-    protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-    /**
-     * @deprecated use {@link EvaluationCore}
-     */
-    @Deprecated
-    @Override
-    protected String logNodeName() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     // TODO

@@ -81,30 +81,10 @@ public abstract class AbstractTypeInferrer implements ITypeInferrer {
     public JvmTypeReference getJvmType(Expression ex, EObject context) {
         return typeSystem.toJvmTypeReference(getType(ex), context);
     }
-    
-    @Override
-    public IInputKey getInferredVariableType(Variable ex) {
-        return getInferredType(ex);
-    }
-
-    @Override
-    public JvmTypeReference getVariableJvmType(Variable ex, EObject context) {
-        return getJvmType(ex, context);
-    }
 
     @Override
     public IInputKey getDeclaredType(Variable ex) {
         return getDeclaredType((Expression)ex);
-    }
-
-    @Override
-    public IInputKey getVariableReferenceType(VariableReference ref) {
-        return getType(ref);
-    }
-
-    @Override
-    public IInputKey getVariableType(Variable var) {
-        return getType(var);
     }
     
 }

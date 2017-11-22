@@ -75,15 +75,6 @@ public class BuildHelper {
     }
     
     /**
-     * @deprecated use {@link BuildHelper#trimUnneccessaryVariables(SubPlanFactory, SubPlan, boolean, QueryAnalyzer)}
-     */
-    @Deprecated
-    public static SubPlan trimUnneccessaryVariables(SubPlanFactory planFactory, /*IOperationCompiler buildable,*/
-            SubPlan plan, boolean onlyIfNotDetermined, IQueryMetaContext metaContext) {
-        return trimUnneccessaryVariables(planFactory, plan, onlyIfNotDetermined, new QueryAnalyzer(metaContext));
-    }
-    
-    /**
      * @return true iff a set of given variables functionally determine all visible variables in the subplan according to the subplan's constraints
      * @param strict if true, only "hard" dependencies are taken into account that are strictly enforced by the model representation; 
      *  if false, user-provided soft dependencies are included as well, that are anticipated but not guaranteed by the storage mechanism;
@@ -93,16 +84,6 @@ public class BuildHelper {
     public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, QueryAnalyzer analyzer, boolean strict) {
         return areVariablesDetermined(plan, determining, plan.getVisibleVariables(), analyzer, strict);
     }
-    
-    /**
-     * @deprecated use {@link BuildHelper#areAllVariablesDetermined(SubPlan, Collection, QueryAnalyzer, boolean)}
-     */
-    @Deprecated
-    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, IQueryMetaContext metaContext) {
-        return areAllVariablesDetermined(plan, determining, new QueryAnalyzer(metaContext), true);
-    }
-
-    
     
     /**
      * @return true iff one set of given variables functionally determine the other set according to the subplan's constraints
@@ -118,16 +99,6 @@ public class BuildHelper {
         final boolean isDetermined = closure.containsAll(determined);
         return isDetermined;
     }
-    
-    /**
-     * @deprecated use {@link BuildHelper#areVariablesDetermined(SubPlan, Collection, Collection, QueryAnalyzer, boolean)}
-     */
-    @Deprecated
-    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined, 
-            IQueryMetaContext metaContext) {
-        return areVariablesDetermined(plan, determining, determined, new QueryAnalyzer(metaContext), true);
-    }
-
 
     private static <T> Set<T> setMinus(Set<T> a, Set<T> b) {
         Set<T> difference = new HashSet<T>(a);

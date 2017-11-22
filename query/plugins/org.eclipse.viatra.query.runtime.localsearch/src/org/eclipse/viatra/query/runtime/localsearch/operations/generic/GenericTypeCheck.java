@@ -38,7 +38,6 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
     private final IInputKey type;
     private ImmutableList<Integer> positionList;
     private VolatileMaskedTuple maskedTuple;
-    private final TupleMask indexerMask;
 
     public GenericTypeCheck(IInputKey type, int[] positions, TupleMask callMask) {
         Preconditions.checkArgument(positions.length == type.getArity(),
@@ -51,7 +50,6 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
         this.positionList = builder.build();
         this.maskedTuple = new VolatileMaskedTuple(callMask);
         this.type = type;
-        this.indexerMask = TupleMask.identity(type.getArity());
     }
 
     @Override
@@ -62,7 +60,7 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         maskedTuple.updateTuple(frame);
-        return context.getRuntimeContext().containsTuple(type, indexerMask, maskedTuple);
+        return context.getRuntimeContext().containsTuple(type, maskedTuple);
     }
 
     @Override
