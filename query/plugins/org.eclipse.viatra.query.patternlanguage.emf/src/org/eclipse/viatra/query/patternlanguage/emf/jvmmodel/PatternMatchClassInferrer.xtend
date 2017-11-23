@@ -207,7 +207,7 @@ class PatternMatchClassInferrer {
         matchClass.members += pattern.toMethod("hashCode", typeRef(int)) [
             annotations += annotationRef(Override)
             body = '''
-                return «Objects».hash «FOR variable : pattern.parameters BEFORE "(" SEPARATOR ", " AFTER ");"»«variable.fieldName»«ENDFOR»
+                return «Objects».hash («FOR variable : pattern.parameters SEPARATOR ", " »«variable.fieldName»«ENDFOR»);
             '''
         ]
         matchClass.members += pattern.toMethod("equals", typeRef(boolean)) [
