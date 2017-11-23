@@ -77,7 +77,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
             sourceTypeKey = typeInferrer.getType(source);
             sourceClass = (EClass) typeSystem.inputKeyToClassifier(sourceTypeKey).filter(input -> input instanceof EClass).orElse(null);
         }
-        if (sourceClass != null) {
+        if (sourceClass == null) {
             validator.error("The 'source' parameter must be EClass.", source,
                     PatternLanguagePackage.Literals.VARIABLE__TYPE, PATTERN_ISSUE_CODE);
             return;

@@ -13,6 +13,7 @@ package org.eclipse.viatra.addon.viewers.tooling.ui.handlers;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -86,7 +87,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
             IQuerySpecification<?> specification = filteredMatcherContent.getMatcher().getSpecification();
             specifications.add(specification);
             IPatternMatch filter = filteredMatcherContent.getFilterMatch();
-            if (Arrays.stream(filter.toArray()).anyMatch(el -> el != null)) {
+            if (Arrays.stream(filter.toArray()).anyMatch(Objects::nonNull)) {
                 dataFilter.addSingleFilter(specification, filter);
             }
         }

@@ -18,7 +18,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;

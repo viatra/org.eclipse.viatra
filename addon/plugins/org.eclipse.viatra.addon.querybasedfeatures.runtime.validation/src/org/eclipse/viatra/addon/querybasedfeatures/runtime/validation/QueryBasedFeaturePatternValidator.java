@@ -229,8 +229,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                 if (kind == null) {
                     validator.error("Cacheless behavior only available for single and many kinds.", ref,
                             PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
-                }
-                switch (kind) {
+                } else switch (kind) {
                 case SINGLE_REFERENCE:
                 case MANY_REFERENCE:
                     // OK

@@ -89,9 +89,7 @@ public class ContainmentRule extends ViewModelRule {
 
     @Override
     protected Job<GenericPatternMatch> getUpdatedJob() {
-        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED, match -> {
-            return;
-        }));
+        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED, match -> {}));
     }
     
     @Override
