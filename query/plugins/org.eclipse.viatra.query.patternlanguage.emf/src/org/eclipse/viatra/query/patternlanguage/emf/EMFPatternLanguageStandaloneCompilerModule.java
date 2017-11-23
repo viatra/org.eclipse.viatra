@@ -20,10 +20,6 @@ import org.eclipse.xtext.resource.XtextResource;
  */
 public class EMFPatternLanguageStandaloneCompilerModule extends EMFPatternLanguageRuntimeModule {
 
-    public EMFPatternLanguageStandaloneCompilerModule() {
-        // TODO Auto-generated constructor stub
-    }
-
     @Override
     public Class<? extends XtextResource> bindXtextResource() {
         return EagerBatchLinkableResource.class;

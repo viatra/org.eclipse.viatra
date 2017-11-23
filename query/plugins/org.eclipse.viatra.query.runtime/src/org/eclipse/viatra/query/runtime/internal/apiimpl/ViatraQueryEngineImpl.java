@@ -291,23 +291,6 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     }
 
     ///////////////// internal stuff //////////////
-
-    /**
-     * Report when a pattern matcher has been completely initialized, so that it can be registered into the engine.
-     * 
-     * @param querySpecification
-     *            the {@link IQuerySpecification} that corresponds to the matcher
-     * @param matcher
-     *            the {@link ViatraQueryMatcher} that has finished its initialization process
-     * 
-     *            TODO make it package-only visible when implementation class is moved to impl package
-     * @deprecated generated code after 1.4 will not need this method
-     */
-    @Deprecated
-    public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, ViatraQueryMatcher<?> matcher) {
-        internalRegisterMatcher(querySpecification, matcher);
-    }
-
     private void internalRegisterMatcher(IQuerySpecification<?> querySpecification, ViatraQueryMatcher<?> matcher) {
         matchers.put(querySpecification, matcher);
         lifecycleProvider.matcherInstantiated(matcher);

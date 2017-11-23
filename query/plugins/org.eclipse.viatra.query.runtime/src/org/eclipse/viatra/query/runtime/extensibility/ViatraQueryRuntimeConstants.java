@@ -18,12 +18,7 @@ package org.eclipse.viatra.query.runtime.extensibility;
  */
 public final class ViatraQueryRuntimeConstants {
 
-    /**
-     * Constructor hidden for utility class
-     */
-    protected ViatraQueryRuntimeConstants() {
-        // TODO Auto-generated constructor stub
-    }
+    private ViatraQueryRuntimeConstants() {/* Constructor hidden for utility class */}
     
     // Surrogate query extension    
     

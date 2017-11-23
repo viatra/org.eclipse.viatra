@@ -177,7 +177,6 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     @Override
     public boolean containsTuple(IInputKey key, ITuple seed) {
-        // TODO seedMask is considered to be IdentityMask; it should be removed in version 2.0 
         ensureValidKey(key);
         if (key instanceof JavaTransitiveInstancesKey) {
             Class<?> instanceClass = forceGetWrapperInstanceClass((JavaTransitiveInstancesKey) key);
