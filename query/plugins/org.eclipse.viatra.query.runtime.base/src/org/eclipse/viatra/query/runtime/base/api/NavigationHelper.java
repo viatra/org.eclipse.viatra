@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.base.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -253,26 +252,6 @@ public interface NavigationHelper {
      * @see #getReferenceValues(EObject, EReference)
      */
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature feature);
-   
-    /**
-     * Find all value assignment instances of the given {@link EStructuralFeature} in the form
-     *  of a host {@link EObject} -> value(s) multimap. 
-     * 
-     * <p>
-     * Unset / null-valued features are not indexed, and will not be included in the results.
-     * 
-     * <p>
-     * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
-     * registered, or (b) running in <em>wildcard mode</em> (see
-     * {@link #isInWildcardMode()}).
-     * 
-     * @param feature the EStructuralFeature
-     * @return the map from source {@link EObject}s to the value(s) of the given feature
-     * @deprecated use {@link #processAllFeatureInstances(EStructuralFeature, IStructuralFeatureInstanceProcessor)} 
-     *  or other, more specific getter methods on this API
-     */
-    @Deprecated
-    public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature feature);
     
     /**
      * Decides whether the given non-null source and target objects are connected via a specific, indexed EStructuralFeature instance.
@@ -549,23 +528,6 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe (null okay)
      * @throws IllegalStateException if in wildcard mode
-     * @deprecated use {@link #registerObservedTypes(Set, Set, Set, IndexingLevel)} instead
-     */
-    @Deprecated
-    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
-    
-    /**
-     * Manually turns on indexing for the given types (indexing of others are unaffected). Note that
-     * registering new types will result in a single iteration through the whole attached model.
-     * <b> Not usable in <em>wildcard mode</em>.</b>
-     * 
-     * @param classes
-     *            the set of classes to observe (null okay)
-     * @param dataTypes
-     *            the set of data types to observe (null okay)
-     * @param features
-     *            the set of features to observe (null okay)
-     * @throws IllegalStateException if in wildcard mode
      * @since 1.4
      */
     public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features, IndexingLevel level);
@@ -594,19 +556,6 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe
      * @throws IllegalStateException if in wildcard mode
-     * @deprecated use {@link #registerEStructuralFeatures(Set, IndexingLevel)} instead
-     */
-    @Deprecated
-    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features);
-    
-    /**
-     * Manually turns on indexing for the given features (indexing of other features are unaffected). Note that
-     * registering new features will result in a single iteration through the whole attached model.
-     * <b> Not usable in <em>wildcard mode</em>.</b>
-     * 
-     * @param features
-     *            the set of features to observe
-     * @throws IllegalStateException if in wildcard mode
      * @since 1.4
      */
     public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features, IndexingLevel level);
@@ -623,20 +572,6 @@ public interface NavigationHelper {
      * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
     public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features);
-
-    /**
-     * Manually turns on indexing for the given classes (indexing of other classes are unaffected). Instances of
-     * subclasses will also be indexed. Note that registering new classes will result in a single iteration through the whole
-     * attached model.
-     * <b> Not usable in <em>wildcard mode</em>.</b>
-     * 
-     * @param classes
-     *            the set of classes to observe
-     * @throws IllegalStateException if in wildcard mode
-     * @deprecated use {@link #registerEClasses(Set, IndexingLevel)} instead
-     */
-    @Deprecated
-    public void registerEClasses(Set<EClass> classes);
     
     /**
      * Manually turns on indexing for the given classes (indexing of other classes are unaffected). Instances of
@@ -662,19 +597,6 @@ public interface NavigationHelper {
      * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
     public void unregisterEClasses(Set<EClass> classes);
-
-    /**
-     * Manually turns on indexing for the given data types (indexing of other features are unaffected). Note that
-     * registering new data types will result in a single iteration through the whole attached model.
-     * <b> Not usable in <em>wildcard mode</em>.</b>
-     * 
-     * @param dataTypes
-     *            the set of data types to observe
-     * @throws IllegalStateException if in wildcard mode
-     * @deprecated use {@link #registerEDataTypes(Set, IndexingLevel)} instead
-     */
-    @Deprecated
-    public void registerEDataTypes(Set<EDataType> dataTypes);
 
     /**
      * Manually turns on indexing for the given data types (indexing of other features are unaffected). Note that
@@ -815,7 +737,7 @@ public interface NavigationHelper {
      * @since 0.8
      */
     void processDirectInstances(EClass type, IEClassProcessor processor);
-    
+
     /**
      * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
      * it. There is no guaranteed order in which the processor will be called with the selected features.
@@ -824,21 +746,6 @@ public interface NavigationHelper {
      * <strong>Precondition:</strong> Will only find those {@link EStructuralFeature}s that have already been registered using
      * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
      * {@link #isInWildcardMode()}).
-     * 
-     * @deprecated use {@link #processAllFeatureInstances(EStructuralFeature, IStructuralFeatureInstanceProcessor)}
-     */
-    @Deprecated
-    public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor);
-    /**
-     * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
-     * it. There is no guaranteed order in which the processor will be called with the selected features.
-     * 
-     * <p>
-     * <strong>Precondition:</strong> Will only find those {@link EStructuralFeature}s that have already been registered using
-     * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
-     * {@link #isInWildcardMode()}).
-     * 
-     * <p> Slightly more efficient than the deprecated {@link #processAllFeatureInstances(EStructuralFeature, IEStructuralFeatureProcessor)}
      * 
      * @since 1.7
      */

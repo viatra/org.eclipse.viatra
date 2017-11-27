@@ -51,7 +51,6 @@ import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IEMFIndexingErrorListener;
-import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IStructuralFeatureInstanceProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
@@ -359,15 +358,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void processAllFeatureInstances(final EStructuralFeature feature, final IEStructuralFeatureProcessor processor) {
-        processAllFeatureInstances(feature, new IStructuralFeatureInstanceProcessor() {
-            @Override
-            public void process(EObject source, Object target) {
-                processor.process(feature, source, target);
-            }
-        });
-    }
-    @Override
     public void processAllFeatureInstances(EStructuralFeature feature, IStructuralFeatureInstanceProcessor processor) {
         featureData(feature).forEach(processor);
     }
@@ -453,18 +443,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature _feature) {
         return Collections.unmodifiableSet(featureData(_feature).getDistinctValuesOfHolder(source));
-    }
-
-    @Override
-    public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature _feature) {
-        final FeatureData fd = featureData(_feature);
-       
-        return Maps.asMap(fd.getAllDistinctHolders(), new Function<EObject, Set<Object>>() {
-            @Override
-            public Set<Object> apply(EObject arg0) {
-                return fd.getDistinctValuesOfHolder(arg0);
-            }
-        });
     }
 
     @Override
@@ -1107,11 +1085,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features) {
-        registerEStructuralFeatures(features, IndexingLevel.FULL);
-    }
-
-    @Override
     public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features) {
         if (isRegistrationNecessary(IndexingLevel.FULL) && features != null) {
             final Set<Object> resolved = resolveFeaturesToKey(features);
@@ -1146,11 +1119,6 @@ public class NavigationHelperImpl implements NavigationHelper {
                 processingFatal(ex, "register the observed EClasses: " + resolvedClasses);
             }
         }
-    }
-
-    @Override
-    public void registerEClasses(Set<EClass> classes) {
-        registerEClasses(classes, IndexingLevel.FULL);
     }
 
     /**
@@ -1207,11 +1175,6 @@ public class NavigationHelperImpl implements NavigationHelper {
                 processingFatal(ex, "register the observed EDataTypes: " + resolved);
             }
         }
-    }
-
-    @Override
-    public void registerEDataTypes(Set<EDataType> dataTypes) {
-        registerEDataTypes(dataTypes, IndexingLevel.FULL);
     }
 
     @Override

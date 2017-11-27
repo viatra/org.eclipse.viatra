@@ -389,6 +389,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             if (position != null && reference.isMany() && attemptProxyResolutions(source, reference)) {
                 // there is added value in doing the resolution now, when we know the position
                 // this may save an iteration through the EList if successful
+                @SuppressWarnings("unchecked")
                 EObject touch = ((java.util.List<EObject>) source.eGet(reference, true)).get(position);
                 // if resolution successful, no further action needed
                 if (!touch.eIsProxy())
@@ -428,7 +429,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 // we found a feature to be visited
                 if (comprehension.onlySamplingFeature(feature)) {
                     // we found a feature that must be sampled
-                    navigationHelper.registerEClasses(ImmutableSet.of(feature.getEContainingClass()));
+                    navigationHelper.registerEClasses(ImmutableSet.of(feature.getEContainingClass()), IndexingLevel.FULL);
                     return true;
                 }
             }

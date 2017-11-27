@@ -169,7 +169,7 @@ class BaseIndexerIndexingLevelsTest {
         }
         if (element instanceof EStructuralFeature){
             baseIndex.registerEStructuralFeatures(#{element}, IndexingLevel.FULL)
-            counted = baseIndex.getFeatureInstances(element).mapValues[it.size].values.fold(0, [a, b | a+b])
+            counted = baseIndex.getHoldersOfFeature(element).map[baseIndex.getFeatureTargets(it, element).size].fold(0, [a, b | a+b])
         }
         if (element instanceof EDataType){
             baseIndex.registerEDataTypes(#{element}, IndexingLevel.FULL)
@@ -191,7 +191,7 @@ class BaseIndexerIndexingLevelsTest {
         }
         if (element instanceof EStructuralFeature){
             baseIndex.registerEStructuralFeatures(#{element}, IndexingLevel.FULL)
-            counted = baseIndex.getFeatureInstances(element).mapValues[it.size].values.fold(0, [a, b | a+b])
+            counted = baseIndex.getHoldersOfFeature(element).map[baseIndex.getFeatureTargets(it, element).size].fold(0, [a, b | a+b])
         }
         if (element instanceof EDataType){
             baseIndex.registerEDataTypes(#{element}, IndexingLevel.FULL)
@@ -217,7 +217,7 @@ class BaseIndexerIndexingLevelsTest {
             baseIndex.registerEStructuralFeatures(#{element}, IndexingLevel.STATISTICS)
             expected = enumerateInstances(element).size
             baseIndex.registerEStructuralFeatures(#{element}, IndexingLevel.FULL)
-            counted = baseIndex.getFeatureInstances(element).mapValues[it.size].values.fold(0, [a, b | a+b])
+            counted = baseIndex.getHoldersOfFeature(element).map[baseIndex.getFeatureTargets(it, element).size].fold(0, [a, b | a+b])
         }
         if (element instanceof EDataType){
             baseIndex.registerEDataTypes(#{element}, IndexingLevel.STATISTICS)
@@ -241,7 +241,7 @@ class BaseIndexerIndexingLevelsTest {
         }
         if (element instanceof EStructuralFeature){
             baseIndex.registerEStructuralFeatures(#{element}, IndexingLevel.FULL)
-            counted = baseIndex.getFeatureInstances(element).mapValues[it.size].values.fold(0, [a, b | a+b])
+            counted = baseIndex.getHoldersOfFeature(element).map[baseIndex.getFeatureTargets(it, element).size].fold(0, [a, b | a+b])
         }
         if (element instanceof EDataType){
             baseIndex.registerEDataTypes(#{element}, IndexingLevel.FULL)
@@ -261,7 +261,7 @@ class BaseIndexerIndexingLevelsTest {
             Assert.assertTrue(symmetricDifference.empty)
         }
         if (element instanceof EStructuralFeature){
-            val featureMap = baseIndex.getFeatureInstances(element)
+            val featureMap = Maps.toMap(baseIndex.getHoldersOfFeature(element), [baseIndex.getFeatureTargets(it, element)])
             val expectedFeatureMap = <EObject, Set<Object>>newHashMap()    
             for(o : expected){
                 val entry = o as List<?>
@@ -299,7 +299,7 @@ class BaseIndexerIndexingLevelsTest {
             Assert.assertTrue(symmetricDifference.empty)
         }
         if (element instanceof EStructuralFeature){
-            val featureMap = baseIndex.getFeatureInstances(element)
+            val featureMap = Maps.toMap(baseIndex.getHoldersOfFeature(element), [baseIndex.getFeatureTargets(it, element)])
             val expectedFeatureMap = <EObject, Set<Object>>newHashMap()    
             for(o : expected){
                 val entry = o as List<?>
@@ -338,7 +338,7 @@ class BaseIndexerIndexingLevelsTest {
         }
         if (element instanceof EStructuralFeature){
             baseIndex.registerEStructuralFeatures(#{element}, IndexingLevel.FULL)
-            val featureMap = baseIndex.getFeatureInstances(element)
+            val featureMap = Maps.toMap(baseIndex.getHoldersOfFeature(element), [baseIndex.getFeatureTargets(it, element)])
             val expectedFeatureMap = <EObject, Set<Object>>newHashMap()    
             for(o : expected){
                 val entry = o as List<?>

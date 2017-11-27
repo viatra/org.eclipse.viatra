@@ -330,11 +330,12 @@ public class EMFModelComprehension {
     /**
      * Can be called to attempt to resolve a reference pointing to one or more proxies, using eGet().
      */
+    @SuppressWarnings("unchecked")
     public void tryResolveReference(EObject source, EReference reference) {
         final Object result = source.eGet(reference, true);
         if (reference.isMany()) {
             // no idea which element to get, have to iterate through
-            for (EObject touch : (Iterable<EObject>) result);         			
+            ((Iterable<EObject>) result).forEach(EObject -> {});         			
         }
     }
     

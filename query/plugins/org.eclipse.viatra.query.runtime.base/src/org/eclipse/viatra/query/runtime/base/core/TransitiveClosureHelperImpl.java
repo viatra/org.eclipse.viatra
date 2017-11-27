@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.api.TransitiveClosureHelper;
@@ -58,7 +59,7 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
         this.classes = collectEClasses();
         /*this.classes = Collections.emptySet();*/
         if (!navigationHelper.isInWildcardMode())
-            navigationHelper.registerObservedTypes(classes, null, features);
+            navigationHelper.registerObservedTypes(classes, null, features, IndexingLevel.FULL);
         
         this.navigationHelper.addFeatureListener(features, this);
         this.navigationHelper.addInstanceListener(classes, this);
