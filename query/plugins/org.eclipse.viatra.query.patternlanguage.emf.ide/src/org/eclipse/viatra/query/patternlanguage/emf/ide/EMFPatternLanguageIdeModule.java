@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.ide;
 
+import org.eclipse.viatra.query.patternlanguage.emf.ide.highlight.EMFPatternLanguageHighlightingCalculator;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 /**
  * Use this class to register ide components.
  */
 public class EMFPatternLanguageIdeModule extends AbstractEMFPatternLanguageIdeModule {
+    
+    @Override
+    public Class<? extends ISemanticHighlightingCalculator> bindSemanticHighlightingCalculator() {
+        return EMFPatternLanguageHighlightingCalculator.class;
+    }
 }

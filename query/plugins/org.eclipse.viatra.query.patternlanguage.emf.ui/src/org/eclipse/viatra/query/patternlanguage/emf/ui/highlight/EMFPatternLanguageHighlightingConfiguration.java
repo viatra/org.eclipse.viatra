@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.ui.highlight;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.viatra.query.patternlanguage.emf.ide.highlight.EMFPatternLanguageHighlightingStyles;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration;
@@ -20,7 +21,7 @@ import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration;
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageHighlightingConfiguration extends XbaseHighlightingConfiguration {
 
-    public static final String METAMODEL_REFERENCE = "viatra.query.metamodel.reference";
+    public static final String METAMODEL_REFERENCE = EMFPatternLanguageHighlightingStyles.METAMODEL_REFERENCE;
 
     @Override
     public void configure(IHighlightingConfigurationAcceptor acceptor) {

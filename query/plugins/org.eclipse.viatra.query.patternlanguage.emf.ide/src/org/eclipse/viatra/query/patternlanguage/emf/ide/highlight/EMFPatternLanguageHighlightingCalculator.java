@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.query.patternlanguage.emf.ui.highlight;
+package org.eclipse.viatra.query.patternlanguage.emf.ide.highlight;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -18,17 +18,17 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.ILeafNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
+import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.annotations.xAnnotations.XAnnotation;
-import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingCalculator;
-import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration;
+import org.eclipse.xtext.xbase.ide.highlighting.XbaseHighlightingCalculator;
 
 import com.google.inject.Inject;
 
@@ -39,7 +39,7 @@ public class EMFPatternLanguageHighlightingCalculator extends XbaseHighlightingC
     private PatternAnnotationProvider annotationProvider;
 
     @Override
-    protected void searchAndHighlightElements(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
+    protected void searchAndHighlightElements(XtextResource resource, IHighlightedPositionAcceptor acceptor, CancelIndicator indicator) {
         TreeIterator<EObject> iterator = resource.getAllContents();
         while (iterator.hasNext()) {
             EObject object = iterator.next();
@@ -52,7 +52,7 @@ public class EMFPatternLanguageHighlightingCalculator extends XbaseHighlightingC
                 highlightAnnotation((XAnnotation) object, acceptor);
             } else if (object instanceof ClassType || object instanceof ReferenceType) {
                 ICompositeNode node = NodeModelUtils.findActualNodeFor(object);
-                highlightNode(node, EMFPatternLanguageHighlightingConfiguration.METAMODEL_REFERENCE, acceptor);
+                highlightNode(acceptor, node, EMFPatternLanguageHighlightingStyles.METAMODEL_REFERENCE);
             } else if (object instanceof Annotation && annotationProvider.isDeprecated((Annotation) object)) {
                 Annotation annotation = (Annotation) object;
                 ICompositeNode compositeNode = NodeModelUtils.findActualNodeFor(annotation);
@@ -64,7 +64,7 @@ public class EMFPatternLanguageHighlightingCalculator extends XbaseHighlightingC
                     }
                 }
                 node = (node == null) ? compositeNode : node;
-                highlightNode(node, XbaseHighlightingConfiguration.DEPRECATED_MEMBERS, acceptor);
+                highlightNode(acceptor, node, EMFPatternLanguageHighlightingStyles.DEPRECATED_MEMBERS);
             } else if (object instanceof AnnotationParameter
                     && annotationProvider.isDeprecated((AnnotationParameter) object)) {
                 ICompositeNode compositeNode = NodeModelUtils.findActualNodeFor(object);
@@ -77,9 +77,9 @@ public class EMFPatternLanguageHighlightingCalculator extends XbaseHighlightingC
                 }
                 node = (node == null) ? compositeNode : node;
 
-                highlightNode(node, XbaseHighlightingConfiguration.DEPRECATED_MEMBERS, acceptor);
+                highlightNode(acceptor, node, EMFPatternLanguageHighlightingStyles.DEPRECATED_MEMBERS);
             } else {
-                computeReferencedJvmTypeHighlighting(acceptor, object);
+                computeReferencedJvmTypeHighlighting(acceptor, object, indicator);
             }
         }
     }

@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage;bundle-version="[2.0.0,
  org.antlr.runtime,
  org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.0.0,2.1.0)",
  org.eclipse.viatra.query.patternlanguage.ide;bundle-version="[2.0.0,2.1.0)"
-Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr,
+Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ide,
+ org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr,
  org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr.internal,
- org.eclipse.viatra.query.patternlanguage.emf.ide
+ org.eclipse.viatra.query.patternlanguage.emf.ide.highlight

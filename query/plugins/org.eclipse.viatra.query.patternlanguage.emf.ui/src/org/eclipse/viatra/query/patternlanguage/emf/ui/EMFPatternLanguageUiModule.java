@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.patternlanguage.annotations.ExtensionBasedAnnota
 import org.eclipse.viatra.query.patternlanguage.annotations.IAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.GenmodelExtensionLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
-import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.ide.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.PatternLanguageShouldGenerate;
@@ -30,7 +30,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMF
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageGeneratorEclipseConfigProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderConfigurationBlock;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
@@ -59,6 +58,7 @@ import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider;
 import org.eclipse.xtext.generator.IShouldGenerate;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
@@ -67,9 +67,7 @@ import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
 
 import com.google.inject.Binder;
@@ -110,23 +108,19 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         metamodelProviderBinder.addBinding().to(TargetPlatformMetamodelProviderService.class);
     }
 
-    /*
-     * Registering model inferrer from the tooling.generator project
-     */
-    public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
-        return EMFPatternLanguageJvmModelInferrer.class;
-    }
-
     @Override
     public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
         return EMFPatternLanguageBuilderParticipant.class;
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+    public Class<? extends ISemanticHighlightingCalculator> bindIdeSemanticHighlightingCalculator() {
         return EMFPatternLanguageHighlightingCalculator.class;
     }
-
+    
     @Override
     public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
         return EMFPatternLanguageHighlightingConfiguration.class;
