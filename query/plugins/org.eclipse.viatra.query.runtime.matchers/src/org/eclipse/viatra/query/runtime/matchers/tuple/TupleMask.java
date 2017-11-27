@@ -43,20 +43,16 @@ public class TupleMask {
 
     /**
      * Creates a TupleMask instance with the given indices array
-     * @deprecated use {@link #fromSelectedIndices(int, List)}
      */
-    @Deprecated
-    public TupleMask(int[] indices, int sourceWidth) {
+    TupleMask(int[] indices, int sourceWidth) {
         this.sourceWidth = sourceWidth;
         this.indices = indices;
         indicesSorted = null;
     }
     /**
      * Creates a TupleMask instance that selects positions where keep is true
-     * @deprecated use {@link #fromKeepIndicators(boolean[])}
      */
-    @Deprecated
-    public TupleMask(boolean[] keep) {
+    TupleMask(boolean[] keep) {
         this.sourceWidth = keep.length;
         int size = 0;
         for (int k = 0; k < keep.length; ++k)

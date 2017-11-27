@@ -176,52 +176,5 @@ public final class CollectionsFactory
             throw new UnsupportedOperationException();
         }
         
-    }
-    
-    // OBSOLETE CODE FOLLOWS BELOW
-    
-    /**
-     * @deprecated use {@link #FRAMEWORK}
-     */
-    @Deprecated
-    public static <K,V> Map<K,V> getMap() {
-        return FRAMEWORK.createMap();
-    }
-    
-    /**
-     * @deprecated use {@link #FRAMEWORK}
-     */
-    @Deprecated    
-    public static <E> Set<E> getSet() {
-        return FRAMEWORK.createSet();
-    }
- 
-    /**
-     * @deprecated use {@link #FRAMEWORK}
-     */
-    @Deprecated
-    public static <E> Set<E> getSet(Collection<E> initial) {
-        return FRAMEWORK.createSet(initial);
-    }
-
-    /**
-     * @deprecated This enum is entirely unnecessary; don't use it
-     */
-    @Deprecated
-    public enum CollectionsFramework {
-        Java,
-        HPPC,
-        GS,
-        FastUtil,
-        Trove,
-        Apache,
-        Javolution
-    }
-    
-    /**
-     * @deprecated This enum is entirely unnecessary; don't use it
-     */
-    @Deprecated
-    public static CollectionsFramework mode = CollectionsFramework.Java;
-    
+    }    
 }

@@ -15,11 +15,11 @@ import com.google.common.io.Files
 import java.io.File
 import java.util.Set
 import org.eclipse.emf.common.util.URI
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility
 
 /**
  * Utility methods to report the results of a {@link CoverageAnalyzer}.
@@ -64,7 +64,7 @@ class CoverageReporter {
             «val bodies = query.disjunctBodies.bodies»
 		    <li>
 		      <a href="#«query.fullyQualifiedName»"><span «getAttributes(coverage, query, bodies)»>
-		      «IF !query.publishedAs.filter(BaseGeneratedPrivateEMFQuerySpecification).empty /* XXX */»private«ENDIF»
+		      «IF query.visibility == PVisibility.PRIVATE»private«ENDIF»
 		      pattern «query.fullyQualifiedName»</span></a> «getBodyCoverage(coverage, bodies)»
 		    </li>
         «ENDFOR»

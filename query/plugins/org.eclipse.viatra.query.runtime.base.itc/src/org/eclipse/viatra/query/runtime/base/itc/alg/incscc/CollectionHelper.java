@@ -42,14 +42,6 @@ public class CollectionHelper {
         return intersection;
     }
 
-    /**
-     * @deprecated renamed to {@link #intersectionMutable(Set, Set)} to clarify
-     */
-    @Deprecated
-    public static <V> Set<V> intersection(Set<V> set1, Set<V> set2) {
-        return intersectionMutable(set1, set2);
-    }
-
     
     /**
      * Returns the difference of two sets (S1\S2). It calls {@link Set#removeAll(java.util.Collection)} but returns a
@@ -69,14 +61,6 @@ public class CollectionHelper {
         Set<V> difference = CollectionsFactory.createSet(set1);
         if (set2 != null) difference.removeAll(set2);
         return difference;
-    }
-    
-    /**
-     * @deprecated renamed to {@link #differenceMutable(Set, Set)} to clarify
-     */
-    @Deprecated
-    public static <V> Set<V> difference(Set<V> set1, Set<V> set2) {
-        return differenceMutable(set1, set2);
     }
 
 }

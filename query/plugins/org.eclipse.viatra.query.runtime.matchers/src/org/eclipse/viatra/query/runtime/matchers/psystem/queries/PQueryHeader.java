@@ -77,7 +77,7 @@ public interface PQueryHeader {
     
     /**
      * Returns the visibility information about the query.
-     * @return
+     * @since 2.0
      */
     public PVisibility getVisibility();
 

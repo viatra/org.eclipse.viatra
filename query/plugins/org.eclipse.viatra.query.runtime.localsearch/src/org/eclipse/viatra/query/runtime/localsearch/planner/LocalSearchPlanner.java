@@ -16,10 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.EMFOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
@@ -54,17 +52,6 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
     private final LocalSearchHints configuration;
     private final IOperationCompiler operationCompiler;
     private final IQueryBackendContext context;
-
-    /**
-     * @since 1.4
-     * @deprecated
-     */
-    @Deprecated
-    public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
-        this(backend.getBackendContext(),
-                new EMFOperationCompiler(backend.getRuntimeContext(), configuration.isUseBase()), logger,
-                configuration);
-    }
     
     /**
      * @since 1.7
@@ -143,10 +130,6 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
         Set<PVariable> boundVariables = Sets.newHashSet();
         for (PParameter parameter : boundParameters) {
             PVariable mappedParameter = parameterMapping.get(parameter);
-            if (mappedParameter == null) {
-                // XXX In case of older (pre-1.4) VIATRA versions, PParameters were not stable, see bug 498348
-                mappedParameter = normalizedBody.getVariableByNameChecked(parameter.getName());
-            }
             boundVariables.add(mappedParameter);
         }
         return boundVariables;

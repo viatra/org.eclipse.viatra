@@ -67,7 +67,6 @@ public class Tuples {
      * This method does a runtime arity check, and therefore 
      * also appropriate if the arity is determined at runtime. 
      */
-    @SuppressWarnings("deprecation")
     public static Tuple leftInheritanceTupleOf(Tuple ancestor, Object... localElements) {
         switch (localElements.length) {
         case 0:
@@ -153,7 +152,6 @@ public class Tuples {
      * <p> Invoke this only if it is statically known that the tuple will be wide. 
      * Otherwise, use {@link #leftInheritanceTupleOf(Tuple, Object...)}.
      */
-    @SuppressWarnings("deprecation")
     public static Tuple wideLeftInheritanceTupleOf(Tuple ancestor, Object... elements) {
         return new LeftInheritanceTuple(ancestor, elements);
     }

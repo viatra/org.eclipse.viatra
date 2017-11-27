@@ -599,7 +599,23 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
     @Override
     public void unsetTarget(Notifier target)
     {
-      unsetTarget((Object)target);
+      Object target1 = (Object)target;
+    if (target1 instanceof EObject)
+      {
+        unsetTarget((EObject)target1);
+      }
+      else if (target1 instanceof Resource)
+      {
+        unsetTarget((Resource)target1);
+      }
+      else if (target1 instanceof ResourceSet)
+      {
+        unsetTarget((ResourceSet)target1);
+      }
+      else
+      {
+        basicUnsetTarget((Notifier)target1);
+      }
     }
 
     /**
@@ -608,32 +624,6 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
     protected void basicUnsetTarget(Notifier target)
     {
       super.unsetTarget(target);
-    }
-    
-    /**
-     * Handles undoing the installation of the adapter
-     * by removing the adapter from each of the directly contained objects.
-     * @deprecated Use or override {@link #unsetTarget(Notifier)} instead.
-     */
-    @Deprecated
-    protected void unsetTarget(Object target)
-    {
-      if (target instanceof EObject)
-      {
-        unsetTarget((EObject)target);
-      }
-      else if (target instanceof Resource)
-      {
-        unsetTarget((Resource)target);
-      }
-      else if (target instanceof ResourceSet)
-      {
-        unsetTarget((ResourceSet)target);
-      }
-      else
-      {
-        basicUnsetTarget((Notifier)target);
-      }
     }
 
     /**

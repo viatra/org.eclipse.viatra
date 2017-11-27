@@ -18,7 +18,6 @@ import java.util.List;
  */
 public final class TupleMaskIdentity extends TupleMask {
 
-    @SuppressWarnings("deprecation")
     TupleMaskIdentity(int[] indices, int sourceWidth) {
         super(indices, sourceWidth);
     }

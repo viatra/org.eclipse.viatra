@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.specification.internal;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -62,10 +63,8 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
 /**
@@ -125,18 +124,6 @@ public class PatternBodyTransformer {
             }
         }
         acceptor.acceptExportedParameters(parameters);
-    }
-
-    /**
-     * 
-     * @deprecated use {@link EMFTypeSystem#classifierToInputKey(EClassifier)} instead.
-     */
-    @Deprecated
-    public static IInputKey classifierToInputKey(EClassifier classifier) {
-        IInputKey key = classifier == null ? null
-                : classifier instanceof EClass ? new EClassTransitiveInstancesKey((EClass) classifier)
-                        : new EDataTypeInSlotsKey((EDataType) classifier);
-        return key;
     }
 
     private void gatherBodyConstraints(PatternBody body, PatternModelAcceptor<?> acceptor)
@@ -321,17 +308,13 @@ public class PatternBodyTransformer {
 
     private List<String> getVariableNames(List<? extends ValueReference> valueReferences,
             final PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
-        return ImmutableList.copyOf( // XXX transformation must be performed eagerly because it can cause side effects
-                Lists.transform(valueReferences, new Function<ValueReference, String>() {
-                    @Override
-                    public String apply(ValueReference valueReference) {
-                        try {
-                            return getVariableName(valueReference, acceptor);
-                        } catch (SpecificationBuilderException e) {
-                            throw Throwables.propagate(e);
-                        }
-                    }
-                }));
+        return valueReferences.stream().map(valueReference -> {
+            try {
+                return getVariableName(valueReference, acceptor);
+            } catch (SpecificationBuilderException e) {
+                throw Throwables.propagate(e);
+            }
+        }).collect(Collectors.toList());
     }
 
     private String getVariableName(ValueReference reference, PatternModelAcceptor<?> acceptor)

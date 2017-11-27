@@ -48,11 +48,9 @@ public final class LeftInheritanceTuple extends BaseLeftInheritanceTuple {
      * null
      * 
      * @param localElements
-     *            array of substitution values
-     * @deprecated obtain instances from {@link Tuples} instead 
+     *            array of substitution values 
      */
-    @Deprecated
-    public LeftInheritanceTuple(Tuple ancestor, Object[] localElements) {
+    LeftInheritanceTuple(Tuple ancestor, Object[] localElements) {
         super(ancestor);
         this.localElements = localElements;
         calcHash();

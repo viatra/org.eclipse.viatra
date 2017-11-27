@@ -190,14 +190,6 @@ public final class LocalSearchHints implements IMatcherCapability {
         return useBase;
     }
     
-    /**
-     * @deprecated allow inverse was deprecated in 1.4; its uses are ignored 
-     */
-    @Deprecated
-    public Boolean isAllowInverse() {
-        return true;
-    }
-    
     public ICostFunction getCostFunction() {
         return costFunction;
     }

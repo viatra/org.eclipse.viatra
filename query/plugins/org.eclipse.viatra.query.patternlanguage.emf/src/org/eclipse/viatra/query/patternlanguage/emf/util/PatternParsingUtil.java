@@ -11,15 +11,12 @@
  */
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
-import java.util.List;
-
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
 /**
@@ -34,18 +31,6 @@ public class PatternParsingUtil {
 
     private PatternParsingUtil() {
         // Empty utility constructor
-    }
-
-    /**
-     * @return A list of parsed query specifications; the contents of the list is undefined if the source file cannot be
-     *         parsed completely
-     * @deprecated Use {@link #parseQueryDefinitions(String, Injector)} or
-     *             {@link #parsePatternDefinitions(String, Injector)} instead
-     */
-    @Deprecated
-    public static List<IQuerySpecification<?>> parsePatterns(String patternString) throws ViatraQueryException {
-        PatternParsingResults results = parsePatternDefinitions(patternString, null);
-        return Lists.newArrayList(results.getQuerySpecifications());
     }
 
     /**

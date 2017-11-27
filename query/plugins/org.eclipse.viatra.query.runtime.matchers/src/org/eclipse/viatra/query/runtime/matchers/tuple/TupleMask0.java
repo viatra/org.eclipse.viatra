@@ -19,7 +19,6 @@ import java.util.List;
  */
 public final class TupleMask0 extends TupleMask {
 
-    @SuppressWarnings("deprecation")
     TupleMask0(int[] indices, int sourceWidth) {
         super(indices, sourceWidth);
     }

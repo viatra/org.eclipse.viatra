@@ -56,16 +56,6 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     /**
      * @param mask
      *            The mask used to index the matchings
-     * @deprecated use {@link #MaskedTupleMemory(TupleMask, Node)}
-     */
-    @Deprecated
-    public MaskedTupleMemory(TupleMask mask) {
-        this(mask, null);
-    }
-
-    /**
-     * @param mask
-     *            The mask used to index the matchings
      * @param owner the node that owns this memory
      * @since 1.7
      */

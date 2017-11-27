@@ -14,6 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -276,15 +277,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 // force traversal upon change of wildcard level
                 final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
                         Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap());
-                coalesceTraversals(new Callable<Void>() {
-
-                    @Override
-                    public Void call() throws Exception {
-                        traverse(visitor);
-                        return null;
-                    }
-
-                }); 
+                coalesceTraversals(() -> traverse(visitor)); 
             }
         } catch (InvocationTargetException ex) {
             processingFatal(ex.getCause(), "Setting wildcard level: " + level);
@@ -1027,21 +1020,11 @@ public class NavigationHelperImpl implements NavigationHelper {
             final Set<Object> resolvedDatatypes = resolveClassifiersToKey(dataTypes);
 
             try {
-                coalesceTraversals(new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        Function<Object, IndexingLevel> f = new Function<Object, IndexingLevel>() {
-
-                            @Override
-                            public IndexingLevel apply(Object input) {
-                                return level;
-                            }
-                        };
-                        delayedFeatures.putAll(Maps.asMap(resolvedFeatures, f));
-                        delayedDataTypes.putAll(Maps.asMap(resolvedDatatypes, f));
-                        delayedClasses.putAll(Maps.asMap(resolvedClasses, f));
-                        return null;
-                    }
+                coalesceTraversals(() -> {
+                    Function<Object, IndexingLevel> f = input -> level;
+                    delayedFeatures.putAll(Maps.asMap(resolvedFeatures, f));
+                    delayedDataTypes.putAll(Maps.asMap(resolvedDatatypes, f));
+                    delayedClasses.putAll(Maps.asMap(resolvedClasses, f));
                 });
             } catch (InvocationTargetException ex) {
                 processingFatal(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
@@ -1067,15 +1050,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             final Set<Object> resolved = resolveFeaturesToKey(features);
 
             try {
-                coalesceTraversals(new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        for (Object o : resolved) {
-                            delayedFeatures.put(o, level);
-                        }
-                        return null;
-                    }
-                });
+                coalesceTraversals(() -> resolved.forEach(o -> delayedFeatures.put(o, level)));
             } catch (InvocationTargetException ex) {
                 processingFatal(ex.getCause(), "register the observed EStructuralFeatures: " + resolved);
             } catch (Exception ex) {
@@ -1104,15 +1079,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             final Set<Object> resolvedClasses = resolveClassifiersToKey(classes);
 
             try {
-                coalesceTraversals(new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        for (Object o : resolvedClasses) {
-                            delayedClasses.put(o, level);
-                        }
-                        return null;
-                    }
-                });
+                coalesceTraversals(() -> resolvedClasses.forEach(o -> delayedClasses.put(o, level)));
             } catch (InvocationTargetException ex) {
                 processingFatal(ex.getCause(), "register the observed EClasses: " + resolvedClasses);
             } catch (Exception ex) {
@@ -1160,15 +1127,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             final Set<Object> resolved = resolveClassifiersToKey(dataTypes);
 
             try {
-                coalesceTraversals(new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        for (Object o : resolved) {
-                            delayedDataTypes.put(o, level);
-                        }
-                        return null;
-                    }
-                });
+                coalesceTraversals(() -> resolved.forEach(o -> delayedDataTypes.put(o, level)));
             } catch (InvocationTargetException ex) {
                 processingFatal(ex.getCause(), "register the observed EDataTypes: " + resolved);
             } catch (Exception ex) {
@@ -1196,6 +1155,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         return delayTraversals;
     }
 
+    public void coalesceTraversals(final Runnable runnable) throws InvocationTargetException {
+        coalesceTraversals(() -> {
+            runnable.run();
+            return null;
+        });
+    }
+    
     @Override
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
         V finalResult = null;
@@ -1347,17 +1313,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         final Runnable[] callbacks = traversalCallbacks.toArray(new Runnable[traversalCallbacks.size()]);
         traversalCallbacks.clear();
         if (callbacks.length > 0){
-            coalesceTraversals(new Callable<Void>() {
-
-                @Override
-                public Void call() throws Exception {
-
-                    for(Runnable callback : callbacks){
-                        callback.run();
-                    }
-                    return null;
-                }
-            });
+            coalesceTraversals(() -> Arrays.stream(callbacks).forEach(callback -> callback.run()));
         }
     }
 
@@ -1412,10 +1368,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    /**
-     * @param emfRoot
-     * @throws ViatraBaseException
-     */
     private void addRootInternal(Notifier emfRoot) throws ViatraBaseException {
         if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
             throw new ViatraBaseException(ViatraBaseException.INVALID_EMFROOT);
@@ -1618,14 +1570,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     @Override
     public void executeAfterTraversal(final Runnable traversalCallback) throws InvocationTargetException {
-        coalesceTraversals(new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                traversalCallbacks.add(traversalCallback);
-                return null;
-            }
-        });
+        coalesceTraversals(() -> traversalCallbacks.add(traversalCallback));
     }
 
 }

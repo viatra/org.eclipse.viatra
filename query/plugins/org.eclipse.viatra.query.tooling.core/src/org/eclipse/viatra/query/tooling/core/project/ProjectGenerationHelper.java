@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
@@ -355,14 +354,6 @@ public abstract class ProjectGenerationHelper {
     }
 
     /**
-     * @deprecated Misspelled method, call {@link #replaceBundledependencies(IProject, Map, Map, IProgressMonitor)} instead.
-     */
-    @Deprecated
-    public static void replaceBundledependencies(IProject project, 
-            final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions, IProgressMonitor monitor) throws CoreException{
-        replaceBundleDependencies(project, replacedDependencies, versions, monitor);
-    }
-    /**
      * Updates the plugin dependency settings of the given project by replacing entries according to the given map. This
      * method preserves optional and re-export flags, and updates version settings (if was originally set)
      * 
@@ -423,19 +414,14 @@ public abstract class ProjectGenerationHelper {
             }
         }
         
-        if (isBeforeKepler()){
-            // We can't remove existing entries with this API. Just add new entries.
-            bundleDesc.setRequiredBundles(toAdd.toArray(new IRequiredBundleDescription[toAdd.size()]));
-        }else{
-            List<IRequiredBundleDescription> dependencies = new LinkedList<>();
-            for(IRequiredBundleDescription r : existingDependencies){
-                if (!toRemove.contains(r.getName())){
-                    dependencies.add(r);
-                }
+        List<IRequiredBundleDescription> dependencies = new LinkedList<>();
+        for(IRequiredBundleDescription r : existingDependencies){
+            if (!toRemove.contains(r.getName())){
+                dependencies.add(r);
             }
-            dependencies.addAll(toAdd);
-            bundleDesc.setRequiredBundles(dependencies.toArray(new IRequiredBundleDescription[dependencies.size()]));
         }
+        dependencies.addAll(toAdd);
+        bundleDesc.setRequiredBundles(dependencies.toArray(new IRequiredBundleDescription[dependencies.size()]));
     }
     
     
@@ -466,29 +452,11 @@ public abstract class ProjectGenerationHelper {
 
             // XXX for compatibility two different versions are needed
             Iterable<IRequiredBundleDescription> dependenciesToSet =
-                isBeforeKepler() ?
-                // Before Kepler setRequiredBundles only adds dependencies, does not remove
-                missingDependencies :
                 // Since Kepler setRequiredBundles overwrites existing dependencies
                 Iterables.concat(missingDependencies, Arrays.asList(existingDependencies));
 
             bundleDesc.setRequiredBundles(Iterables.toArray(dependenciesToSet, IRequiredBundleDescription.class));
         }
-    }
-    
-    private static Boolean isBeforeKeplerValue = null;
-    
-    /**
-     * Detect whether the running eclipse is older than Kepler. This is required for some cases
-     * as there were incompatible functional changes in the PDE API.
-     * @return True if the actual runtime context is older than eclipse Kepler release
-     */
-    private static boolean isBeforeKepler(){
-        if (isBeforeKeplerValue == null){
-            final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
-            isBeforeKeplerValue = pdeVersion.compareTo(new Version(3, 9, 0)) < 0;
-        }
-        return isBeforeKeplerValue;
     }
     
     /**
@@ -715,20 +683,6 @@ public abstract class ProjectGenerationHelper {
         modifier.loadPluginXml(project);
         modifier.removeExtensions(removableExtensionIdentifiers);
         modifier.savePluginXml();
-    }
-
-    /**
-     * Ensures that the project contains the src and src-gen folders as source folders.
-     *
-     * @param project
-     *            an existing, open plug-in project
-     * @param monitor
-     * @throws CoreException
-     * @deprecated Use {@link #ensureSourceFolders(IProject,List,IProgressMonitor)} instead
-     */
-    @Deprecated
-    public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
-        ensureSourceFolders(project, SOURCEFOLDERS, monitor);
     }
     
     /**

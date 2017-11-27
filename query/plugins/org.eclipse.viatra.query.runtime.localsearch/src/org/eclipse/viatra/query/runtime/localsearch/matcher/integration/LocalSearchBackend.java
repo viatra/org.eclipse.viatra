@@ -13,9 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider;
@@ -33,11 +30,9 @@ import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
 
 /**
  * @author Marton Bur, Zoltan Ujhelyi
@@ -49,12 +44,6 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     IPlanProvider planProvider;
     private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
     
-    // Cache
-    /**
-     * @deprecated Use generalCache instead
-     */
-    @Deprecated
-    private final Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass = HashBasedTable.create();
     private final PurgableCache generalCache;
     
     private final Multimap<PQuery, AbstractLocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
@@ -107,7 +96,6 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     
     @Override
     public void dispose() {  
-        eAttributesByTypeForEClass.clear();
         resultProviderCache.clear();
         generalCache.purge();
     }
@@ -120,15 +108,6 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     @Override
     public IQueryResultProvider peekExistingResultProvider(PQuery query) {
         return null;
-    }
-
-    /**
-     * 
-     * @deprecated use the general caching mechanism instead
-     */
-    @Deprecated
-    public Table<EDataType, EClass, Set<EAttribute>> geteAttributesByTypeForEClass() {
-        return eAttributesByTypeForEClass;
     }
 
     /**
