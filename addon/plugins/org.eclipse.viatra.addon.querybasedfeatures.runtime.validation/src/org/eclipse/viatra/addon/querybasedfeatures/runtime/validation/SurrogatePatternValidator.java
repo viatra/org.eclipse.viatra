@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -31,8 +33,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-
-import com.google.inject.Inject;
 
 /**
  * @author Abel Hegedus

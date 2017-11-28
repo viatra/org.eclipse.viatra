@@ -22,11 +22,13 @@
         <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete.recipes</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.evm</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime</module>
         <module>../../releng/org.eclipse.viatra.target.core</module>
         <module>../../releng/org.eclipse.viatra.target.all</module>
         <module>../../releng/org.eclipse.viatra.parent</module>
         <module>../../maven/viatra-query-runtime</module>
         <module>../../maven/viatra-query-language</module>
+        <module>../../maven/viatra-querybasedfeatures</module>
         <module>../../maven/viatra-transformation-runtime</module>
         <module>../../maven/viatra-maven-plugin</module>
     </modules>

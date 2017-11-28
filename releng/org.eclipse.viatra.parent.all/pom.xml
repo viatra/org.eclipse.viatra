@@ -48,7 +48,6 @@
 		<!-- Addons -->
 		<module>../../addon/plugins/org.eclipse.viatra.addon.databinding.runtime</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.databinding.runtime.validation</module>
-		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime.validation</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.tooling</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.core</module>

@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>viatra-querybasedfeatures</artifactId>
+  <name>VIATRA Query based Feature Runtime</name>
+  <description>Maven module for VIATRA Query based feature runtime</description>
+  <dependencies>
+        <dependency>
+            <groupId>org.eclipse.viatra</groupId>
+            <artifactId>viatra-query-runtime</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.viatra</groupId>
+            <artifactId>viatra-transformation-runtime</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.viatra</groupId>
+            <artifactId>org.eclipse.viatra.addon.querybasedfeatures.runtime</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>      
+    </dependencies>
+    <parent>
+        <artifactId>org.eclipse.viatra.parent.core</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../../releng/org.eclipse.viatra.parent.core/pom.xml</relativePath>
+    </parent>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
