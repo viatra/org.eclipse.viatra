@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.AggregatorCheck;
@@ -83,10 +82,10 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected Set<MatcherReference> dependencies = Sets.newHashSet();
     protected Map<PConstraint, Set<Integer>> variableBindings;
     private Map<PVariable, Integer> variableMappings;
-    protected final EMFQueryRuntimeContext runtimeContext;
+    protected final IQueryRuntimeContext runtimeContext;
 
     public AbstractOperationCompiler(IQueryRuntimeContext runtimeContext) {
-        this.runtimeContext = (EMFQueryRuntimeContext) runtimeContext;
+        this.runtimeContext = runtimeContext;
     }
 
     /**

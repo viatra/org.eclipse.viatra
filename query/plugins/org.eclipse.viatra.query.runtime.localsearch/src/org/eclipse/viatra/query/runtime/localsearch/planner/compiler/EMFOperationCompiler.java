@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
@@ -48,12 +49,15 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
 
     private boolean baseIndexAvailable;
 
+    private final EMFQueryRuntimeContext runtimeContext;
+    
     public EMFOperationCompiler(IQueryRuntimeContext runtimeContext) {
         this(runtimeContext, false);
     }
-
+    
     public EMFOperationCompiler(IQueryRuntimeContext runtimeContext, boolean baseIndexAvailable) {
         super(runtimeContext);
+        this.runtimeContext = (EMFQueryRuntimeContext) runtimeContext;
         this.baseIndexAvailable = baseIndexAvailable;
     }
 
