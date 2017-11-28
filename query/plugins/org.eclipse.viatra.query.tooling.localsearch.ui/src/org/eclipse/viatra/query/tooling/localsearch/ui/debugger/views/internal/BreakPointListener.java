@@ -51,7 +51,7 @@ public class BreakPointListener implements IDoubleClickListener {
             eventContextParameters.put(ISources.ACTIVE_PART_NAME, debuggerView);
             eventContextParameters.put(ISources.ACTIVE_PART_ID_NAME, LocalSearchDebugView.ID);
             eventContextParameters.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, thisSelection);
-            ICommandService commandService = (ICommandService) site.getService(ICommandService.class);
+            ICommandService commandService = site.getService(ICommandService.class);
             commandService.getCommand("org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.placebreakpoint").executeWithChecks(
                     new ExecutionEvent(null, eventContextParameters, null, null));
         }

@@ -53,7 +53,7 @@ public class CommandInvokingDoubleClickListener implements IDoubleClickListener 
     public void doubleClick(DoubleClickEvent event) {
         ISelection selection = event.getSelection();
         if (selection instanceof TreeSelection) {
-            IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+            IHandlerService handlerService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getService(IHandlerService.class);
             try {
                 handlerService.executeCommand(commandId, null);

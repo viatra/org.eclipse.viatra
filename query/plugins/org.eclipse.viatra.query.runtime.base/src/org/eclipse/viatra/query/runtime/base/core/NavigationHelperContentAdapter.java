@@ -599,7 +599,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
     @Override
     public void unsetTarget(Notifier target)
     {
-      Object target1 = (Object)target;
+      Object target1 = target;
     if (target1 instanceof EObject)
       {
         unsetTarget((EObject)target1);

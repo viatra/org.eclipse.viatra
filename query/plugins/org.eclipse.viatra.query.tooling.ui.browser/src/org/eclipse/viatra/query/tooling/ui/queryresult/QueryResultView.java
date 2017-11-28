@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -158,19 +156,9 @@ public class QueryResultView extends ViewPart {
     };
     
     public QueryResultView() {
-        this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
-            @Override
-            public String getContributorId() {
-                return getSite().getId();
-            }
-        };
+        this.propertyPageContributor = () -> getSite().getId();
         this.hint = new QueryEvaluationHint(null, new ReteBackendFactory());
-        this.connectorListener = new IModelConnectorListener() {
-            @Override
-            public void modelUnloaded(IModelConnector modelConnector) {
-                unloadModel();
-            }
-        };
+        this.connectorListener = modelConnector -> unloadModel();
     }
 
     /**
@@ -258,16 +246,11 @@ public class QueryResultView extends ViewPart {
         // Create pop-up menu over the tree viewer
         MenuManager menuManager = new MenuManager();
         menuManager.setRemoveAllWhenShown(true);
-        menuManager.addMenuListener(new IMenuListener() {
-            @Override
-            public void menuAboutToShow(IMenuManager mgr) {
-                mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-            }
-        });
+        menuManager.addMenuListener(mgr -> mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS)));
         control.setMenu(menuManager.createContextMenu(control));
         getSite().registerContextMenu(ID,menuManager, queryResultTreeViewer);
         collapseHandler = new CollapseAllHandler(queryResultTreeViewer);
-        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+        IHandlerService handlerService = getSite().getService(IHandlerService.class);
         handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
     }
 
@@ -283,9 +266,8 @@ public class QueryResultView extends ViewPart {
         queryResultTreeViewer.getTree().setFocus();
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object getAdapter(Class adapter) {
+    public <T> T getAdapter(Class<T> adapter) {
         if (adapter == IPropertySheetPage.class) {
             return adapter.cast(new TabbedPropertySheetPage(this.propertyPageContributor));
         }
@@ -339,9 +321,8 @@ public class QueryResultView extends ViewPart {
      * @since 1.4
      */
     private void activeEnginePropertyChanged() {
-        //Casting is required for backward compatibility with old platform versions
-        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
-        if(service != null){
+        IEvaluationService service = getSite().getService(IEvaluationService.class);
+        if (service != null){
             service.requestEvaluation(ActiveEnginePropertyTester.ACTIVE_ENGINE_ID);
         }
     }

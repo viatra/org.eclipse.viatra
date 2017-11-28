@@ -105,7 +105,7 @@ public class TransformationStateBuilder {
             }
             
             TransformationRule transformationRule = new TransformationRule(pair.getKey().getName(), 
-                    !pair.getValue().equals(((RuleSpecification<?>) pair.getKey()).createEmptyFilter()), 
+                    !pair.getValue().equals(pair.getKey().createEmptyFilter()), 
                     ruleActivations);
             
             stateRules.add(transformationRule);

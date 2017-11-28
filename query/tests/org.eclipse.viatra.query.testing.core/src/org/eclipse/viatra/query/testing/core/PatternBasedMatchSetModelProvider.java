@@ -70,7 +70,7 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
             EMFScope scope, 
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, 
             QueryEvaluationHint hint) throws ViatraQueryException{
-        return (ViatraQueryMatcher<Match>) getOrCreateEngine(scope).getMatcher(querySpecification, hint);
+        return getOrCreateEngine(scope).getMatcher(querySpecification, hint);
     }
     
     @Override

@@ -266,7 +266,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     private List<SearchOperationViewerNode> createOperationsListFromExecutor(SearchPlanExecutor planExecutor) {
         List<SearchOperationViewerNode> nodes = Lists.newArrayList();
         
-        List<ISearchOperation> plan = ((SearchPlanExecutor)planExecutor).getSearchPlan().getOperations();
+        List<ISearchOperation> plan = planExecutor.getSearchPlan().getOperations();
         for (ISearchOperation operation : plan) {
             nodes.add(new SearchOperationViewerNode(operation, planExecutor));
         }

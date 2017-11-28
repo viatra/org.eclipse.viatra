@@ -218,13 +218,13 @@ class NodeFactory {
             TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
             TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
             IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo().getPosetComparator();
-            IMultisetAggregationOperator operator = (IMultisetAggregationOperator) recipe.getMultisetAggregationOperator();
+            IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
             return new ColumnAggregatorNode(reteContainer, operator, recipe.isDeleteRederiveEvaluation(), coreMask,
                     posetMask, posetComparator);            
         } else {
             TupleMask coreMask = toMask(recipe.getGroupByMask());
             int aggregatedColumn = recipe.getAggregableIndex();
-            IMultisetAggregationOperator operator = (IMultisetAggregationOperator) recipe.getMultisetAggregationOperator();
+            IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
             return new ColumnAggregatorNode(reteContainer, operator, coreMask, aggregatedColumn);
         }
     }

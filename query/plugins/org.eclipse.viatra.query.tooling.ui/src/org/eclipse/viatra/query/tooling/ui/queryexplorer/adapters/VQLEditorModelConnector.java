@@ -36,12 +36,12 @@ public class VQLEditorModelConnector extends EMFModelConnector {
         Notifier result = null;
         if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
             // XXX It should load the depending vql's as well
-            IFile file = (IFile) editorPart.getEditorInput().getAdapter(IFile.class);
+            IFile file = editorPart.getEditorInput().getAdapter(IFile.class);
             if (file != null) {
                 result = loadVQLFile(file);
             }
         } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
-            IFile file = (IFile) editorPart.getEditorInput().getAdapter(IFile.class);
+            IFile file = editorPart.getEditorInput().getAdapter(IFile.class);
             if (file != null) {
                 result = loadVQLFile(file);
             }

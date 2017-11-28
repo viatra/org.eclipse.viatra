@@ -40,13 +40,13 @@ public class ProjectNatureUpdater extends AbstractHandler {
                 if (element instanceof IProject) {
                     project = (IProject) element;
                 } else if (element instanceof IAdaptable) {
-                    project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
+                    project = ((IAdaptable) element).getAdapter(IProject.class);
                 }
                 if (project != null) {
                     final NatureUpdaterJob job = new NatureUpdaterJob(project);
                     job.schedule();
                     try {
-                        ICommandService service = ((ICommandService)HandlerUtil.getActiveSite(event).getService(ICommandService.class));
+                        ICommandService service = HandlerUtil.getActiveSite(event).getService(ICommandService.class);
                         service.getCommand(MigratorConstants.API_MIGRATOR_COMMAND_ID).executeWithChecks(event);
                     } catch (NotDefinedException | NotEnabledException | NotHandledException e) {
                         throw new ExecutionException("Error migrating project", e);

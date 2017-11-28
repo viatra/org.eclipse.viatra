@@ -104,7 +104,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
         label.setLayoutData(gridData);
 
         parameterType = new Text(composite, SWT.BORDER | SWT.SINGLE);
-        parameterType.setText(result.getObject() == null ? "" : ((EClassifier) result.getObject()).getName());
+        parameterType.setText(result.getObject() == null ? "" : result.getObject().getName());
         parameterType.setEditable(false);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.horizontalSpan = 1;
@@ -169,7 +169,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     private void setParameterType(EClassifier object) {
         this.result.setObject(object);
         if (object != null) {
-            parameterType.setText(((EClassifier) object).getName());
+            parameterType.setText(object.getName());
         }
     }
 }

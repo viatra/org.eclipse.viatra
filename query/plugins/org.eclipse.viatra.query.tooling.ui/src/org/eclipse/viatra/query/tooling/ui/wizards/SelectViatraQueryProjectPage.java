@@ -155,7 +155,7 @@ public class SelectViatraQueryProjectPage extends WizardPage {
                 IProject containerProject = ((IResource) obj).getProject();
                 setSelectedProject(viewer, containerProject);
             } else if (obj instanceof IAdaptable) {
-                final IResource adaptedResource = (IResource) ((IAdaptable) obj).getAdapter(IResource.class);
+                final IResource adaptedResource = ((IAdaptable) obj).getAdapter(IResource.class);
                 if (adaptedResource != null) {
                     setSelectedProject(viewer, adaptedResource.getProject());
                 }

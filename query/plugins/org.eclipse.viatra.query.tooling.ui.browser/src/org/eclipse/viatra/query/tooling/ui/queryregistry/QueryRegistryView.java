@@ -76,14 +76,7 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
             updater = XtextIndexBasedRegistryUpdaterFactory.INSTANCE.getUpdater(QuerySpecificationRegistry.getInstance());
             queryRegistryTreeInput = new QueryRegistryTreeInput(QuerySpecificationRegistry.getInstance());
             
-            QueryRegistryView.this.getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
-
-                @Override
-                public void run() {
-                    queryTreeViewer.setInput(queryRegistryTreeInput);
-                }
-                
-            });
+            QueryRegistryView.this.getViewSite().getShell().getDisplay().asyncExec(() -> queryTreeViewer.setInput(queryRegistryTreeInput));
             return Status.OK_STATUS;
         }
         
@@ -156,7 +149,7 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         
         getSite().setSelectionProvider(queryTreeViewer);
         
-        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+        IHandlerService handlerService = getSite().getService(IHandlerService.class);
         collapseHandler = new CollapseAllHandler(queryTreeViewer);
         handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
         

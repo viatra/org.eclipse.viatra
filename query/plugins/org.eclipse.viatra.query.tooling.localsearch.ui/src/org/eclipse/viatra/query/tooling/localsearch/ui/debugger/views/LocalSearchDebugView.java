@@ -129,15 +129,13 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
             planExecutorThread = new Thread(planExecutorRunnable);
             planExecutorThread.start();
         }
-        //Casting is required for backward compatibility with old platform versions
-        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        IEvaluationService service = getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
     }
     
     public void setDebugger(LocalSearchDebugger localSearchDebugger) {
         this.debugger = localSearchDebugger;
-        //Casting is required for backward compatibility with old platform versions
-        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        IEvaluationService service = getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
     }
     public LocalSearchDebugger getDebugger() {
@@ -252,8 +250,7 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
             }
         });
         
-        //Casting is required for backward compatibility with old platform versions
-        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        IEvaluationService service = getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
     }
 

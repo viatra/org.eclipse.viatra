@@ -28,7 +28,7 @@ public class LoadVqlPatternHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         try {
-            IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
+            IFile file = HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
             if (file != null) {
                 RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file, null);
                 injector.injectMembers(registrator);
