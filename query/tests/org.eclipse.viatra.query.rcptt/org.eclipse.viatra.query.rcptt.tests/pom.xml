@@ -32,8 +32,8 @@
                         <version>${rcptt.version}</version>
                     </runner>
                     <testOptions>
-                        <execTimeout>7200</execTimeout>
-                        <testExecTimeout>600</testExecTimeout>
+                        <execTimeout>14400</execTimeout>
+                        <testExecTimeout>1200</testExecTimeout>
                     </testOptions>
                     <skipTags>
                         <skipTag>testToSkip</skipTag>
