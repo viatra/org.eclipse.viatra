@@ -154,7 +154,7 @@ public class EventDrivenTransformation {
         return forEngine(ViatraQueryEngine.on(scope));
     }
 
-    public static EventDrivenTransformationBuilder forEngine(ViatraQueryEngine engine) throws ViatraQueryException {
+    public static EventDrivenTransformationBuilder forEngine(ViatraQueryEngine engine) {
         return new EventDrivenTransformationBuilder().setQueryEngine(engine);
     }
 

@@ -307,7 +307,7 @@ public class PatternBodyTransformer {
     }
 
     private List<String> getVariableNames(List<? extends ValueReference> valueReferences,
-            final PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+            final PatternModelAcceptor<?> acceptor) {
         return valueReferences.stream().map(valueReference -> {
             try {
                 return getVariableName(valueReference, acceptor);

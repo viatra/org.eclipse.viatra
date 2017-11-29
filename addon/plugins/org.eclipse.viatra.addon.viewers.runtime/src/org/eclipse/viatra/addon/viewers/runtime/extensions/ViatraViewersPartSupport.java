@@ -61,7 +61,7 @@ public abstract class ViatraViewersPartSupport {
     /**
      * The configuration DTO.
      */
-    public ViewersComponentConfiguration configuration;
+    protected ViewersComponentConfiguration configuration;
     
     /**
      * Selection listener for the "forward reveal" feature.

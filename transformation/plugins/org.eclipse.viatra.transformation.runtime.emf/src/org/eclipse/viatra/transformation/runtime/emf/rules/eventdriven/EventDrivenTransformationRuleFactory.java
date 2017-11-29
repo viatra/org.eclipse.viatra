@@ -19,7 +19,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
-import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Preconditions;
@@ -72,8 +71,7 @@ public class EventDrivenTransformationRuleFactory {
             return this;
         }
 
-        public EventDrivenTransformationRuleBuilder<Match, Matcher> addLifeCycle(ActivationLifeCycle lifeCycle)
-                throws InconsistentEventSemanticsException {
+        public EventDrivenTransformationRuleBuilder<Match, Matcher> addLifeCycle(ActivationLifeCycle lifeCycle) {
             this.lifeCycle = lifeCycle;
             return this;
         }

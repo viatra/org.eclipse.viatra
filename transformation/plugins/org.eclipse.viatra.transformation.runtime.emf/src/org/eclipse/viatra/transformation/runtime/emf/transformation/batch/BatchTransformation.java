@@ -11,11 +11,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.transformation.batch;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
-import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -34,11 +35,7 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRu
 import org.eclipse.viatra.transformation.runtime.emf.rules.TransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * A base class for batch transformations.
@@ -52,13 +49,13 @@ public class BatchTransformation {
     protected final ViatraQueryEngine queryEngine;
     protected final IExecutor executor;
     protected final Context context;
-    protected Set<BatchTransformationRule<?, ?>> rules = Sets.newHashSet();
+    protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<>();
 
     public static class BatchTransformationBuilder {
         private ViatraQueryEngine engine;
-        private Set<BatchTransformationRule<?, ?>> rules = Sets.newHashSet();
-        private List<IEVMListener> listeners = Lists.newArrayList();
-        private List<IEVMAdapter> adapters = Lists.newArrayList();
+        private Set<BatchTransformationRule<?, ?>> rules = new HashSet<>();
+        private List<IEVMListener> listeners = new ArrayList<>();
+        private List<IEVMAdapter> adapters = new ArrayList<>();
 
         public BatchTransformationBuilder setQueryEngine(ViatraQueryEngine engine) {
             this.engine = engine;
@@ -102,13 +99,13 @@ public class BatchTransformation {
             return transformation;
         }
 
-        private BatchTransformation doBuild() throws ViatraQueryException {
+        private BatchTransformation doBuild() {
             final IExecutor executor = new Executor();
             RuleEngine ruleEngine = RuleEngines.createViatraQueryRuleEngine(engine);
             return new BatchTransformation(ruleEngine, engine, executor);
         }
 
-        private BatchTransformation debugBuild() throws ViatraQueryException {
+        private BatchTransformation debugBuild() {
             AdaptableEVM vm = AdaptableEVMFactory.getInstance().createAdaptableEVM();
             vm.addAdapters(adapters);
             vm.addListeners(listeners);
@@ -121,13 +118,7 @@ public class BatchTransformation {
         }
 
         private void initializeIndexes(ViatraQueryEngine queryEngine) throws ViatraQueryException {
-            GenericQueryGroup.of(Iterables.toArray(
-                    Iterables.transform(rules, new Function<BatchTransformationRule<?, ?>, IQuerySpecification<?>>() {
-                        @Override
-                        public IQuerySpecification<?> apply(BatchTransformationRule<?, ?> rule) {
-                            return rule.getPrecondition();
-                        }
-                    }), IQuerySpecification.class)).prepare(queryEngine);
+            GenericQueryGroup.of(rules.stream().map(rule -> rule.getPrecondition())).prepare(queryEngine);
         }
 
     }
@@ -136,7 +127,7 @@ public class BatchTransformation {
         return forEngine(ViatraQueryEngine.on(scope));
     }
 
-    public static BatchTransformationBuilder forEngine(ViatraQueryEngine engine) throws ViatraQueryException {
+    public static BatchTransformationBuilder forEngine(ViatraQueryEngine engine) {
         return new BatchTransformationBuilder().setQueryEngine(engine);
     }
 

@@ -428,7 +428,7 @@ public class ReteRecipeCompiler {
     }
 
     private CompiledSubPlan compileDeferred(TypeFilterConstraint constraint, SubPlan plan, SubPlan parentPlan,
-            CompiledSubPlan parentCompiled) throws QueryProcessingException {
+            CompiledSubPlan parentCompiled) {
         final IInputKey inputKey = constraint.getInputKey();
         if (!metaContext.isStateless(inputKey))
             throw new UnsupportedOperationException(

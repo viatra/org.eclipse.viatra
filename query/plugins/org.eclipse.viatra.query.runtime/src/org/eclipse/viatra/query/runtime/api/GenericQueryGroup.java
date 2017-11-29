@@ -13,6 +13,8 @@ package org.eclipse.viatra.query.runtime.api;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseQueryGroup;
 
@@ -41,6 +43,15 @@ public class GenericQueryGroup extends BaseQueryGroup {
         return patterns;
     }
 
+    /**
+     * Creates a generic {@link IQueryGroup} instance from {@link IQuerySpecification} objects.
+     * 
+     * @since 2.0
+     */
+    public static IQueryGroup of(Stream<IQuerySpecification<?>> querySpecifications) {
+        return new GenericQueryGroup(querySpecifications.collect(Collectors.toSet()));
+    }
+    
     /**
      * Creates a generic {@link IQueryGroup} instance from {@link IQuerySpecification} objects.
      * 

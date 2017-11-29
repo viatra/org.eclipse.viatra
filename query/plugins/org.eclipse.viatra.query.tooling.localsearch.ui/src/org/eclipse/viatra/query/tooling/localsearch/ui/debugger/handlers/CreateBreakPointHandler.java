@@ -36,7 +36,7 @@ public class CreateBreakPointHandler extends AbstractHandler {
         return null;
     }
 
-    public void breakPointHandler(LocalSearchDebugView localSearchDebugView, IStructuredSelection thisSelection) throws PartInitException {
+    public void breakPointHandler(LocalSearchDebugView localSearchDebugView, IStructuredSelection thisSelection) {
         if (thisSelection.size() != 1) {
             // when more than one operation is selected, place no breakpoints
             return;

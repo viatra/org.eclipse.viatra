@@ -27,9 +27,7 @@ import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.connector.SpecificationMapSourceConnector;
 import org.junit.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -50,7 +48,7 @@ public class PackageBasedQueryGroupTest {
     }
     
     @Test
-    public void updateTest() throws ViatraQueryException {
+    public void updateTest() {
         SpecificationMapSourceConnector connector = null;
         try {
             PackageBasedQueryGroup packageBasedQueryGroup = new PackageBasedQueryGroup("org.eclipse.viatra.integration.uml.derivedfeatures");
@@ -67,14 +65,10 @@ public class PackageBasedQueryGroupTest {
             connector = new SpecificationMapSourceConnector("umlSource", ImmutableSet.of(mockedProvider), true);
             QuerySpecificationRegistry.getInstance().addSource(connector);
             
-            Set<IQuerySpecification<?>> specifications2 = packageBasedQueryGroup.getSpecifications();
-            boolean fqnIncluded = Iterables.any(specifications2, new Predicate<IQuerySpecification<?>>() {
-    
-                @Override
-                public boolean apply(IQuerySpecification<?> specification) {
-                    return specification.getFullyQualifiedName().equals(fqn);
-                }
-            });
+            
+            boolean fqnIncluded = packageBasedQueryGroup.getSpecifications().stream()
+                    .anyMatch(specification -> specification.getFullyQualifiedName().equals(fqn));
+            
             assertTrue(fqnIncluded);
         } finally {
             if (connector != null) {

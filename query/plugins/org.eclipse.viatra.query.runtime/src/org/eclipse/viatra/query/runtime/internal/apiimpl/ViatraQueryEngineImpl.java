@@ -143,7 +143,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      * @since 1.4
      */
     public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope,
-            ViatraQueryEngineOptions engineOptions) throws ViatraQueryException {
+            ViatraQueryEngineOptions engineOptions) {
         super();
         this.manager = manager;
         this.scope = scope;
