@@ -14,6 +14,6 @@ image::tutorial/install.png[Install window]
 
 For a faster installation, you may deselect the _Contact all update sites during install\..._ field, but then it might be necessary to install the required _Xtext Runtime_ manually.
 
-This document assumes that the CPS metamodels are installed into the Eclipse instance. They are available from the p2 repository https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.update/target/repository/
+This document assumes that the CPS metamodels are installed into the Eclipse instance. They are available from the p2 repository http://download.eclipse.org/viatra/examples/cps
 
 VIATRA defines a custom perspective called `Transformation Development` that includes a few views and shortcuts that make it easier to develop queries and transformations. The remainder of the tutorial expects that this perspective is selected; in case a different perspective is used, the corresponding views and wizards are still available in their standard respective locations.

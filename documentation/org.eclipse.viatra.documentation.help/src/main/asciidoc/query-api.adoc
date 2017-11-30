@@ -638,7 +638,7 @@ We already have some connector implementations for the most common use cases. Fo
 [[query-api-registry-connectors]]
 [source,java]
 ----
-IRegistrySourceConnector connector = new SpecificationMapSourceConnector("my.source.identifier", false /* do not include these in default views */);
+IRegistrySourceConnector connector = new SpecificationMapSourceConnector("my.source.identifier", true /* include these in default view; fqn clashes are errors */);
 
 IQuerySpecification<?> specification = /* available from somewhere */
 
@@ -651,6 +651,7 @@ connector.addQuerySpecificationProvider(provider);
 connector.removeQuerySpecificationProvider(specification.getFullyQualifiedName());
 ----
 
+NOTE: The default view assumes all queries loaded there have a single qualified name. If this cannot ensured, the source should not be added to the default views and specific views are to be created accordingly.
 
 == Performance tuning and special engine modes
 

@@ -6,7 +6,7 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 = Debugging and Profiling Graph Patterns
 
 [[rete-visualizer]]
-== Rete Visualizer =
+== Rete Visualizer
 
 .Installation
 * Install the *Query Visualization* feature group from the VIATRA update site.
@@ -27,8 +27,7 @@ image:tools/rete_visualizer.png[]
 == Local Search Debugger
 
 .Installation
-
-The Local Search Debugger Tooling is available in the Query Visualization feature group.
+* The Local Search Debugger Tooling is available in the Query Visualization feature group.
 
 .Usage
 * Open the Local Search Debugger view in Eclipse
