@@ -138,8 +138,6 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      *            null if unmanaged
      * @param scope
      * @param engineDefaultHint
-     * @throws ViatraQueryException
-     *             if the emf root is invalid
      * @since 1.4
      */
     public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope,
@@ -164,10 +162,8 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      *            null if unmanaged
      * @param scope
      * @param engineDefaultHint
-     * @throws ViatraQueryException
-     *             if the emf root is invalid
      */
-    public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope) throws ViatraQueryException {
+    public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope) {
         this(manager, scope, ViatraQueryEngineOptions.DEFAULT);
     }
 

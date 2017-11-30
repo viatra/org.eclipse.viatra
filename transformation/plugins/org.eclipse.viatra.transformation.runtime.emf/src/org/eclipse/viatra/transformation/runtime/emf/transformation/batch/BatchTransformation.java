@@ -123,7 +123,7 @@ public class BatchTransformation {
 
     }
 
-    public static BatchTransformationBuilder forScope(EMFScope scope) throws ViatraQueryException {
+    public static BatchTransformationBuilder forScope(EMFScope scope) {
         return forEngine(ViatraQueryEngine.on(scope));
     }
 

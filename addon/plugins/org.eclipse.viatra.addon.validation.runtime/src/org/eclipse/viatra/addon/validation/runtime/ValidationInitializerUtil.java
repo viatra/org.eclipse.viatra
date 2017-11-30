@@ -16,7 +16,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
@@ -37,10 +36,9 @@ public final class ValidationInitializerUtil {
      *            An editor Id for which we wish to use the registered constraint specifications at the
      *            org.eclipse.viatra.addon.livevalidation.runtime.constraintspecification extension point.
      * @return The initialized validation engine.
-     * @throws ViatraQueryException if there is an error creating the engine on the scope
      */
     public static IValidationEngine initializeValidationWithRegisteredConstraintsOnScope(QueryScope scope,
-            String editorId) throws ViatraQueryException {
+            String editorId) {
         ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
         Logger logger = ViatraQueryLoggingUtil.getLogger(ValidationEngine.class);
         IValidationEngine validationEngine = ValidationEngine.builder().setEngine(engine).setLogger(logger).build();

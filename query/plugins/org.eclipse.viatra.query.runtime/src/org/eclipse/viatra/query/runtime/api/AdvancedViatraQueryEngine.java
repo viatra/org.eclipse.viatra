@@ -74,8 +74,7 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * @return the advanced interface to a newly created unmanaged engine
      * @since 0.9
      */
-    public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope)
-            throws ViatraQueryException {
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope) {
         return new ViatraQueryEngineImpl(null, scope);
     }
     
@@ -100,8 +99,7 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * @return the advanced interface to a newly created unmanaged engine
      * @since 1.4
      */
-    public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope, ViatraQueryEngineOptions options)
-            throws ViatraQueryException {
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope, ViatraQueryEngineOptions options) {
         return new ViatraQueryEngineImpl(null, scope, options);
     }
 

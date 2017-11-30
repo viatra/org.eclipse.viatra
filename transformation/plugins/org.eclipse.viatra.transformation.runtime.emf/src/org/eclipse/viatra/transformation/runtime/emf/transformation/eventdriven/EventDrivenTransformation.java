@@ -150,7 +150,7 @@ public class EventDrivenTransformation {
 
     }
 
-    public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws ViatraQueryException {
+    public static EventDrivenTransformationBuilder forScope(EMFScope scope) {
         return forEngine(ViatraQueryEngine.on(scope));
     }
 

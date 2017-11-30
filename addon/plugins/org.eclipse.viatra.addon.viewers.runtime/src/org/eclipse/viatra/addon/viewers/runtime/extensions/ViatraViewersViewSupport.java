@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -32,7 +31,6 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -228,13 +226,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
 
     protected ViatraQueryEngine getEngine() {
         Assert.isNotNull(this.modelSource);
-        try {
-            return ViatraQueryEngine.on(this.modelSource);
-        } catch (ViatraQueryException e) {
-            ViewersRuntimePlugin.getDefault().getLog()
-                    .log(new Status(Status.ERROR, ViewersRuntimePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
-        }
-        return null;
+        return ViatraQueryEngine.on(this.modelSource);
     }
 
     // ***************** layout stuff ***************** //

@@ -84,9 +84,8 @@ public class ViatraQueryEngineManager {
      * 		the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
      * 		Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return a new or previously existing engine
-     * @throws ViatraQueryException
      */
-    public ViatraQueryEngine getQueryEngine(QueryScope scope) throws ViatraQueryException {
+    public ViatraQueryEngine getQueryEngine(QueryScope scope) {
         return getQueryEngine(scope, ViatraQueryEngineOptions.DEFAULT);
     }
     
@@ -102,10 +101,9 @@ public class ViatraQueryEngineManager {
      *      the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
      *      Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return a new or previously existing engine
-     * @throws ViatraQueryException
      * @since 1.4
      */
-    public ViatraQueryEngine getQueryEngine(QueryScope scope, ViatraQueryEngineOptions options) throws ViatraQueryException {
+    public ViatraQueryEngine getQueryEngine(QueryScope scope, ViatraQueryEngineOptions options) {
         ViatraQueryEngineImpl engine = getEngineInternal(scope);
         if (engine == null) {
             engine = new ViatraQueryEngineImpl(this, scope, options);
