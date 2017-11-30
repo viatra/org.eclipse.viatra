@@ -191,18 +191,16 @@ pattern reachableState(sm :StateMachine, state: State){
 
 == Validation
 
-VIATRA provides facilities to create validation rules based on the pattern language of the framework. These rules can be evaluated on various EMF instance models and upon violations of constraints, markers are automatically created in the Eclipse Problems View.
+VIATRA provides facilities to create validation rules based on the pattern language of the framework. These rules can be evaluated on various EMF instance models and upon violations of constraints, markers are automatically created in the Eclipse Problems View. 
 
-The *@Constraint* annotation can be used to mark a pattern as a validation rule. If the framework finds at least one pattern with such annotation.
-
-Annotation parameters:
+The *@Constraint* annotation can be used to derive a validation rule from a graph pattern as a validation rule. The pattern of the rule identifies the erroneous model elements, while the annotation parameters provides information about how to present the results in the user interface. The annotation uses the following parameters:
 
 * _key:_ The list of paremeters which determine which objects the constraint violation needs to be attached to.
 * _message:_ The message to display when the constraint violation is found. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.
 * _severity:_ "warning" or "error"
-* _targetEditorId:_ An Eclipse editor ID where the validation framework should register itself to the context menu. Use "*" as a wildcard if the constraint should be used always when validation is started.
+* _targetEditorId:_ An Eclipse editor ID where the validation framework should register itself to the context menu. Use ` * ` as a wildcard if the constraint should be used always when validation is started.
 
-To find a specific editor id, we can use the _Plug-in Selection Spy_ tool with a kbd:[Shift+Alt+F1] shortcut.
+NOTE: To find a specific editor id, we can use the _Plug-in Selection Spy_ tool with a kbd:[Shift+Alt+F1] shortcut. For a few generic editors, such as the *Sample Reflective Ecore Editor*, the framework by default provides such a registration option, no manual registration is necessary. 
 
 For example:
 
@@ -220,8 +218,10 @@ pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp : java 
 }
 ----
 
+When adding such a constraint annotation to a graph pattern, the code generator initializes a validation project that includes and registers the rules derived from the patterns for the framework. These rules can be tried out by opening a new, runtime Eclipse instance, opening an erroneous instance model in the model editor (the same one added to the `targetEditorId` parameter), and starting the validation from the popup menu items under *VIATRA Validation*.
+
 == References
 
 * link:query-language.html[Pattern Language]
-* Validation Framework: https://wiki.eclipse.org/VIATRA/Addons/UserDocumentation/Validation
-* Query Based Features: https://wiki.eclipse.org/VIATRA/Addons/UserDocumentation/Query_Based_Features
+* link:addons.html#viatra-validation[Validation Framework]
+* link:addons.html#viatra-qbf[Query Based Features]

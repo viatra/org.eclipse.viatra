@@ -80,13 +80,13 @@ The most important new features are as follows:
 * Show location works for queries, matchers, matches and parameter values
 * Improved labeling in the tree (reuse domain specific icons for EMF model elements)
 * Match set filtering is possible through the Properties view
-image::releases/14_query-ui-matcher_filter.png[]
+image:releases/14_query-ui-matcher_filter.png[]
 * Drag-and-drop and double click for loading from Query Registry into Query Results
 * HiDPI icons for high-resolution, scaled displays.
 * Load existing managed query engines into the Query Results view
-image::releases/14_query-ui-open_managed_engine.png[]
+image:releases/14_query-ui-open_managed_engine.png[]
 * Tree view for engine details including the model, engine options, base index options
-image::releases/14_managed_engine_selection.png[]
+image:releases/14_managed_engine_selection.png[]
 * Remove individual matchers from Query Results
 
 
