@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "asciidoc-website",
+            "type": "shell",
+            "command": "mvn -B -o generate-resources -Dasciidoc.highligher=highlight.js -Dasciidoc.header=false -Dasciidoc.toc=false",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "taskName": "asciidoc",
+            "type": "shell",
+            "command": "mvn -B -o generate-resources",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

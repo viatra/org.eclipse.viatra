@@ -62,7 +62,7 @@ To use VIATRA Query features, add the repository and the required dependencies t
 </repositories>
 ----
 
-== viatra-maven-plugin ==
+== viatra-maven-plugin
 
 The maven plugin requires information from the used EMF packages and additionally the EMF packages should be able loaded as well. For this reason, it is important to add references to EPackages and Genmodels together with the corresponding dependencies.
 
@@ -74,7 +74,7 @@ Since 1.5, it is possible to use the project dependencies without declaring them
 * Explicit dependency declarations are transitive, so you don't need to specify all dependencies in all POM.XML files. Note that in some cases you need to add extra dependencies with specific versions (e.g. emf.core) if your genmodel requires a higher version than what is provided by the viatra-maven-plugin. This way you can redefine the EMF versions used by the generator.
 * If a pattern file in a Maven project imports patterns from another project on which it depends, make sure that the files containing the imported patterns are included in the dependency's Maven artifact.
 
-.Example POM.XML (based on link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/frameworktests/org.eclipse.viatra.gui.tests.queries/pom.xml[CPS example])
+.Example POM.XML (based on link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/tests/org.eclipse.viatra.query.runtime.cps.tests/pom.xml[CPS example])
 [source,xml]
 ----
 <pluginRepositories>
@@ -152,7 +152,7 @@ Since 1.5, it is possible to use the project dependencies without declaring them
 </build>
 ----
 
-=== Troubleshooting ===
+=== Troubleshooting
 
 .Cyclic linking
 In a project that contains multiple pattern definition files, there is a slight chance you get an error message like follows:
@@ -193,7 +193,7 @@ pattern myPattern(...) {
 
 You have to rename `util.vql` to `a_util.vql` and `logic.vql` to `b_logic.vql`, so that the former is processed before the latter.
 
-.Ambyguous types
+.Ambiguous types
 
 If you get type errors during validation such as `ERROR:foo cannot be resolved.` or `ERROR:Ambiguous variable type defintions: [Foo, Bar], type cannot be selected` although the query files are valid in Eclipse, check the cross-references in your ecore/genmodel files by opening them with a text editor. If their URIs are workspace-based, i.e. they start with `platform:/resource`, you have to map those URIs to absolute `file:` URIs by including URI mappings in the viatra-maven-plugin configuration (since 1.6):
 
@@ -224,7 +224,8 @@ If you get the error
 `ERROR:Variable foo has a type Foo which has multiple definitions: 'file://C:\project\model/../../anotherProject/model/usedMetamodel.ecore' --  'file://C:\project\../anotherProject/model/usedMetamodel.ecore'`
 make sure that the genmodelUri in the viatra-maven-plugin's configuration is *exactly* the same as the URI in your .genmodel file, e.g. if your `metamodel.ecore` resides in the `model` subfolder, this will be the configuration with the correct relative URI:
 
-<source lang="xml">
+[source,xml]
+----
 <plugin>
 	<groupId>org.eclipse.viatra</groupId>
 	<artifactId>viatra-maven-plugin</artifactId>
@@ -236,6 +237,6 @@ make sure that the genmodelUri in the viatra-maven-plugin's configuration is *ex
 		</metamodels>
 	</configuration>
 </plugin>
-</source>
+----
 
 NOTE: The URIs should be the same *after* URI mapping if used.

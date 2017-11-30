@@ -1,0 +1,28 @@
+= Query Development Tools in VIATRA
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
+
+:imagesdir: {rootdir}/images
+:toclevels: 2
+:toc:
+:toc-placement: macro
+:numbered:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
+
+
+
+toc::[]
+
+include::tools/query-tests.adoc[leveloffset=+1]
+
+<<<
+include::tools/query-profiling.adoc[leveloffset=+1]
+
+<<<
+include::tools/maven.adoc[leveloffset=+1]

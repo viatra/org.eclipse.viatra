@@ -11,6 +11,10 @@
     </parent>
     <artifactId>org.eclipse.viatra.documentation.help</artifactId>
     <packaging>eclipse-plugin</packaging>
+    <properties>
+        <asciidoc.highligher>coderay</asciidoc.highligher>
+        <asciidoc.header>true</asciidoc.header>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -40,148 +44,14 @@
                         </goals>
                         <configuration>
                             <backend>html5</backend>	
-                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <sourceHighlighter>${asciidoc.highlighter}</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
                             <attributes>
                                 <linkcss>true</linkcss>
                                 <last-update-label>false</last-update-label>
-                                <toc>false</toc>
                             </attributes>
-                            <!-- <headerFooter>false</headerFooter>  -->			
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-tutorial</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>tutorial.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-releases</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>releases.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-query-api</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>query-api.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-vql</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>query-language.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-evm</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>evm.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-transformations</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>transformations.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-addons</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDocumentName>addons.adoc</sourceDocumentName>
-                            <backend>html5</backend>	
-                            <sourceHighlighter>highlight.js</sourceHighlighter>
-                            <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>
-                            <headerFooter>true</headerFooter>	
-                            <attributes>
-                                <linkcss>true</linkcss>
-                                <last-update-label>false</last-update-label>
-                            </attributes>
+                            <headerFooter>${asciidoc.header}</headerFooter>
                         </configuration>
                     </execution>
                 </executions>

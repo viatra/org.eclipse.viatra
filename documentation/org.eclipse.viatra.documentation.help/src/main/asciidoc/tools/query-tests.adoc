@@ -118,7 +118,7 @@ public class CustomIntegerAccess extends JavaObjectAccess{
 
 === Coverage analysis and reporting ===
 
-Since 1.6 (see {{bug|514628}}), you can add analyzers to a test object which measure various metrics of query execution. For example, you can analyze coverage during testing:
+Starting with VIATRA 1.6 (see link:http://bugs.eclipse.org/514628[bug 514628]), you can add analyzers to a test object which measure various metrics of query execution. For example, you can analyze coverage during testing:
 
 [source,xtend]
 ----  
