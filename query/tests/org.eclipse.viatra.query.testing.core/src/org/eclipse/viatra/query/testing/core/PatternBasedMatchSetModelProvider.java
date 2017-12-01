@@ -54,7 +54,7 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
      * 
      * @since 1.6
      */
-    protected AdvancedViatraQueryEngine getOrCreateEngine(EMFScope scope) throws ViatraQueryException{
+    protected AdvancedViatraQueryEngine getOrCreateEngine(EMFScope scope) {
         if (engine == null) {
             engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope, getEngineOptions());
         }

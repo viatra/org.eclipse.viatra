@@ -56,7 +56,7 @@ public class EventDrivenTransformation {
         private List<IEVMAdapter> adapters = Lists.newArrayList();
         private List<IEVMListener> listeners = Lists.newArrayList();
 
-        public EventDrivenTransformationBuilder setScope(EMFScope scope) throws ViatraQueryException {
+        public EventDrivenTransformationBuilder setScope(EMFScope scope) {
             this.engine = ViatraQueryEngine.on(scope);
             return this;
         }
