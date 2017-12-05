@@ -130,10 +130,9 @@ public class QueryExplorerPatternRegistry {
      * @param patternModel
      *            the parsed pattern model
      * @return the list of patterns registered
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      */
-    public Set<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel)
-            throws ViatraQueryException {
+    public Set<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel) {
         List<IQuerySpecification<?>> allCreatedSpecifications = Lists.newArrayList();
         Set<IQuerySpecification<?>> activeSpecifications = Sets.newLinkedHashSet();
 

@@ -17,7 +17,6 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
@@ -102,7 +101,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
     protected abstract Object getTarget(Tuple frame);
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         // Note: second parameter is NOT bound during execution, but the first is
         IQueryResultProvider matcher = context.getMatcher(information.getReference());
 

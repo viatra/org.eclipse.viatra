@@ -60,8 +60,7 @@ public class PatternParsingUtil {
      *         parsed completely
      * @since 1.7
      */
-    public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString)
-            throws ViatraQueryException {
+    public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString) {
         return parsePatternDefinitions(patternString).getQuerySpecifications();
     }
 
@@ -70,8 +69,7 @@ public class PatternParsingUtil {
      *         parsed completely
      * @since 1.7
      */
-    public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString, Injector injector)
-            throws ViatraQueryException {
+    public static Iterable<IQuerySpecification<?>> parseQueryDefinitions(String patternString, Injector injector) {
         return parsePatternDefinitions(patternString, injector).getQuerySpecifications();
     }
 }

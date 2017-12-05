@@ -71,7 +71,7 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
     }
 
     @Override
-    public void checkSanity() throws QueryProcessingException {
+    public void checkSanity() {
         super.checkSanity();
         for (Object obj : this.actualParametersTuple.getDistinctElements()) {
             PVariable var = (PVariable) obj;

@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * @author Gabor Bergmann
@@ -85,7 +84,7 @@ public abstract class BasePConstraint implements PConstraint {
     }
 
     @Override
-    public void checkSanity() throws QueryProcessingException {
+    public void checkSanity() {
     }
 
     public PBody getPSystem() {

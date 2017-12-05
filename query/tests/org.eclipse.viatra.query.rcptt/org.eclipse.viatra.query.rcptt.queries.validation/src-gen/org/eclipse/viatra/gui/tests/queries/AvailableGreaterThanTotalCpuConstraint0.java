@@ -23,7 +23,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import org.eclipse.viatra.gui.tests.queries.util.AvailableGreaterThanTotalCpuQuerySpecification;
 
@@ -31,7 +30,7 @@ public class AvailableGreaterThanTotalCpuConstraint0 implements IConstraintSpeci
 
     private AvailableGreaterThanTotalCpuQuerySpecification querySpecification;
 
-    public AvailableGreaterThanTotalCpuConstraint0() throws ViatraQueryException {
+    public AvailableGreaterThanTotalCpuConstraint0() {
         querySpecification = AvailableGreaterThanTotalCpuQuerySpecification.instance();
     }
 

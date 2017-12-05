@@ -56,7 +56,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     }
     protected final PQuery wrappedPQuery;
     
-    protected abstract Matcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException;
+    protected abstract Matcher instantiate(ViatraQueryEngine engine);
 
     /**
      * For backward compatibility of code generated with previous versions of viatra query, this method has a default
@@ -66,7 +66,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
      * @since 1.4
      */
     @Override
-    public Matcher instantiate() throws ViatraQueryException{
+    public Matcher instantiate() {
         return null;
     }
     
@@ -87,7 +87,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     }
 
     @Override
-    public Matcher getMatcher(ViatraQueryEngine engine) throws ViatraQueryException {
+    public Matcher getMatcher(ViatraQueryEngine engine) {
         ensureInitializedInternal();
         if (wrappedPQuery.getStatus() == PQueryStatus.ERROR) {
 
@@ -115,40 +115,9 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
         return instantiate(engine);
     }
 
-    protected void ensureInitializedInternal() throws ViatraQueryException {
-        try {
-            wrappedPQuery.ensureInitialized();
-        } catch (QueryInitializationException e) {
-            throw new ViatraQueryException(e);
-        }
+    protected void ensureInitializedInternal() {
+        wrappedPQuery.ensureInitialized();
     }
-    protected void ensureInitializedInternalSneaky() {
-        try {
-            wrappedPQuery.ensureInitialized();
-        } catch (QueryInitializationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    
-
-    // // EXPERIMENTAL
-    //
-    // @Override
-    // public Matcher getMatcher(TransactionalEditingDomain trDomain) throws ViatraQueryException {
-    // return getMatcher(trDomain, 0);
-    // }
-    //
-    // @Override
-    // public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws ViatraQueryException {
-    // try {
-    // ViatraQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
-    // return instantiate(engine);
-    // } catch (RetePatternBuildException e) {
-    // throw new ViatraQueryException(e);
-    // }
-    // }
-    
     
     // // DELEGATIONS
     

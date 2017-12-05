@@ -54,6 +54,7 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -500,7 +501,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
             }
         }
         //Shall never be executed
-        throw new RuntimeException("Expression not found in pattern")
+        throw new QueryProcessingException("Expression not found in pattern", pattern)
     }
     
     /**

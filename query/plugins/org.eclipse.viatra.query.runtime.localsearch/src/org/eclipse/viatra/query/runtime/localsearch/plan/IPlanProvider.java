@@ -13,8 +13,8 @@ package org.eclipse.viatra.query.runtime.localsearch.plan;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * @author Grill Balázs
@@ -24,8 +24,9 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
 public interface IPlanProvider {
 
     /**
+     * @throws ViatraQueryRuntimeException
      * @since 1.7
      */
-    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, LocalSearchHints configuration, MatcherReference key) throws QueryProcessingException;
+    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, LocalSearchHints configuration, MatcherReference key);
     
 }

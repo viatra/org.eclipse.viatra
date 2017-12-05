@@ -23,7 +23,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import org.eclipse.viatra.gui.tests.queries.util.TargetStateNotContainedBySameStateMachineQuerySpecification;
 
@@ -31,7 +30,7 @@ public class TargetStateNotContainedBySameStateMachineConstraint0 implements ICo
 
     private TargetStateNotContainedBySameStateMachineQuerySpecification querySpecification;
 
-    public TargetStateNotContainedBySameStateMachineConstraint0() throws ViatraQueryException {
+    public TargetStateNotContainedBySameStateMachineConstraint0() {
         querySpecification = TargetStateNotContainedBySameStateMachineQuerySpecification.instance();
     }
 

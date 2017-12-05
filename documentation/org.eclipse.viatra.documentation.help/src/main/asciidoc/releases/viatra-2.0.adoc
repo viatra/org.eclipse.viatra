@@ -6,17 +6,20 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == Migrating to VIATRA 2.0
 
-.Dependency updates
-
+=== Dependency updates
 Update minimum version of required dependencies 
 
-.Deprecated code removal
+=== Deprecated code removal
 
-All code marked as deprecated has been removed from the codebase.
-
-.Further removal
+All code marked as deprecated has been removed from the codebase. Additionally, further components were removed
 * CEP has been removed
 * Xcore integration has been removed
 * C++ local search implementatation has been removed
 * Query-by-example has been removed
 * EVM-JDT integration has been removed
+
+=== Exception handling consolidation
+Before VIATRA 2.0, the various APIs of the Query component threw a set of different *checked* exceptions: ViatraQueryException, ViatraBaseException and QueryProcessingException (and specialized versions of them). For version 2.0, these exceptions were updated in two ways:
+
+1. All of them are now runtime exceptions, making it unnecessary to explicitly catch them. This makes it easier to put query processing code into lambda expressions, however, makes it entirely the developers responsibility to handle these exceptions as they happen.
+2. All of them have now a common base exception called ViatraQueryRuntimeException - this class can be used anywhere in catch blocks if appropriate.

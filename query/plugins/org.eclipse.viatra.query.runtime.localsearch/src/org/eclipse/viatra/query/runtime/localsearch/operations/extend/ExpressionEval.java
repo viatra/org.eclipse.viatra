@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
@@ -43,7 +42,7 @@ public class ExpressionEval extends ExtendOperation<Object> {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         try {
             Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
             if (result != null){

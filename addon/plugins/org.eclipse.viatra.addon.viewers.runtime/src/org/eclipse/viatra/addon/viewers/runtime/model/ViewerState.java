@@ -84,7 +84,7 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
         }
     }
 
-    private Collection<ViewModelRule> collectRules(ViewerDataModel model) throws QueryInitializationException {
+    private Collection<ViewModelRule> collectRules(ViewerDataModel model) {
 
         Collection<ViewModelRule> rules = Lists.newArrayList();
         for (IQuerySpecification<?> pattern : model.getPatterns()) {

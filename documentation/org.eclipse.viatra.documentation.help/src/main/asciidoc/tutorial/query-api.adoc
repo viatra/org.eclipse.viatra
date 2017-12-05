@@ -62,7 +62,7 @@ To initialize a query engine, as first step an EMF scope has to be loaded. This 
 [[query-runtime-scope]]
 [source,java]
 ----
-private EMFScope initializeModelScope() throws IOException, ViatraQueryException {
+private EMFScope initializeModelScope() throws IOException {
 	ResourceSet rs = new ResourceSetImpl();
 	Resource res = rs.createResource(URI.createPlatformPluginURI("org.eclipse.viatra.examples.cps.queries/example.cyberphysicalsystem", false));
 	res.load(new HashMap<>());
@@ -77,7 +77,7 @@ Additionally, it is recommended to prepare the engine with all queries that will
 [[query-runtime-prepare]]
 [source,java]
 ----
-private ViatraQueryEngine prepareQueryEngine(EMFScope scope) throws ViatraQueryException {
+private ViatraQueryEngine prepareQueryEngine(EMFScope scope) {
 	// Access managed query engine
     ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
 	
@@ -97,7 +97,7 @@ The easiest way to use all the query engine is to ask for all matches of a query
 [[query-runtime-printallmatches]]
 [source,java]
 ----
-private void printAllMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printAllMatches(ViatraQueryEngine engine) {
     // Access pattern matcher
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     // Get and iterate over all matches
@@ -115,7 +115,7 @@ It is also possible to use a more functional style processing of matches using m
 [[query-runtime-printallmatches2]]
 [source,java]
 ----
-private void printAllMatches2(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printAllMatches2(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     matcher.forEachMatch(new HostIpAddressProcessor() {
         
@@ -132,7 +132,7 @@ When using Java 8, the same functionality can be accessed using lambda functions
 [[query-runtime-printallmatches3]]
 [source,java]
 ----
-private void printAllMatches3(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printAllMatches3(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     // The lambda method implements IMatchProcessor<HostIpAddressMatch>
     matcher.forEachMatch((match) -> {
@@ -146,7 +146,7 @@ Often it is beneficial to check for and process only a single match. For this re
 [[query-runtime-printonematch]]
 [source,java]
 ----
-private void printOneMatch(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printOneMatch(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     System.out.println(matcher.getOneArbitraryMatch());
 }
@@ -159,7 +159,7 @@ The generated matchers also include a few methods to access values of the parame
 [[query-runtime-printalladdresses]]
 [source,java]
 ----
-private void printAllAddresses(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printAllAddresses(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     for (String ip : matcher.getAllValuesOfip()) {
         System.out.println(ip);
@@ -175,7 +175,7 @@ All matcher functionality supports filtering the matches with constants. By sett
 [[query-runtime-printfilteredmatches]]
 [source,java]
 ----
-private void printFilteredMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printFilteredMatches(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     for (HostIpAddressMatch match : matcher.getAllMatches(null, "152.66.102.2")) {
         System.out.println(match.prettyPrint());
@@ -190,7 +190,7 @@ If a filter condition has to be reused, it is possible to create mutable matches
 [[query-runtime-printfilteredmatches2]]
 [source,java]
 ----
-private void printFilteredMatches2(ViatraQueryEngine engine) throws ViatraQueryException {
+private void printFilteredMatches2(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     HostIpAddressMatch filterMatch = HostIpAddressMatch.newEmptyMatch();
 	filterMatch.setIp("152.66.102.3");
@@ -205,7 +205,7 @@ Finally, if we are only interested in whether there exist any match fulfilling t
 [[query-runtime-countmatches]]
 [source,java]
 ----
-private void countMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+private void countMatches(ViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     System.out.printf("Count matches: %d %n", matcher.countMatches());
     System.out.printf("Has matches: %b %n", matcher.hasMatch(HostIpAddressMatch.newEmptyMatch()));
@@ -223,7 +223,7 @@ There are cases where the standard engine lifecycle is inappropriate, e.g. the m
 [[query-runtime-prepareadvanced]]
 [source,java]
 ----
-private AdvancedViatraQueryEngine prepareAdvancedQueryEngine(EMFScope scope) throws ViatraQueryException {
+private AdvancedViatraQueryEngine prepareAdvancedQueryEngine(EMFScope scope) {
     AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
     
     // Initialize all queries on engine
@@ -256,7 +256,7 @@ IMatchUpdateListener<HostIpAddressMatch> listener = new IMatchUpdateListener<Hos
     }
 };
 
-private void addChangeListener(AdvancedViatraQueryEngine engine) throws ViatraQueryException {
+private void addChangeListener(AdvancedViatraQueryEngine engine) {
     HostIpAddressMatcher matcher = HostIpAddressMatcher.on(engine);
     
     try {
@@ -286,7 +286,7 @@ In addition to Rete-based incremental query evaluation VIATRA also includes a lo
 [[query-runtime-localsearch]]
 [source,java]
 ----
-private void queryWithLocalSearch(AdvancedViatraQueryEngine engine) throws ViatraQueryException {
+private void queryWithLocalSearch(AdvancedViatraQueryEngine engine) {
     QueryEvaluationHint hint = LocalSearchHints.getDefault().build();
     HostIpAddressMatcher matcher = engine.getMatcher(HostIpAddressQuerySpecification.instance(), hint);
     

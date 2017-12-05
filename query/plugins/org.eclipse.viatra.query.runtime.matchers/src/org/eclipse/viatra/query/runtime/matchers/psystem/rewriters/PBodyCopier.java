@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
@@ -162,7 +163,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         } else if (constraint instanceof ExpressionEvaluation) {
             copyExpressionEvaluationConstraint((ExpressionEvaluation) constraint);
         } else {
-            throw new RuntimeException("Unknown PConstraint encountered while copying PBody: " + constraint.getClass().getName());
+            throw new QueryProcessingException("Unknown PConstraint {0} encountered while copying PBody", new String[] {constraint.getClass().getName()}, "Unknown PConstraint", body.getPattern());
         }
     }
 

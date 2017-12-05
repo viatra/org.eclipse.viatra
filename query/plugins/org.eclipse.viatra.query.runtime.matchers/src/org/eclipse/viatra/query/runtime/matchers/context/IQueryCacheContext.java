@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.context;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -34,6 +34,8 @@ public interface IQueryCacheContext {
      * <p> <b>Caution:</b> behavior undefined if called while the caching result provider of the given query is being constructed. 
      *   Beware of infinite loops. 
      * <p> <b>Postcondition:</b> {@link IQueryBackend#isCaching()} returns true for the {@link #getQueryBackend()} of the returned provider
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    public IQueryResultProvider getCachingResultProvider(PQuery query) throws QueryProcessingException;
+    public IQueryResultProvider getCachingResultProvider(PQuery query);
 }

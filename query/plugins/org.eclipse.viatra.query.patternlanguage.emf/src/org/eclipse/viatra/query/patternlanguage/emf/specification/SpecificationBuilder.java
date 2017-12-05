@@ -29,8 +29,8 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
@@ -39,7 +39,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 
@@ -124,10 +123,10 @@ public class SpecificationBuilder {
      * not be called with different patterns having the same fqn over its entire lifecycle.
      *
      * @param pattern
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
-            Pattern pattern) throws ViatraQueryException {
+            Pattern pattern) {
         return getOrCreateSpecification(pattern, false);
     }
 
@@ -139,15 +138,15 @@ public class SpecificationBuilder {
      * @param skipPatternValidation
      *            if set to true, detailed pattern validation is skipped - true for model inferrer; not recommended for
      *            generic API
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
-            Pattern pattern, boolean skipPatternValidation) throws ViatraQueryException {
+            Pattern pattern, boolean skipPatternValidation) {
         return getOrCreateSpecification(pattern, Lists.<IQuerySpecification<?>>newArrayList(), skipPatternValidation);
     }
 
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
-            Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) throws ViatraQueryException {
+            Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) {
         Preconditions.checkArgument(pattern != null && !pattern.eIsProxy(), "Cannot create specification from a null pattern");
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         Preconditions.checkArgument(fqn != null && !"".equals(fqn), "Pattern name cannot be empty");
@@ -155,25 +154,20 @@ public class SpecificationBuilder {
                 "This builder already contains a different pattern with the fqn %s of the newly added pattern.", fqn);
         IQuerySpecification<?> specification = getSpecification(pattern);
         if (specification == null) {
-            try {
-                specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
-            } catch (QueryInitializationException e) {
-                throw new ViatraQueryException(e);
-            }
+            specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
         }
         return specification;
     }
 
-    protected IQuerySpecification<?> buildSpecification(Pattern pattern) throws QueryInitializationException {
+    protected IQuerySpecification<?> buildSpecification(Pattern pattern) {
         return buildSpecification(pattern, false, Lists.<IQuerySpecification<?>>newArrayList());
     }
 
-    protected IQuerySpecification<?> buildSpecification(Pattern pattern, List<IQuerySpecification<?>> newSpecifications) throws QueryInitializationException {
+    protected IQuerySpecification<?> buildSpecification(Pattern pattern, List<IQuerySpecification<?>> newSpecifications) {
         return buildSpecification(pattern, false, newSpecifications);
     }
 
-    protected IQuerySpecification<?> buildSpecification(Pattern pattern, boolean skipPatternValidation, List<IQuerySpecification<?>> newSpecifications)
-            throws QueryInitializationException {
+    protected IQuerySpecification<?> buildSpecification(Pattern pattern, boolean skipPatternValidation, List<IQuerySpecification<?>> newSpecifications) {
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         Preconditions.checkArgument(!patternMap.containsKey(fqn), "Builder already stores query with the name of %s",
                 fqn);
@@ -252,13 +246,19 @@ public class SpecificationBuilder {
         }
     }
 
-    public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) {
         Set<PBody> bodies = getBodies(pattern, query);
         query.initializeBodies(bodies);
         return bodies;
     }
 
-    public Set<PBody> getBodies(Pattern pattern, PQuery query) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public Set<PBody> getBodies(Pattern pattern, PQuery query) {
         PatternBodyTransformer transformer = new PatternBodyTransformer(pattern);
         Set<PBody> pBodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {

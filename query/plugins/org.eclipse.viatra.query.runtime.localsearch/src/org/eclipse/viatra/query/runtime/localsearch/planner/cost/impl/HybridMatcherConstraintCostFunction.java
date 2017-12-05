@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
@@ -40,7 +39,7 @@ import com.google.common.collect.Iterables;
 public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintCostFunction {
     
     @Override
-    protected double _calculateCost(PositivePatternCall patternCall, IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(PositivePatternCall patternCall, IConstraintEvaluationContext input) {
         // Determine local constant constraints which is used to filter results
         Tuple variables = patternCall.getVariablesTuple();
         Set<Object> variablesSet = variables.getDistinctElements();

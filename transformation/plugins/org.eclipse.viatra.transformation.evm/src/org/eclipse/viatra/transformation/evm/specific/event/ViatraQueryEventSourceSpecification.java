@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
@@ -48,7 +47,7 @@ public class ViatraQueryEventSourceSpecification<Match extends IPatternMatch> im
         return querySpecification;
     }
     
-    protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) throws ViatraQueryException {
+    protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) {
         ViatraQueryMatcher<Match> matcher = querySpecification.getMatcher(engine);
         return matcher;
     }

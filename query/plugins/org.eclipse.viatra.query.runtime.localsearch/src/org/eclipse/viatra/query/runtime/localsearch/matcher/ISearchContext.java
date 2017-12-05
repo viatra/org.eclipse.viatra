@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.IAdornmentProvider;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
@@ -61,10 +62,10 @@ public interface ISearchContext {
      * Returns a matcher for a selected query specification.
      * 
      * @param reference
-     * @throws QueryProcessingException 
+     * @throws ViatraQueryRuntimeException
      * @since 1.5
      */
-    IQueryResultProvider getMatcher(MatcherReference reference) throws LocalSearchException;
+    IQueryResultProvider getMatcher(MatcherReference reference);
     
     /**
      * Allows search operations to cache values through the entire lifecycle of the local search backend. The values are
@@ -109,11 +110,11 @@ public interface ISearchContext {
         }
         
         /**
-         * @throws QueryProcessingException 
+         * @throws ViatraQueryRuntimeException
          * @since 1.5
          */
         @Override
-        public IQueryResultProvider getMatcher(final MatcherReference reference) throws LocalSearchException {
+        public IQueryResultProvider getMatcher(final MatcherReference reference) {
             // Inject adornment for referenced pattern
             IAdornmentProvider adornmentProvider = new IAdornmentProvider() {
                 

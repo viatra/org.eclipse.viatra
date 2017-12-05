@@ -4,7 +4,7 @@ Bundle-Name: org.eclipse.viatra.query.rcptt.queries.validation
 Bundle-SymbolicName: org.eclipse.viatra.query.rcptt.queries.validation;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Require-Bundle: org.eclipse.viatra.query.rcptt.queries,
- com.google.guava,
- org.eclipse.viatra.query.runtime,
- org.eclipse.viatra.addon.validation.core
+  com.google.guava,
+  org.eclipse.viatra.query.runtime,
+  org.eclipse.viatra.addon.validation.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

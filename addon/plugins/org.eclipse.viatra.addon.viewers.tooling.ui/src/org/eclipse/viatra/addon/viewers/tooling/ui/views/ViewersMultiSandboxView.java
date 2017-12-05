@@ -90,8 +90,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     private ViewersMultiSandboxViewComponent currentComponent;
     SashForm container;
     
-    public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter)
-            throws ViatraQueryException {
+    public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) {
         if (model != null) {
             defaultComponent.initializeContents(model, queries, filter);
             for (ViewersMultiSandboxViewComponent c : additionalComponents) {

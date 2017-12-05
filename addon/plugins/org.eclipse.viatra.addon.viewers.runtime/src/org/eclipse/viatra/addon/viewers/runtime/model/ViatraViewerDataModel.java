@@ -44,10 +44,9 @@ public class ViatraViewerDataModel extends ViewerDataModel {
      * 
      * @param patterns
      * @param engine
-     * @throws ViatraQueryException
-     * @throws ViatraBaseException
+     * @throws ViatraQueryRuntimeException
      */
-    public ViatraViewerDataModel(Collection<IQuerySpecification<?>> patterns, ViatraQueryEngine engine) throws ViatraQueryException, ViatraBaseException {
+    public ViatraViewerDataModel(Collection<IQuerySpecification<?>> patterns, ViatraQueryEngine engine) {
         super(engine);
         this.patterns = Sets.newHashSet(patterns);
         this.logger = ViatraQueryLoggingUtil.getLogger(getClass());

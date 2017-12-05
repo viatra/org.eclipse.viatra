@@ -48,7 +48,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         if(!(feature instanceof EReference)){
             throw new LocalSearchException("Without base index, inverse navigation only possible along "
                     + "EReferences with defined EOpposite.");

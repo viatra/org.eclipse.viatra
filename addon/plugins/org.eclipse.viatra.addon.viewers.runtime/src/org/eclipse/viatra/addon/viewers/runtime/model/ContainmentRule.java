@@ -23,8 +23,8 @@ import org.eclipse.viatra.addon.viewers.runtime.specifications.ContainmentQueryS
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
@@ -46,8 +46,11 @@ public class ContainmentRule extends ViewModelRule {
         this.filter = filter;
     }
 
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
     public static ContainmentRule initiate(IQuerySpecification<?> specification, PAnnotation annotation,
-            ViewerState state, ViewerDataFilter filter) throws QueryInitializationException {
+            ViewerState state, ViewerDataFilter filter) {
         ContainmentQuerySpecificationDescriptor descriptor = new ContainmentQuerySpecificationDescriptor(specification,
                 annotation);
         return new ContainmentRule(descriptor, state, filter);

@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -82,10 +82,10 @@ public class SolutionTrajectory {
      * 
      * @param model
      *            The model.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             If the VIATRA Query fails to initialize.
      */
-    public void setModel(Notifier model) throws ViatraQueryException {
+    public void setModel(Notifier model) {
         editingDomain = null;
         EMFScope scope = new EMFScope(model);
         this.engine = ViatraQueryEngine.on(scope);
@@ -116,10 +116,10 @@ public class SolutionTrajectory {
      * 
      * @param modelRoot
      *            The root of the model.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             If the VIATRA Query fails to initialize.
      */
-    public void setModelWithEditingDomain(Notifier modelRoot) throws ViatraQueryException {
+    public void setModelWithEditingDomain(Notifier modelRoot) {
         setModel(modelRoot);
         editingDomain = EMFHelper.createEditingDomain(model);
     }
@@ -129,10 +129,10 @@ public class SolutionTrajectory {
      * 
      * @param modelRoot
      *            The root of the model.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             If the VIATRA Query fails to initialize.
      */
-    public void doTransformation(Notifier modelRoot) throws ViatraQueryException {
+    public void doTransformation(Notifier modelRoot) {
         setModel(modelRoot);
         doTransformation();
     }
@@ -144,10 +144,10 @@ public class SolutionTrajectory {
      * 
      * @param modelRoot
      *            The root of the model.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             If the VIATRA Query fails to initialize.
      */
-    public void doTransformationUndoable(Notifier modelRoot) throws ViatraQueryException {
+    public void doTransformationUndoable(Notifier modelRoot) {
         setModelWithEditingDomain(modelRoot);
         doTransformation();
     }
@@ -158,10 +158,10 @@ public class SolutionTrajectory {
      * 
      * @throws Exception
      *             If the activation to fire is not found. Possible problems: wrong model, bad state serializer.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             If the VIATRA Query fails to initialize.
      */
-    public void doTransformation() throws ViatraQueryException {
+    public void doTransformation() {
         while (doNextTransformation());
     }
 
@@ -169,9 +169,9 @@ public class SolutionTrajectory {
      * Transforms the given model by one step to the solution (makes one step in the trajectory). To initialize the
      * model call the {@link SolutionTrajectory#setModel(Notifier)} method.
      * 
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      */
-    public boolean doNextTransformation() throws ViatraQueryException {
+    public boolean doNextTransformation() {
         if (currentIndex >= activationCodes.size()) {
             return false;
         } else {
@@ -182,7 +182,7 @@ public class SolutionTrajectory {
     }
 
     @SuppressWarnings("unchecked")
-    private void doNextTransformation(int index) throws ViatraQueryException {
+    private void doNextTransformation(int index) {
         checkNotNull(model, "The model cannot be null! Use the setModel method.");
 
         // cast for the ".process(match)" method.

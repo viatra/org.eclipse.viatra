@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -53,7 +52,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
         frame.setValue(sourcePosition, null);
         frame.setValue(targetPosition, null);
         it = null;

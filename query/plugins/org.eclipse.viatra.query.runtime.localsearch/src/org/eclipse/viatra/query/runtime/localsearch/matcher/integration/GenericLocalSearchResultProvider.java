@@ -13,10 +13,10 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.GenericOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -26,13 +26,16 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public class GenericLocalSearchResultProvider extends AbstractLocalSearchResultProvider {
 
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
     public GenericLocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
-            IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
+            IPlanProvider planProvider, QueryEvaluationHint userHints) {
         super(backend, context, query, planProvider, userHints);
     }
 
     @Override
-    protected void indexInitializationBeforePlanning() throws QueryProcessingException {
+    protected void indexInitializationBeforePlanning() {
         super.indexInitializationBeforePlanning();
         
         indexReferredTypesOfQuery(query, IndexingService.INSTANCES);

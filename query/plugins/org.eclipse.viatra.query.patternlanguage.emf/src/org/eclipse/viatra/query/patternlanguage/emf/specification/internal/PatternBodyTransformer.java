@@ -54,10 +54,10 @@ import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.aggregators.count;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.XExpression;
@@ -90,9 +90,10 @@ public class PatternBodyTransformer {
     /**
      * Traverses the given {@link PatternBody}, making proper calls to the given {@link PatternModelAcceptor} during the
      * traversal, then returns the result of the acceptor.
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    public <Result> Result transform(PatternBody body, PatternModelAcceptor<Result> acceptor)
-            throws QueryInitializationException {
+    public <Result> Result transform(PatternBody body, PatternModelAcceptor<Result> acceptor) {
         try {
             preprocessVariables(body, acceptor);
             preprocessParameters(acceptor);

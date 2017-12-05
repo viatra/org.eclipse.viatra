@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -30,7 +31,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
@@ -62,9 +62,9 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
      *
      * @param pattern
      *            the pattern for which the matcher is to be constructed.
-     * @throws QueryInitializationException
+     * @throws ViatraQueryRuntimeException
      */
-    public GenericEMFPatternPQuery(Pattern pattern) throws QueryInitializationException {
+    public GenericEMFPatternPQuery(Pattern pattern) {
         this(pattern, false);
     }
 
@@ -77,9 +77,9 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
      *            true if the query is not created automatically - in this case before use the
      *            {@link #initializeBodies(Set) } method
      *
-     * @throws QueryInitializationException
+     * @throws ViatraQueryRuntimeException
      */
-    public GenericEMFPatternPQuery(Pattern pattern, boolean delayedInitialization) throws QueryInitializationException {
+    public GenericEMFPatternPQuery(Pattern pattern, boolean delayedInitialization) {
         super(CorePatternLanguageHelper.calculatePVisibility(pattern));
         this.pattern = pattern;
         if (delayedInitialization) {
@@ -171,7 +171,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     }
 
     @Override
-    protected Set<PBody> doGetContainedBodies() throws QueryInitializationException {
+    protected Set<PBody> doGetContainedBodies() {
         SpecificationBuilder specificationBuilder = new SpecificationBuilder();
         try {
             return specificationBuilder.getBodies(pattern, this);
@@ -181,12 +181,8 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
         }
     }
     
-    /**
-     * Sets up the bodies stored inside this query specification. Only available for uninitialized specifications.
-     * @param bodies a non-empty set of {@link PBody} instances
-     */
     @Override
-    public void initializeBodies(Set<PBody> bodies) throws QueryInitializationException {
+    public void initializeBodies(Set<PBody> bodies) {
         Preconditions.checkState(isMutable(), "The bodies can only be set for uninitialized queries.");
         if (bodies.isEmpty()) {
             addError(new PProblem("No bodies specified for query"));

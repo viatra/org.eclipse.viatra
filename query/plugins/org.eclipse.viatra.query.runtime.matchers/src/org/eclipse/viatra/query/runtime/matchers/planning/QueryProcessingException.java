@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.planning;
 
-import java.util.Arrays;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 
 /**
  * @author Zoltan Ujhelyi
  * @since 0.9
  */
-public class QueryProcessingException extends Exception {
+public class QueryProcessingException extends ViatraQueryRuntimeException {
 
     private static final long serialVersionUID = -8272290113656867086L;
     /**
@@ -36,11 +36,23 @@ public class QueryProcessingException extends Exception {
         return internal;
     }
     
-    protected Object patternDescription;
-    protected String templateMessage;
-    protected String[] templateContext;
+    private Object patternDescription;
+    private String shortMessage;
 
-    protected String shortMessage;
+    /**
+     * @param message
+     *            The template of the exception message
+     * @param context
+     *            The data elements to be used to instantiate the template. Can be null if no context parameter is
+     *            defined
+     * @param patternDescription
+     *            the PatternDescription where the exception occurred
+     * @since 2.0
+     */
+    public QueryProcessingException(String message, Object patternDescription) {
+        super(message);
+        initializeFields(message, patternDescription);
+    }
     
     /**
      * @param message
@@ -53,7 +65,7 @@ public class QueryProcessingException extends Exception {
      */
     public QueryProcessingException(String message, String[] context, String shortMessage, Object patternDescription) {
         super(bind(message, context));
-        initializeFields(message, context, shortMessage, patternDescription);
+        initializeFields(shortMessage, patternDescription);
     }
 
     /**
@@ -68,7 +80,7 @@ public class QueryProcessingException extends Exception {
     public QueryProcessingException(String message, String[] context, String shortMessage, Object patternDescription,
             Throwable cause) {
         super(bind(message, context), cause);
-        initializeFields(message, context, shortMessage, patternDescription);
+        initializeFields(shortMessage, patternDescription);
     }
     
     public Object getPatternDescription() {
@@ -79,18 +91,8 @@ public class QueryProcessingException extends Exception {
         return shortMessage;
     }
 
-    public String[] getTemplateContext() {
-        return Arrays.copyOf(templateContext, templateContext.length);
-    }
-
-    public String getTemplateMessage() {
-        return templateMessage;
-    }
-
-    private void initializeFields(String message, String[] context, String shortMessage, Object patternDescription) {
+    private void initializeFields(String shortMessage, Object patternDescription) {
         this.patternDescription = patternDescription;
-        this.templateMessage = message;
-        this.templateContext = context == null ? new String[0] : Arrays.copyOf(context, context.length);
         this.shortMessage = shortMessage;
     }
 

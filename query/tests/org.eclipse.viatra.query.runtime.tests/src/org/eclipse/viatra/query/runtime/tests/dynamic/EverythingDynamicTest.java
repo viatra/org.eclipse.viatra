@@ -42,7 +42,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,7 +49,7 @@ public class EverythingDynamicTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void everythingDynamic() throws ViatraQueryException {
+    public void everythingDynamic() {
         EMFPatternLanguagePlugin.getInstance().addCompoundInjector(new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration(), EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
 
         // Create the dynamic metamodel

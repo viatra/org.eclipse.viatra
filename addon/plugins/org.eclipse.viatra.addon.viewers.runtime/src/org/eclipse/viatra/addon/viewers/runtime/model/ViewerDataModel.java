@@ -25,9 +25,7 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.NotationModel;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.core.ViewModelManager;
 
@@ -47,11 +45,11 @@ public abstract class ViewerDataModel {
     protected NotationModel model;
     protected ViatraQueryEngine engine;
 
-    public ViewerDataModel(ResourceSet notifier) throws ViatraQueryException, ViatraBaseException {
+    public ViewerDataModel(ResourceSet notifier) {
         this(ViatraQueryEngine.on(new EMFScope(notifier)));
     }
 
-    public ViewerDataModel(ViatraQueryEngine engine) throws ViatraQueryException, ViatraBaseException {
+    public ViewerDataModel(ViatraQueryEngine engine) {
         if (!(engine.getScope() instanceof EMFScope)) {
             ViatraQueryLoggingUtil.getLogger(ViewModelManager.class).error(
                     "Only EMFScope is supported currently for ViatraQueryEngine");
@@ -63,7 +61,7 @@ public abstract class ViewerDataModel {
         prepareBaseNotifier();
     }
     
-    private void prepareBaseNotifier() throws ViatraQueryException, ViatraBaseException {
+    private void prepareBaseNotifier() {
 
         Collection<? extends Notifier> notifiers = getNotifiers();
         Resource resource = null;
@@ -113,7 +111,7 @@ public abstract class ViewerDataModel {
 
     public abstract Collection<IQuerySpecification<?>> getPatterns();
 
-    private Resource addNotationResource() throws ViatraQueryException, ViatraBaseException {
+    private Resource addNotationResource() {
         ResourceSet resourceSet = new ResourceSetImpl();
         Resource resource = resourceSet.createResource(URI.createURI(getNotationResourceId()));
         NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);

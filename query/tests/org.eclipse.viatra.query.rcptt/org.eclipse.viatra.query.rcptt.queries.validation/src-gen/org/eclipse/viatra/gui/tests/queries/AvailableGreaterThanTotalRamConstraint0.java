@@ -23,7 +23,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import org.eclipse.viatra.gui.tests.queries.util.AvailableGreaterThanTotalRamQuerySpecification;
 
@@ -31,7 +30,7 @@ public class AvailableGreaterThanTotalRamConstraint0 implements IConstraintSpeci
 
     private AvailableGreaterThanTotalRamQuerySpecification querySpecification;
 
-    public AvailableGreaterThanTotalRamConstraint0() throws ViatraQueryException {
+    public AvailableGreaterThanTotalRamConstraint0() {
         querySpecification = AvailableGreaterThanTotalRamQuerySpecification.instance();
     }
 

@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 
@@ -61,8 +61,9 @@ public abstract class GenericQuerySpecification<Matcher extends GenericPatternMa
     /**
      * Derived classes should use this implementation of {@link #instantiate(ViatraQueryEngine)} 
      * if they use {@link GenericPatternMatcher} proper.
+     * @throws ViatraQueryRuntimeException
      */
-    protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws ViatraQueryException {
+    protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) {
         return GenericPatternMatcher.instantiate(engine, this);
     }
 

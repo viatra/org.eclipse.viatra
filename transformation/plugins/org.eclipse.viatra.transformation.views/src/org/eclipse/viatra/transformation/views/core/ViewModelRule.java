@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -146,7 +146,10 @@ public abstract class ViewModelRule {
     }
     // - Event filter
 
-    public final void initialize(String traceabilityId) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public final void initialize(String traceabilityId) {
         descriptor.initialize(traceabilityId);
         filter = prepareFilter();
     }

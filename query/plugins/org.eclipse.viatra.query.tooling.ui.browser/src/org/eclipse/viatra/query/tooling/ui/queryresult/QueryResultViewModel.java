@@ -21,7 +21,6 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
@@ -47,7 +46,7 @@ public enum QueryResultViewModel {
         this.defaultHint = new QueryEvaluationHint(null, new ReteBackendFactory());
     }
     
-    protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) throws ViatraQueryException {
+    protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) {
         checkArgument(connector != null, "Connector cannot be null");
         checkArgument(type != null, "Type cannot be null");
         Notifier notifier = connector.getNotifier(type);

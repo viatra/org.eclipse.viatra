@@ -17,7 +17,6 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
@@ -55,14 +54,14 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IPat
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         super.onInitialize(frame, context);
         matcher = context.getMatcher(information.getReference());
         // Note: second parameter is NOT bound during execution, but the first is
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         Object targetValue = frame.get(targetPosition);
         Queue<Object> sourcesToEvaluate = new LinkedList<>();
         sourcesToEvaluate.add(frame.get(sourcePosition));

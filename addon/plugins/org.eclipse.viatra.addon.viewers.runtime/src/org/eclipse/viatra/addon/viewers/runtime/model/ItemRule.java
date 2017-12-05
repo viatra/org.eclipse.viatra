@@ -23,8 +23,8 @@ import org.eclipse.viatra.addon.viewers.runtime.util.LabelParser;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
@@ -38,16 +38,18 @@ public class ItemRule extends ViewModelRule {
     private final ViewerState state;
     private ViewerDataFilter baseFilter;
 
-    private ItemRule(ItemQuerySpecificationDescriptor descriptor, ViewerState state, ViewerDataFilter filter)
-            throws QueryInitializationException {
+    private ItemRule(ItemQuerySpecificationDescriptor descriptor, ViewerState state, ViewerDataFilter filter) {
         super(descriptor);
         this.state = state;
         this.descriptor = descriptor;
         this.baseFilter = filter;
     }
     
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
     public static ItemRule initiate(IQuerySpecification<?> specification, PAnnotation annotation, ViewerState state,
-            ViewerDataFilter filter) throws QueryInitializationException {
+            ViewerDataFilter filter) {
         ItemQuerySpecificationDescriptor descriptor = new ItemQuerySpecificationDescriptor(specification, annotation);
         return new ItemRule(descriptor, state, filter);
     }

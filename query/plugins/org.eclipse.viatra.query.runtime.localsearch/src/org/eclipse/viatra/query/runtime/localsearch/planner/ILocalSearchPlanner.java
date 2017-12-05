@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -33,9 +33,8 @@ public interface ILocalSearchPlanner {
      *            a set of bound parameters
      * @return a mapping between ISearchOperation list and a mapping, that holds a PVariable-Integer mapping for the
      *         list of ISearchOperations
-     * @throws QueryProcessingException
+     * @throws ViatraQueryRuntimeException
      */
-    Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters)
-            throws QueryProcessingException;
+    Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters);
 
 }

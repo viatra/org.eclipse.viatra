@@ -23,10 +23,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas;
@@ -55,11 +53,9 @@ public class ViewModelManager {
     /**
      * Initialize the manager.
      * 
-     * @throws ViatraQueryException
-     * @throws QueryInitializationException 
-     * @throws ViatraBaseException 
+     * @throws ViatraQueryRuntimeException
      */
-    public void initialize() throws ViatraQueryException, QueryInitializationException, ViatraBaseException {
+    public void initialize() {
 
         prepareBaseNotifier();
         traceability.setId(traceabilityId);
@@ -82,10 +78,9 @@ public class ViewModelManager {
 
     /**
      * Prepare the base notifier. Sets the ResourceSet and adds the traceability Resource.
-     * @throws ViatraBaseException 
-     * @throws ViatraQueryException 
+     * @throws ViatraQueryRuntimeException
      */
-    private void prepareBaseNotifier() throws ViatraQueryException, ViatraBaseException {
+    private void prepareBaseNotifier() {
 
         Collection<? extends Notifier> notifiers = getNotifiers();
         Resource resource = null;
@@ -124,7 +119,7 @@ public class ViewModelManager {
         return engine;
     }
 
-    private Resource addTraceabilityResource() throws ViatraQueryException, ViatraBaseException {
+    private Resource addTraceabilityResource() {
         ResourceSet resourceSet = new ResourceSetImpl();
         Resource resource = resourceSet.createResource(URI.createURI(getTraceabilityResourceId()));
         NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);

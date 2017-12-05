@@ -21,7 +21,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.PackageBasedQueryGroup;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.connector.SpecificationMapSourceConnector;
@@ -37,7 +36,7 @@ import com.google.common.collect.ImmutableSet;
 public class PackageBasedQueryGroupTest {
 
     @Test
-    public void simpleTest() throws ViatraQueryException {
+    public void simpleTest() {
         PackageBasedQueryGroup packageBasedQueryGroup = new PackageBasedQueryGroup("org.eclipse.viatra.integration.uml.derivedfeatures");
         Set<IQuerySpecification<?>> specifications = packageBasedQueryGroup.getSpecifications();
         assertFalse(specifications.isEmpty());
@@ -78,7 +77,7 @@ public class PackageBasedQueryGroupTest {
     }
     
     @Test
-    public void subPackageTest() throws ViatraQueryException {
+    public void subPackageTest() {
         PackageBasedQueryGroup subPackageGroup = new PackageBasedQueryGroup("org.eclipse.viatra.integration.uml", true);
         assertFalse(subPackageGroup.getSpecifications().isEmpty());
         

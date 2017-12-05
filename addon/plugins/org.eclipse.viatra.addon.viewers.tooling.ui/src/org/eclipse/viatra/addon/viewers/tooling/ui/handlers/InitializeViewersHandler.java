@@ -76,7 +76,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
         return null;
     }
 
-    private void initializeViewersSandboxOnCollection(EMFScope scope, IFilteredMatcherCollection parent) throws ViatraQueryException {
+    private void initializeViewersSandboxOnCollection(EMFScope scope, IFilteredMatcherCollection parent) {
         Iterable<IFilteredMatcherContent<?>> filteredMatchers = parent.getFilteredMatchers();
         
         // collect specifications from matchers

@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
@@ -127,7 +128,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         return new LocalSearchMatcher(plan, executors);
     }
 
-    private IPlanDescriptor getOrCreatePlan(MatcherReference key, IQueryBackendContext backendContext, IOperationCompiler compiler, LocalSearchHints configuration, IPlanProvider planProvider) throws QueryProcessingException {
+    private IPlanDescriptor getOrCreatePlan(MatcherReference key, IQueryBackendContext backendContext, IOperationCompiler compiler, LocalSearchHints configuration, IPlanProvider planProvider) {
         if (planCache.containsKey(key)){
             return planCache.get(key);
         } else {
@@ -137,7 +138,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         }
     }
     
-    private IPlanDescriptor getOrCreatePlan(MatcherReference key, IPlanProvider planProvider) throws QueryProcessingException {
+    private IPlanDescriptor getOrCreatePlan(MatcherReference key, IPlanProvider planProvider) {
         if (planCache.containsKey(key)){
             return planCache.get(key);
         } else {
@@ -183,7 +184,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      * requesting preparation for its dependencies.
      * @since 1.5
      */
-    public void prepare() throws QueryProcessingException {
+    public void prepare() {
         try {
             runtimeContext.coalesceTraversals(new Callable<Void>() {
     
@@ -191,17 +192,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                 public Void call() throws Exception {
                     indexInitializationBeforePlanning();
                     prepareDirectDependencies();
-                    runtimeContext.executeAfterTraversal(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            try {
-                                preparePlansForExpectedAdornments();
-                            } catch (QueryProcessingException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    });
+                    runtimeContext.executeAfterTraversal(() -> preparePlansForExpectedAdornments());
                     return null;
                 }
             });
@@ -210,7 +201,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         }
     }
 
-    protected void preparePlansForExpectedAdornments() throws QueryProcessingException {
+    protected void preparePlansForExpectedAdornments() {
      // Plan for possible adornments
         Iterator<MatcherReference> iterator = computeExpectedAdornments();
         while(iterator.hasNext()){
@@ -237,7 +228,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     
     }
 
-    protected void prepareDirectDependencies() throws QueryProcessingException {
+    protected void prepareDirectDependencies() {
         // Do not prepare for any adornment at this point
         IAdornmentProvider adornmentProvider = new IAdornmentProvider() {
             
@@ -257,9 +248,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      * inside a coalesceTraversals block, meaning (1) it is safe to add multiple registration requests as necessary, but
      * (2) no value or statistics is available from the index.
      * 
-     * @throws QueryProcessingException
+     * @throws ViatraQueryRuntimeException
      */
-    protected void indexInitializationBeforePlanning() throws QueryProcessingException {
+    protected void indexInitializationBeforePlanning() {
         // By default, no indexing is necessary
     }
     
@@ -304,23 +295,19 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     }
 
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {
-        try {
-            return newLocalSearchMatcher(parameters);
-        } catch (QueryProcessingException | ViatraQueryException e) {
-            throw new RuntimeException(e);
-        }
+        return newLocalSearchMatcher(parameters);
     }
     
     private LocalSearchMatcher initializeMatcher(TupleMask parameterSeedMask) {
-        try {
-            return newLocalSearchMatcher(parameterSeedMask.transformUnique(query.getParameters()));
-        } catch (QueryProcessingException | ViatraQueryException e) {
-            throw new RuntimeException(e);
-        }
+        return newLocalSearchMatcher(parameterSeedMask.transformUnique(query.getParameters()));
+
     }
 
     
-    public LocalSearchMatcher newLocalSearchMatcher(ITuple parameters) throws ViatraQueryException, QueryProcessingException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public LocalSearchMatcher newLocalSearchMatcher(ITuple parameters) {
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.getSize(); i++) {
             if (parameters.get(i) != null) {
@@ -331,7 +318,10 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         return newLocalSearchMatcher(adornment);
     }
     
-    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException, QueryProcessingException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) {
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
@@ -342,8 +332,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         return newLocalSearchMatcher(adornment);
     }
 
-    private LocalSearchMatcher newLocalSearchMatcher(final Set<PParameter> adornment)
-            throws QueryProcessingException, ViatraQueryException {
+    private LocalSearchMatcher newLocalSearchMatcher(final Set<PParameter> adornment) {
         final MatcherReference reference = new MatcherReference(query, adornment, userHints);
         
         IPlanDescriptor plan = getOrCreatePlan(reference, planProvider);

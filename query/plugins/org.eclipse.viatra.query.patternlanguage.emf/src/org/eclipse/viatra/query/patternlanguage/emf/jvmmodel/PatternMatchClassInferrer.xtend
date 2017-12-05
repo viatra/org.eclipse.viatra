@@ -28,7 +28,6 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.xtext.diagnostics.Severity
@@ -239,12 +238,7 @@ class PatternMatchClassInferrer {
         matchClass.members += pattern.toMethod("specification", querySpecificationClassRef) [
             annotations += annotationRef(Override)
             body = '''
-                try {
-                    return «querySpecificationClassRef.type.simpleName».instance();
-                } catch («ViatraQueryException» ex) {
-                     // This cannot happen, as the match object can only be instantiated if the query specification exists
-                     throw new «IllegalStateException» (ex);
-                }
+                return «querySpecificationClassRef.type.simpleName».instance();
             '''
         ]
         matchClass.members += pattern.toMethod("newEmptyMatch", typeRef(matchClass)) [

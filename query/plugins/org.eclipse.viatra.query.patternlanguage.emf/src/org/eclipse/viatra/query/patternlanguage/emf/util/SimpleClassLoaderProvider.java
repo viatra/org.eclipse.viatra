@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 public class SimpleClassLoaderProvider implements IClassLoaderProvider {
 
     @Override
-    public ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException {
+    public ClassLoader getClassLoader(EObject ctx) {
         ClassLoader l = ctx.getClass().getClassLoader();
         if (l == null) {
             throw new ViatraQueryException(String.format("No classloader found for context object %s.", ctx), "No classloader found.");

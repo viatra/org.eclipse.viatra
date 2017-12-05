@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -342,9 +342,9 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 
     /**
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
+     * @throws ViatraQueryRuntimeException
      */
-    public synchronized RecipeTraceInfo accessProductionTrace(PQuery query)
-            throws QueryProcessingException 
+    public synchronized RecipeTraceInfo accessProductionTrace(PQuery query) 
     {
         final CompiledQuery compiled = engine.getCompiler().getCompiledForm(query);
         return compiled;
@@ -364,9 +364,9 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
     }
     /**
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
+     * @throws ViatraQueryRuntimeException
      */
-    public synchronized Address<? extends Production> accessProductionNode(PQuery query)
-            throws QueryProcessingException {
+    public synchronized Address<? extends Production> accessProductionNode(PQuery query) {
         final RecipeTraceInfo productionTrace = accessProductionTrace(query);
         return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
     }

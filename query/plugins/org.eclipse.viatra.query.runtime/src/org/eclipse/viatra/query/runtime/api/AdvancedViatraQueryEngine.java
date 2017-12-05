@@ -15,8 +15,8 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
@@ -204,13 +204,12 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query
      * @return a pattern matcher corresponding to the specification
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with the query
-     * @throws ViatraQueryException if the matcher could not be initialized
+     * @throws ViatraQueryRuntimeException if the matcher could not be initialized
      * @since 0.9
      */
     public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
             IQuerySpecification<Matcher> querySpecification, 
-            QueryEvaluationHint optionalEvaluationHints)
-        throws ViatraQueryException;
+            QueryEvaluationHint optionalEvaluationHints);
 
     /**
      * Initializes matchers for a group of patterns as one step (optionally overriding some of the default query evaluation hints). 
@@ -225,14 +224,11 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * 
      * @param queryGroup a {@link IQueryGroup} identifying a set of VIATRA queries
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with each query
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if there was an error in preparing the engine
      * @since 0.9
      */
-    public abstract void prepareGroup(
-            IQueryGroup queryGroup, 
-            QueryEvaluationHint optionalEvaluationHints)
-        throws ViatraQueryException;
+    public abstract void prepareGroup(IQueryGroup queryGroup, QueryEvaluationHint optionalEvaluationHints);
  
     /**
      * Indicates whether the engine is managed, i.e. the default engine assigned to the given scope root by
@@ -310,9 +306,9 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
     /**
      * Provides access to the selected query backend component of the VIATRA Query engine.
      * @noreference for internal use only
+     * @throws ViatraQueryRuntimeException
      */
-    public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory)
-            throws ViatraQueryException;
+    public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory);
 
     /**
      * Access an existing pattern matcher based on a {@link IQuerySpecification}, and optional hints override.

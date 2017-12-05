@@ -21,7 +21,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.generic.GenericTy
 import org.eclipse.viatra.query.runtime.localsearch.operations.generic.GenericTypeExtendSingleValue;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -40,8 +39,7 @@ public class GenericOperationCompiler extends AbstractOperationCompiler {
     }
 
     @Override
-    protected void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping)
-            throws QueryProcessingException {
+    protected void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         IInputKey inputKey = typeConstraint.getInputKey();
         Tuple tuple = typeConstraint.getVariablesTuple();
         int[] positions = new int[tuple.getSize()];
@@ -54,8 +52,7 @@ public class GenericOperationCompiler extends AbstractOperationCompiler {
     }
     
     @Override
-    protected void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping)
-            throws QueryProcessingException {
+    protected void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         IInputKey inputKey = typeConstraint.getSupplierKey();
         Tuple tuple = typeConstraint.getVariablesTuple();
         int[] positions = new int[tuple.getSize()];

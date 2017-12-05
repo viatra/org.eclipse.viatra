@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
@@ -37,8 +36,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     /**
      * @since 1.4
      */
-    public GenericPatternMatcher(GenericQuerySpecification<? extends GenericPatternMatcher> specification) 
-            throws ViatraQueryException {
+    public GenericPatternMatcher(GenericQuerySpecification<? extends GenericPatternMatcher> specification) {
         super(specification);
     }
 
@@ -67,7 +65,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      * Internal method for {@link GenericQuerySpecification}
      * @noreference
      */
-    static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(GenericQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
+    static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(GenericQuerySpecification<Matcher> querySpecification) {
         return new GenericPatternMatcher(querySpecification);
     }
   
@@ -75,7 +73,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      * Internal method for {@link GenericQuerySpecification}
      * @noreference
      */
-    static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(ViatraQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
+    static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(ViatraQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) {
         // check if matcher already exists
         GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
         if (matcher == null) {

@@ -40,7 +40,7 @@ public class StructuralFeatureCheck extends CheckOperation {
     }
     
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkNotNull(frame.getValue(sourcePosition), "Invalid plan, variable %s unbound", sourcePosition);
         Preconditions.checkNotNull(frame.getValue(targetPosition), "Invalid plan, variable %s unbound", targetPosition);
         try {

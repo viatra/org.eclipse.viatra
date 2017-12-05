@@ -94,7 +94,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     }
 
     @Override
-    public void checkSanity() throws QueryProcessingException {
+    public void checkSanity() {
         super.checkSanity();
         if (!parameterVariable.isDeducable()) {
             String[] args = { parameterName };

@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -193,9 +193,10 @@ public class ChangeMonitor extends IChangeMonitor {
      * Adds the defined rules to the ExecutionSchema and enables them. Call this method after the rules have been added,
      * and the model instance to be monitored is initialized.
      * 
+     * @throws ViatraQueryRuntimeException
      */
     @Override
-    public void startMonitoring() throws ViatraQueryException {
+    public void startMonitoring() {
 
         for (RuleSpecification<IPatternMatch> rule : rules) {
             executionSchema.addRule(rule);

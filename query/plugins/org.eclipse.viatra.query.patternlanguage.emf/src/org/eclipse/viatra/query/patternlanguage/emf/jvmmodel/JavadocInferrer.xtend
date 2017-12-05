@@ -80,7 +80,7 @@ class JavadocInferrer {
         If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
         The match set will be incrementally refreshed upon updates.
         @param engine the existing VIATRA Query engine in which this matcher will be created.
-        @throws ViatraQueryException if an error occurs during pattern matcher creation
+        @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
     '''
 
     def javadocMatcherStaticOnEngine(Pattern pattern) '''
@@ -88,11 +88,11 @@ class JavadocInferrer {
         If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
         The match set will be incrementally refreshed upon updates.
         @param engine the existing VIATRA Query engine in which this matcher will be created.
-        @throws ViatraQueryException if an error occurs during pattern matcher creation
+        @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
     '''
 
     def javadocMatcherStaticCreate(Pattern pattern) '''	
-        @throws ViatraQueryException if an error occurs during pattern matcher creation
+        @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
         @return an initialized matcher
         @noreference This method is for internal matcher initialization by the framework, do not call it manually.
     '''
@@ -195,12 +195,12 @@ class JavadocInferrer {
 
     def javadocQuerySpecificationMethod(Pattern pattern) '''
         @return the singleton instance of the query specification of this pattern
-        @throws ViatraQueryException if the pattern definition could not be loaded
+        @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
     '''
 
     def javadocQuerySpecificationInstanceMethod(Pattern pattern) '''
         @return the singleton instance of the query specification
-        @throws ViatraQueryException if the pattern definition could not be loaded
+        @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
     '''
 
     def javadocGroupClass(PatternModel model, boolean includePrivate) '''
@@ -227,6 +227,6 @@ class JavadocInferrer {
         Access the pattern group.
         
         @return the singleton instance of the group
-        @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
+        @throws ViatraQueryRuntimeException if there was an error loading the generated code of pattern specifications
     '''
 }

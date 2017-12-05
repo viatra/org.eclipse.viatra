@@ -37,8 +37,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
@@ -83,7 +81,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
     private Map<ReteNodeRecipe, Node> nodeTrace = Maps.newHashMap();
     
     @Override
-    protected EMFScope extractModelSource(List<Object> objects) throws ViatraQueryException {
+    protected EMFScope extractModelSource(List<Object> objects) {
         Map<ReteNodeRecipe, Node> recipeToReteMap = Maps.newHashMap();
         // compute full Rete to Recipe map
         // compute recipe node set to display
@@ -104,33 +102,29 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
         Set<ReteNodeRecipe> recipeSet = Sets.newHashSet();
         
         for (IFilteredMatcherContent patternMatcherContent : Iterables.filter(objects, IFilteredMatcherContent.class)) {
-            try {
-                ViatraQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
-                if (matcher == null)
-                    continue;
-                final ReteEngine reteEngine = (ReteEngine) ((AdvancedViatraQueryEngine) matcher.getEngine())
-                        .getQueryBackend(new ReteBackendFactory());
+            ViatraQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
+            if (matcher == null)
+                continue;
+            final ReteEngine reteEngine = (ReteEngine) ((AdvancedViatraQueryEngine) matcher.getEngine())
+                    .getQueryBackend(new ReteBackendFactory());
 
-                // compute RecipeNode to ReteNode map once
-                if (recipeToReteMap.isEmpty()) {
-                    Map<ReteNodeRecipe, Node> computeNodeTrace = computeNodeTrace(reteEngine);
-                    recipeToReteMap.putAll(computeNodeTrace);
-                }
-
-                PQuery pQuery = matcher.getSpecification().getInternalQueryRepresentation();
-                // get root trace info from matcher
-                RecipeTraceInfo traceInfo = reteEngine.getBoundary().accessProductionTrace(pQuery);
-
-                // collect recipe nodes for pattern
-                ReteNodeRecipe recipe = traceInfo.getRecipe();
-                Set<ReteNodeRecipe> parents = getRecipeNodeParents(recipe);
-                parents.add(recipe);
-
-                // multiple patterns are selected
-                recipeSet.addAll(parents);
-            } catch (ViatraQueryException | QueryProcessingException e) {
-                throw new RuntimeException("Failed to get query backend", e);
+            // compute RecipeNode to ReteNode map once
+            if (recipeToReteMap.isEmpty()) {
+                Map<ReteNodeRecipe, Node> computeNodeTrace = computeNodeTrace(reteEngine);
+                recipeToReteMap.putAll(computeNodeTrace);
             }
+
+            PQuery pQuery = matcher.getSpecification().getInternalQueryRepresentation();
+            // get root trace info from matcher
+            RecipeTraceInfo traceInfo = reteEngine.getBoundary().accessProductionTrace(pQuery);
+
+            // collect recipe nodes for pattern
+            ReteNodeRecipe recipe = traceInfo.getRecipe();
+            Set<ReteNodeRecipe> parents = getRecipeNodeParents(recipe);
+            parents.add(recipe);
+
+            // multiple patterns are selected
+            recipeSet.addAll(parents);
         }
         return recipeSet;
     }
@@ -157,7 +151,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
     /**
      * Create a temporary resource and put in all root containers of the recipes collected for visualization.
      */
-    private EMFScope createRecipeModel(Set<ReteNodeRecipe> recipeSet) throws ViatraQueryException {
+    private EMFScope createRecipeModel(Set<ReteNodeRecipe> recipeSet) {
         if (recipeSet.isEmpty()) {
             return null;
         }

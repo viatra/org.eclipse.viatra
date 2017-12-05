@@ -63,6 +63,7 @@ import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra.query.runtime.base.core.EMFBaseIndexInstanceStore.FeatureData;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 import com.google.common.base.Function;
@@ -228,7 +229,10 @@ public class NavigationHelperImpl implements NavigationHelper {
         return comprehension;
     }
 
-    public NavigationHelperImpl(Notifier emfRoot, BaseIndexOptions options, Logger logger) throws ViatraBaseException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public NavigationHelperImpl(Notifier emfRoot, BaseIndexOptions options, Logger logger) {
         this.baseIndexOptions = options.copy();
         this.logger = logger;
         assert (logger != null);
@@ -1326,7 +1330,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void addRoot(Notifier emfRoot) throws ViatraBaseException {
+    public void addRoot(Notifier emfRoot) {
         addRootInternal(emfRoot);
     }
 
@@ -1368,7 +1372,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private void addRootInternal(Notifier emfRoot) throws ViatraBaseException {
+    private void addRootInternal(Notifier emfRoot) {
         if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
             throw new ViatraBaseException(ViatraBaseException.INVALID_EMFROOT);
         }

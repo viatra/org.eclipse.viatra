@@ -46,13 +46,12 @@ import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.integration.zest.viewer.ZestContentViewer;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.internal.LocalSearchDebuggerRunner;
@@ -90,7 +89,10 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
     private LocalSearchDebugger debugger;
     private Thread planExecutorThread = null;
 
-    public void createDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> query, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public void createDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> query, final Object[] adornment) {
         disposeExistingDebugger();
         initializeDebugger(engine, query, adornment);
         closeMatchTabs();
@@ -103,7 +105,7 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         return queryName;
     }
     
-    private void initializeDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> specification, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
+    private void initializeDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> specification, final Object[] adornment) {
         final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
         final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
                 .getResultProvider(specification.getInternalQueryRepresentation());

@@ -263,14 +263,13 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         }
     }
     
-    public void initializeContents(ViewersComponentConfiguration c) throws ViatraQueryException {
+    public void initializeContents(ViewersComponentConfiguration c) {
         if (c!=null) {
             initializeContents(c.getScope(), c.getPatterns(), c.getFilter());
         }
     }
 
-    public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
-            throws ViatraQueryException {
+    public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter) {
         if (model != null) {
             Collection<IQuerySpecification<?>> patterns = getPatternsWithProperAnnotations(_patterns);
             this.initialConfiguration = new ViewersComponentConfiguration(model,patterns,filter);
@@ -279,7 +278,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         }
     }
 
-    private void doSetContents(EMFScope scope, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws ViatraQueryException {
+    private void doSetContents(EMFScope scope, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) {
         if (state!=null) {
             // dispose any previous viewerstate
             state.dispose();
@@ -291,7 +290,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     }
     
     
-    private AdvancedViatraQueryEngine getEngine(EMFScope scope) throws ViatraQueryException {
+    private AdvancedViatraQueryEngine getEngine(EMFScope scope) {
         if (engine != null) {
             engine.dispose();
         }

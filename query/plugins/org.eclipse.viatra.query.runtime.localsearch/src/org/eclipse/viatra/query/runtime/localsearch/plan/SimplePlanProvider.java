@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * A plan provider implementation which caches previously calculated plans to avoid re-planning for the same adornment
@@ -37,8 +36,7 @@ public class SimplePlanProvider implements IPlanProvider {
     }
     
     @Override
-    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, final LocalSearchHints configuration, MatcherReference key)
-            throws QueryProcessingException {
+    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, final LocalSearchHints configuration, MatcherReference key) {
         
         LocalSearchPlanner planner = new LocalSearchPlanner(backend, compiler, logger, configuration);
         

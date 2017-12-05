@@ -39,7 +39,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.xtext.common.types.JvmType;
@@ -152,12 +151,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         if (calledSpecification == null) {
             // This should only happen in case of erroneous links, e.g. link to a proxy Pattern or similar
             // otherwise pattern would be found in the name map (see SpecificationBuilder logic)
-            try {
-                calledSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(patternRef, true));
-            } catch (QueryInitializationException e) {
-                // Cannot happen, as initialization is delayed
-                throw new RuntimeException(e);
-            }
+            calledSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(patternRef, true));
         }
         return calledSpecification.getInternalQueryRepresentation();
     }

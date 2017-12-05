@@ -24,8 +24,8 @@ import org.eclipse.viatra.addon.viewers.runtime.util.LabelParser;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
@@ -46,8 +46,11 @@ public class EdgeRule extends ViewModelRule {
         this.filter = filter;
     }
 
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
     public static EdgeRule initiate(IQuerySpecification<?> specification, PAnnotation annotation, ViewerState state,
-            ViewerDataFilter filter) throws QueryInitializationException {
+            ViewerDataFilter filter) {
         EdgeQuerySpecificationDescriptor descriptor = new EdgeQuerySpecificationDescriptor(specification, annotation);
         return new EdgeRule(descriptor, state, filter);
     }

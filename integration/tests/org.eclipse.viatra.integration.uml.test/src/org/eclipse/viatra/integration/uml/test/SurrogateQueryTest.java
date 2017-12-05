@@ -33,7 +33,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -58,7 +57,7 @@ import com.google.common.collect.Maps;
 public class SurrogateQueryTest {
     
     @Parameters(name = "{index}: {1}")
-    public static Collection<Object[]> data() throws ViatraQueryException {
+    public static Collection<Object[]> data() {
         DerivedFeatures features = DerivedFeatures.instance();
         Set<IQuerySpecification<?>> specifications = features.getSpecifications();
         
@@ -90,17 +89,13 @@ public class SurrogateQueryTest {
     
     @Ignore("Do not run on CI")
     @Test
-    public void checkSurrogateOnUMLMetamodel() throws ViatraQueryException {
+    public void checkSurrogateOnUMLMetamodel() {
         
         String modelUri = "/org.eclipse.viatra.integration.uml.test/model/UML.merged.uml";
         performSurrogateQueryValidation(modelUri);
     }
     
-    /**
-     * @param modelUri
-     * @throws ViatraQueryException
-     */
-    private void performSurrogateQueryValidation(String modelUri) throws ViatraQueryException {
+    private void performSurrogateQueryValidation(String modelUri) {
         ModelLoadHelper modelLoadHelper = new ModelLoadHelper();
         umlResource = modelLoadHelper.loadModelFromUri(modelUri);
         Model umlModel = (Model) umlResource.getContents().get(0);
@@ -138,14 +133,8 @@ public class SurrogateQueryTest {
         }
     }
 
-    /**
-     * @param umlModel
-     * @param engine
-     * @param structuralFeature
-     * @throws ViatraQueryException
-     */
     private boolean checkStructuralFeatures(Model umlModel, AdvancedViatraQueryEngine engine,
-            EStructuralFeature structuralFeature) throws ViatraQueryException {
+            EStructuralFeature structuralFeature) {
         @SuppressWarnings("unchecked")
         ViatraQueryMatcher<IPatternMatch> matcher = (ViatraQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
         IPatternMatch match = matcher.newEmptyMatch();
@@ -221,9 +210,6 @@ public class SurrogateQueryTest {
         return incorrectValuesFound;
     }
 
-    /**
-     * @return
-     */
     private static Map<PQuery, EStructuralFeature> getSurrogateToQueryMap() {
         Map<PQuery, EStructuralFeature> surrogateQueryToFeature = Maps.newHashMap();
         
@@ -239,13 +225,7 @@ public class SurrogateQueryTest {
         return surrogateQueryToFeature;
     }
 
-    /**
-     * @param querySpecification
-     * @param surrogateQueryToFeature 
-     * @return
-     * @throws ViatraQueryException 
-     */
-    private boolean checkQuerySpecification(IQuerySpecification<?> querySpecification, EStructuralFeature structuralFeature, ViatraQueryEngine engine) throws ViatraQueryException {
+    private boolean checkQuerySpecification(IQuerySpecification<?> querySpecification, EStructuralFeature structuralFeature, ViatraQueryEngine engine) {
     
         // iterate on getAllValuesOfSource
         @SuppressWarnings("unchecked")

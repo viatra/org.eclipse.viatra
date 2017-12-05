@@ -6,7 +6,8 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.viatra.query.runtime.matchers.aggregators;uses:="org.eclipse.viatra.query.runtime.matchers.psystem.aggregations,com.google.common.collect",
+Export-Package: org.eclipse.viatra.query.runtime.matchers,
+ org.eclipse.viatra.query.runtime.matchers.aggregators;uses:="org.eclipse.viatra.query.runtime.matchers.psystem.aggregations,com.google.common.collect",
  org.eclipse.viatra.query.runtime.matchers.algorithms,
  org.eclipse.viatra.query.runtime.matchers.backend,
  org.eclipse.viatra.query.runtime.matchers.context;uses:="com.google.common.collect",

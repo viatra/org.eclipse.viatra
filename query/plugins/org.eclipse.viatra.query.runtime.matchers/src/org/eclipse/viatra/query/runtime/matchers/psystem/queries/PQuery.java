@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -138,9 +139,9 @@ public interface PQuery extends PQueryHeader, PTraceable {
 
     /**
      * If the query definition is uninitialized, initializes it.
-     * @throws QueryInitializationException if initialization of query specification fails
+     * @throws ViatraQueryRuntimeException if initialization of query specification fails
      */
-    public abstract void ensureInitialized() throws QueryInitializationException;
+    public abstract void ensureInitialized();
     
     /**
      * Returns the end-user query specification API objects that wrap this query.

@@ -33,7 +33,6 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
@@ -43,7 +42,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterRe
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtext.common.types.JvmDeclaredType
@@ -130,7 +128,6 @@ class PatternQuerySpecificationClassInferrer {
         querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
             visibility = JvmVisibility::PUBLIC
             static = true
-            exceptions += typeRef(ViatraQueryException)
             documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
             body = '''
                 try{
@@ -146,13 +143,11 @@ class PatternQuerySpecificationClassInferrer {
                 visibility = JvmVisibility::PROTECTED
                 annotations += annotationRef(Override)
                 parameters += pattern.toParameter("engine", typeRef(ViatraQueryEngine))
-                exceptions += typeRef(ViatraQueryException)
                 body = '''return «matcherClass».on(engine);'''
             ]
             querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
                 visibility = JvmVisibility::PUBLIC
                 annotations += annotationRef(Override)
-                exceptions += typeRef(ViatraQueryException)
                 body = '''return «matcherClass».create();'''
             ]
             querySpecificationClass.members += pattern.toMethod("newEmptyMatch", typeRef(matchClass)) [
@@ -228,22 +223,12 @@ class PatternQuerySpecificationClassInferrer {
         pQueryClass.members += pattern.toMethod("doGetContainedBodies", typeRef(Set, typeRef(PBody))) [
             visibility = JvmVisibility::PUBLIC
             annotations += annotationRef(Override)
-            exceptions += typeRef(QueryInitializationException)
             try {
                 body = '''
                     «inferQueryEvaluationHints(pattern)»
                     «Set»<«PBody»> bodies = «Sets».newLinkedHashSet();
-                    «IF CorePatternLanguageHelper.getReferencedPatterns(pattern).filter[it != pattern].isEmpty»
-                        «inferBodies(pattern)»
-                        «inferAnnotations(pattern)»
-                    «ELSE»
-                        try {
-                            «inferBodies(pattern)»
-                            «inferAnnotations(pattern)»
-                        } catch («ViatraQueryException» ex) {
-                            throw processDependencyException(ex);
-                        }
-                    «ENDIF»
+                    «inferBodies(pattern)»
+                    «inferAnnotations(pattern)»
                     return bodies;
                 '''
             } catch (Exception e) {
@@ -332,7 +317,7 @@ class PatternQuerySpecificationClassInferrer {
                     visibility = JvmVisibility::PUBLIC
                     static = true
                     body = '''
-                        INSTANCE.ensureInitializedInternalSneaky();
+                        INSTANCE.ensureInitializedInternal();
                         return null;
                     '''
                 ]

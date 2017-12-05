@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api.scope;
 
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
@@ -24,9 +24,9 @@ public interface IEngineContext {
     
     /**
      * Returns the base index. 
-     * @throws ViatraQueryException 
+     * @throws ViatraQueryRuntimeException if the base index cannot be accessed 
      */	
-    IBaseIndex getBaseIndex() throws ViatraQueryException;
+    IBaseIndex getBaseIndex();
 
     /**
      * Disposes this context object. Resources in the index may now be freed up.
@@ -45,6 +45,7 @@ public interface IEngineContext {
      * 
      * @return a runtime context for pattern matching
      * @since 1.2
+     * @throws ViatraQueryRuntimeException if the runtime context cannot be initialized
      */
-    public IQueryRuntimeContext getQueryRuntimeContext() throws ViatraQueryException;
+    public IQueryRuntimeContext getQueryRuntimeContext();
 }

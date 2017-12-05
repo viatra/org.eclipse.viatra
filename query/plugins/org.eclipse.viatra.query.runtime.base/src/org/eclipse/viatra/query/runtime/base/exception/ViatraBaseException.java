@@ -11,7 +11,9 @@
 
 package org.eclipse.viatra.query.runtime.base.exception;
 
-public class ViatraBaseException extends Exception {
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+
+public class ViatraBaseException extends ViatraQueryRuntimeException {
 
     private static final long serialVersionUID = -5145445047912938251L;
 

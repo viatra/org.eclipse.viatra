@@ -87,7 +87,7 @@ The example generated source code below demonstrates the *ApplicationInstancesMa
 ----
 public class EClassNamesMatcher implements ViatraQueryMatcher<EClassNamesMatch> {
   /** factory method **/
-  public static ApplicationInstancesMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException;
+  public static ApplicationInstancesMatcher on(final ViatraQueryEngine engine);
 
   /** access to match set **/
     public Collection<ApplicationInstancesMatch> getAllMatches(); // inherited
@@ -113,7 +113,7 @@ public class EClassNamesMatcher implements ViatraQueryMatcher<EClassNamesMatch> 
   public ApplicationInstancesMatch newMatch(final ApplicationInstance pAI);
   
   /** Access query specification */
-  public static IQuerySpecification<ApplicationInstancesMatcher> querySpecification() throws ViatraQueryException;
+  public static IQuerySpecification<ApplicationInstancesMatcher> querySpecification();
 }
 ----
 
@@ -136,10 +136,10 @@ The code sample extends the BaseGeneratedQuerySpecification class.
 public final class ApplicationInstancesQuerySpecification extends BaseGeneratedEMFQuerySpecification<ApplicationInstancesMatcher> {
 
   /** Singleton instance access */
-  public static ApplicationInstancesQuerySpecification instance() throws ViatraQueryException;
+  public static ApplicationInstancesQuerySpecification instance();
 
   /** Instantiate matches and matchers */
-  public ApplicationInstancesMatcher instantiate() throws ViatraQueryException;
+  public ApplicationInstancesMatcher instantiate();
   public ApplicationInstancesMatch newEmptyMatch();
   public ApplicationInstancesMatch newMatch(final Object... parameters);
 

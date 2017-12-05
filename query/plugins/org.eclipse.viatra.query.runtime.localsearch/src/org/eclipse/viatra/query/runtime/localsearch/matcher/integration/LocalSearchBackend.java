@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
@@ -23,7 +24,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
@@ -64,7 +64,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     }
     
     @Override
-    public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
+    public IQueryResultProvider getResultProvider(PQuery query) {
         return getResultProvider(query, null);
     }
     
@@ -72,8 +72,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
      * @since 1.4
      */
     @Override
-    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
-            throws QueryProcessingException {
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints) {
         
         IMatcherCapability requestedCapability = getHintProvider().getQueryEvaluationHint(query).overrideBy(hints).calculateRequiredCapability(query);
         for(AbstractLocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
@@ -89,10 +88,10 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     }
     
     /**
-     * @throws QueryProcessingException 
+     * @throws ViatraQueryRuntimeException 
      * @since 1.7
      */
-    protected abstract AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints) throws QueryProcessingException;
+    protected abstract AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints);
     
     @Override
     public void dispose() {  

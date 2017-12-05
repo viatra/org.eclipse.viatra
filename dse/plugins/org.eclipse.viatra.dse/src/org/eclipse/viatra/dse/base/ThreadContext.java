@@ -130,7 +130,6 @@ public class ThreadContext implements IDseStrategyContext{
      * Initializes the {@link ThreadContext} by initializing the underlying {@link ViatraQueryEngine} and
      * {@link RuleEngine}. {@link Guidance} initialization is also happening within this method.
      * 
-     * @throws ViatraQueryException
      */
     public void init() throws DSEException {
 

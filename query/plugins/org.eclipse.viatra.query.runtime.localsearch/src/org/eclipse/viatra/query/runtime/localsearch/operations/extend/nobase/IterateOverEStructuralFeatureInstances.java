@@ -50,7 +50,7 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation,
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
         frame.setValue(sourcePosition, null);
         frame.setValue(targetPosition, null);
         it = null;

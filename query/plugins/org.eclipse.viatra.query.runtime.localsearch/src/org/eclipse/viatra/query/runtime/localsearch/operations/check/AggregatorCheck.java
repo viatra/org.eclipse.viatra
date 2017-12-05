@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
@@ -54,14 +53,14 @@ public class AggregatorCheck extends CheckOperation implements IPatternMatcherOp
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         super.onInitialize(frame, context);
         maskedTuple.updateTuple(frame);
         matcher = context.getMatcher(information.getReference());
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         IMultisetAggregationOperator<?, ?, ?> operator = aggregator.getAggregator().getOperator();
         Object result = aggregate(operator, aggregator.getAggregatedColumn(), frame);
         return result == null ? false : Objects.equals(frame.getValue(position), result);

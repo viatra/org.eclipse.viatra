@@ -11,9 +11,8 @@
 package org.eclipse.viatra.query.testing.core.api;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * Implementations of this interface may provide analysis information about query executions
@@ -32,7 +31,9 @@ public interface IPatternExecutionAnalyzer {
     /**
      * This method is called after a {@link ViatraQueryMatcher} is created, allowing this analyzer to extract 
      * analysis information.
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    public void processMatcher(ViatraQueryMatcher<?> matcher) throws ViatraQueryException, QueryProcessingException;
+    public void processMatcher(ViatraQueryMatcher<?> matcher);
     
 }

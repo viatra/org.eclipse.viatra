@@ -19,12 +19,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.traceability.patterns.Trace;
@@ -50,7 +50,10 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
     
     private String traceabilityId;
     
-    public GenericTracedPQuery(GenericReferencedPQuery referencedQuery) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public GenericTracedPQuery(GenericReferencedPQuery referencedQuery) {
         super(referencedQuery);
         this.referencedQuery = referencedQuery;
         this.traceabilityId = referencedQuery.getTraceabilityId();
@@ -58,7 +61,7 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
     }
 
     @Override
-    protected Set<PBody> doGetContainedBodies() throws QueryInitializationException {
+    protected Set<PBody> doGetContainedBodies() {
         PBody body = super.doGetContainedBodies().iterator().next();
         final PVariable var_trace = body.getOrCreateVariableByName(TRACE_PARAMETER);
         PVariable var_id = body.getOrCreateVariableByName(referencedQuery.getFullyQualifiedName());

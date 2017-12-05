@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Iterators;
@@ -36,7 +35,7 @@ public class ExtendConstant extends ExtendOperation<Object> {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         it = Iterators.singletonIterator(value);
     }
 

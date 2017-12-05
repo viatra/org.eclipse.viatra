@@ -51,7 +51,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
@@ -293,7 +293,10 @@ public class QueryResultView extends ViewPart {
         control.getShell().layout(new Control[] {control}, SWT.DEFER);
     }
     
-    public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) throws ViatraQueryException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) {
         unloadModel();
 
         input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);

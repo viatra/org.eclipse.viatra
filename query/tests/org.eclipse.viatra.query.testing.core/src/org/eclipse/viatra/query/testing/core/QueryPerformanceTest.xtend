@@ -85,13 +85,15 @@ abstract class QueryPerformanceTest {
 
     /**
      * This method shall return a scope that identifies the input artifact used for performance testing the queries.
+     * @throws ViatraQueryRuntimeException
      */
-    def QueryScope getScope() throws ViatraQueryException
+    def QueryScope getScope()
 
     /**
      * This method shall return the query group that contains the set of queries to evaluate.
+     * @throws ViatraQueryRuntimeException
      */
-    def IQueryGroup getQueryGroup() throws ViatraQueryException
+    def IQueryGroup getQueryGroup()
 
     /**
      * This method shall return the query backend class that will be used for evaluation.

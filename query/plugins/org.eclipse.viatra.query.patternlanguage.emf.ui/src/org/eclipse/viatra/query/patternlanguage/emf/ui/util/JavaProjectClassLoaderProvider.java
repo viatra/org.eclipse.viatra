@@ -46,7 +46,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
     private IWorkspaceRoot root;
 
     @Override
-    public ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException {
+    public ClassLoader getClassLoader(EObject ctx) {
         try {
             IFile file = getIFile(ctx);
             ClassLoader l;

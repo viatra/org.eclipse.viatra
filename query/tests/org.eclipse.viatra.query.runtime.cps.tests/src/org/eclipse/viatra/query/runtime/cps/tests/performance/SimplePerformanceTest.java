@@ -17,20 +17,19 @@ import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.cps.tests.queries.OtherTests;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.testing.core.QueryPerformanceTest;
 
 public class SimplePerformanceTest extends QueryPerformanceTest {
 
     @Override
-    public QueryScope getScope() throws ViatraQueryException {
+    public QueryScope getScope() {
         ResourceSet set = new ResourceSetImpl();
         set.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", false), true);
         return new EMFScope(set);
     }
 
     @Override
-    public IQueryGroup getQueryGroup() throws ViatraQueryException {
+    public IQueryGroup getQueryGroup() {
         return OtherTests.instance();
     }
 

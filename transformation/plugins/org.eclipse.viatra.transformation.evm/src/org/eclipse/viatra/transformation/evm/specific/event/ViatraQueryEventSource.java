@@ -18,7 +18,6 @@ import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.MatchUpdateAdapter;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
 import org.eclipse.viatra.transformation.evm.api.event.adapter.EventSourceAdapter;
 import org.eclipse.viatra.transformation.evm.notification.IAttributeMonitorListener;
@@ -30,7 +29,7 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
     private IAttributeMonitorListener<Match> attributeMonitorListener;
     private IMatchUpdateListener<Match> matchUpdateListener;
     
-    protected ViatraQueryEventSource(ViatraQueryEventRealm realm, ViatraQueryEventSourceSpecification<Match> sourceDefinition) throws ViatraQueryException {
+    protected ViatraQueryEventSource(ViatraQueryEventRealm realm, ViatraQueryEventSourceSpecification<Match> sourceDefinition) {
         super(sourceDefinition, realm);
         ViatraQueryMatcher<Match> _matcher = sourceDefinition.getMatcher(realm.getEngine());
         this.matcher = _matcher;

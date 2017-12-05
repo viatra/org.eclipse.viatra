@@ -112,7 +112,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         }
     }
 
-    PBody normalizeBodyInternal(PBody body) throws QueryProcessingException {
+    PBody normalizeBodyInternal(PBody body) {
         // UNIFICATION AND WEAK INEQUALITY ELIMINATION
         unifyVariablesAlongEqualities(body);
         eliminateWeakInequalities(body);
@@ -299,7 +299,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * @param body
      * @throws RetePatternBuildException
      */
-    void checkSanity(PBody body) throws QueryProcessingException {
+    void checkSanity(PBody body) {
         for (PConstraint pConstraint : body.getConstraints())
             pConstraint.checkSanity();
     }

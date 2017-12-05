@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.generic;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation;
@@ -58,7 +57,7 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
         return context.getRuntimeContext().containsTuple(type, maskedTuple);
     }

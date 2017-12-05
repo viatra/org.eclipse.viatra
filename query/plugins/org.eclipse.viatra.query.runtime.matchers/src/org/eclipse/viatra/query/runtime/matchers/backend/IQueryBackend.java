@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -30,17 +30,17 @@ public interface IQueryBackend {
 	
     /**
      * Returns a result provider for a given query. Repeated calls may return the same instance.
-     * @throws QueryProcessingException 
+     * @throws ViatraQueryRuntimeException
      */
-	public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException;
+	public IQueryResultProvider getResultProvider(PQuery query);
 	
 	/**
      * Returns a result provider for a given query. Repeated calls may return the same instance.
      * @param optional hints that may override engine and query defaults (as provided by {@link IQueryBackendHintProvider}). Can be null.
-     * @throws QueryProcessingException 
+     * @throws ViatraQueryRuntimeException 
 	 * @since 1.4
      */
-    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints) throws QueryProcessingException;
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints);
 	
     /**
      * Returns an existing result provider for a given query, if it was previously constructed, returns null otherwise.

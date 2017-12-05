@@ -34,7 +34,7 @@ public class InequalityCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         Object source = frame.getValue(sourceLocation);
         Object target = frame.getValue(targetLocation);
         if (source == null) {

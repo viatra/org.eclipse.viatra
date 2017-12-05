@@ -14,7 +14,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
@@ -35,7 +34,7 @@ class InitializedSnapshotMatchSetModelProvider implements IMatchSetModelProvider
 
     override <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(EMFScope scope,
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
-        Match filter) throws ViatraQueryException {
+        Match filter) {
         
         val FQN = querySpecification.getFullyQualifiedName()
         
@@ -48,7 +47,7 @@ class InitializedSnapshotMatchSetModelProvider implements IMatchSetModelProvider
 
     override <Match extends IPatternMatch> getMatchSetRecord(ResourceSet resourceSet,
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
-        Match filter) throws ViatraQueryException {
+        Match filter) {
         val FQN = querySpecification.getFullyQualifiedName()
         
         return getMatchSetRecordsFromSnapshot(qsnap, FQN)

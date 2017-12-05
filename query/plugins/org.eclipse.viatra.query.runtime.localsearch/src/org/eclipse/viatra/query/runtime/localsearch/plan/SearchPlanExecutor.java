@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptabl
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
@@ -99,7 +100,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     }
    
 
-    private void init(MatchingFrame frame) throws LocalSearchException {
+    private void init(MatchingFrame frame) {
         if (currentOperation == -1) {
             currentOperation++;
             ISearchOperation operation = operations.get(currentOperation);
@@ -125,7 +126,10 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         return 0.0;
     }
 
-    public boolean execute(MatchingFrame frame) throws LocalSearchException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public boolean execute(MatchingFrame frame) {
         int upperBound = operations.size() - 1;
         init(frame);
         operationSelected(frame);

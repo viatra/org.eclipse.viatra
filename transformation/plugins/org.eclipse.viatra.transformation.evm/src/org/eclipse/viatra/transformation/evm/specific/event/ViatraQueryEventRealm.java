@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
@@ -34,7 +33,7 @@ public class ViatraQueryEventRealm implements EventRealm {
     }
 
     protected <Match extends IPatternMatch> ViatraQueryEventSource<Match> createSource(
-            EventSourceSpecification<Match> sourceSpecification) throws ViatraQueryException {
+            EventSourceSpecification<Match> sourceSpecification) {
         checkArgument(sourceSpecification instanceof ViatraQueryEventSourceSpecification,
                 "Source definition must be ViatraQueryEventSourceSpecification!");
         ViatraQueryEventSource<Match> eventSource = new ViatraQueryEventSource<Match>(this,

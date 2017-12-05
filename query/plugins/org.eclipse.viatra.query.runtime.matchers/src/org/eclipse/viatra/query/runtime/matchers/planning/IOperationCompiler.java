@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.planning;
 
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -33,7 +34,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
  */
 public interface IOperationCompiler<Collector> {
 
-    public Collector patternCollector(PQuery pattern) throws QueryProcessingException;
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public Collector patternCollector(PQuery pattern);
  
     public void buildConnection(SubPlan parentPlan, Collector collector);
     
@@ -42,8 +46,10 @@ public interface IOperationCompiler<Collector> {
      */
     public void patternFinished(PQuery pattern, Collector collector);
     
-    public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)
-            throws QueryProcessingException;
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey);
 
     public SubPlan transitiveInstantiationPlan(Tuple nodes);
 

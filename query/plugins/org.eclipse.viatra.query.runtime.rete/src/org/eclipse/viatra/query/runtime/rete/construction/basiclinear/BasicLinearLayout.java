@@ -20,7 +20,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvid
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.BuildHelper;
@@ -61,7 +60,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     }
 
     @Override
-    public SubPlan plan(final PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException {
+    public SubPlan plan(final PBody pSystem, Logger logger, IQueryMetaContext context) {
         SubPlanFactory planFactory = new SubPlanFactory(pSystem);
         PQuery query = pSystem.getPattern();
         //planProcessor.setCompiler(compiler);

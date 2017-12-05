@@ -19,7 +19,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -105,16 +104,12 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
             if (currentPlan == null) {
                 return false;
             }
-            try {
-                boolean foundMatch = currentPlan.execute(frame);
-                while ((!foundMatch) && planIterator.hasNext()) {
-                    foundMatch = selectNextPlan() && currentPlan.execute(frame);
-                }
-                isNextMatchCalculated = foundMatch;
-                return foundMatch;
-            } catch (LocalSearchException e) {
-                throw new RuntimeException(e);
+            boolean foundMatch = currentPlan.execute(frame);
+            while ((!foundMatch) && planIterator.hasNext()) {
+                foundMatch = selectNextPlan() && currentPlan.execute(frame);
             }
+            isNextMatchCalculated = foundMatch;
+            return foundMatch;
         }
 
         @Override

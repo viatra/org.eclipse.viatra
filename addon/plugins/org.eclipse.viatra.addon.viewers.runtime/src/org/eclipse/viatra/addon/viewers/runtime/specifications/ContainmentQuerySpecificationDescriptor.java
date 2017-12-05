@@ -14,10 +14,10 @@ import java.util.Collections;
 
 import org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.transformation.views.traceability.generic.AbstractQuerySpecificationDescriptor;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -32,8 +32,10 @@ public class ContainmentQuerySpecificationDescriptor extends AbstractQuerySpecif
     private final String container;
     private final String item;
 
-    public ContainmentQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation)
-            throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public ContainmentQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation) {
         super(specification, getTraceSource(specification, annotation), Collections.<PParameter, String> emptyMap());
 
         ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE);

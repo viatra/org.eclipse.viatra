@@ -23,7 +23,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import org.eclipse.viatra.gui.tests.queries.util.TransitionWithoutTargetStateQuerySpecification;
 
@@ -31,7 +30,7 @@ public class TransitionWithoutTargetStateConstraint0 implements IConstraintSpeci
 
     private TransitionWithoutTargetStateQuerySpecification querySpecification;
 
-    public TransitionWithoutTargetStateConstraint0() throws ViatraQueryException {
+    public TransitionWithoutTargetStateConstraint0() {
         querySpecification = TransitionWithoutTargetStateQuerySpecification.instance();
     }
 

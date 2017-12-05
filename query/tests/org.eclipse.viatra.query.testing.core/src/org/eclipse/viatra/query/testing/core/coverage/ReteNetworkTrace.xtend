@@ -13,8 +13,6 @@ import com.google.common.collect.Multimap
 import com.google.common.collect.Multimaps
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery
@@ -43,7 +41,10 @@ class ReteNetworkTrace {
         ]
      }
 
-    new(ViatraQueryMatcher<?> matcher, IPTraceableTraceProvider traceProvider) throws ViatraQueryException, QueryProcessingException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    new(ViatraQueryMatcher<?> matcher, IPTraceableTraceProvider traceProvider) {
     	this.reteEngine = (matcher.getEngine() as AdvancedViatraQueryEngine).getQueryBackend(
             new ReteBackendFactory()) as ReteEngine
         this.scope = matcher.engine.scope as EMFScope

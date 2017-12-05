@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -73,19 +72,19 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
         frame.setValue(unboundVariableIndex, null);
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
         it = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple).iterator();
 
     }
 
     @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (it.hasNext()) {
             final Object next = it.next();
             frame.setValue(unboundVariableIndex, next);

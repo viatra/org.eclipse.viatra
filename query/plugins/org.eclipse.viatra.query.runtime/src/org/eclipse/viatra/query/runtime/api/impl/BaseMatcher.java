@@ -22,11 +22,9 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.QueryResultWrapper;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
@@ -47,13 +45,9 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     /**
      * @since 1.4
      */
-    public BaseMatcher(IQuerySpecification<? extends BaseMatcher<Match>> querySpecification) throws ViatraQueryException{
+    public BaseMatcher(IQuerySpecification<? extends BaseMatcher<Match>> querySpecification) {
         this.querySpecification = querySpecification;
-        try {
-            this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
-        } catch (QueryInitializationException e) {
-            throw new ViatraQueryException(e);
-        }
+        this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
     }
     
     /**

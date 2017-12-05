@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -129,10 +130,9 @@ public class BuildHelper {
      * 
      * @param pSystem
      * @param plan
-     * @throws QueryProcessingException
+     * @throws ViatraQueryRuntimeException
      */
-    public static void finalCheck(final PBody pSystem, SubPlan plan, IQueryMetaContext context)
-            throws QueryProcessingException {
+    public static void finalCheck(final PBody pSystem, SubPlan plan, IQueryMetaContext context) {
         PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, plan);
         if (unenforcedConstraint != null) {
             throw new QueryProcessingException(

@@ -13,8 +13,6 @@ package org.eclipse.viatra.query.testing.core.coverage
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine
 import org.eclipse.viatra.query.runtime.rete.network.Node
@@ -34,8 +32,10 @@ class ReteCoverage {
     /**
      * Although this constructor requires a matcher, it extracts the underlying ReteEngine and
      * the computed coverage is engine-wide.
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    new(ViatraQueryMatcher<?> matcher) throws ViatraQueryException, QueryProcessingException {
+    new(ViatraQueryMatcher<?> matcher) {
         this.reteEngine = (matcher.getEngine() as AdvancedViatraQueryEngine).getQueryBackend(
             new ReteBackendFactory()) as ReteEngine
         this.scope = matcher.engine.scope as EMFScope

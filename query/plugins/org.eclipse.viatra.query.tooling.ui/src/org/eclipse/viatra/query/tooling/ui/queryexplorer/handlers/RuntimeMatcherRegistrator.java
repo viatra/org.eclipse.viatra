@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
@@ -63,23 +62,19 @@ public class RuntimeMatcherRegistrator implements Runnable {
     public void run() {
         final QueryExplorer queryExplorer = QueryExplorer.getInstance();
         if (queryExplorer != null) {
-            try {
-                final RootContent vr = queryExplorer.getRootContent();
-                final PatternComposite viewerInput = queryExplorer.getPatternsViewerRoot()
-                        .getGenericPatternsRoot();
-                openPatternsViewerIfNoPreviousPatterns(queryExplorer);
-                // UNREGISTERING PATTERNS
-                unregisterPatternsFromMatcherTreeViewer(vr);
-                // remove labels from pattern registry for the corresponding pattern model
-                removeLabelsFromPatternRegistry(queryExplorer, viewerInput);
-                // REGISTERING PATTERNS
-                Set<IQuerySpecification<?>> newPatterns = registerPatternsFromPatternModel(vr, queryExplorer.getHints());
-                setCheckedStatesOnNewPatterns(queryExplorer, viewerInput, newPatterns);
-                
-                queryExplorer.refreshPatternsViewer();
-            } catch (ViatraQueryException e) {
-                throw new RuntimeException(e);
-            }
+            final RootContent vr = queryExplorer.getRootContent();
+            final PatternComposite viewerInput = queryExplorer.getPatternsViewerRoot()
+                    .getGenericPatternsRoot();
+            openPatternsViewerIfNoPreviousPatterns(queryExplorer);
+            // UNREGISTERING PATTERNS
+            unregisterPatternsFromMatcherTreeViewer(vr);
+            // remove labels from pattern registry for the corresponding pattern model
+            removeLabelsFromPatternRegistry(queryExplorer, viewerInput);
+            // REGISTERING PATTERNS
+            Set<IQuerySpecification<?>> newPatterns = registerPatternsFromPatternModel(vr, queryExplorer.getHints());
+            setCheckedStatesOnNewPatterns(queryExplorer, viewerInput, newPatterns);
+            
+            queryExplorer.refreshPatternsViewer();
         }
     }
 
@@ -110,7 +105,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
         queryExplorerInstance.refreshPatternsViewer();
     }
 
-    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) throws ViatraQueryException {
+    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) {
         PatternModel newParsedModel = null;
         if (this.resource!=null) {
             newParsedModel = dbUtil.extractPatternModelFromResource(resource);

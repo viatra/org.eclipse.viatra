@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * This is a generic query specification for VIATRA Query pattern matchers, for "interpretative" query execution. Instantiate the
@@ -52,7 +51,7 @@ public class GenericQuerySpecification
     }
 
     @Override
-    public GenericPatternMatcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException {
+    public GenericPatternMatcher instantiate(ViatraQueryEngine engine) {
         return GenericPatternMatcher.on(engine, this);
     }
 
@@ -65,7 +64,7 @@ public class GenericQuerySpecification
      * @since 1.4
      */
     @Override
-    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+    public GenericPatternMatcher instantiate() {
         return new GenericPatternMatcher(this);
     }
     

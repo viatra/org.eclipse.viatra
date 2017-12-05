@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.junit.Assert;
 
 import com.google.common.collect.Sets;
@@ -37,9 +37,11 @@ public class CompareQueryTester {
     /**
      * Compares the results of two queries. It is assumed that the query specifications are equivalent and use the same
      * match classes
+     * 
+     * @throws ViatraQueryRuntimeException
      */
     public static void assertQueriesEquivalent(ViatraQueryEngine engine, IQuerySpecification<?> querySpecification1,
-            IQuerySpecification<?> querySpecification2) throws ViatraQueryException {
+            IQuerySpecification<?> querySpecification2) {
         // Create a matcher for the original query specification
         ViatraQueryMatcher<? extends IPatternMatch> matcher = querySpecification1.getMatcher(engine);
         // Create a matcher for the flattened query specification

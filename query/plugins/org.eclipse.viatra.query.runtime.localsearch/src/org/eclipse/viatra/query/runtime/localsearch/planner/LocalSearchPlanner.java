@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationC
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -92,11 +91,9 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
      *            a set of bound parameters
      * @return a mapping between ISearchOperation list and a mapping, that holds a PVariable-Integer mapping for the
      *         list of ISearchOperations
-     * @throws QueryProcessingException
      */
     @Override
-    public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters)
-            throws QueryProcessingException {
+    public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters) {
         // 1. Preparation
         preprocessor.setTraceCollector(configuration.getTraceCollector());
         Set<PBody> normalizedBodies = preprocessor.rewrite(querySpec.getDisjunctBodies()).getBodies();

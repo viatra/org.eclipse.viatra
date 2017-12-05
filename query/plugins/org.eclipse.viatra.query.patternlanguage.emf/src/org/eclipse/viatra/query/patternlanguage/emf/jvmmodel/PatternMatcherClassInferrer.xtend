@@ -75,7 +75,6 @@ class PatternMatcherClassInferrer {
                     visibility = JvmVisibility::PUBLIC
                     static = true
                     documentation = pattern.javadocQuerySpecificationMethod.toString
-                    exceptions += typeRef(ViatraQueryException)
                     body = '''
                         return «specificationClass.typeRef».instance();
                     '''
@@ -117,7 +116,6 @@ class PatternMatcherClassInferrer {
             visibility = JvmVisibility::PUBLIC
             documentation = pattern.javadocMatcherStaticOnEngine.toString
             parameters += pattern.toParameter("engine", typeRef(ViatraQueryEngine))
-            exceptions += typeRef(ViatraQueryException)
             body = '''
                 // check if matcher already exists
                 «matcherClass.simpleName» matcher = engine.getExistingMatcher(querySpecification());
@@ -131,7 +129,6 @@ class PatternMatcherClassInferrer {
             static = true
             visibility = JvmVisibility::PUBLIC
             documentation = pattern.javadocMatcherStaticCreate.toString
-            exceptions += typeRef(ViatraQueryException)
             body = '''
                 return new «matcherClass.simpleName»();
             '''
@@ -146,7 +143,6 @@ class PatternMatcherClassInferrer {
         matcherClass.members += pattern.toConstructor [
             visibility = JvmVisibility::PRIVATE
             documentation = pattern.javadocMatcherConstructorEngine.toString
-            exceptions += typeRef(ViatraQueryException)
             body = '''super(querySpecification());'''
         ]
     }

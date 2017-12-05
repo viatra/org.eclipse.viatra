@@ -13,7 +13,6 @@ package org.eclipse.viatra.transformation.evm.specific.event;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleInstance;
 import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
@@ -25,15 +24,10 @@ public class ViatraQueryRuleInstanceBuilder<Match extends IPatternMatch> extends
     
     @Override
     public void prepareRuleInstance(RuleInstance<Match> ruleInstance, EventFilter<? super Match> filter) {
-        try {
-            checkArgument(ruleInstance != null, "Cannot prepare null rule instance!");
-            ViatraQueryEventSource<Match> source = realm.createSource(sourceSpecification);
-            ViatraQueryEventHandler<Match> handler = new ViatraQueryEventHandler<Match>(source, filter, ruleInstance);
-            handler.prepareEventHandler();
-        } catch (ViatraQueryException e) {
-            throw new RuntimeException("Could not create matcher for event source definition " + sourceSpecification + " in realm "
-                    + realm, e);
-        }
+        checkArgument(ruleInstance != null, "Cannot prepare null rule instance!");
+        ViatraQueryEventSource<Match> source = realm.createSource(sourceSpecification);
+        ViatraQueryEventHandler<Match> handler = new ViatraQueryEventHandler<Match>(source, filter, ruleInstance);
+        handler.prepareEventHandler();
     }
 
     protected ViatraQueryRuleInstanceBuilder(ViatraQueryEventRealm realm, ViatraQueryEventSourceSpecification<Match> sourceSpecification) {

@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.api.IPatternExecutionAnalyzer
@@ -46,7 +45,7 @@ class AnalyzedPatternBasedMatchSetModelProvider extends PatternBasedMatchSetMode
         EMFScope scope, 
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, 
         QueryEvaluationHint hint
-    ) throws ViatraQueryException {
+        ) {
         val matcher = super.createMatcher(scope, querySpecification, hint)
         analyzers.forEach[processMatcher(matcher)]
         return matcher;

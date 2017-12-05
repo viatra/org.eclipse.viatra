@@ -36,7 +36,6 @@ import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -163,19 +162,15 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
     }
 
     protected void doUpdateDisplay() {
-        try {
-            EMFScope target = extractModelSource(currentSelection);
-            if (target != null && !target.equals(this.modelSource)) {
-                // we have found a new target
-                unsetModelSource();
-                setModelSource(target);
-            }
-        } catch (ViatraQueryException e) {
-            throw new RuntimeException("Failed to extract model source", e);
+        EMFScope target = extractModelSource(currentSelection);
+        if (target != null && !target.equals(this.modelSource)) {
+            // we have found a new target
+            unsetModelSource();
+            setModelSource(target);
         }
     }
     
-    protected EMFScope extractModelSource(List<Object> objects) throws ViatraQueryException {
+    protected EMFScope extractModelSource(List<Object> objects) {
         Set<Notifier> notifiers = ImmutableSet.copyOf(Iterables.filter(objects, Notifier.class));
         // extract logic
         switch (connectorType) {

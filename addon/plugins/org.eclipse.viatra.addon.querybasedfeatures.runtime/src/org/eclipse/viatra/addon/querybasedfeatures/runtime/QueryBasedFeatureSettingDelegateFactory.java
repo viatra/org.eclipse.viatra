@@ -31,7 +31,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 
@@ -74,7 +73,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         return delayedFeatures;
     }
     
-    protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws ViatraQueryException {
+    protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) {
         if(dynamicEMFMode) {
             WeakReference<AdvancedViatraQueryEngine> reference = engineMap.get(notifier);
             if(reference != null && reference.get() != null) {

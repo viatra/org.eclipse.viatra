@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
 
@@ -36,10 +36,10 @@ public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extend
      *
      * @param engine
      *            the existing VIATRA Query engine in which this matcher will be created.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if an error occurs during pattern matcher creation
      */
-    public Matcher getMatcher(ViatraQueryEngine engine) throws ViatraQueryException;
+    public Matcher getMatcher(ViatraQueryEngine engine);
 
     
     /**
@@ -80,10 +80,10 @@ public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extend
     /**
      * Creates a new uninitialized matcher, which is not functional until an engine initializes it. Clients
      * should not call this method, it is used by the {@link ViatraQueryEngine} instance to instantiate matchers.
-     * @throws ViatraQueryException 
+     * @throws ViatraQueryRuntimeException 
      * @noreference This method is not intended to be referenced by clients.
      * @since 1.4
      */
-    public Matcher instantiate() throws ViatraQueryException;
+    public Matcher instantiate();
     
 }

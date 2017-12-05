@@ -12,10 +12,10 @@ package org.eclipse.viatra.query.runtime.matchers.psystem;
 
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * Adds extra methods to the PQuery interface to initialize its contents.
@@ -44,8 +44,9 @@ public interface InitializablePQuery extends PQuery {
      * uninitialized}.
      *
      * @param bodies
+     * @throws ViatraQueryRuntimeException
      */
-    void initializeBodies(Set<PBody> bodies) throws QueryInitializationException;
+    void initializeBodies(Set<PBody> bodies);
 
     /**
      * Adds an annotation to the specification. Only applicable if the pattern is still

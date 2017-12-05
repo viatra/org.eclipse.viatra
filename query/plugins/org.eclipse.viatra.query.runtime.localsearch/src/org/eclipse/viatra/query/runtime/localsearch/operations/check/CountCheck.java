@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
@@ -46,14 +45,14 @@ public class CountCheck extends CheckOperation implements IPatternMatcherOperati
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         super.onInitialize(frame, context);
         maskedTuple.updateTuple(frame);
         matcher = context.getMatcher(information.getReference());
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         int count = matcher.countMatches(information.getParameterMask(), maskedTuple);
         return ((Integer)frame.getValue(position)) == count;
     }

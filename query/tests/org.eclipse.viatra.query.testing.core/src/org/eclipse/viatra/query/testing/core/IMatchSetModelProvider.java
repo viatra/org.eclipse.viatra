@@ -14,7 +14,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 
 /**
@@ -28,24 +27,22 @@ public interface IMatchSetModelProvider {
      * 
      * @param querySpecification
      * @return recorded matches
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      * @since 1.5.2 
      */
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(EMFScope scope,
-            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
-                    throws ViatraQueryException;
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter);
     
     /**
      * Creates a snapshot of the current matches of the given query specification
      * 
      * @param querySpecification
      * @return recorded matches
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      * 
      */
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet rs,
-            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
-                    throws ViatraQueryException;
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter);
 
     
     /**

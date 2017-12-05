@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -44,14 +43,14 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
         IQueryResultProvider matcher = context.getMatcher(information.getReference());
         matches = matcher.getAllMatches(information.getParameterMask(), maskedTuple).iterator();
     }
 
     @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (matches.hasNext()){
             Tuple tuple = matches.next();
             while(!fillInResult(frame, tuple) && matches.hasNext()){
@@ -83,7 +82,7 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
     }
     
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
         TupleMask mask = information.getFullFrameMask();
         for(int i : information.getFreeParameterIndices()){
             mask.set(frame, i, null);

@@ -18,13 +18,13 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
@@ -187,11 +187,10 @@ public class ReteEngine implements IQueryBackend {
      * @param query
      *            the pattern to be matched.
      * @return a patternmatcher object that can match occurences of the given pattern.
-     * @throws RetePatternBuildException
+     * @throws ViatraQueryRuntimeException
      *             if construction fails.
      */
-    public synchronized RetePatternMatcher accessMatcher(final PQuery query)
-            throws QueryProcessingException {
+    public synchronized RetePatternMatcher accessMatcher(final PQuery query) {
         ensureInitialized();
         RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
@@ -201,7 +200,7 @@ public class ReteEngine implements IQueryBackend {
         if (matcher == null) {
             constructionWrapper(new Callable<Void>() {
                 @Override
-                public Void call() throws QueryProcessingException {
+                public Void call()  {
                     RecipeTraceInfo prodNode;
                     prodNode = boundary.accessProductionTrace(query);
 
@@ -227,15 +226,14 @@ public class ReteEngine implements IQueryBackend {
      * @pre: builder is set.
      * @param specifications
      *            the patterns to be matched.
-     * @throws RetePatternBuildException
+     * @throws ViatraQueryRuntimeException
      *             if construction fails.
      */
-    public synchronized void buildMatchersCoalesced(final Collection<PQuery> specifications)
-            throws QueryProcessingException {
+    public synchronized void buildMatchersCoalesced(final Collection<PQuery> specifications) {
         ensureInitialized();
         constructionWrapper(new Callable<Void>() {
             @Override
-            public Void call() throws QueryProcessingException {
+            public Void call()  {
                 for (PQuery specification : specifications) {
                     boundary.accessProductionNode(specification);
                 }
@@ -513,7 +511,7 @@ public class ReteEngine implements IQueryBackend {
     }
     
     @Override
-    public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
+    public IQueryResultProvider getResultProvider(PQuery query)  {
         return accessMatcher(query);
     }
     
@@ -521,8 +519,7 @@ public class ReteEngine implements IQueryBackend {
      * @since 1.4
      */
     @Override
-    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
-            throws QueryProcessingException {
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints) {
         hintConfigurator.storeHint(query, hints);
         return accessMatcher(query);
     }

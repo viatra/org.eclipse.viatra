@@ -47,7 +47,7 @@ public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
             null, "Problem with query dependencies.", this, ex);
     }
 
-    protected EClassifier getClassifierLiteral(String packageUri, String classifierName) throws QueryInitializationException {
+    protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
         if (ePackage == null) 
             throw new QueryInitializationException(
@@ -77,7 +77,7 @@ public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
         }
     }
 
-    protected EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) throws QueryInitializationException {
+    protected EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) {
         EClassifier container = getClassifierLiteral(packageUri, className);
         if (! (container instanceof EClass)) 
             throw new QueryInitializationException(
@@ -93,7 +93,7 @@ public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
         return feature;
     }
 
-    protected EEnumLiteral getEnumLiteral(String packageUri, String enumName, String literalName) throws QueryInitializationException {
+    protected EEnumLiteral getEnumLiteral(String packageUri, String enumName, String literalName) {
         EClassifier enumContainer = getClassifierLiteral(packageUri, enumName);
         if (! (enumContainer instanceof EEnum)) 
             throw new QueryInitializationException(

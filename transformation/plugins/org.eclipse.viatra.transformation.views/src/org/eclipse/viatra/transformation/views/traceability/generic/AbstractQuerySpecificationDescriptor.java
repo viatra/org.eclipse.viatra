@@ -13,8 +13,8 @@ package org.eclipse.viatra.transformation.views.traceability.generic;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 import com.google.common.collect.Multimap;
 
@@ -32,7 +32,10 @@ public abstract class AbstractQuerySpecificationDescriptor {
         this.traceIds = traceIds;
     }
 
-    public void initialize(String traceabilityId) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public void initialize(String traceabilityId) {
         tracedSpecification = GenericTracedQuerySpecification.initiate(GenericReferencedQuerySpecification.initiate(
                 specification, traceSources, traceIds, traceabilityId));
     }

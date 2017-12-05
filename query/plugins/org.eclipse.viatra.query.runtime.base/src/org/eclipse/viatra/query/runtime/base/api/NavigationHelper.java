@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 
 /**
  * 
@@ -669,8 +669,9 @@ public interface NavigationHelper {
      * Adds an additional EMF model root.
      * 
      * @param emfRoot
+     * @throws ViatraQueryRuntimeException
      */
-    public void addRoot(Notifier emfRoot) throws ViatraBaseException;
+    public void addRoot(Notifier emfRoot);
     
     /**
      * Moves an EObject (along with its entire containment subtree) within the containment hierarchy of the EMF model. 

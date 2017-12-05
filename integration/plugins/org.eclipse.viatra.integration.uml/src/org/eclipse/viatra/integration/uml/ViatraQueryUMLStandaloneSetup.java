@@ -73,8 +73,8 @@ import org.eclipse.viatra.integration.uml.derivedfeatures.VertexOutgoing;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.SingletonQueryGroupProvider;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.connector.QueryGroupProviderSourceConnector;
@@ -97,9 +97,9 @@ public class ViatraQueryUMLStandaloneSetup {
     
     /**
      * Register the query specifications
-     * @throws ViatraQueryException if a query specification cannot be initialized or registered
+     * @throws ViatraQueryRuntimeException if a query specification cannot be initialized or registered
      */
-    public static void doSetup() throws ViatraQueryException {
+    public static void doSetup() {
         // query specification registry
         SingletonQueryGroupProvider groupProvider = new SingletonQueryGroupProvider(getQueryGroup());
         QueryGroupProviderSourceConnector sourceConnector = new QueryGroupProviderSourceConnector(CONNECTOR_ID, groupProvider, true);
@@ -113,11 +113,11 @@ public class ViatraQueryUMLStandaloneSetup {
         }
     }
 
-    private static IQueryGroup getQueryGroup() throws ViatraQueryException {
+    private static IQueryGroup getQueryGroup() {
         return DerivedFeatures.instance();
     }
 
-    private static Map<EStructuralFeature, IQuerySpecification<?>> getSurrogateQueries() throws ViatraQueryException {
+    private static Map<EStructuralFeature, IQuerySpecification<?>> getSurrogateQueries() {
         return ImmutableMap.<EStructuralFeature, IQuerySpecification<?>> builder()
             .put(UMLPackage.Literals.ACTION__CONTEXT, ActionContext.instance())
             .put(UMLPackage.Literals.ACTION__INPUT, ActionInput.instance())

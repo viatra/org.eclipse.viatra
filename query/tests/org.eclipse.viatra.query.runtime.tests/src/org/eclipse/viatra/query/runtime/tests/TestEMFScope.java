@@ -38,7 +38,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
@@ -53,7 +52,7 @@ import com.google.common.collect.Iterables;
 public class TestEMFScope {
 
     @Test
-    public void multipleResourceSets() throws ViatraQueryException {
+    public void multipleResourceSets() {
         ResourceSet resourceSet1 = createResourceSet(); 
         ResourceSet resourceSet2 = createResourceSet();
         ReteNodeRecipe object1 = createObject(resourceSet1);
@@ -67,7 +66,7 @@ public class TestEMFScope {
     }
 
     @Test
-    public void eListSet() throws ViatraQueryException {
+    public void eListSet() {
         ResourceSet resourceSet = createResourceSet(); 
         ReteNodeRecipe object1 = createObject(resourceSet);
         ReteNodeRecipe object2 = createObject(resourceSet);
@@ -186,7 +185,7 @@ public class TestEMFScope {
         return pattern;
     }
 
-    private Collection<? extends IPatternMatch> getMatches(Pattern pattern, EMFScope scope) throws ViatraQueryException {
+    private Collection<? extends IPatternMatch> getMatches(Pattern pattern, EMFScope scope) {
         ViatraQueryMatcher<? extends IPatternMatch> matcher = ViatraQueryEngine.on(scope).getMatcher(new SpecificationBuilder().getOrCreateSpecification(pattern));
         return matcher.getAllMatches();
     }

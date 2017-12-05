@@ -12,8 +12,6 @@ package org.eclipse.viatra.query.runtime.api;
 
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-
 /**
  * Generic interface for group of query specifications.
  * 
@@ -37,10 +35,10 @@ public interface IQueryGroup {
      * 
      * @param engine
      *            the existing VIATRA Query engine in which the matchers will be created.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if there was an error in preparing the engine
      */
-    public void prepare(ViatraQueryEngine engine) throws ViatraQueryException;
+    public void prepare(ViatraQueryEngine engine);
 
     /**
      * Returns the currently assigned {@link IQuerySpecification}s.

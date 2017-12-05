@@ -13,10 +13,10 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.EMFOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -26,25 +26,25 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 public class LocalSearchResultProvider extends AbstractLocalSearchResultProvider {
 
     /**
-     * @throws QueryProcessingException
+     * @throws ViatraQueryRuntimeException
      * @since 1.5
      */
     public LocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
-            IPlanProvider planProvider) throws QueryProcessingException {
+            IPlanProvider planProvider) {
         this(backend, context, query, planProvider, null);
     }
 
     /**
-     * @throws QueryProcessingException
+     * @throws ViatraQueryRuntimeException
      * @since 1.5
      */
     public LocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
-            IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
+            IPlanProvider planProvider, QueryEvaluationHint userHints) {
         super(backend, context, query, planProvider, userHints);
     }
 
     @Override
-    protected void indexInitializationBeforePlanning() throws QueryProcessingException {
+    protected void indexInitializationBeforePlanning() {
         super.indexInitializationBeforePlanning();
         
         indexReferredTypesOfQuery(query, IndexingService.STATISTICS);

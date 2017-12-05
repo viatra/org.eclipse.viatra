@@ -21,10 +21,8 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -51,20 +49,20 @@ public class GenericReferencedQuerySpecification extends
     }
     
     @Override
-    protected GenericPatternMatcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException {
+    protected GenericPatternMatcher instantiate(ViatraQueryEngine engine) {
          GenericPatternMatcher matcher = defaultInstantiate(engine);
          return matcher;
     }
     
     public static GenericReferencedQuerySpecification initiate(IQuerySpecification<?> specification, Multimap<PParameter, PParameter> traceSources,
-            Map<PParameter, String> traceIds, String traceabilityId) throws QueryInitializationException {
+            Map<PParameter, String> traceIds, String traceabilityId) {
         
         GenericReferencedPQuery query = calculateReferencedQuery(specification.getInternalQueryRepresentation(), traceSources, traceIds, traceabilityId);        
         return new GenericReferencedQuerySpecification(query, specification);
     }
     
     private static GenericReferencedPQuery calculateReferencedQuery(PQuery original, Multimap<PParameter, PParameter> traceSources,
-            Map<PParameter, String> traceIds, String traceabilityId) throws QueryInitializationException {        
+            Map<PParameter, String> traceIds, String traceabilityId) {        
         return new GenericReferencedPQuery(original, traceSources, traceIds, traceabilityId);
     }
 
@@ -93,7 +91,7 @@ public class GenericReferencedQuerySpecification extends
     }
     
     @Override
-    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+    public GenericPatternMatcher instantiate() {
         return new GenericPatternMatcher(this);
     }
 }

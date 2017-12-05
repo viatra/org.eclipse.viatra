@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.exception;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
@@ -21,7 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  * @since 0.9
  * 
  */
-public class ViatraQueryException extends Exception {
+public class ViatraQueryException extends ViatraQueryRuntimeException {
 
     private static final long serialVersionUID = -74252748358355750L;
 

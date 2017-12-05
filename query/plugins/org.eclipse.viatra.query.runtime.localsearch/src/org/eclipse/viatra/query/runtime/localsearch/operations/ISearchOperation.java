@@ -13,8 +13,8 @@ package org.eclipse.viatra.query.runtime.localsearch.operations;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 
 /**
  * @author Zoltan Ujhelyi
@@ -26,28 +26,27 @@ public interface ISearchOperation {
      * During the execution of the corresponding plan, the onInitialize callback is evaluated before the execution of
      * the operation may begin. Operations may use this method to initialize its internal data structures.
      * 
-     * @param frame
-     * @param context
+     * @throws ViatraQueryRuntimeException
      */
-    void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
+    void onInitialize(MatchingFrame frame, ISearchContext context);
 
     /**
      * After the execution of the operation failed and {@link #execute(MatchingFrame, ISearchContext)} returns false, the onBacktrack
      * callback is evaluated. Operations may use this method to clean up any temporary structures, and make the
      * operation ready for a new execution.
      * 
-     * @param frame
-     * @param context 
+     * @throws ViatraQueryRuntimeException
      */
-    void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
+    void onBacktrack(MatchingFrame frame, ISearchContext context);
 
     /**
      * 
      * @param frame
      * @param context
      * @return true if successful, or false if backtracking needed
+     * @throws ViatraQueryRuntimeException
      */
-    boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
+    boolean execute(MatchingFrame frame, ISearchContext context);
     
     /**
      * 

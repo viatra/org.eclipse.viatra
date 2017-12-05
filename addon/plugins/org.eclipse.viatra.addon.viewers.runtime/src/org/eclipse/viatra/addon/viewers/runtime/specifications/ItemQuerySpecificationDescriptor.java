@@ -15,10 +15,10 @@ import java.util.Collections;
 import org.eclipse.viatra.addon.viewers.runtime.notation.HierarchyPolicy;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.transformation.views.traceability.generic.AbstractQuerySpecificationDescriptor;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -35,8 +35,10 @@ public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecification
     private final HierarchyPolicy policy;
     private final PAnnotation formatAnnotation;
 
-    public ItemQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation)
-            throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public ItemQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation) {
 
         super(specification, ArrayListMultimap.<PParameter, PParameter> create(), Collections
                 .<PParameter, String> emptyMap());

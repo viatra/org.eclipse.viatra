@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.BuildHelper;
@@ -67,8 +67,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
     }
 
     @Override
-    public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context)
-            throws QueryProcessingException {
+    public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context) {
         return new Scaffold(pSystem, logger, context).run();
     }
 
@@ -99,7 +98,10 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             hints = hintProvider.getQueryEvaluationHint(query);
         }
 
-        public SubPlan run() throws QueryProcessingException {
+        /**
+         * @throws ViatraQueryRuntimeException
+         */
+        public SubPlan run() {
             try {
                 logger.debug(String.format(
                         "%s: patternbody build started for %s",
@@ -166,7 +168,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             return candidates;
         }
 
-        private void admitSubPlan(SubPlan plan) throws QueryProcessingException {
+        private void admitSubPlan(SubPlan plan) {
             // are there any unapplied constant filters that we can apply here?
             if (ReteHintOptions.prioritizeConstantFiltering.getValueOrDefault(hints)) {
                 SetView<ConstantValue> unappliedConstants = 
@@ -198,8 +200,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             forefront.add(plan);
         }
 
-        private void doJoin(JoinCandidate selectedJoin)
-                throws QueryProcessingException {
+        private void doJoin(JoinCandidate selectedJoin) {
             forefront.remove(selectedJoin.getPrimary());
             forefront.remove(selectedJoin.getSecondary());
             admitSubPlan(selectedJoin.getJoinedPlan(planFactory));

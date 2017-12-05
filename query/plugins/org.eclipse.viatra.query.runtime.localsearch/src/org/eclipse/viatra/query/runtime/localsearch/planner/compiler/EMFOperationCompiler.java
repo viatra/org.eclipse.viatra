@@ -62,7 +62,7 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
     }
 
     @Override
-    protected void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+    protected void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         final IInputKey inputKey = typeConstraint.getInputKey();
         if (inputKey instanceof JavaTransitiveInstancesKey) {
             operations.add(new InstanceOfJavaClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((JavaTransitiveInstancesKey) inputKey).getInstanceClass()));
@@ -78,7 +78,7 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
     }
     
     @Override
-    protected void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+    protected void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         final IInputKey inputKey = typeConstraint.getSupplierKey();
         if (inputKey instanceof EClassTransitiveInstancesKey) {
             operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));

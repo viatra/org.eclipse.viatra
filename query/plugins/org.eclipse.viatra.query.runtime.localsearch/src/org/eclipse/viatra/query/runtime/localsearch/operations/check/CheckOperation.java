@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
@@ -29,16 +28,16 @@ public abstract class CheckOperation implements ISearchOperation {
     private boolean executed;
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         executed = false;
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
     }
 
     @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public boolean execute(MatchingFrame frame, ISearchContext context) {
         executed = executed ? false : check(frame, context);
         return executed;
     }
@@ -47,6 +46,6 @@ public abstract class CheckOperation implements ISearchOperation {
      * Executes the checking operation
      * @since 1.7
      */
-    protected abstract boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
+    protected abstract boolean check(MatchingFrame frame, ISearchContext context) ;
 
 }

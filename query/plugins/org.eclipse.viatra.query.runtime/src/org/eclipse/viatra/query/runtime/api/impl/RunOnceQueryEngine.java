@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Run-once query engines can be used to retrieve the current match set of query specifications
@@ -91,7 +90,7 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
     
     @Override
     public <Match extends IPatternMatch> Collection<Match> getAllMatches(
-            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) throws ViatraQueryException {
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {
         
         if(samplingMode && reSamplingNeeded && engine != null) {
             // engine exists from earlier, but may need resampling if model changed

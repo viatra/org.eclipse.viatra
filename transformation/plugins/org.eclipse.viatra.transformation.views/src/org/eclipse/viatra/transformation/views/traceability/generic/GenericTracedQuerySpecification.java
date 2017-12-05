@@ -17,9 +17,8 @@ import org.eclipse.viatra.query.runtime.api.GenericQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 import com.google.common.collect.Multimap;
 
@@ -39,13 +38,15 @@ public class GenericTracedQuerySpecification extends GenericQuerySpecification<G
         this.referencedQuerySpecification = referencedQuerySpecification;
     }
 
-    public static GenericTracedQuerySpecification initiate(GenericReferencedQuerySpecification referenced) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public static GenericTracedQuerySpecification initiate(GenericReferencedQuerySpecification referenced) {
         return new GenericTracedQuerySpecification(GenericTracedQuerySpecification.calculateTracedQuery((GenericReferencedPQuery) referenced
                 .getInternalQueryRepresentation()), referenced);
     }
 
-    private static GenericTracedPQuery calculateTracedQuery(GenericReferencedPQuery referencedQuery)
-            throws QueryInitializationException {
+    private static GenericTracedPQuery calculateTracedQuery(GenericReferencedPQuery referencedQuery) {
         return new GenericTracedPQuery(referencedQuery);
     }
 
@@ -55,7 +56,7 @@ public class GenericTracedQuerySpecification extends GenericQuerySpecification<G
     }
 
     @Override
-    protected GenericPatternMatcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException {
+    protected GenericPatternMatcher instantiate(ViatraQueryEngine engine) {
         GenericPatternMatcher matcher = defaultInstantiate(engine);
         return matcher;
     }
@@ -73,7 +74,7 @@ public class GenericTracedQuerySpecification extends GenericQuerySpecification<G
     }
     
     @Override
-    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+    public GenericPatternMatcher instantiate() {
         return new GenericPatternMatcher(this);
     }
 }

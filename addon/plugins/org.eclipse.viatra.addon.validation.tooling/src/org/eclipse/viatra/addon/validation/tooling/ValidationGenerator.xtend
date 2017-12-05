@@ -216,7 +216,6 @@ class ValidationGenerator implements IGenerationFragment {
             import org.eclipse.viatra.query.runtime.api.IPatternMatch;
             import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
             import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-            import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
             
             import «specificationType.qualifiedName»;
             
@@ -224,7 +223,7 @@ class ValidationGenerator implements IGenerationFragment {
             
                 private «specificationType.simpleName» querySpecification;
             
-                public «className»() throws ViatraQueryException {
+                public «className»() {
                     querySpecification = «specificationType.simpleName».instance();
                 }
             

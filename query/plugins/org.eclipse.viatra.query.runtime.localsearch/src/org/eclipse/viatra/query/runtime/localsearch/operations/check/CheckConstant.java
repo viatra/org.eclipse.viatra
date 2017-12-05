@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Lists;
@@ -36,7 +35,7 @@ public class CheckConstant extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         return frame.get(position).equals(value);
     }
 

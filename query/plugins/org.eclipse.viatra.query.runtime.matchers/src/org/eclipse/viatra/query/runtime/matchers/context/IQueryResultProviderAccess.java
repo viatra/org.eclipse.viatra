@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -27,9 +26,8 @@ public interface IQueryResultProviderAccess {
     /**
      * Get a result provider for the given {@link PQuery}, which conforms the capabilities requested by the
      * given {@link QueryEvaluationHint} object.
-     * @throws QueryProcessingException 
-     * @throws ViatraQueryException 
+     * @throws ViatraQueryRuntimeException 
      */
-    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint overrideHints) throws QueryProcessingException;
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint overrideHints);
     
 }

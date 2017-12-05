@@ -16,8 +16,6 @@ import org.eclipse.viatra.query.runtime.api.GenericMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * This is a generic pattern matcher for any VIATRA Query pattern, with "interpretative" query execution. Use the
@@ -43,7 +41,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 class GenericPatternMatcher extends
         org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
 
-    protected GenericPatternMatcher(GenericQuerySpecification specification) throws ViatraQueryException {
+    protected GenericPatternMatcher(GenericQuerySpecification specification) {
         super(specification);
     }
     
@@ -59,17 +57,11 @@ class GenericPatternMatcher extends
      * @param pattern
      *            the VIATRA Query pattern for which the matcher is to be
      *            constructed.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if an error occurs during pattern matcher creation
      */
-    public static GenericPatternMatcher on(ViatraQueryEngine engine,
-            Pattern pattern) throws ViatraQueryException {
-        try {
-            return on(engine, new GenericQuerySpecification(
-                    new GenericEMFPatternPQuery(pattern)));
-        } catch (QueryInitializationException e) {
-            throw new ViatraQueryException(e);
-        }
+    public static GenericPatternMatcher on(ViatraQueryEngine engine, Pattern pattern) {
+        return on(engine, new GenericQuerySpecification(new GenericEMFPatternPQuery(pattern)));
     }
 
     /**
@@ -84,15 +76,13 @@ class GenericPatternMatcher extends
      * @param querySpecification
      *            the query specification for which the matcher is to be
      *            constructed.
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if an error occurs during pattern matcher creation
      */
     public static GenericPatternMatcher on(ViatraQueryEngine engine,
-            GenericQuerySpecification querySpecification)
-            throws ViatraQueryException {
+            GenericQuerySpecification querySpecification) {
         // check if matcher already exists
-        GenericPatternMatcher matcher = engine
-                .getExistingMatcher(querySpecification);
+        GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
         if (matcher == null) {
             matcher = engine.getMatcher(querySpecification);
         }

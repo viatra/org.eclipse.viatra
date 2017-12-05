@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 
 /**
@@ -46,7 +45,7 @@ public interface PConstraint extends PTraceable {
 
     public void delete();
 
-    public void checkSanity() throws QueryProcessingException;
+    public void checkSanity();
 
     /**
      * Returns an integer ID that is guaranteed to increase strictly monotonously for constraints within a pBody.

@@ -15,11 +15,9 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.MappingTraceCollector;
@@ -59,7 +57,7 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
 	}
 
     @Override
-    public void processMatcher(ViatraQueryMatcher<?> matcher) throws ViatraQueryException, QueryProcessingException {
+    public void processMatcher(ViatraQueryMatcher<?> matcher) {
         // Only Rete backend is supported
         if (matcher instanceof BaseMatcher) {
             BaseMatcher<?> baseMatcher = (BaseMatcher<?>) matcher;

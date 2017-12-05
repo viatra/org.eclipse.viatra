@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -25,7 +24,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -35,9 +34,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.traceability.patterns.Trace;
 
 import com.google.common.base.Preconditions;
@@ -66,7 +63,10 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
     
     private PQuery baseQuery;
 
-    public GenericReferencedPQuery(GenericReferencedPQuery referencedQuery) throws QueryInitializationException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public GenericReferencedPQuery(GenericReferencedPQuery referencedQuery) {
         baseQuery = referencedQuery.baseQuery;
         parameters = Lists.newArrayList(referencedQuery.parameters);
         traceSources = referencedQuery.traceSources;
@@ -74,8 +74,11 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         traceabilityId = referencedQuery.traceabilityId;
     }
     
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
     public GenericReferencedPQuery(PQuery baseQuery, Multimap<PParameter, PParameter> traceSources,
-            Map<PParameter, String> traceIds, String traceabilityId) throws QueryInitializationException {
+            Map<PParameter, String> traceIds, String traceabilityId) {
         this.baseQuery = baseQuery;
         this.parameters = Lists.newArrayList(baseQuery.getParameters());
         this.parameters.addAll(traceSources.keySet());
@@ -103,7 +106,7 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
     }
 
     @Override
-    protected Set<PBody> doGetContainedBodies() throws QueryInitializationException {
+    protected Set<PBody> doGetContainedBodies() {
         PBody body = new PBody(this);
 
         List<PParameter> originalParams = baseQuery.getParameters();
@@ -118,23 +121,18 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
 
         body.setSymbolicParameters(symbolicParameters);
         new PositivePatternCall(body, Tuples.flatTupleOf(newVariables.toArray()), baseQuery);
-        try {
-            insertTraceCall(body);
-        } catch (ViatraQueryException e) {
-            Logger logger = ViatraQueryLoggingUtil.getLogger(GenericReferencedPQuery.class);
-            logger.error(e.getMessage());
-        }
-
+        insertTraceCall(body);
+        
         return Collections.<PBody> singleton(body);
     }
 
-    private void insertTraceCall(PBody body) throws ViatraQueryException {
+    private void insertTraceCall(PBody body) {
         for (PParameter pParameter : traceSources.keySet()) {
             insertTraceCall(body, pParameter);
         }
     }
 
-    private void insertTraceCall(PBody body, PParameter pTarget) throws ViatraQueryException {
+    private void insertTraceCall(PBody body, PParameter pTarget) {
         PVariable var_target = body.getOrCreateVariableByName(pTarget.getName());
         body.getSymbolicParameters().add(new ExportedParameter(body, var_target, pTarget));
 

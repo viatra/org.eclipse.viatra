@@ -20,7 +20,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.Iterables;
@@ -87,7 +86,7 @@ public final class PatternParsingResults {
      * Collects all the query that are parsed and built successfully
      * @return In case of parsing errors, the returned contents is undefined.
      */
-    public Iterable<IQuerySpecification<?>> getQuerySpecifications() throws ViatraQueryException {
+    public Iterable<IQuerySpecification<?>> getQuerySpecifications() {
         List<IQuerySpecification<?>> specList = Lists.newArrayList();
         for (Pattern pattern : patterns) {
             boolean isPrivate = CorePatternLanguageHelper.isPrivate(pattern);

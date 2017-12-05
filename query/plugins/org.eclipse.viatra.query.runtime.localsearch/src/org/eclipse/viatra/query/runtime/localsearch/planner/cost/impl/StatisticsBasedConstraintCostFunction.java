@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -56,18 +56,14 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
 
     @Override
     public double apply(final IConstraintEvaluationContext input) {
-        try {
-            return this.calculateCost(input.getConstraint(), input);
-        } catch (QueryProcessingException e) {
-            throw new RuntimeException("Error while calculating operation cost ", e);
-        }
+        return this.calculateCost(input.getConstraint(), input);
     }
 
-    protected double _calculateCost(final ConstantValue constant, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final ConstantValue constant, final IConstraintEvaluationContext input) {
         return 0.0f;
     }
 
-    protected double _calculateCost(final TypeConstraint constraint, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final TypeConstraint constraint, final IConstraintEvaluationContext input) {
         final Collection<PVariable> freeMaskVariables = input.getFreeVariables();
         final Collection<PVariable> boundMaskVariables = input.getBoundVariables();
         IInputKey supplierKey = constraint.getSupplierKey();
@@ -99,7 +95,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
 
     protected double calculateBinaryExtendCost(final IInputKey supplierKey, final PVariable srcVariable,
             final PVariable dstVariable, final boolean isInverse, final long edgeCount,
-            final IConstraintEvaluationContext input) throws QueryProcessingException {
+            final IConstraintEvaluationContext input) {
         final Collection<PVariable> freeMaskVariables = input.getFreeVariables();
         final PConstraint constraint = input.getConstraint();
         IQueryMetaContext metaContext = input.getRuntimeContext().getMetaContext();
@@ -156,7 +152,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     }
     
     protected double calculateUnaryConstraintCost(final TypeConstraint constraint,
-            final IConstraintEvaluationContext input) throws QueryProcessingException {
+            final IConstraintEvaluationContext input) {
         PVariable variable = (PVariable) constraint.getVariablesTuple().get(0);
         if (input.getBoundVariables().contains(variable)) {
             return 0.9;
@@ -165,16 +161,16 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         }
     }
 
-    protected double _calculateCost(final ExportedParameter exportedParam, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final ExportedParameter exportedParam, final IConstraintEvaluationContext input) {
         return 0.0;
     }
 
     protected double _calculateCost(final TypeFilterConstraint exportedParam,
-            final IConstraintEvaluationContext input) throws QueryProcessingException {
+            final IConstraintEvaluationContext input) {
         return 0.0;
     }
 
-    protected double _calculateCost(final PositivePatternCall patternCall, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final PositivePatternCall patternCall, final IConstraintEvaluationContext input) {
         final Map<Set<PVariable>, Set<PVariable>> dependencies = input.getQueryAnalyzer()
                 .getFunctionalDependencies(ImmutableSet.of(patternCall), false);
         final Set<PVariable> boundOrImplied = FunctionalDependencyHelper.closureOf(input.getBoundVariables(),
@@ -195,49 +191,49 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     /**
      * @since 1.7
      */
-    protected double _calculateCost(final ExpressionEvaluation evaluation, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final ExpressionEvaluation evaluation, final IConstraintEvaluationContext input) {
         return _calculateCost((PConstraint)evaluation, input);
     }
     
     /**
      * @since 1.7
      */
-    protected double _calculateCost(final Inequality inequality, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final Inequality inequality, final IConstraintEvaluationContext input) {
         return _calculateCost((PConstraint)inequality, input);
     }
     
     /**
      * @since 1.7
      */
-    protected double _calculateCost(final AggregatorConstraint aggregator, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final AggregatorConstraint aggregator, final IConstraintEvaluationContext input) {
         return _calculateCost((PConstraint)aggregator, input);
     }
     
     /**
      * @since 1.7
      */
-    protected double _calculateCost(final NegativePatternCall call, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final NegativePatternCall call, final IConstraintEvaluationContext input) {
         return _calculateCost((PConstraint)call, input);
     }
     
     /**
      * @since 1.7
      */
-    protected double _calculateCost(final PatternMatchCounter counter, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final PatternMatchCounter counter, final IConstraintEvaluationContext input) {
         return _calculateCost((PConstraint)counter, input);
     }
     
     /**
      * @since 1.7
      */
-    protected double _calculateCost(final BinaryTransitiveClosure closure, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final BinaryTransitiveClosure closure, final IConstraintEvaluationContext input) {
         return _calculateCost((PConstraint)closure, input);
     }
     
     /**
      * Default cost calculation strategy
      */
-    protected double _calculateCost(final PConstraint constraint, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    protected double _calculateCost(final PConstraint constraint, final IConstraintEvaluationContext input) {
         if (input.getFreeVariables().isEmpty()) {
             return 1.0;
         } else {
@@ -245,7 +241,10 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         }
     }
 
-    public double calculateCost(final PConstraint constraint, final IConstraintEvaluationContext input) throws QueryProcessingException {
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public double calculateCost(final PConstraint constraint, final IConstraintEvaluationContext input) {
         Preconditions.checkArgument(constraint != null, "Set constraint value correctly");
         if (constraint instanceof ExportedParameter) {
             return _calculateCost((ExportedParameter) constraint, input);

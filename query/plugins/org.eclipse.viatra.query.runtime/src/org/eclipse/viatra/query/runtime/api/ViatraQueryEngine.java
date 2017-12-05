@@ -18,7 +18,6 @@ import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -105,19 +104,19 @@ public abstract class ViatraQueryEngine {
      *  consider {@link EMFScope#extractUnderlyingEMFIndex(ViatraQueryEngine)} instead to access EMF-specific details.
      * 
      * @return the baseIndex the NavigationHelper maintaining the base index
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if the base index could not be constructed
      */
-    public abstract IBaseIndex getBaseIndex() throws ViatraQueryException;
+    public abstract IBaseIndex getBaseIndex();
 
     /**
      * Access a pattern matcher based on a {@link IQuerySpecification}. 
      * Multiple calls will return the same matcher.
      * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
      * @return a pattern matcher corresponding to the specification
-     * @throws ViatraQueryException if the matcher could not be initialized
+     * @throws ViatraQueryRuntimeException if the matcher could not be initialized
      */
-    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws ViatraQueryException;
+    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification);
 
     /**
      * Access a pattern matcher for the graph pattern with the given fully qualified name. 
@@ -126,9 +125,9 @@ public abstract class ViatraQueryEngine {
      * 
      * @param patternFQN the fully qualified name of a VIATRA query specification
      * @return a pattern matcher corresponding to the specification
-     * @throws ViatraQueryException if the matcher could not be initialized
+     * @throws ViatraQueryRuntimeException if the matcher could not be initialized
      */
-    public abstract ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException;
+    public abstract ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN);
     
     /**
      * Access an existing pattern matcher based on a {@link IQuerySpecification}.

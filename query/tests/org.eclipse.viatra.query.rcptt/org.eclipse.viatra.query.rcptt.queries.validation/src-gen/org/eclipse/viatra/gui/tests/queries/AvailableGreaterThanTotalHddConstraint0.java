@@ -23,7 +23,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import org.eclipse.viatra.gui.tests.queries.util.AvailableGreaterThanTotalHddQuerySpecification;
 
@@ -31,7 +30,7 @@ public class AvailableGreaterThanTotalHddConstraint0 implements IConstraintSpeci
 
     private AvailableGreaterThanTotalHddQuerySpecification querySpecification;
 
-    public AvailableGreaterThanTotalHddConstraint0() throws ViatraQueryException {
+    public AvailableGreaterThanTotalHddConstraint0() {
         querySpecification = AvailableGreaterThanTotalHddQuerySpecification.instance();
     }
 

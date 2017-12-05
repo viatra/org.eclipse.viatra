@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -64,7 +65,7 @@ public abstract class BasePQuery implements PQuery {
 
 	@Override
 	public Integer getPositionOfParameter(String parameterName) {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    int index = getParameterNames().indexOf(parameterName);
 	    return index != -1 ? index : null;
 	}
@@ -108,7 +109,7 @@ public abstract class BasePQuery implements PQuery {
 
 	@Override
 	public QueryEvaluationHint getEvaluationHints() {
-		ensureInitializedSneaky();
+		ensureInitialized();
 		return evaluationHints;
 		// TODO instead of field, compute something from annotations?
 	}
@@ -120,37 +121,37 @@ public abstract class BasePQuery implements PQuery {
 
 	@Override
 	public List<PAnnotation> getAllAnnotations() {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    return Lists.newArrayList(annotations);
 	}
 
 	@Override
 	public List<PAnnotation> getAnnotationsByName(final String annotationName) {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    return Lists.newArrayList(Iterables.filter(annotations, new AnnotationNameTester(annotationName)));
 	}
 
 	@Override
 	public PAnnotation getFirstAnnotationByName(String annotationName) {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    return Iterables.find(annotations, new AnnotationNameTester(annotationName), null);
 	}
 
 	@Override
 	public List<String> getParameterNames() {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    return Lists.transform(getParameters(), PQueries.parameterNameFunction());
 	}
 
 	@Override
 	public Set<PQuery> getDirectReferredQueries() {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    return canonicalDisjunction.getDirectReferredQueries();
 	}
 
 	@Override
 	public Set<PQuery> getAllReferredQueries() {
-	    ensureInitializedSneaky();
+	    ensureInitialized();
 	    return canonicalDisjunction.getAllReferredQueries();
 	}
 
@@ -162,7 +163,7 @@ public abstract class BasePQuery implements PQuery {
 	
 	@Override
 	public Set<TypeJudgement> getTypeGuarantees() {
-	    ensureInitializedSneaky();
+	    ensureInitialized();
 		Set<TypeJudgement> result = new HashSet<TypeJudgement>();
 		
 		List<PParameter> parameters = getParameters();
@@ -187,13 +188,13 @@ public abstract class BasePQuery implements PQuery {
 
 	@Override
 	public PDisjunction getDisjunctBodies() {
-		ensureInitializedSneaky();
+		ensureInitialized();
 	    Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query %s contains errors.", getFullyQualifiedName());
 	    return canonicalDisjunction;
 	}
 
 	@Override
-	public final void ensureInitialized() throws QueryInitializationException {
+	public final void ensureInitialized() {
 	    try {
             if (status.equals(PQueryStatus.UNINITIALIZED)) {
                 setStatus(PQueryStatus.INITIALIZING);
@@ -203,14 +204,6 @@ public abstract class BasePQuery implements PQuery {
 	    } catch (QueryInitializationException e) {
 	        addError(new PProblem(e, e.getShortMessage()));
 	        throw e;
-	    }
-	}
-	
-	public final void ensureInitializedSneaky() {
-	    try {
-	       ensureInitialized();
-	    } catch (QueryInitializationException e) {
-	        throw new RuntimeException(e);
 	    }
 	}
 
@@ -226,8 +219,9 @@ public abstract class BasePQuery implements PQuery {
 	 * Creates and returns the bodies of the query. If recalled again, a new instance is created.
 	 * 
 	 * @return
+	 * @throws ViatraQueryRuntimeException
 	 */
-	protected abstract Set<PBody> doGetContainedBodies() throws QueryInitializationException;
+	protected abstract Set<PBody> doGetContainedBodies();
 
 	@Override
 	public String toString() {

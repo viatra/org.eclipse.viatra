@@ -39,7 +39,7 @@ public class ContainmentCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    protected boolean check(MatchingFrame frame, ISearchContext context) {
         try {
             EObject child = (EObject) frame.getValue(childPosition);
             EObject container = (EObject)frame.getValue(containerPosition);

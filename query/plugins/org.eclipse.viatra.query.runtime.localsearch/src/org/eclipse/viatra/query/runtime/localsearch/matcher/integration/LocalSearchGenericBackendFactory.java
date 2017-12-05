@@ -15,7 +15,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -35,7 +34,7 @@ public enum LocalSearchGenericBackendFactory implements IQueryBackendFactory {
         return new LocalSearchBackend(context) {
             
             @Override
-            protected AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints) throws QueryProcessingException {
+            protected AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints) {
                 return new GenericLocalSearchResultProvider(this, context, query, planProvider, hints);
             }
             

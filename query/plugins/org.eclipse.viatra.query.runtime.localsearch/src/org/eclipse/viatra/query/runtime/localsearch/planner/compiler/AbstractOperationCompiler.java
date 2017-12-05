@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendCons
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.CompilerHelper;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -74,9 +75,15 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
 
     protected abstract void createExtend(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping);
 
-    protected abstract void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException;
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    protected abstract void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping);
 
-    protected abstract void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException;
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    protected abstract void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping);
 
     protected List<ISearchOperation> operations;
     protected Set<MatcherReference> dependencies = Sets.newHashSet();
@@ -94,10 +101,10 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
      * @param plan
      * @param boundParameters
      * @return an ordered list of POperations that make up the compiled search plan
-     * @throws QueryProcessingException 
+     * @throws ViatraQueryRuntimeException
      */
     @Override
-    public List<ISearchOperation> compile(SubPlan plan, Set<PParameter> boundParameters) throws QueryProcessingException {
+    public List<ISearchOperation> compile(SubPlan plan, Set<PParameter> boundParameters) {
     
         variableMappings = CompilerHelper.createVariableMapping(plan);
         variableBindings = CompilerHelper.cacheVariableBindings(plan, variableMappings, boundParameters);
@@ -112,7 +119,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         return operations;
     }
 
-    private void compile(POperation pOperation, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+    private void compile(POperation pOperation, Map<PVariable, Integer> variableMapping) {
     
         if (pOperation instanceof PApply) {
             PApply pApply = (PApply) pOperation;
@@ -136,7 +143,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     
     }
 
-    private void createCheckDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+    private void createCheckDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) {
         
         
         // DeferredPConstraint subclasses
@@ -176,7 +183,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     
     }
     
-    protected void createExtendDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+    protected void createExtendDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) {
     
         // DeferredPConstraint subclasses
         
@@ -326,7 +333,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         dependencies.add(information.getReference());
     }
 
-    protected void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+    protected void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
         int sourcePosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(0));
         int targetPosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(1));
         

@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.core.NavigationHelperImpl;
 import org.eclipse.viatra.query.runtime.base.core.TransitiveClosureHelperImpl;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
 /**
  * Factory class for the utils in the library: <ul>
@@ -75,10 +74,9 @@ public class ViatraBaseFactory {
      *            the log output where errors will be logged if encountered during the operation of the
      *            NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
      * @return the NavigationHelper instance
-     * @throws ViatraBaseException
+     * @throws ViatraQueryRuntimeException
      */
-    public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, Logger logger)
-            throws ViatraBaseException {
+    public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, Logger logger) {
         BaseIndexOptions options = new BaseIndexOptions(false, wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE);
         return createNavigationHelper(emfRoot, options, logger);
     }
@@ -109,10 +107,9 @@ public class ViatraBaseFactory {
      *            the log output where errors will be logged if encountered during the operation of the
      *            NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
      * @return the NavigationHelper instance
-     * @throws ViatraBaseException
+     * @throws ViatraQueryRuntimeException
      */
-    public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger)
-            throws ViatraBaseException {
+    public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger) {
         BaseIndexOptions options = new BaseIndexOptions(dynamicModel, wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE);
         return createNavigationHelper(emfRoot, options, logger);
     }
@@ -133,9 +130,9 @@ public class ViatraBaseFactory {
      *            the log output where errors will be logged if encountered during the operation of the
      *            NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
      * @return the NavigationHelper instance
+     * @throws ViatraQueryRuntimeException
      */
-    public NavigationHelper createNavigationHelper(Notifier emfRoot, BaseIndexOptions options, Logger logger)
-            throws ViatraBaseException {
+    public NavigationHelper createNavigationHelper(Notifier emfRoot, BaseIndexOptions options, Logger logger) {
         Logger l = logger;
         if (l == null)
             l = Logger.getLogger(NavigationHelper.class);
@@ -157,10 +154,9 @@ public class ViatraBaseFactory {
      * @param referencesToObserve
      *            the set of references to observe
      * @return the TransitiveClosureHelper instance
-     * @throws ViatraBaseException if the creation of the internal NavigationHelper failed
+     * @throws ViatraQueryRuntimeException if the creation of the internal NavigationHelper failed
      */
-    public TransitiveClosureHelper createTransitiveClosureHelper(Notifier emfRoot, Set<EReference> referencesToObserve)
-            throws ViatraBaseException {
+    public TransitiveClosureHelper createTransitiveClosureHelper(Notifier emfRoot, Set<EReference> referencesToObserve) {
         return new TransitiveClosureHelperImpl(getInstance().createNavigationHelper(emfRoot, false, null), true, referencesToObserve);
     }
 

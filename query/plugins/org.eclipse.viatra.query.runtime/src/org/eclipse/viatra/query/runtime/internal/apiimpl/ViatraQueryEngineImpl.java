@@ -41,6 +41,7 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.viatra.query.runtime.internal.engine.ModelUpdateProvider;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
@@ -205,14 +206,13 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
     @Override
     public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
-            IQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
+            IQuerySpecification<Matcher> querySpecification) {
         return getMatcher(querySpecification, null);
     }
 
     @Override
     public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
-            IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalEvaluationHints)
-            throws ViatraQueryException {
+            IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalEvaluationHints) {
         Matcher matcher = getExistingMatcher(querySpecification, optionalEvaluationHints);
         if (matcher != null) {
             return matcher;
@@ -256,7 +256,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     }
 
     @Override
-    public ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException {
+    public ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) {
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
         IDefaultRegistryView view = registry.getDefaultView();
         IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification = view
@@ -271,7 +271,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     }
 
     @Override
-    public IBaseIndex getBaseIndex() throws ViatraQueryException {
+    public IBaseIndex getBaseIndex() {
         return engineContext.getBaseIndex();
     }
 
@@ -296,7 +296,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      * Provides access to the selected query backend component of the VIATRA Query Engine.
      */
     @Override
-    public IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory) throws ViatraQueryException {
+    public IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory) {
         IQueryBackend iQueryBackend = queryBackends.get(iQueryBackendFactory);
         if (iQueryBackend == null) {
             // do this first, to make sure the runtime context exists
@@ -537,11 +537,9 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      * @param query
      *            the pattern for which the result provider should be delivered
      * 
-     * @throws QueryProcessingException
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      */
-    public IQueryResultProvider getResultProvider(IQuerySpecification<?> query)
-            throws QueryProcessingException, ViatraQueryException {
+    public IQueryResultProvider getResultProvider(IQuerySpecification<?> query) {
         Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
 
         return getResultProviderInternal(query, null);
@@ -553,11 +551,9 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      * @param query
      *            the pattern for which the result provider should be delivered
      * 
-     * @throws QueryProcessingException
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      */
-    public IQueryResultProvider getResultProvider(IQuerySpecification<?> query, QueryEvaluationHint hint)
-            throws QueryProcessingException, ViatraQueryException {
+    public IQueryResultProvider getResultProvider(IQuerySpecification<?> query, QueryEvaluationHint hint) {
         Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
 
         return getResultProviderInternal(query, hint);
@@ -567,9 +563,10 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      * This method returns the result provider exactly as described by the passed hint. Query cannot be null! Use
      * {@link #getQueryEvaluationHint(IQuerySpecification, QueryEvaluationHint)} before passing a hint to this method to
      * make sure engine and query specific hints are correctly applied.
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query, QueryEvaluationHint hint)
-            throws ViatraQueryException, QueryProcessingException {
+    private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query, QueryEvaluationHint hint) {
         return getResultProviderInternal(query.getInternalQueryRepresentation(), hint);
     }
 
@@ -577,9 +574,10 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      * This method returns the result provider exactly as described by the passed hint. Query cannot be null! Use
      * {@link #getQueryEvaluationHint(IQuerySpecification, QueryEvaluationHint)} before passing a hint to this method to
      * make sure engine and query specific hints are correctly applied.
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    private IQueryResultProvider getResultProviderInternal(PQuery query, QueryEvaluationHint hint)
-            throws ViatraQueryException, QueryProcessingException {
+    private IQueryResultProvider getResultProviderInternal(PQuery query, QueryEvaluationHint hint) {
         Preconditions.checkArgument(query != null, "Query cannot be null!");
         final IQueryBackend backend = getQueryBackend(getQueryEvaluationHint(query, hint).getQueryBackendFactory());
         return backend.getResultProvider(query, hint);
@@ -587,15 +585,19 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
     /**
      * Returns the query backend (influenced by the hint system), even if it is a non-caching backend.
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    private IQueryBackend getQueryBackend(PQuery query) throws ViatraQueryException {
+    private IQueryBackend getQueryBackend(PQuery query) {
         return getQueryBackend(getQueryEvaluationHint(query).getQueryBackendFactory());
     }
 
     /**
      * Returns a caching query backend (influenced by the hint system).
+     * 
+     * @throws ViatraQueryRuntimeException
      */
-    private IQueryBackend getCachingQueryBackend(PQuery query) throws ViatraQueryException {
+    private IQueryBackend getCachingQueryBackend(PQuery query) {
         IQueryBackend regularBackend = getQueryBackend(query);
         if (regularBackend.isCaching())
             return regularBackend;
@@ -614,15 +616,12 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     }
 
     @Override
-    public IQueryResultProvider getCachingResultProvider(PQuery query) throws QueryProcessingException {
+    public IQueryResultProvider getCachingResultProvider(PQuery query) {
         try {
             return getCachingQueryBackend(query).getResultProvider(query);
         } catch (ViatraQueryException iqe) {
             getLogger().error(ERROR_ACCESSING_BACKEND, iqe);
-            throw new QueryProcessingException(
-                    "Error while attempting to consult caching query evaluator backend for evaluating query {1}",
-                    new String[] { query.getFullyQualifiedName() }, "Error while accessing query evaluator backends",
-                    query, iqe);
+            throw iqe;
         }
     }
 
@@ -652,8 +651,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     }
 
     @Override
-    public void prepareGroup(IQueryGroup queryGroup, final QueryEvaluationHint optionalEvaluationHints)
-            throws ViatraQueryException {
+    public void prepareGroup(IQueryGroup queryGroup, final QueryEvaluationHint optionalEvaluationHints) {
         try {
             Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
 
@@ -717,38 +715,13 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     }
 
     @Override
-    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint overrideHints)
-            throws QueryProcessingException {
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint overrideHints) {
         try {
             return getResultProviderInternal(query, overrideHints);
         } catch (ViatraQueryException e) {
             getLogger().error(ERROR_ACCESSING_BACKEND, e);
-            throw new QueryProcessingException(
-                    "Error while attempting to consult query evaluator backend for evaluating query {1}",
-                    new String[] { query.getFullyQualifiedName() }, "Error while accessing query evaluator backends",
-                    query, e);
+            throw e;
         }
     }
-
-    // /**
-    // * EXPERIMENTAL: Creates a VIATRA Query Engine that executes post-commit, or retrieves an already existing one.
-    // * @param emfRoot the EMF root where this engine should operate
-    // * @param reteThreads experimental feature; 0 is recommended
-    // * @return a new or previously existing engine
-    // * @throws ViatraQueryException
-    // */
-    // public ReteEngine<String> getReteEngine(final TransactionalEditingDomain editingDomain, int reteThreads) throws
-    // ViatraQueryException {
-    // final ResourceSet resourceSet = editingDomain.getResourceSet();
-    // WeakReference<ReteEngine<String>> weakReference = engines.get(resourceSet);
-    // ReteEngine<String> engine = weakReference != null ? weakReference.get() : null;
-    // if (engine == null) {
-    // IPatternMatcherRuntimeContext<String> context = new
-    // EMFPatternMatcherRuntimeContext.ForTransactionalEditingDomain<String>(editingDomain);
-    // engine = buildReteEngine(context, reteThreads);
-    // if (engine != null) engines.put(resourceSet, new WeakReference<ReteEngine<String>>(engine));
-    // }
-    // return engine;
-    // }
 
 }

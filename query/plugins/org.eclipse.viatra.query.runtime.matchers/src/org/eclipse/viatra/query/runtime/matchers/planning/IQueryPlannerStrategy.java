@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.matchers.planning;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 
@@ -22,5 +23,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
  * @author Gabor Bergmann
  */
 public interface IQueryPlannerStrategy {
-    public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException;
+    
+    /**
+     * @throws ViatraQueryRuntimeException
+     */
+    public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context);
 }

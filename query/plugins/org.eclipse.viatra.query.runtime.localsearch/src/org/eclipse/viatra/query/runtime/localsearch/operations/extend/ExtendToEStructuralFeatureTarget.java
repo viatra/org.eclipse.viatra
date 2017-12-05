@@ -39,7 +39,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         try {
             final EObject value = (EObject) frame.getValue(sourcePosition);
             if(! feature.getEContainingClass().isSuperTypeOf(value.eClass()) ){

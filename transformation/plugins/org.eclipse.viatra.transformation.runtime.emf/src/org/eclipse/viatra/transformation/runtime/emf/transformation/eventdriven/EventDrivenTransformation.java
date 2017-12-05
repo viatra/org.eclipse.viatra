@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
@@ -105,7 +104,10 @@ public class EventDrivenTransformation {
         }
 
         @SuppressWarnings("unchecked")
-        public EventDrivenTransformation build() throws ViatraQueryException {
+        /**
+         * @throws ViatraQueryRuntimeException
+         */
+        public EventDrivenTransformation build() {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
 

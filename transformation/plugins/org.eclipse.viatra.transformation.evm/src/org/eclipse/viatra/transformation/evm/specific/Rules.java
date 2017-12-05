@@ -17,7 +17,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -99,7 +98,7 @@ public final class Rules {
 
         
         @Override
-        protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) throws ViatraQueryException {
+        protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) {
             if(matcher.getEngine().equals(engine)) {
                 return matcher;
             }

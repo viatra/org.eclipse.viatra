@@ -19,8 +19,7 @@ import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.base.api.ViatraBaseFactory;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
@@ -45,22 +44,21 @@ class EMFEngineContext implements IEngineContext {
         this.taintListener = taintListener;
     }
     
-    public NavigationHelper getNavHelper() throws ViatraQueryException {
+    /**
+     * @throws ViatraQueryRuntimeException thrown if the navigation helper cannot be initialized
+     */
+    public NavigationHelper getNavHelper() {
         return getNavHelper(true);
     }
-    private NavigationHelper getNavHelper(boolean ensureInitialized) throws ViatraQueryException {
+    
+    private NavigationHelper getNavHelper(boolean ensureInitialized) {
         if (navHelper == null) {
-            try {
-                // sync to avoid crazy compiler reordering which would matter if derived features use VIATRA and call this
-                // reentrantly
-                synchronized (this) {
-                    navHelper = ViatraBaseFactory.getInstance().createNavigationHelper(null, this.emfScope.getOptions(),
-                            logger);
-                    getBaseIndex().addIndexingErrorListener(taintListener);
-                }
-            } catch (ViatraBaseException e) {
-                throw new ViatraQueryException("Could not create VIATRA Base Index", "Could not create base index",
-                        e);
+            // sync to avoid crazy compiler reordering which would matter if derived features use VIATRA and call this
+            // reentrantly
+            synchronized (this) {
+                navHelper = ViatraBaseFactory.getInstance().createNavigationHelper(null, this.emfScope.getOptions(),
+                        logger);
+                getBaseIndex().addIndexingErrorListener(taintListener);
             }
 
             if (ensureInitialized) {
@@ -71,19 +69,14 @@ class EMFEngineContext implements IEngineContext {
         return navHelper;
     }
 
-    private void ensureIndexLoaded() throws ViatraQueryException {
-        try {
-            for (Notifier scopeRoot : this.emfScope.getScopeRoots()) {
-                navHelper.addRoot(scopeRoot);
-            }
-        } catch (ViatraBaseException e) {
-            throw new ViatraQueryException("Could not initialize VIATRA Base Index",
-                    "Could not initialize base index", e);
+    private void ensureIndexLoaded() {
+        for (Notifier scopeRoot : this.emfScope.getScopeRoots()) {
+            navHelper.addRoot(scopeRoot);
         }
     }
 
     @Override
-    public IQueryRuntimeContext getQueryRuntimeContext() throws ViatraQueryException {
+    public IQueryRuntimeContext getQueryRuntimeContext() {
         NavigationHelper nh = getNavHelper(false);
         if (runtimeContext == null) {
             runtimeContext = 
@@ -110,7 +103,7 @@ class EMFEngineContext implements IEngineContext {
     
     
     @Override
-    public IBaseIndex getBaseIndex() throws ViatraQueryException {
+    public IBaseIndex getBaseIndex() {
         if (baseIndex == null) {
             final NavigationHelper navigationHelper = getNavHelper();
             baseIndex = new EMFBaseIndexWrapper(navigationHelper);

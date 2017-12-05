@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -36,9 +36,9 @@ public interface IOperationCompiler {
      * @param plan
      * @param boundParameters
      * @return an ordered list of POperations that make up the compiled search plan
-     * @throws QueryProcessingException 
+     * @throws ViatraQueryRuntimeException 
      */
-    List<ISearchOperation> compile(SubPlan plan, Set<PParameter> boundParameters) throws QueryProcessingException;
+    List<ISearchOperation> compile(SubPlan plan, Set<PParameter> boundParameters);
 
     Set<MatcherReference> getDependencies();
 

@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.api.impl;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Base implementation of {@link IQueryGroup}.
@@ -24,11 +23,11 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 public abstract class BaseQueryGroup implements IQueryGroup {
 
     @Override
-    public void prepare(ViatraQueryEngine engine) throws ViatraQueryException {
+    public void prepare(ViatraQueryEngine engine) {
         prepare(AdvancedViatraQueryEngine.from(engine));
     }
     
-    protected void prepare(AdvancedViatraQueryEngine engine) throws ViatraQueryException {
+    protected void prepare(AdvancedViatraQueryEngine engine) {
         engine.prepareGroup(this, null /* default options */);
     }
     

@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Executor;
 import org.eclipse.viatra.transformation.evm.api.IExecutor;
@@ -90,7 +90,10 @@ public class BatchTransformation {
             return this;
         }
 
-        public BatchTransformation build() throws ViatraQueryException {
+        /**
+         * @throws ViatraQueryRuntimeException
+         */
+        public BatchTransformation build() {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             BatchTransformation transformation = (listeners.size() > 0 || adapters.size() > 0) ? debugBuild()
                     : doBuild();
@@ -117,7 +120,7 @@ public class BatchTransformation {
             return batchTransformation;
         }
 
-        private void initializeIndexes(ViatraQueryEngine queryEngine) throws ViatraQueryException {
+        private void initializeIndexes(ViatraQueryEngine queryEngine) {
             GenericQueryGroup.of(rules.stream().map(rule -> rule.getPrecondition())).prepare(queryEngine);
         }
 

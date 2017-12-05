@@ -23,7 +23,6 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import org.eclipse.viatra.gui.tests.queries.util.NodeIpIsNotUniqueQuerySpecification;
 
@@ -31,7 +30,7 @@ public class NodeIpIsNotUniqueConstraint0 implements IConstraintSpecification {
 
     private NodeIpIsNotUniqueQuerySpecification querySpecification;
 
-    public NodeIpIsNotUniqueConstraint0() throws ViatraQueryException {
+    public NodeIpIsNotUniqueConstraint0() {
         querySpecification = NodeIpIsNotUniqueQuerySpecification.instance();
     }
 

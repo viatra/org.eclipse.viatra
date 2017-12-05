@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Returns the corresponding class loader for the selected patterns.
@@ -25,10 +24,10 @@ public interface IClassLoaderProvider {
      * 
      * @param pattern
      * @return the found classloader, never null
-     * @throws ViatraQueryException
+     * @throws ViatraQueryRuntimeException
      *             if no classloader is found, or classloader cannot be initialized, an exception is thrown
      * @since 1.7
      */
-    ClassLoader getClassLoader(EObject ctx) throws ViatraQueryException;
+    ClassLoader getClassLoader(EObject ctx);
 
 }

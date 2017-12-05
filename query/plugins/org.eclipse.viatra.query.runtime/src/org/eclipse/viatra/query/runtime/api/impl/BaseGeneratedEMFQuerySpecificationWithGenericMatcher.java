@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.api.GenericQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -29,9 +28,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 public abstract class BaseGeneratedEMFQuerySpecificationWithGenericMatcher
         extends GenericQuerySpecification<GenericPatternMatcher> {
 
-    /**
-     * @param wrappedPQuery
-     */
     public BaseGeneratedEMFQuerySpecificationWithGenericMatcher(PQuery wrappedPQuery) {
         super(wrappedPQuery);
     }
@@ -42,12 +38,12 @@ public abstract class BaseGeneratedEMFQuerySpecificationWithGenericMatcher
     }
 
     @Override
-    protected GenericPatternMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
+    protected GenericPatternMatcher instantiate(final ViatraQueryEngine engine) {
         return defaultInstantiate(engine);
     }
 
     @Override
-    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+    public GenericPatternMatcher instantiate() {
         return new GenericPatternMatcher(this);
     }
 

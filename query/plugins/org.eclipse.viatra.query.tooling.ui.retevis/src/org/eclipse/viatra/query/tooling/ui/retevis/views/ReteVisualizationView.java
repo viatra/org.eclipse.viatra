@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization;
 
 
@@ -29,17 +28,13 @@ public class ReteVisualizationView extends ViewPart {
         graphViewer.createControl(parent, SWT.BORDER);
         getSite().setSelectionProvider(graphViewer);
         
-        try {
-            viewSupport = new ReteVisualizationViewSupport(
-                    this, 
-                    ViewersComponentConfiguration.fromQuerySpecs(ReteVisualization.instance().getSpecifications()),
-                    graphViewer);
-            viewSupport.createPartControl(parent, graphViewer.getControl());
-            viewSupport.createToolbar();
-            viewSupport.createLayoutMenu();
-        } catch (ViatraQueryException e) {
-            throw new RuntimeException("Failed to get Rete Visualization query specifications", e);
-        }
+        viewSupport = new ReteVisualizationViewSupport(
+                this, 
+                ViewersComponentConfiguration.fromQuerySpecs(ReteVisualization.instance().getSpecifications()),
+                graphViewer);
+        viewSupport.createPartControl(parent, graphViewer.getControl());
+        viewSupport.createToolbar();
+        viewSupport.createLayoutMenu();
     }
 
     private ReteVisualizationViewSupport viewSupport;
