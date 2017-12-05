@@ -1,0 +1,22 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-20]]
+= VIATRA 2.0
+
+== Migrating to VIATRA 2.0
+
+.Dependency updates
+
+Update minimum version of required dependencies 
+
+.Deprecated code removal
+
+All code marked as deprecated has been removed from the codebase.
+
+.Further removal
+* CEP has been removed
+* Xcore integration has been removed
+* C++ local search implementatation has been removed
+* Query-by-example has been removed
+* EVM-JDT integration has been removed
