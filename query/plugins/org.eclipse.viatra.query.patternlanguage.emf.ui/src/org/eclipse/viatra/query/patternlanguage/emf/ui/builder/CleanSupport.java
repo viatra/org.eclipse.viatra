@@ -32,7 +32,6 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.runtime.IExtensions;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
@@ -96,8 +95,7 @@ public class CleanSupport {
         }
     }
 
-    private void internalFullClean(IBuildContext context, IProgressMonitor monitor) throws CoreException,
-            ViatraQueryException {
+    private void internalFullClean(IBuildContext context, IProgressMonitor monitor) throws CoreException {
         IProject modelProject = context.getBuiltProject();
         // clean all fragments
         cleanAllFragment(modelProject);

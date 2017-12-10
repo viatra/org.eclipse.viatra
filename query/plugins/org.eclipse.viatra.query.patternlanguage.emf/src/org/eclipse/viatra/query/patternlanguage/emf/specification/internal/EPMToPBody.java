@@ -185,8 +185,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     @Override
-    public void acceptExpressionEvaluation(XExpression expression, String outputVariableName)
-            throws SpecificationBuilderException {
+    public void acceptExpressionEvaluation(XExpression expression, String outputVariableName) {
         XBaseEvaluator evaluator = new XBaseEvaluator(expression, pattern);
         PVariable outputPVariable = outputVariableName == null ? null : findPVariable(outputVariableName);
         new ExpressionEvaluation(pBody, evaluator, outputPVariable);
@@ -201,7 +200,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
     
     @Override
-    public void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) throws SpecificationBuilderException {
+    public void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) {
         PVariable resultPVariable = findPVariable(resultVariableName);
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
         PQuery calledPQuery = findCalledPQuery(calledPattern);

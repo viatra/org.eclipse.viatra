@@ -33,7 +33,7 @@ import com.google.common.collect.Sets;
 public class SurrogateQueryRewriter extends PDisjunctionRewriter {
 
     @Override
-    public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
+    public PDisjunction rewrite(PDisjunction disjunction) {
         Set<PBody> replacedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body, getTraceCollector()) {

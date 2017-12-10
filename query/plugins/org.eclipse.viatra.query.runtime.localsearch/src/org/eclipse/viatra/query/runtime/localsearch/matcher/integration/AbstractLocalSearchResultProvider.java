@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
@@ -202,7 +201,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     }
 
     protected void preparePlansForExpectedAdornments() {
-     // Plan for possible adornments
+        // Plan for possible adornments
         Iterator<MatcherReference> iterator = computeExpectedAdornments();
         while(iterator.hasNext()){
             LocalSearchHints configuration = overrideDefaultHints(query);
@@ -217,11 +216,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             //Prepare dependencies
             for(SearchPlanForBody body: plan.getPlan()){
                 for(MatcherReference dependency : body.getDependencies()){
-                    try {
-                        searchContext.getMatcher(dependency);
-                    } catch (LocalSearchException e) {
-                        throw new QueryProcessingException("Could not prepare dependency {1}", new String[]{dependency.toString()}, e.getMessage(), query, e);
-                    }
+                    searchContext.getMatcher(dependency);
                 }
             }
         }

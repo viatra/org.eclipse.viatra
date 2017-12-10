@@ -20,9 +20,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public abstract class PDisjunctionRewriter extends AbstractRewriterTraceSource{
     
-    public abstract PDisjunction rewrite(PDisjunction disjunction) throws RewriterException;
+    public abstract PDisjunction rewrite(PDisjunction disjunction);
     
-    public PDisjunction rewrite(PQuery query) throws RewriterException {
+    public PDisjunction rewrite(PQuery query) {
         return rewrite(query.getDisjunctBodies());
     }
     

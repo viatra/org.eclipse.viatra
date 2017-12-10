@@ -118,14 +118,13 @@ public interface PatternModelAcceptor<Result> {
     /**
      * Accepts an {@link ExpressionEvaluation}.
      */
-    void acceptExpressionEvaluation(XExpression expression, String outputVariableName) throws SpecificationBuilderException;
+    void acceptExpressionEvaluation(XExpression expression, String outputVariableName);
 
     /**
      * Accepts a {@link AbstractAggregator}.
-     * @param aggregateParameterType TODO
      * @since 1.4
      */
-    void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) throws SpecificationBuilderException;
+    void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn);
 
     void acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern,
             String resultVariableName);

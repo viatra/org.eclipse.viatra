@@ -242,8 +242,7 @@ public class ReteEngine implements IQueryBackend {
         });
     }
 
-    private void constructionWrapper(final Callable<Void> payload)
-            throws RetePatternBuildException {
+    private void constructionWrapper(final Callable<Void> payload) {
 //		context.modelReadLock();
 //		    try {
                 if (parallelExecutionEnabled)

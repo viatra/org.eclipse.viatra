@@ -81,7 +81,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     }
 
     @Override
-    public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
+    public PDisjunction rewrite(PDisjunction disjunction) {
         Set<PBody> normalizedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body, getTraceCollector());
@@ -103,7 +103,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * 
      * @param body
      */
-    public PBody normalizeBody(PBody body) throws RewriterException {
+    public PBody normalizeBody(PBody body) {
         try {
             return normalizeBodyInternal(body);
         } catch (QueryProcessingException e) {

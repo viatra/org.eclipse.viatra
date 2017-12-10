@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.IAdornmentProvider;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -28,7 +27,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
@@ -131,11 +129,7 @@ public interface ISearchContext {
                 hints = overrideHints.overrideBy(hints);
             }
                     
-            try {
-                return resultProviderAccess.getResultProvider(reference.getQuery(), hints);
-            } catch (QueryProcessingException e) {
-                throw new LocalSearchException("Could not access referenced query: "+reference, e);
-            }
+            return resultProviderAccess.getResultProvider(reference.getQuery(), hints);
         }
 
         @Override

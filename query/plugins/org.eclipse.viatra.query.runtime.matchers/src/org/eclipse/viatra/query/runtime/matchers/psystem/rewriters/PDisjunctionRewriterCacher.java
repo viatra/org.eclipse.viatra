@@ -49,7 +49,7 @@ public class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
     }
     
     @Override
-    public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
+    public PDisjunction rewrite(PDisjunction disjunction) {
         if (!cachedResults.containsKey(disjunction)) {
             PDisjunction rewritten = disjunction;
             setupTraceCollectorInChain();

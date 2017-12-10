@@ -122,7 +122,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
      * @throws RetePatternBuildException
      *             to indicate the error in detail.
      */
-    private void raiseForeverDeferredError(DeferredPConstraint constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(DeferredPConstraint constraint, SubPlan plan, IQueryMetaContext context) {
         if (constraint instanceof Equality) {
             raiseForeverDeferredError((Equality)constraint, plan, context);
         } else if (constraint instanceof ExportedParameter) {
@@ -134,13 +134,13 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
         }
     }
     
-    private void raiseForeverDeferredError(Equality constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(Equality constraint, SubPlan plan, IQueryMetaContext context) {
         String[] args = { constraint.getWho().toString(), constraint.getWithWhom().toString() };
         String msg = "Cannot express equality of variables {1} and {2} if neither of them is deducable.";
         String shortMsg = "Equality between undeducible variables.";
         throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
-    private void raiseForeverDeferredError(ExportedParameter constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(ExportedParameter constraint, SubPlan plan, IQueryMetaContext context) {
         String[] args = { constraint.getParameterName() };
         String msg = "Pattern Graph Search terminated incompletely: "
                 + "exported pattern variable {1} could not be determined based on the pattern constraints. "
@@ -148,7 +148,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
         String shortMsg = "Could not deduce value of parameter";
         throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
-    private void raiseForeverDeferredError(ExpressionEvaluation constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(ExpressionEvaluation constraint, SubPlan plan, IQueryMetaContext context) {
         if (constraint.checkTypeSafety(plan, context) == null) {
             raiseForeverDeferredError(constraint, plan);
         } else {
@@ -159,7 +159,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
             throw new RetePatternBuildException(msg, args, shortMsg, null);
         }
     }
-    private void raiseForeverDeferredError(VariableDeferredPConstraint constraint, SubPlan plan) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(VariableDeferredPConstraint constraint, SubPlan plan) {
         Set<PVariable> missing = CollectionsFactory.createSet(constraint.getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
         missing.removeAll(plan.getVisibleVariables());
         String[] args = { toString(), Arrays.toString(missing.toArray()) };

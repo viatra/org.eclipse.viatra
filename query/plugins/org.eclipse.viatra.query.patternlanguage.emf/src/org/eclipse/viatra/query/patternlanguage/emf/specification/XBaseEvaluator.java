@@ -12,9 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.SpecificationBuilderException;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -42,9 +40,6 @@ import com.google.inject.Provider;
 @SuppressWarnings("restriction")
 public class XBaseEvaluator implements IExpressionEvaluator{
 
-    @Inject
-    private Logger logger;
-
     private final XExpression xExpression;
     private final Pattern pattern;
 
@@ -64,29 +59,23 @@ public class XBaseEvaluator implements IExpressionEvaluator{
      *            the expression to evaluate
      * @param pattern
      */
-    public XBaseEvaluator(XExpression xExpression, Pattern pattern) throws SpecificationBuilderException{
+    public XBaseEvaluator(XExpression xExpression, Pattern pattern) {
         super();
-        try {
-            XtextInjectorProvider.INSTANCE.getInjector().injectMembers(this);
-            this.xExpression = xExpression;
-            this.pattern = pattern;
-            ClassLoader classLoader = classLoaderProvider.getClassLoader(pattern);
-            if (classLoader != null) {
-                interpreter.setClassLoader(classLoader);
-            }
-            PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
-            List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
-            usedNames = Iterables.transform(usedVariables, new Function<Variable, String>() {
-                @Override
-                public String apply(Variable var) {
-                    return var.getName();
-                }
-            });
-        } catch (ViatraQueryException e) {
-            logger.error("XBase Java evaluator extension point initialization failed.", e);
-            throw new SpecificationBuilderException("XBase interpreter initialization failed", new String[0], "Failed Xbase interpreter initialization", pattern, e);
+        XtextInjectorProvider.INSTANCE.getInjector().injectMembers(this);
+        this.xExpression = xExpression;
+        this.pattern = pattern;
+        ClassLoader classLoader = classLoaderProvider.getClassLoader(pattern);
+        if (classLoader != null) {
+            interpreter.setClassLoader(classLoader);
         }
-
+        PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
+        List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
+        usedNames = Iterables.transform(usedVariables, new Function<Variable, String>() {
+            @Override
+            public String apply(Variable var) {
+                return var.getName();
+            }
+        });
     }
 
     @Override

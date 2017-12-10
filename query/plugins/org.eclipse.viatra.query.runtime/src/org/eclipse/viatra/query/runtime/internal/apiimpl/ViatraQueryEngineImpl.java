@@ -227,12 +227,8 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
         BaseMatcher<?> baseMatcher = (BaseMatcher<?>) matcher;
         IMatcherCapability capability = getRequestedCapability(querySpecification, optionalEvaluationHints);
-        try {
-            ((QueryResultWrapper) baseMatcher).setBackend(this,
-                    getResultProvider(querySpecification, optionalEvaluationHints), capability);
-        } catch (QueryProcessingException e) {
-            throw new ViatraQueryException(e);
-        }
+        ((QueryResultWrapper) baseMatcher).setBackend(this,
+                getResultProvider(querySpecification, optionalEvaluationHints), capability);
         internalRegisterMatcher(querySpecification, baseMatcher);
         return matcher;
     }

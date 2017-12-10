@@ -76,7 +76,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         return result;
     }
 
-    private static final String FLATTENING_ERROR_MESSAGE = "Error occured while flattening";
     private IFlattenCallPredicate flattenCallPredicate;
 
     public PQueryFlattener(IFlattenCallPredicate flattenCallPredicate) {
@@ -84,7 +83,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     }
 
     @Override
-    public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
+    public PDisjunction rewrite(PDisjunction disjunction) {
         PQuery query = disjunction.getQuery();
 
         // Check for recursion
@@ -96,11 +95,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             }
         }
 
-        try {
-            return this.doFlatten(disjunction);
-        } catch (Exception e) {
-            throw new RewriterException(FLATTENING_ERROR_MESSAGE, new String[0], FLATTENING_ERROR_MESSAGE, query, e);
-        }
+        return this.doFlatten(disjunction);
     }
 
     /**
