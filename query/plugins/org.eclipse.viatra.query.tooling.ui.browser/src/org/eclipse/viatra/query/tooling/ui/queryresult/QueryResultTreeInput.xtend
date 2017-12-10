@@ -412,7 +412,10 @@ class QueryResultTreeMatcher <MATCH extends IPatternMatch> implements IFilteredM
     RuleSpecification<MATCH> ruleSpec
     
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
-    Exception exception;
+    Exception exception
+    
+    @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
+    int matchCount
     
     override def getFilterMatch() {
         if(filterMatch === null) {

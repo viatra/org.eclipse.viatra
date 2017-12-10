@@ -68,7 +68,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
             return '''«element.entry?.fullyQualifiedName» - «element.exception.message»'''
         }
         val matcher = element.matcher
-        val count = element.countFilteredMatches
+        val count = element.matchCount
         val countMsg = switch count {
             case 0 : "No matches"
             case 1 : "1 match"
