@@ -68,7 +68,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         if(inputElement.exception !== null) {
             return null
         }
-        return inputElement.matcher.getAllMatches(inputElement.filterMatch)
+        return inputElement.filteredMatches
     }
     
     def dispatch Object[] getChildrenInternal(IPatternMatch inputElement) {
@@ -114,7 +114,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         if(inputElement.exception !== null) {
             return false
         }
-        return inputElement.matcher.countMatches(inputElement.filterMatch) > 0
+        return inputElement.matchCount > 0
     }
     
     def dispatch boolean hasChildrenInternal(IPatternMatch inputElement) {
@@ -138,6 +138,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
      
     override matcherFilterUpdated(QueryResultTreeMatcher matcher) {
+        matcher.matchCount = matcher.countFilteredMatches
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.refresh(matcher)
@@ -154,6 +155,9 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
     
     override matchAdded(QueryResultTreeMatcher matcher, IPatternMatch match) {
+        if (matcher.filterMatch.isCompatibleWith(match)) {
+            matcher.matchCount = matcher.matchCount + 1
+        }
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.add(matcher, match)
@@ -172,6 +176,9 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
     
     override matchRemoved(QueryResultTreeMatcher matcher, IPatternMatch match) {
+        if (matcher.filterMatch.isCompatibleWith(match)) {
+            matcher.matchCount = matcher.matchCount - 1
+        }
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.remove(match)

@@ -391,16 +391,16 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
  * @author Abel Hegedus
  */
 @FinalFieldsConstructor
-class QueryResultTreeMatcher implements IFilteredMatcherContent {
+class QueryResultTreeMatcher<MATCH extends IPatternMatch> implements IFilteredMatcherContent<MATCH> {
     
     @Accessors(PUBLIC_GETTER)
     final QueryResultTreeInput parent
     
     @Accessors(PUBLIC_GETTER)
-    final ViatraQueryMatcher matcher
+    final ViatraQueryMatcher<MATCH> matcher
     
     @Accessors(PROTECTED_SETTER)
-    IPatternMatch filterMatch
+    MATCH filterMatch
 
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     QueryEvaluationHint hint
@@ -412,7 +412,10 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
     RuleSpecification ruleSpec
     
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
-    Exception exception;
+    Exception exception
+    
+    @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
+    int matchCount
     
     override def getFilterMatch() {
         if(filterMatch === null) {
@@ -426,7 +429,7 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
         filterMatch.filterUpdated
     }
     
-    def filterUpdated(IPatternMatch filterMatch) {
+    def filterUpdated(MATCH filterMatch) {
         if(filterMatch !== this.filterMatch){
             this.filterMatch = filterMatch
         }
@@ -440,6 +443,19 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
     def remove() {
         parent.removeMatcher(this)
     }
+    
+    override countFilteredMatches() {
+        matcher.countMatches(filterMatch)
+    }
+    
+    override getFilteredMatches() {
+        matcher.getAllMatches(filterMatch)
+    }
+    
+    override hasFilteredMatch() {
+        matcher.hasMatch(filterMatch)
+    }
+    
 }
 
 /**

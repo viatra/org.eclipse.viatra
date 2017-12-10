@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -283,5 +284,20 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
          *  only compiles because of raw types and works due to type erasure on generic collections
          */
         return children.iterator();
+    }
+
+    @Override
+    public Collection getFilteredMatches() {
+        return getMatcher().getAllMatches(getFilterMatch());
+    }
+
+    @Override
+    public int countFilteredMatches() {
+        return getMatcher().countMatches(getFilterMatch());
+    }
+
+    @Override
+    public boolean hasFilteredMatch() {
+        return getMatcher().hasMatch(getFilterMatch());
     }
 }

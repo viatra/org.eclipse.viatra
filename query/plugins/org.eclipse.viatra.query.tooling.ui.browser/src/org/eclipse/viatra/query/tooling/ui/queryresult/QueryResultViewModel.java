@@ -82,7 +82,7 @@ public enum QueryResultViewModel {
         if(removed) {
             AdvancedViatraQueryEngine engine = input.getEngine();
             input.dispose();
-            if(!input.isReadOnlyEngine()) {
+            if(engine != null && !input.isReadOnlyEngine()) {
                 engine.dispose();
             }
         }
