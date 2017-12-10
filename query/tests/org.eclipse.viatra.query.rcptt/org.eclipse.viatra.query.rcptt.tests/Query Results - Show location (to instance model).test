@@ -1,0 +1,39 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _6ICoUNqJEee1d7rAf32j1w,_j6aQcPA8EeWlEbYJ7IoFCQ,_SuqUYNpsEee1d7rAf32j1w,_-0BBgNqEEee1d7rAf32j1w,_3f8W8NqEEee1d7rAf32j1w
+Element-Name: Query Results - Show location (to instance model)
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _KfuEkNqOEee1d7rAf32j1w
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/8/17, 2:06 PM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Tamas Borbas, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Borbas - Testing VIATRA GUI
+ *   Zoltan Ujhelyi - Adaptation for Query Results view
+ *******************************************************************************/
+
+get-view "Query Results" | get-tree -index 1 
+    | select "org.eclipse.viatra.examples.cps.queries.finalPattern.*$/HI=Host Instance simple.cps.*" 
+    | get-menu "Show location" | click
+with [get-editor "demo.cyberphysicalsystem" | get-tree] {
+    get-property "selection[0].path[0]" 
+        | equals "platform:/resource/org.eclipse.viatra.examples.cps.instances/demo.cyberphysicalsystem" | verify-true
+    get-property "selection[0].path[1]" | equals "Cyber Physical System testModel6504822858552" | verify-true
+    get-property "selection[0].path[2]" | equals "Host Type simple.cps.host.SecondHostClass0" | verify-true
+    get-property "selection[0].path[3]" | equals "Host Instance simple.cps.host.SecondHostClass0.inst1" | verify-true
+}
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

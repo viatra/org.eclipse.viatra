@@ -1,30 +1,27 @@
 --- RCPTT testcase ---
 Format-Version: 1.0
 Context-Type: org.eclipse.rcptt.ctx.ecl
-Element-Name: Initialize viewers
+Element-Name: Select Local Search
 Element-Type: context
 Element-Version: 2.0
-Id: _AfewUO91EeW7SP0a5rPzzg
+Id: _x7nUINwjEee1d7rAf32j1w
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/8/17, 2:41 PM
+Save-Time: 12/8/17, 3:26 PM
 
 ------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998
 Content-Type: text/ecl
 Entry-Name: .ecl.context
 
 /*******************************************************************************
- * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * Copyright (c) 2010-2017, Zoltan Ujhelyi, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Tamas Borbas - Testing VIATRA GUI
+ *   Zoltan Ujhelyi - Testing VIATRA GUI
  *******************************************************************************/
 
-with [get-view "Query Results"] {
-	get-tree -index 1 | select "uml.emptyclass.emptyClass.*$" 
-    get-menu "Reinitialize VIATRA Viewers" | click
-}
+get-view "Query Results" | get-combo | select LocalSearchBackend
 ------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998--

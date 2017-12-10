@@ -1,0 +1,35 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.workbench
+Element-Name: VIATRA Workbench (Default)
+Element-Type: context
+Element-Version: 2.0
+Id: _6ICoUNqJEee1d7rAf32j1w
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/6/17, 2:32 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_.q7.content-3d2e0690-ce48-3609-83e0-c704d49f1eaf
+Content-Type: q7/binary
+Entry-Name: .q7.content
+
+UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAAIAAkALmNvbnRlbnRVVAUAAQAAAAB1kM1OwzAQhO99Cssn
+OGCTIgGKmlZRyyFIIITKzw2ZZJMaYm+62STl7XGRErhw3f1mZmcXq4OrRQ/UWvSJjNS5FOBzLKyvEtlx
+eXYtV8vZAqlSkNe2aUFR3jCrNgdvyGL8gvT5HjS7NXqGA4uDs/HkOD86hgzfxmGeyB1zE2s9DINCV6ng
+q1/vshH5P2ZSjuuj8gfRDguo9QgGPRJI4Y2DRD5n6fYxFdON4mQDpelqPpXCFol8u8zW+HS/v70BiIor
+SsuL+Uc0SNGEAg3kbHvIAvf3sN4aJqP2HdCXYsQ6/Ep1Vm3J+LZEcoZD9Q30D78eUi9n31BLBwhy8k3E
+9QAAAGwBAABQSwECFAAUAAgICAAAACEAcvJNxPUAAABsAQAACAAJAAAAAAAAAAAAAAAAAAAALmNvbnRl
+bnRVVAUAAQAAAABQSwUGAAAAAAEAAQA/AAAANAEAAAAA
+------=_.q7.content-3d2e0690-ce48-3609-83e0-c704d49f1eaf--

@@ -1,13 +1,13 @@
 --- RCPTT testcase ---
 Format-Version: 1.0
-Contexts: _LipjoO9FEeWazOws8qE-Nw,_xLFOcO9OEeW7SP0a5rPzzg,_SuqUYNpsEee1d7rAf32j1w,_EbxWQNwcEee1d7rAf32j1w,_NFe-ENwcEee1d7rAf32j1w,_AfewUO91EeW7SP0a5rPzzg
-Element-Name: Viewers - Sandbox - Create new component
+Contexts: _6ICoUNqJEee1d7rAf32j1w,_j6aQcPA8EeWlEbYJ7IoFCQ,_SuqUYNpsEee1d7rAf32j1w,_-0BBgNqEEee1d7rAf32j1w,_3f8W8NqEEee1d7rAf32j1w
+Element-Name: Query Results - Unload model
 Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
-Id: _gmPRYO91EeW7SP0a5rPzzg
+Id: _fEvQYNwFEee1d7rAf32j1w
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/8/17, 2:34 PM
+Save-Time: 12/8/17, 1:58 PM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
@@ -15,7 +15,7 @@ Content-Type: text/ecl
 Entry-Name: .content
 
 /*******************************************************************************
- * Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+ * Copyright (c) 2010-2016, Tamas Borbas, Zoltan Ujhelyi, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,13 @@ Entry-Name: .content
  *
  * Contributors:
  *   Tamas Borbas - Testing VIATRA GUI
+ *   Zoltan Ujhelyi - Adaptation for Query Results view
  *******************************************************************************/
 
-get-view "Viewers Sandbox" | get-button "Create new component" | click
-
-get-view "Viewers Sandbox" | get-group "Activated queries" -index 1 | get-tree 
-    | select "Item : uml.emptyclass.emptyClass"
-get-view "Viewers Sandbox" | get-group "Activated queries" -index 1 | get-tree 
-    | get-item "Edge : uml.emptyclass.superClass" | get-property caption | equals "Edge : uml.emptyclass.superClass" 
-    | verify-true
+with [get-view "Query Results"] {
+	get-tree -index 1 | get-property itemCount | equals 24 | verify-true
+	get-menu "Unload model" | click
+	// Here get-tree returns the same widget as get-tree -index 1 two lines before, just unloading changes the structure
+	get-tree | get-property itemCount | equals  0 | verify-true 
+}
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

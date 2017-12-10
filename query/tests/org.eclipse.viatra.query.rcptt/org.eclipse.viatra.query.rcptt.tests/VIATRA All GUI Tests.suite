@@ -5,8 +5,8 @@ Element-Type: testsuite
 Element-Version: 2.0
 Id: _o6SgUO93EeW7SP0a5rPzzg
 Manually-Ordered: true
-Runtime-Version: 2.1.0.201606221726
-Save-Time: 4/21/17 5:56 PM
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/6/17, 2:35 PM
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
 Content-Type: text/plain
@@ -31,5 +31,6 @@ _kTJEAPEBEeW0yqPNDxWanA	// kind: 'suite' name: 'VIATRA Query Explorer' path: 'VI
 _gRUfYO93EeW7SP0a5rPzzg	// kind: 'suite' name: 'VIATRA Viewers' path: 'VIATRA Viewers.suite'
 _4XrwIPGgEeW7irRH823xbw	// kind: 'suite' name: 'VIATRA Testing Framework' path: 'VIATRA Testing Framework.suite'
 _-MEJkPGgEeW7irRH823xbw	// kind: 'suite' name: 'VIATRA Validation Framework' path: 'VIATRA Validation Framework.suite'
+_OeHJkNqKEee1d7rAf32j1w	// kind: 'suite' name: 'VIATRA Query Results' path: 'VIATRA Query Results.suite'
 
 ------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--

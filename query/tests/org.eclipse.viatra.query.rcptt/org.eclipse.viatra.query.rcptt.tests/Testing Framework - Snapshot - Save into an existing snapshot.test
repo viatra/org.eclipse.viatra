@@ -1,13 +1,13 @@
 --- RCPTT testcase ---
 Format-Version: 1.0
-Contexts: _LipjoO9FEeWazOws8qE-Nw,_NN2OQO9SEeW7SP0a5rPzzg,_Vv6AoPGcEeW7irRH823xbw,_e26iUPD1EeW0yqPNDxWanA,_e2hgwPD1EeW0yqPNDxWanA
+Contexts: _6ICoUNqJEee1d7rAf32j1w,_Vv6AoPGcEeW7irRH823xbw,_SuqUYNpsEee1d7rAf32j1w,_-0BBgNqEEee1d7rAf32j1w,_3f8W8NqEEee1d7rAf32j1w
 Element-Name: Testing Framework - Snapshot - Save into an existing snapshot
 Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
 Id: _2yOyEPGcEeW7irRH823xbw
-Runtime-Version: 2.0.2.201511100828
-Save-Time: 4/14/16 8:13 AM
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/8/17, 2:28 PM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
@@ -30,8 +30,8 @@ get-view "Project Explorer" | get-tree | select "org.eclipse.viatra.examples.cps
 get-editor "demo.snapshot" | get-tree 
     | get-item "platform:\\/resource\\/org.eclipse.viatra.examples.cps.queries\\/snapshots\\/demo.snapshot/Query Snapshot ResourceSet" 
     | get-property childCount | equals 1 | verify-true
-get-view "Query Explorer" | get-tree -index 1 
-    | select "[platform:\\/resource\\/org.eclipse.viatra.examples.cps.instances\\/demo.cyberphysicalsystem][org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID]/org.eclipse.viatra.examples.cps.queries.applicationTypes.*$" 
+get-view "Query Results" | get-tree -index 1 
+    | select "org.eclipse.viatra.examples.cps.queries.applicationTypes.*$" 
     | get-menu "Save VIATRA Query snapshot" | click
 with [get-window "Existing snapshot"] {
     get-tree | select "org.eclipse.viatra.examples.cps.queries/snapshots/demo.snapshot"

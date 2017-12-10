@@ -1,13 +1,13 @@
 --- RCPTT testcase ---
 Format-Version: 1.0
-Contexts: _LipjoO9FEeWazOws8qE-Nw,_xLFOcO9OEeW7SP0a5rPzzg,_NN2OQO9SEeW7SP0a5rPzzg,_RYkiQO9SEeW7SP0a5rPzzg,_UBBLMO9SEeW7SP0a5rPzzg
+Contexts: _LipjoO9FEeWazOws8qE-Nw,_xLFOcO9OEeW7SP0a5rPzzg,_SuqUYNpsEee1d7rAf32j1w,_EbxWQNwcEee1d7rAf32j1w,_NFe-ENwcEee1d7rAf32j1w
 Element-Name: Viewers - Sandbox - Initialize
 Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
 Id: _gmkokO91EeW7SP0a5rPzzg
-Runtime-Version: 2.0.2.201511100828
-Save-Time: 4/11/16 2:39 PM
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/8/17, 2:43 PM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
@@ -27,9 +27,10 @@ Entry-Name: .content
 
 get-view "Viewers Sandbox" | get-group "Activated queries" | get-tree | get-property itemCount | equals 0 
     | verify-true
-get-view "Query Explorer" | get-tree -index 1 
-    | select "\[platform:\\/resource\\/org.eclipse.viatra.examples.uml.instances\\/empty-classes.uml\]\[.*\]/uml.emptyclass.emptyClass.*$" 
-    | get-menu "Reinitialize VIATRA Viewers" | click
+with [get-view "Query Results"] {
+	get-tree -index 1 | select "uml.emptyclass.emptyClass.*$" 
+    get-menu "Reinitialize VIATRA Viewers" | click
+}
 get-view "Viewers Sandbox" | get-group "Activated queries" | get-tree 
     | get-item "Item : uml.emptyclass.emptyClass" | get-property caption | equals "Item : uml.emptyclass.emptyClass" 
     | verify-true
