@@ -164,7 +164,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      * @return true if the input is a valid (partial) match of the pattern.
      */
     protected boolean rawHasMatch(Object[] parameters) {
-        return backend.countMatches(parameters) > 0;
+        return backend.hasMatch(parameters);
     }
 
     @Override

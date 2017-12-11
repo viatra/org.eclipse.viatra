@@ -22,6 +22,30 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQueryResultProvider {
+
+    /**
+     * Decides whether there are any matches of the pattern that conform to the given fixed values of some parameters.
+     *
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @pre size of input array must be equal to the number of parameters.
+     * @since 2.0
+     */
+    public boolean hasMatch(Object[] parameters);
+    
+    /**
+     * Decides whether there are any matches of the pattern that conform to the given fixed values of some parameters.
+     *
+     * @param parameterSeedMask
+     *            a mask that extracts those parameters of the query (from the entire parameter list) that should be
+     *            bound to a fixed value
+     * @param parameters
+     *            the tuple of fixed values restricting the match set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered match tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold
+     * @since 2.0
+     */
+    public boolean hasMatch(TupleMask parameterSeedMask, ITuple projectedParameterSeed);
     
     /**
      * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.

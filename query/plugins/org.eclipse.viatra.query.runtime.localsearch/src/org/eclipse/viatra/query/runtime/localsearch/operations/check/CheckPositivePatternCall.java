@@ -41,7 +41,7 @@ public class CheckPositivePatternCall extends CheckOperation implements IPattern
      * @since 1.5
      */
     protected boolean check(MatchingFrame frame, ISearchContext context) {
-        return matcher.getOneArbitraryMatch(information.getParameterMask(), maskedTuple) != null;
+        return matcher.hasMatch(information.getParameterMask(), maskedTuple);
     }
 
     /**

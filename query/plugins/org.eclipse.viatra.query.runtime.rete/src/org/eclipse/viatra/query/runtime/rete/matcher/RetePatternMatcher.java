@@ -348,6 +348,18 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         return notNull;
     }
 
+    
+    
+    @Override
+    public boolean hasMatch(Object[] parameters) {
+        return countMatches(parameters) > 0;
+    }
+
+    @Override
+    public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameters) {
+        return countMatches(parameterSeedMask, parameters) > 0;
+    }
+
     @Override
     public int countMatches(Object[] parameters) {
         return count(parameters, notNull(parameters));

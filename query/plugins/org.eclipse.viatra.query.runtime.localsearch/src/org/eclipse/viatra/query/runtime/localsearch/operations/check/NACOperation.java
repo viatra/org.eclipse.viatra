@@ -47,7 +47,7 @@ public class NACOperation extends CheckOperation implements IPatternMatcherOpera
 
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) {
-        return matcher.getOneArbitraryMatch(information.getParameterMask(), maskedTuple) == null;
+        return !matcher.hasMatch(information.getParameterMask(), maskedTuple);
     }
     
     

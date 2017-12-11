@@ -361,6 +361,18 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     }
 
     @Override
+    public boolean hasMatch(Object[] parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameters);
+        return matcher.hasMatch(parameters);
+    }
+
+    @Override
+    public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameters) {
+        final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
+        return matcher.hasMatch(parameterSeedMask, parameters);
+    }
+
+    @Override
     public Tuple getOneArbitraryMatch(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
         return matcher.getOneArbitraryMatch(parameters);
