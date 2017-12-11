@@ -1,0 +1,48 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _6ICoUNqJEee1d7rAf32j1w,_mEGa0N2oEee926zyOqltzg,_j6aQcPA8EeWlEbYJ7IoFCQ
+Element-Name: Query Registry - New query
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _CwmukN6FEee926zyOqltzg
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/11/17, 4:13 PM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+/*******************************************************************************
+ * Copyright (c) 2010-2017, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - Initial API and implementation
+ *******************************************************************************/
+get-view "Project Explorer" | get-tree 
+    | select "org.eclipse.viatra.examples.cps.queries/src/org.eclipse.viatra.examples.cps.queries/simpleCpsQueries.vql" 
+    | double-click
+with [get-view "Query Registry"] {
+    get-editbox | set-text newQuery
+    get-tree | get-property itemCount | equals 0 | verify-true
+}
+
+
+with [get-editor "simpleCpsQueries.vql" | get-text-viewer] {
+    set-caret-pos 6 1
+    type-text "pattern newQuery(AT : ApplicationType) {ApplicationType(AT);}"
+    key-type "M1+s"
+}
+
+with [get-view "Query Registry"] {
+    get-editbox | set-text newQuery
+    get-tree | get-item 
+    -path "org.eclipse.viatra.examples.cps.queries/org.eclipse.viatra.examples.cps.queries/newQuery" 
+    | get-property caption | equals newQuery | verify-true
+}
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

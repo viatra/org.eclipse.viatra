@@ -1,0 +1,37 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Element-Name: VIATRA Query Registry
+Element-Type: testsuite
+Element-Version: 2.0
+Id: _8iqJIN6FEee926zyOqltzg
+Manually-Ordered: true
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 12/11/17, 4:14 PM
+
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
+Content-Type: text/plain
+Entry-Name: .description
+
+Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+  Tamas Borbas - Testing VIATRA GUI
+------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
+Content-Type: text/testcase
+Entry-Name: testcase-items
+
+_f3Q1UN59Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Load CPS Queries (Menu)' path: 'Query Registry - Load CPS Queries (Menu).test'
+_21NNMN58Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Load Registered Query (Double click)' path: 'Query Registry - Load Registered Query (Double click).test'
+_f5CzcN58Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Load Single Query (Double click)' path: 'Query Registry - Load Single Query (Double click).test'
+_CgqkMN58Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Load Single Query (Menu)' path: 'Query Registry - Load Single Query (Menu).test'
+_CwmukN6FEee926zyOqltzg	// kind: 'test' name: 'Query Registry - New query' path: 'Query Registry - New query.test'
+_9qBeAN5-Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Show location (Indexed OK)' path: 'Query Registry - Show location (Indexed OK).test'
+_4Cx-IN59Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Show location (OK)' path: 'Query Registry - Show location (OK).test'
+_IxR7wN5-Eee926zyOqltzg	// kind: 'test' name: 'Query Registry - Show location (Unindexed fail)' path: 'Query Registry - Show location (Unindexed fail).test'
+
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--
