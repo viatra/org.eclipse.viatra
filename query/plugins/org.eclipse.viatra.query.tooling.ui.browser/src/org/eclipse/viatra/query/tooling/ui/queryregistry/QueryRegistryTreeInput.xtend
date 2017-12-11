@@ -39,7 +39,7 @@ class QueryRegistryTreeInput {
     @Accessors(PUBLIC_GETTER)
     IRegistryView view
     
-    @Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
+    @Accessors(PUBLIC_GETTER)
     IQuerySpecificationRegistryChangeListener listener
     
     new(IQuerySpecificationRegistry registry) {
@@ -57,7 +57,16 @@ class QueryRegistryTreeInput {
             val entry = new QueryRegistryTreeEntry(treePackage.pckg, it)
             treePackage.pckg.entries.put(fullyQualifiedName, entry)
         ]
-        view.addViewListener(listener)
+    }
+    
+    def void setListener(IQuerySpecificationRegistryChangeListener listener) {
+        if (this.listener !== null) {
+            view.removeViewListener(this.listener)
+        }
+        this.listener = listener
+        if (listener !== null) {
+            view.addViewListener(listener)
+        }
     }
     
     def QueryRegistryTreeInputChange addEntryToInput(IQuerySpecificationRegistryEntry entry) {
