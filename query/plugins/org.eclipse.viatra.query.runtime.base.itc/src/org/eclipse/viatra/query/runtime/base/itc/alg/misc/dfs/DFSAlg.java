@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 
 public class DFSAlg<V> implements IGraphObserver<V> {
 
-    private static final long serialVersionUID = 7397186805581323071L;
     private IGraphDataSource<V> gds;
     private DRedTcRelation<V> tc;
     private int[] visited;

@@ -14,8 +14,6 @@ package org.eclipse.viatra.query.runtime.base.itc.graphs;
 
 public class Graph3 extends TestGraph<Integer> {
 
-    private static final long serialVersionUID = -3807323812221410872L;
-    
     public Graph3() {
         super(null);
     }

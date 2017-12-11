@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ import java.util.Set;
  * @param <V>
  *            the type of the nodes in the graph
  */
-public interface IGraphDataSource<V> extends Serializable {
+public interface IGraphDataSource<V> {
 
     /**
      * Attaches a new graph observer to this graph data source. Observers will be notified in the order they have been registered.   

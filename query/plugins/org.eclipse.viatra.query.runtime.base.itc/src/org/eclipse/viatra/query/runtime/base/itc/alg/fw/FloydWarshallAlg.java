@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 
 public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 
-    private static final long serialVersionUID = 8551056305625218732L;
     private DRedTcRelation<V> tc = null;
     private IBiDirectionalGraphDataSource<V> gds = null;
 

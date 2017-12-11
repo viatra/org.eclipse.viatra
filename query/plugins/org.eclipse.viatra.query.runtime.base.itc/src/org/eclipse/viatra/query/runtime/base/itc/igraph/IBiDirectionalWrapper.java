@@ -29,7 +29,6 @@ import java.util.Set;
  */
 public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V>, IGraphObserver<V> {
 
-    private static final long serialVersionUID = -5771114630390029106L;
     private IGraphDataSource<V> wrappedDataSource;
     // target -> source -> count
     private Map<V, Map<V, Integer>> incomingEdges;

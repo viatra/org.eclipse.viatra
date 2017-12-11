@@ -37,7 +37,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  */
 public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
-    private static final long serialVersionUID = -2383210800242398869L;
     private CountingTcRelation<V> tc = null;
     private IBiDirectionalGraphDataSource<V> gds = null;
     private List<ITcObserver<V>> observers;

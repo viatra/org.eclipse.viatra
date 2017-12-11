@@ -50,8 +50,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.Direction;
  */
 public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
-    private static final long serialVersionUID = 6207002106223444807L;
-
     public UnionFind<V> sccs;
     public IBiDirectionalGraphDataSource<V> gds;
     private CountingAlg<V> counting;

@@ -17,8 +17,6 @@ import org.eclipse.viatra.query.runtime.base.itc.misc.TestObserver;
 
 public class Graph5 extends TestGraph<Integer> {
 
-    private static final long serialVersionUID = -3807323812221410872L;
-    
     public Graph5() {
         super(new TestObserver<Integer>());
     }

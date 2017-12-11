@@ -31,7 +31,6 @@ import com.google.common.collect.Multiset;
 // TODO IBiDirectionalGraphDataSource
 public class EMFDataSource implements IGraphDataSource<EObject> {
 
-    private static final long serialVersionUID = 5404152895901306358L;
     private List<IGraphObserver<EObject>> observers;
     private Set<EReference> references;
     private Set<EClass> classes;

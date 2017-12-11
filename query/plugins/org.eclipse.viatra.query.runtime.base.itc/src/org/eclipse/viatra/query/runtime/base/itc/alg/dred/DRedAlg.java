@@ -38,7 +38,6 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
  */
 public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
-    private static final long serialVersionUID = 356353826099208151L;
     private IGraphDataSource<V> graphDataSource = null;
     private DRedTcRelation<V> tc = null;
     private DRedTcRelation<V> dtc = null;

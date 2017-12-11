@@ -11,15 +11,13 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.io.Serializable;
-
 /**
  * Interface GraphObserver is used to observ the changes in a graph; edge and node insertion/deleteion.
  * 
  * @author Tamas Szabo
  * 
  */
-public interface IGraphObserver<V> extends Serializable {
+public interface IGraphObserver<V> {
 
     /**
      * Used to notify when an edge is inserted into the graph.

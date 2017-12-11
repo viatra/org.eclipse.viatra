@@ -24,8 +24,6 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 
 public class PKAlg<V> implements IGraphObserver<V> {
 
-    private static final long serialVersionUID = -4382533946686076317L;
-
     /**
      * Maps the nodes to their indicies.
      */

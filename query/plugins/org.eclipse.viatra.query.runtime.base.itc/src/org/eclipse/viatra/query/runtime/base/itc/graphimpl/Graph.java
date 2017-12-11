@@ -29,8 +29,6 @@ import com.google.common.base.Function;
 
 public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSource<V> {
 
-    private static final long serialVersionUID = 1L;
-
     // source -> target -> count
     private Map<V, Map<V, Integer>> outgoingEdges;
     // target -> source -> count

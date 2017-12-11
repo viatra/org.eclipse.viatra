@@ -16,8 +16,6 @@ package org.eclipse.viatra.query.runtime.base.itc.graphs;
  */
 public class SelfLoopGraph extends TestGraph<Integer> {
 
-    private static final long serialVersionUID = 1L;
-
     public SelfLoopGraph() {
         super(null);
     }

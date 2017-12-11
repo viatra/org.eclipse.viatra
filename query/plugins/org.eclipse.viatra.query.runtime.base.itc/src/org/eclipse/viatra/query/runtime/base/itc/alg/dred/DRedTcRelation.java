@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.alg.dred;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,9 +19,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.ITcRelation;
 
-public class DRedTcRelation<V> implements Serializable, ITcRelation<V> {
-
-    private static final long serialVersionUID = 1L;
+public class DRedTcRelation<V> implements ITcRelation<V> {
 
     // tc(a,b) means that b is transitively reachable from a
     private Map<V, Set<V>> tuplesForward;
