@@ -124,6 +124,14 @@ public class PatternLanguageValidator extends AbstractPatternLanguageValidator i
     public static final String UNUSED_PRIVATE_PATTERN_MESSAGE = "The pattern '%s' is never used locally.";
     public static final String RECURSIVE_PATTERN_CALL = "Recursive pattern call: %s";
     /**
+     * @since 2.0
+     */
+    public static final String RECURSIVE_PATTERN_CALL_TRANSITIVE = "Transitive closure is not supported in recursive pattern calls: %s";
+    /**
+     * @since 2.0
+     */
+    public static final String RECURSIVE_PATTERN_CALL_NEGATIVE = "Negative pattern calls are not supported in recursive pattern calls: %s";
+    /**
      * @since 1.4
      */
     public static final String INVALID_AGGREGATE_MESSAGE = "Aggregate variables can only be used in aggregators.";
@@ -542,7 +550,10 @@ public class PatternLanguageValidator extends AbstractPatternLanguageValidator i
             }
 
             if (isNegativePatternCall(call)) {
-                error(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,
+                error(String.format(RECURSIVE_PATTERN_CALL_NEGATIVE, buffer.toString()), call,
+                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
+            } else if (call.isTransitive()) {
+                error(String.format(RECURSIVE_PATTERN_CALL_TRANSITIVE, buffer.toString()), call,
                         PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
             } else {
                 warning(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,

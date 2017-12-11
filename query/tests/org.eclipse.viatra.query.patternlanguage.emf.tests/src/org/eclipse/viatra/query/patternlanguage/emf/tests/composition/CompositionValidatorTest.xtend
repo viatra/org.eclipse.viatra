@@ -27,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
+import org.eclipse.viatra.query.patternlanguage.validation.PatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -168,7 +169,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
             }'
         )
         
-        tester.validate(model).assertError(null, "Recursive pattern call")
+        tester.validate(model).assertError(IssueCodes.RECURSIVE_PATTERN_CALL, "Negative pattern")
     }
     @Test
     def void testQuantifiedLocalVariable() {

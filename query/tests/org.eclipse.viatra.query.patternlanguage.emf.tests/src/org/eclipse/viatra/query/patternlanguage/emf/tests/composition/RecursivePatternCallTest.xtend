@@ -92,6 +92,24 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
     }
+    
+    @Test
+    def void testSelfRecursionTC() {
+        val model = parseHelper.parse(
+            '''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            
+            pattern reachableClass(src : EClass, trg : EClass) {
+                EClass.eStructuralFeatures.eType(src, trg);
+            } or {
+                EClass.eSuperTypes(src, sup);
+                find reachableClass+(sup, trg);
+            }
+            '''
+        )
+        tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
+    }
 
     @Test
     def void testChainNoRecursion() {
@@ -193,11 +211,11 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
         val result = tester.validate(model)
         result.assertAll(
             AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-                "Recursive pattern call: p3 -> neg p1 -> p2 -> p3"),
+                "p3 -> neg p1 -> p2 -> p3"),
             AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
-                "Recursive pattern call: p2 -> p3 -> neg p1 -> p2"),
+                "p2 -> p3 -> neg p1 -> p2"),
             AssertableDiagnostics.error(IssueCodes::RECURSIVE_PATTERN_CALL,
-                "Recursive pattern call: neg p1 -> p2 -> p3 -> neg p1"))
+                "neg p1 -> p2 -> p3 -> neg p1"))
     }
 
     @Test
