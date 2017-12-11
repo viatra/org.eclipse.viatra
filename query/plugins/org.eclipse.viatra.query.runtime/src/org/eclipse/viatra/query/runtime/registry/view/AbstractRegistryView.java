@@ -109,11 +109,13 @@ public abstract class AbstractRegistryView implements IRegistryView {
 
     @Override
     public void addViewListener(IQuerySpecificationRegistryChangeListener listener) {
+        checkArgument(listener != null, "Null listener not supported");
         listeners.add(listener);
     }
 
     @Override
     public void removeViewListener(IQuerySpecificationRegistryChangeListener listener) {
+        checkArgument(listener != null, "Null listener not supported");
         listeners.remove(listener);
     }
 
