@@ -41,7 +41,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
@@ -61,8 +60,6 @@ public class EMFModelConnector implements IModelConnector {
 
     protected ILog logger;
 
-    private PatternMatcherRootContentKey key;
-
     protected IWorkbenchPage workbenchPage;
 
     private ModelEditorPartListener modelEditorPartListener;
@@ -80,8 +77,7 @@ public class EMFModelConnector implements IModelConnector {
     public void loadModel(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier notifier = getNotifier(modelConnectorTypeEnum);
         if (notifier != null) {
-            key = new PatternMatcherRootContentKey(editorPart, notifier);
-            workbenchPage = key.getEditorPart().getSite().getPage();
+            workbenchPage = editorPart.getSite().getPage();
             modelEditorPartListener = new ModelEditorPartListener(this);
             workbenchPage.addPartListener(modelEditorPartListener);
         }
@@ -98,24 +94,14 @@ public class EMFModelConnector implements IModelConnector {
     @Override
     public void showLocation(Object[] locationObjects) {
         IStructuredSelection preparedSelection = prepareSelection(locationObjects);
-        navigateToElements(key.getEditorPart(), preparedSelection);
-        workbenchPage.bringToTop(key.getEditorPart());
-        if (key.getEditorPart() instanceof ISelectionProvider) {
-            ISelectionProvider selectionProvider = (ISelectionProvider) key.getEditorPart();
+        navigateToElements(editorPart, preparedSelection);
+        workbenchPage.bringToTop(editorPart);
+        if (editorPart instanceof ISelectionProvider) {
+            ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
             selectionProvider.setSelection(preparedSelection);
             
         }
-        reflectiveSetSelection(key.getEditorPart(), preparedSelection);
-    }
-
-    // XXX This is only needed for the current QueryExplorer. In the future this should be removed.
-    /**
-     * @deprecated
-     * @noreference This method is only used by the Query Explorer
-     */
-    @Deprecated
-    public PatternMatcherRootContentKey getKey() {
-        return key;
+        reflectiveSetSelection(editorPart, preparedSelection);
     }
 
     @Override
@@ -164,7 +150,7 @@ public class EMFModelConnector implements IModelConnector {
         List<TreePath> paths = new ArrayList<>();
         for (Object o : locationObjects) {
             if (o instanceof EObject) {
-                TreePath path = createTreePath(key.getEditorPart(), (EObject) o);
+                TreePath path = createTreePath(editorPart, (EObject) o);
                 if (path != null) {
                     paths.add(path);
                 }

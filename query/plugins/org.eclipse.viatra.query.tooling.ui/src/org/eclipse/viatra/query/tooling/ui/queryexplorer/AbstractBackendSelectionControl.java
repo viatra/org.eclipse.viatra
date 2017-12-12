@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.viatra.query.tooling.ui.registry.QueryBackendRegistry;
 
 import com.google.common.collect.Iterables;
@@ -72,7 +71,7 @@ public abstract class AbstractBackendSelectionControl extends WorkbenchWindowCon
             @Override
             public String getText(Object element) {
                 if (element instanceof IQueryBackendFactory){
-                    return DisplayUtil.getQueryBackendName((IQueryBackendFactory) element);
+                    return QueryBackendRegistry.getInstance().getQueryBackendName((IQueryBackendFactory) element);
                 }
                 return super.getText(element);
             }

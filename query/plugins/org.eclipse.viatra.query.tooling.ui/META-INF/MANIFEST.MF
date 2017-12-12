@@ -46,14 +46,8 @@ Require-Bundle: org.eclipse.ui,
 Bundle-Activator: org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.query.tooling.ui,
- org.eclipse.viatra.query.tooling.ui.dialog,
  org.eclipse.viatra.query.tooling.ui.queryexplorer,
  org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters,
- org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher;
-  uses:="com.google.common.base",
- org.eclipse.viatra.query.tooling.ui.queryexplorer.content.patternsviewer,
- org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers;
-  uses:="com.google.inject",
  org.eclipse.viatra.query.tooling.ui.queryexplorer.preference,
  org.eclipse.viatra.query.tooling.ui.queryexplorer.util;
   uses:="com.google.common.base,

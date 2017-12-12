@@ -71,4 +71,13 @@ public class QueryBackendRegistry {
         return queryBackendFactories;
     }
     
+    /**
+     * 
+     * @param backend
+     * @return a user-readable name for the given {@link IQueryBackend} implementation.
+     * @since 2.0
+     */
+    public String getQueryBackendName(IQueryBackendFactory backend){
+        return backend.getBackendClass().getSimpleName();
+    }
 }

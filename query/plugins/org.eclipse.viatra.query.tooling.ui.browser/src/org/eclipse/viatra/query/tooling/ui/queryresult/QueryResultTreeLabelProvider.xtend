@@ -15,7 +15,6 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
 
 /**
@@ -25,6 +24,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     
     val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry()
     AdapterFactoryLabelProvider adapterFactoryLabelProvider
+    static val String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
     
     new() {
         val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory()
@@ -83,7 +83,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     }
     
     dispatch def String getTextInternal(IPatternMatch element) {
-        val message = DisplayUtil.getMessage(element)
+        val message = getMessage(element)
         if(message !== null) {
             return ViatraQueryRuntimeHelper.getMessage(element, message, [adapterFactoryLabelProvider.getText(it)])
         }
@@ -94,4 +94,18 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
         adapterFactoryLabelProvider.getText(element)
     }
     
+    def String getMessage(IPatternMatch match) {
+        // Check format annotation from the Query Explorer annotation
+        val annotation = match.specification.getFirstAnnotationByName(QUERY_EXPLORER_ANNOTATION)
+        if (annotation !== null) {
+            return annotation.getFirstValue("message") as String
+        }
+
+        // No formatting annotation found
+        if (match.parameterNames().size() == 0) {
+            return "(Match)"
+        } else {
+            return '''«FOR param : match.parameterNames SEPARATOR ", "»«param»=$«param»$«ENDFOR»'''
+        }
+    }
 }

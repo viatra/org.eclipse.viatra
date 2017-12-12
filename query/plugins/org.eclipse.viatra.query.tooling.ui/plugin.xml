@@ -55,13 +55,6 @@
             id="org.eclipse.viatra.query.tooling.ui"
             name="VIATRA">
       </category>
-      <view
-            category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
-            icon="icons/logo2.png"
-            id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
-            name="Query Explorer">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -291,28 +284,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.RuntimeMatcherRegistrationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.runtimematcherreg">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadResourceSetHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadmodel">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
-            </reference>
-         </activeWhen>
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadVqlPatternHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadmodel">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
-            </reference>
-         </activeWhen>
-      </handler>
  <!--     <handler
             class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachVqlEditorRegistrationHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.loadmodel">
@@ -332,249 +303,12 @@
          </activeWhen>
       </handler> -->
       <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.ShowLocationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.showlocation">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.UnloadModelHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.unloadmodel">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PatternUnregistrationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.unregisterpattern">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PackagePresentationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.pattern.flat">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PackagePresentationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.pattern.hierarchical">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadResourceSetHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadresourceset">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadResourceHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadresource">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadResourceHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadvqlmodel">
-      </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadVqlPatternHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadvqlpattern">
-      </handler>
-      <handler
             class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PatternRegistryShowLocationHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.showlocation_patternreg">
       </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.ResetUIHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.resetui">
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any">
-         <menu
-               id="org.eclipse.viatra.query.tooling.ui.navigator.popup"
-               label="VIATRA">
-            <command
-                  commandId="org.eclipse.viatra.query.tooling.ui.runtimematcherreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra.query.tooling.ui.vql.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <separator
-                  name="additions"
-                  visible="true">
-            </separator>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer">
-         <control
-               class="org.eclipse.viatra.query.tooling.ui.queryexplorer.BackendSelectionControl">
-         </control>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.loadmodel"
-               icon="icons/load.gif"
-               id="org.eclipse.viatra.query.tooling.ui.loadmodelmenu"
-               label="Load model"
-               style="pulldown">
-         </command>
-         <separator
-               name="org.eclipse.viatra.query.tooling.ui.separator1"
-               visible="true">
-         </separator>
-      </menuContribution>     
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
-               icon="platform:/plugin/org.eclipse.ui/icons/full/elcl16/step_current.png"
-               label="Show location"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-                  <or>
-                    <reference
-                       definitionId="org.eclipse.viatra.query.tooling.ui.match">
-                    </reference>
-                    <reference
-                       definitionId="org.eclipse.viatra.query.tooling.ui.matcher">
-                    </reference>
-                  </or>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.unloadmodel"
-               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
-               label="Unload model"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.root">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:#TextEditorContext?after=group.edit">
-         <menu
-               id="org.eclipse.viatra.query.tooling.ui.menu.emfpatternlanguage"
-               label="VIATRA">
-            <command
-                  commandId="org.eclipse.viatra.query.tooling.ui.runtimematcherreg"
-                  style="push">
-            </command>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeEditorId">
-                  <equals
-                        value="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.patternsViewerMenu">
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.unregisterpattern"
-               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
-               label="Unregister pattern"
-               style="push">
-         </command>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.showlocation_patternreg"
-               icon="platform:/plugin/org.eclipse.ui/icons/full/elcl16/step_current.png"
-               label="Show location"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer">
-         <menu
-               label="Patterns viewer presentation">
-            <command
-                  commandId="org.eclipse.viatra.query.tooling.ui.pattern.hierarchical"
-                  icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/hierarchicalLayout.png"
-                  label="Hierarchical"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.viatra.query.tooling.ui.pattern.flat"
-                  icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/flatLayout.png"
-                  label="Flat"
-                  style="push">
-            </command>
-         </menu>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.resetui"
-               icon="icons/reset.gif"
-               label="Reset UI"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.viatra.query.tooling.ui.loadmodelmenu">
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.loadresourceset"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.loadresource"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.loadvqlpattern"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.loadvqlmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
-               </reference>
-            </visibleWhen>
-         </command>
-<!--      	 <command
-               commandId="org.eclipse.viatra.query.tooling.ui.attachmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
-               </reference>
-            </visibleWhen>
-         </command>            -->
-         </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.viatra.query.tooling.category"
-            id="org.eclipse.viatra.query.tooling.ui.runtimematcherreg"
-            name="Register patterns in Query Explorer">
-      </command>
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.loadmodel"
@@ -597,47 +331,8 @@
       </category>
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
-            id="org.eclipse.viatra.query.tooling.ui.unloadmodel"
-            name="Unload model">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra.query.tooling.category"
-            id="org.eclipse.viatra.query.tooling.ui.unregisterpattern"
-            name="Unregister pattern">
-      </command>
-      <command
-            id="org.eclipse.viatra.query.tooling.ui.pattern.flat"
-            name="Flat">
-      </command>
-      <command
-            id="org.eclipse.viatra.query.tooling.ui.pattern.hierarchical"
-            name="Hierarchical">
-      </command>
-      <command
-            id="org.eclipse.viatra.query.tooling.ui.loadresource"
-            name="Load Resource">
-      </command>
-      <command
-            id="org.eclipse.viatra.query.tooling.ui.loadresourceset"
-            name="Load ResourceSet">
-      </command>
-      <command
-            id="org.eclipse.viatra.query.tooling.ui.loadvqlmodel"
-            name="Load as model">
-      </command>
-      <command
-            id="org.eclipse.viatra.query.tooling.ui.loadvqlpattern"
-            name="Load pattern(s)">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.showlocation_patternreg"
             name="Show location">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra.query.tooling.category"
-            id="org.eclipse.viatra.query.tooling.ui.resetui"
-            name="Reset UI">
       </command>
    </extension>
    <extension
