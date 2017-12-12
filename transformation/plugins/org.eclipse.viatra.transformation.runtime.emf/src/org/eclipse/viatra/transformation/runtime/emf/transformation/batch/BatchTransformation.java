@@ -121,7 +121,7 @@ public class BatchTransformation {
         }
 
         private void initializeIndexes(ViatraQueryEngine queryEngine) {
-            GenericQueryGroup.of(rules.stream().map(rule -> rule.getPrecondition())).prepare(queryEngine);
+            GenericQueryGroup.of(rules.stream().map(BatchTransformationRule::getPrecondition)).prepare(queryEngine);
         }
 
     }

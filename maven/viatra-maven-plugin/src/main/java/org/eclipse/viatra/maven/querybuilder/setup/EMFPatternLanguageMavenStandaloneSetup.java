@@ -15,7 +15,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandalone
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
-import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 
 import com.google.inject.Binder;

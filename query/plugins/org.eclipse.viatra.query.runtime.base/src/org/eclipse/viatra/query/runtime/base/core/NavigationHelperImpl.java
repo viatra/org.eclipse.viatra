@@ -1317,7 +1317,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         final Runnable[] callbacks = traversalCallbacks.toArray(new Runnable[traversalCallbacks.size()]);
         traversalCallbacks.clear();
         if (callbacks.length > 0){
-            coalesceTraversals(() -> Arrays.stream(callbacks).forEach(callback -> callback.run()));
+            coalesceTraversals(() -> Arrays.stream(callbacks).forEach(Runnable::run));
         }
     }
 

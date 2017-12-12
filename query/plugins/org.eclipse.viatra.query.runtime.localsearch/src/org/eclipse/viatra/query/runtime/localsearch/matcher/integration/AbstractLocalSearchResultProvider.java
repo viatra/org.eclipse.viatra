@@ -191,7 +191,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                 public Void call() throws Exception {
                     indexInitializationBeforePlanning();
                     prepareDirectDependencies();
-                    runtimeContext.executeAfterTraversal(() -> preparePlansForExpectedAdornments());
+                    runtimeContext.executeAfterTraversal(AbstractLocalSearchResultProvider.this::preparePlansForExpectedAdornments);
                     return null;
                 }
             });
