@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist;
 
+import java.util.Objects;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -67,7 +69,7 @@ final class PatternImporter extends ReplacementTextApplier {
                 public ImportState exec(XtextResource state) throws Exception {
                     final PatternModel model = (PatternModel) Iterators.find(state.getAllContents(),
                             Predicates.instanceOf(PatternModel.class));
-                    if (targetPackage.equals(model.getPackageName())) {
+                    if (Objects.equals(targetPackage, model.getPackageName())) {
                         return ImportState.SAMEPACKAGE;
                     }
                     final VQLImportSection importSection = model.getImportPackages();
