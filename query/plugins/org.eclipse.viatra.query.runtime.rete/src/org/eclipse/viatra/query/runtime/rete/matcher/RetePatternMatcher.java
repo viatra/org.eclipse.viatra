@@ -357,7 +357,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     @Override
     public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameters) {
-        return countMatches(parameterSeedMask, parameters) > 0;
+        return count(parameterSeedMask, parameters) > 0;
     }
 
     @Override
@@ -367,7 +367,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     @Override
     public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
-        return countMatches(parameterSeedMask, parameters);
+        return count(parameterSeedMask, parameters);
     }
 
 
@@ -379,7 +379,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     @Override
     public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
-        return getOneArbitraryMatch(parameterSeedMask, parameters);
+        return matchOne(parameterSeedMask, parameters);
     }
     
     @Override
@@ -389,7 +389,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     @Override
     public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
-        return getAllMatches(parameterSeedMask, parameters);
+        return matchAll(parameterSeedMask, parameters);
     }
     
     @Override
