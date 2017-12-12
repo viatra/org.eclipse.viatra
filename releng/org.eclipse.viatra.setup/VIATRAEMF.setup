@@ -132,10 +132,6 @@
         name="org.eclipse.emf.sdk.feature.group"/>
     <requirement
         name="org.eclipse.pde.api.tools.ee.feature.feature.group"/>
-    <requirement
-        name="fr.obeo.releng.targetplatform-feature.feature.group"/>
-    <repository
-        url="http://mbarbero.github.io/fr.obeo.releng.targetplatform/p2/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -903,82 +899,6 @@
       </setupTask>
     </stream>
     <description>Complex Event Processing for VIATRA</description>
-  </project>
-  <project name="xcore"
-      label="Xcore Integration">
-    <setupTask
-        xsi:type="setup.targlets:TargletTask"
-        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
-      <targlet
-          name="${scope.project.label}"
-          activeRepositoryList="${eclipse.target.platform}">
-        <requirement
-            name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
-        <repositoryList
-            name="Mars">
-          <repository
-              url="http://download.eclipse.org/viatra/dependency"/>
-          <repository
-              url="http://download.eclipse.org/releases/mars"/>
-          <repository
-              url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
-        </repositoryList>
-        <repositoryList
-            name="Neon">
-          <repository
-              url="http://download.eclipse.org/viatra/dependency"/>
-          <repository
-              url="http://download.eclipse.org/releases/neon"/>
-          <repository
-              url="http://download.itemis.com/updates/releases"/>
-          <repository
-              url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
-        </repositoryList>
-      </targlet>
-    </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsImportTask"
-        predecessor="git.clone.viatra">
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}/integration/plugins/org.eclipse.viatra.integration.xcore"
-          locateNestedProjects="true"/>
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}/integration/plugins/org.eclipse.viatra.integration.xcore.model"
-          locateNestedProjects="true"/>
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}/integration/plugins/org.eclipse.viatra.integration.xcore.modeleditor"
-          locateNestedProjects="true"/>
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}/integration/plugins/org.eclipse.viatra.integration.xcore.ui"
-          locateNestedProjects="true"/>
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}/integration/features/org.eclipse.viatra.integration.xcore.feature"
-          locateNestedProjects="true"/>
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}/releng"
-          locateNestedProjects="true"/>
-    </setupTask>
-    <stream
-        name="master"/>
-    <stream
-        name="1.2-maintenance"/>
-    <stream
-        name="1.3-maintenance"/>
-    <stream
-        name="1.4-maintenance"/>
-    <stream
-        name="1.5-maintenance"/>
-    <stream
-        name="1.6-maintenance"/>
-    <description></description>
   </project>
   <project name="mylyn"
       label="Mylyn tasks">
