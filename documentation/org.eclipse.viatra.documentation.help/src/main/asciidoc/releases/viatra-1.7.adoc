@@ -10,8 +10,6 @@ The memory usage of the query engine was optimized in several ways during VIATRA
 
 Further changes also helped to reduce the temporary objects created during search-based pattern matching or provide faster responses in transformation by smarter preconditions checking.
 
-*TODO* Execute and include a full performance measurement
-
 == Updated generated code structure
 
 Traditionally, VIATRA generates four different Java classes for each query: (1) a _query specification_ class, (2) a _matcher_ class, (3) a _match_ class and (4) a _match processor_ class, each into a separate file. In case of projects with many pattern definitions, generating these files can get expensive.
@@ -29,10 +27,9 @@ Additionally, the generation of pattern-specific match processors can be disable
 
 == CPS Demonstrator Application
 
-VIATRA 1.7 includes a demonstrator application that can be used to see most features of the transformation framework in action. The application includes an example project and transformations included in editors. For more details about the transformation, have a look at the link:../cps/CPS-Application.html[corresponding documentation].
+VIATRA 1.7 includes a demonstrator application that can be used to see most features of the transformation framework in action. The application includes an example project and transformations included in editors.
 
-* *TODO* Provide download links
-* *TODO* Add a few screenshots here
+* The application can be downloaded for multiple platforms: link:http://download.eclipse.org/viatra/examples/cps/application/org.eclipse.viatra.examples.cps.application.product-win32.win32.x86_64.zip[Windows (64 bit)], link:http://download.eclipse.org/viatra/examples/cps/application/org.eclipse.viatra.examples.cps.application.product-macosx.cocoa.x86_64.zip[macOS], link:http://download.eclipse.org/viatra/examples/cps/application/org.eclipse.viatra.examples.cps.application.product-linux.gtk.x86_64.zip[Linux (GTK 64 bit)]
 
 == Additional issues
 For a complete list of fixed issues for VIATRA 1.7 consult https://projects.eclipse.org/projects/modeling.viatra/releases/1.7.0/bugs
