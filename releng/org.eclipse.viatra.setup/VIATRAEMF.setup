@@ -37,10 +37,6 @@
     <description>Copyright owner to be inserted in copyright comment on new files after user name (e.g. employer)</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:VariableTask"
-      name="viatra.git.branch"
-      value="master"/>
-  <setupTask
       xsi:type="setup:CompoundTask"
       name="Eclipse Preferences">
     <setupTask
@@ -324,7 +320,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.8"
+          predecessor="//@setupTasks.7"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -779,7 +775,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.8"
+        predecessor="//@setupTasks.7"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -1241,6 +1237,10 @@
         </repositoryList>
       </targlet>
     </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="master"/>
   </stream>
   <stream name="1.2-maintenance">
     <setupTask
@@ -1335,6 +1335,10 @@
         option="-XX:MaxPermSize="
         value="256M"
         vm="true"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.2-maintenance"/>
   </stream>
   <stream name="1.3-maintenance">
     <setupTask
@@ -1429,6 +1433,10 @@
         option="-XX:MaxPermSize="
         value="256M"
         vm="true"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.3-maintenance"/>
   </stream>
   <stream name="1.4-maintenance">
     <setupTask
@@ -1510,6 +1518,10 @@
         option="-XX:MaxPermSize="
         value="256M"
         vm="true"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.4-maintenance"/>
   </stream>
   <stream name="1.5-maintenance">
     <setupTask
@@ -1589,6 +1601,10 @@
         option="-XX:MaxPermSize="
         value="256M"
         vm="true"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.5-maintenance"/>
   </stream>
   <stream name="1.6-maintenance">
     <setupTask
@@ -1715,6 +1731,10 @@
         option="-XX:MaxPermSize="
         value="256M"
         vm="true"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.6-maintenance"/>
   </stream>
   <stream name="1.7-maintenance"
       label="">
@@ -1872,6 +1892,11 @@
         option="-XX:MaxPermSize="
         value="256M"
         vm="true"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.7-maintenance"
+        defaultValue=""/>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
