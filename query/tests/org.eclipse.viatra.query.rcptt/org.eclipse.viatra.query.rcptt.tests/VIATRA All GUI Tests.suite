@@ -6,7 +6,7 @@ Element-Version: 2.0
 Id: _o6SgUO93EeW7SP0a5rPzzg
 Manually-Ordered: true
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/12/17, 2:32 PM
+Save-Time: 12/13/17, 12:11 PM
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
 Content-Type: text/plain
@@ -25,11 +25,12 @@ Contributors:
 Content-Type: text/testcase
 Entry-Name: testcase-items
 
-_tvOEYO92EeW7SP0a5rPzzg	//
-_eAbv0PEBEeW0yqPNDxWanA	//
-_gRUfYO93EeW7SP0a5rPzzg	//
-_4XrwIPGgEeW7irRH823xbw	//
-_-MEJkPGgEeW7irRH823xbw	//
-_OeHJkNqKEee1d7rAf32j1w	//
+_tvOEYO92EeW7SP0a5rPzzg	// kind: 'suite' name: 'VIATRA Preferences' path: 'VIATRA Preferences.suite'
+_eAbv0PEBEeW0yqPNDxWanA	// kind: 'suite' name: 'VIATRA Basic Creations' path: 'VIATRA Basic Creations.suite'
+_gRUfYO93EeW7SP0a5rPzzg	// kind: 'suite' name: 'VIATRA Viewers' path: 'VIATRA Viewers.suite'
+_4XrwIPGgEeW7irRH823xbw	// kind: 'suite' name: 'VIATRA Testing Framework' path: 'VIATRA Testing Framework.suite'
+_-MEJkPGgEeW7irRH823xbw	// kind: 'suite' name: 'VIATRA Validation Framework' path: 'VIATRA Validation Framework.suite'
+_OeHJkNqKEee1d7rAf32j1w	// kind: 'suite' name: 'VIATRA Query Results' path: 'VIATRA Query Results.suite'
+_8iqJIN6FEee926zyOqltzg	// kind: 'suite' name: 'VIATRA Query Registry' path: 'VIATRA Query Registry.suite'
 
 ------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--
