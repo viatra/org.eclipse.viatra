@@ -7,7 +7,7 @@ Element-Version: 3.0
 External-Reference: 
 Id: _21NNMN58Eee926zyOqltzg
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/11/17, 3:13 PM
+Save-Time: 12/18/17, 11:27 AM
 Testcase-Type: ecl
 Verifications: _aqeAUN59Eee926zyOqltzg
 
@@ -30,4 +30,6 @@ with [get-view "Query Registry"] {
     get-tree | select "Registered queries/org.eclipse.viatra.gui.tests.queries/idIsNotUnique" 
         | double-click
 }
+/* Query result view updates in a background thread, wait for calculating results */
+wait 2000
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

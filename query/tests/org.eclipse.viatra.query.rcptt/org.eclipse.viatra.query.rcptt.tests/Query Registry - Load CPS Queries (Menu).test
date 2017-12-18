@@ -7,7 +7,7 @@ Element-Version: 3.0
 External-Reference: 
 Id: _f3Q1UN59Eee926zyOqltzg
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/11/17, 3:15 PM
+Save-Time: 12/18/17, 11:27 AM
 Testcase-Type: ecl
 Verifications: _qkChEN59Eee926zyOqltzg
 
@@ -30,4 +30,6 @@ with [get-view "Query Registry"] {
     get-tree | select "org.eclipse.viatra.examples.cps.queries/org.eclipse.viatra.examples.cps.queries" 
         | get-menu -path "Load into Query Results" | click
 }
+/* Query result view updates in a background thread, wait for calculating results */
+wait 2000
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

@@ -1,13 +1,13 @@
 --- RCPTT testcase ---
 Format-Version: 1.0
-Contexts: _6ICoUNqJEee1d7rAf32j1w,_mEGa0N2oEee926zyOqltzg,_j6aQcPA8EeWlEbYJ7IoFCQ
+Contexts: _AeW7gOPdEee926zyOqltzg,_mEGa0N2oEee926zyOqltzg,_j6aQcPA8EeWlEbYJ7IoFCQ
 Element-Name: Query Registry - Show location (Indexed OK)
 Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
 Id: _9qBeAN5-Eee926zyOqltzg
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/11/17, 3:40 PM
+Save-Time: 12/18/17, 11:22 AM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
@@ -24,12 +24,6 @@ Entry-Name: .content
  * Contributors:
  *   Zoltan Ujhelyi - Initial API and implementation
  *******************************************************************************/
-
-get-menu -path "Window/Show View/Other..." | click
-with [get-window "Show View"] {
-    get-tree | select "Plug-in Development/Plug-ins"
-    get-button Open | click
-}
 
 get-view "Plug-ins" | get-tree | select "org.eclipse.viatra.query.tooling.ui.retevis \\(.*\\)" | get-menu 
     -path "Add to Java Search" | click
