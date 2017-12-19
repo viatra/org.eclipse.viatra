@@ -7,7 +7,7 @@ Element-Version: 3.0
 External-Reference: 
 Id: _9qBeAN5-Eee926zyOqltzg
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/18/17, 11:22 AM
+Save-Time: 12/19/17, 1:08 PM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
@@ -34,6 +34,10 @@ with [get-view "Query Registry"] {
         | get-menu -path "Show location" | click
 }
 
-get-editor "CheckRecipe.class" | get-text-viewer | get-property "getSelectionText()" 
-    | equals CheckRecipe | verify-true
+get-editor "CheckRecipe.class" {
+	if [get-property id -raw | eq "org.eclipse.jdt.ui.ClassFileEditor"] 
+	    {get-text-viewer | get-property "getSelectionText()" | equals CheckRecipe | verify-true}
+	    {get-property id -raw | eq "org.eclipse.jdt.ui.ClassFileEditorNoSource"} // Source not found editor
+	 
+}
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--
