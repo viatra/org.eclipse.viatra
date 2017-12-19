@@ -17,7 +17,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
  * @since 1.4
  */
 public abstract class AbstractMemorylessAggregationOperator<Domain, AggregateResult> 
-    extends AbstractMultisetAggregationOperator<Domain, AggregateResult, AggregateResult> 
+    implements IMultisetAggregationOperator<Domain, AggregateResult, AggregateResult> 
 {
 
     @Override

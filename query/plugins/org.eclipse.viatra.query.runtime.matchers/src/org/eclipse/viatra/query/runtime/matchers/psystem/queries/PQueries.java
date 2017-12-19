@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Utility class for using PQueries in Guava collection operations effectively
@@ -41,69 +39,18 @@ public final class PQueries {
      *
      */
     public static Predicate<PQuery> queryStatusPredicate(final PQueryStatus status) {
-        return new Predicate<PQuery>() {
-
-            @Override
-            public boolean apply(PQuery query) {
-                return query.getStatus().equals(status);
-            }
-        };
+        return query -> query.getStatus().equals(status);
     }
 
-    /**
-     * Function that returns the qualified name of a query
-     */
-    public static Function<PQuery, String> queryNameFunction() {
-        return new Function<PQuery, String>() {
-
-            @Override
-            public String apply(PQuery query) {
-                return query.getFullyQualifiedName();
-            }
-        };
-    }
-
-    public static Function<PParameter, String> parameterNameFunction() {
-        return new Function<PParameter, String>() {
-
-            @Override
-            public String apply(PParameter param) {
-                return param.getName();
-            }
-        };
-    }
-
-    public static Function<IQueryReference, PQuery> queryOfReferenceFunction() {
-        return new Function<IQueryReference, PQuery>() {
-
-            @Override
-            public PQuery apply(IQueryReference reference) {
-                return reference.getReferredQuery();
-            }
-        };
-    }
-
-    public static Function<PBody, Iterable<PQuery>> directlyReferencedQueriesFunction() {
-        return new Function<PBody, Iterable<PQuery>>() {
-
-            @Override
-            public Iterable<PQuery> apply(PBody body) {
-                return Iterables.transform(body.getConstraintsOfType(IQueryReference.class), PQueries.queryOfReferenceFunction());
-            }
-        };
+    public static Function<PBody, Stream<PQuery>> directlyReferencedQueriesFunction() {
+        return body -> (body.getConstraintsOfType(IQueryReference.class).stream().map(IQueryReference::getReferredQuery));
     }
     
     /**
      * @since 1.4
      */
     public static Predicate<PParameter> parameterDirectionPredicate(final PParameterDirection direction){
-        return new Predicate<PParameter>() {
-
-            @Override
-            public boolean apply(PParameter input) {
-                return input.getDirection() == direction;
-            }
-        };
+        return input -> input.getDirection() == direction;
     }
 
     /**
@@ -112,14 +59,13 @@ public final class PQueries {
      * @since 1.6
      */
     public static Set<PTraceable> getTraceables(PQuery query) {
-        Set<PBody> bodies = query.getDisjunctBodies().getBodies();
-        Iterable<PConstraint> constraints = Iterables.concat(Iterables.transform(bodies, new Function<PBody, Iterable<PConstraint>>() {
-            @Override
-            public Iterable<PConstraint> apply(PBody body) {
-                return body.getConstraints();
-            }
-        }));
-        return ImmutableSet.<PTraceable>builder().add(query).addAll(bodies).addAll(constraints).build();
+        final Set<PTraceable> traceables = new HashSet<>();
+        traceables.add(query);
+        query.getDisjunctBodies().getBodies().forEach(body -> {
+            traceables.add(body);
+            body.getConstraints().forEach(c -> traceables.add(c));
+        });
+        return traceables;
     }
 
 }

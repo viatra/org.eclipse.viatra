@@ -96,16 +96,15 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     
     def String getMessage(IPatternMatch match) {
         // Check format annotation from the Query Explorer annotation
-        val annotation = match.specification.getFirstAnnotationByName(QUERY_EXPLORER_ANNOTATION)
-        if (annotation !== null) {
-            return annotation.getFirstValue("message") as String
-        }
+        match.specification.getFirstAnnotationByName(QUERY_EXPLORER_ANNOTATION)
+            .flatMap[getFirstValue("message", String)].orElse(// No formatting annotation found
+                if (match.parameterNames().isEmpty) {
+                    "(Match)"
+                } else {
+                    '''«FOR param : match.parameterNames SEPARATOR ", "»«param»=$«param»$«ENDFOR»'''
+                }
+            )
 
-        // No formatting annotation found
-        if (match.parameterNames().size() == 0) {
-            return "(Match)"
-        } else {
-            return '''«FOR param : match.parameterNames SEPARATOR ", "»«param»=$«param»$«ENDFOR»'''
-        }
+        
     }
 }

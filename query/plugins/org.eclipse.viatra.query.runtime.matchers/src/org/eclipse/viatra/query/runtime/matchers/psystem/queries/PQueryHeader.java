@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 
@@ -70,10 +71,9 @@ public interface PQueryHeader {
     /**
      * Returns the first annotation with a specified name
      * 
-     * @param annotationName
-     * @return the found annotation, or null if non is available
+     * @since 2.0
      */
-    public PAnnotation getFirstAnnotationByName(String annotationName);
+    public Optional<PAnnotation> getFirstAnnotationByName(String annotationName);
     
     /**
      * Returns the visibility information about the query.

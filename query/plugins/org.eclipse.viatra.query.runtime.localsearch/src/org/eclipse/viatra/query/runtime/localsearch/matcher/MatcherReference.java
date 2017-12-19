@@ -11,14 +11,11 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 public class MatcherReference {
     final PQuery query;
@@ -38,7 +35,7 @@ public class MatcherReference {
         super();
         this.query = query;
         this.adornment = adornment;
-        this.boundParameterNames = Sets.newHashSet(Iterables.transform(adornment, PQueries.parameterNameFunction()));
+        this.boundParameterNames = adornment.stream().map(PParameter::getName).collect(Collectors.toSet()); 
         this.hints = hints;
     }
     

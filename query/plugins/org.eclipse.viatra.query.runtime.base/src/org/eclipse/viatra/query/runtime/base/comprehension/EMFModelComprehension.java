@@ -335,7 +335,7 @@ public class EMFModelComprehension {
         final Object result = source.eGet(reference, true);
         if (reference.isMany()) {
             // no idea which element to get, have to iterate through
-            ((Iterable<EObject>) result).forEach(EObject -> {});         			
+            ((Iterable<EObject>) result).forEach(EObject -> {/*proxy resolution as a side-effect of traversal*/});         			
         }
     }
     

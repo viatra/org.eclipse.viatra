@@ -12,7 +12,6 @@
 package org.eclipse.viatra.addon.viewers.runtime.util;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.viatra.addon.viewers.runtime.notation.FormatSpecification;
@@ -56,9 +55,7 @@ public final class FormatParser {
     
     public static FormatSpecification parseFormatAnnotation(PAnnotation format) {
         FormatSpecification specification = NotationFactory.eINSTANCE.createFormatSpecification();
-        for (Entry<String, Object> param : format.getAllValues()) {
-            parseParameter(param.getKey(), param.getValue(), specification);
-        }
+        format.forEachValue((key, value) -> parseParameter(key, value, specification));
         return specification;
     }
 

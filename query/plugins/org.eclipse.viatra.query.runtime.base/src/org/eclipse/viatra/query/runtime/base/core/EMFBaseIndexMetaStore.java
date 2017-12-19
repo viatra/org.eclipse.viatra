@@ -199,11 +199,9 @@ public class EMFBaseIndexMetaStore {
 
     private Enumerator enumToCanonicalDynamicInternal(final Enumerator value) {
         final String key = enumToKeyDynamicInternal(value);
-        Enumerator canonicalEnumerator = uniqueIDToCanonicalEnumerator.get(key);
-        if (canonicalEnumerator == null) { // if no canonical version appointed yet, appoint first version
-            canonicalEnumerator = uniqueIDToEnumerator.get(key).iterator().next();
-            uniqueIDToCanonicalEnumerator.put(key, canonicalEnumerator);
-        }
+        Enumerator canonicalEnumerator = uniqueIDToCanonicalEnumerator.computeIfAbsent(key, 
+                // if no canonical version appointed yet, appoint first version
+                k -> uniqueIDToEnumerator.get(k).iterator().next());
         return canonicalEnumerator;
     }
 
@@ -322,17 +320,9 @@ public class EMFBaseIndexMetaStore {
         }
 
         // update subtype maps
-        Set<Object> subTypes = subTypeMap.get(superClassKey);
-        if (subTypes == null) {
-            subTypes = new HashSet<Object>();
-            subTypeMap.put(superClassKey, subTypes);
-        }
+        Set<Object> subTypes = subTypeMap.computeIfAbsent(superClassKey, k -> new HashSet<>());
         subTypes.add(subClassKey);
-        Set<Object> superTypes = superTypeMap.get(subClassKey);
-        if (superTypes == null) {
-            superTypes = new HashSet<Object>();
-            superTypeMap.put(subClassKey, superTypes);
-        }
+        Set<Object> superTypes = superTypeMap.computeIfAbsent(subClassKey, k -> new HashSet<>());
         superTypes.add(superClassKey);
     }
     

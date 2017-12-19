@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
+import java.util.function.Supplier;
+
 /**
  * A cache is a simple key-value pair that stores calculated values for specific key objects
  * 
@@ -25,7 +27,8 @@ public interface ICache {
     /**
      * Return a selected value for the key object. If the value is not available in the cache yet, the given provider is
      * called once
+     * @since 2.0
      */
-    <T> T getValue(Object key, Class<? extends T> clazz, IProvider<T> valueProvider);
+    <T> T getValue(Object key, Class<? extends T> clazz, Supplier<T> valueProvider);
 
 }

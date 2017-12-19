@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  * <pre>
  * class SomeAdornments{
  * 
- *     public Iterable<Set<{@link PParameter}>> getAdornments({@link PQuery} query){
+ *     public Iterable&lt;Set&lt;{@link PParameter}>> getAdornments({@link PQuery} query){
  *         if (SomeGeneratedQuerySpecification.instance().getInternalQueryRepresentation().equals(query)){
  *             return Collections.singleton(Sets.filter(Sets.newHashSet(query.getParameters()), new Predicate<PParameter>() {
  *

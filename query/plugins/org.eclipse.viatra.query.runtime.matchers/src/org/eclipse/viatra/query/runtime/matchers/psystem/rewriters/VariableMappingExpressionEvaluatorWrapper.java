@@ -80,14 +80,10 @@ class VariableMappingExpressionEvaluatorWrapper implements IExpressionEvaluator 
 
     @Override
     public Object evaluateExpression(final IValueProvider provider) throws Exception {
-        return wrapped.evaluateExpression(new IValueProvider() {
-            
-            @Override
-            public Object getValue(String variableName) {
-                String mappedVariableName = variableMapping.get(variableName);
-                Preconditions.checkArgument(mappedVariableName != null, "Could not find variable %s", variableName);
-                return provider.getValue(mappedVariableName);
-            }
+        return wrapped.evaluateExpression(variableName -> {
+            String mappedVariableName = variableMapping.get(variableName);
+            Preconditions.checkArgument(mappedVariableName != null, "Could not find variable %s", variableName);
+            return provider.getValue(mappedVariableName);
         });
     }
 

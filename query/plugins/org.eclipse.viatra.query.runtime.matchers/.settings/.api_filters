@@ -132,6 +132,25 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/queries/PQueries.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries">
+        <filter comment="Modified return value" id="1141899266">
+            <message_arguments>
+                <message_argument value="1.4"/>
+                <message_argument value="2.0"/>
+                <message_argument value="parameterDirectionPredicate(PParameterDirection)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Modified return value" id="1143996420">
+            <message_arguments>
+                <message_argument value="directlyReferencedQueriesFunction()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Modified return value" id="1143996420">
+            <message_arguments>
+                <message_argument value="queryStatusPredicate(PQuery.PQueryStatus)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/rewriters/IRewriterTraceCollector.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector">
         <filter comment="Internal API implementation" id="576720909">
             <message_arguments>

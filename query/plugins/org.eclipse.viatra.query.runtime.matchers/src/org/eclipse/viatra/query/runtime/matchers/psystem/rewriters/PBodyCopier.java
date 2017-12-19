@@ -11,9 +11,11 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
@@ -40,10 +42,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRena
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 /**
  * This class can create a new PBody for a PQuery. The result body contains a copy of given variables and constraints. 
  * 
@@ -59,7 +57,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
     /**
      * Mapping between the original and the copied variables
      */
-    protected Map<PVariable, PVariable> variableMapping = Maps.newHashMap();
+    protected Map<PVariable, PVariable> variableMapping = new HashMap<>();
     
     public Map<PVariable, PVariable> getVariableMapping() {
         return variableMapping;
@@ -89,9 +87,6 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
     
     /**
      * Merge all variables and constraints from a source body to a target body. If multiple bodies are merged into a single one, use the renamer and filter options to avoid collisions.
-     * @param sourceBody
-     * @param namingTool
-     * @param filter
      */
     public void mergeBody(PBody sourceBody, IVariableRenamer namingTool, IConstraintFilter filter) {
 
@@ -104,14 +99,8 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         }
 
         // Copy exported parameters
-        this.body.setSymbolicParameters(Lists.transform(sourceBody.getSymbolicParameters(),
-                new Function<ExportedParameter, ExportedParameter>() {
-
-                    @Override
-                    public ExportedParameter apply(ExportedParameter input) {
-                        return copyExportedParameterConstraint(input);
-                    }
-                }));
+        this.body.setSymbolicParameters(sourceBody.getSymbolicParameters().stream().map(
+                input -> copyExportedParameterConstraint(input)).collect(Collectors.toList()));
 
         // Copy constraints which are not filtered
         Set<PConstraint> constraints = sourceBody.getConstraints();

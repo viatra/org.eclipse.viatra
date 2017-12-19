@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Factory class used as an accessor to Collections implementations. 
@@ -59,6 +60,18 @@ public final class CollectionsFactory
     }
 
     /**
+     * Instantiates an empty set; the key parameter is used to allow using this as a method reference as a
+     * {@link Function}, e.g. in {@link Map#computeIfAbsent(Object, Function)}.
+     * 
+     * @param key
+     *            the value of this parameter is ignored
+     * @since 2.0
+     */
+    public static <T> Set<T> emptySet(Object key) {
+        return FRAMEWORK.createSet();
+    }
+    
+    /**
      * Instantiates a new empty set. 
      * The set must be of a special type that is not allowed to be instantiated in any way except by a call to this method.
      * @see MarkedSet
@@ -77,6 +90,18 @@ public final class CollectionsFactory
         return FRAMEWORK.createMultiset();
     }
 
+    /**
+     * Instantiates an empty multiset; the key parameter is used to allow using this as a method reference as a
+     * {@link Function}, e.g. in {@link Map#computeIfAbsent(Object, Function)}.
+     * 
+     * @param key
+     *            the value of this parameter is ignored
+     * @since 2.0
+     */
+    public static <T> IMultiset<T> emptyMultiset(Object key) {
+        return FRAMEWORK.createMultiset();
+    }
+    
     /**
      * Instantiates a new empty delta bag.
      * @since 1.7

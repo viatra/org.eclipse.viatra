@@ -35,7 +35,6 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
-import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.testing.core.ModelLoadHelper;
 import org.junit.After;
@@ -107,8 +106,7 @@ public class SurrogateQueryTest {
         
         // find surrogate EStructuralFeature
         EStructuralFeature structuralFeature = null;
-        PAnnotation annotation = querySpecification.getFirstAnnotationByName("Surrogate");
-        if(annotation == null){
+        if (!querySpecification.getFirstAnnotationByName("Surrogate").isPresent()) {
             return;
         }
         

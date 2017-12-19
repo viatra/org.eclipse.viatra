@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-import com.google.common.base.Function;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * A provider interface useful in various registry instances.
@@ -20,9 +21,7 @@ import com.google.common.base.Function;
  * @author Zoltan Ujhelyi
  *
  */
-public interface IProvider<T> {
-
-    T get();
+public interface IProvider<T> extends Supplier<T>{
     
     public final class ProvidedValueFunction implements Function<IProvider<PQuery>, PQuery> {
         @Override

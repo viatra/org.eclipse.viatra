@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -25,7 +24,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
@@ -115,15 +113,11 @@ class FlattenerCopier extends PBodyCopier {
 
     @Override
     protected void copyExpressionEvaluationConstraint(final ExpressionEvaluation expressionEvaluation) {
-        Map<PVariable, PVariable> variableMapping = Maps.filterEntries(this.variableMapping, new Predicate<Entry<PVariable, PVariable>>() {
-
-            @Override
-            public boolean apply(Entry<PVariable, PVariable> input) {
-                return expressionEvaluation.getPSystem().getAllVariables().contains(input.getKey());
-            }
-        });
+        Map<PVariable, PVariable> variableMapping = Maps.filterEntries(this.variableMapping, 
+                input -> expressionEvaluation.getPSystem().getAllVariables().contains(input.getKey()));
+        
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-       addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));
+        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));
     }
     
 }

@@ -23,7 +23,6 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
@@ -48,7 +47,8 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         // The resulting iterator can be safely casted to EObject iterator as its content is filtered to an EClass
-        it = (Iterator<EObject>) Iterators.filter(getModelContents(), clazz.getInstanceClass()) ;
+        final Class<?> ic = clazz.getInstanceClass();
+        it = (Iterator<EObject>) getModelContents().filter(ic::isInstance).map(ic::cast).iterator();
     }
     
     @Override

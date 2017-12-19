@@ -47,12 +47,7 @@ public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
      */
     @Override
     public Comparator<IInputKey> getSuggestedEliminationOrdering() {
-        return new Comparator<IInputKey>() {
-            @Override
-            public int compare(IInputKey o1, IInputKey o2) {
-                return 0;
-            }
-        };
+        return (o1, o2) -> 0;
     }
     
     /**

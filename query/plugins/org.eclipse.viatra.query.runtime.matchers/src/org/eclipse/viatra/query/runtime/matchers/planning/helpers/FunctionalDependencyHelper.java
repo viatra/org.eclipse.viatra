@@ -130,11 +130,7 @@ public class FunctionalDependencyHelper {
      * @since 1.5
      */
     public static <A> void includeDependency(Map<Set<A>, Set<A>> accumulator, Set<A> left, Set<A> right) {
-        Set<A> accumulatorRights = accumulator.get(left);
-        if (accumulatorRights == null) {
-            accumulatorRights = new HashSet<A>();
-            accumulator.put(left, accumulatorRights);
-        }
+        Set<A> accumulatorRights = accumulator.computeIfAbsent(left, l -> new HashSet<>());
         accumulatorRights.addAll(right);
     }    
     

@@ -80,11 +80,7 @@ public abstract class AbstractTuple implements ITuple {
         Map<Object, List<Integer>> result = new HashMap<Object, List<Integer>>();
         for (int i = 0; i < getSize(); i++) {
             Object value = get(i);
-            List<Integer> indices = result.get(value);
-            if (indices == null) {
-                indices = new ArrayList<Integer>();
-                result.put(value, indices);
-            }
+            List<Integer> indices = result.computeIfAbsent(value, v -> new ArrayList<>());
             indices.add(i);
         }
         return result;

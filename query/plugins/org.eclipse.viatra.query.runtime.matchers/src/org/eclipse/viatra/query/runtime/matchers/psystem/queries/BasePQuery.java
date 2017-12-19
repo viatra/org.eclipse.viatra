@@ -14,7 +14,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
@@ -26,9 +30,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Default implementation of PQuery.
@@ -49,19 +50,6 @@ public abstract class BasePQuery implements PQuery {
 	
 	/** For traceability only. */
 	private List<Object> wrappingQuerySpecifications = new ArrayList<Object>(1);
-
-    private static final class AnnotationNameTester implements Predicate<PAnnotation> {
-        private final String annotationName;
-
-        private AnnotationNameTester(String annotationName) {
-            this.annotationName = annotationName;
-        }
-
-        @Override
-        public boolean apply(PAnnotation annotation) {
-            return (annotation == null) ? false : annotationName.equals(annotation.getName());
-        }
-    }
 
 	@Override
 	public Integer getPositionOfParameter(String parameterName) {
@@ -122,25 +110,28 @@ public abstract class BasePQuery implements PQuery {
 	@Override
 	public List<PAnnotation> getAllAnnotations() {
 		ensureInitialized();
-	    return Lists.newArrayList(annotations);
+	    return new ArrayList<>(annotations);
 	}
 
+	private Stream<PAnnotation> getAnnotationStreamByName(final String name) {
+	    ensureInitialized();
+        return annotations.stream().filter(Objects::nonNull).filter(annotation -> Objects.equals(name, annotation.getName()));
+	}
+	
 	@Override
 	public List<PAnnotation> getAnnotationsByName(final String annotationName) {
-		ensureInitialized();
-	    return Lists.newArrayList(Iterables.filter(annotations, new AnnotationNameTester(annotationName)));
+		return getAnnotationStreamByName(annotationName).collect(Collectors.toList());
 	}
 
 	@Override
-	public PAnnotation getFirstAnnotationByName(String annotationName) {
-		ensureInitialized();
-	    return Iterables.find(annotations, new AnnotationNameTester(annotationName), null);
+	public Optional<PAnnotation> getFirstAnnotationByName(String annotationName) {
+	    return getAnnotationStreamByName(annotationName).findFirst();
 	}
 
 	@Override
 	public List<String> getParameterNames() {
 		ensureInitialized();
-	    return Lists.transform(getParameters(), PQueries.parameterNameFunction());
+	    return getParameters().stream().map(PParameter::getName).collect(Collectors.toList());
 	}
 
 	@Override

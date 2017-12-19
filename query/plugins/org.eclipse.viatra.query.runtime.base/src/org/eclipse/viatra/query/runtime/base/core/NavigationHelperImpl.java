@@ -533,11 +533,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addInstanceListener(Collection<EClass> classes, InstanceListener listener) {
-        Set<EClass> registered = this.subscribedInstanceListeners.get(listener);
-        if (registered == null) {
-            registered = new HashSet<EClass>();
-            this.subscribedInstanceListeners.put(listener, registered);
-        }
+        Set<EClass> registered = this.subscribedInstanceListeners.computeIfAbsent(listener, l -> new HashSet<>());
         Set<EClass> delta = setMinus(classes, registered);
         if (!delta.isEmpty()) {
             registered.addAll(delta);
@@ -570,11 +566,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener) {
-        Set<EStructuralFeature> registered = this.subscribedFeatureListeners.get(listener);
-        if (registered == null) {
-            registered = new HashSet<EStructuralFeature>();
-            this.subscribedFeatureListeners.put(listener, registered);
-        }
+        Set<EStructuralFeature> registered = this.subscribedFeatureListeners.computeIfAbsent(listener, l -> new HashSet<>());
         Set<EStructuralFeature> delta = setMinus(features, registered);
         if (!delta.isEmpty()) {
             registered.addAll(delta);
@@ -601,11 +593,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
-        Set<EDataType> registered = this.subscribedDataTypeListeners.get(listener);
-        if (registered == null) {
-            registered = new HashSet<EDataType>();
-            this.subscribedDataTypeListeners.put(listener, registered);
-        }
+        Set<EDataType> registered = this.subscribedDataTypeListeners.computeIfAbsent(listener, l -> new HashSet<>());
         Set<EDataType> delta = setMinus(types, registered);
         if (!delta.isEmpty()) {
             registered.addAll(delta);
@@ -639,11 +627,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
-        Set<LightweightEObjectObserver> observers = lightweightObservers.get(observedObject);
-        if (observers == null) {
-            observers = CollectionsFactory.createSet();
-            lightweightObservers.put(observedObject, observers);
-        }
+        Set<LightweightEObjectObserver> observers = lightweightObservers.computeIfAbsent(observedObject, CollectionsFactory::emptySet);
         return observers.add(observer);
     }
 
@@ -676,11 +660,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             EObject key = entry.getKey();
             Set<LightweightEObjectObserver> value = entry.getValue();
             for (LightweightEObjectObserver observer : value) {
-                Collection<EObject> observedObjects = invertedMap.get(observer);
-                if (observedObjects == null) {
-                    observedObjects = CollectionsFactory.createSet();
-                    invertedMap.put(observer, observedObjects);
-                }
+                Collection<EObject> observedObjects = invertedMap.computeIfAbsent(observer, CollectionsFactory::emptySet);
                 observedObjects.add(key);
             }
         }
@@ -1431,12 +1411,8 @@ public class NavigationHelperImpl implements NavigationHelper {
             // iterate on instances
             for (final EStructuralFeature f : featuresToSample) {
                 EClass containingClass = f.getEContainingClass();
-                processAllInstances(containingClass, new IEClassProcessor() {
-                    @Override
-                    public void process(EClass type, EObject instance) {
-                        resampleFeatureValueForHolder(instance, f, insertionVisitor, removalVisitor);
-                    }
-                });
+                processAllInstances(containingClass, (type, instance) -> 
+                    resampleFeatureValueForHolder(instance, f, insertionVisitor, removalVisitor));
             }
             notifyBaseIndexChangeListeners();
         }

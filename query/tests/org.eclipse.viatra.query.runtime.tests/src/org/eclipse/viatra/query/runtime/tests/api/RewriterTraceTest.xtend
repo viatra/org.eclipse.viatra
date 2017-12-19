@@ -65,7 +65,7 @@ class RewriterTraceTest {
         canonicalTraceables.forEach[canonicalTraceable |
             val rewrittenTraceables = traceCollector.getRewrittenTraceables(canonicalTraceable)
             // Assert that every element has a valid trace
-            Assert.assertTrue("No rewritten/removed version of "+canonicalTraceable+" found!", !rewrittenTraceables.empty || traceCollector.isRemoved(canonicalTraceable))
+            Assert.assertTrue("No rewritten/removed version of "+canonicalTraceable+" found!", rewrittenTraceables.findAny.present || traceCollector.isRemoved(canonicalTraceable))
         ]
     }
 }

@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.api.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -130,7 +131,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
         return wrappedPQuery.getAnnotationsByName(annotationName);
     }
     @Override
-    public PAnnotation getFirstAnnotationByName(String annotationName) {
+    public Optional<PAnnotation> getFirstAnnotationByName(String annotationName) {
         return wrappedPQuery.getFirstAnnotationByName(annotationName);
     }
     @Override

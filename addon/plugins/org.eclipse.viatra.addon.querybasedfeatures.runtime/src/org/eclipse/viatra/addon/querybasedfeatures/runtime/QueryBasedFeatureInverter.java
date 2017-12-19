@@ -13,17 +13,11 @@ package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 public interface QueryBasedFeatureInverter<ComputedType, StorageType> {
     /**
      * Return the storage value for the computed value.
-     * 
-     * @param computedValue
-     * @return
      */
     StorageType invert(ComputedType computedValue);
 
     /**
      * Validate the computed value to ensure that inverting is possible
-     * 
-     * @param computedValue
-     * @return
      */
     ComputedType validate(ComputedType computedValue);
 }

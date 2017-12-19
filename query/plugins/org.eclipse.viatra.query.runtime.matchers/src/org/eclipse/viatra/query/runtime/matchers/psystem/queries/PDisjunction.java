@@ -11,12 +11,12 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -69,9 +69,10 @@ public class PDisjunction {
      * @return a non-null, but possibly empty list of query definitions
      */
     public Set<PQuery> getDirectReferredQueries() {
-        Iterable<PQuery> queries = Iterables.concat(Iterables.transform(this.getBodies(),
-                PQueries.directlyReferencedQueriesFunction()));
-        return Sets.newHashSet(queries);
+        return this.getBodies().stream().
+                map(PQueries.directlyReferencedQueriesFunction()).
+                <PQuery>flatMap(o -> o).
+                collect(Collectors.toSet());
     }
 
     /**

@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
@@ -64,11 +65,9 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -653,19 +652,14 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
             final Set<IQuerySpecification<?>> specifications = new HashSet<IQuerySpecification<?>>(
                     queryGroup.getSpecifications());
-            final Collection<PQuery> patterns = Collections2.transform(specifications,
-                    new Function<IQuerySpecification<?>, PQuery>() {
-                        @Override
-                        public PQuery apply(IQuerySpecification<?> input) {
-                            return input.getInternalQueryRepresentation();
-                        }
-                    });
-            for (PQuery pQuery : patterns) {
-                pQuery.ensureInitialized();
-            }
-            Collection<String> erroneousPatterns = Collections2.transform(
-                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.ERROR)),
-                    PQueries.queryNameFunction());
+            final Collection<PQuery> patterns = specifications.stream().map(
+                    input -> input.getInternalQueryRepresentation()).collect(Collectors.toList());
+            patterns.forEach(PQuery::ensureInitialized);
+            
+            Collection<String> erroneousPatterns = patterns.stream().
+                    filter(PQueries.queryStatusPredicate(PQueryStatus.ERROR)).
+                    map(PQuery::getFullyQualifiedName).
+                    collect(Collectors.toList());
             Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s",
                     Joiner.on(", ").join(erroneousPatterns));
 

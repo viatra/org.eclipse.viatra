@@ -11,13 +11,13 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -31,16 +31,10 @@ public class AllValidAdornments implements IAdornmentProvider {
 
     @Override
     public Iterable<Set<PParameter>> getAdornments(PQuery query) {
-        final Set<PParameter> ins = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.IN));
-        Set<PParameter> inouts = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.INOUT));
+        final Set<PParameter> ins = query.getParameters().stream().filter(PQueries.parameterDirectionPredicate(PParameterDirection.IN)).collect(Collectors.toSet()); 
+        Set<PParameter> inouts = query.getParameters().stream().filter(PQueries.parameterDirectionPredicate(PParameterDirection.INOUT)).collect(Collectors.toSet()); 
         Set<Set<PParameter>> possibleInouts = Sets.powerSet(inouts);
-        return Iterables.transform(possibleInouts, new Function<Set<PParameter>, Set<PParameter>>() {
-
-            @Override
-            public Set<PParameter> apply(Set<PParameter> input) {
-                return Sets.union(ins, input);
-            }
-        });
+        return Iterables.transform(possibleInouts, input -> Sets.union(ins, input));
     }
 
 }

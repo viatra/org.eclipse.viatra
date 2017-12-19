@@ -22,6 +22,13 @@
                 <message_argument value="AbstractLocalSearchResultProvider"/>
             </message_arguments>
         </filter>
+        <filter comment="This is considered an internal usage" id="640712815">
+            <message_arguments>
+                <message_argument value="ICache"/>
+                <message_argument value="AbstractLocalSearchResultProvider"/>
+                <message_argument value="getValue(Object, Class&lt;? extends T&gt;, IProvider&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/LocalSearchBackend.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend">
         <filter comment="Internal API usage" id="640708718">

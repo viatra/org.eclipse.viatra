@@ -15,12 +15,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -54,13 +56,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * @author Zoltan Ujhelyi
@@ -83,7 +78,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     /**
      * @since 1.5
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked"})
     public AbstractLocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
             IPlanProvider planProvider, QueryEvaluationHint userHints) {
         this.backend = backend;
@@ -94,13 +89,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         this.userHints = userHints;
         this.runtimeContext = context.getRuntimeContext();
         this.searchContext = new ISearchContext.SearchContext(backendContext, userHints, backend.getCache());
-        this.planCache = backend.getCache().getValue(PLAN_CACHE_KEY, Map.class, new IProvider<Map>() {
-
-            @Override
-            public Map<MatcherReference, IPlanDescriptor> get() {
-                return new HashMap<>();
-            }
-        });
+        this.planCache = backend.getCache().getValue(PLAN_CACHE_KEY, Map.class, HashMap::new);
     }
     
     protected abstract IOperationCompiler getOperationCompiler(IQueryBackendContext backendContext, LocalSearchHints configuration);
@@ -110,20 +99,14 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     }
 
     private LocalSearchMatcher createMatcher(IPlanDescriptor plan, final ISearchContext searchContext) {
-        Collection<SearchPlanForBody> compiledPlans = Lists.newArrayList(plan.getPlan());
-    
-        Collection<SearchPlanExecutor> executors = Collections2.transform(compiledPlans,
-                new Function<SearchPlanForBody, SearchPlanExecutor>() {
-    
-                    @Override
-                    public SearchPlanExecutor apply(SearchPlanForBody input) {
-                        final SearchPlan plan = new SearchPlan();
-                        plan.addOperations(input.getCompiledOperations());
-    
-                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.calculateParameterMask());
-                    }
-                });
-    
+        Collection<SearchPlanExecutor> executors = StreamSupport.stream(plan.getPlan().spliterator(), false)
+                .map(input -> {
+                    final SearchPlan plan1 = new SearchPlan();
+                    plan1.addOperations(input.getCompiledOperations());
+
+                    return new SearchPlanExecutor(plan1, searchContext, input.getVariableKeys(),
+                            input.calculateParameterMask());
+                }).collect(Collectors.toList());
         return new LocalSearchMatcher(plan, executors);
     }
 
@@ -168,14 +151,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         return backendContext.getHintProvider().getQueryEvaluationHint(pQuery).overrideBy(userHints);
     }
 
-    private Iterator<MatcherReference> computeExpectedAdornments() {
-        return Iterators.transform(overrideDefaultHints(query).getAdornmentProvider().getAdornments(query).iterator(), new Function<Set<PParameter>, MatcherReference>() {
-    
-            @Override
-            public MatcherReference apply(Set<PParameter> input) {
-                return new MatcherReference(query, input, userHints);
-            }
-        });
+    private Stream<MatcherReference> computeExpectedAdornments() {
+        return StreamSupport.stream(overrideDefaultHints(query).getAdornmentProvider().getAdornments(query).spliterator(), false)
+                .map(input -> new MatcherReference(query, input, userHints));
     }
 
     /**
@@ -202,11 +180,10 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
 
     protected void preparePlansForExpectedAdornments() {
         // Plan for possible adornments
-        Iterator<MatcherReference> iterator = computeExpectedAdornments();
-        while(iterator.hasNext()){
+        computeExpectedAdornments().forEach(reference -> {
             LocalSearchHints configuration = overrideDefaultHints(query);
             IOperationCompiler compiler = getOperationCompiler(backendContext, configuration);
-            IPlanDescriptor plan = getOrCreatePlan(iterator.next(), backendContext, compiler, configuration, planProvider); 
+            IPlanDescriptor plan = getOrCreatePlan(reference, backendContext, compiler, configuration, planProvider); 
             // Index keys
             try {
                 indexKeys(plan.getIteratedKeys());
@@ -219,7 +196,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                     searchContext.getMatcher(dependency);
                 }
             }
-        }
+            
+        });
+        
     
     }
 
@@ -303,7 +282,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      * @throws ViatraQueryRuntimeException
      */
     public LocalSearchMatcher newLocalSearchMatcher(ITuple parameters) {
-        final Set<PParameter> adornment = Sets.newHashSet();
+        final Set<PParameter> adornment = new HashSet<>();
         for (int i = 0; i < parameters.getSize(); i++) {
             if (parameters.get(i) != null) {
                 adornment.add(query.getParameters().get(i));
@@ -317,7 +296,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      * @throws ViatraQueryRuntimeException
      */
     public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) {
-        final Set<PParameter> adornment = Sets.newHashSet();
+        final Set<PParameter> adornment = new HashSet<>();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
                 adornment.add(query.getParameters().get(i));

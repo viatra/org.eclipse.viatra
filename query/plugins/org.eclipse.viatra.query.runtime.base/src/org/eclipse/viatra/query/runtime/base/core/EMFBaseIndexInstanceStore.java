@@ -64,8 +64,6 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
      * key (String id or EDataType instance) -> multiset of value(s)
      */
     private final Map<Object, IMultiset<Object>> dataTypeMap = CollectionsFactory.createMap();
-
-
     
     /**
      * Bundles all instance store data specific to a given binary feature.
@@ -150,20 +148,15 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         }
 
         private boolean addToHolderToValueMap(Object value, EObject holder) {
-            IMultiset<Object> values = holderToValueMap.get(holder);
-            if (values == null) {
-                values = CollectionsFactory.createMultiset();
-                holderToValueMap.put(holder, values);
-            }
+            IMultiset<Object> values = holderToValueMap.computeIfAbsent(holder, 
+                    CollectionsFactory::emptyMultiset);
             boolean changed = values.addOne(value);
             return changed;
         }
+        
         private boolean addToValueToHolderMap(final Object value, final EObject holder) {
-            IMultiset<EObject> holders = valueToHolderMap.get(value);
-            if (holders == null) {
-                holders = CollectionsFactory.createMultiset();
-                valueToHolderMap.put(value, holders);
-            }
+            IMultiset<EObject> holders = valueToHolderMap.computeIfAbsent(value, 
+                    CollectionsFactory::emptyMultiset);
             boolean changed = holders.addOne(holder);
             return changed;
         }
@@ -198,11 +191,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
                     for (EObject holder : holders.keySet()) {
                         int count = holders.getCount(holder);
                         
-                        IMultiset<Object> valuesOfHolder = holderToValueMap.get(holder);
-                        if (valuesOfHolder == null) {
-                            valuesOfHolder = CollectionsFactory.createMultiset();
-                            holderToValueMap.put(holder, valuesOfHolder);
-                        }
+                        IMultiset<Object> valuesOfHolder = holderToValueMap.computeIfAbsent(holder,
+                                CollectionsFactory::emptyMultiset);
                         valuesOfHolder.addPositive(value, count);
                     }
                 }
@@ -330,11 +320,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
     }
     
     private void insertIntoValueToFeatureMap(final Object featureKey, Object target) {
-        IMultiset<Object> featureKeys = valueToFeatureMap.get(target);
-        if (featureKeys == null) {
-            featureKeys = CollectionsFactory.createMultiset();
-            valueToFeatureMap.put(target, featureKeys);
-        }
+        IMultiset<Object> featureKeys = valueToFeatureMap.computeIfAbsent(target, CollectionsFactory::emptyMultiset);
         featureKeys.addOne(featureKey);
     }
     private void removeFromValueToFeatureMap(final Object featureKey, final Object value) {
@@ -356,11 +342,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
     }
 
     public void insertIntoInstanceSet(final Object keyClass, final EObject value) {
-        Set<EObject> set = instanceMap.get(keyClass);
-        if (set == null) {
-            set = CollectionsFactory.createSet();
-            instanceMap.put(keyClass, set);
-        }
+        Set<EObject> set = instanceMap.computeIfAbsent(keyClass, CollectionsFactory::emptySet);
         
         if (!set.add(value)) {
             String msg = String.format("Notification received to index %s as a %s, but it already exists in the index. This indicates some errors in underlying model representation.", value, keyClass);
@@ -401,11 +383,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
     }
 
     public void insertIntoDataTypeMap(final Object keyType, final Object value) {
-        IMultiset<Object> valMap = dataTypeMap.get(keyType);
-        if (valMap == null) {
-            valMap = CollectionsFactory.createMultiset();
-            dataTypeMap.put(keyType, valMap);
-        }
+        IMultiset<Object> valMap = dataTypeMap.computeIfAbsent(keyType, CollectionsFactory::emptyMultiset);
         final boolean firstOccurrence = valMap.addOne(value);
         
         isDirty = true;

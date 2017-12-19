@@ -18,6 +18,27 @@ All code marked as deprecated has been removed from the codebase. Additionally, 
 * Query-by-example has been removed
 * EVM-JDT integration has been removed
 
+=== Reduction of Guava uses
+
+There were a few cases, where Guava types such as Functions or Predicates were visible in the API. In VIATRA 2.0, the trivial method calls were removed (to be handled via direct method references), while the remaining ones were replaced by the alternatives built-in to the Java 8 standard library. The following methods were affected:
+
+ * `PQueries#parameterDirectionPredicate`: returns Java 8 predicate
+ * `PQueries#queryNameFunction`: can be replaced by a method reference of `PQuery::getFullyQualifiedName`
+ * `PQueries#parameterNameFunction`: can be replaced by a method reference of `PParameter::getName`
+ * `PQueries#queryOfReferenceFunction`: can be replaced by a method reference of `IQueryReference::getReferredQuery`
+ * `PQueries#directlyReferencedQueriesFunction`: returns a Java 8 function
+ * `PQueries#queryStatusPredicate`: returns a Java 8 predicate
+ 
+=== Avoid returning null values in the API
+
+A few APIs in VIATRA returned null if no possible values could be found. Given VIATRA 2.0 depends on Java 8, such APIs were reworked to return url:https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html[Optional] values instead.
+
+The affected methods are the following:
+
+ * PQueryHeader#getFirstAnnotationByName
+
+If the old behavior of returning `null` values is necessary the `Optional.orElse` call can be used, e.g. `query.getFirstAnnotationByName("Constraint").orElse(null);`
+
 === Exception handling consolidation
 Before VIATRA 2.0, the various APIs of the Query component threw a set of different *checked* exceptions: ViatraQueryException, ViatraBaseException and QueryProcessingException (and specialized versions of them). For version 2.0, these exceptions were updated in two ways:
 

@@ -11,7 +11,10 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
@@ -19,9 +22,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
 
 /**
  * This abstract class provides a utility method for extenders to iterate over the given scope.
@@ -39,23 +39,18 @@ public abstract class AbstractIteratingExtendOperation<T> extends ExtendOperatio
         this.scope = scope;
     }
     
-    protected Iterator<Notifier> getModelContents(){
-        return Iterators.concat(Iterators.transform(scope.getScopeRoots().iterator(), new Function<Notifier, Iterator<? extends Notifier>>() {
-
-            @Override
-            public Iterator<? extends Notifier> apply(Notifier input) {
-                if (input instanceof ResourceSet){
-                    return ((ResourceSet) input).getAllContents();
-                }
-                if (input instanceof Resource){
-                    return ((Resource) input).getAllContents();
-                }
-                if (input instanceof EObject){
-                    return ((EObject) input).eAllContents();
-                }
-                return Collections.emptyIterator();
+    protected Stream<Notifier> getModelContents() {
+        return scope.getScopeRoots().stream().map(input -> {
+            if (input instanceof ResourceSet) {
+                return ((ResourceSet) input).getAllContents();
+            } else if (input instanceof Resource) {
+                return ((Resource) input).getAllContents();
+            } else if (input instanceof EObject) {
+                return ((EObject) input).eAllContents();
             }
-        }));
+            return Collections.<Notifier> emptyIterator();
+        }).map(i -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(i, Spliterator.ORDERED), false))
+                .flatMap(i -> i);
     }
 
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMultisetAggregationOperator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
@@ -22,7 +22,7 @@ import com.google.common.collect.TreeMultiset;
  * @since 1.4
  */
 public class ExtremumOperator<T extends Comparable<T>>
-        extends AbstractMultisetAggregationOperator<T, SortedMultiset<T>, T> {
+        implements IMultisetAggregationOperator<T, SortedMultiset<T>, T> {
     
     public enum Extreme {
         MIN, MAX;

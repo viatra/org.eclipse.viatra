@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.annotations;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimaps;
+import org.eclipse.collections.api.multimap.MutableMultimap;
+import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 
 /**
  * A container describing query annotations
@@ -29,13 +25,7 @@ import com.google.common.collect.Multimaps;
 public class PAnnotation {
 
     private final String name;
-    private ListMultimap<String, Object> attributes = Multimaps.newListMultimap(new HashMap<String, Collection<Object>>(), new Supplier<List<Object>>() {
-
-        @Override
-        public List<Object> get() {
-            return new ArrayList<Object>();
-        }
-    });
+    private MutableMultimap<String, Object> attributes = FastListMultimap.newMultimap();
 
     public PAnnotation(String name) {
         this.name = name;
@@ -62,9 +52,20 @@ public class PAnnotation {
      * Returns the value of the first occurrence of an attribute
      * @param attributeName
      * @return the attribute value, or null, if attribute is not available
+     * @since 2.0
      */
-    public Object getFirstValue(String attributeName) {
-        return Iterables.getFirst(getAllValues(attributeName), null);
+    public Optional<Object> getFirstValue(String attributeName) {
+        return getAllValues(attributeName).stream().findFirst();
+    }
+    
+    /**
+     * Returns the value of the first occurrence of an attribute
+     * @param attributeName
+     * @return the attribute value, or null, if attribute is not available
+     * @since 2.0
+     */
+    public <T> Optional<T> getFirstValue(String attributeName, Class<T> clazz) {
+        return getAllValues(attributeName).stream().filter(o -> clazz.isInstance(o)).map(clazz::cast).findFirst();
     }
 
     /**
@@ -73,12 +74,14 @@ public class PAnnotation {
      * @return a non-null, but possibly empty list of attributes
      */
     public List<Object> getAllValues(String attributeName) {
-        return attributes.get(attributeName);
+        return attributes.get(attributeName).toList();
     }
+    
     /**
-     * Returns all values of all attributes. A selected attribute name (key) can appear multiple times in the collection.
+     * Executes a consumer over all attributes. A selected attribute name (key) can appear (and thus consumed) multiple times.
+     * @since 2.0
      */
-    public Collection<Entry<String,Object>> getAllValues() {
-        return attributes.entries();
+    public void forEachValue(BiConsumer<String, Object> consumer) {
+        attributes.forEachKeyValue((key, value) -> consumer.accept(key, value));
     }
 }

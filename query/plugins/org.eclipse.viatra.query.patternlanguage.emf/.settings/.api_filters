@@ -109,6 +109,13 @@
         </filter>
     </resource>
     <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/eMFPatternLanguage/util/EMFPatternLanguageSwitch.java" type="org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.util.EMFPatternLanguageSwitch">
+        <filter comment="EMF generated code" id="1141899266">
+            <message_arguments>
+                <message_argument value="2.7"/>
+                <message_argument value="2.0"/>
+                <message_argument value="caseXImportSection(XImportSection)"/>
+            </message_arguments>
+        </filter>
         <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="caseVQLImportSection(VQLImportSection)"/>
@@ -146,6 +153,13 @@
         <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="ruleVQLImportSection()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/scoping/EMFPatternLanguageScopeProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageScopeProvider">
+        <filter comment="EMF generated code" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageScopeProvider"/>
             </message_arguments>
         </filter>
     </resource>

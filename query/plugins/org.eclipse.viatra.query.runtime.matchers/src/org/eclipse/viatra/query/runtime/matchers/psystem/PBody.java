@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra.query.runtime.matchers.psystem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.TypeHelper;
@@ -27,9 +29,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 /**
  * A set of constraints representing a pattern body
@@ -205,13 +205,8 @@ public class PBody implements PTraceable {
      * @return a non-null, but possibly empty list
      */
     public List<PVariable> getSymbolicParameterVariables() {
-        return Lists.transform(getSymbolicParameters(), new Function<ExportedParameter, PVariable>() {
-
-            @Override
-            public PVariable apply(ExportedParameter constraint) {
-                return constraint.getParameterVariable();
-            }
-        });
+        return getSymbolicParameters().stream().map(constraint -> constraint.getParameterVariable())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -221,7 +216,7 @@ public class PBody implements PTraceable {
      */
     public List<ExportedParameter> getSymbolicParameters() {
         if (symbolicParameters == null) 
-            symbolicParameters = Lists.<ExportedParameter> newArrayList();
+            symbolicParameters = new ArrayList<>();
         return symbolicParameters;
     }
 
@@ -231,7 +226,7 @@ public class PBody implements PTraceable {
      */
     public void setSymbolicParameters(List<ExportedParameter> symbolicParameters) {
         checkMutability();
-        this.symbolicParameters = Lists.newArrayList(symbolicParameters);
+        this.symbolicParameters = new ArrayList<>(symbolicParameters);
     }
 
     /**

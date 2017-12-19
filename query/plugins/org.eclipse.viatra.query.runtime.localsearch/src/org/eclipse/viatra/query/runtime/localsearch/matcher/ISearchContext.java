@@ -27,8 +27,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
@@ -114,15 +112,11 @@ public interface ISearchContext {
         @Override
         public IQueryResultProvider getMatcher(final MatcherReference reference) {
             // Inject adornment for referenced pattern
-            IAdornmentProvider adornmentProvider = new IAdornmentProvider() {
-                
-                @Override
-                public Iterable<Set<PParameter>> getAdornments(PQuery query) {
-                    if (query.equals(reference.query)){
-                        return Collections.singleton(reference.adornment);
-                    }
-                    return Collections.emptySet();
+            IAdornmentProvider adornmentProvider = query -> {
+                if (query.equals(reference.query)){
+                    return Collections.singleton(reference.adornment);
                 }
+                return Collections.emptySet();
             };
             QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
             if (overrideHints != null){

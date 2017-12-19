@@ -15,6 +15,7 @@ import java.util.Collections;
 import org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -38,11 +39,13 @@ public class ContainmentQuerySpecificationDescriptor extends AbstractQuerySpecif
     public ContainmentQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation) {
         super(specification, getTraceSource(specification, annotation), Collections.<PParameter, String> emptyMap());
 
-        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE);
+        ParameterReference parameterSource = annotation.getFirstValue(SOURCE, ParameterReference.class).
+                orElseThrow(() -> new QueryProcessingException("Invalid container value", specification));
         String parameterSourceValue = parameterSource.getName();
         container = parameterSourceValue;
 
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET);
+        ParameterReference parameterTarget = annotation.getFirstValue(TARGET, ParameterReference.class).
+                orElseThrow(() -> new QueryProcessingException("Invalid item value", specification));
         String parameterTargetValue = parameterTarget.getName();
         item = parameterTargetValue;
     }
@@ -50,8 +53,10 @@ public class ContainmentQuerySpecificationDescriptor extends AbstractQuerySpecif
     private static Multimap<PParameter, PParameter> getTraceSource(IQuerySpecification<?> specification,
             PAnnotation annotation) {
         Multimap<PParameter, PParameter> traces = ArrayListMultimap.create();
-        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE);
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET);
+        ParameterReference parameterSource = annotation.getFirstValue(SOURCE, ParameterReference.class).
+                orElseThrow(() -> new QueryProcessingException("Invalid container value", specification));
+        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET).
+                orElseThrow(() -> new QueryProcessingException("Invalid item value", specification));
 
         insertToTraces(specification, traces, parameterSource.getName());
         insertToTraces(specification, traces, parameterTarget.getName());

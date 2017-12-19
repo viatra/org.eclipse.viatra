@@ -119,11 +119,7 @@ public class TypeHelper {
             final IInputKey inputKey = typeJudgement.getInputKey();
             if (inputKey.getArity() == 1) {
                 PVariable variable = (PVariable) typeJudgement.getVariablesTuple().get(0);
-                Set<TypeJudgement> inferredTypes = results.get(variable);
-                if (inferredTypes == null) {
-                    inferredTypes = new HashSet<TypeJudgement>();
-                    results.put(variable, inferredTypes);
-                }
+                Set<TypeJudgement> inferredTypes = results.computeIfAbsent(variable, v -> new HashSet<>());
                 inferredTypes.add(typeJudgement);
             }
         }

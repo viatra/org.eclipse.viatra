@@ -16,6 +16,7 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -42,11 +43,13 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
     public EdgeQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation) {
         super(specification, getTraceSource(specification, annotation), Collections.<PParameter, String> emptyMap());
 
-        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE_PARAMETER_NAME);
+        ParameterReference parameterSource = annotation.getFirstValue(SOURCE_PARAMETER_NAME, ParameterReference.class)
+                .orElseThrow(() -> new QueryProcessingException("Invalid source value", specification));
         String parameterSourceValue = parameterSource.getName();
         source = parameterSourceValue;
 
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET_PARAMETER_NAME);
+        ParameterReference parameterTarget = annotation.getFirstValue(TARGET_PARAMETER_NAME, ParameterReference.class)
+                .orElseThrow(() -> new QueryProcessingException("Invalid target value", specification));
         String parameterTargetValue = parameterTarget.getName();
         target = parameterTargetValue;
 
@@ -54,14 +57,16 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
         String parameterLabelValue = parameterLabel == null ? "" : (String) parameterLabel;
         label = parameterLabelValue;
 
-        formatAnnotation = specification.getFirstAnnotationByName(FormatParser.ANNOTATION_ID);
+        formatAnnotation = specification.getFirstAnnotationByName(FormatParser.ANNOTATION_ID).orElse(null);
     }
 
     private static Multimap<PParameter, PParameter> getTraceSource(IQuerySpecification<?> specification,
             PAnnotation annotation) {
         Multimap<PParameter, PParameter> traces = ArrayListMultimap.create();
-        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE_PARAMETER_NAME);
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET_PARAMETER_NAME);
+        ParameterReference parameterSource = annotation.getFirstValue(SOURCE_PARAMETER_NAME, ParameterReference.class).
+                orElseThrow(() -> new QueryProcessingException("Invalid source value", specification));
+        ParameterReference parameterTarget = annotation.getFirstValue(TARGET_PARAMETER_NAME, ParameterReference.class).
+                orElseThrow(() -> new QueryProcessingException("Invalid target value", specification));
 
         insertToTraces(specification, traces, parameterSource.getName());
         insertToTraces(specification, traces, parameterTarget.getName());

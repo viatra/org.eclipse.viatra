@@ -17,16 +17,15 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -55,21 +54,22 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
     /**
      * Decides whether {@link PTraceable} is removed
      */
-    private final Predicate<PTraceable> removed = new Predicate<PTraceable>() {
-        @Override
-        public boolean apply(PTraceable input) {
-            return removals.containsKey(input);
-        }
-    };
+    private final Predicate<PTraceable> removed = input -> removals.containsKey(input);
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public Iterable<PTraceable> getCanonicalTraceables(PTraceable derivative) {
-        return findTraceEnds(derivative, traces);
+    public Stream<PTraceable> getCanonicalTraceables(PTraceable derivative) {
+        return findTraceEnds(derivative, traces).stream();
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public Iterable<PTraceable> getRewrittenTraceables(PTraceable source) {
-        return findTraceEnds(source, inverseTraces);
+    public Stream<PTraceable> getRewrittenTraceables(PTraceable source) {
+        return findTraceEnds(source, inverseTraces).stream();
     }
 
     /**
@@ -123,19 +123,15 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
 
     @Override
     public boolean isRemoved(PTraceable traceable) {
-        return Iterables.all(getRewrittenTraceables(traceable), removed);
+        return getRewrittenTraceables(traceable).allMatch(removed);
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public Iterable<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
-        Iterable<PTraceable> removedTraceEnds = Iterables.filter(getRewrittenTraceables(traceable), removed);
-        return Iterables.transform(removedTraceEnds, new Function<PTraceable, IDerivativeModificationReason>() {
-
-            @Override
-            public IDerivativeModificationReason apply(PTraceable input) {
-                return removals.get(input);
-            }
-        });
+    public Stream<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
+        return getRewrittenTraceables(traceable).filter(removed).map(input -> removals.get(input));
     }
 
 }

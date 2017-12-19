@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.stream.Stream;
+
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -28,16 +30,18 @@ public interface IPTraceableTraceProvider {
      * {@link PTraceable} according to the transformation.
      * 
      * @param derivative a {@link PTraceable} which is contained by the {@link PQuery} produced by the associated rewriter
+     * @since 2.0
      */
-    public Iterable<PTraceable> getCanonicalTraceables(PTraceable derivative);
+    public Stream<PTraceable> getCanonicalTraceables(PTraceable derivative);
     
     /**
      * Find and return the {@link PTraceable}s in the rewritten query which are the destinations of the given source
      * {@link PTraceable} according to the transformation.
      * 
      * @param source a {@link PTraceable} which is contained by a {@link PQuery} before rewriting
+     * @since 2.0
      */
-    public Iterable<PTraceable> getRewrittenTraceables(PTraceable source);
+    public Stream<PTraceable> getRewrittenTraceables(PTraceable source);
     
     /**
      * Returns whether the given traceable element has been removed by every rewriter for a reason.
@@ -47,6 +51,7 @@ public interface IPTraceableTraceProvider {
     /**
      * Returns the reasons for which the traceable element has been removed by the rewriters.
      * @return the reasons of removal during rewriting
+     * @since 2.0
      */
-    public Iterable<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable);
+    public Stream<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable);
 }

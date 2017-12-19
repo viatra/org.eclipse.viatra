@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
-import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 
@@ -27,14 +27,20 @@ public class NopTraceCollector implements IRewriterTraceCollector {
         // Private constructor to force using the common instance
     }
     
+    /**
+     * @since 2.0
+     */
     @Override
-    public Iterable<PTraceable> getCanonicalTraceables(PTraceable derivative) {
-        return Collections.emptyList();
+    public Stream<PTraceable> getCanonicalTraceables(PTraceable derivative) {
+        return Stream.empty();
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public Iterable<PTraceable> getRewrittenTraceables(PTraceable source) {
-        return Collections.emptyList();
+    public Stream<PTraceable> getRewrittenTraceables(PTraceable source) {
+        return Stream.empty();
     }
 
 
@@ -53,9 +59,12 @@ public class NopTraceCollector implements IRewriterTraceCollector {
         return false;
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public Iterable<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
-        return Collections.emptyList();
+    public Stream<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
+        return Stream.empty();
     }
 
 }

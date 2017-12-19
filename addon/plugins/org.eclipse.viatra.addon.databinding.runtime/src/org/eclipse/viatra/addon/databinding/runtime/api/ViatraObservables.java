@@ -13,6 +13,7 @@ package org.eclipse.viatra.addon.databinding.runtime.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -33,6 +34,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 
 import com.google.common.base.Preconditions;
@@ -295,23 +297,20 @@ public final class ViatraObservables {
             propertyMap.put(v, def);
         }
         for (PAnnotation annotation : query.getAnnotationsByName(OBSERVABLEVALUE_ANNOTATION)) {
-            String name = (String) annotation.getFirstValue("name");
-            String expr = (String) annotation.getFirstValue("expression");
-            String label = (String) annotation.getFirstValue("labelExpression");
-            if (name == null) {
-                Preconditions.checkArgument(expr == null && label == null,
-                        "Name attribute must not be empty");
-                continue;
-            }
-            Preconditions.checkArgument(expr != null ^ label != null,
+            String name = annotation.getFirstValue("name", String.class).
+                    orElseThrow(() -> new QueryProcessingException("Invalid container annotation", query));
+            Optional<String> expr = annotation.getFirstValue("expression", String.class);
+            Optional<String> label = annotation.getFirstValue("labelExpression", String.class);
+
+            Preconditions.checkArgument(expr.isPresent() ^ label.isPresent(),
                     "Either expression or label expression attribute must not be empty.");
             String obsExpr = null;
             ObservableType type;
-            if (expr != null) {
-                obsExpr = expr;
+            if (expr.isPresent()) {
+                obsExpr = expr.get();
                 type = ObservableType.OBSERVABLE_FEATURE;
             } else {// if (labelRef != null)
-                obsExpr = label;
+                obsExpr = label.get();
                 type = ObservableType.OBSERVABLE_LABEL;
             }
             ObservableDefinition def = new ObservableDefinition(name, obsExpr, type);

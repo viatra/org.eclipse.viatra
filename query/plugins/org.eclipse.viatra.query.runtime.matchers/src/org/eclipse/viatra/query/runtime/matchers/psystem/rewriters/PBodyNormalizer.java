@@ -193,12 +193,8 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
             }
         }
         Comparator<ITypeConstraint> eliminationOrder = Ordering.from(context.getSuggestedEliminationOrdering())
-                .onResultOf(new Function<ITypeConstraint, IInputKey>() {
-                    @Override
-                    public IInputKey apply(ITypeConstraint input) {
-                        return input.getEquivalentJudgement().getInputKey();
-                    }
-                }).compound(PConstraint.CompareByMonotonousID.INSTANCE);
+                .onResultOf((Function<ITypeConstraint, IInputKey>) input -> input.getEquivalentJudgement().getInputKey())
+                .compound(PConstraint.CompareByMonotonousID.INSTANCE);
         Collections.sort(allTypeConstraints, eliminationOrder);
         Queue<ITypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
 

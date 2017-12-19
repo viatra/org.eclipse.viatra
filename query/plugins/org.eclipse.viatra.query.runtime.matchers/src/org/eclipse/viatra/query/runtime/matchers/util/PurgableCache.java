@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.common.base.Preconditions;
 
@@ -26,7 +27,7 @@ public class PurgableCache implements ICache {
     
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getValue(Object key, Class<? extends T> clazz, IProvider<T> valueProvider) {
+    public <T> T getValue(Object key, Class<? extends T> clazz, Supplier<T> valueProvider) {
         if (storage.containsKey(key)) {
             Object value = storage.get(key);
             Preconditions.checkState(clazz.isInstance(value), "Cache stores for key %s a value of %s that is incompatible with the requested type %s", key, value, clazz);

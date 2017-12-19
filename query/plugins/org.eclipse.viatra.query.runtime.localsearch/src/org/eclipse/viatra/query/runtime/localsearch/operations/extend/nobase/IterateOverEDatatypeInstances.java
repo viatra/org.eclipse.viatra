@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
@@ -29,10 +28,8 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchO
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
@@ -50,7 +47,7 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
         this.dataType = dataType;
     }
     
-    protected Iterator<EAttribute> doGetEAttributes(EClass eclass, ISearchContext context){
+    protected Stream<EAttribute> doGetEAttributes(EClass eclass, ISearchContext context){
         @SuppressWarnings({ "unchecked", "rawtypes" })
         Table<EDataType, EClass, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Table.class, new IProvider<Table>() {
 
@@ -68,37 +65,29 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
                 }
             }));
         }
-        return cache.get(dataType, eclass).iterator();
+        return cache.get(dataType, eclass).stream();
     }
 
     public EDataType getDataType() {
         return dataType;
     }
-
+    
     @Override
     public void onInitialize(MatchingFrame frame, final ISearchContext context) {
-        it = Iterators.concat(Iterators.transform(Iterators.filter(getModelContents(), EObject.class), new Function<EObject, Iterator<Object>>(){
-
-            @Override
-            public Iterator<Object> apply(final EObject input) {
-                Iterator<EAttribute> features = doGetEAttributes(input.eClass(), context);
-                return Iterators.concat(
-                        Iterators.transform(features, new Function<EAttribute, Iterator<?>>() {
-
-                            @Override
-                            public Iterator<?> apply(EAttribute attribute) {
-                                if (attribute.isMany()){
-                                    return ((List<?>)input.eGet(attribute)).iterator();
-                                }else{
-                                    Object o = input.eGet(attribute);
-                                    return o == null ? Collections.emptyIterator() : Iterators.singletonIterator(o);
-                                }
-                            }
-                        })
-                    );
-            }
-            
-        }));
+        it = getModelContents().filter(EObject.class::isInstance).map(EObject.class::cast)
+                .map(input -> doGetEAttributes(input.eClass(), context)
+                .map(attribute -> {
+                    if (attribute.isMany()) {
+                        return ((List<?>) input.eGet(attribute)).stream();
+                    } else {
+                        Object o = input.eGet(attribute);
+                        return o == null ? Stream.empty() : Stream.of(o);
+                    }
+                }))
+                .flatMap(i -> i)
+                .<Object>flatMap(i -> i)
+                .iterator();
+        // it = Iterators.concat(Iterators.transform(Iterators.filter(getOldModelContents(), EObject.class), );
     }
     
     
