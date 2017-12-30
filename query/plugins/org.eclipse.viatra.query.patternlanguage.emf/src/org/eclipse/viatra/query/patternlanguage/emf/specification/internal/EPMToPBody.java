@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.specification.internal;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericEMFPatternPQuery;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
@@ -45,12 +47,6 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
-
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * {@link PatternModelAcceptor} implementation that constructs a {@link PBody}.
@@ -88,22 +84,17 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
 
     @Override
     public void acceptExportedParameters(List<Variable> parameters) {
-        List<ExportedParameter> exportedParameters = Lists.newArrayList();
+        List<ExportedParameter> exportedParameters = new ArrayList<>();
         for (Variable parameter : parameters) {
             final String parameterName = parameter.getName();
             PVariable pVariable = findPVariable(parameterName);
             // param should always exist as PParameters are created from the input Variable list of this method
-            PParameter param = Iterables.find(pBody.getPattern().getParameters(), new Predicate<PParameter>() {
-
-                @Override
-                public boolean apply(PParameter input) {
-                    return input != null && Objects.equal(input.getName(), parameterName);
-                }
-                
-            });
-            if (param == null) {
-                throw new IllegalStateException(String.format("Pattern %s does not have a parameter %s", pBody.getPattern().getFullyQualifiedName(), parameterName));
-            }
+            PParameter param = pBody.getPattern().getParameters().stream().
+                    filter(Objects::nonNull).
+                    filter(input -> Objects.equals(input.getName(), parameterName)).
+                    findAny().
+                    orElseThrow(() -> new IllegalStateException(String.format("Pattern %s does not have a parameter %s", 
+                            pBody.getPattern().getFullyQualifiedName(), parameterName)));
             ExportedParameter exportedParameter = new ExportedParameter(pBody, pVariable, param);
             exportedParameters.add(exportedParameter);
         }
@@ -129,13 +120,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     private Tuple getPVariableTuple(List<String> variableNames) {
-        List<PVariable> pVariables = Lists.transform(variableNames, new Function<String, PVariable>() {
-            @Override
-            public PVariable apply(String variableName) {
-                return findPVariable(variableName);
-            }
-        });
-        return Tuples.flatTupleOf(pVariables.toArray());
+        return Tuples.flatTupleOf(variableNames.stream().map(this::findPVariable).toArray());
     }
 
     @Override

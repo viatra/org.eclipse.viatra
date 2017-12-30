@@ -44,7 +44,6 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -70,13 +69,7 @@ public class SpecificationBuilder {
      */
     private Map<String, Pattern> patternNameMap = new HashMap<>();
     private Multimap<PQuery, IQuerySpecification<?>> dependantQueries = Multimaps.newSetMultimap(
-            new HashMap<PQuery, Collection<IQuerySpecification<?>>>(), new Supplier<Set<IQuerySpecification<?>>>() {
-
-                @Override
-                public Set<IQuerySpecification<?>> get() {
-                    return Sets.newHashSet();
-                }
-            });
+            new HashMap<PQuery, Collection<IQuerySpecification<?>>>(), Sets::newHashSet);
     private PatternSanitizer sanitizer = new PatternSanitizer(/*logger*/ null /* do not log all errors */);
 
     /**
@@ -173,14 +166,10 @@ public class SpecificationBuilder {
                 fqn);
         if (sanitizer.admit(pattern, skipPatternValidation)) {
             Set<Pattern> newPatterns = Sets.newHashSet(Sets.filter(sanitizer.getAdmittedPatterns(),
-                    new Predicate<Pattern>() {
-
-                        @Override
-                        public boolean apply(Pattern pattern) {
-                            final String name = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-                            return !pattern.eIsProxy() && !"".equals(name)
-                                   && !patternMap.containsKey(name);
-                        }
+                    (Predicate<Pattern>) pattern1 -> {
+                        final String name = CorePatternLanguageHelper.getFullyQualifiedName(pattern1);
+                        return !pattern1.eIsProxy() && !"".equals(name)
+                               && !patternMap.containsKey(name);
                     }));
             // Initializing new query specifications
             for (Pattern newPattern : newPatterns) {

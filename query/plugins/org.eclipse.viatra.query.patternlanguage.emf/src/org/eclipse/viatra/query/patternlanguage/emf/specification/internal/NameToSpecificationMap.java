@@ -13,16 +13,15 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification.internal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 
 /**
  * A helper class for storing a mapping between a set of fully qualified names and {@link IQuerySpecification} instances. The
@@ -137,10 +136,10 @@ public class NameToSpecificationMap implements Map<String, IQuerySpecification<?
     /**
      * Returns a specification with the selected status
      * @param status
-     * @return a specification with the selected status, or null if no such specification is available
+     * @return an optional specification with the selected status
      */
-    public IQuerySpecification<?> getSpecificationWithStatus(final PQueryStatus status) {
-        return Iterables.getFirst(getSpecificationsWithStatus(status), null);
+    public Optional<IQuerySpecification<?>> getSpecificationWithStatus(final PQueryStatus status) {
+        return getSpecificationStreamWithStatus(status).findAny();
     }
     
     /**
@@ -149,12 +148,10 @@ public class NameToSpecificationMap implements Map<String, IQuerySpecification<?
      * @return a non-null (but possibly empty) specification list
      */
     public Collection<IQuerySpecification<?>> getSpecificationsWithStatus(final PQueryStatus status) {
-        return Collections2.filter(map.values(), new Predicate<IQuerySpecification<?>>() {
-
-            @Override
-            public boolean apply(IQuerySpecification<?> specification) {
-                return specification.getInternalQueryRepresentation().getStatus().equals(status);
-            }
-        });
+        return getSpecificationStreamWithStatus(status).collect(Collectors.toList());
+    }
+    
+    private Stream<IQuerySpecification<?>> getSpecificationStreamWithStatus(final PQueryStatus status) {
+        return map.values().stream().filter(specification -> specification.getInternalQueryRepresentation().getStatus().equals(status));
     }
 }

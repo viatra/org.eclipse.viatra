@@ -14,14 +14,16 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation;
 import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
 
 import java.lang.reflect.Method;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.lang.model.SourceVersion;
 
@@ -33,6 +35,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
@@ -96,8 +99,6 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
-import org.eclipse.xtext.xbase.lib.Functions.Function2;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -188,22 +189,6 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
         }
         return pathExpressionTail.getType();
     }
-
-    private final Function<IInputKey, String> TYPENAME = new Function<IInputKey, String>() {
-
-        @Override
-        public String apply(IInputKey input) {
-            return typeSystem.typeString(input);
-        }
-    };
-    
-    private final Predicate<EClass> NOTNULL_NOTPROXY = new Predicate<EClass>() {
-
-        @Override
-        public boolean apply(EClass input) {
-            return input != null  && !input.eIsProxy();
-        }
-    };
     
     @Inject
     private IMetamodelProvider metamodelProvider;
@@ -348,25 +333,23 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
      */
     private void checkPatternVariablesType(Variable variable) {
         Set<IInputKey> allPossibleTypes = typeInferrer.getAllPossibleTypes(variable);
-        Set<EClassifier> possibleClassifiers = Sets.newHashSet(
-                Iterables.filter(Iterables.transform(allPossibleTypes, new Function<IInputKey, EClassifier>() {
-
-                    @Override
-                    public EClassifier apply(IInputKey input) {
-                        if (input instanceof EClassTransitiveInstancesKey) {
-                            return ((EClassTransitiveInstancesKey) input).getEmfKey();
-                        } else if (input instanceof EDataTypeInSlotsKey) {
-                            return ((EDataTypeInSlotsKey) input).getEmfKey();
-                        }
-                        return null;
+        Set<EClassifier> possibleClassifiers = 
+                allPossibleTypes.stream().map(input -> {
+                    if (input instanceof EClassTransitiveInstancesKey) {
+                        return ((EClassTransitiveInstancesKey) input).getEmfKey();
+                    } else if (input instanceof EDataTypeInSlotsKey) {
+                        return ((EDataTypeInSlotsKey) input).getEmfKey();
                     }
-                }), Predicates.notNull()));
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
         // We only need to give warnings/errors if there are multiple possible types
         if (allPossibleTypes.size() <= 1 || allPossibleTypes.contains(BottomTypeKey.INSTANCE)) {
             return;
         }
 
-        Set<String> typeNameSet = Sets.newHashSet(Iterables.transform(allPossibleTypes, TYPENAME));
+        Set<String> typeNameSet = Sets.newHashSet(Iterables.transform(allPossibleTypes, typeSystem::typeString));
 
         Set<String> classifierNamesSet = new HashSet<>();
         Set<String> classifierPackagesSet = new HashSet<>();
@@ -415,22 +398,13 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             }
         } else {
             // Check whether all types conforms to declared type
-            Iterable<IInputKey> unconformTypes = Iterables.filter(allPossibleTypes, new Predicate<IInputKey>() {
-
-                @Override
-                public boolean apply(IInputKey input) {
-                    return !typeSystem.isConformant(declaredType, input);
-                }
-            });
-            Iterable<String> inconsistentTypes = Iterables.transform(Iterables.filter(unconformTypes, new Predicate<IInputKey>(){
-
-                @Override
-                public boolean apply(IInputKey input) {
-                    return !typeSystem.hasCommonSubtype(ImmutableSet.of(declaredType, input), EMFPatternLanguageHelper.getEPackageImportsIterable(patternModel));
-                }
-                
-            }), TYPENAME);
-            if (!Iterables.isEmpty(inconsistentTypes)) {
+            List<String> inconsistentTypes = allPossibleTypes.stream()
+                .filter(input -> !typeSystem.isConformant(declaredType, input))
+                .filter(input -> !typeSystem.hasCommonSubtype(ImmutableSet.of(declaredType, input), 
+                        EMFPatternLanguageHelper.getEPackageImportsIterable(patternModel)))
+                .map(typeSystem::typeString)
+                .collect(Collectors.toList());
+            if (!inconsistentTypes.isEmpty()) {
                 error("Variable types [" + Joiner.on(", ").join(inconsistentTypes)
                         + "] do not conform to declared type " + typeSystem.typeString(declaredType),
                         variable.getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
@@ -440,8 +414,8 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     }
     
     private void checkParameterTypes(final Variable variable) {
-        Iterable<Variable> parameterReferences = Iterables.filter(
-                CorePatternLanguageHelper.getLocalReferencesOfParameter(variable), Predicates.notNull());
+        Set<Variable> parameterReferences = CorePatternLanguageHelper.getLocalReferencesOfParameter(variable).stream()
+                .filter(Objects::nonNull).collect(Collectors.toSet());
         
         final IInputKey inferredType = typeInferrer.getType(variable);
         if (variable.getType() == null) {
@@ -455,69 +429,43 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             
             if (possibleTypes.isEmpty()) {
                 return;
-            } else if (possibleTypes.size() > 1 && Iterables.all(possibleTypes, Predicates.instanceOf(EClassTransitiveInstancesKey.class))) {
-                Set<IInputKey> types = typeSystem.getCompatibleSupertypes(possibleTypes);
-                Iterable<EClass> eClasses = Iterables.filter(Iterables.transform(
-                        Iterables.filter(types, EClassTransitiveInstancesKey.class),
-                        new Function<EClassTransitiveInstancesKey, EClass>() {
-                            
-                            @Override
-                            public EClass apply(EClassTransitiveInstancesKey input) {
-                                return input.getEmfKey();
-                                
+            } else if (possibleTypes.size() > 1 && Iterables.all(possibleTypes, EClassTransitiveInstancesKey.class::isInstance)) {
+                Set<EClass> eClasses = typeSystem.getCompatibleSupertypes(possibleTypes).stream()
+                    .filter(EClassTransitiveInstancesKey.class::isInstance)
+                    .map(EClassTransitiveInstancesKey.class::cast)
+                    .map(EClassTransitiveInstancesKey::getEmfKey)
+                    .filter(input -> input != null  && !input.eIsProxy())
+                    .collect(Collectors.toSet());
+
+                final EClass erroneous = EcoreFactory.eINSTANCE.createEClass();
+                Optional<EClass> reduced = eClasses.stream()
+                        .filter(Objects::nonNull)
+                        .filter(obj -> !obj.eIsProxy())
+                        .reduce((t1, t2) -> {
+                            if (t1 == EcorePackage.Literals.EOBJECT) {
+                                return t2;
+                            } else {
+                                final EClass compatibleType = (EClass) EcoreUtil2.getCompatibleType(t1, t2, null);
+                                return compatibleType == null ? erroneous : compatibleType;
                             }
-                            
-                        }), NOTNULL_NOTPROXY);
-                Iterable<String> typeNames = Iterables.concat(Iterables.transform(eClasses, new Function<EClass, String>() {
-
-                    @Override
-                    public String apply(EClass input) {
-                        return input.getName();
-                    }
-                }), ImmutableSet.of("EObject"));
-                String[] issueData = Iterables.toArray(typeNames, String.class);
-                EClass reduced = IterableExtensions.fold(eClasses, EcorePackage.Literals.EOBJECT, new Function2<EClass, EClass, EClass>() {
-
-                    @Override
-                    public EClass apply(EClass t1, EClass t2) {
-                        if (t1 == EcorePackage.Literals.EOBJECT) {
-                            return t2;
-                        } else if (t1 == null || t2 == null) {
-                            return null;
-                        } else {
-                            return (EClass) EcoreUtil2.getCompatibleType(t1, t2, null);
-                        }
-                    }
-                    
-                });
-                if (reduced == null) {
+                        });
+                if (Objects.equals(reduced.orElse(erroneous), erroneous)) {
+                    String[] issueData = Stream.concat(eClasses.stream().map(EClass::getName), 
+                            Stream.of("EObject")).toArray(String[]::new);
                     error("Variable type cannot be calculated unambiguously, the types [" 
-                            + Joiner.on(", ").join(Iterables.transform(possibleTypes, TYPENAME))
+                            + Joiner.on(", ").join(Iterables.transform(possibleTypes, typeSystem::typeString))
                             + "] have no _unique_ common supertype. The list of possible supertypes found are [" 
-                            + Joiner.on(", ").join(typeNames)
+                            + Joiner.on(", ").join(issueData)
                             + "], specify one as the intended supertype.", variable, null,
                             EMFIssueCodes.PARAMETER_TYPE_AMBIGUOUS, issueData);
                 }
             }
         } else {
             // Check for more specific type inferrable for bodies
-            Iterable<IInputKey> referenceTypes = Iterables.filter(Iterables.transform(parameterReferences, new Function<Variable, IInputKey>() {
-
-                @Override
-                public IInputKey apply(Variable input) {
-                    return typeInferrer.getInferredType(input);
-                }
-            }), Predicates.notNull());
-            boolean allTypesMoreSpecific = Iterables.all(referenceTypes, new Predicate<IInputKey>() {
-
-                @Override
-                public boolean apply(IInputKey aggregatedType) {
-                    return !Objects.equals(inferredType, aggregatedType) 
-                            && Objects.equals(inferredType.getClass(), aggregatedType.getClass())
-                            && typeSystem.isConformant(inferredType, aggregatedType);
-                }
-                
-            });
+            Set<IInputKey> referenceTypes = parameterReferences.stream().map(typeInferrer::getInferredType).filter(Objects::nonNull).collect(Collectors.toSet());
+            boolean allTypesMoreSpecific = referenceTypes.stream().allMatch(aggregatedType -> !Objects.equals(inferredType, aggregatedType) 
+                    && Objects.equals(inferredType.getClass(), aggregatedType.getClass())
+                    && typeSystem.isConformant(inferredType, aggregatedType)); 
             Iterator<IInputKey> it = referenceTypes.iterator();
             if (it.hasNext() && allTypesMoreSpecific) {
                 Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(Sets.newHashSet(referenceTypes), true);
@@ -533,7 +481,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     }
 
     private void reportMissingParameterTypeDeclaration(Variable parameter, Set<IInputKey> possibleTypes, IInputKey inferredType) {
-        if (possibleTypes.size() == 0) {
+        if (possibleTypes.isEmpty()) {
             return;
         } else if (possibleTypes.size() == 1 && !(possibleTypes.iterator().next() instanceof BottomTypeKey)) {
             String[] issueData = new String[]{new InputKeyToData(typeSystem).apply(inferredType)};
@@ -541,25 +489,22 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
                     issueData);
         } else {
-            Set<IInputKey> orderedTypes = ImmutableSortedSet.orderedBy(new Comparator<IInputKey>() {
-    
-                @Override
-                public int compare(IInputKey o1, IInputKey o2) {
-                    if (o1 instanceof EClassTransitiveInstancesKey && !(o2 instanceof EClassTransitiveInstancesKey)) {
-                        return +1;
-                    } else if (o2 instanceof EClassTransitiveInstancesKey && !(o1 instanceof EClassTransitiveInstancesKey)) {
-                        return -1;
-                    } else if (o1 instanceof EDataTypeInSlotsKey && !(o2 instanceof EDataTypeInSlotsKey)) {
-                        return +1;
-                    } else if (o2 instanceof EDataTypeInSlotsKey && !(o1 instanceof EDataTypeInSlotsKey)) {
-                        return +1;
-                    } else if (typeSystem.isConformant(o1, o2)){ //Common type group
-                        return +1;
-                    } else if (typeSystem.isConformant(o2, o1)) {
-                        return -1;
-                    }
-                    return 0;
-                }}).addAll(possibleTypes).build();
+            Set<IInputKey> orderedTypes = ImmutableSortedSet.<IInputKey>orderedBy((o1, o2) -> {
+                if (o1 instanceof EClassTransitiveInstancesKey && !(o2 instanceof EClassTransitiveInstancesKey)) {
+                    return +1;
+                } else if (o2 instanceof EClassTransitiveInstancesKey && !(o1 instanceof EClassTransitiveInstancesKey)) {
+                    return -1;
+                } else if (o1 instanceof EDataTypeInSlotsKey && !(o2 instanceof EDataTypeInSlotsKey)) {
+                    return +1;
+                } else if (o2 instanceof EDataTypeInSlotsKey && !(o1 instanceof EDataTypeInSlotsKey)) {
+                    return +1;
+                } else if (typeSystem.isConformant(o1, o2)){ //Common type group
+                    return +1;
+                } else if (typeSystem.isConformant(o2, o1)) {
+                    return -1;
+                }
+                return 0;
+            }).addAll(possibleTypes).build();
             Set<String> superClasses = (Iterables.any(possibleTypes, new EClassType())) 
                     ? ImmutableSet.of("EObject")
                     : ImmutableSet.of(EMFIssueCodes.JAVA_TYPE_PREFIX + "java.lang.Object");
@@ -801,13 +746,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
         StringBuilder result = new StringBuilder();
         for (Set<Variable> partition : unionFind.getPartitions()) {
             result.append("[");
-            Iterable<String> variableNames = Iterables.transform(partition, new Function<Variable, String>() {
-                @Override
-                public String apply(Variable variable) {
-                    return variable.getName();
-                }
-            });
-            result.append(Joiner.on(", ").join(variableNames));
+            result.append(partition.stream().map(Variable::getName).collect(Collectors.joining(", ")));
             result.append("]");
         }
         return result.toString();

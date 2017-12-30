@@ -102,31 +102,19 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         } else {
             // at least one of them has to specify this feature
             for (PAnnotation annotation : qbfAnnotations) {
-                Object featureParam = annotation.getFirstValue("feature");
-                if (featureParam instanceof String && eStructuralFeature.getName().equals(featureParam)) {
-                    processQBFAnnotation(annotation);
-                }
+                annotation.getFirstValue("feature", String.class)
+                        .filter(featureParam -> eStructuralFeature.getName().equals(featureParam))
+                        .ifPresent(featureParam -> processQBFAnnotation(annotation));
             }
         }
     }
 
     private void processQBFAnnotation(PAnnotation annotation) {
-        Object sourceParam = annotation.getFirstValue("source");
-        if (sourceParam instanceof String) {
-            parameters.sourceVar = (String) sourceParam;
-        }
-        Object targetParam = annotation.getFirstValue("target");
-        if (targetParam instanceof String) {
-            parameters.targetVar = (String) targetParam;
-        }
-        Object keepCacheParam = annotation.getFirstValue("keepCache");
-        if (keepCacheParam instanceof Boolean) {
-            parameters.keepCache = (Boolean) keepCacheParam;
-        }
-        Object kindParam = annotation.getFirstValue("kind");
-        if (kindParam instanceof String) {
-            parameters.kind = QueryBasedFeatureKind.parseKindString((String) kindParam);
-        }
+        parameters.sourceVar = annotation.getFirstValue("source", String.class).orElse(parameters.defaultSourceVar);
+        parameters.targetVar = annotation.getFirstValue("target", String.class).orElse(parameters.defaultTargetVar);
+        parameters.keepCache  = annotation.getFirstValue("keepCache", Boolean.class).orElse(parameters.defaultKeepCache);
+        parameters.kind = annotation.getFirstValue("kind", String.class)
+                .map(QueryBasedFeatureKind::parseKindString).orElse(parameters.defaultKind);
     }
 
     @Override
@@ -232,19 +220,21 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         
         private QueryBasedFeatureKind kind;
         private boolean keepCache;
+        
+        private final String defaultSourceVar;
+        private final String defaultTargetVar;
+        private final QueryBasedFeatureKind defaultKind;
+        private final boolean defaultKeepCache;
 
-        /**
-         * @param querySpecification
-         */
         public QueryBasedFeatureParameters(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification) {
             List<String> parameterNames = querySpecification.getParameterNames();
-            sourceVar = parameterNames.get(0);
-            targetVar = parameterNames.get(1);
-            keepCache = true;
+            defaultSourceVar = sourceVar = parameterNames.get(0);
+            defaultTargetVar = targetVar = parameterNames.get(1);
+            defaultKeepCache = keepCache = true;
             if(eStructuralFeature.isMany()) {
-                kind = QueryBasedFeatureKind.MANY_REFERENCE;
+                defaultKind = kind = QueryBasedFeatureKind.MANY_REFERENCE;
             } else {
-                kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
+                defaultKind = kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
             }
         }
       }

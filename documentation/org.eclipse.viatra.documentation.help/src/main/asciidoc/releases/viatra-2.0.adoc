@@ -28,6 +28,7 @@ There were a few cases, where Guava types such as Functions or Predicates were v
  * `PQueries#queryOfReferenceFunction`: can be replaced by a method reference of `IQueryReference::getReferredQuery`
  * `PQueries#directlyReferencedQueriesFunction`: returns a Java 8 function
  * `PQueries#queryStatusPredicate`: returns a Java 8 predicate
+ * `CorePatternLanguageHelper#getReferencedPatternsTransitive` accepts a Java 8 predicate as a parameter
  
 === Avoid returning null values in the API
 
@@ -36,6 +37,8 @@ A few APIs in VIATRA returned null if no possible values could be found. Given V
 The affected methods are the following:
 
  * PQueryHeader#getFirstAnnotationByName
+ * CorePatternLanguageHelper#getFirstAnnotationByName
+ * CorePatternLanguageHelper#getParameterByName
 
 If the old behavior of returning `null` values is necessary the `Optional.orElse` call can be used, e.g. `query.getFirstAnnotationByName("Constraint").orElse(null);`
 

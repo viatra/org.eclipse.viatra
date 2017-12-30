@@ -24,15 +24,15 @@ public class ViewersRuntimeModelUtil {
     private ViewersRuntimeModelUtil() {}
     
     public static boolean isItemQuerySpecification(IQuerySpecification<?> querySpecification) {
-        return querySpecification.getFirstAnnotationByName(ItemQuerySpecificationDescriptor.ANNOTATION_ID) != null;
+        return querySpecification.getFirstAnnotationByName(ItemQuerySpecificationDescriptor.ANNOTATION_ID).isPresent();
     }
     
     public static boolean isEdgeQuerySpecification(IQuerySpecification<?> querySpecification) {
-        return querySpecification.getFirstAnnotationByName(EdgeQuerySpecificationDescriptor.ANNOTATION_ID) != null;
+        return querySpecification.getFirstAnnotationByName(EdgeQuerySpecificationDescriptor.ANNOTATION_ID).isPresent();
     }
     
     public static boolean isContainmentQuerySpecification(IQuerySpecification<?> querySpecification) {
-        return querySpecification.getFirstAnnotationByName(ContainmentQuerySpecificationDescriptor.ANNOTATION_ID) != null;
+        return querySpecification.getFirstAnnotationByName(ContainmentQuerySpecificationDescriptor.ANNOTATION_ID).isPresent();
     }
     
 }

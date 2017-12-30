@@ -52,7 +52,6 @@ import org.eclipse.xtext.scoping.impl.SimpleScope;
 import org.eclipse.xtext.util.SimpleAttributeResolver;
 import org.eclipse.xtext.xbase.scoping.batch.XbaseBatchScopeProvider;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -231,13 +230,8 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
 
     private IScope calculateEnumLiteralScope(EEnum enumeration) {
         EList<EEnumLiteral> literals = enumeration.getELiterals();
-        return Scopes.scopeFor(literals, new Function<EEnumLiteral, QualifiedName>() {
-            @Override
-            public QualifiedName apply(EEnumLiteral literal) {
-                QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(literal.getLiteral());
-                return qualifiedName;
-            }
-        }, IScope.NULLSCOPE);
+        return Scopes.scopeFor(literals, 
+                literal -> qualifiedNameConverter.toQualifiedName(literal.getLiteral()), IScope.NULLSCOPE);
     }
 
     private final ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();

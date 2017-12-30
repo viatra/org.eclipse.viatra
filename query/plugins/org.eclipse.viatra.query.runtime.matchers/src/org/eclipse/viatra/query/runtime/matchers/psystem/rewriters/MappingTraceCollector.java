@@ -54,7 +54,7 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
     /**
      * Decides whether {@link PTraceable} is removed
      */
-    private final Predicate<PTraceable> removed = input -> removals.containsKey(input);
+    private final Predicate<PTraceable> removed = removals::containsKey;
 
     /**
      * @since 2.0
@@ -131,7 +131,7 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
      */
     @Override
     public Stream<IDerivativeModificationReason> getRemovalReasons(PTraceable traceable) {
-        return getRewrittenTraceables(traceable).filter(removed).map(input -> removals.get(input));
+        return getRewrittenTraceables(traceable).filter(removed).map(removals::get);
     }
 
 }

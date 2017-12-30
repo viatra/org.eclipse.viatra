@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 /**
  * An error feedback implementation that creates diagnostics in EMF resources.
@@ -34,15 +29,8 @@ public final class ResourceDiagnosticFeedback implements IErrorFeedback {
     public void clearMarkers(Resource resource, final String markerType) {
         if (resource != null) {
             EList<Diagnostic> errors = resource.getErrors();
-            Collection<Diagnostic> filter = Collections2.filter(errors, new Predicate<Diagnostic>() {
-
-                @Override
-                public boolean apply(Diagnostic input) {
-                    return input instanceof EObjectDiagnosticImpl
-                            && markerType.contentEquals(((EObjectDiagnosticImpl)input).getCode());
-                }
-            });
-            errors.removeAll(filter);
+            errors.removeIf(input -> input instanceof EObjectDiagnosticImpl
+                    && markerType.contentEquals(((EObjectDiagnosticImpl)input).getCode()));
         }
     }
 

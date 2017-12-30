@@ -76,7 +76,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         if (ref == null) {
             source = pattern.getParameters().get(0);
         } else if (ref instanceof VariableValue) {
-            source = CorePatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar());
+            source = CorePatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
             if (pattern.getParameters().get(0).equals(source)) {
                 validator.warning("The 'source' parameter is not needed if it is the first pattern parameter.", ref,
                         PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
@@ -162,7 +162,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         if (ref == null) {
             target = pattern.getParameters().get(1);
         } else if (ref instanceof VariableValue) {
-            target = CorePatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar());
+            target = CorePatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
             if (pattern.getParameters().get(1).equals(target)) {
                 validator.warning("The 'target' parameter is not needed if it is the second pattern parameter.", ref,
                         PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);

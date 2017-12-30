@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -35,7 +34,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterExcep
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -113,45 +111,40 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     @Override
     public List<PParameter> getParameters() {
         if (parameters == null) {
-            parameters = ImmutableList.copyOf(Iterables.transform(pattern.getParameters(), new Function<Variable, PParameter>() {
-    
-                @Override
-                public PParameter apply(Variable var) {
-                    if (var == null) {
-                        return new PParameter("", "");
-                    } else {
-                        PParameterDirection direction = PParameterDirection.INOUT;
-                        if (var instanceof Parameter){
-                            switch(((Parameter) var).getDirection()){
-                            case IN:
-                                direction = PParameterDirection.IN;
-                                break;
-                            case OUT:
-                                direction = PParameterDirection.OUT;
-                                break;
-                            case INOUT:
-                            default:
-                                break;
-                            
-                            }
+            parameters = ImmutableList.copyOf(Iterables.transform(pattern.getParameters(), var -> {
+                if (var == null) {
+                    return new PParameter("", "");
+                } else {
+                    PParameterDirection direction = PParameterDirection.INOUT;
+                    if (var instanceof Parameter){
+                        switch(((Parameter) var).getDirection()){
+                        case IN:
+                            direction = PParameterDirection.IN;
+                            break;
+                        case OUT:
+                            direction = PParameterDirection.OUT;
+                            break;
+                        case INOUT:
+                        default:
+                            break;
+                        
                         }
-                        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-                        ITypeInferrer typeProvider = injector.getInstance(ITypeInferrer.class);
-                        EMFTypeSystem typeSystem = injector.getInstance(EMFTypeSystem.class);
-                        JvmTypeReference ref = typeProvider.getJvmType(var, var);
-                        // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-                        String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
-                                .getQualifiedName();
-                        
-                        IInputKey unaryDeclaredType = null; 
-                        Type type = var.getType();
-                        if (type != null) 
-                            unaryDeclaredType = typeSystem.extractTypeDescriptor(type);
-                        
-                        return new PParameter(var.getName(), clazz, unaryDeclaredType, direction);
                     }
+                    Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+                    ITypeInferrer typeProvider = injector.getInstance(ITypeInferrer.class);
+                    EMFTypeSystem typeSystem = injector.getInstance(EMFTypeSystem.class);
+                    JvmTypeReference ref = typeProvider.getJvmType(var, var);
+                    // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
+                    String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
+                            .getQualifiedName();
+                    
+                    IInputKey unaryDeclaredType = null; 
+                    Type type = var.getType();
+                    if (type != null) 
+                        unaryDeclaredType = typeSystem.extractTypeDescriptor(type);
+                    
+                    return new PParameter(var.getName(), clazz, unaryDeclaredType, direction);
                 }
-    
             }));
         }
         return parameters;

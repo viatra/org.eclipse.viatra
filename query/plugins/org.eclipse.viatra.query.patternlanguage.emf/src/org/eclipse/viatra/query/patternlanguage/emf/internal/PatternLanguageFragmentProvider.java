@@ -11,16 +11,16 @@
 package org.eclipse.viatra.query.patternlanguage.emf.internal;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.xtext.resource.DefaultFragmentProvider;
 import org.eclipse.xtext.resource.IFragmentProvider;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 
 /**
  * @author Zoltan Ujhelyi
@@ -38,15 +38,15 @@ public class PatternLanguageFragmentProvider extends DefaultFragmentProvider {
 
     @Override
     public EObject getEObject(Resource resource, final String fragment, IFragmentProvider.Fallback fallback) {
-        Optional<EObject> candidatePattern = Iterators.tryFind(resource.getAllContents(), new Predicate<EObject>() {
-
-            @Override
-            public boolean apply(EObject input) {
-                return (input instanceof Pattern) && Objects.equals(((Pattern)input).getName(), fragment);
-            }
-        });
+        Optional<EObject> candidatePattern = 
+                StreamSupport.stream(Spliterators.spliteratorUnknownSize(resource.getAllContents(), Spliterator.ORDERED), false).
+                filter(Pattern.class::isInstance).
+                map(Pattern.class::cast).
+                filter(input -> Objects.equals(input.getName(), fragment)).
+                map(EObject.class::cast).
+                findAny();
         
-        return candidatePattern.or(fallback.getEObject(fragment));
+        return candidatePattern.orElse(fallback.getEObject(fragment));
     }
     
 }

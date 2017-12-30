@@ -20,9 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -61,17 +64,12 @@ import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
-import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
@@ -177,17 +175,11 @@ public final class CorePatternLanguageHelper {
      *
      * @param pattern
      * @param name
-     * @return the requested parameter of the pattern, or null if none exists
-     * @since 0.7.0
+     * @return the requested parameter of the pattern if exists
+     * @since 2.0
      */
-    public static Variable getParameterByName(final Pattern pattern, final String name) {
-        return Iterables.find(pattern.getParameters(), new Predicate<Variable>() {
-
-            @Override
-            public boolean apply(Variable variable) {
-                return name.equals(variable.getName());
-            }
-        }, null);
+    public static Optional<Variable> getParameterByName(final Pattern pattern, final String name) {
+        return pattern.getParameters().stream().filter(variable -> name.equals(variable.getName())).findAny();
     }
 
     /** Compiles a map for name-based lookup of symbolic parameter positions. */
@@ -240,23 +232,9 @@ public final class CorePatternLanguageHelper {
         Iterable<XFeatureCall> featuredCalls = (xExpression instanceof XFeatureCall) ? 
                 Iterables.concat(ImmutableList.of((XFeatureCall)xExpression), Iterables.filter(contents, XFeatureCall.class))
                 : Iterables.filter(contents, XFeatureCall.class);
-        final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, new Function<XFeatureCall,String>() {
-            @Override
-            public String apply(final XFeatureCall call) {
-              return call.getConcreteSyntaxFeatureName();
-            }
-          }));
-        Iterable<Variable> calledVariables = Iterables.filter(allVariables, new Predicate<Variable>() {
-            @Override
-            public boolean apply(final Variable var) {
-              return valNames.contains(var.getName());
-            }
-          });
-        return IterableExtensions.sortBy(calledVariables, new Function1<Variable,String>() {
-            public String apply(final Variable var) {
-              return var.getName();
-            }
-          });
+        final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, call -> call.getConcreteSyntaxFeatureName()));
+        Iterable<Variable> calledVariables = Iterables.filter(allVariables, var -> valNames.contains(var.getName()));
+        return IterableExtensions.sortBy(calledVariables, var -> var.getName());
     }
 
 
@@ -321,7 +299,7 @@ public final class CorePatternLanguageHelper {
      * @since 1.4
      */
     public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern, boolean orderPatterns) {
-        return getReferencedPatternsTransitive(pattern, orderPatterns, Predicates.<Pattern>alwaysTrue());
+        return getReferencedPatternsTransitive(pattern, orderPatterns, i -> true);
     }
     
     /**
@@ -333,7 +311,7 @@ public final class CorePatternLanguageHelper {
      * @param pattern the source pattern
      * @param orderPatterns if true, the returned set will be ordered based on the call edges
      * @param filter the filter predicate
-     * @since 1.6
+     * @since 2.0
      */
     public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern, boolean orderPatterns, Predicate<Pattern> filter) {
         Set<Pattern> referencedPatterns = null;
@@ -368,7 +346,7 @@ public final class CorePatternLanguageHelper {
     }
     
     private static void calculateReferencedPatternsTransitive(Pattern pattern, Set<Pattern> addedPatterns, final Predicate<Pattern> filter) {
-        Set<Pattern> candidates = Sets.filter(getReferencedPatterns(pattern), filter);
+        Set<Pattern> candidates = getReferencedPatterns(pattern).stream().filter(filter).collect(Collectors.toSet());
         candidates.removeAll(addedPatterns);
         addedPatterns.addAll(candidates);
         for (Pattern newCandidate : candidates) {
@@ -385,7 +363,7 @@ public final class CorePatternLanguageHelper {
         }
 
         @Override
-        public boolean apply(Annotation annotation) {
+        public boolean test(Annotation annotation) {
             return name.equals(annotation.getName());
         }
     }
@@ -399,11 +377,11 @@ public final class CorePatternLanguageHelper {
      *            the pattern instance
      * @param name
      *            the name of the annotation to return
-     * @returns the first annotation or null if no such annotation exists
-     * @since 0.7.0
+     * @returns the first annotation if exists
+     * @since 2.0
      */
-    public static Annotation getFirstAnnotationByName(Pattern pattern, String name) {
-        return Iterables.find(pattern.getAnnotations(), new AnnotationNameFilter(name), null);
+    public static Optional<Annotation> getFirstAnnotationByName(Pattern pattern, String name) {
+        return pattern.getAnnotations().stream().filter(new AnnotationNameFilter(name)).findFirst();
     }
 
     /**
@@ -418,7 +396,7 @@ public final class CorePatternLanguageHelper {
      * @since 0.7.0
      */
     public static Collection<Annotation> getAnnotationsByName(Pattern pattern, String name) {
-        return Collections2.filter(pattern.getAnnotations(), new AnnotationNameFilter(name));
+        return pattern.getAnnotations().stream().filter(new AnnotationNameFilter(name)).collect(Collectors.toList());
     }
 
     /**
@@ -430,20 +408,11 @@ public final class CorePatternLanguageHelper {
      */
     public static Collection<ValueReference> getAnnotationParameters(final Annotation annotation,
             final String parameterName) {
-        return Collections2.transform(
-                Collections2.filter(annotation.getParameters(), new Predicate<AnnotationParameter>() {
-                    @Override
-                    public boolean apply(AnnotationParameter parameter) {
-                        Preconditions.checkArgument(parameter != null);
-                        return parameter.getName().equals(parameterName);
-                    }
-                }), new Function<AnnotationParameter, ValueReference>() {
-                    @Override
-                    public ValueReference apply(AnnotationParameter parameter) {
-                        Preconditions.checkArgument(parameter != null);
-                        return parameter.getValue();
-                    }
-                });
+        return annotation.getParameters().stream()
+            .filter(Objects::nonNull)
+            .filter(parameter -> parameter.getName().equals(parameterName))
+            .map(AnnotationParameter::getValue)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -658,12 +627,7 @@ public final class CorePatternLanguageHelper {
         } else if (ref instanceof VariableValue) {
             value = new ParameterReference(((VariableValue)ref).getValue().getVar());
         } else if (ref instanceof ListValue) {
-            value = Lists.transform(((ListValue) ref).getValues(), new Function<ValueReference, Object>() {
-                @Override
-                public Object apply(ValueReference ref) {
-                    return getValue(ref);
-                }
-            });
+            value = ((ListValue) ref).getValues().stream().map(CorePatternLanguageHelper::getValue).collect(Collectors.toList());
         } else {
             throw new UnsupportedOperationException("Unknown attribute parameter type");
         }
@@ -683,19 +647,13 @@ public final class CorePatternLanguageHelper {
     public static Set<Variable> getLocalReferencesOfParameter(final Variable variable) {
         Preconditions.checkArgument(isParameter(variable), "Variable must represent a pattern parameter.");
         Pattern pattern = (Pattern) variable.eContainer();
-        return Sets.newHashSet(Iterables.filter(Iterables.transform(pattern.getBodies(), new Function<PatternBody, Variable>(){
-
-            @Override
-            public Variable apply(final PatternBody body) {
-                return Iterables.find(body.getVariables(), new Predicate<Variable>() {
-
-                    @Override
-                    public boolean apply(Variable input) {
-                        return (input instanceof ParameterRef)
-                                && ((ParameterRef) input).getReferredParam().equals(variable);
-                    }
-                }, null);
-            }}), Predicates.notNull()));
+        
+        return pattern.getBodies().stream().map(body -> body.getVariables().stream()
+                        .filter(ParameterRef.class::isInstance)
+                        .map(ParameterRef.class::cast)
+                        .filter(input -> input.getReferredParam().equals(variable)))
+                .flatMap(i -> i)
+                .collect(Collectors.toSet());
     }
     
     /**
@@ -711,14 +669,7 @@ public final class CorePatternLanguageHelper {
      * @since 1.4
      */
     public static boolean hasAggregateReference(Variable var) {
-        return Iterables.any(var.getReferences(), new Predicate<VariableReference>() {
-
-            @Override
-            public boolean apply(VariableReference input) {
-                return input != null && isAggregateReference(input);
-            }
-            
-        });
+        return var.getReferences().stream().anyMatch(input -> input != null && isAggregateReference(input));
     }
     
     /**

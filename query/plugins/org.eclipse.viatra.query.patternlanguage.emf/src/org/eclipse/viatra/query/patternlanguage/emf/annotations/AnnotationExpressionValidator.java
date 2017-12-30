@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.annotations;
 
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import org.eclipse.emf.ecore.EClass;
@@ -63,8 +64,8 @@ public class AnnotationExpressionValidator {
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
         }
 
-        Variable parameter = CorePatternLanguageHelper.getParameterByName(pattern, expression);
-        if (parameter == null) {
+        Optional<Variable> parameter = CorePatternLanguageHelper.getParameterByName(pattern, expression);
+        if (!parameter.isPresent()) {
             validator.error(String.format("Unknown parameter name %s", expression), ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
             return;
@@ -91,8 +92,8 @@ public class AnnotationExpressionValidator {
             return;
         }
 
-        Variable parameter = CorePatternLanguageHelper.getParameterByName(pattern, tokens[0]);
-        if (parameter == null) {
+        Optional<Variable> parameter = CorePatternLanguageHelper.getParameterByName(pattern, tokens[0]);
+        if (!parameter.isPresent()) {
             validator.error(String.format("Unknown parameter name %s", tokens[0]), ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
             return;
@@ -100,7 +101,7 @@ public class AnnotationExpressionValidator {
         
         
 
-        IInputKey type = typeInferrer.getType(parameter);
+        IInputKey type = typeInferrer.getType(parameter.get());
         if (type == null) {
             // Parameter type errors are reported in called method
         } else if (type instanceof JavaTransitiveInstancesKey) {
@@ -113,7 +114,7 @@ public class AnnotationExpressionValidator {
             EClassifier classifier = ((EDataTypeInSlotsKey) type).getEmfKey();
             validateClassifierFeatureAccess(classifier, tokens, ref, validator);
         } else {
-            validator.error(String.format("Label expressions only supported on EMF types, not on %s", type.getPrettyPrintableName()), parameter,
+            validator.error(String.format("Label expressions only supported on EMF types, not on %s", type.getPrettyPrintableName()), parameter.get(),
                     PatternLanguagePackage.Literals.VARIABLE__NAME, GENERAL_ISSUE_CODE);
         }
         

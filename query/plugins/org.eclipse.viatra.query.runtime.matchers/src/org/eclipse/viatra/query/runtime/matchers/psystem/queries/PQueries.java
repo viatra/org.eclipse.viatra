@@ -63,7 +63,7 @@ public final class PQueries {
         traceables.add(query);
         query.getDisjunctBodies().getBodies().forEach(body -> {
             traceables.add(body);
-            body.getConstraints().forEach(c -> traceables.add(c));
+            body.getConstraints().forEach(traceables::add);
         });
         return traceables;
     }

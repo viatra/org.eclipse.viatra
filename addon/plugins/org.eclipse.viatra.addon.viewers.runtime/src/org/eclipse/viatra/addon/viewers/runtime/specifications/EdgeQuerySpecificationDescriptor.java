@@ -53,9 +53,7 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
         String parameterTargetValue = parameterTarget.getName();
         target = parameterTargetValue;
 
-        Object parameterLabel = annotation.getFirstValue(LABEL_PARAMETER_NAME);
-        String parameterLabelValue = parameterLabel == null ? "" : (String) parameterLabel;
-        label = parameterLabelValue;
+        label = annotation.getFirstValue(LABEL_PARAMETER_NAME, String.class).orElse("");
 
         formatAnnotation = specification.getFirstAnnotationByName(FormatParser.ANNOTATION_ID).orElse(null);
     }

@@ -89,6 +89,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     /**
      * @since 1.7
      */
+    @Override
     public Class<? extends IBatchScopeProvider> bindIBatchScopeProvider() {
         return EMFPatternLanguageDeclarativeScopeProvider.class;
     }
@@ -131,6 +132,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return SimpleClassLoaderProvider.class;
     }
 
+    @Override
     public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
         return EMFPatternLanguageJvmModelInferrer.class;
     }
@@ -178,6 +180,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     /**
      * @since 2.0
      */
+    @Override
     public Class<? extends IFormatter> bindIFormatter() {
         return EMFPatternLanguageFormatter.class;
     }

@@ -49,14 +49,11 @@ public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecification
         String parameterNameValue = parameterName.getName();
         source = parameterNameValue;
 
-        Object parameterLabel = annotation.getFirstValue(LABEL_PARAMETER_NAME);
-        String parameterLabelValue = parameterLabel == null ? "" : (String) parameterLabel;
-        label = parameterLabelValue;
+        label = annotation.getFirstValue(LABEL_PARAMETER_NAME, String.class).orElse("");
 
-        Object parameterHierarchy = annotation.getFirstValue(HIERARCHY_PARAMETER_NAME);
-        HierarchyPolicy parameterHierarchyPolicy = parameterHierarchy == null ? HierarchyPolicy.ALWAYS
-                : HierarchyPolicy.valueOf(((String) parameterHierarchy).toUpperCase());
-        policy = parameterHierarchyPolicy;
+        policy = annotation.getFirstValue(HIERARCHY_PARAMETER_NAME, String.class)
+                .map(input -> HierarchyPolicy.valueOf(input.toUpperCase()))
+                .orElse(HierarchyPolicy.ALWAYS);
 
         formatAnnotation = specification.getFirstAnnotationByName(FormatParser.ANNOTATION_ID).orElse(null);
 

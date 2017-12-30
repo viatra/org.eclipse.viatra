@@ -18,9 +18,6 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.xtext.xbase.compiler.GeneratorConfig;
 import org.eclipse.xtext.xbase.lib.Pure;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-
 /**
  * A generator configuration that stores both Xbase and pattern language specific options
  * 
@@ -57,28 +54,14 @@ public class EMFPatternLanguageGeneratorConfig extends GeneratorConfig {
         }
 
         public static String[] getAllIdentifiers() {
-            return Iterables.toArray(
-                    Iterables.transform(Arrays.asList(values()), new Function<MatcherGenerationStrategy, String>() {
-
-                        @Override
-                        public String apply(MatcherGenerationStrategy input) {
-                            return input.toString();
-                        }
-                    }), String.class);
+            return Arrays.stream(values()).map(MatcherGenerationStrategy::toString).toArray(String[]::new);
         }
         
         /**
          * Returns all labels in the same order than {@link #values()}.
          */
         public static String[] getAllLabels() {
-            return Iterables.toArray(
-                    Iterables.transform(Arrays.asList(values()), new Function<MatcherGenerationStrategy, String>() {
-
-                        @Override
-                        public String apply(MatcherGenerationStrategy input) {
-                            return input.label;
-                        }
-                    }), String.class);
+            return Arrays.stream(values()).map(input -> input.label).toArray(String[]::new);
         }
         
         public static MatcherGenerationStrategy defaultValue() {

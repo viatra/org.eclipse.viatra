@@ -653,7 +653,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
             final Set<IQuerySpecification<?>> specifications = new HashSet<IQuerySpecification<?>>(
                     queryGroup.getSpecifications());
             final Collection<PQuery> patterns = specifications.stream().map(
-                    input -> input.getInternalQueryRepresentation()).collect(Collectors.toList());
+                    IQuerySpecification::getInternalQueryRepresentation).collect(Collectors.toList());
             patterns.forEach(PQuery::ensureInitialized);
             
             Collection<String> erroneousPatterns = patterns.stream().

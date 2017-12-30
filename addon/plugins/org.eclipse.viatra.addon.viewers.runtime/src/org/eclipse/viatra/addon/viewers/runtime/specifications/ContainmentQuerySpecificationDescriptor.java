@@ -55,7 +55,7 @@ public class ContainmentQuerySpecificationDescriptor extends AbstractQuerySpecif
         Multimap<PParameter, PParameter> traces = ArrayListMultimap.create();
         ParameterReference parameterSource = annotation.getFirstValue(SOURCE, ParameterReference.class).
                 orElseThrow(() -> new QueryProcessingException("Invalid container value", specification));
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET).
+        ParameterReference parameterTarget = annotation.getFirstValue(TARGET, ParameterReference.class).
                 orElseThrow(() -> new QueryProcessingException("Invalid item value", specification));
 
         insertToTraces(specification, traces, parameterSource.getName());

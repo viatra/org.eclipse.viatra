@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.patternlanguage.emf.scoping;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -42,13 +41,7 @@ public class CompoundMetamodelProviderService implements IMetamodelProvider {
     @Inject
     public CompoundMetamodelProviderService(Set<IMetamodelProviderInstance> providers) {
         sortedProviders = Lists.newArrayList(providers);
-        Collections.sort(sortedProviders, new Comparator<IMetamodelProviderInstance>() {
-
-            @Override
-            public int compare(IMetamodelProviderInstance o1, IMetamodelProviderInstance o2) {
-                return o1.getPriority() - o2.getPriority();
-            }
-        });
+        Collections.sort(sortedProviders, (o1, o2) -> o1.getPriority() - o2.getPriority());
     }
 
     @Override

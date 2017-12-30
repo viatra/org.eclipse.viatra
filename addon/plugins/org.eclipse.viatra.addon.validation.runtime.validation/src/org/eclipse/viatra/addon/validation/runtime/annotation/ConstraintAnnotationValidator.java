@@ -13,6 +13,7 @@ package org.eclipse.viatra.addon.validation.runtime.annotation;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
@@ -131,12 +132,12 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
         }
         
         for (StringValue key : stringValueList) {
-            Variable parameterByName = CorePatternLanguageHelper.getParameterByName(pattern, key.getValue());
-            if (parameterByName == null) {
-                validator.error(key.getValue() + " is not a pattern parameter!", key, null, issueCode);
-            } else {
-                variables.add(parameterByName);
+            Optional<Variable> parameterByName = CorePatternLanguageHelper.getParameterByName(pattern, key.getValue());
+            if (parameterByName.isPresent()) {
+                variables.add(parameterByName.get());
                 validator.warning("Deprecated: remove quotes to use variable reference instead!", key, null, issueCode);
+            } else {
+                validator.error(key.getValue() + " is not a pattern parameter!", key, null, issueCode);
             }
         }
         for (VariableReference key : variableReferenceList) {

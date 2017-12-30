@@ -65,7 +65,7 @@ public class PAnnotation {
      * @since 2.0
      */
     public <T> Optional<T> getFirstValue(String attributeName, Class<T> clazz) {
-        return getAllValues(attributeName).stream().filter(o -> clazz.isInstance(o)).map(clazz::cast).findFirst();
+        return getAllValues(attributeName).stream().filter(clazz::isInstance).map(clazz::cast).findFirst();
     }
 
     /**
@@ -82,6 +82,6 @@ public class PAnnotation {
      * @since 2.0
      */
     public void forEachValue(BiConsumer<String, Object> consumer) {
-        attributes.forEachKeyValue((key, value) -> consumer.accept(key, value));
+        attributes.forEachKeyValue(consumer::accept);
     }
 }

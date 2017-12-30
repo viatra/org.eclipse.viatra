@@ -205,7 +205,7 @@ public class PBody implements PTraceable {
      * @return a non-null, but possibly empty list
      */
     public List<PVariable> getSymbolicParameterVariables() {
-        return getSymbolicParameters().stream().map(constraint -> constraint.getParameterVariable())
+        return getSymbolicParameters().stream().map(ExportedParameter::getParameterVariable)
                 .collect(Collectors.toList());
     }
 

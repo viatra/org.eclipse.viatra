@@ -29,7 +29,6 @@ import org.eclipse.xtext.xbase.interpreter.IEvaluationContext;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationResult;
 import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -70,12 +69,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
         }
         PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
         List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
-        usedNames = Iterables.transform(usedVariables, new Function<Variable, String>() {
-            @Override
-            public String apply(Variable var) {
-                return var.getName();
-            }
-        });
+        usedNames = Iterables.transform(usedVariables, Variable::getName);
     }
 
     @Override

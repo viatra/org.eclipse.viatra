@@ -32,7 +32,6 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -61,15 +60,12 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
     public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
         final Collection<String> packageURIs = getProvidedMetamodels();
         Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
-                new Function<String, IEObjectDescription>() {
-                    @Override
-                    public IEObjectDescription apply(String from) {
-                        InternalEObject proxyPackage = (InternalEObject) EcoreFactory.eINSTANCE.createEPackage();
-                        proxyPackage.eSetProxyURI(URI.createURI(from));
-                        QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
-                        return EObjectDescription.create(qualifiedName, proxyPackage,
-                                Collections.singletonMap("nsURI", "true"));
-                    }
+                from -> {
+                    InternalEObject proxyPackage = (InternalEObject) EcoreFactory.eINSTANCE.createEPackage();
+                    proxyPackage.eSetProxyURI(URI.createURI(from));
+                    QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
+                    return EObjectDescription.create(qualifiedName, proxyPackage,
+                            Collections.singletonMap("nsURI", "true"));
                 });
         return new SimpleScope(delegateScope, metamodels);
     }

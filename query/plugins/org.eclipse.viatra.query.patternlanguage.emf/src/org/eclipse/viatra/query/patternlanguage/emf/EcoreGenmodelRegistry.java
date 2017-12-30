@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -67,13 +66,7 @@ public class EcoreGenmodelRegistry {
      * @since 1.0
      */
     public Collection<EPackage> getPackages() {
-        return Collections2.transform(genpackageMap.values(), new Function<GenPackage, EPackage>() {
-
-            @Override
-            public EPackage apply(GenPackage input) {
-                return input.getEcorePackage();
-            }
-        });
+        return Collections2.transform(genpackageMap.values(), GenPackage::getEcorePackage);
         
     }
     

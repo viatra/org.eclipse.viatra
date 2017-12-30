@@ -100,7 +100,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
 
         // Copy exported parameters
         this.body.setSymbolicParameters(sourceBody.getSymbolicParameters().stream().map(
-                input -> copyExportedParameterConstraint(input)).collect(Collectors.toList()));
+                this::copyExportedParameterConstraint).collect(Collectors.toList()));
 
         // Copy constraints which are not filtered
         Set<PConstraint> constraints = sourceBody.getConstraints();

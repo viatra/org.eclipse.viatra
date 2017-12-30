@@ -17,8 +17,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageIm
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -51,14 +49,7 @@ public class EMFPatternLanguageHelper {
         if (imports == null) {
             return ImmutableList.of();
         }
-        return Iterables.filter(imports.getPackageImport(),
-                new Predicate<PackageImport>() {
-
-                    @Override
-                    public boolean apply(PackageImport pImport) {
-                        return !pImport.eIsProxy();
-                    }
-                });
+        return Iterables.filter(imports.getPackageImport(), pImport -> !pImport.eIsProxy());
     }
     
     /**
@@ -68,12 +59,6 @@ public class EMFPatternLanguageHelper {
      * @since 1.3
      */
     public static Iterable<EPackage> getEPackageImportsIterable(PatternModel model) {
-        return Iterables.transform(getPackageImportsIterable(model), new Function<PackageImport, EPackage>() {
-
-            @Override
-            public EPackage apply(PackageImport input) {
-                return input.getEPackage();
-            }
-        });
+        return Iterables.transform(getPackageImportsIterable(model), PackageImport::getEPackage);
     }
 }

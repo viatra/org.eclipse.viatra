@@ -12,7 +12,9 @@ package org.eclipse.viatra.query.patternlanguage.emf.types;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
@@ -34,10 +36,7 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -58,25 +57,15 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     @Inject
     private NumberLiterals literals;
 
+    private static final Predicate<Pattern> NON_NULL = Objects::nonNull;
+    
     /**
      * This predicate selects a pattern that has at least one untyped parameter
      */
-    private static final Predicate<Pattern> UNTYPED_PATTERN_PREDICATE = new Predicate<Pattern>(){
-
-        @Override
-        public boolean apply(Pattern input) {
-            return input != null && Iterables.any(input.getParameters(), new Predicate<Variable>() {
-
-                @Override
-                public boolean apply(Variable variable) {
-                    return variable.getType() == null;
-                }
-            });
-        }
-        
-    };
+    private static final Predicate<Pattern> UNTYPED_PATTERN_PREDICATE = input -> input.getParameters().stream()
+            .anyMatch(variable -> variable.getType() == null);
     
-    private static final Predicate<Pattern> TYPED_PATTERN_PREDICATE = Predicates.not(UNTYPED_PATTERN_PREDICATE);
+    private static final Predicate<Pattern> TYPED_PATTERN_PREDICATE = UNTYPED_PATTERN_PREDICATE.negate();
     
     /**
      * @since 1.3
@@ -136,14 +125,14 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
 
         // XXX requiring an ordered call graph might be expensive, but it avoids inconsistent errors during type inference
         // The UNTYPED_PARAMETER_PREDICATE is used to return a reduced call graph where pattern with only declared types are (transitively) ignored.
-        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern, true, UNTYPED_PATTERN_PREDICATE);
+        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern, true, NON_NULL.and(UNTYPED_PATTERN_PREDICATE));
         patternsToCheck.add(pattern);
         
         for (Pattern patternToCheck : patternsToCheck) {
-            for (Pattern typedCall : Iterables.filter(CorePatternLanguageHelper.getReferencedPatterns(patternToCheck), TYPED_PATTERN_PREDICATE)) {
+            CorePatternLanguageHelper.getReferencedPatterns(patternToCheck).stream()
+                .filter(NON_NULL.and(TYPED_PATTERN_PREDICATE))
                 // Ensure called parameter types are loaded
-                rules.loadParameterVariableTypes(typedCall, types);
-            }
+                .forEach(typedCall -> rules.loadParameterVariableTypes(typedCall, types));
             if (!types.isProcessed(patternToCheck)) {
                 rules.inferTypes(patternToCheck, types);
                 for (PatternBody body : patternToCheck.getBodies()) {
