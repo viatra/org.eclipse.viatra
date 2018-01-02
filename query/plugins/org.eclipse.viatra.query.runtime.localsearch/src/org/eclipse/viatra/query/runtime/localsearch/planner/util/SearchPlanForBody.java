@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -21,9 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 /**
  * This class is responsible for storing the results of the planner and operation compiler for a selected body.
@@ -48,10 +47,10 @@ public class SearchPlanForBody {
         for (int i=0; i<parameters.size(); i++) {
             parameterKeys[i] = variableKeys.get(parameters.get(i));
         }
-        this.compiledOperations = Lists.newArrayListWithCapacity(compiledOperations.size()+1);
+        this.compiledOperations = new ArrayList<>(compiledOperations.size()+1);
         this.compiledOperations.addAll(compiledOperations);
         
-        this.dependencies = Lists.newArrayList(dependencies);
+        this.dependencies = new ArrayList<>(dependencies);
     }
 
     public PBody getBody() {
@@ -84,7 +83,7 @@ public class SearchPlanForBody {
     
     @Override
     public String toString() {
-        return Joiner.on("\n").join(compiledOperations);
+        return compiledOperations.stream().map(Object::toString).collect(Collectors.joining("\n"));
     }
     
 }

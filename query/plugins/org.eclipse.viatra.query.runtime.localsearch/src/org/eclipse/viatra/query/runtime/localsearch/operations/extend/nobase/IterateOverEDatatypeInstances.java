@@ -11,7 +11,9 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.emf.common.util.EList;
@@ -26,12 +28,9 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 /**
@@ -48,22 +47,13 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
     }
     
     protected Stream<EAttribute> doGetEAttributes(EClass eclass, ISearchContext context){
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        Table<EDataType, EClass, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Table.class, new IProvider<Table>() {
-
-            @Override
-            public Table<EDataType, EClass, Set<EAttribute>> get() {
-                return HashBasedTable.create();
-            }
-        });
-        if(!cache.contains(dataType, eclass)){
+        @SuppressWarnings({ "unchecked"})
+        Table<EDataType, EClass, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Table.class, HashBasedTable::create);
+        if(!cache.contains(dataType, eclass)) {
             EList<EAttribute> eAllAttributes = eclass.getEAllAttributes();
-            cache.put(dataType, eclass, Sets.filter(Sets.newHashSet(eAllAttributes), new Predicate<EAttribute>() {
-                @Override
-                public boolean apply(EAttribute input) {
-                    return input.getEType().equals(dataType);
-                }
-            }));
+            cache.put(dataType, eclass, 
+                    eAllAttributes.stream().filter(input -> Objects.equals(input.getEType(), dataType)).collect(Collectors.toSet())
+            );
         }
         return cache.get(dataType, eclass).stream();
     }
@@ -87,7 +77,6 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
                 .flatMap(i -> i)
                 .<Object>flatMap(i -> i)
                 .iterator();
-        // it = Iterators.concat(Iterators.transform(Iterators.filter(getOldModelContents(), EObject.class), );
     }
     
     

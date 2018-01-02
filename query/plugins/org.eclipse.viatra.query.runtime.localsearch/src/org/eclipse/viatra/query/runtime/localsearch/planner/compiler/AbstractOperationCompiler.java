@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.compiler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -56,14 +61,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 /**
  * @author Zoltan Ujhelyi
  * @since 1.7
@@ -86,7 +83,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected abstract void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping);
 
     protected List<ISearchOperation> operations;
-    protected Set<MatcherReference> dependencies = Sets.newHashSet();
+    protected Set<MatcherReference> dependencies = new HashSet<>();
     protected Map<PConstraint, Set<Integer>> variableBindings;
     private Map<PVariable, Integer> variableMappings;
     protected final IQueryRuntimeContext runtimeContext;
@@ -109,7 +106,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         variableMappings = CompilerHelper.createVariableMapping(plan);
         variableBindings = CompilerHelper.cacheVariableBindings(plan, variableMappings, boundParameters);
     
-        operations = Lists.newArrayList();
+        operations = new ArrayList<>();
     
         List<POperation> operationList = CompilerHelper.createOperationsList(plan);
         for (POperation pOperation : operationList) {
@@ -219,20 +216,11 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
             return true;
         }else if (pConstraint instanceof PositivePatternCall){
             // Positive pattern call is check if all non-single used variables are bound
-            return variableBindings.get(pConstraint).containsAll(Collections2.transform(Sets.filter(pConstraint.getAffectedVariables(), new Predicate<PVariable>() {
-    
-                @Override
-                public boolean apply(PVariable input) {
-                    return input.getReferringConstraints().size() > 1;
-                }
-            }), new Function<PVariable, Integer>() {
-    
-                @Override
-                public Integer apply(PVariable input) {
-                    return variableMapping.get(input);
-                }
-                
-            }));
+            List<Integer> callVariables = pConstraint.getAffectedVariables().stream()
+                .filter(input -> input.getReferringConstraints().size() > 1)
+                .map(input -> variableMapping.get(input))
+                .collect(Collectors.toList());
+            return variableBindings.get(pConstraint).containsAll(callVariables);
         }else if (pConstraint instanceof AggregatorConstraint){
             PVariable outputvar = ((AggregatorConstraint) pConstraint).getResultVariable();
             return variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
@@ -245,7 +233,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         } else {
             // In other cases, all variables shall be bound to be a check
             Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
-            Set<Integer> varIndices = Sets.newHashSet();
+            Set<Integer> varIndices = new HashSet<>();
             for (PVariable variable : affectedVariables) {
                 varIndices.add(variableMapping.get(variable));
             }
@@ -288,7 +276,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         int targetPosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(1));
         
         //The second parameter is NOT bound during execution!
-        CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, ImmutableSet.of(sourcePosition));
+        CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));
         operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition));
         dependencies.add(information.getReference());
     }
@@ -296,7 +284,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected void createCheck(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         Iterable<String> inputParameterNames = expressionEvaluation.getEvaluator().getInputParameterNames();
-        Map<String, Integer> nameMap = Maps.newHashMap();
+        Map<String, Integer> nameMap = new HashMap<>();
         
         for (String pVariableName : inputParameterNames) {
             PVariable pVariable = expressionEvaluation.getPSystem().getVariableByNameChecked(pVariableName);
@@ -362,7 +350,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected void createExtend(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         Iterable<String> inputParameterNames = expressionEvaluation.getEvaluator().getInputParameterNames();
-        Map<String, Integer> nameMap = Maps.newHashMap();
+        Map<String, Integer> nameMap = new HashMap<>();
         
         for (String pVariableName : inputParameterNames) {
             PVariable pVariable = expressionEvaluation.getPSystem().getVariableByNameChecked(pVariableName);

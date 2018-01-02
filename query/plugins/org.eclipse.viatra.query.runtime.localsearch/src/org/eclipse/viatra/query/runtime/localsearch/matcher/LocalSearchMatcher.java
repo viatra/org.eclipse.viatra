@@ -43,7 +43,10 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     private IPlanDescriptor planDescriptor;
     private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
 
-    public ImmutableList<SearchPlanExecutor> getPlan() {
+    /**
+     * @since 2.0
+     */
+    public List<SearchPlanExecutor> getPlan() {
         return plan;
     }
     

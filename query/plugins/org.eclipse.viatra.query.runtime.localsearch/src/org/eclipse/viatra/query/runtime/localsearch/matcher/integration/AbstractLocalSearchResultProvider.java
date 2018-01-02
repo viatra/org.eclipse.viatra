@@ -204,14 +204,8 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
 
     protected void prepareDirectDependencies() {
         // Do not prepare for any adornment at this point
-        IAdornmentProvider adornmentProvider = new IAdornmentProvider() {
-            
-            @Override
-            public Iterable<Set<PParameter>> getAdornments(PQuery query) {
-                return Collections.emptySet();
-            }
-        };
-        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
+        IAdornmentProvider adornmentProvider = query -> Collections.emptySet();
+        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
         for(PQuery dep : getDirectPositiveDependencies()){
             backendContext.getResultProviderAccess().getResultProvider(dep, hints);
         }

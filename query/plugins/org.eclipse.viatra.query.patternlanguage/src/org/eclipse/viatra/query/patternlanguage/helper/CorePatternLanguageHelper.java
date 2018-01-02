@@ -232,9 +232,9 @@ public final class CorePatternLanguageHelper {
         Iterable<XFeatureCall> featuredCalls = (xExpression instanceof XFeatureCall) ? 
                 Iterables.concat(ImmutableList.of((XFeatureCall)xExpression), Iterables.filter(contents, XFeatureCall.class))
                 : Iterables.filter(contents, XFeatureCall.class);
-        final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, call -> call.getConcreteSyntaxFeatureName()));
+        final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, XFeatureCall::getConcreteSyntaxFeatureName));
         Iterable<Variable> calledVariables = Iterables.filter(allVariables, var -> valNames.contains(var.getName()));
-        return IterableExtensions.sortBy(calledVariables, var -> var.getName());
+        return IterableExtensions.sortBy(calledVariables, Variable::getName);
     }
 
 

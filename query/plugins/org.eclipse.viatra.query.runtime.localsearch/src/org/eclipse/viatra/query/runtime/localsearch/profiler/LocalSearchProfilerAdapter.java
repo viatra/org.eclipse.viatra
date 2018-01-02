@@ -23,8 +23,6 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * This is a simple {@link ILocalSearchAdapter} which capable of counting
  * each search operation execution then printing it in human readably form 
@@ -45,7 +43,7 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
         final ArrayList<List<ISearchOperation>> operations;
         
         public PlanProfile(LocalSearchMatcher lsMatcher) {
-            ImmutableList<SearchPlanExecutor> plan = lsMatcher.getPlan();
+            List<SearchPlanExecutor> plan = lsMatcher.getPlan();
             bodies = new int[plan.size()][];
             operations = new ArrayList<>(plan.size());
             for(int i=0;i<bodies.length;i++){
@@ -56,7 +54,7 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
         }
         
         public void register(LocalSearchMatcher lsMatcher){
-            ImmutableList<SearchPlanExecutor> plan = lsMatcher.getPlan();
+            List<SearchPlanExecutor> plan = lsMatcher.getPlan();
             for(int i=0;i<bodies.length;i++){
                 currentBodies.put(plan.get(i), bodies[i]);
             }
@@ -98,21 +96,18 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
     @Override
     public void patternMatchingStarted(LocalSearchMatcher lsMatcher) {
         MatcherReference key = new MatcherReference(lsMatcher.getPlanDescriptor().getQuery(), lsMatcher.getPlanDescriptor().getAdornment());
-        PlanProfile pp = profile.get(key);
-        if (pp == null){
-            pp = new PlanProfile(lsMatcher);
-            profile.put(key, pp);
-        }
+        PlanProfile pp = profile.computeIfAbsent(key, input -> new PlanProfile(lsMatcher));
         pp.register(lsMatcher);
     }
 
     @Override
     public void patternMatchingFinished(LocalSearchMatcher lsMatcher) {
         MatcherReference key = new MatcherReference(lsMatcher.getPlanDescriptor().getQuery(), lsMatcher.getPlanDescriptor().getAdornment());
-        PlanProfile pp = profile.get(key);
-        if (pp != null){
+        profile.computeIfPresent(key, (ref, pp) -> {
             pp.unRegister(lsMatcher);
-        }
+            // Remove entry
+            return null;
+        });
     }
 
     @Override

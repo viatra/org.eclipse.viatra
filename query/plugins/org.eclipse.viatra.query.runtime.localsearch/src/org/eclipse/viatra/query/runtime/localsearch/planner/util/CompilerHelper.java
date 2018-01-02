@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,11 +27,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-
 /**
  * 
  * Helper methods for compiling SubPlans
@@ -40,8 +38,12 @@ public class CompilerHelper {
 
     private CompilerHelper() {/*Utility class constructor*/}
     
+    private static boolean isUserSpecified(PVariable var) {
+        return !var.isVirtual() && !var.getName().startsWith("_"); 
+    }
+    
     public static Map<PVariable, Integer> createVariableMapping(SubPlan plan) {
-        Map<PVariable, Integer> variableMapping = Maps.newHashMap();
+        Map<PVariable, Integer> variableMapping = new HashMap<>();
 
         int variableNumber = 0;
 
@@ -54,27 +56,18 @@ public class CompilerHelper {
             }
         }
 
-        List<PVariable> allVariables =
-        new Ordering<PVariable>() {
-
-            private boolean isUserSpecified(PVariable var) {
-                return !var.isVirtual() && !var.getName().startsWith("_"); 
-            }
-            
-            @Override
-            public int compare(PVariable left, PVariable right) {
-                boolean leftUserSpecified = isUserSpecified(left);
-                boolean rightUserSpecified = isUserSpecified(right);
-                if (leftUserSpecified && !rightUserSpecified) {
-                    return -1;
-                } else if (!leftUserSpecified && rightUserSpecified) {
-                    return +1;
-                } else {
-                    return left.getName().compareTo(right.getName());
-                }
-            }
-            
-        }.sortedCopy(plan.getBody().getUniqueVariables());
+        List<PVariable> allVariables = new ArrayList<>(plan.getBody().getUniqueVariables());
+        Collections.sort(allVariables, (left, right) -> {
+                    boolean leftUserSpecified = isUserSpecified(left);
+                    boolean rightUserSpecified = isUserSpecified(right);
+                    if (leftUserSpecified && !rightUserSpecified) {
+                        return -1;
+                    } else if (!leftUserSpecified && rightUserSpecified) {
+                        return +1;
+                    } else {
+                        return left.getName().compareTo(right.getName());
+                    }
+                });
         for (PVariable pVariable : allVariables) {
             if (!variableMapping.containsKey(pVariable)) {
                 variableMapping.put(pVariable, variableNumber++);
@@ -90,7 +83,7 @@ public class CompilerHelper {
         Set<Integer> externallyBoundVariables = getVariableIndicesForParameters(plan, variableMappings,
                 adornment);
 
-        Map<PConstraint, Set<Integer>> variableBindings = Maps.newHashMap();
+        Map<PConstraint, Set<Integer>> variableBindings = new HashMap<>();
 
         List<SubPlan> allPlansInHierarchy = getAllParentPlans(plan);
         for (SubPlan subPlan : allPlansInHierarchy) {
@@ -98,9 +91,9 @@ public class CompilerHelper {
 
             if (operation instanceof PApply) {
                 PConstraint pConstraint = ((PApply) operation).getPConstraint();
-                Set<Integer> parametersBoundByParentPlan = getParametersBoundByParentPlan(variableMappings, subPlan);
-                Set<Integer> boundVariableIndices = Sets.union(externallyBoundVariables, parametersBoundByParentPlan);
-
+                Set<Integer> boundVariableIndices = getParametersBoundByParentPlan(variableMappings, subPlan);
+                boundVariableIndices.addAll(externallyBoundVariables);
+                
                 variableBindings.put(pConstraint, boundVariableIndices);
             }
         }
@@ -127,7 +120,8 @@ public class CompilerHelper {
      */
     private static List<SubPlan> getAllParentPlans(SubPlan plan) {
         SubPlan currentPlan = plan;
-        List<SubPlan> allPlans = Lists.newArrayList(plan);
+        List<SubPlan> allPlans = new ArrayList<>();
+        allPlans.add(plan);
         while (!currentPlan.getParentPlans().isEmpty()) {
             // In the local search it is assumed that only a single parent exists
             currentPlan = currentPlan.getParentPlans().get(0);
@@ -146,7 +140,7 @@ public class CompilerHelper {
      */
     private static Set<Integer> getVariableIndices(Map<PVariable, Integer> variableMappings,
             Iterable<PVariable> variables) {
-        Set<Integer> variableIndices = Sets.newHashSet();
+        Set<Integer> variableIndices = new HashSet<>();
         for (PVariable pVariable : variables) {
             variableIndices.add(variableMappings.get(pVariable));
         }
@@ -157,7 +151,7 @@ public class CompilerHelper {
      * Returns all affected variables of the given PConstraints.
      */
     private static Set<PVariable> getAffectedVariables(Set<PConstraint> pConstraints) {
-        Set<PVariable> allDeducedVariables = Sets.newHashSet();
+        Set<PVariable> allDeducedVariables = new HashSet<>();
         for (PConstraint pConstraint : pConstraints) {
             allDeducedVariables.addAll(pConstraint.getAffectedVariables());
         }
@@ -177,12 +171,12 @@ public class CompilerHelper {
      */
     private static Set<Integer> getVariableIndicesForParameters(SubPlan plan,
             Map<PVariable, Integer> variableMappings, Set<PParameter> parameters) {
-        Map<PParameter, PVariable> parameterMapping = Maps.newHashMap();
+        Map<PParameter, PVariable> parameterMapping = new HashMap<>();
         for (ExportedParameter constraint : plan.getBody().getSymbolicParameters()) {
             parameterMapping.put(constraint.getPatternParameter(), constraint.getParameterVariable());
         }
         
-        Set<Integer> variableIndices = Sets.newHashSet();
+        Set<Integer> variableIndices = new HashSet<>();
         for (PParameter parameter : parameters) {
             PVariable parameterVariable = parameterMapping.get(parameter);
             if (parameterVariable == null) {
@@ -203,15 +197,16 @@ public class CompilerHelper {
      * @return list of POperations extracted from the <code>plan</code>
      */
     public static List<POperation> createOperationsList(SubPlan plan) {
-        List<POperation> operationsList = Lists.newArrayList();
+        List<POperation> operationsList = new ArrayList<>();
         while (plan.getParentPlans().size() > 0) {
             operationsList.add(plan.getOperation());
             SubPlan parentPlan = plan.getParentPlans().get(0);
             plan = parentPlan;
         }
         operationsList.add(plan.getOperation());
-
-        return Lists.reverse(operationsList);
+        
+        Collections.reverse(operationsList);
+        return operationsList; 
     }
 
 }

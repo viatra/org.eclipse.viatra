@@ -9,9 +9,9 @@
  */
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 import java.util.Set;
+import java.util.function.Function;
+
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
@@ -44,9 +44,9 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     /** 
      * Instantiates the wrapper
      * @param constraintfor which the information is added and stored
-     * @param boundMaskVariablesthe bound variables in the operation mask
-     * @param freeMaskVariablesthe free variables in the operation mask
-     * @param sameWithDifferentBindingsduring the planning process, multiple operation adornments are considered for a constraint, so that it
+     * @param boundMaskVariables the bound variables in the operation mask
+     * @param freeMaskVariables the free variables in the operation mask
+     * @param sameWithDifferentBindings during the planning process, multiple operation adornments are considered for a constraint, so that it
      * is represented by multiple plan infos. This parameter contains all plan infos that are for the same
      * constraint, but with different adornment
      * @param context the query backend context
@@ -101,10 +101,10 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     }
 
     public PConstraintCategory getCategory(PBody pBody, Set<PVariable> boundVariables) {
-        if (!Sets.intersection(this.freeMaskVariables, boundVariables).isEmpty()) {
+        if (boundVariables.stream().anyMatch(this.freeMaskVariables::contains)) {
             return PConstraintCategory.PAST;
-        } else if (!Sets.intersection(this.boundMaskVariables, Sets.difference(pBody.getAllVariables(), boundVariables)).
-            isEmpty()) {
+        } else if (pBody.getAllVariables().stream().filter(var -> !boundVariables.contains(var))
+                .anyMatch(this.boundMaskVariables::contains)) {
             return PConstraintCategory.FUTURE;
         } else {
             return PConstraintCategory.PRESENT;

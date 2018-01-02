@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,10 +35,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormaliz
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionRewriterCacher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * 
@@ -98,7 +97,7 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
         preprocessor.setTraceCollector(configuration.getTraceCollector());
         Set<PBody> normalizedBodies = preprocessor.rewrite(querySpec.getDisjunctBodies()).getBodies();
 
-        List<SearchPlanForBody> plansForBodies = Lists.newArrayListWithExpectedSize(normalizedBodies.size());
+        List<SearchPlanForBody> plansForBodies = new ArrayList<>(normalizedBodies.size());
 
         for (PBody normalizedBody : normalizedBodies) {
             // 2. Plan creation
@@ -120,11 +119,11 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
     }
 
     private Set<PVariable> calculatePatternAdornmentForPlanner(Set<PParameter> boundParameters, PBody normalizedBody) {
-        Map<PParameter, PVariable> parameterMapping = Maps.newHashMap();
+        Map<PParameter, PVariable> parameterMapping = new HashMap<>();
         for (ExportedParameter constraint : normalizedBody.getSymbolicParameters()) {
             parameterMapping.put(constraint.getPatternParameter(), constraint.getParameterVariable());
         }
-        Set<PVariable> boundVariables = Sets.newHashSet();
+        Set<PVariable> boundVariables = new HashSet<>();
         for (PParameter parameter : boundParameters) {
             PVariable mappedParameter = parameterMapping.get(parameter);
             boundVariables.add(mappedParameter);

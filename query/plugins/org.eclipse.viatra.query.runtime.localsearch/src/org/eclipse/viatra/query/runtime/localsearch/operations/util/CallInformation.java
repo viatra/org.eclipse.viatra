@@ -11,9 +11,12 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -24,12 +27,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * This class stores a precompiled version of call-related metadata and masks for local search operations
@@ -44,8 +41,8 @@ public final class CallInformation {
     private final TupleMask parameterMask;
     private final int[] freeParameterIndices;
     
-    private final Map<PParameter, Integer> mapping = Maps.newHashMap();
-    private final Set<PParameter> adornment = Sets.newHashSet();
+    private final Map<PParameter, Integer> mapping = new HashMap<>();
+    private final Set<PParameter> adornment = new HashSet<>();
     private final PQuery referredQuery;
     private final MatcherReference matcherReference;
     
@@ -142,14 +139,9 @@ public final class CallInformation {
     
     @Override
     public String toString() {
-        return referredQuery.getFullyQualifiedName()+"("+Joiner.on(",").join(
-                Iterables.transform(referredQuery.getParameters(), new Function<PParameter, String>() {
-
-                    @Override
-                    public String apply(PParameter input) {
-                        return (adornment.contains(input) ? "+" : "-") + mapping.get(input);
-                    }
-                }))+")";
+        return referredQuery.getFullyQualifiedName()+"("+
+                referredQuery.getParameters().stream().map(input -> (adornment.contains(input) ? "+" : "-") + mapping.get(input)).collect(Collectors.joining(","))
+                +")";
     }
     
 }

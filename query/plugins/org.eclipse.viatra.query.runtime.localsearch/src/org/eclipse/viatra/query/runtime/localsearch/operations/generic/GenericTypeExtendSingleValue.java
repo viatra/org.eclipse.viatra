@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.generic;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -22,12 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * @author Zoltan Ujhelyi
@@ -37,7 +35,7 @@ import com.google.common.collect.ImmutableList.Builder;
 public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratingSearchOperation {
 
     private final IInputKey type;
-    private final ImmutableList<Integer> positionList;
+    private final List<Integer> positionList;
     private Iterator<? extends Object> it;
     private final VolatileMaskedTuple maskedTuple;
     private TupleMask indexerMask;
@@ -54,11 +52,11 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
         Preconditions.checkArgument(positions.length == type.getArity(),
                 "The type %s requires %s parameters, but %s positions are provided", type.getPrettyPrintableName(),
                 type.getArity(), positions.length);
-        Builder<Integer> builder = ImmutableList.<Integer>builder();
+        List<Integer> positionList = new ArrayList<>();
         for (int position : positions) {
-            builder.add(position);
+            positionList.add(position);
         }
-        this.positionList = builder.build();
+        this.positionList = Collections.unmodifiableList(positionList);
         this.type = type;
 
         this.unboundVariableIndex = unboundVariableIndex;
@@ -101,13 +99,10 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
 
     @Override
     public String toString() {
-        Iterable<String> parameterNames = Iterables.transform(positionList, new Function<Integer, String>() {
-
-                    @Override
-                    public String apply(Integer input) {
-                        return String.format("%s%d", Objects.equals(input, unboundVariableIndex) ? "-" : "+", input);
-                    }
-                });
-        return "extend    " + type.getPrettyPrintableName() + "(" + Joiner.on(", ").join(parameterNames) + ")";
+        return "extend    " + type.getPrettyPrintableName() + "("
+                + positionList.stream().map(
+                        input -> String.format("%s%d", Objects.equals(input, unboundVariableIndex) ? "-" : "+", input))
+                        .collect(Collectors.joining(", "))
+                + ")";
     }
 }

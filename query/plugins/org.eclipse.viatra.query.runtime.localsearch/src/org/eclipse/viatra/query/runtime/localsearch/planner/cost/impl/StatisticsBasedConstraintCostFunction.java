@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -38,8 +39,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Cost function which calculates cost based on the cardinality of items in the runtime model
@@ -145,7 +144,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             final PConstraint constraint) {
         final QueryAnalyzer queryAnalyzer = input.getQueryAnalyzer();
         final Map<Set<PVariable>, Set<PVariable>> functionalDependencies = queryAnalyzer
-                .getFunctionalDependencies(Collections.unmodifiableSet(Sets.newHashSet(constraint)), false);
+                .getFunctionalDependencies(Collections.singleton(constraint), false);
         final Set<PVariable> impliedVariables = FunctionalDependencyHelper.closureOf(input.getBoundVariables(),
                 functionalDependencies);
         return ((impliedVariables != null) && impliedVariables.containsAll(input.getFreeVariables()));
@@ -172,7 +171,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
 
     protected double _calculateCost(final PositivePatternCall patternCall, final IConstraintEvaluationContext input) {
         final Map<Set<PVariable>, Set<PVariable>> dependencies = input.getQueryAnalyzer()
-                .getFunctionalDependencies(ImmutableSet.of(patternCall), false);
+                .getFunctionalDependencies(Collections.singleton(patternCall), false);
         final Set<PVariable> boundOrImplied = FunctionalDependencyHelper.closureOf(input.getBoundVariables(),
                 dependencies);
         final List<PParameter> parameters = patternCall.getReferredQuery().getParameters();

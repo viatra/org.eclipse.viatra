@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * This class represents the state of the plan during planning
@@ -64,36 +62,24 @@ public class PlanState {
     }
 
     public void updateOperations(List<PConstraintInfo> allPotentialExtendInfos, List<PConstraintInfo> allPotentialChecks) {
-        futureChecks = Lists.newArrayList();
-        futureExtends = Lists.newArrayList();
-        presentExtends = Lists.newArrayList();
+        futureChecks = new ArrayList<>();
+        futureExtends = new ArrayList<>();
+        presentExtends = new ArrayList<>();
 
-        Set<PConstraintInfo> allUsedAppliedConstraints = Sets.newHashSet();
+        Set<PConstraintInfo> allUsedAppliedConstraints = new HashSet<>();
         for (PConstraintInfo pConstraintPlanInfo : operationsList) {
             allUsedAppliedConstraints.addAll(pConstraintPlanInfo.getSameWithDifferentBindings());
         }
 
         final Set<PConstraintInfo> allUsedAppliedConstraintsArg = allUsedAppliedConstraints;
 
-        Collection<PConstraintInfo> allRelevantExtendInfos = Collections2.filter(allPotentialExtendInfos,
-            new Predicate<PConstraintInfo>() {
-
-                @Override
-                public boolean apply(PConstraintInfo input) {
-                    return !allUsedAppliedConstraintsArg.contains(input) && isPossibleExtend(input);
-                }
-            });
+        Collection<PConstraintInfo> allRelevantExtendInfos = allPotentialExtendInfos.stream().filter(
+            input -> !allUsedAppliedConstraintsArg.contains(input) && isPossibleExtend(input)).collect(Collectors.toList());
         // categorize extend constraint infos
         categorizeExtends(allRelevantExtendInfos);
         
-        Collection<PConstraintInfo> allRelevantCheckInfos = Collections2.filter(allPotentialChecks,
-            new Predicate<PConstraintInfo>() {
-
-                @Override
-                public boolean apply(PConstraintInfo input) {
-                    return !allUsedAppliedConstraintsArg.contains(input) && isPossibleCheck(input);
-                }
-            });
+        Collection<PConstraintInfo> allRelevantCheckInfos = allPotentialChecks.stream().filter(
+            input -> !allUsedAppliedConstraintsArg.contains(input) && isPossibleCheck(input)).collect(Collectors.toList());
         // categorize check constraint infos
         categorizeChecks(allRelevantCheckInfos);
         

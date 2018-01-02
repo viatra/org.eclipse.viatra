@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -40,11 +46,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 
 /**
  * @author Grill Balázs
@@ -52,14 +55,7 @@ import com.google.common.collect.Sets;
  */
 class PConstraintInfoInferrer {
     
-    private static final class SingleUseVariablePredicate implements Predicate<PVariable> {
-        @Override
-        public boolean apply(PVariable input) {
-            return input != null && input.getReferringConstraints().size() == 1;
-        }
-    }
-    
-    private static final SingleUseVariablePredicate SINGLE_USE_VARIABLE = new SingleUseVariablePredicate();
+    private static final Predicate<PVariable> SINGLE_USE_VARIABLE = input -> input != null && input.getReferringConstraints().size() == 1;
 
     private final boolean useIndex;
     private final Function<IConstraintEvaluationContext, Double> costFunction;
@@ -84,7 +80,7 @@ class PConstraintInfoInferrer {
      * @return a collection of the wrapper PConstraintInfo objects with all the allowed application conditions
      */
     public List<PConstraintInfo> createPConstraintInfos(Set<PConstraint> constraintSet) {
-        List<PConstraintInfo> constraintInfos = Lists.newArrayList();
+        List<PConstraintInfo> constraintInfos = new ArrayList<>();
 
         for (PConstraint pConstraint : constraintSet) {
             createPConstraintInfoDispatch(constraintInfos, pConstraint);
@@ -135,8 +131,8 @@ class PConstraintInfoInferrer {
         // IN parameters cannot be unbound and
         // OUT parameters cannot be bound
         Tuple variables = pCall.getVariablesTuple();
-        final Set<PVariable> inVariables = Sets.newHashSet();
-        Set<PVariable> inoutVariables = Sets.newHashSet();
+        final Set<PVariable> inVariables = new HashSet<>();
+        Set<PVariable> inoutVariables = new HashSet<>();
         List<PParameter> parameters = pCall.getReferredQuery().getParameters();
         for(int i=0;i<parameters.size();i++){
             switch(parameters.get(i).getDirection()){
@@ -152,13 +148,9 @@ class PConstraintInfoInferrer {
             
             }
         }
-        Iterable<Set<PVariable>> bindings = Iterables.transform(Sets.powerSet(inoutVariables), new Function<Set<PVariable>, Set<PVariable>>() {
-
-            @Override
-            public Set<PVariable> apply(Set<PVariable> input) {
-                return Sets.union(inVariables, input);
-            }
-        });
+        Iterable<Set<PVariable>> bindings = Sets.powerSet(inoutVariables).stream()
+                .map(input -> Stream.concat(input.stream(), inVariables.stream()).collect(Collectors.toSet()))
+                .collect(Collectors.toSet());
         
         doCreateConstraintInfos(resultList, pCall, affectedVariables, bindings);
     }
@@ -174,14 +166,14 @@ class PConstraintInfoInferrer {
         PVariable firstVariable = (PVariable) variables.get(0);
         PVariable secondVariable = (PVariable) variables.get(1);
         // Check is always supported
-        bindings.add(Sets.newHashSet(firstVariable, secondVariable));
+        bindings.add(new HashSet<>(Arrays.asList(firstVariable, secondVariable)));
         // If first parameter is not bound mandatorily, it can be left out
         if (parameters.get(0).getDirection() != PParameterDirection.IN) {
-            bindings.add(Sets.newHashSet(secondVariable));
+            bindings.add(Collections.singleton(secondVariable));
         }
         // If second parameter is not bound mandatorily, it can be left out
         if (parameters.get(1).getDirection() != PParameterDirection.IN) {
-            bindings.add(Sets.newHashSet(firstVariable));
+            bindings.add(Collections.singleton(firstVariable));
         }
         
         doCreateConstraintInfos(resultList, closure, closure.getAffectedVariables(), bindings);
@@ -200,12 +192,12 @@ class PConstraintInfoInferrer {
             ExpressionEvaluation expressionEvaluation) {
         // An expression evaluation can only have its output variable unbound. All other variables shall be bound
         PVariable output = expressionEvaluation.getOutputVariable();
-        Set<Set<PVariable>> bindings = Sets.newHashSet();
+        Set<Set<PVariable>> bindings = new HashSet<>();
         Set<PVariable> affectedVariables = expressionEvaluation.getAffectedVariables();
         // All variables bound -> check
         bindings.add(affectedVariables);
         // Output variable is not bound -> extend
-        bindings.add(Sets.difference(affectedVariables, Collections.singleton(output)));
+        bindings.add(affectedVariables.stream().filter(var -> !Objects.equals(var, output)).collect(Collectors.toSet()));
         doCreateConstraintInfos(resultList, expressionEvaluation, affectedVariables, bindings);
     }
 
@@ -228,7 +220,8 @@ class PConstraintInfoInferrer {
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
         // The only variables which can be unbound are single-use
-        Set<PVariable> canBeUnboundVariables = Sets.union(Collections.singleton(resultVariable), Sets.filter(affectedVariables, SINGLE_USE_VARIABLE));
+        Set<PVariable> canBeUnboundVariables = 
+                Stream.concat(Stream.of(resultVariable), affectedVariables.stream().filter(SINGLE_USE_VARIABLE)).collect(Collectors.toSet());
        
         Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
@@ -242,22 +235,22 @@ class PConstraintInfoInferrer {
      * @return The set of possible bound variable sets
      */
     private Set<Set<PVariable>> calculatePossibleBindings(Set<PVariable> canBeUnboundVariables, Set<PVariable> affectedVariables){
-        final Set<PVariable> mustBindVariables = Sets.difference(affectedVariables, canBeUnboundVariables);
-        return Sets.newHashSet(Iterables.transform(Sets.powerSet(canBeUnboundVariables), new Function<Set<PVariable>, Set<PVariable>>() {
-
-            @Override
-            public Set<PVariable> apply(Set<PVariable> input) {
-                // deducible variables shall need to be bound before executing this constraint
-                return Sets.union(input, mustBindVariables);
-            }
-        }));
+        final Set<PVariable> mustBindVariables = affectedVariables.stream().filter(input -> !canBeUnboundVariables.contains(input)).collect(Collectors.toSet()); 
+        return Sets.powerSet(canBeUnboundVariables).stream()
+                .map(input -> {
+                    //some variables have to be bound before executing this constraint
+                    Set<PVariable> result= new HashSet<>(input);
+                    result.addAll(mustBindVariables);
+                    return result;
+                })
+                .collect(Collectors.toSet());
     }
     
     private void createConstraintInfoGeneric(List<PConstraintInfo> resultList, PConstraint pConstraint){
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
         // The only variables which can be unbound are single use variables
-        Set<PVariable> canBeUnboundVariables = Sets.filter(affectedVariables, SINGLE_USE_VARIABLE);
+        Set<PVariable> canBeUnboundVariables = affectedVariables.stream().filter(SINGLE_USE_VARIABLE).collect(Collectors.toSet());
        
         Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
@@ -300,11 +293,12 @@ class PConstraintInfoInferrer {
     
     private void doCreateConstraintInfos(List<PConstraintInfo> constraintInfos,
             PConstraint pConstraint, Set<PVariable> affectedVariables, Iterable<Set<PVariable>> bindings) {
-        Set<PConstraintInfo> sameWithDifferentBindings = Sets.newHashSet();
+        Set<PConstraintInfo> sameWithDifferentBindings = new HashSet<>();
         for (Set<PVariable> boundVariables : bindings) {
-            PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables, Sets.difference(
-                    affectedVariables, boundVariables), sameWithDifferentBindings, 
-                    context, costFunction);
+            
+            PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables,
+                    affectedVariables.stream().filter(input -> !boundVariables.contains(input)).collect(Collectors.toSet()),
+                    sameWithDifferentBindings, context, costFunction);
             constraintInfos.add(info);
             sameWithDifferentBindings.add(info);
         }
@@ -312,16 +306,9 @@ class PConstraintInfoInferrer {
     
     private Set<Set<PVariable>> excludeUnnavigableOperationMasks(TypeConstraint typeConstraint, Set<Set<PVariable>> bindings) {
         PVariable firstVariable = typeConstraint.getVariableInTuple(0);
-        Iterator<Set<PVariable>> iterator = bindings.iterator();
-        Set<Set<PVariable>>elementsToRemove = Sets.newHashSet();
-        while (iterator.hasNext()) {
-            Set<PVariable> boundVariablesSet = iterator.next();
-            if(!boundVariablesSet.isEmpty() && !boundVariablesSet.contains(firstVariable)){
-                elementsToRemove.add(boundVariablesSet);
-            }
-        }
-        bindings = Sets.difference(bindings, elementsToRemove);
-        return bindings;
+        return bindings.stream().filter(
+                boundVariablesSet -> (boundVariablesSet.isEmpty() || boundVariablesSet.contains(firstVariable)))
+                .collect(Collectors.toSet());
     }
     
     private boolean hasEOpposite(EStructuralFeature feature) {
