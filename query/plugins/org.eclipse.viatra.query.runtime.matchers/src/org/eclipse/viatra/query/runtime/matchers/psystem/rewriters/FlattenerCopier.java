@@ -12,7 +12,9 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
@@ -22,10 +24,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 
 /**
@@ -89,8 +90,7 @@ class FlattenerCopier extends PBodyCopier {
             // If the call was not flattened, copy the constraint
             super.copyPositivePatternCallConstraint(positivePatternCall);
         } else {
-            PBody calledBody = callsToFlatten.get(positivePatternCall);
-            Preconditions.checkNotNull(calledBody);
+            PBody calledBody = Objects.requireNonNull(callsToFlatten.get(positivePatternCall));
             Preconditions.checkArgument(positivePatternCall.getReferredQuery().equals(calledBody.getPattern()));
 
             List<PVariable> symbolicParameters = calledBody.getSymbolicParameterVariables();
@@ -113,8 +113,9 @@ class FlattenerCopier extends PBodyCopier {
 
     @Override
     protected void copyExpressionEvaluationConstraint(final ExpressionEvaluation expressionEvaluation) {
-        Map<PVariable, PVariable> variableMapping = Maps.filterEntries(this.variableMapping, 
-                input -> expressionEvaluation.getPSystem().getAllVariables().contains(input.getKey()));
+        Map<PVariable, PVariable> variableMapping = this.variableMapping.entrySet().stream()
+                .filter(input -> expressionEvaluation.getPSystem().getAllVariables().contains(input.getKey()))
+                .collect(Collectors.toMap(input -> input.getKey(), input -> input.getValue()));
         
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
         addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));

@@ -14,12 +14,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-
-import com.google.common.base.Joiner;
-
 
 /**
  * No constraints, and no parent SubPlan, just a (possibly empty) set of a priori known (input) variables. Satisfied by a single tuple.
@@ -49,7 +47,7 @@ public class PStart extends POperation {
 
     @Override
     public String getShortName() {
-        return String.format("START_{%s}", Joiner.on(',').join(aPrioriVariables));
+        return aPrioriVariables.stream().map(PVariable::getName).collect(Collectors.joining(",", "START_{", "}"));
     }
     @Override
     public int numParentSubPlans() {

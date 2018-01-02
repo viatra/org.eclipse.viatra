@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * A masked tuple implementation that allows modifying the backing tuple.

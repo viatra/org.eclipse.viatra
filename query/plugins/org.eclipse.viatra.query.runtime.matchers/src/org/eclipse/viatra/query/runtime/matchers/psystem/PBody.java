@@ -28,8 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Consta
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * A set of constraints representing a pattern body
@@ -252,7 +251,7 @@ public class PBody implements PTraceable {
         if (status == null) {
             query.checkMutability();
         } else {
-            Preconditions.checkState(status.equals(PQueryStatus.UNINITIALIZED));
+            Preconditions.checkState(status.equals(PQueryStatus.UNINITIALIZED), "Initialized queries are not mutable");
         }
     }
 

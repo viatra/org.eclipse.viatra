@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.tuple;
 
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * This class provides a volatile tuple view with a given mask of a given tuple instance. If the masked tuple changes,

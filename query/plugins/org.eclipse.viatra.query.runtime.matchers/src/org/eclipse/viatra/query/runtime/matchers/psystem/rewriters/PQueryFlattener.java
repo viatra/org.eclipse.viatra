@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,11 +32,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IConstraintFi
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IConstraintFilter.ExportedParameterFilter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRenamer.HierarchicalName;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 
 /**
@@ -52,7 +53,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     private static <K, V> Set<Map<K, V>> permutation(Map<K, Set<V>> values) {
         // An ordering of keys is defined here which will help restoring the appropriate values after the execution of
         // the cartesian product
-        List<K> keyList = Lists.newArrayList(values.keySet());
+        List<K> keyList = new ArrayList<>(values.keySet());
 
         // Produce list of value sets with the ordering defined by keyList
         List<Set<V>> valuesList = new ArrayList<Set<V>>(keyList.size());
@@ -64,9 +65,9 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         Set<List<V>> valueMappings = Sets.cartesianProduct(valuesList);
 
         // Build result
-        Set<Map<K, V>> result = Sets.newLinkedHashSet();
+        Set<Map<K, V>> result = new LinkedHashSet<>();
         for (List<V> valueList : valueMappings) {
-            Map<K, V> map = Maps.newHashMap();
+            Map<K, V> map = new HashMap<>();
             for (int i = 0; i < keyList.size(); i++) {
                 map.put(keyList.get(i), valueList.get(i));
             }
@@ -107,8 +108,8 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     private List<PDisjunction> disjunctionDependencies(PDisjunction rootDisjunction) {
         // Disjunctions are first collected into a list usign a depth-first approach,
         // which can be iterated backwards while removing duplicates
-        Deque<PDisjunction> stack = Queues.newArrayDeque();
-        List<PDisjunction> list = Lists.newLinkedList();
+        Deque<PDisjunction> stack = new ArrayDeque<>();
+        LinkedList<PDisjunction> list = new LinkedList<>();
         stack.push(rootDisjunction);
         list.add(rootDisjunction);
 
@@ -133,12 +134,14 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         // Remove duplicates (keeping the last instance) and reverse order
         Set<PDisjunction> visited = new HashSet<PDisjunction>();
         List<PDisjunction> result = new ArrayList<PDisjunction>(list.size());
-        for (PDisjunction item : Lists.reverse(list)) {
+        
+        list.descendingIterator().forEachRemaining(item -> {
             if (!visited.contains(item)) {
                 result.add(item);
                 visited.add(item);
             }
-        }
+            
+        });
 
         return result;
     }
@@ -152,15 +155,15 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      */
     private PDisjunction doFlatten(PDisjunction rootDisjunction) {
 
-        Map<PDisjunction, Set<PBody>> flatBodyMapping = Maps.newHashMap();
+        Map<PDisjunction, Set<PBody>> flatBodyMapping = new HashMap<>();
 
         List<PDisjunction> dependencies = disjunctionDependencies(rootDisjunction);
 
         for (PDisjunction disjunction : dependencies) {
-            Set<PBody> flatBodies = Sets.newHashSet();
+            Set<PBody> flatBodies = new HashSet<>();
             for (PBody body : disjunction.getBodies()) {
                 if (isFlatteningNeeded(body)) {
-                    Map<PositivePatternCall, Set<PBody>> flattenedBodies = Maps.newHashMap();
+                    Map<PositivePatternCall, Set<PBody>> flattenedBodies = new HashMap<>();
                     for (PConstraint pConstraint : body.getConstraints()) {
 
                         if (pConstraint instanceof PositivePatternCall) {
@@ -203,7 +206,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         Set<Map<PositivePatternCall, PBody>> conjunctedCalls = permutation(flattenedCalls);
 
         // The result set containing the merged conjuncted bodies
-        Set<PBody> conjunctedBodies = Sets.<PBody> newHashSet();
+        Set<PBody> conjunctedBodies = new HashSet<>();
 
         for (Map<PositivePatternCall, PBody> calledBodies : conjunctedCalls) {
             FlattenerCopier copier = createBodyCopier(pQuery, calledBodies);

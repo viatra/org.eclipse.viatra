@@ -15,11 +15,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Provides VIATRA Query with additional hints on how a query should be evaluated. The same hint can be provided to multiple queries. 
@@ -49,9 +47,9 @@ public class QueryEvaluationHint {
             IQueryBackendFactory queryBackendFactory) {
         super();
         this.queryBackendFactory = queryBackendFactory;
-        this.backendHintSettings = backendHintSettings == null ? 
-                Collections.<QueryHintOption<?>, Object>emptyMap() : 
-                    ImmutableMap.copyOf(backendHintSettings);
+        this.backendHintSettings = backendHintSettings == null 
+                ? Collections.<QueryHintOption<?>, Object> emptyMap()
+                : new HashMap<>(backendHintSettings);
     }
     
     /**
@@ -167,7 +165,9 @@ public class QueryEvaluationHint {
                 sb.append(backendHintSettings.toString());
             } else {
                 // we have to iterate on the contents
-                String joinedHintMap = Joiner.on(", ").withKeyValueSeparator("=").join(backendHintSettings);
+                
+                String joinedHintMap = backendHintSettings.entrySet().stream()
+                        .map(setting -> setting.getKey() + "=" + setting.getValue()).collect(Collectors.joining(", "));
                 sb.append('{').append(joinedHintMap).append('}');
             }            
         }

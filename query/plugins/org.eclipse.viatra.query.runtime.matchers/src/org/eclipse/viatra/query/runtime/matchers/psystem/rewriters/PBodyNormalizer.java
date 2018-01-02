@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,10 +39,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQuerySt
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 
 /**
  * A disjunction rewriter for creating a normalized form of specification, unifying variables and running basic sanity
@@ -82,7 +81,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
 
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) {
-        Set<PBody> normalizedBodies = Sets.newHashSet();
+        Set<PBody> normalizedBodies = new HashSet<>();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body, getTraceCollector());
             PBody modifiedBody = copier.getCopiedBody();
@@ -268,7 +267,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     }
     
     void eliminateDuplicateTypeConstraints(PBody body) {
-        Map<Object, PConstraint> constraints = Maps.newHashMap();
+        Map<Object, PConstraint> constraints = new HashMap<>();
         for (PConstraint constraint : body.getConstraints()) {
             Object key = getConstraintKey(constraint);
             // Retain first found instance of a constraint

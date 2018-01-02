@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * A wrapper for {@link IExpressionEvaluator} which is capable of correctly mapping variable names used by the
@@ -41,10 +41,10 @@ class VariableMappingExpressionEvaluatorWrapper implements IExpressionEvaluator 
         // Instead of just saving the reference of the mapping, save the actual (trimmed) state of the mapping as it
         // may change during copying (especially during flattening). A LinkedHashMap is used to retain ordering of
         // original parameter names iterator.
-        this.variableMapping = Maps.newLinkedHashMap();
+        this.variableMapping = new LinkedHashMap<>();
 
         // Index map by variable names
-        Map<String, PVariable> names = Maps.newHashMap();
+        Map<String, PVariable> names = new HashMap<>();
         for (PVariable originalVar : variableMapping.keySet()) {
             names.put(originalVar.getName(), originalVar);
         }

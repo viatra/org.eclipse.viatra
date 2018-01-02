@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
-import com.google.common.base.Preconditions;
-
 /**
  * A provider implementation that always returns the same object instance. 
  * @author Zoltan Ujhelyi

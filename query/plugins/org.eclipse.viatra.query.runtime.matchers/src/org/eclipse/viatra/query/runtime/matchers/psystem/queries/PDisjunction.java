@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,9 +82,10 @@ public class PDisjunction {
      * @return a non-null, but possibly empty list of query definitions
      */
     public Set<PQuery> getAllReferredQueries() {
-        Set<PQuery> processedQueries = Sets.newHashSet(this.getQuery());
+        Set<PQuery> processedQueries = new HashSet<>();
+        processedQueries.add(this.getQuery());
         Set<PQuery> foundQueries = getDirectReferredQueries();
-        Set<PQuery> newQueries = Sets.newHashSet(foundQueries);
+        Set<PQuery> newQueries = new HashSet<>(foundQueries);
     
         while(!processedQueries.containsAll(newQueries)) {
             PQuery query = newQueries.iterator().next();

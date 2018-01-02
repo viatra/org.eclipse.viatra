@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.Objects;
+
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
-
-import com.google.common.base.Preconditions;
 
 /**
  * @since 1.6
@@ -24,8 +24,7 @@ public class AbstractRewriterTraceSource {
     private IRewriterTraceCollector traceCollector = NopTraceCollector.INSTANCE;
     
     public void setTraceCollector(IRewriterTraceCollector traceCollector) {
-        Preconditions.checkNotNull(traceCollector);
-        this.traceCollector = traceCollector;
+        this.traceCollector = Objects.requireNonNull(traceCollector);
     }
     
     public IPTraceableTraceProvider getTraces() {

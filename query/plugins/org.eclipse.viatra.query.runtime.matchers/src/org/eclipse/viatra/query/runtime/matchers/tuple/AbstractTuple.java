@@ -15,9 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-
-import com.google.common.base.Objects;
 
 /**
  * Common implementation methods for immutable and volatile tuples. The class should not be used directly in client
@@ -104,7 +103,7 @@ public abstract class AbstractTuple implements ITuple {
         for (int i = 0; result && i < getSize(); ++i) {
             Object ours = get(i);
             Object theirs = other.get(i);
-            result = result && Objects.equal(ours, theirs);
+            result = result && Objects.equals(ours, theirs);
         }
         return result;
     }

@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
@@ -28,7 +29,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 
 /**
  * @author Gabor Bergmann
@@ -159,7 +159,7 @@ public class TypeHelper {
      */
     public static Set<TypeJudgement> typeClosure(Set<TypeJudgement> preclosedBaseSet, Set<TypeJudgement> delta,
             IQueryMetaContext context) {
-        delta = Sets.difference(delta, preclosedBaseSet);
+        delta = delta.stream().filter(input -> !preclosedBaseSet.contains(input)).collect(Collectors.toSet());
         if (delta.isEmpty())
             return preclosedBaseSet;
 

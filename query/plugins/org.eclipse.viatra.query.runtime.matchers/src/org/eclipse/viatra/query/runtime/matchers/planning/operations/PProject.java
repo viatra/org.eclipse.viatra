@@ -12,16 +12,14 @@ package org.eclipse.viatra.query.runtime.matchers.planning.operations;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Represents a projection of a single parent SubPlan onto a limited set of variables.
@@ -67,15 +65,16 @@ public class PProject extends POperation {
         super.checkConsistency(subPlan);
         final SubPlan parentPlan = subPlan.getParentPlans().get(0);
         
-        if (!parentPlan.getVisibleVariables().containsAll(toVariables)) {
-            throw new IllegalArgumentException(String.format("Variables missing from project: %s", 
-                    Joiner.on(',').join(Sets.difference(new HashSet<PVariable>(toVariables), parentPlan.getVisibleVariables()))));
-        }
+        Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(toVariables), 
+                () -> toVariables.stream()
+                        .filter(input -> !parentPlan.getVisibleVariables().contains(input)).map(PVariable::getName)
+                        .collect(Collectors.joining(",", "Variables missing from project: ", "")));
     }
 
     @Override
     public String getShortName() {
-        return String.format("PROJECT%s_{%s}", ordered? "!" : "", Joiner.on(",").join(toVariables));
+        return String.format("PROJECT%s_{%s}", ordered? "!" : "", 
+                toVariables.stream().map(PVariable::getName).collect(Collectors.joining(",")));
     }
     
     @Override

@@ -47,14 +47,6 @@ public class PJoin extends POperation {
     public String getShortName() {
         return "JOIN"; //String.format("JOIN_{%s}", Joiner.on(",").join(onVariables));
     }
-
-    @Override
-    public void checkConsistency(SubPlan subPlan) {
-        super.checkConsistency(subPlan);
-//		for (SubPlan parentPlan : subPlan.getParentPlans())
-//			Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(onVariables),
-//					"Variables missing from join: " + Joiner.on(',').join(Sets.difference(onVariables, parentPlan.getVisibleVariables())));		
-    }	
     
     @Override
     public int hashCode() {

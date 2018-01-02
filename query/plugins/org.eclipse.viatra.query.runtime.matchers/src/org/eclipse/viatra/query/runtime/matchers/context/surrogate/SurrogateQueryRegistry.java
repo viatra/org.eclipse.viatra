@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.context.surrogate;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -18,12 +21,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.matchers.util.SingletonInstanceProvider;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -31,8 +30,8 @@ import com.google.common.collect.Sets;
  */
 public class SurrogateQueryRegistry {
     
-    private Map<IInputKey, IProvider<PQuery>> registeredSurrogateQueryMap = Maps.newHashMap();
-    private Map<IInputKey, IProvider<PQuery>> dynamicSurrogateQueryMap = Maps.newHashMap();
+    private Map<IInputKey, IProvider<PQuery>> registeredSurrogateQueryMap = new HashMap<>();
+    private Map<IInputKey, IProvider<PQuery>> dynamicSurrogateQueryMap = new HashMap<>();
     
     /**
      * Hidden constructor
@@ -128,7 +127,7 @@ public class SurrogateQueryRegistry {
      * @return an unmodifiable set of features with registered surrogate queries
      */
     public Set<IInputKey> getRegisteredSurrogateQueries() {
-        return ImmutableSet.<IInputKey>builder().addAll(getRegisteredSurrogateQueriesInternal()).build();
+        return Collections.unmodifiableSet(getRegisteredSurrogateQueriesInternal());
     }
     
     private Set<IInputKey> getRegisteredSurrogateQueriesInternal() {
@@ -139,7 +138,7 @@ public class SurrogateQueryRegistry {
      * @return an unmodifiable set of features with dynamically added surrogate queries
      */
     public Set<IInputKey> getDynamicSurrogateQueries() {
-        return ImmutableSet.<IInputKey>builder().addAll(getDynamicSurrogateQueriesInternal()).build();
+        return Collections.unmodifiableSet(getDynamicSurrogateQueriesInternal());
     }
     
     private Set<IInputKey> getDynamicSurrogateQueriesInternal() {
@@ -150,6 +149,8 @@ public class SurrogateQueryRegistry {
      * @return an unmodifiable set that contains all features with surrogate queries.
      */
     public Set<IInputKey> getAllSurrogateQueries() {
-        return Sets.union(getRegisteredSurrogateQueriesInternal(), getDynamicSurrogateQueriesInternal());
+        Set<IInputKey> results = new HashSet<>(getRegisteredSurrogateQueriesInternal());
+        results.addAll(getDynamicSurrogateQueriesInternal());
+        return results;
     }
 }

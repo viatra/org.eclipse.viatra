@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.TypeHelper;
@@ -26,8 +27,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
-
-import com.google.common.base.Joiner;
 
 /**
  * A plan representing a subset of (or possibly all the) constraints evaluated. A SubPlan instance is responsible for
@@ -118,13 +117,13 @@ public class SubPlan {
     }
     public String toShortString() {
         return String.format("Plan{%s}:%s", 
-                Joiner.on(',').join(visibleVariables),
+                visibleVariables.stream().map(PVariable::getName).collect(Collectors.joining(",")),
                 operation.getShortName());
     }
     public String toLongString() {
         return String.format("%s<%s>", 
                 toShortString(),
-                Joiner.on("; ").join(parentPlans));
+                parentPlans.stream().map(Object::toString).collect(Collectors.joining("; ")));
     }
 
 
