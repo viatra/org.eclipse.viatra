@@ -6,7 +6,7 @@ Element-Type: context
 Element-Version: 2.0
 Id: _NFe-ENwcEee1d7rAf32j1w
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 12/8/17, 2:33 PM
+Save-Time: 1/2/18, 7:10 PM
 
 ------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998
 Content-Type: text/ecl
@@ -23,7 +23,7 @@ Entry-Name: .ecl.context
  *   Tamas Borbas - Testing VIATRA GUI
  *******************************************************************************/
 get-view "Project Explorer" | get-tree 
-    | select "org.eclipse.viatra.examples.uml.viatra/src/uml.emptyclass/EmptyClass.vql" 
+    | select "org.eclipse.viatra.examples.uml.viatra/src/uml.emptyclass/EmptyClassViewers.vql" 
     | double-click
 get-view "Query Results" | get-button "Load queries from active editor" | click
 ------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998--
