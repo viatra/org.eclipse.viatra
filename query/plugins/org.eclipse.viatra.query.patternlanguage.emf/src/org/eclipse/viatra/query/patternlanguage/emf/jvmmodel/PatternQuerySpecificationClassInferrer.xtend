@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 
-import com.google.common.collect.Sets
 import com.google.inject.Inject
 import java.util.Arrays
 import java.util.List
@@ -55,6 +54,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility
+import java.util.LinkedHashSet
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -226,7 +226,7 @@ class PatternQuerySpecificationClassInferrer {
             try {
                 body = '''
                     «inferQueryEvaluationHints(pattern)»
-                    «Set»<«PBody»> bodies = «Sets».newLinkedHashSet();
+                    «Set»<«PBody»> bodies = new «LinkedHashSet»<>();
                     «inferBodies(pattern)»
                     «inferAnnotations(pattern)»
                     return bodies;

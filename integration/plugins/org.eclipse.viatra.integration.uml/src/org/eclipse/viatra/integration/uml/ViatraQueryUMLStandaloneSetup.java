@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.integration.uml;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -79,8 +83,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQuer
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.connector.QueryGroupProviderSourceConnector;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * A helper class to register all query specifications of the UML support
  * project to various internal registries of VIATRA Query in Eclipse-less
@@ -118,82 +120,83 @@ public class ViatraQueryUMLStandaloneSetup {
     }
 
     private static Map<EStructuralFeature, IQuerySpecification<?>> getSurrogateQueries() {
-        return ImmutableMap.<EStructuralFeature, IQuerySpecification<?>> builder()
-            .put(UMLPackage.Literals.ACTION__CONTEXT, ActionContext.instance())
-            .put(UMLPackage.Literals.ACTION__INPUT, ActionInput.instance())
-            .put(UMLPackage.Literals.ACTION__OUTPUT, ActionOutput.instance())
-            .put(UMLPackage.Literals.ACTIVITY__GROUP, ActivityGroup.instance())
-            .put(UMLPackage.Literals.ACTIVITY__NODE, ActivityNode.instance())
-            .put(UMLPackage.Literals.ACTIVITY_EDGE__IN_GROUP, ActivityEdgeInGroup.instance())
-            .put(UMLPackage.Literals.ACTIVITY_GROUP__CONTAINED_EDGE, ActivityGroupContainedEdge.instance())
-            .put(UMLPackage.Literals.ACTIVITY_GROUP__CONTAINED_NODE, ActivityGroupContainedNode.instance())
-            .put(UMLPackage.Literals.ACTIVITY_GROUP__IN_ACTIVITY, ActivityGroupInActivity.instance())
-            .put(UMLPackage.Literals.ACTIVITY_GROUP__SUBGROUP, ActivityGroupSubgroup.instance())
-            .put(UMLPackage.Literals.ACTIVITY_GROUP__SUPER_GROUP, ActivityGroupSuperGroup.instance())
-            .put(UMLPackage.Literals.ACTIVITY_NODE__ACTIVITY, ActivityNodeActivity.instance())
-            .put(UMLPackage.Literals.ACTIVITY_NODE__IN_GROUP, ActivityNodeInGroup.instance())
-            .put(UMLPackage.Literals.ASSOCIATION__END_TYPE, AssociationEndType.instance())
-            .put(UMLPackage.Literals.BEHAVIOR__CONTEXT, BehaviorContext.instance())
-            .put(UMLPackage.Literals.CLASS__EXTENSION, ClassExtension.instance())
-            .put(UMLPackage.Literals.CLASS__SUPER_CLASS, ClassSuperClass.instance())
-            .put(UMLPackage.Literals.CLASSIFIER__ATTRIBUTE, ClassifierAttribute.instance())
-            .put(UMLPackage.Literals.CLASSIFIER__FEATURE, ClassifierFeature.instance())
-            .put(UMLPackage.Literals.CLASSIFIER__GENERAL, ClassifierGeneral.instance())
-//			.put(UMLPackage.Literals.CLASSIFIER__INHERITED_MEMBER, ClassifierInheritedMemberQuerySpecification.instance())
-//			.put(UMLPackage.Literals.COMPONENT__PROVIDED, ComponentProvidedQuerySpecification.instance())
-//			.put(UMLPackage.Literals.COMPONENT__REQUIRED, ComponentRequiredQuerySpecification.instance())
-            .put(UMLPackage.Literals.CONNECTABLE_ELEMENT__END, ConnectableElementEnd.instance())
-            .put(UMLPackage.Literals.CONNECTOR__KIND, ConnectorKind.instance())
-//			.put(UMLPackage.Literals.CONNECTOR_END__DEFINING_END, ConnectorEndDefiningEndQuerySpecification.instance())
-            .put(UMLPackage.Literals.DEPLOYMENT_TARGET__DEPLOYED_ELEMENT, DeploymentTargetDeployedElement.instance())
-            .put(UMLPackage.Literals.DIRECTED_RELATIONSHIP__SOURCE, DirectedRelationshipSource.instance())
-            .put(UMLPackage.Literals.DIRECTED_RELATIONSHIP__TARGET, DirectedRelationshipTarget.instance())
-            .put(UMLPackage.Literals.ELEMENT__OWNED_ELEMENT, ElementOwnedElement.instance())
-            .put(UMLPackage.Literals.ELEMENT__OWNER, ElementOwner.instance())
-            .put(UMLPackage.Literals.ENCAPSULATED_CLASSIFIER__OWNED_PORT, EncapsulatedClassifierOwnedPort.instance())
-//			.put(UMLPackage.Literals.EXTENSION__IS_REQUIRED, ExtensionIsRequiredQuerySpecification.instance())
-            .put(UMLPackage.Literals.EXTENSION__METACLASS, ExtensionMetaclass.instance())
-            .put(UMLPackage.Literals.FEATURE__FEATURING_CLASSIFIER, FeatureFeaturingClassifier.instance())
-            .put(UMLPackage.Literals.MESSAGE__MESSAGE_KIND, MessageMessageKind.instance())
-//			.put(UMLPackage.Literals.MULTIPLICITY_ELEMENT__LOWER, MultiplicityElementLowerQuerySpecification.instance())
-//			.put(UMLPackage.Literals.MULTIPLICITY_ELEMENT__UPPER, MultiplicityElementUpperQuerySpecification.instance())
-            .put(UMLPackage.Literals.NAMED_ELEMENT__CLIENT_DEPENDENCY, NamedElementClientDependency.instance())
-            .put(UMLPackage.Literals.NAMED_ELEMENT__NAMESPACE, NamedElementNamespace.instance())
-            .put(UMLPackage.Literals.NAMED_ELEMENT__QUALIFIED_NAME, NamedElementQualifiedName.instance())
-            .put(UMLPackage.Literals.NAMESPACE__IMPORTED_MEMBER, NamespaceImportedMember.instance())
-            .put(UMLPackage.Literals.NAMESPACE__MEMBER, NamespaceMember.instance())
-            .put(UMLPackage.Literals.NAMESPACE__OWNED_MEMBER, NamespaceOwnedMember.instance())
-            .put(UMLPackage.Literals.OPAQUE_EXPRESSION__RESULT, OpaqueExpressionResult.instance())
-//			.put(UMLPackage.Literals.OPERATION__IS_ORDERED, OperationIsOrderedQuerySpecification.instance())
-//			.put(UMLPackage.Literals.OPERATION__IS_UNIQUE, OperationIsUniqueQuerySpecification.instance())
-//			.put(UMLPackage.Literals.OPERATION__LOWER, OperationLowerQuerySpecification.instance())
-//			.put(UMLPackage.Literals.OPERATION__TYPE, OperationTypeQuerySpecification.instance())
-//			.put(UMLPackage.Literals.OPERATION__UPPER, OperationUpperQuerySpecification.instance())
-            .put(UMLPackage.Literals.PACKAGE__NESTED_PACKAGE, PackageNestedPackage.instance())
-            .put(UMLPackage.Literals.PACKAGE__NESTING_PACKAGE, PackageNestingPackage.instance())
-            .put(UMLPackage.Literals.PACKAGE__OWNED_STEREOTYPE, PackageOwnedStereotype.instance())
-            .put(UMLPackage.Literals.PACKAGE__OWNED_TYPE, PackageOwnedType.instance())
-//			.put(UMLPackage.Literals.PARAMETER__DEFAULT, ParameterDefaultQuerySpecification.instance())
-//			.put(UMLPackage.Literals.PORT__PROVIDED, PortProvidedQuerySpecification.instance())
-//			.put(UMLPackage.Literals.PORT__REQUIRED, PortRequiredQuerySpecification.instance())
-//			.put(UMLPackage.Literals.PROPERTY__DEFAULT, PropertyDefaultQuerySpecification.instance())
-            .put(UMLPackage.Literals.PROPERTY__IS_COMPOSITE, PropertyIsComposite.instance())
-//			.put(UMLPackage.Literals.PROPERTY__OPPOSITE, PropertyOppositeQuerySpecification.instance())
-            .put(UMLPackage.Literals.PROTOCOL_TRANSITION__REFERRED, ProtocolTransitionReferred.instance())
-            .put(UMLPackage.Literals.REDEFINABLE_ELEMENT__REDEFINED_ELEMENT, RedefinableElementRedefinedElement.instance())
-            .put(UMLPackage.Literals.REDEFINABLE_ELEMENT__REDEFINITION_CONTEXT, RedefinableElementRedefinitionContext.instance())
-            .put(UMLPackage.Literals.REDEFINABLE_TEMPLATE_SIGNATURE__INHERITED_PARAMETER, RedefinableTemplateSignatureInheritedParameter.instance())
-            .put(UMLPackage.Literals.RELATIONSHIP__RELATED_ELEMENT, RelationshipRelatedElement.instance())
-            .put(UMLPackage.Literals.STATE__IS_COMPOSITE, StateIsComposite.instance())
-            .put(UMLPackage.Literals.STATE__IS_ORTHOGONAL, StateIsOrthogonal.instance())
-//			.put(UMLPackage.Literals.STATE__IS_SIMPLE, StateIsSimpleQuerySpecification.instance())
-//			.put(UMLPackage.Literals.STATE__IS_SUBMACHINE_STATE, StateIsSubmachineStateQuerySpecification.instance())
-//			.put(UMLPackage.Literals.STEREOTYPE__PROFILE, StereotypeProfileQuerySpecification.instance())
-            .put(UMLPackage.Literals.STRUCTURED_CLASSIFIER__PART, StructuredClassifierPart.instance())
-            .put(UMLPackage.Literals.STRUCTURED_CLASSIFIER__ROLE, StructuredClassifierRole.instance())
-            .put(UMLPackage.Literals.TYPE__PACKAGE, TypePackage.instance())
-            .put(UMLPackage.Literals.VERTEX__INCOMING, VertexIncoming.instance())
-            .put(UMLPackage.Literals.VERTEX__OUTGOING, VertexOutgoing.instance())
-            .build();
+        
+        return Collections.unmodifiableMap(Stream.of(
+            new SimpleEntry<>(UMLPackage.Literals.ACTION__CONTEXT, ActionContext.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTION__INPUT, ActionInput.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTION__OUTPUT, ActionOutput.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY__GROUP, ActivityGroup.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY__NODE, ActivityNode.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_EDGE__IN_GROUP, ActivityEdgeInGroup.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_GROUP__CONTAINED_EDGE, ActivityGroupContainedEdge.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_GROUP__CONTAINED_NODE, ActivityGroupContainedNode.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_GROUP__IN_ACTIVITY, ActivityGroupInActivity.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_GROUP__SUBGROUP, ActivityGroupSubgroup.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_GROUP__SUPER_GROUP, ActivityGroupSuperGroup.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_NODE__ACTIVITY, ActivityNodeActivity.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ACTIVITY_NODE__IN_GROUP, ActivityNodeInGroup.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ASSOCIATION__END_TYPE, AssociationEndType.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.BEHAVIOR__CONTEXT, BehaviorContext.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CLASS__EXTENSION, ClassExtension.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CLASS__SUPER_CLASS, ClassSuperClass.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CLASSIFIER__ATTRIBUTE, ClassifierAttribute.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CLASSIFIER__FEATURE, ClassifierFeature.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CLASSIFIER__GENERAL, ClassifierGeneral.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.CLASSIFIER__INHERITED_MEMBER, ClassifierInheritedMemberQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.COMPONENT__PROVIDED, ComponentProvidedQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.COMPONENT__REQUIRED, ComponentRequiredQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CONNECTABLE_ELEMENT__END, ConnectableElementEnd.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.CONNECTOR__KIND, ConnectorKind.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.CONNECTOR_END__DEFINING_END, ConnectorEndDefiningEndQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.DEPLOYMENT_TARGET__DEPLOYED_ELEMENT, DeploymentTargetDeployedElement.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.DIRECTED_RELATIONSHIP__SOURCE, DirectedRelationshipSource.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.DIRECTED_RELATIONSHIP__TARGET, DirectedRelationshipTarget.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ELEMENT__OWNED_ELEMENT, ElementOwnedElement.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ELEMENT__OWNER, ElementOwner.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.ENCAPSULATED_CLASSIFIER__OWNED_PORT, EncapsulatedClassifierOwnedPort.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.EXTENSION__IS_REQUIRED, ExtensionIsRequiredQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.EXTENSION__METACLASS, ExtensionMetaclass.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.FEATURE__FEATURING_CLASSIFIER, FeatureFeaturingClassifier.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.MESSAGE__MESSAGE_KIND, MessageMessageKind.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.MULTIPLICITY_ELEMENT__LOWER, MultiplicityElementLowerQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.MULTIPLICITY_ELEMENT__UPPER, MultiplicityElementUpperQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.NAMED_ELEMENT__CLIENT_DEPENDENCY, NamedElementClientDependency.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.NAMED_ELEMENT__NAMESPACE, NamedElementNamespace.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.NAMED_ELEMENT__QUALIFIED_NAME, NamedElementQualifiedName.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.NAMESPACE__IMPORTED_MEMBER, NamespaceImportedMember.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.NAMESPACE__MEMBER, NamespaceMember.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.NAMESPACE__OWNED_MEMBER, NamespaceOwnedMember.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.OPAQUE_EXPRESSION__RESULT, OpaqueExpressionResult.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.OPERATION__IS_ORDERED, OperationIsOrderedQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.OPERATION__IS_UNIQUE, OperationIsUniqueQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.OPERATION__LOWER, OperationLowerQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.OPERATION__TYPE, OperationTypeQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.OPERATION__UPPER, OperationUpperQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.PACKAGE__NESTED_PACKAGE, PackageNestedPackage.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.PACKAGE__NESTING_PACKAGE, PackageNestingPackage.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.PACKAGE__OWNED_STEREOTYPE, PackageOwnedStereotype.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.PACKAGE__OWNED_TYPE, PackageOwnedType.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.PARAMETER__DEFAULT, ParameterDefaultQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.PORT__PROVIDED, PortProvidedQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.PORT__REQUIRED, PortRequiredQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.PROPERTY__DEFAULT, PropertyDefaultQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.PROPERTY__IS_COMPOSITE, PropertyIsComposite.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.PROPERTY__OPPOSITE, PropertyOppositeQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.PROTOCOL_TRANSITION__REFERRED, ProtocolTransitionReferred.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.REDEFINABLE_ELEMENT__REDEFINED_ELEMENT, RedefinableElementRedefinedElement.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.REDEFINABLE_ELEMENT__REDEFINITION_CONTEXT, RedefinableElementRedefinitionContext.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.REDEFINABLE_TEMPLATE_SIGNATURE__INHERITED_PARAMETER, RedefinableTemplateSignatureInheritedParameter.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.RELATIONSHIP__RELATED_ELEMENT, RelationshipRelatedElement.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.STATE__IS_COMPOSITE, StateIsComposite.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.STATE__IS_ORTHOGONAL, StateIsOrthogonal.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.STATE__IS_SIMPLE, StateIsSimpleQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.STATE__IS_SUBMACHINE_STATE, StateIsSubmachineStateQuerySpecification.instance()),
+//			new SimpleEntry<>(UMLPackage.Literals.STEREOTYPE__PROFILE, StereotypeProfileQuerySpecification.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.STRUCTURED_CLASSIFIER__PART, StructuredClassifierPart.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.STRUCTURED_CLASSIFIER__ROLE, StructuredClassifierRole.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.TYPE__PACKAGE, TypePackage.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.VERTEX__INCOMING, VertexIncoming.instance()),
+            new SimpleEntry<>(UMLPackage.Literals.VERTEX__OUTGOING, VertexOutgoing.instance()))
+        .collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue())));
     }
 }
