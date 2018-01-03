@@ -17,6 +17,31 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="org.eclipse.rcptt.core.launching"/>
+      <import plugin="org.eclipse.rcptt.ctx.debug"/>
+      <import plugin="org.eclipse.rcptt.ctx.filesystem"/>
+      <import plugin="org.eclipse.rcptt.ctx.group"/>
+      <import plugin="org.eclipse.rcptt.ctx.parameters"/>
+      <import plugin="org.eclipse.rcptt.ctx.preferences"/>
+      <import plugin="org.eclipse.rcptt.ctx.resources"/>
+      <import plugin="org.eclipse.rcptt.ctx.script"/>
+      <import plugin="org.eclipse.rcptt.ctx.workbench"/>
+      <import plugin="org.eclipse.rcptt.expandbar"/>
+      <import plugin="org.eclipse.rcptt.util.resources"/>
+      <import plugin="org.eclipse.rcptt.util.swt"/>
+      <import plugin="org.eclipse.rcptt.verifications.log"/>
+      <import plugin="org.eclipse.rcptt.verifications.text"/>
+      <import plugin="org.eclipse.rcptt.verifications.time"/>
+      <import plugin="org.eclipse.rcptt.verifications.tree"/>
+      <import feature="org.eclipse.rcptt.ecl.platform" version="2.0.0" match="compatible"/>
+      <import feature="org.eclipse.rcptt.ecl.platform.ui" version="2.0.0" match="compatible"/>
+      <import feature="org.eclipse.rcptt.ecl.server" version="2.0.0" match="compatible"/>
+      <import feature="org.eclipse.rcptt.tesla.ecl" version="2.0.0" match="compatible"/>
+      <import feature="org.eclipse.rcptt.updates" version="2.0.0" match="compatible"/>
+      <import feature="org.eclipse.rcptt.watson" version="2.0.0" match="compatible"/>
+   </requires>
+
    <plugin
          id="org.eclipse.viatra.query.rcptt.queries"
          download-size="0"

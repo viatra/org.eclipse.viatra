@@ -11,7 +11,6 @@
 
     <properties>
         <rootPath>${basedir}/..</rootPath>
-        <autPath>../org.eclipse.viatra.query.rcptt.product/target/products/org.eclipse.viatra.query.rcptt.product-[platform].zip</autPath>
     </properties>
 
     <build>
@@ -23,7 +22,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <aut>
-                        <explicit>${autPath}</explicit>
+                        <groupId>org.eclipse.viatra</groupId>
+                        <artifactId>org.eclipse.viatra.query.rcptt.product</artifactId>
                         <vmArgs>
                             <vmArg>${argLine}</vmArg>
                         </vmArgs>
