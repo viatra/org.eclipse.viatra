@@ -163,15 +163,11 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      */
     public void prepare() {
         try {
-            runtimeContext.coalesceTraversals(new Callable<Void>() {
-    
-                @Override
-                public Void call() throws Exception {
-                    indexInitializationBeforePlanning();
-                    prepareDirectDependencies();
-                    runtimeContext.executeAfterTraversal(AbstractLocalSearchResultProvider.this::preparePlansForExpectedAdornments);
-                    return null;
-                }
+            runtimeContext.coalesceTraversals(() -> {
+                indexInitializationBeforePlanning();
+                prepareDirectDependencies();
+                runtimeContext.executeAfterTraversal(AbstractLocalSearchResultProvider.this::preparePlansForExpectedAdornments);
+                return null;
             });
         } catch (InvocationTargetException e) {
             throw new QueryProcessingException("Error while building required indexes: %s", new String[]{e.getTargetException().getMessage()}, "Error while building required indexes.", query, e);
@@ -204,7 +200,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
 
     protected void prepareDirectDependencies() {
         // Do not prepare for any adornment at this point
-        IAdornmentProvider adornmentProvider = query -> Collections.emptySet();
+        IAdornmentProvider adornmentProvider = input -> Collections.emptySet();
         QueryEvaluationHint hints = new QueryEvaluationHint(Collections.singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
         for(PQuery dep : getDirectPositiveDependencies()){
             backendContext.getResultProviderAccess().getResultProvider(dep, hints);

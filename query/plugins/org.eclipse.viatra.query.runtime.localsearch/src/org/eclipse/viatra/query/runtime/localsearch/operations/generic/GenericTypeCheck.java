@@ -40,11 +40,11 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
         Preconditions.checkArgument(positions.length == type.getArity(),
                 "The type %s requires %s parameters, but %s positions are provided", type.getPrettyPrintableName(),
                 type.getArity(), positions.length);
-        List<Integer> positionList = new ArrayList<>();
+        List<Integer> modifiablePositionList = new ArrayList<>();
         for (int position : positions) {
-            positionList.add(position);
+            modifiablePositionList.add(position);
         }
-        this.positionList = Collections.unmodifiableList(positionList);
+        this.positionList = Collections.unmodifiableList(modifiablePositionList);
         this.maskedTuple = new VolatileMaskedTuple(callMask);
         this.type = type;
     }

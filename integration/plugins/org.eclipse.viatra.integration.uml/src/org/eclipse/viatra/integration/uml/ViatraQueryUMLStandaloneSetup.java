@@ -197,6 +197,6 @@ public class ViatraQueryUMLStandaloneSetup {
             new SimpleEntry<>(UMLPackage.Literals.TYPE__PACKAGE, TypePackage.instance()),
             new SimpleEntry<>(UMLPackage.Literals.VERTEX__INCOMING, VertexIncoming.instance()),
             new SimpleEntry<>(UMLPackage.Literals.VERTEX__OUTGOING, VertexOutgoing.instance()))
-        .collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue())));
+        .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
     }
 }

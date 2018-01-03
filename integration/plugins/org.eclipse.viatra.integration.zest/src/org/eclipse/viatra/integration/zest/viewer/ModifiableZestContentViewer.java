@@ -43,7 +43,10 @@ public class ModifiableZestContentViewer extends ZestContentViewer {
         final Map<Object, Node> nodeMap = contentNodeMap;
         if (nodeMap.containsKey(contentNode)) {
             Node node = nodeMap.get(contentNode);
-            node.getGraph().getNodes().remove(node);
+            final Graph graph = node.getGraph();
+            if (graph != null) {
+                graph.getNodes().remove(node);
+            }
         }
     }
 
@@ -70,7 +73,9 @@ public class ModifiableZestContentViewer extends ZestContentViewer {
             edgeMap.remove(contentEdge, edge);
 
             Graph graph = edge.getGraph();
-            graph.getEdges().remove(edge);
+            if (graph != null) {
+                graph.getEdges().remove(edge);
+            }
         }
     }
 }

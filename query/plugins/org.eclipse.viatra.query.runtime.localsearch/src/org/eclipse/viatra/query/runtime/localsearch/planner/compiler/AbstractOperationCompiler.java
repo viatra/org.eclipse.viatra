@@ -218,7 +218,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
             // Positive pattern call is check if all non-single used variables are bound
             List<Integer> callVariables = pConstraint.getAffectedVariables().stream()
                 .filter(input -> input.getReferringConstraints().size() > 1)
-                .map(input -> variableMapping.get(input))
+                .map(variableMapping::get)
                 .collect(Collectors.toList());
             return variableBindings.get(pConstraint).containsAll(callVariables);
         }else if (pConstraint instanceof AggregatorConstraint){

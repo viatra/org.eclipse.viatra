@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -115,7 +116,7 @@ class FlattenerCopier extends PBodyCopier {
     protected void copyExpressionEvaluationConstraint(final ExpressionEvaluation expressionEvaluation) {
         Map<PVariable, PVariable> variableMapping = this.variableMapping.entrySet().stream()
                 .filter(input -> expressionEvaluation.getPSystem().getAllVariables().contains(input.getKey()))
-                .collect(Collectors.toMap(input -> input.getKey(), input -> input.getValue()));
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
         addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));

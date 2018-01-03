@@ -18,7 +18,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Sets;
 
 /**
  * 

@@ -12,8 +12,10 @@ package org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
@@ -59,9 +61,10 @@ public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintC
         // These will be fixed in runtime, but unknown at planning time
         // This is represented by indices to ease working with result tuples
         final Map<Object, Integer> variableIndices = variables.invertIndex();
-        Stream<Integer> aggregateKeys = context.getBoundVariables().stream()
+        List<Integer> aggregateKeys = context.getBoundVariables().stream()
                 .filter(input -> !constantMap.containsKey(input))
-                .map(input -> variableIndices.get(input));
+                .map(variableIndices::get)
+                .collect(Collectors.toList());
 
         IQueryResultProvider resultProvider = context.resultProviderAccess().getResultProvider(patternCall.getReferredQuery(), null);
         Map<Tuple, Integer> aggregatedCounts = new HashMap<>();
@@ -73,7 +76,7 @@ public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintC
         
         int result = 0;
         for (Tuple match : matches) {
-            Tuple extracted = Tuples.flatTupleOf(aggregateKeys.map(index -> match.get(index)).toArray());
+            Tuple extracted = Tuples.flatTupleOf(aggregateKeys.stream().map(match::get).toArray());
             int count = (aggregatedCounts.containsKey(extracted)) 
                 ? aggregatedCounts.get(extracted) + 1
                 : 1;                
