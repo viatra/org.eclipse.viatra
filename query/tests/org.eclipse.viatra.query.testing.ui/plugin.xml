@@ -14,12 +14,6 @@
                   checkEnabled="false">
                   <or>
                     <reference
-                       definitionId="org.eclipse.viatra.query.tooling.ui.matcher">
-                    </reference>
-                    <reference
-                       definitionId="org.eclipse.viatra.query.tooling.ui.root">
-                    </reference>
-                    <reference
                           definitionId="org.eclipse.viatra.query.tooling.ui.filteredmatchercontent">
                     </reference>
                   </or>
