@@ -11,8 +11,6 @@
 
 package org.eclipse.viatra.addon.validation.tooling
 
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
 import org.eclipse.core.runtime.Path
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
@@ -102,7 +100,6 @@ class ValidationGenerator implements IGenerationFragment {
 
     override getProjectDependencies() {
         newArrayList(
-            "com.google.guava",
             "org.eclipse.viatra.query.runtime",
             "org.eclipse.viatra.addon.validation.core"
         )
@@ -204,12 +201,12 @@ class ValidationGenerator implements IGenerationFragment {
             */
             package «pattern.packageName»;
             
+            import java.util.HashMap;
+            import java.util.HashSet;
             import java.util.List;
             import java.util.Map;
             import java.util.Set;
-            import com.google.common.collect.ImmutableList;
-            import com.google.common.collect.ImmutableMap;
-            import com.google.common.collect.ImmutableSet;
+            import java.util.Arrays;
             
             import org.eclipse.viatra.addon.validation.core.api.Severity;
             import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
@@ -235,17 +232,16 @@ class ValidationGenerator implements IGenerationFragment {
             
                 @Override
                 public Map<String,Object> getKeyObjects(IPatternMatch signature) {
-                    Map<String,Object> map = ImmutableMap.of(
-                        «FOR key : pattern.getKeyList(annotation) SEPARATOR ","»
-                            "«key»",signature.get("«key»")
-                        «ENDFOR»
-                    );
+                    Map<String,Object> map = new HashMap<>();
+                    «FOR key : pattern.getKeyList(annotation)»
+                        map.put("«key»",signature.get("«key»"));
+                    «ENDFOR»
                     return map;
                 }
             
                 @Override
                 public List<String> getKeyNames() {
-                    List<String> keyNames = ImmutableList.of(
+                    List<String> keyNames = Arrays.asList(
                         «FOR key : pattern.getKeyList(annotation) SEPARATOR ","»
                             "«key»"
                         «ENDFOR»
@@ -255,7 +251,7 @@ class ValidationGenerator implements IGenerationFragment {
             
                 @Override
                 public List<String> getPropertyNames() {
-                    List<String> propertyNames = ImmutableList.of(
+                    List<String> propertyNames = Arrays.asList(
                         «FOR property : pattern.getPropertyList(annotation) SEPARATOR ","»
                             "«property»"
                         «ENDFOR»
@@ -265,15 +261,15 @@ class ValidationGenerator implements IGenerationFragment {
             
                 @Override
                 public Set<List<String>> getSymmetricPropertyNames() {
-                    Set<List<String>> symmetricPropertyNamesSet = ImmutableSet.<List<String>>of(
+                    Set<List<String>> symmetricPropertyNamesSet = new HashSet<>(
                         «val symmetricProperties = pattern.getSymmetricList(annotation).filter[
                         !pattern.getKeyList(annotation).containsAll(it)
                     ]»
                         «FOR propertyList : symmetricProperties SEPARATOR ","»
-                            ImmutableList.of(
-                            «FOR property : propertyList SEPARATOR ","»
-                                "«property»"
-                            «ENDFOR»
+                            Arrays.asList(
+                                «FOR property : propertyList SEPARATOR ","»
+                                    "«property»"
+                                «ENDFOR»
                             )
                         «ENDFOR»
                     );
@@ -282,12 +278,12 @@ class ValidationGenerator implements IGenerationFragment {
             
                 @Override
                 public Set<List<String>> getSymmetricKeyNames() {
-                    Set<List<String>> symmetricKeyNamesSet = ImmutableSet.<List<String>>of(
+                    Set<List<String>> symmetricKeyNamesSet = new HashSet<>(
                         «val symmetricKeys = pattern.getSymmetricList(annotation).filter[
                         pattern.getKeyList(annotation).containsAll(it)
                     ]»
                         «FOR symmetricKeyList : symmetricKeys SEPARATOR ","»
-                            ImmutableList.of(
+                            Arrays.asList(
                             «FOR key : symmetricKeyList SEPARATOR ","»
                                 "«key»"
                             «ENDFOR»
@@ -313,24 +309,23 @@ class ValidationGenerator implements IGenerationFragment {
 
     def getKeyList(Pattern pattern, Annotation annotation) {
         val keyParamValues = (annotation.getFirstAnnotationParameter("key") as ListValue).values
-        ImmutableList.builder.addAll(keyParamValues.map[it.nameOfParameterFromValueReference]).build
+        keyParamValues.map[it.nameOfParameterFromValueReference]
     }
 
     def getPropertyList(Pattern pattern, Annotation annotation) {
         val parameters = pattern.parameters.map[name]
         val keyParamValues = (annotation.getFirstAnnotationParameter("key") as ListValue).values
         val keys = keyParamValues.map[it.nameOfParameterFromValueReference]
-        ImmutableList.copyOf(parameters.filter[!keys.contains(it)])
+        parameters.filter[!keys.contains(it)]
     }
 
     def getSymmetricList(Pattern pattern, Annotation annotation) {
         val symmetricParams = annotation.getAnnotationParameters("symmetric")
-        val symmetryLists = symmetricParams.map [
-            ImmutableList.copyOf((it as ListValue).values.map [
+        symmetricParams.map [
+            (it as ListValue).values.map [
                 it.nameOfParameterFromValueReference
-            ])
+            ]
         ]
-        ImmutableSet.copyOf(symmetryLists)
     }
 
     def String getNameOfParameterFromValueReference(ValueReference ref) {

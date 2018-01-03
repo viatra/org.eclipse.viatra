@@ -11,12 +11,12 @@
 */
 package org.eclipse.viatra.gui.tests.queries;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import java.util.Arrays;
 
 import org.eclipse.viatra.addon.validation.core.api.Severity;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
@@ -42,15 +42,14 @@ public class AvailableGreaterThanTotalHddConstraint0 implements IConstraintSpeci
 
     @Override
     public Map<String,Object> getKeyObjects(IPatternMatch signature) {
-        Map<String,Object> map = ImmutableMap.of(
-            "host",signature.get("host")
-        );
+        Map<String,Object> map = new HashMap<>();
+        map.put("host",signature.get("host"));
         return map;
     }
 
     @Override
     public List<String> getKeyNames() {
-        List<String> keyNames = ImmutableList.of(
+        List<String> keyNames = Arrays.asList(
             "host"
         );
         return keyNames;
@@ -58,21 +57,21 @@ public class AvailableGreaterThanTotalHddConstraint0 implements IConstraintSpeci
 
     @Override
     public List<String> getPropertyNames() {
-        List<String> propertyNames = ImmutableList.of(
+        List<String> propertyNames = Arrays.asList(
         );
         return propertyNames;
     }
 
     @Override
     public Set<List<String>> getSymmetricPropertyNames() {
-        Set<List<String>> symmetricPropertyNamesSet = ImmutableSet.<List<String>>of(
+        Set<List<String>> symmetricPropertyNamesSet = new HashSet<>(
         );
         return symmetricPropertyNamesSet;
     }
 
     @Override
     public Set<List<String>> getSymmetricKeyNames() {
-        Set<List<String>> symmetricKeyNamesSet = ImmutableSet.<List<String>>of(
+        Set<List<String>> symmetricKeyNamesSet = new HashSet<>(
         );
         return symmetricKeyNamesSet;
     }
