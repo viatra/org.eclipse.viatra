@@ -93,13 +93,6 @@
                relative="org.eclipse.ui.views.ProblemView">
          </view>
          <view
-               id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
-               minimized="false"
-               relationship="stack"
-               relative="org.eclipse.ui.views.PropertySheet"
-               visible="false">
-         </view>
-         <view
                id="org.eclipse.amalgam.explorer.contextual.ui.view.ExplorerContextualID"
                minimized="false"
                relationship="stack"
@@ -189,66 +182,6 @@
          </with>
       </definition>
       <definition
-            id="org.eclipse.viatra.query.tooling.ui.root">
-         <with
-               variable="selection">
-            <count
-                  value="1">
-            </count>
-            <iterate
-                  ifEmpty="false">
-               <instanceof
-                     value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
-               </instanceof>
-            </iterate>
-         </with>
-      </definition>
-      <definition
-            id="org.eclipse.viatra.query.tooling.ui.match">
-         <with
-               variable="selection">
-            <count
-                  value="1">
-            </count>
-            <iterate
-                  ifEmpty="false">
-               <instanceof
-                     value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatchContent">
-               </instanceof>
-            </iterate>
-         </with>
-      </definition>
-      <definition
-            id="org.eclipse.viatra.query.tooling.ui.matcher">
-         <with
-               variable="selection">
-            <count
-                  value="1">
-            </count>
-            <iterate
-                  ifEmpty="false">
-               <instanceof
-                     value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
-               </instanceof>
-            </iterate>
-         </with>
-      </definition>
-      <definition
-            id="org.eclipse.viatra.query.tooling.ui.patterncomponent">
-         <with
-               variable="selection">
-            <iterate
-                  ifEmpty="false">
-               <instanceof
-                     value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent">
-               </instanceof>
-            </iterate>
-            <count
-                  value="1">
-            </count>
-         </with>
-      </definition>
-      <definition
             id="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
          <with
                variable="activeEditor">
@@ -283,42 +216,12 @@
       </definition>
    </extension>
    <extension
-         point="org.eclipse.ui.handlers">
- <!--     <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachVqlEditorRegistrationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.loadmodel">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
-            </reference>
-         </activeWhen>
-      </handler> -->
-<!--      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachVqlEditorRegistrationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.attachmodel">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
-            </reference>
-         </activeWhen>
-      </handler> -->
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PatternRegistryShowLocationHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.showlocation_patternreg">
-      </handler>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.loadmodel"
             name="Load model">
       </command>
-<!--      <command
-            categoryId="org.eclipse.viatra.query.tooling.category"
-            id="org.eclipse.viatra.query.tooling.ui.attachmodel"
-            name="Attach pattern model">
-      </command> -->
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.showlocation"
