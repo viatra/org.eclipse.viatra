@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.internal;
 
-import static com.google.common.base.Preconditions.checkState;
+import static org.eclipse.viatra.query.runtime.matchers.util.Preconditions.checkState;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,11 +34,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQuer
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-
 /**
  * @author Abel Hegedus
  *
@@ -45,7 +42,7 @@ public class ExtensionBasedSurrogateQueryLoader {
 
     private static final String DUPLICATE_SURROGATE_QUERY = "Duplicate surrogate query definition %s for feature %s of EClass %s in package %s (FQN in map %s, contributing plug-ins %s, plug-in %s)";
     
-    private Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
+    private Map<String, String> contributingPluginOfFeatureMap = new HashMap<>();
     private Map<EStructuralFeature, PQueryProvider> contributedSurrogateQueries;
 
     private static final ExtensionBasedSurrogateQueryLoader INSTANCE = new ExtensionBasedSurrogateQueryLoader();
@@ -94,13 +91,9 @@ public class ExtensionBasedSurrogateQueryLoader {
         if(contributedSurrogateQueries != null) {
             return contributedSurrogateQueries;
         }
-        contributedSurrogateQueries = Maps.newHashMap();
+        contributedSurrogateQueries = new HashMap<>();
         if (Platform.isRunning()) {
-
-            final Iterable<IConfigurationElement> config = ImmutableList.<IConfigurationElement>builder()
-                .add(Platform.getExtensionRegistry().getConfigurationElementsFor(ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID))
-                .build();
-            for (IConfigurationElement e : config) {
+            for (IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)) {
                 if (e.isValid()) {
                     processExtension(e);
                 }
@@ -139,11 +132,13 @@ public class ExtensionBasedSurrogateQueryLoader {
             EStructuralFeature feature = cls.getEStructuralFeature(featureName);
             featureIdBuilder.append("##").append(featureName);
             checkState(feature != null, "Feature %s of EClass %s in package %s not found! (plug-in %s)", featureName, className, packageUri, contributorName);
+            
             PQueryProvider fqnInMap = contributedSurrogateQueries.get(feature);
             if(fqnInMap != null) {
                 String duplicateSurrogateFormatString = DUPLICATE_SURROGATE_QUERY;
-                Collection<String> contributorPlugins = contributingPluginOfFeatureMap.get(featureIdBuilder.toString());
-                String duplicateSurrogateMessage = String.format(duplicateSurrogateFormatString, queryFqn, featureName, className, packageUri, fqnInMap, contributorPlugins, contributorName);
+                Collection<String> contributorPlugins = Arrays.asList(contributorName, contributingPluginOfFeatureMap.get(featureIdBuilder.toString()));
+                String duplicateSurrogateMessage = String.format(duplicateSurrogateFormatString, queryFqn, featureName,
+                        className, packageUri, fqnInMap, contributorPlugins, contributorName);
                 throw new IllegalStateException(duplicateSurrogateMessage);
             }
             contributedSurrogateQueries.put(feature, surrogateQueryProvider);

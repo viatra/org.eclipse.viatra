@@ -12,9 +12,10 @@ package org.eclipse.viatra.query.runtime.internal.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
@@ -28,10 +29,8 @@ import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 
 public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryModelUpdateListener> {
 
@@ -45,14 +44,8 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
         super();
         this.queryEngine = queryEngine;
         this.logger = logger;
-        Map<ChangeLevel, Collection<ViatraQueryModelUpdateListener>> map = Maps.newEnumMap(ChangeLevel.class);
-        listenerMap = Multimaps.newSetMultimap(map,
-                new com.google.common.base.Supplier<Set<ViatraQueryModelUpdateListener>>() {
-                    @Override
-                    public Set<ViatraQueryModelUpdateListener> get() {
-                        return Sets.newHashSet();
-                    }
-        });
+        Map<ChangeLevel, Collection<ViatraQueryModelUpdateListener>> map = new EnumMap<>(ChangeLevel.class);
+        listenerMap = Multimaps.newSetMultimap(map, HashSet::new);
     }
     
     @Override
@@ -144,7 +137,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
         if(!listenerMap.isEmpty()) {
             for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
                 if(tempLevel.compareTo(level) >= 0) {
-                    for (ViatraQueryModelUpdateListener listener : new ArrayList<ViatraQueryModelUpdateListener>(listenerMap.get(level))) {
+                    for (ViatraQueryModelUpdateListener listener : new ArrayList<>(listenerMap.get(level))) {
                         try {
                             listener.notifyChanged(tempLevel);
                         } catch (Exception ex) {

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.emf.helper;
 
+import java.util.function.Function;
+
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-
-import com.google.common.base.Function;
 
 /**
  * Helper functions for dealing with the EMF objects with VIATRA Queries.
@@ -29,13 +29,7 @@ public class ViatraQueryRuntimeHelper {
     
     private ViatraQueryRuntimeHelper() {/*Utility class constructor*/}
     
-    private static final StringValueTransformer STRING_VALUE_TRANSFORMER = new StringValueTransformer();
-    private static final class StringValueTransformer implements Function<Object, String> {
-        @Override
-        public String apply(Object input) {
-            return (input == null) ? "(null)" : input.toString();
-        }
-    }
+    private static final Function<Object, String> STRING_VALUE_TRANSFORMER = input -> (input == null) ? "(null)" : input.toString();
 
     /**
      * Gives a human-readable name of an EMF type. 
@@ -123,7 +117,7 @@ public class ViatraQueryRuntimeHelper {
      *            cannot be null!
      * @param parameterValueTransformer
      *            cannot be null!
-     * @since 1.3
+     * @since 2.0
      */
     public static String getMessage(IPatternMatch match, String messageFormat, Function<Object,String> parameterValueTransformer) {
         String[] tokens = messageFormat.split("\\$");

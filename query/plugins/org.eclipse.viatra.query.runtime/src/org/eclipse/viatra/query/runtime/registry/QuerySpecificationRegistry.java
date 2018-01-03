@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.registry.impl.QuerySpecificationRegistryImpl;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Registry for query specifications that can be accessed using fully qualified names through views.
@@ -51,7 +50,7 @@ public class QuerySpecificationRegistry implements IQuerySpecificationRegistry {
      */
     protected QuerySpecificationRegistry() {
         this.internalRegistry = new QuerySpecificationRegistryImpl();
-        this.delayedConnectors = Sets.newHashSet();
+        this.delayedConnectors = new HashSet<>();
         
     }
     
@@ -60,10 +59,11 @@ public class QuerySpecificationRegistry implements IQuerySpecificationRegistry {
      */
     protected IQuerySpecificationRegistry getInternalRegistry() {
         if(!delayedConnectors.isEmpty()) {
-            ImmutableSet<IRegistrySourceConnector> delayed = ImmutableSet.copyOf(delayedConnectors);
-            for (IRegistrySourceConnector connector : delayed) {
+            final Iterator<IRegistrySourceConnector> it = delayedConnectors.iterator();
+            while (it.hasNext()) {
+                final IRegistrySourceConnector connector = it.next();
                 internalRegistry.addSource(connector);
-                delayedConnectors.remove(connector);
+                it.remove();
             }
         }
         return internalRegistry;

@@ -14,10 +14,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
@@ -26,7 +29,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
-import org.eclipse.viatra.query.runtime.base.api.IStructuralFeatureInstanceProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
@@ -45,10 +47,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-
 /**
  * The EMF-based runtime query context, backed by an IQBase NavigationHelper.
  * 
@@ -61,9 +59,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     protected final NavigationHelper baseIndex;
     //private BaseIndexListener listener;
     
-    protected final Map<EClass, EnumSet<IndexingService>> indexedClasses = Maps.newHashMap();
-    protected final Map<EDataType, EnumSet<IndexingService>> indexedDataTypes = Maps.newHashMap();
-    protected final Map<EStructuralFeature, EnumSet<IndexingService>> indexedFeatures = Maps.newHashMap();
+    protected final Map<EClass, EnumSet<IndexingService>> indexedClasses = new HashMap<>();
+    protected final Map<EDataType, EnumSet<IndexingService>> indexedDataTypes = new HashMap<>();
+    protected final Map<EStructuralFeature, EnumSet<IndexingService>> indexedFeatures = new HashMap<>();
     
     protected final EMFQueryMetaContext metaContext;
 
@@ -229,7 +227,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
             
             if (seedMask.indices.length == 0) { // unseeded
-                return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
+                return baseIndex.getAllInstances(eClass).stream().map(wrapUnary).collect(Collectors.toSet());
             } else { // fully seeded
                 Object seedInstance = seedMask.getValue(seed, 0);
                 if (containsTuple(key, seed)) 
@@ -239,7 +237,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
             
             if (seedMask.indices.length == 0) { // unseeded
-                return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
+                return baseIndex.getDataTypeInstances(dataType).stream().map(wrapUnary).collect(Collectors.toSet());
             } else { // fully seeded
                 Object seedInstance = seedMask.getValue(seed, 0);
                 if (containsTuple(key, seed)) 
@@ -266,31 +264,18 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
             if (!isSourceBound && isTargetBound) { 
                 final Object seedTarget = seed.get(targetIndex);
                 final Set<EObject> results = baseIndex.findByFeatureValue(seedTarget, feature);
-                return Iterables.transform(results, new Function<Object, Tuple>() {
-                    @Override
-                    public Tuple apply(Object obj) {
-                        return Tuples.staticArityFlatTupleOf(obj, seedTarget);
-                    }
-                });
+                return results.stream().map(obj -> Tuples.staticArityFlatTupleOf(obj, seedTarget)).collect(Collectors.toSet());
             } else if (isSourceBound && isTargetBound) { // fully seeded
                 final Object seedSource = seed.get(sourceIndex);
                 final Object seedTarget = seed.get(targetIndex);
                 if (containsTuple(key, seed)) 
                     result.add(Tuples.staticArityFlatTupleOf(seedSource, seedTarget));
             } else if (!isSourceBound && !isTargetBound) { // fully unseeded
-                baseIndex.processAllFeatureInstances(feature, new IStructuralFeatureInstanceProcessor() {
-                    public void process(EObject source, Object target) {
-                        result.add(Tuples.staticArityFlatTupleOf(source, target));
-                    }
-                });
+                baseIndex.processAllFeatureInstances(feature, (source, target) -> result.add(Tuples.staticArityFlatTupleOf(source, target)));
             } else if (isSourceBound && !isTargetBound) { 
                 final Object seedSource = seed.get(sourceIndex);
                 final Set<Object> results = baseIndex.getFeatureTargets((EObject) seedSource, feature);
-                return Iterables.transform(results, new Function<Object, Tuple>() {
-                    public Tuple apply(Object obj) {
-                        return Tuples.staticArityFlatTupleOf(seedSource, obj);
-                    }
-                });
+                return results.stream().map(obj -> Tuples.staticArityFlatTupleOf(seedSource, obj)).collect(Collectors.toSet());
             } 
         } else {
             illegalInputKey(key);
@@ -300,12 +285,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return result;
     }
 
-    private static Function<Object, Tuple> wrapUnary = new Function<Object, Tuple>() {
-        @Override
-        public Tuple apply(Object obj) {
-            return Tuples.staticArityFlatTupleOf(obj);
-        }
-    };
+    private static Function<Object, Tuple> wrapUnary = obj -> Tuples.staticArityFlatTupleOf(obj);
 
     @Override
     public Iterable<? extends Object> enumerateValues(IInputKey key, TupleMask seedMask, ITuple seed) {

@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -60,16 +61,13 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
@@ -111,7 +109,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     /**
      * The RETE and other pattern matcher implementations of the VIATRA Query Engine.
      */
-    private volatile Map<IQueryBackendFactory, IQueryBackend> queryBackends = Maps.newHashMap();
+    private volatile Map<IQueryBackendFactory, IQueryBackend> queryBackends = new HashMap<>();
 
     /**
      * The current engine default hints
@@ -200,7 +198,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
     @Override
     public Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers() {
-        return ImmutableSet.copyOf(matchers.values());
+        return new HashSet<>(matchers.values());
     }
 
     @Override
@@ -661,7 +659,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
                     map(PQuery::getFullyQualifiedName).
                     collect(Collectors.toList());
             Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s",
-                    Joiner.on(", ").join(erroneousPatterns));
+                    erroneousPatterns.stream().collect(Collectors.joining(", ")));
 
             // TODO maybe do some smarter preparation per backend?
             try {

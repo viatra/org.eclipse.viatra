@@ -12,8 +12,9 @@ package org.eclipse.viatra.query.runtime.registry.view;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
@@ -22,12 +23,9 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntr
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 
 /**
  * An abstract {@link IRegistryView} implementation that stores the registry, the set of listeners added to the view and
@@ -66,15 +64,8 @@ public abstract class AbstractRegistryView implements IRegistryView {
     public AbstractRegistryView(IQuerySpecificationRegistry registry, boolean allowDuplicateFQNs) {
         this.registry = registry;
         this.allowDuplicateFQNs = allowDuplicateFQNs;
-        this.fqnToEntryMap = Multimaps.newSetMultimap(
-                Maps.<String, Collection<IQuerySpecificationRegistryEntry>> newTreeMap(),
-                new Supplier<Set<IQuerySpecificationRegistryEntry>>() {
-                    @Override
-                    public Set<IQuerySpecificationRegistryEntry> get() {
-                        return Sets.newHashSet();
-                    }
-                });
-        this.listeners = Sets.newHashSet();
+        this.fqnToEntryMap = Multimaps.newSetMultimap(new TreeMap<>(), HashSet::new);
+        this.listeners = new HashSet<>();
     }
 
     @Override

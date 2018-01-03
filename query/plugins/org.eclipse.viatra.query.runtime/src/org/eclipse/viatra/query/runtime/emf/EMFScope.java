@@ -11,7 +11,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.emf;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
@@ -26,10 +31,6 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * An {@link QueryScope} consisting of EMF objects contained in multiple {@link ResourceSet}s, a single {@link ResourceSet}, {@link Resource} or a containment subtree below a given {@link EObject}.
@@ -57,7 +58,7 @@ public class EMFScope extends QueryScope {
      * @throws ViatraQueryRuntimeException- if scopeRoot is not an EMF ResourceSet, Resource or EObject
      */
     public EMFScope(Notifier scopeRoot) {
-        this(ImmutableSet.of(scopeRoot), new BaseIndexOptions());
+        this(Collections.singleton(scopeRoot), new BaseIndexOptions());
     }
 
     /**
@@ -68,7 +69,7 @@ public class EMFScope extends QueryScope {
      * @throws ViatraQueryRuntimeException if scopeRoot is not an EMF ResourceSet, Resource or EObject
      */
     public EMFScope(Notifier scopeRoot, BaseIndexOptions options) {
-        this(ImmutableSet.of(scopeRoot), options);
+        this(Collections.singleton(scopeRoot), options);
     }
 
     /**
@@ -92,17 +93,20 @@ public class EMFScope extends QueryScope {
         if (scopeRoots.isEmpty()) {
             throw new IllegalArgumentException("No scope roots given");
         } else if (scopeRoots.size() == 1) {
-            checkScopeRoots(scopeRoots, Predicates.or(ImmutableSet.of(Predicates.instanceOf(EObject.class), Predicates.instanceOf(Resource.class), Predicates.instanceOf(ResourceSet.class))));
+            checkScopeRoots(scopeRoots, EObject.class::isInstance, Resource.class::isInstance, ResourceSet.class::isInstance);
         } else {
-            checkScopeRoots(scopeRoots, Predicates.instanceOf(ResourceSet.class));
+            checkScopeRoots(scopeRoots, ResourceSet.class::isInstance);
         }
-        this.scopeRoots = ImmutableSet.copyOf(scopeRoots);
+        this.scopeRoots = new HashSet<>(scopeRoots);
         this.options = options.copy();
     }
 
-    private void checkScopeRoots(Set<? extends Notifier> scopeRoots, Predicate<Object> predicate) {
+    @SafeVarargs
+    private final void checkScopeRoots(Set<? extends Notifier> scopeRoots, Predicate<Notifier>... predicates) {
         for (Notifier scopeRoot : scopeRoots) {
-            if (!predicate.apply(scopeRoot))
+            // Creating compound predicate that checks the various branches of disjunction together
+            Predicate<Notifier> compoundPredicate = Arrays.stream(predicates).collect(Collectors.reducing(a -> true, a -> a, (a, b) -> a.or(b)));
+            if (!compoundPredicate.test(scopeRoot))
                 throw new ViatraQueryException(ViatraQueryException.INVALID_EMFROOT
                         + (scopeRoot == null ? "(null)" : scopeRoot.getClass().getName()),
                         ViatraQueryException.INVALID_EMFROOT_SHORT);

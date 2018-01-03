@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseQueryGroup;
-import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * Initializes a query group from a set of query providers. The query providers are not executed until the queries
@@ -32,13 +29,13 @@ import com.google.common.collect.Sets;
  */
 public class LazyLoadingQueryGroup extends BaseQueryGroup {
 
-    private final Set<? extends IProvider<IQuerySpecification<?>>> providers;
+    private final Set<? extends Supplier<IQuerySpecification<?>>> providers;
     private Set<IQuerySpecification<?>> specifications = null;
 
     /**
      * @param providers a non-null set to initialize the group
      */
-    public LazyLoadingQueryGroup(Set<? extends IProvider<IQuerySpecification<?>>> providers) {
+    public LazyLoadingQueryGroup(Set<? extends Supplier<IQuerySpecification<?>>> providers) {
         Preconditions.checkArgument(providers != null, "The set of providers must not be null");
         this.providers = providers;
     }
@@ -46,31 +43,21 @@ public class LazyLoadingQueryGroup extends BaseQueryGroup {
     /**
      * @param providers a non-null set to initialize the group
      */
-    public static IQueryGroup of(Set<? extends IProvider<IQuerySpecification<?>>> querySpecifications) {
+    public static IQueryGroup of(Set<? extends Supplier<IQuerySpecification<?>>> querySpecifications) {
         return new LazyLoadingQueryGroup(querySpecifications);
     }
 
     @Override
     public Set<IQuerySpecification<?>> getSpecifications() {
         if (specifications == null) {
-            specifications = Sets.newHashSet(Iterables.filter(Iterables.transform(providers,
-                    new Function<IProvider<IQuerySpecification<?>>, IQuerySpecification<?>>() {
-
-                        @Override
-                        public IQuerySpecification<?> apply(IProvider<IQuerySpecification<?>> input) {
-                            if (input == null) {
-                                return null;
-                            }
-                            try {
-                                return input.get();
-                            } catch (Exception e) {
-                                // TODO maybe store in issue list and provide better error reporting in general
-                                String errorMessage = "Exception occurred while accessing query specification from provider: " + e.getMessage();
-                                ViatraQueryLoggingUtil.getLogger(getClass()).error(errorMessage);
-                                return null;
-                            }
-                        }
-                    }),Predicates.notNull()));
+            try {
+                specifications = providers.stream().filter(Objects::nonNull).map(Supplier::get).filter(Objects::nonNull).collect(Collectors.toSet());
+            } catch (Exception e) {
+                // TODO maybe store in issue list and provide better error reporting in general
+                String errorMessage = "Exception occurred while accessing query specification from provider: " + e.getMessage();
+                ViatraQueryLoggingUtil.getLogger(getClass()).error(errorMessage);
+                return null;
+            }
         }
         return specifications;
     }

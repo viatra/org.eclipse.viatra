@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.query.runtime.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.eclipse.viatra.query.runtime.matchers.util.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -24,8 +24,6 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.collect.Sets;
 
 /**
  * Global registry of active VIATRA Query Engines.
@@ -134,7 +132,7 @@ public class ViatraQueryEngineManager {
         for (WeakReference<ViatraQueryEngineImpl> engineRef : engines.values()) {
             AdvancedViatraQueryEngine engine = engineRef == null ? null : engineRef.get();
             if(existingEngines == null) {
-                existingEngines = Sets.newHashSet();
+                existingEngines = new HashSet<>();
             }
             existingEngines.add(engine);
         }
@@ -176,7 +174,7 @@ public class ViatraQueryEngineManager {
     protected void notifyInitializationListeners(AdvancedViatraQueryEngine engine) {
         try {
             if (!initializationListeners.isEmpty()) {
-                for (ViatraQueryEngineInitializationListener listener : Sets.newHashSet(initializationListeners)) {
+                for (ViatraQueryEngineInitializationListener listener : new HashSet<>(initializationListeners)) {
                     listener.engineInitialized(engine);
                 }
             }

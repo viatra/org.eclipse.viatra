@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.connector;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.registry.IConnectorListener;
 import org.eclipse.viatra.query.runtime.registry.IRegistrySourceConnector;
-
-import com.google.common.collect.Sets;
 
 /**
  * Abstract registry source connector implementation that stores the identifier and listener set.
@@ -44,10 +42,10 @@ public abstract class AbstractRegistrySourceConnector implements IRegistrySource
      */
     public AbstractRegistrySourceConnector(String identifier, boolean includeInDefaultViews) {
         super();
-        checkNotNull(identifier, "Identifier must not be null!");
+        Objects.requireNonNull(identifier, "Identifier must not be null!");
         this.identifier = identifier;
         this.includeInDefaultViews = includeInDefaultViews;
-        this.listeners = Sets.newHashSet();
+        this.listeners = new HashSet<>();
     }
 
     @Override
@@ -62,7 +60,7 @@ public abstract class AbstractRegistrySourceConnector implements IRegistrySource
 
     @Override
     public void addListener(IConnectorListener listener) {
-        checkNotNull(listener, "Listener must not be null!");
+        Objects.requireNonNull(listener, "Listener must not be null!");
         boolean added = listeners.add(listener);
         if (added) {
             sendQuerySpecificationsToListener(listener);
@@ -71,7 +69,7 @@ public abstract class AbstractRegistrySourceConnector implements IRegistrySource
 
     @Override
     public void removeListener(IConnectorListener listener) {
-        checkNotNull(listener, "Listener must not be null!");
+        Objects.requireNonNull(listener, "Listener must not be null!");
         listeners.remove(listener);
     }
 

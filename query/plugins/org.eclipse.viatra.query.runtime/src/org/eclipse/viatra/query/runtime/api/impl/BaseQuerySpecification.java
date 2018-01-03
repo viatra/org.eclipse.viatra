@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.api.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -21,15 +22,10 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
 
 /**
  * Base implementation of IQuerySpecification.
@@ -91,17 +87,8 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     public Matcher getMatcher(ViatraQueryEngine engine) {
         ensureInitializedInternal();
         if (wrappedPQuery.getStatus() == PQueryStatus.ERROR) {
-
-            String errorMessages = Joiner.on("\n")
-                    .join(Iterables.transform(wrappedPQuery.getPProblems(), new Function<PProblem, String>() {
-
-                        @Override
-                        public String apply(PProblem input) {
-                            return (input == null) ? "" : input.getShortMessage();
-                        }
-
-                    }));
-
+            String errorMessages = wrappedPQuery.getPProblems().stream()
+                    .map(input -> (input == null) ? "" : input.getShortMessage()).collect(Collectors.joining("\n"));
             throw new ViatraQueryException(String.format("Erroneous query specification: %s %n %s", getFullyQualifiedName(), errorMessages),
                     "Cannot initialize matchers on erroneous query specifications.");
         } else if (!engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass())) {
