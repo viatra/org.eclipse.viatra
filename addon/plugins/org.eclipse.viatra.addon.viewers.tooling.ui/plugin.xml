@@ -6,15 +6,6 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
-         <command
-               commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset"
-               label="Reinitialize VIATRA Viewers"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
             locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
          <command
                commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset"
@@ -23,7 +14,6 @@
          </command>
       </menuContribution>
    </extension>
-   
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -31,17 +21,11 @@
             id="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset"
             name="Reinitialize VIATRA Viewers (resourceset)">
       </command>
-      <command
-            categoryId="org.eclipse.viatra.addon.viewers.tooling.ui.category"
-            id="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resource"
-            name="Reinitialize VIATRA Viewers (resource)">
-      </command>
       <category
             id="org.eclipse.viatra.addon.viewers.tooling.ui.category"
             name="VIATRA Viewers">
       </category>
    </extension>
-   
    <extension
          point="org.eclipse.ui.views"> 
       <view
@@ -56,42 +40,16 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra.addon.viewers.tooling.ui.handlers.InitializeViewersHandlerResource"
-            commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resource">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <count
-                     value="1">
-               </count>
-               <iterate>
-                  <or>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </with>
-         </enabledWhen>
-      </handler>
-      <handler
             class="org.eclipse.viatra.addon.viewers.tooling.ui.handlers.InitializeViewersHandlerResourceSet"
             commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset">
          <enabledWhen>
             <or>
-               <reference
-                     definitionId="org.eclipse.viatra.query.tooling.ui.root">
-               </reference>
                <reference
                      definitionId="org.eclipse.viatra.query.tooling.ui.filteredmatchercontent">
                </reference>
             </or>
          </enabledWhen>
       </handler>
-      
    </extension>
    <extension
          point="org.eclipse.viatra.addon.viewers.tooling.ui.viewersandboxtab">
@@ -118,5 +76,4 @@
          </viewShortcut>
       </perspectiveExtension>
    </extension>
-
 </plugin>
