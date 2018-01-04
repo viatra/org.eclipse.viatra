@@ -12,6 +12,8 @@ package org.eclipse.viatra.query.runtime.rete.recipes.helper;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,9 +26,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Stores a set of known <em>canonical</em> recipes, each representing a disjoint equivalence class of recipes, modulo
@@ -42,8 +41,8 @@ public class RecipeRecognizer {
     /**
      * if EcoreUtil.equals(recipe1, recipe2), only one of them will be included here
      */
-    Map<EClass, Set<ReteNodeRecipe>> canonicalRecipesByClass = Maps.newHashMap();
-    Map<Long, ReteNodeRecipe> canonicalRecipeByEquivalenceClassID = Maps.newHashMap();
+    Map<EClass, Set<ReteNodeRecipe>> canonicalRecipesByClass = new HashMap<>();
+    Map<Long, ReteNodeRecipe> canonicalRecipeByEquivalenceClassID = new HashMap<>();
 
     private IQueryRuntimeContext runtimeContext;
 
@@ -132,7 +131,7 @@ public class RecipeRecognizer {
     private Set<ReteNodeRecipe> getSameClassCanonicalRecipes(final ReteNodeRecipe recipe) {
         Set<ReteNodeRecipe> sameClassRecipes = canonicalRecipesByClass.get(recipe.eClass());
         if (sameClassRecipes == null) {
-            sameClassRecipes = Sets.newHashSet();
+            sameClassRecipes = new HashSet<>();
             canonicalRecipesByClass.put(recipe.eClass(), sameClassRecipes);
         }
         return sameClassRecipes;

@@ -17,7 +17,9 @@ import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.L
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.ADORNMENT_PROVIDER;
 import static org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions.normalizationTraceCollector;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
@@ -31,9 +33,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NeverFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NopTraceCollector;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
 
 /**
  * Type safe builder and extractor for Local search specific hints
@@ -140,7 +139,7 @@ public final class LocalSearchHints implements IMatcherCapability {
     
 
     private Map<QueryHintOption<?>, Object> calculateHintMap() {
-        Map<QueryHintOption<?>, Object> map = Maps.newHashMap();
+        Map<QueryHintOption<?>, Object> map = new HashMap<>();
         if (useBase != null){
             USE_BASE_INDEX.insertOverridingValue(map, useBase); 
         }
@@ -289,7 +288,7 @@ public final class LocalSearchHints implements IMatcherCapability {
             /*
              * We allow substitution of matchers if their functionally relevant settings are equal.
              */
-            return Objects.equal(other.useBase, useBase);
+            return Objects.equals(other.useBase, useBase);
         }
         /*
          * For any other cases (e.g. for Rete), we cannot assume

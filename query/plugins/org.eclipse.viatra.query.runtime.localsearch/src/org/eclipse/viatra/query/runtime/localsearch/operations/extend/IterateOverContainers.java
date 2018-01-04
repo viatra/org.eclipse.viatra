@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -18,10 +19,7 @@ import java.util.NoSuchElementException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Iterates all child elements of a selected EObjects. 
@@ -88,7 +86,7 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
         } else if (transitive) {
             it = new ParentIterator(source);
         } else { 
-            it = Iterators.singletonIterator(container);
+            it = Collections.singleton(container).iterator();
         }
     }
 
@@ -99,7 +97,7 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, sourcePosition, new Integer[0]);
+        return Arrays.asList(position, sourcePosition);
     }
     
 }

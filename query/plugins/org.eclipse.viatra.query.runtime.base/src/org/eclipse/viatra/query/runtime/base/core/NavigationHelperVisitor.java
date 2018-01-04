@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.core;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,8 +26,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
-
-import com.google.common.collect.ImmutableSet;
 
 public abstract class NavigationHelperVisitor extends EMFVisitor {
 
@@ -429,7 +428,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 // we found a feature to be visited
                 if (comprehension.onlySamplingFeature(feature)) {
                     // we found a feature that must be sampled
-                    navigationHelper.registerEClasses(ImmutableSet.of(feature.getEContainingClass()), IndexingLevel.FULL);
+                    navigationHelper.registerEClasses(Collections.singleton(feature.getEContainingClass()), IndexingLevel.FULL);
                     return true;
                 }
             }

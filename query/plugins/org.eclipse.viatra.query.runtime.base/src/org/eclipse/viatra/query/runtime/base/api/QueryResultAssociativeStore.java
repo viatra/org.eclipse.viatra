@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,8 +18,6 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Abel Hegedus
@@ -225,7 +224,7 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
         if (setter == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
-        Collection<Entry<KeyType, ValueType>> entries = Lists.newArrayList(getCacheEntries());
+        Collection<Entry<KeyType, ValueType>> entries = new ArrayList<>(getCacheEntries());
         Iterator<Entry<KeyType, ValueType>> iterator = entries.iterator();
         while (iterator.hasNext()) {
             Entry<KeyType, ValueType> entry = iterator.next();

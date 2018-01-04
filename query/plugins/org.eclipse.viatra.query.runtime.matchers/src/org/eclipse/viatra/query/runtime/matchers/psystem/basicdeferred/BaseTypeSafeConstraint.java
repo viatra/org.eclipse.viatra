@@ -13,6 +13,8 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -20,8 +22,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.VariableDeferredPConstraint;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Gabor Bergmann
@@ -47,7 +47,7 @@ public abstract class BaseTypeSafeConstraint extends
         super(pBody, 
                 (outputVariable == null) ? 
                         inputVariables : 
-                        ImmutableSet.<PVariable>builder().addAll(inputVariables).add(outputVariable).build()
+                            Stream.concat(inputVariables.stream(), Stream.of(outputVariable)).collect(Collectors.toSet())
                     );
         this.inputVariables = inputVariables;
         this.outputVariable = outputVariable;

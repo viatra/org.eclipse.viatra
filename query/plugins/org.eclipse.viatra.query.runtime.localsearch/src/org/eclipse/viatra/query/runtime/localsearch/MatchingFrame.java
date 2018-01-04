@@ -16,8 +16,7 @@ import java.util.Arrays;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.IModifiableTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileTuple;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * A MatchingFrame is a Volatile Tuple implementation used by the local search engine internally.

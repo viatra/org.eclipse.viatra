@@ -159,4 +159,52 @@ public final class Preconditions {
             throw new IllegalStateException(messageSupplier.get());
         }
     }
+    
+    /**
+     * Ensures that an index is appropriate for a list or array of given size.
+     * 
+     * @param index
+     * @param size
+     * @throws IndexOutOfBoundsException
+     *             if index is negative or is greater or equal to size
+     */
+    public static void checkElementIndex(int index, int size) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+    
+    /**
+     * Ensures that an index is appropriate for a list or array of given size.
+     * 
+     * @param index
+     * @param size
+     * @param errorMessageTemplate
+     *            a template for the exception message should the check fail using the Java Formatter syntax; the same
+     *            as used by {@link String#format(String, Object...)}.
+     * @param errorMessageArgs
+     *            the arguments to be substituted into the message template.
+     * @throws IndexOutOfBoundsException
+     *             if index is negative or is greater or equal to size
+     */
+    public static void checkElementIndex(int index, int size, String errorMessageTemplate, Object... errorMessageArgs) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException(String.format(errorMessageTemplate, errorMessageArgs));
+        }
+    }
+    
+    /**
+     * Ensures that an index is appropriate for a list or array of given size.
+     * 
+     * @param index
+     * @param size
+     * @param messageSupplier a supplier that is called to calculate the error message if necessary
+     * @throws IndexOutOfBoundsException
+     *             if index is negative or is greater or equal to size
+     */
+    public static void checkElementIndex(int index, int size, Supplier<String> messageSupplier) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException(messageSupplier.get());
+        }
+    }
 }

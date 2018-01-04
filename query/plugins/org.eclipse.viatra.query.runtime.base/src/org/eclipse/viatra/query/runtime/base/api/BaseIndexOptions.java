@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.api;
 
+import java.util.Objects;
+
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
-
-import com.google.common.base.Objects;
 
 /**
  * The base index options indicate how the indices are built.
@@ -279,7 +279,7 @@ public class BaseIndexOptions {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(dynamicEMFMode, notifierFilterConfiguration, resourceFilterConfiguration,
+        return Objects.hash(dynamicEMFMode, notifierFilterConfiguration, resourceFilterConfiguration,
                 featureFilterConfiguration, traverseOnlyWellBehavingDerivedFeatures, wildcardMode, strictNotificationMode,
                 danglingFreeAssumption);
     }
@@ -346,7 +346,7 @@ public class BaseIndexOptions {
     }
 
     private static void appendModifier(StringBuilder sb, Object actualValue, Object expectedValue, String switchName) {
-        if (Objects.equal(expectedValue, actualValue)) {
+        if (Objects.equals(expectedValue, actualValue)) {
             // silent
         } else {
             sb.append(Boolean.FALSE.equals(actualValue) ? '-' : '+');

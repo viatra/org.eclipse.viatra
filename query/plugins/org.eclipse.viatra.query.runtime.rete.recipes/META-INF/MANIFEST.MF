@@ -12,7 +12,6 @@ Export-Package: org.eclipse.viatra.query.runtime.rete.recipes,
  org.eclipse.viatra.query.runtime.rete.recipes.impl,
  org.eclipse.viatra.query.runtime.rete.recipes.util
 Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.xtext.xbase.lib,
  org.eclipse.viatra.query.runtime.matchers;bundle-version="[2.0.0,2.1.0)"
 Bundle-ActivationPolicy: lazy
 

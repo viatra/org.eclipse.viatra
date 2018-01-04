@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -56,7 +57,7 @@ public class LazyLoadingQueryGroup extends BaseQueryGroup {
                 // TODO maybe store in issue list and provide better error reporting in general
                 String errorMessage = "Exception occurred while accessing query specification from provider: " + e.getMessage();
                 ViatraQueryLoggingUtil.getLogger(getClass()).error(errorMessage);
-                return null;
+                return Collections.emptySet();
             }
         }
         return specifications;

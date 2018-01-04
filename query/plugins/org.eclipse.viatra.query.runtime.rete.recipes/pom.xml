@@ -34,12 +34,6 @@
                                         <exclude>.gitignore</exclude>
                                     </excludes>
                                 </fileset>
-                                <fileset>
-                                    <directory>xtend-gen</directory>
-                                    <excludes>
-                                        <exclude>.gitignore</exclude>
-                                    </excludes>
-                                </fileset>
                             </filesets>
                         </configuration>
                     </execution>
@@ -71,19 +65,6 @@
                             <goal>eclipse-run</goal>
                         </goals>
                         <phase>generate-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.xtend</groupId>
-                <artifactId>xtend-maven-plugin</artifactId>
-                <version>${xtend.compiler.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

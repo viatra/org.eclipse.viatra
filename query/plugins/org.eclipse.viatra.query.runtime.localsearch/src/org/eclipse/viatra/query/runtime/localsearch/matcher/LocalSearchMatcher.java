@@ -11,12 +11,21 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
@@ -26,22 +35,17 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.UnmodifiableIterator;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * @author Zoltan Ujhelyi
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class LocalSearchMatcher implements ILocalSearchAdaptable {
+public final class LocalSearchMatcher implements ILocalSearchAdaptable {
 
-    private ImmutableList<SearchPlanExecutor> plan;
-    private IPlanDescriptor planDescriptor;
-    private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
+    private final List<SearchPlanExecutor> plan;
+    private final IPlanDescriptor planDescriptor;
+    private final List<ILocalSearchAdapter> adapters;
 
     /**
      * @since 2.0
@@ -52,19 +56,19 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     
     @Override
     public List<ILocalSearchAdapter> getAdapters() {
-        return Lists.newArrayList(adapters);
+        return new ArrayList<>(adapters);
     }
     
-    private abstract class PlanExecutionIterator extends UnmodifiableIterator<Tuple> {
+    private abstract class PlanExecutionIterator implements Iterator<Tuple> {
 
-        protected final UnmodifiableIterator<SearchPlanExecutor> planIterator;
+        protected final Iterator<SearchPlanExecutor> planIterator;
         
         protected SearchPlanExecutor currentPlan;
         protected MatchingFrame frame;
         protected VolatileModifiableMaskedTuple parametersOfFrameView; 
         private boolean isNextMatchCalculated;
         
-        public PlanExecutionIterator(final UnmodifiableIterator<SearchPlanExecutor> planIterator) {
+        public PlanExecutionIterator(final Iterator<SearchPlanExecutor> planIterator) {
             this.planIterator = planIterator;
             isNextMatchCalculated = false;
         }
@@ -130,7 +134,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         
         private final Object[] parameterValues;
         
-        public PlanExecutionIteratorWithArrayParameters(UnmodifiableIterator<SearchPlanExecutor> planIterator, final Object[] parameterValues) {
+        public PlanExecutionIteratorWithArrayParameters(Iterator<SearchPlanExecutor> planIterator, final Object[] parameterValues) {
             super(planIterator);
             this.parameterValues = parameterValues;
             selectNextPlan();
@@ -162,7 +166,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         private final ITuple parameterValues;
         private final TupleMask parameterSeedMask;
         
-        public PlanExecutionIteratorWithTupleParameters(UnmodifiableIterator<SearchPlanExecutor> planIterator, final TupleMask parameterSeedMask, final ITuple parameterValues) {
+        public PlanExecutionIteratorWithTupleParameters(Iterator<SearchPlanExecutor> planIterator, final TupleMask parameterSeedMask, final ITuple parameterValues) {
             super(planIterator);
             this.parameterSeedMask = parameterSeedMask;
             this.parameterValues = parameterValues;
@@ -191,55 +195,45 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
             return true;
         }
     }
-    
-    /**
-     * If a descendant initializes a matcher using the default constructor, it is expected that it also calls the
-     * {@link #setPlan(SearchPlanExecutor)} and {@link #setFramesize(int)} methods manually.
-     * @since 1.5
-     */
-    protected LocalSearchMatcher(IPlanDescriptor query) {
-        Preconditions.checkArgument(query != null, "Cannot initialize matcher with null query.");
-        this.planDescriptor = query;
-    }
 
     /**
      * @since 1.7
      */
     public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor plan) {
-        this(planDescriptor, ImmutableList.of(plan));
+        this(planDescriptor, Collections.singletonList(plan));
     }
     
     /**
      * @since 1.7
      */
     public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor[] plan) {
-        this(planDescriptor, ImmutableList.copyOf(plan));
+        this(planDescriptor, new ArrayList<>(Arrays.asList(plan)));
     }
     
     /**
      * @since 1.7
      */
     public LocalSearchMatcher(IPlanDescriptor planDescriptor, Collection<SearchPlanExecutor> plan) {
-        this(planDescriptor, ImmutableList.copyOf(plan));
+        this(planDescriptor, new ArrayList<>(plan));
     }
     
-    /**
-     * @since 1.7
-     */
-    protected LocalSearchMatcher(IPlanDescriptor planDescriptor, ImmutableList<SearchPlanExecutor> plan) {
-        this(planDescriptor);
+    private LocalSearchMatcher(IPlanDescriptor planDescriptor, List<SearchPlanExecutor> plan) {
+        Preconditions.checkArgument(planDescriptor != null, "Cannot initialize matcher with null query.");
+        this.planDescriptor = planDescriptor;
         this.plan = plan;
-        this.adapters = Lists.newLinkedList(adapters);
+        this.adapters = new LinkedList<>();
     }
     
     @Override
     public void addAdapter(ILocalSearchAdapter adapter) {
-        addAdapters(Lists.newArrayList(adapter));
+        this.adapters.add(adapter);
+        adapter.adapterRegistered(this);
     }
 
     @Override
     public void removeAdapter(ILocalSearchAdapter adapter) {
-        addAdapters(Lists.newArrayList(adapter));
+        this.adapters.remove(adapter);
+        adapter.adapterUnregistered(this);
     }
     
     @Override
@@ -256,14 +250,6 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         for (ILocalSearchAdapter adapter : adapters) {
             adapter.adapterUnregistered(this);
         }
-    }
-    
-    protected void setPlan(SearchPlanExecutor plan) {
-        this.plan = ImmutableList.of(plan);
-    }
-
-    protected void setPlan(SearchPlanExecutor[] plan) {
-        this.plan = ImmutableList.copyOf(plan);
     }
 
     public boolean hasMatch() {
@@ -395,7 +381,9 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     public Collection<Tuple> getAllMatches(final Object[] parameterValues) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
-        ImmutableSet<Tuple> results = ImmutableSet.copyOf(it);
+        Set<Tuple> results = StreamSupport
+                .stream(Spliterators.spliteratorUnknownSize(it, Spliterator.IMMUTABLE | Spliterator.DISTINCT), false)
+                .collect(Collectors.toSet());
         matchingFinished();
         return results;
     }
@@ -406,7 +394,9 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     public Iterable<Tuple> getAllMatches(TupleMask parameterSeedMask, final ITuple parameterValues) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
-        ImmutableSet<Tuple> results = ImmutableSet.copyOf(it);
+        Set<Tuple> results = StreamSupport
+                .stream(Spliterators.spliteratorUnknownSize(it, Spliterator.IMMUTABLE | Spliterator.DISTINCT), false)
+                .collect(Collectors.toSet());
         matchingFinished();
         return results;
     }

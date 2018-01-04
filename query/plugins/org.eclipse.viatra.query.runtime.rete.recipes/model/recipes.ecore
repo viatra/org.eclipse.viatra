@@ -174,7 +174,7 @@
     </eAnnotations>
     <eOperations name="getArity" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%java.lang.Object%>> _constantValues = this.getConstantValues();&#xA;return ((&lt;%java.lang.Object%>[])org.eclipse.xtext.xbase.lib.Conversions.unwrapArray(_constantValues, &lt;%java.lang.Object%>.class)).length;"/>
+        <details key="body" value="return this.getConstantValues().size();"/>
       </eAnnotations>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="constantValues" unique="false"

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -19,9 +21,6 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 /**
  * This operation simply checks if a model element is part of the Query Scope
@@ -42,7 +41,7 @@ public class ScopeCheck extends CheckOperation {
 
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
+        Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %d unbound", position));
         Object value = frame.getValue(position);
         if(value instanceof EObject){
             EObject eObject = (EObject) value;
@@ -67,6 +66,6 @@ public class ScopeCheck extends CheckOperation {
     }
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Arrays.asList(position);
     }
 }

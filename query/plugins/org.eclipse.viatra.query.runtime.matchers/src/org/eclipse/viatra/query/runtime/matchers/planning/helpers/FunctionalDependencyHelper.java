@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -122,7 +121,7 @@ public class FunctionalDependencyHelper {
         // TODO perform proper minimization, 
         // see e.g. page 45 in http://www.cs.ubc.ca/~hkhosrav/db/slides/03.design%20theory.pdf
         
-        return ImmutableMap.copyOf(solidDependencies);
+        return Collections.unmodifiableMap(solidDependencies);
     }
     
     /**

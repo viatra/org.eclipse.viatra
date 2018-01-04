@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.context;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Data object representing the implication of an input key, in use cases including edge supertypes, edge opposites, node type constraints, etc.
@@ -59,7 +59,7 @@ public final class InputKeyImplication {
         super();
         this.implyingKey = implyingKey;
         this.impliedKey = impliedKey;
-        this.impliedIndices = ImmutableList.copyOf(implyingIndices);
+        this.impliedIndices = Collections.unmodifiableList(new ArrayList<>(implyingIndices));
     }
     
     @Override

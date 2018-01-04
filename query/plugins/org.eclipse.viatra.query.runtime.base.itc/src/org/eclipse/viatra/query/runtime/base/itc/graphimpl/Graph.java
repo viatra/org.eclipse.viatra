@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCC;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCCResult;
@@ -24,8 +25,6 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataS
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-
-import com.google.common.base.Function;
 
 public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSource<V> {
 
@@ -222,7 +221,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
     private static final String[] colors = new String[] { "yellow", "blue", "red", "green", "gray", "cyan" };
 
     /**
-     * @since 1.6
+     * @since 2.0
      */
     public String generateDot(boolean colorSCCs, Function<V, String> nameMapper, Function<V, String> colorMapper) {
         Map<V, String> colorMap = new HashMap<V, String>();

@@ -29,9 +29,8 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
@@ -110,7 +109,7 @@ public class LocalSearchRuntimeBasedStrategy {
         List<List<PlanState>> stateTable = initializeStateTable(k, n);
 
         // Set initial state: begin with an empty operation list
-        PlanState initialState = new PlanState(pBody, Lists.<PConstraintInfo> newArrayList(), boundVariables);
+        PlanState initialState = new PlanState(pBody, new ArrayList<>(), boundVariables);
         
         // It is needed to start from a list that is ordered by the cost of the constraint application
         OperationCostComparator infoComparator = new OperationCostComparator();
@@ -149,10 +148,10 @@ public class LocalSearchRuntimeBasedStrategy {
     }
 
     private List<List<PlanState>> initializeStateTable(int k, int n) {
-        List<List<PlanState>> stateTable = Lists.newArrayList();
+        List<List<PlanState>> stateTable = new ArrayList<>();
         // Initialize state table and fill it with null
         for (int i = 0; i <= n ; i++) {
-            stateTable.add(Lists.<PlanState>newArrayList());
+            stateTable.add(new ArrayList<>());
         }
         return stateTable;
     }
@@ -182,7 +181,7 @@ public class LocalSearchRuntimeBasedStrategy {
         int futureExtensionsIndex = 0;
         int extensionIndex = 0;
 
-        List<PConstraintInfo> extensions = Lists.newArrayList();
+        List<PConstraintInfo> extensions = new ArrayList<>();
 
         while (presentExtensionsIndex < presentExtensionsForState.size() || futureExtensionsIndex < futureExtensionsForState.size()) {
             if (futureExtensionsIndex >= futureExtensionsForState.size() || (presentExtensionsIndex < presentExtensionsForState.size() && presentExtensionsForState.get(presentExtensionsIndex).getCost() < futureExtensionsForState.get(futureExtensionsIndex).getCost())) {
@@ -209,7 +208,7 @@ public class LocalSearchRuntimeBasedStrategy {
     private List<Integer> determineIndices(List<List<PlanState>> stateTable, int i2, PlanState newState, int k) {
         int a = k;
         int c = 0;
-        List<Integer> acIndices = Lists.newArrayList();
+        List<Integer> acIndices = new ArrayList<>();
         for (int j = 0; j < k; j++) {
             if (j < stateTable.get(i2).size()) {
                 PlanState stateInTable = stateTable.get(i2).get(j);
@@ -232,7 +231,7 @@ public class LocalSearchRuntimeBasedStrategy {
 
     private PlanState calculateNextState(PlanState currentState, PConstraintInfo constraintInfo) {
         // Create operation list based on the current state
-        ArrayList<PConstraintInfo> newOperationsList = Lists.newArrayList(currentState.getOperations());
+        ArrayList<PConstraintInfo> newOperationsList = new ArrayList<>(currentState.getOperations());
         newOperationsList.add(constraintInfo);
 
         // Bound the free variables
@@ -244,7 +243,7 @@ public class LocalSearchRuntimeBasedStrategy {
 
     private List<Set<PVariable>> reachabilityAnalysis(PBody pBody, List<PConstraintInfo> constraintInfos) {
         // TODO implement reachability analisys, also save/persist the results somewhere
-        List<Set<PVariable>> reachableBoundVariableSets = Lists.newArrayList();
+        List<Set<PVariable>> reachableBoundVariableSets = new ArrayList<>();
         return reachableBoundVariableSets;
     }
 

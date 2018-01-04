@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 /**
  * A simple operation that checks whether a {@link EStructuralFeature} connects two selected variables.
@@ -41,8 +40,8 @@ public class StructuralFeatureCheck extends CheckOperation {
     
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Preconditions.checkNotNull(frame.getValue(sourcePosition), "Invalid plan, variable %s unbound", sourcePosition);
-        Preconditions.checkNotNull(frame.getValue(targetPosition), "Invalid plan, variable %s unbound", targetPosition);
+        Objects.requireNonNull(frame.getValue(sourcePosition), () -> String.format("Invalid plan, variable %s unbound", sourcePosition));
+        Objects.requireNonNull(frame.getValue(targetPosition), () -> String.format("Invalid plan, variable %s unbound", targetPosition));
         try {
             EObject source = (EObject) frame.getValue(sourcePosition);
             if(! feature.getEContainingClass().isSuperTypeOf(source.eClass()) ){
@@ -67,7 +66,7 @@ public class StructuralFeatureCheck extends CheckOperation {
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+        return Arrays.asList(sourcePosition, targetPosition);
     }
 
 }

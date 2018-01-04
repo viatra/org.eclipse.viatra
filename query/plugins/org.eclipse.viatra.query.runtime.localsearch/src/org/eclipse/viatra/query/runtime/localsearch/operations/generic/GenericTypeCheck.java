@@ -22,8 +22,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperat
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * @author Zoltan Ujhelyi
@@ -38,7 +37,7 @@ public class GenericTypeCheck extends CheckOperation implements IIteratingSearch
 
     public GenericTypeCheck(IInputKey type, int[] positions, TupleMask callMask) {
         Preconditions.checkArgument(positions.length == type.getArity(),
-                "The type %s requires %s parameters, but %s positions are provided", type.getPrettyPrintableName(),
+                "The type %s requires %d parameters, but %d positions are provided", type.getPrettyPrintableName(),
                 type.getArity(), positions.length);
         List<Integer> modifiablePositionList = new ArrayList<>();
         for (int position : positions) {

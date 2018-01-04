@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
@@ -29,7 +27,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 public class PDisjunction {
 
-    private ImmutableSet<PBody> bodies;
+    private Set<PBody> bodies;
     private PQuery query;
 
     public PDisjunction(Set<PBody> bodies) {
@@ -39,12 +37,8 @@ public class PDisjunction {
     public PDisjunction(PQuery query, Set<PBody> bodies) {
         super();
         this.query = query;
-        final Builder<PBody> builder = ImmutableSet.builder();
-        for (PBody body : bodies) {
-            body.setContainerDisjunction(this);
-            builder.add(body);
-        }
-        this.bodies = builder.build();
+        this.bodies = Collections.unmodifiableSet(new HashSet<>(bodies));
+        this.bodies.forEach(body -> body.setContainerDisjunction(this));
     }
 
     /**

@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,8 +23,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
@@ -287,7 +287,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
         }
         Collection<ValueType> oldValues = removeAll(key);
         Iterator<? extends ValueType> iterator = values.iterator();
-        Collection<ValueType> notInserted = Lists.newArrayList();
+        Collection<ValueType> notInserted = new ArrayList<>();
         while (iterator.hasNext()) {
             ValueType value = iterator.next();
             if(!modifyThroughQueryResultSetter(key, value, Direction.INSERT)) {
@@ -320,7 +320,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
         // if it contains the key, the type MUST be correct
         if (cache.containsKey(key)) {
             Collection<ValueType> collection = cache.get((KeyType) key);
-            Collection<ValueType> output = ImmutableSet.copyOf(collection);
+            Collection<ValueType> output = Collections.unmodifiableSet(new HashSet<>(collection));
 
             for (ValueType valueType : output) {
                 modifyThroughQueryResultSetter((KeyType) key, valueType, Direction.DELETE);

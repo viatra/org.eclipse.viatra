@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.eclipse.viatra.query.runtime.matchers.util.Preconditions.checkArgument;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import com.google.common.collect.Sets;
 
 /**
  * Adapter class for lightweight observer which filters feature updates to a selected set of features.
@@ -35,7 +34,7 @@ public abstract class LightweightEObjectObserverAdapter implements LightweightEO
      */
     public LightweightEObjectObserverAdapter(Collection<EStructuralFeature> observedFeatures) {
         checkArgument(observedFeatures != null, "List of observed features must not be null!");
-        this.observedFeatures = Sets.newHashSet(observedFeatures);
+        this.observedFeatures = new HashSet<>(observedFeatures);
     }
     
     public void observeAdditionalFeature(EStructuralFeature observedFeature) {

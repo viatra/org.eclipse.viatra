@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
@@ -37,7 +36,7 @@ public class InstanceOfClassCheck extends CheckOperation {
 
     @Override
     protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
+        Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
         if (frame.getValue(position) instanceof EObject) {
             return clazz.isSuperTypeOf(((EObject) frame.getValue(position)).eClass());
         }
@@ -51,7 +50,7 @@ public class InstanceOfClassCheck extends CheckOperation {
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Arrays.asList(position);
     }
     
 }

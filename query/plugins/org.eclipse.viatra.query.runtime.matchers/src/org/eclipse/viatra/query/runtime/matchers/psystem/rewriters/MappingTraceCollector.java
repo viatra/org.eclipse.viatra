@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,7 +26,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -77,7 +77,7 @@ public class MappingTraceCollector implements IRewriterTraceCollector {
      */
     private Set<PTraceable> findTraceEnds(PTraceable traceable, Multimap<PTraceable, PTraceable> traceRecords) {
         if (traceable instanceof PQuery) { // PQueries are preserved
-            return ImmutableSet.of(traceable);
+            return Collections.singleton(traceable);
         }
         Set<PTraceable> visited = new HashSet<>();
         Set<PTraceable> result = new HashSet<>();

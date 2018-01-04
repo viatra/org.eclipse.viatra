@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.core;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.function.Function.identity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -23,9 +23,13 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notification;
@@ -65,15 +69,11 @@ import org.eclipse.viatra.query.runtime.base.core.EMFBaseIndexInstanceStore.Feat
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 public class NavigationHelperImpl implements NavigationHelper {
@@ -747,13 +747,13 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addBaseIndexChangeListener(EMFBaseIndexChangeListener listener) {
-        checkArgument(listener != null, "Cannot add null listener!");
+        Preconditions.checkArgument(listener != null, "Cannot add null listener!");
         baseIndexChangeListeners.add(listener);
     }
 
     @Override
     public void removeBaseIndexChangeListener(EMFBaseIndexChangeListener listener) {
-        checkArgument(listener != null, "Cannot remove null listener!");
+        Preconditions.checkArgument(listener != null, "Cannot remove null listener!");
         baseIndexChangeListeners.remove(listener);
     }
 
@@ -1006,9 +1006,9 @@ public class NavigationHelperImpl implements NavigationHelper {
             try {
                 coalesceTraversals(() -> {
                     Function<Object, IndexingLevel> f = input -> level;
-                    delayedFeatures.putAll(Maps.asMap(resolvedFeatures, f));
-                    delayedDataTypes.putAll(Maps.asMap(resolvedDatatypes, f));
-                    delayedClasses.putAll(Maps.asMap(resolvedClasses, f));
+                    delayedFeatures.putAll(resolvedFeatures.stream().collect(Collectors.toMap(identity(), f)));
+                    delayedDataTypes.putAll(resolvedDatatypes.stream().collect(Collectors.toMap(identity(), f)));
+                    delayedClasses.putAll(resolvedClasses.stream().collect(Collectors.toMap(identity(), f)));
                 });
             } catch (InvocationTargetException ex) {
                 processingFatal(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
@@ -1249,13 +1249,16 @@ public class NavigationHelperImpl implements NavigationHelper {
                  *
                  * Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
                  * works as expected, but it seems a better idea to do the cleanup for all types in the same way */
-                for (Entry<Object, IndexingLevel> entry : Iterables.concat(toGatherClasses.entrySet(),
-                        toGatherFeatures.entrySet(), toGatherDataTypes.entrySet())) {
-                    IndexingLevel oldIndexingLevel = getIndexingLevel(entry.getKey());
-                    if (entry.getValue().hasInstances() && oldIndexingLevel.hasStatistics() && !oldIndexingLevel.hasInstances()) {
-                        statsStore.removeType(entry.getKey());
+                BiConsumer<Object, IndexingLevel> removeType = (key, value) -> {
+                    IndexingLevel oldIndexingLevel = getIndexingLevel(key);
+                    if (value.hasInstances() && oldIndexingLevel.hasStatistics() && !oldIndexingLevel.hasInstances()) {
+                        statsStore.removeType(key);
                     }
-                }
+                    
+                };
+                toGatherClasses.forEach(removeType);
+                toGatherFeatures.forEach(removeType);
+                toGatherDataTypes.forEach(removeType);
                 
                 // Are there new classes to be observed that are not available via superclasses? 
                 //      (at sufficient level)
@@ -1393,7 +1396,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (!baseIndexOptions.isTraverseOnlyWellBehavingDerivedFeatures()) {
             // get all required classes
             Set<EClass> allCurrentClasses = instanceStore.getAllCurrentClasses();
-            Set<EStructuralFeature> featuresToSample = Sets.newHashSet();
+            Set<EStructuralFeature> featuresToSample = new HashSet<>();
             // collect features to sample
             for (EClass cls : allCurrentClasses) {
                 EList<EStructuralFeature> features = cls.getEAllStructuralFeatures();
@@ -1461,8 +1464,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     private void resampleSingleFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
             Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
         InternalEObject internalEObject = (InternalEObject) source;
-        Object oldValue = Iterables.getFirst(oldValues, null);
-        if (!Objects.equal(oldValue, newValue)) {
+        Object oldValue = oldValues.stream().findFirst().orElse(null);
+        if (!Objects.equals(oldValue, newValue)) {
             // value changed
             comprehension.traverseFeature(removalVisitor, source, feature, oldValue, null);
             comprehension.traverseFeature(insertionVisitor, source, feature, newValue, null);

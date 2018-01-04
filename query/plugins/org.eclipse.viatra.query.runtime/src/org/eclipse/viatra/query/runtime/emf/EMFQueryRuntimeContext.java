@@ -285,7 +285,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return result;
     }
 
-    private static Function<Object, Tuple> wrapUnary = obj -> Tuples.staticArityFlatTupleOf(obj);
+    private static Function<Object, Tuple> wrapUnary = Tuples::staticArityFlatTupleOf;
 
     @Override
     public Iterable<? extends Object> enumerateValues(IInputKey key, TupleMask seedMask, ITuple seed) {

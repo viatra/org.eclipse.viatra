@@ -16,6 +16,7 @@
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -27,9 +28,8 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
@@ -209,7 +209,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         if (operations == null) {
             return "Unspecified plan";
         } else {
-            return Joiner.on("\n").join(operations);
+            return operations.stream().map(Object::toString).collect(Collectors.joining("\n"));
         }
     }
 

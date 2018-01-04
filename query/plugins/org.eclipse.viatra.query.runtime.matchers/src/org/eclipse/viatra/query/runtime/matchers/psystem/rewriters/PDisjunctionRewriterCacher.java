@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.WeakHashMap;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A rewriter that stores the previously computed results of a rewriter or a rewriter chain.
@@ -37,15 +38,15 @@ public class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
     }
     
     public PDisjunctionRewriterCacher(PDisjunctionRewriter rewriter) {
-        rewriterChain = ImmutableList.of(rewriter);
+        rewriterChain = Collections.singletonList(rewriter);
     }
     
     public PDisjunctionRewriterCacher(PDisjunctionRewriter... rewriters) {
-        rewriterChain = ImmutableList.copyOf(rewriters);
+        rewriterChain = new ArrayList<>(Arrays.asList(rewriters));
     }
     
     public PDisjunctionRewriterCacher(List<PDisjunctionRewriter> rewriterChain) {
-        this.rewriterChain = ImmutableList.copyOf(rewriterChain);
+        this.rewriterChain = new ArrayList<>(rewriterChain);
     }
     
     @Override
