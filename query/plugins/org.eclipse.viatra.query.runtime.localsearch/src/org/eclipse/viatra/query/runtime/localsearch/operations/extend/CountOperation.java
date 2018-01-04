@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -18,8 +19,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOp
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
-
-import com.google.common.collect.Iterators;
 
 /**
  * Calculates the count of matches for a called matcher
@@ -46,7 +45,7 @@ public class CountOperation extends ExtendOperation<Integer> implements IPattern
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         matcher = context.getMatcher(information.getReference());
         maskedTuple.updateTuple(frame);
-        it = Iterators.singletonIterator(matcher.countMatches(information.getParameterMask(), maskedTuple));
+        it = Collections.singletonList(matcher.countMatches(information.getParameterMask(), maskedTuple)).iterator();
         
     }
     

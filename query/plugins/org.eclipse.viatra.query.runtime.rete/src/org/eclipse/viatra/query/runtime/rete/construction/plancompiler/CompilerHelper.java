@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -53,8 +54,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Bergmann Gabor
@@ -208,9 +207,9 @@ public class CompilerHelper {
         for (int i = 0; i < parameters.size(); i++) {
             IInputKey key = parameters.get(i).getDeclaredUnaryType();
             if (key == null) {
-                keys.add(ImmutableSet.<IInputKey> of());
+                keys.add(Collections.emptySet());
             } else {
-                keys.add(ImmutableSet.of(parameters.get(i).getDeclaredUnaryType()));
+                keys.add(Collections.singleton(parameters.get(i).getDeclaredUnaryType()));
             }
         }
         return computePosetInfo(keys, context);

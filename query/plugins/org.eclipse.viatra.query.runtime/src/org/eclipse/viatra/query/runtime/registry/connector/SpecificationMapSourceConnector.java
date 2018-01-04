@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.connector;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.viatra.query.runtime.extensibility.SingletonQuerySpecificationProvider;
 import org.eclipse.viatra.query.runtime.registry.IConnectorListener;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 /**
  * A simple connector implementation that allows users to simply add and remove specifications. These changes are
@@ -47,7 +46,7 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      */
     public SpecificationMapSourceConnector(String identifier, boolean includeInDefaultViews) {
         super(identifier, includeInDefaultViews);
-        this.specificationProviderMap = Maps.newHashMap();
+        this.specificationProviderMap = new HashMap<>();
     }
     
     /**
@@ -93,7 +92,7 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      * @throws IllegalArgumentException if the connector already contains a specification with the same FQN
      */
     public void addQuerySpecificationProvider(IQuerySpecificationProvider provider) {
-        checkNotNull(provider, "Provider must not be null!");
+        Objects.requireNonNull(provider, "Provider must not be null!");
         String fullyQualifiedName = provider.getFullyQualifiedName();
         if (!specificationProviderMap.containsKey(fullyQualifiedName)) {
             specificationProviderMap.put(fullyQualifiedName, provider);
@@ -112,7 +111,7 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      * @throws NoSuchElementException if the connector does not contain a specification with the given FQN
      */
     public void removeQuerySpecificationProvider(String fullyQualifiedName) {
-        checkNotNull(fullyQualifiedName, "Fully qualified name must not be null!");
+        Objects.requireNonNull(fullyQualifiedName, "Fully qualified name must not be null!");
         IQuerySpecificationProvider provider = specificationProviderMap.remove(fullyQualifiedName);
         if (provider == null) {
             throw new NoSuchElementException(
@@ -127,8 +126,7 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      * @return the immutable copy of the set of FQNs for the added query specifications
      */
     public Set<String> getQuerySpecificationFQNs() {
-        ImmutableSet<String> fqns = ImmutableSet.copyOf(specificationProviderMap.keySet());
-        return fqns;
+        return Collections.unmodifiableSet(new HashSet<>(specificationProviderMap.keySet()));
     }
 
     /**
@@ -137,7 +135,7 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      * @return true if a specification with the given FQN exists in the connector, false otherwise
      */
     public boolean hasQuerySpecificationFQN(String fullyQualifiedName) {
-        checkNotNull(fullyQualifiedName, "FQN must not be null!");
+        Objects.requireNonNull(fullyQualifiedName, "FQN must not be null!");
         return specificationProviderMap.containsKey(fullyQualifiedName);
     }
 

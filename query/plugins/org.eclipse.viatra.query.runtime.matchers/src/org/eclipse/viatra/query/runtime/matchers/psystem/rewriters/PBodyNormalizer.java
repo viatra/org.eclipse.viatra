@@ -37,10 +37,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
-import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Ordering;
 
 /**
  * A disjunction rewriter for creating a normalized form of specification, unifying variables and running basic sanity
@@ -191,9 +189,16 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
                         context);
             }
         }
-        Comparator<ITypeConstraint> eliminationOrder = Ordering.from(context.getSuggestedEliminationOrdering())
-                .onResultOf((Function<ITypeConstraint, IInputKey>) input -> input.getEquivalentJudgement().getInputKey())
-                .compound(PConstraint.CompareByMonotonousID.INSTANCE);
+        Comparator<ITypeConstraint> eliminationOrder = (o1, o2) -> {
+            IInputKey type1 = o1.getEquivalentJudgement().getInputKey();
+            IInputKey type2 = o2.getEquivalentJudgement().getInputKey();
+            
+            int result = context.getSuggestedEliminationOrdering().compare(type1, type2);
+            return (result == 0) 
+                    ? PConstraint.COMPARE_BY_MONOTONOUS_ID.compare(o1, o2) 
+                    : result;
+        }; 
+                
         Collections.sort(allTypeConstraints, eliminationOrder);
         Queue<ITypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
 

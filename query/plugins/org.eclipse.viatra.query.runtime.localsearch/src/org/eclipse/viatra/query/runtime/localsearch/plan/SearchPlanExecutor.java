@@ -16,6 +16,8 @@
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -30,10 +32,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
-
 /**
  * A search plan executor is used to execute {@link SearchPlan} instances.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -44,11 +42,14 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     SearchPlan plan;
     private List<ISearchOperation> operations;
     private final ISearchContext context;
-    private final List<ILocalSearchAdapter> adapters = Lists.newCopyOnWriteArrayList();
-    private final BiMap<Integer,PVariable> variableMapping;
+    private final List<ILocalSearchAdapter> adapters = new CopyOnWriteArrayList<>();
+    private final Map<Integer,PVariable> variableMapping;
     private final TupleMask parameterMask;
 
-    public BiMap<Integer, PVariable> getVariableMapping() {
+    /**
+     * @since 2.0
+     */
+    public Map<Integer, PVariable> getVariableMapping() {
         return variableMapping;
     }
 
@@ -93,7 +94,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
-        this.variableMapping = HashBiMap.<PVariable, Integer>create(variableMapping).inverse();
+        this.variableMapping = variableMapping.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
         operations = plan.getOperations();
         this.currentOperation = -1;
         this.parameterMask = parameterMask;

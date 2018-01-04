@@ -13,8 +13,7 @@ package org.eclipse.viatra.query.runtime.util;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Centralized logger of the VIATRA Query runtime.

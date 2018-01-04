@@ -12,7 +12,9 @@ package org.eclipse.viatra.query.runtime.rete.construction.plancompiler;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
@@ -22,8 +24,6 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
-
-import com.google.common.base.Joiner;
 
 /**
  * In a recursive query structure, query composition references can be cut off so that the remaining structure is DAG.
@@ -52,13 +52,17 @@ public class RecursionCutoffPoint {
         if (!compiledQuery.getParentRecipeTraces().isEmpty()) {
             throw new IllegalArgumentException(String.format("Recursion cut-off point of query %s has trace parents: %s", 
                     compiledQuery.getQuery(),
-                    Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+                    prettyPrintParentRecipeTraces(compiledQuery.getParentRecipeTraces())));
         }
         if (!recipe.getParents().isEmpty()) {
             throw new IllegalArgumentException(String.format("Recursion cut-off point of query %s has recipe parents: %s", 
                     compiledQuery.getQuery(),
-                    Joiner.on(", ").join(compiledQuery.getParentRecipeTraces())));
+                    prettyPrintParentRecipeTraces(compiledQuery.getParentRecipeTraces())));
         }
+    }
+    
+    private String prettyPrintParentRecipeTraces(List<RecipeTraceInfo> trace) {
+        return trace.stream().map(Object::toString).collect(Collectors.joining(", "));
     }
     
     /**

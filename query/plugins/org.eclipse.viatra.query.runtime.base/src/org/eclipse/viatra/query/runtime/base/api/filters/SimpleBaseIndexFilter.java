@@ -11,11 +11,10 @@
 package org.eclipse.viatra.query.runtime.base.api.filters;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-
-import com.google.common.collect.Sets;
 
 /**
  * An index filter that is based on a collection of {@link Notifier} instances.
@@ -34,7 +33,7 @@ public class SimpleBaseIndexFilter implements IBaseIndexObjectFilter {
      * @param filterConfiguration
      */
     public SimpleBaseIndexFilter(Collection<Notifier> filterConfiguration) {
-        filters = Sets.newHashSet(filterConfiguration);
+        filters = new HashSet<>(filterConfiguration);
     }
 
     public SimpleBaseIndexFilter(SimpleBaseIndexFilter other) {

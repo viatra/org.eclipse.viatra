@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -20,7 +21,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOper
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -77,7 +77,7 @@ public class SearchOperationViewerNode {
                 sb.append(searchOperation.toString());
 
                 sb.append("(");
-                BiMap<Integer, PVariable> variableMapping = planExecutor.getVariableMapping();
+                Map<Integer, PVariable> variableMapping = planExecutor.getVariableMapping();
                 List<Integer> variablePositions = searchOperation.getVariablePositions();
                 for (int i = 0; i < variablePositions.size(); i++) {
                     PVariable pVariable = variableMapping.get(variablePositions.get(i));

@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.plan;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * A SearchPlan stores a collection of SearchPlanOperations for a fixed order of variables.
@@ -26,7 +25,7 @@ import com.google.common.collect.Lists;
  */
 public class SearchPlan {
 
-    private List<ISearchOperation> operations = Lists.newArrayList();
+    private List<ISearchOperation> operations = new ArrayList<>();
 
     public void addOperation(ISearchOperation operation) {
         operations.add(operation);
@@ -45,7 +44,7 @@ public class SearchPlan {
      * @return the operations
      */
     public List<ISearchOperation> getOperations() {
-        return ImmutableList.copyOf(operations);
+        return Collections.unmodifiableList(new ArrayList<>(operations));
     }
 
 }

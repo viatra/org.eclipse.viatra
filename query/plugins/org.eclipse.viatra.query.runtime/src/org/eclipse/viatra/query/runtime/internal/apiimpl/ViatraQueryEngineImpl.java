@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.query.runtime.internal.apiimpl;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.eclipse.viatra.query.runtime.matchers.util.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;

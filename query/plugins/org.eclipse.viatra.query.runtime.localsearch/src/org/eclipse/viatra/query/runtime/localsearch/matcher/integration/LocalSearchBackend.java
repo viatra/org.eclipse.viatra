@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,9 +32,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * @author Marton Bur, Zoltan Ujhelyi
@@ -42,7 +42,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
 
     IQueryBackendContext context;
     IPlanProvider planProvider;
-    private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
+    private final Set<ILocalSearchAdapter> adapters = new HashSet<>();
     
     private final PurgableCache generalCache;
     
@@ -151,7 +151,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
      * @since 1.7
      */
     public List<ILocalSearchAdapter> getAdapters() {
-        return Lists.newArrayList(adapters);
+        return new ArrayList<>(adapters);
     }
     
     /**

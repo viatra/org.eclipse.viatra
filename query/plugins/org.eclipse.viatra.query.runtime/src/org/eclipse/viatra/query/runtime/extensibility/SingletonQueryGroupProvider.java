@@ -11,13 +11,11 @@
 package org.eclipse.viatra.query.runtime.extensibility;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.util.SingletonInstanceProvider;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Provider implementation for storing an existing query group instance.
@@ -37,20 +35,14 @@ public class SingletonQueryGroupProvider extends SingletonInstanceProvider<IQuer
 
     @Override
     public Set<String> getQuerySpecificationFQNs() {
-        Builder<String> builder = ImmutableSet.<String>builder();
-        for(IQuerySpecification<?> spec : get().getSpecifications()) {
-           builder.add(spec.getFullyQualifiedName());
-        }
-        return builder.build();
+        return get().getSpecifications().stream().map(IQuerySpecification::getFullyQualifiedName)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Set<IQuerySpecificationProvider> getQuerySpecificationProviders() {
-        Builder<IQuerySpecificationProvider> builder = ImmutableSet.<IQuerySpecificationProvider>builder();
-        for(IQuerySpecification<?> spec : get().getSpecifications()) {
-            builder.add(new SingletonQuerySpecificationProvider(spec));
-        }
-        return builder.build();
+        return get().getSpecifications().stream().map(SingletonQuerySpecificationProvider::new)
+                .collect(Collectors.toSet());
     }
 
 }

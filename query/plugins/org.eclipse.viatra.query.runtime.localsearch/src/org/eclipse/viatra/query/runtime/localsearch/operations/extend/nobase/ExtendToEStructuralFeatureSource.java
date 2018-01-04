@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +23,6 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper VIATRA Base indexer}.
@@ -74,7 +72,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<Object> {
                 }
             } else {
                 if (featureValue != null) {
-                    it = Iterators.singletonIterator(featureValue);
+                    it = Collections.singleton(featureValue).iterator();
                 } else {
                     it = Collections.emptyIterator();
                 }
@@ -91,7 +89,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<Object> {
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, targetPosition, new Integer[0]);
+        return Arrays.asList(position, targetPosition);
     }
     
 }

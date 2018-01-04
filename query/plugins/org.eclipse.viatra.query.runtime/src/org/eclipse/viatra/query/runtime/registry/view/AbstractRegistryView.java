@@ -10,20 +10,19 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.view;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
@@ -75,38 +74,36 @@ public abstract class AbstractRegistryView implements IRegistryView {
 
     @Override
     public Iterable<IQuerySpecificationRegistryEntry> getEntries() {
-        ImmutableSet<IQuerySpecificationRegistryEntry> entrySet = ImmutableSet.copyOf(fqnToEntryMap.values());
-        return entrySet;
+        return Collections.unmodifiableSet(new HashSet<>(fqnToEntryMap.values()));
     }
 
     @Override
     public Set<String> getQuerySpecificationFQNs() {
-        ImmutableSet<String> fqns = ImmutableSet.copyOf(fqnToEntryMap.keySet());
-        return fqns;
+        return Collections.unmodifiableSet(new HashSet<>(fqnToEntryMap.keySet()));
     }
 
     @Override
     public boolean hasQuerySpecificationFQN(String fullyQualifiedName) {
-        checkArgument(fullyQualifiedName != null, "FQN must not be null!");
+        Preconditions.checkArgument(fullyQualifiedName != null, "FQN must not be null!");
         return fqnToEntryMap.containsKey(fullyQualifiedName);
     }
 
     @Override
     public Set<IQuerySpecificationRegistryEntry> getEntries(String fullyQualifiedName) {
-        checkArgument(fullyQualifiedName != null, "FQN must not be null!");
+        Preconditions.checkArgument(fullyQualifiedName != null, "FQN must not be null!");
         Set<IQuerySpecificationRegistryEntry> entries = fqnToEntryMap.get(fullyQualifiedName);
-        return ImmutableSet.copyOf(entries);
+        return Collections.unmodifiableSet(new HashSet<>(entries));
     }
 
     @Override
     public void addViewListener(IQuerySpecificationRegistryChangeListener listener) {
-        checkArgument(listener != null, "Null listener not supported");
+        Preconditions.checkArgument(listener != null, "Null listener not supported");
         listeners.add(listener);
     }
 
     @Override
     public void removeViewListener(IQuerySpecificationRegistryChangeListener listener) {
-        checkArgument(listener != null, "Null listener not supported");
+        Preconditions.checkArgument(listener != null, "Null listener not supported");
         listeners.remove(listener);
     }
 

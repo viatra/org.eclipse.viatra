@@ -12,13 +12,11 @@ package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * A communication group represents a set of nodes in the communication graph that form a strongly connected component.
@@ -164,8 +162,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
         @Override
         public Map<MessageKind, Collection<Mailbox>> getMailboxes() {
             if (mailbox != null) {
-                return ImmutableMap.<MessageKind, Collection<Mailbox>> of(MessageKind.DEFAULT,
-                        ImmutableSet.<Mailbox> of(mailbox));
+                return Collections.singletonMap(MessageKind.DEFAULT, Collections.singleton(mailbox));
             } else {
                 return Collections.emptyMap();
             }
@@ -280,8 +277,11 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 
         @Override
         public Map<MessageKind, Collection<Mailbox>> getMailboxes() {
-            return ImmutableMap.<MessageKind, Collection<Mailbox>> of(MessageKind.ANTI_MONOTONE, antiMonotoneMailboxes,
-                    MessageKind.MONOTONE, monotoneMailboxes, MessageKind.DEFAULT, defaultMailboxes);
+            Map<MessageKind, Collection<Mailbox>> map = new HashMap<>();
+            map.put(MessageKind.ANTI_MONOTONE, antiMonotoneMailboxes);
+            map.put(MessageKind.MONOTONE, monotoneMailboxes);
+            map.put(MessageKind.DEFAULT, defaultMailboxes);
+            return Collections.unmodifiableMap(map);
         }
 
     }

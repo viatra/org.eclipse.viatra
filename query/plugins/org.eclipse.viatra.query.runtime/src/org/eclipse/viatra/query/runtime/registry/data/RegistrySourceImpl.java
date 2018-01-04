@@ -11,8 +11,7 @@
 package org.eclipse.viatra.query.runtime.registry.data;
 
 import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.TreeMap;
 
 /**
  * Internal data storage object that represents a query specification source driven by a connector. The source must have
@@ -42,7 +41,7 @@ public class RegistrySourceImpl {
         this.identifier = identifier;
         this.includeInDefaultViews = includeInDefaultViews;
         this.querySpecificationStore = querySpecificationStore;
-        this.fqnToEntryMap = Maps.newTreeMap();
+        this.fqnToEntryMap = new TreeMap<>();
     }
 
     /**

@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.eclipse.jface.viewers.TableViewer;
@@ -32,10 +35,6 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewele
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
-
 /**
  * An adapter implementation for local search matchers to support debugging
  * 
@@ -48,7 +47,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     private LocalSearchDebugView localSearchDebugView;
     private Deque<LocalSearchMatcher> runningMatchers;
     private Deque<SearchPlanExecutor> runningExecutors;
-    private List<ILocalSearchAdaptable> adaptedElements = Lists.newArrayList();
+    private List<ILocalSearchAdaptable> adaptedElements = new ArrayList<>();
     private boolean startHandlerCalled = false;
     private boolean isDisposed = false;
     private boolean hasFinished = false;
@@ -94,8 +93,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
                         // TODO make sure that the initialization is done for every part so that restart is possible
 
-                        runningMatchers = Queues.newArrayDeque();
-                        runningExecutors = Queues.newArrayDeque();
+                        runningMatchers = new ArrayDeque<>();
+                        runningExecutors = new ArrayDeque<>();
 
                         TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(lsMatcher.getQuerySpecification());
                         @SuppressWarnings("unchecked")
@@ -188,8 +187,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             @Override
             public void run() {
-                BiMap<Integer, PVariable> variableMapping = newPlanExecutor.getVariableMapping();
-                List<String> columnNames = Lists.newArrayList();
+                Map<Integer, PVariable> variableMapping = newPlanExecutor.getVariableMapping();
+                List<String> columnNames = new ArrayList<>();
                 for (int i = 0; i < variableMapping.size(); i++) {
                     columnNames.add(variableMapping.get(i).getName());
                 }
@@ -264,7 +263,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
     
     private List<SearchOperationViewerNode> createOperationsListFromExecutor(SearchPlanExecutor planExecutor) {
-        List<SearchOperationViewerNode> nodes = Lists.newArrayList();
+        List<SearchOperationViewerNode> nodes = new ArrayList<>();
         
         List<ISearchOperation> plan = planExecutor.getSearchPlan().getOperations();
         for (ISearchOperation operation : plan) {

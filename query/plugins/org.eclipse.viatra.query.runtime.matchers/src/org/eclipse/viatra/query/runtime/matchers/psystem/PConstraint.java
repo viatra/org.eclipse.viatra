@@ -52,15 +52,12 @@ public interface PConstraint extends PTraceable {
      */
     public abstract int getMonotonousID();
     
-    
     /**
-     * Compares by {@link PConstraint#getMonotonousID()}
+     * A comparator that orders constraints by their {@link #getMonotonousID() monotonous identifiers}. Should only used
+     * for tiebreaking in other comparators.
+     * 
+     * @since 2.0
      */
-    public enum CompareByMonotonousID implements Comparator<PConstraint> {
-        INSTANCE;
-        @Override
-        public int compare(PConstraint arg0, PConstraint arg1) {
-            return arg0.getMonotonousID() - arg1.getMonotonousID();
-        }
-    }
+    public static final Comparator<PConstraint> COMPARE_BY_MONOTONOUS_ID = (arg0, arg1) -> arg0.getMonotonousID() - arg1.getMonotonousID();
+
 }

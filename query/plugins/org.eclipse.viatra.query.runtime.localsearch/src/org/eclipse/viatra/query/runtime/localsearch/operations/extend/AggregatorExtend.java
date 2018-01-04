@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,9 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetA
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 /**
  * Calculates the aggregated value of a column based on the given {@link AggregatorConstraint}
@@ -55,7 +53,7 @@ public class AggregatorExtend extends ExtendOperation<Object> implements IPatter
         maskedTuple.updateTuple(frame);
         matcher = context.getMatcher(information.getReference());
         Object aggregate = aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn());
-        it = aggregate == null ? Collections.emptyIterator() : Iterators.<Object>singletonIterator(aggregate);
+        it = aggregate == null ? Collections.emptyIterator() : Collections.singletonList(aggregate).iterator();
         
     }
 
@@ -71,7 +69,7 @@ public class AggregatorExtend extends ExtendOperation<Object> implements IPatter
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Arrays.asList(position);
     }
     
     @Override

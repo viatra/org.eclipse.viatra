@@ -12,16 +12,13 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 
 /**
  * A Viatra Query (incremental) evaluation engine, attached to a model such as an EMF resource. The engine hosts pattern matchers, and
@@ -144,13 +141,7 @@ public abstract class ViatraQueryEngine {
     public abstract Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers();
     
     public Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getRegisteredQuerySpecifications() {
-        return Sets.newHashSet(Collections2.transform(getCurrentMatchers(), new Function<ViatraQueryMatcher<?>, IQuerySpecification<?>>() {
-
-            @Override
-            public IQuerySpecification<?> apply(ViatraQueryMatcher<?> arg0) {
-                return arg0.getSpecification();
-            }
-        }));
+        return getCurrentMatchers().stream().map(ViatraQueryMatcher::getSpecification).collect(Collectors.toSet());
     }
 
     /**

@@ -18,7 +18,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirec
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -34,7 +33,7 @@ public class AllValidAdornments implements IAdornmentProvider {
         final Set<PParameter> ins = query.getParameters().stream().filter(PQueries.parameterDirectionPredicate(PParameterDirection.IN)).collect(Collectors.toSet()); 
         Set<PParameter> inouts = query.getParameters().stream().filter(PQueries.parameterDirectionPredicate(PParameterDirection.INOUT)).collect(Collectors.toSet()); 
         Set<Set<PParameter>> possibleInouts = Sets.powerSet(inouts);
-        return Iterables.transform(possibleInouts, input -> Sets.union(ins, input));
+        return possibleInouts.stream().map(input -> Sets.union(ins, input)).collect(Collectors.toSet());
     }
 
 }

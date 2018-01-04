@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.impl;
 
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -19,8 +20,6 @@ import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Registry view implementation that considers specifications relevant if they are included in default views.
@@ -46,7 +45,7 @@ public class GlobalRegistryView extends AbstractRegistryView implements IDefault
     
     @Override
     public IQueryGroup getQueryGroup() {
-        IQueryGroup queryGroup = LazyLoadingQueryGroup.of(ImmutableSet.copyOf(fqnToEntryMap.values())); 
+        IQueryGroup queryGroup = LazyLoadingQueryGroup.of(new HashSet<>(fqnToEntryMap.values())); 
         return queryGroup;
     }
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,9 +28,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
 /**
  * This rewriter class can add new equality constraints to the copied body
  * 
@@ -38,13 +36,26 @@ import com.google.common.collect.Table;
  */
 class FlattenerCopier extends PBodyCopier {
 
-    private Map<PositivePatternCall, PBody> callsToFlatten;
+    private final Map<PositivePatternCall, CallInformation> calls;
 
-    private Table<PositivePatternCall, PVariable, PVariable> variableCopyTable = HashBasedTable.create();
-
+    private static class CallInformation {
+        final PBody body;
+        final Map<PVariable, PVariable> variableMapping;
+        
+        private CallInformation(PBody body) {
+            this.body = body;
+            this.variableMapping = new HashMap<>();
+        }
+    }
+    
+    public FlattenerCopier(PQuery query, Map<PositivePatternCall, PBody> callsToFlatten) {
+        super(query);
+        this.calls = callsToFlatten.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey(), entry -> new CallInformation(entry.getValue())));
+    }
+    
     protected void copyVariable(PositivePatternCall contextPatternCall, PVariable variable, String newName) {
         PVariable newPVariable = body.getOrCreateVariableByName(newName);
-        variableCopyTable.put(contextPatternCall, variable, newPVariable);
+        calls.get(contextPatternCall).variableMapping.put(variable, newPVariable);
         variableMapping.put(variable, newPVariable);
     }
 
@@ -59,7 +70,7 @@ class FlattenerCopier extends PBodyCopier {
     public void mergeBody(PositivePatternCall contextPatternCall, IVariableRenamer namingTool,
             IConstraintFilter filter) {
 
-        PBody sourceBody = callsToFlatten.get(contextPatternCall);
+        PBody sourceBody = calls.get(contextPatternCall).body;
 
         // Copy variables
         Set<PVariable> allVariables = sourceBody.getAllVariables();
@@ -79,19 +90,14 @@ class FlattenerCopier extends PBodyCopier {
         }
     }
 
-    public FlattenerCopier(PQuery query, Map<PositivePatternCall, PBody> callsToFlatten) {
-        super(query);
-        this.callsToFlatten = callsToFlatten;
-    }
-
     @Override
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
 
-        if (!callsToFlatten.containsKey(positivePatternCall)) {
+        if (!calls.containsKey(positivePatternCall)) {
             // If the call was not flattened, copy the constraint
             super.copyPositivePatternCallConstraint(positivePatternCall);
         } else {
-            PBody calledBody = Objects.requireNonNull(callsToFlatten.get(positivePatternCall));
+            PBody calledBody = Objects.requireNonNull(calls.get(positivePatternCall).body);
             Preconditions.checkArgument(positivePatternCall.getReferredQuery().equals(calledBody.getPattern()));
 
             List<PVariable> symbolicParameters = calledBody.getSymbolicParameterVariables();
@@ -108,7 +114,7 @@ class FlattenerCopier extends PBodyCopier {
     private void createEqualityConstraint(PVariable pVariable1, PVariable pVariable2,
             PositivePatternCall contextPatternCall) {
         PVariable who = variableMapping.get(pVariable1);
-        PVariable withWhom = variableCopyTable.get(contextPatternCall, pVariable2);
+        PVariable withWhom = calls.get(contextPatternCall).variableMapping.get(pVariable2);
         addTrace(contextPatternCall, new Equality(body, who, withWhom));
     }
 

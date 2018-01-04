@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.connector;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.extensibility.IQueryGroupProvider;
 import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
@@ -55,7 +55,7 @@ public class QueryGroupProviderSourceConnector extends AbstractRegistrySourceCon
      *            true if the specifications in the connector should be included in default views
      */
     public void setQueryGroupProvider(IQueryGroupProvider queryGroupProvider) {
-        checkNotNull(queryGroupProvider, "Query group provider must not be null!");
+        Objects.requireNonNull(queryGroupProvider, "Query group provider must not be null!");
         IQueryGroupProvider oldProvider = this.queryGroupProvider;
 
         for (IQuerySpecificationProvider specificationProvider : oldProvider.getQuerySpecificationProviders()) {

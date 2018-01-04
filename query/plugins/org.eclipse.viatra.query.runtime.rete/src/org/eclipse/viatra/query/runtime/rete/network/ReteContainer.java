@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
@@ -28,8 +29,6 @@ import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
-
-import com.google.common.base.Function;
 
 /**
  * @author Gabor Bergmann
@@ -476,12 +475,7 @@ public final class ReteContainer {
     /**
      * @since 1.6
      */
-    public static final Function<Node, String> NAME_MAPPER = new Function<Node, String>() {
-        @Override
-        public String apply(Node input) {
-            return input.toString().substring(0, Math.min(30, input.toString().length()));
-        }
-    };
+    public static final Function<Node, String> NAME_MAPPER = input -> input.toString().substring(0, Math.min(30, input.toString().length()));
 
     
     /**

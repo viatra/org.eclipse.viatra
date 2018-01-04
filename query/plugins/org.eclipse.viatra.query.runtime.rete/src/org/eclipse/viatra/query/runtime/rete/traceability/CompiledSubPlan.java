@@ -15,12 +15,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
-
-import com.google.common.base.Joiner;
 
 /**
  * A trace marker associating a Rete recipe with a query SubPlan. 
@@ -37,12 +37,13 @@ public class CompiledSubPlan extends PlanningTrace {
         
         // Make sure that each variable occurs only once
         Set<PVariable> variablesSet = new HashSet<PVariable>(variablesTuple);
-        if (variablesSet.size() != variablesTuple.size()) {
-            throw new IllegalStateException(String.format(
-                    "Illegal column duplication (%s) while the query plan %s was compiled into a Rete Recipe %s", 
-                    Joiner.on(',').join(variablesTuple), subPlan.toShortString(), recipe));
-        }
+        Preconditions.checkState(variablesSet.size() == variablesTuple.size(),
+                () -> String.format(
+                        "Illegal column duplication (%s) while the query plan %s was compiled into a Rete Recipe %s",
+                        variablesTuple.stream().map(PVariable::getName).collect(Collectors.joining(",")),
+                        subPlan.toShortString(), recipe));
     }
+    
     public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
             ReteNodeRecipe recipe,
             RecipeTraceInfo... parentRecipeTraces) {

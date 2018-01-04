@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,8 +21,6 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChan
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Package based {@link BaseQueryGroup} implementation. It handles patterns as a group within the same package.
@@ -70,12 +69,9 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
 
     @Override
     public Set<IQuerySpecification<?>> getSpecifications() {
-        return ImmutableSet.copyOf(querySpecifications);
+        return Collections.unmodifiableSet(new HashSet<>(querySpecifications));
     }
 
-    /**
-     * @return the packageName
-     */
     public String getPackageName() {
         return packageName;
     }

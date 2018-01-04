@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 /**
  * This operation handles constants in search plans by binding a variable to a constant value. Such operations should be
@@ -36,12 +35,12 @@ public class ExtendConstant extends ExtendOperation<Object> {
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = Iterators.singletonIterator(value);
+        it = Collections.singletonList(value).iterator();
     }
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Arrays.asList(position);
     }
     
     @Override

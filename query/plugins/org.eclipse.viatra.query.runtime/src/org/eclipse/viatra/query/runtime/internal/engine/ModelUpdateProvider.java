@@ -28,7 +28,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.Chang
 import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
@@ -102,7 +101,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
     private void updateMaxLevel() {
         if(!listenerMap.containsKey(maxLevel)) {
             ChangeLevel newMaxLevel = ChangeLevel.NO_CHANGE;
-            for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
+            for (ChangeLevel level : new HashSet<>(listenerMap.keySet())) {
                 newMaxLevel = newMaxLevel.changeOccured(level);
             }
             maxLevel = newMaxLevel;
@@ -135,7 +134,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
         currentChange = ChangeLevel.NO_CHANGE;
         
         if(!listenerMap.isEmpty()) {
-            for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
+            for (ChangeLevel level : new HashSet<>(listenerMap.keySet())) {
                 if(tempLevel.compareTo(level) >= 0) {
                     for (ViatraQueryModelUpdateListener listener : new ArrayList<>(listenerMap.get(level))) {
                         try {
