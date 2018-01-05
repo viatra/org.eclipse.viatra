@@ -10,8 +10,12 @@
  */
 package org.eclipse.viatra.transformation.debug;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -31,10 +35,6 @@ import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
-import org.eclipse.xtext.xbase.lib.Pair;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Adapter implementation that enables the user to define breakpoints in a VIATRA based event driven transformation.
@@ -46,14 +46,14 @@ import com.google.common.collect.Sets;
  */
 public class TransformationDebugger extends AbstractEVMListener implements IEVMAdapter {
     private String id;
-    private List<IDebuggerTargetAgent> agents = Lists.newArrayList();
+    private List<IDebuggerTargetAgent> agents = new ArrayList<>();
     private ViatraQueryEngine engine;
 
     // Debug functions
-    private List<ITransformationBreakpointHandler> breakpoints = Lists.newArrayList();
-    private Set<Pair<RuleSpecification<?>, EventFilter<?>>> rules = Sets.newHashSet();
-    private Set<Activation<?>> nextActivations = Sets.newHashSet();
-    private Set<Activation<?>> conflictingActivations = Sets.newHashSet();
+    private List<ITransformationBreakpointHandler> breakpoints = new ArrayList<>();
+    private Set<Entry<RuleSpecification<?>, EventFilter<?>>> rules = new HashSet<>();
+    private Set<Activation<?>> nextActivations = new HashSet<>();
+    private Set<Activation<?>> conflictingActivations = new HashSet<>();
 
     private Activation<?> nextActivation;
 
@@ -101,7 +101,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
     @Override
     public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
-        rules.add(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
+        rules.add(new SimpleEntry<>(specification, filter));
         for (IDebuggerTargetAgent listener : agents) {
             listener.addedRule(specification, filter);
         }
@@ -109,7 +109,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
     @Override
     public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
-        rules.remove(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
+        rules.remove(new SimpleEntry<>(specification, filter));
         for (IDebuggerTargetAgent listener : agents) {
             listener.removedRule(specification, filter);
 
@@ -125,7 +125,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
     @Override
     public void disposeListener() {
-        List<IDebuggerTargetAgent> listenersToRemove = Lists.newArrayList();
+        List<IDebuggerTargetAgent> listenersToRemove = new ArrayList<>();
         
         for (IDebuggerTargetAgent listener : agents) {
             try {
@@ -281,8 +281,8 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     }
 
     private void conflictSetChanged(TransformationDebuggerConflictSet set) {
-        nextActivations = Sets.newHashSet(set.getNextActivations());
-        conflictingActivations = Sets.newHashSet(set.getConflictingActivations());
+        nextActivations = new HashSet<>(set.getNextActivations());
+        conflictingActivations = new HashSet<>(set.getConflictingActivations());
         for (IDebuggerTargetAgent listener : agents) {
             listener.conflictSetChanged(nextActivations, conflictingActivations);
         }

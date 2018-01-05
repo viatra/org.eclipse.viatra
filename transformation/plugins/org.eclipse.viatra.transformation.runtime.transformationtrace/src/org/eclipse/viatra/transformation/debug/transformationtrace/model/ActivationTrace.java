@@ -11,15 +11,14 @@
 package org.eclipse.viatra.transformation.debug.transformationtrace.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
-public class ActivationTrace implements Serializable{
+public class ActivationTrace implements Serializable {
     private static final long serialVersionUID = 4482651679137706911L;
     private final String ruleName;
-    private List<RuleParameterTrace> ruleParameterTraces = Lists.newArrayList();
-    
+    private List<RuleParameterTrace> ruleParameterTraces = new ArrayList<>();
+
     public ActivationTrace(String ruleName) {
         super();
         this.ruleName = ruleName;

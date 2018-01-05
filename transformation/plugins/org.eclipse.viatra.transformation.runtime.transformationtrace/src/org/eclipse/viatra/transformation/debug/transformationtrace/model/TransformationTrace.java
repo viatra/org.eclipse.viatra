@@ -11,13 +11,12 @@
 package org.eclipse.viatra.transformation.debug.transformationtrace.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
-public class TransformationTrace implements Serializable{
+public class TransformationTrace implements Serializable {
     private static final long serialVersionUID = -5640407055932939677L;
-    private List<ActivationTrace> activationTraces = Lists.newArrayList();
+    private List<ActivationTrace> activationTraces = new ArrayList<>();
 
     public List<ActivationTrace> getActivationTraces() {
         return activationTraces;

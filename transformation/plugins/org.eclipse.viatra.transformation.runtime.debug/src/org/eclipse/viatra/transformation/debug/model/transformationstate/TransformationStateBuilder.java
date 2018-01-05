@@ -11,9 +11,13 @@
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -23,19 +27,15 @@ import org.eclipse.viatra.transformation.debug.transformationtrace.model.Activat
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-import org.eclipse.xtext.xbase.lib.Pair;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class TransformationStateBuilder {
     private String ID;
-    private Set<Pair<RuleSpecification<?>, EventFilter<?>>> rules = Sets.newHashSet();
+    private Set<Entry<RuleSpecification<?>, EventFilter<?>>> rules = new HashSet<>();
     
     private Deque<Activation<?>> startedActivations = new ArrayDeque<Activation<?>>();
 
-    private Set<Activation<?>> nextActivations = Sets.newHashSet();
-    private Set<Activation<?>> conflictingActivations = Sets.newHashSet();
+    private Set<Activation<?>> nextActivations = new HashSet<>();
+    private Set<Activation<?>> conflictingActivations = new HashSet<>();
     
     private ITransformationBreakpointHandler breakpointHit;
     
@@ -71,32 +71,33 @@ public class TransformationStateBuilder {
         return this;
     }
 
-    public TransformationStateBuilder addRule(Pair<RuleSpecification<?>, EventFilter<?>> rule) {
-        rules.add(rule);
+    public TransformationStateBuilder addRule(RuleSpecification<?> specification, EventFilter<?> filter) {
+        rules.add(new SimpleEntry<>(specification, filter));
         return this;
     }
     
-    public TransformationStateBuilder removeRule(Pair<RuleSpecification<?>, EventFilter<?>> rule) {
-        rules.remove(rule);
+    public TransformationStateBuilder removeRule(RuleSpecification<?> specification, EventFilter<?> filter) {
+        rules.remove(new SimpleEntry<>(specification, filter));
         return this;
     }
 
     public TransformationStateBuilder setActivations(Set<Activation<?>> conflictingActivations, Set<Activation<?>> nextActivations) {       
-        this.conflictingActivations = Sets.difference(conflictingActivations, nextActivations);
+        this.conflictingActivations = new HashSet<>(conflictingActivations);
+        this.conflictingActivations.removeAll(nextActivations);
         this.nextActivations = nextActivations;
         return this;
     }
     
     public TransformationState build(){
         TransformationState state = new TransformationState(ID);
-        Set<Activation<?>> activations = Sets.newHashSet();
+        Set<Activation<?>> activations = new HashSet<>();
         activations.addAll(nextActivations);
         activations.addAll(conflictingActivations);
         
         //Transformation Rules
-        List<TransformationRule> stateRules = Lists.newArrayList();
-        for (Pair<RuleSpecification<?>, EventFilter<?>> pair : rules) {
-            List<RuleActivation> ruleActivations = Lists.newArrayList();
+        List<TransformationRule> stateRules = new ArrayList<>();
+        for (Entry<RuleSpecification<?>, EventFilter<?>> pair : rules) {
+            List<RuleActivation> ruleActivations = new ArrayList<>();
                         
             for (Activation<?> activation : activations) {
                if(activation.getInstance().getSpecification().equals(pair.getKey())){
@@ -112,18 +113,18 @@ public class TransformationStateBuilder {
         }
         
         //Next Activations
-        List<RuleActivation> nextActivationsToAdd = Lists.newArrayList();
+        List<RuleActivation> nextActivationsToAdd = new ArrayList<>();
         
         for (Activation<?> activation : this.nextActivations) {
             nextActivationsToAdd.add(createActivation(state, activation));
         }
         //Conflicting Activations
-        List<RuleActivation> conflictingActivationsToAdd = Lists.newArrayList();
+        List<RuleActivation> conflictingActivationsToAdd = new ArrayList<>();
         for (Activation<?> activation : this.conflictingActivations) {
             conflictingActivationsToAdd.add(createActivation(state, activation));
         }
         //Activation Stack
-        List<RuleActivation> activationStack = Lists.newArrayList();
+        List<RuleActivation> activationStack = new ArrayList<>();
         for (Activation<?> activation : this.startedActivations) {
             activationStack.add(createActivation(state, activation));
         }
@@ -148,7 +149,7 @@ public class TransformationStateBuilder {
     }
     
     private List<ActivationParameter> getParameters(Activation<?> original){
-        List<ActivationParameter> parameters = Lists.newArrayList();
+        List<ActivationParameter> parameters = new ArrayList<>();
         Object atom = original.getAtom();
         if(atom instanceof IPatternMatch){
             IPatternMatch match = (IPatternMatch) atom;

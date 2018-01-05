@@ -13,13 +13,12 @@ package org.eclipse.viatra.transformation.debug.model.transformationstate;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.util.stream.Collectors;
 
 public class TransformationModelElement implements Serializable{
     private static final long serialVersionUID = -8165991633354685442L;
@@ -28,11 +27,11 @@ public class TransformationModelElement implements Serializable{
     private UUID id = UUID.randomUUID(); 
     private boolean loaded = false; 
     
-    private Map<String, String> attributes = Maps.newHashMap();
+    private Map<String, String> attributes = new HashMap<>();
     
-    private Map<String, List<TransformationModelElement>> crossReferences = Maps.newHashMap();
+    private Map<String, List<TransformationModelElement>> crossReferences = new HashMap<>();
     
-    private Map<String, List<TransformationModelElement>> containedElements = Maps.newHashMap();
+    private Map<String, List<TransformationModelElement>> containedElements = new HashMap<>();
     
     public UUID getId() {
         return id;
@@ -47,7 +46,7 @@ public class TransformationModelElement implements Serializable{
     }
     
     public Map<String, String> getAttributes() {
-        return Maps.newHashMap(attributes);
+        return new HashMap<>(attributes);
     }
     
     public void addAttribute(String name, String value) {
@@ -60,23 +59,15 @@ public class TransformationModelElement implements Serializable{
     }
     
     public void addEmptyCrossReference(String name) {
-        List<TransformationModelElement> list = crossReferences.get(name);
-        if(list==null){
-            crossReferences.put(name, new ArrayList<TransformationModelElement>());
-        }
+        crossReferences.computeIfAbsent(name, n -> new ArrayList<>());
     }
     
     public void addCrossReference(String name, TransformationModelElement value) {
-        List<TransformationModelElement> list = crossReferences.get(name);
-        if(list==null){
-            crossReferences.put(name, Lists.newArrayList(value));
-        }else{
-            list.add(value);
-        }
+        crossReferences.computeIfAbsent(name, n -> new ArrayList<>()).add(value);
     }
     
     public Map<String, List<TransformationModelElement>> getCrossReferences() {
-        return Maps.newHashMap((crossReferences));
+        return new HashMap<>(crossReferences);
     }
     
     public Collection<TransformationModelElement> getContainedElement(String name) {
@@ -84,31 +75,19 @@ public class TransformationModelElement implements Serializable{
     }
     
     public void addEmptyContainment(String name) {
-        List<TransformationModelElement> list = containedElements.get(name);
-        if(list==null){
-            containedElements.put(name, new ArrayList<TransformationModelElement>());
-        }
+        containedElements.computeIfAbsent(name, n -> new ArrayList<>());
     }
     
     public void addContainedElement(String name, TransformationModelElement value) {
-        List<TransformationModelElement> list = containedElements.get(name);
-        if(list==null){
-            containedElements.put(name, Lists.newArrayList(value));
-        }else{
-            list.add(value);
-        }
+        containedElements.computeIfAbsent(name, n -> new ArrayList<>()).add(value);
     }
     
     public Map<String, List<TransformationModelElement>> getContainments() {
-        return Maps.newHashMap(containedElements);
+        return new HashMap<>(containedElements);
     }
     
     public List<TransformationModelElement> getChildren() {
-        List<TransformationModelElement> list = Lists.newArrayList();
-        for(List<TransformationModelElement> children : containedElements.values()){
-            list.addAll(children);
-        } 
-        return list;
+        return containedElements.values().stream().flatMap(i -> i.stream()).collect(Collectors.toList());
     }
     
     public void setCrossReferences(Map<String, List<TransformationModelElement>> crossReferences) {

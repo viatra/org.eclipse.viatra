@@ -10,6 +10,8 @@
  */
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,12 +21,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-@SuppressWarnings("unchecked")
 public class TransformationModelBuilder {
-    private Map<TransformationModelElement, EObject> elementMap = Maps.newHashMap();
+    private Map<TransformationModelElement, EObject> elementMap = new HashMap<>();
 
     public synchronized void reset() {
         elementMap.clear();
@@ -60,7 +58,8 @@ public class TransformationModelBuilder {
                 if (reference.isContainment()) {
                     Object eGet = eobject.eGet(reference);
                     if (eGet instanceof List) {
-                        List<EObject> referenceList = Lists.newArrayList(((List<EObject>) eGet));
+                        @SuppressWarnings("unchecked")
+                        List<EObject> referenceList = new ArrayList<>(((List<EObject>) eGet));
                         for (EObject object : referenceList) {
                             element.addContainedElement(reference.getName(), getTransformationElement(object));
                         }
@@ -86,7 +85,8 @@ public class TransformationModelBuilder {
                 if (!reference.isContainment()) {
                     Object eGet = eobject.eGet(reference);
                     if (eGet instanceof List) {
-                        List<EObject> referenceList = Lists.newArrayList(((List<EObject>) eGet));
+                        @SuppressWarnings("unchecked")
+                        List<EObject> referenceList = new ArrayList<>(((List<EObject>) eGet));
                         for (EObject object : referenceList) {
                             element.addCrossReference(reference.getName(), getTransformationElement(object));
                         }

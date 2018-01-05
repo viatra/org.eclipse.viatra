@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.tracer;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -28,8 +29,6 @@ import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMAdapter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
-
-import com.google.common.collect.Sets;
 
 /**
  * Adapter implementation that loads transformation traces and executes the transformation according to them
@@ -112,7 +111,7 @@ public class TraceExecutor extends AbstractEVMAdapter {
 
         @Override
         public Activation<?> getNextActivation() {
-            Set<Activation<?>> nextActivations = Sets.newHashSet(delegatedConflictSet.getConflictingActivations());
+            Set<Activation<?>> nextActivations = new HashSet<>(delegatedConflictSet.getConflictingActivations());
             if (nextActivations.size() > 0) {
                 return getActivation(nextActivations);
             } else {
@@ -148,7 +147,7 @@ public class TraceExecutor extends AbstractEVMAdapter {
     }
 
     public class TraceExecutorIterator implements Iterator<Activation<?>> {
-        private final Set<Activation<?>> activations = Sets.newHashSet();
+        private final Set<Activation<?>> activations = new HashSet<>();
 
         public TraceExecutorIterator(Iterator<Activation<?>> delegatedIterator) {
             while (delegatedIterator.hasNext()) {

@@ -11,9 +11,8 @@
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class TransformationRule implements Serializable{
     private static final long serialVersionUID = -8125023765801802667L;
@@ -38,7 +37,7 @@ public class TransformationRule implements Serializable{
     }
 
     public List<RuleActivation> getActivations() {
-        return Lists.newArrayList(activations);
+        return new ArrayList<>(activations);
     }
     
     

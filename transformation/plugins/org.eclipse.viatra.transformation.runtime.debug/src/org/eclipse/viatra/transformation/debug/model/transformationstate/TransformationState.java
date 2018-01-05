@@ -11,11 +11,10 @@
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpointHandler;
-
-import com.google.common.collect.Lists;
 
 public class TransformationState implements Serializable{
     private static final long serialVersionUID = 6702356275765247363L;
@@ -35,7 +34,7 @@ public class TransformationState implements Serializable{
     }
       
     public List<RuleActivation> getActivationStack() {
-        return Lists.newArrayList(activationStack);
+        return new ArrayList<>(activationStack);
     }
         
     public String getID() {
@@ -43,19 +42,19 @@ public class TransformationState implements Serializable{
     }
     
     public List<TransformationRule> getRules() {
-        return Lists.newArrayList(rules);
+        return new ArrayList<>(rules);
     }
     
     public List<RuleActivation> getNextActivations() {
-        return Lists.newArrayList(nextActivations);
+        return new ArrayList<>(nextActivations);
     }
     
     public List<RuleActivation> getConflictingActivations() {
-        return Lists.newArrayList(conflictingActivations);
+        return new ArrayList<>(conflictingActivations);
     }
     
     public List<ITransformationBreakpointHandler> getBreakpoints() {
-        return Lists.newArrayList(breakpoints);
+        return new ArrayList<>(breakpoints);
     }
 
     public ITransformationBreakpointHandler getBreakpointHit() {

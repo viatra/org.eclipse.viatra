@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,9 +56,6 @@ import org.eclipse.viatra.transformation.debug.transformationtrace.model.Activat
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-import org.eclipse.xtext.xbase.lib.Pair;
-
-import com.google.common.collect.Lists;
 
 public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport implements IDebuggerTargetAgent, DebuggerTargetEndpointMBean{
     private static final String NOTIFICATION_TYPE = "TransformationState";
@@ -195,13 +193,13 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
 
     @Override
     public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
-        builder.addRule(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
+        builder.addRule(specification, filter);
         
     }
 
     @Override
     public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
-        builder.removeRule(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
+        builder.removeRule(specification, filter);
     }
 
     @Override
@@ -238,7 +236,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
 
     @Override
     public List<TransformationModelElement> getRootElements() {
-        List<TransformationModelElement> list = Lists.newArrayList();
+        List<TransformationModelElement> list = new ArrayList<>();
         
         ViatraQueryEngine engine = debugger.getEngine();
         List<EObject> resourceElements = getResourceElements(getResources(engine));
@@ -260,7 +258,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
     
    
     private ResourceSet[] getResources(ViatraQueryEngine engine) {
-        List<ResourceSet> retVal = Lists.newArrayList();
+        List<ResourceSet> retVal = new ArrayList<>();
         if(engine != null){
             QueryScope scope = engine.getScope();
             if (scope instanceof EMFScope) {
@@ -278,7 +276,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
     }
     
     private List<EObject> getResourceElements(ResourceSet[] resourceSets) {
-        List<EObject> list = Lists.newArrayList();
+        List<EObject> list = new ArrayList<>();
         for (ResourceSet rs : resourceSets) {
             EList<Resource> resources = rs.getResources();
             for (Resource resource : resources) {
