@@ -31,7 +31,23 @@ There were a few cases, where Guava types such as Functions or Predicates were v
  * `CorePatternLanguageHelper#getReferencedPatternsTransitive` accepts a Java 8 predicate as a parameter
  * `ConflictSetIterator` accepts a Java 8 predicate as a constructor parameter
  * `BatchTransformationStatements#fireUntil` accepts a Java 8 predicate as a condition
- 
+
+
+=== Removal of unnecessary Xtend library dependencies
+
+The transformation API used the `Pair` class from the Xtend standard library to rely the `->` (mapped to) operator to define filters based on name mappings. In version 2.0, the underlying code was changed to rely on `Map.Entry` classes from the Java standard library. 
+
+The following methods were affected by this change:
+
+ * `MatchParameterFilter` accepts an array of Map Entries instead of Xtend Pairs
+ * `BatchTransformationStatements` accepts an array of Map Entries instead of Xtend Pairs as parameters on various methods
+ * `EventDrivenTransformationBuilder#filter` accepts an array of Map Entries instead of Xtend Pairs
+
+To migrate your code, you can do one of the following:
+
+ * If you are using Xtend code, and the `"name" -> value` syntax does not compile anymore, add the following import declaration in the header: `import static extension org.eclipse.viatra.transformation.runtime.emf.transformation.TransformationExtensions.*`
+ * If you are not using Xtend, or you don't want to rely on the mapped to operator, simply instantiate these entries with the call `new SimpleEntry<>("name", value)`.
+
 === Avoid returning null values in the API
 
 A few APIs in VIATRA returned null if no possible values could be found. Given VIATRA 2.0 depends on Java 8, such APIs were reworked to return url:https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html[Optional] values instead.

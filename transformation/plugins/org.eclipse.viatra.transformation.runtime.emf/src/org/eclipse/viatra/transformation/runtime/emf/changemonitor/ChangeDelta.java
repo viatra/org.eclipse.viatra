@@ -17,8 +17,6 @@ import java.util.Objects;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.xtext.xbase.lib.Pure;
-import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
 /**
  * Class representing the changes in a given instance model since the last checkpoint. It contains three MultiMaps which
@@ -26,7 +24,6 @@ import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
  * 
  * @author Lunk Péter
  */
-@SuppressWarnings("all")
 public class ChangeDelta {
     public final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appeared;
 
@@ -66,11 +63,7 @@ public class ChangeDelta {
 
     @Override
     public String toString() {
-        ToStringBuilder b = new ToStringBuilder(this);
-        b.add("appeared", this.appeared);
-        b.add("updated", this.updated);
-        b.add("disappeared", this.disappeared);
-        return b.toString();
+        return String.format("CHANGE: appeared = %s; updated = %s; disappeared = %s", appeared, updated, disappeared);
     }
 
     public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> getAppeared() {

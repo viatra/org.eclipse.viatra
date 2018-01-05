@@ -12,6 +12,7 @@
 package org.eclipse.viatra.transformation.runtime.emf.transformation.batch;
 
 import java.util.Collections;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -32,7 +33,6 @@ import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilte
 import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 /**
  * Utility class for simple rule usage
@@ -83,8 +83,9 @@ public class BatchTransformationStatements {
      * conflicting matches will cause an execution.
      * @since 2.0
      */
-    public <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
-            final Predicate<Match> breakCondition, final Pair<String, ?>... filterParameters) {
+    @SafeVarargs
+    public final <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
+            final Predicate<Match> breakCondition, final Entry<String, ?>... filterParameters) {
         executor.startExecution(FIRE_UNTIL_TRANSACTION_FILTER_CONDITION_RULE_NAME + rule.getName());
         fireUntil(rule.getRuleSpecification(), breakCondition, new MatchParameterFilter(filterParameters));
         executor.endExecution(FIRE_UNTIL_TRANSACTION_FILTER_CONDITION_RULE_NAME + rule.getName());
@@ -163,9 +164,11 @@ public class BatchTransformationStatements {
 
     /**
      * Executes the selected rule with the selected filter on its current match set of the precondition.
+     * @since 2.0
      */
-    public <Match extends IPatternMatch> void fireAllCurrent(final BatchTransformationRule<Match, ?> rule,
-            final Pair<String, ?>... parameterFilter) {
+    @SafeVarargs
+    public final <Match extends IPatternMatch> void fireAllCurrent(final BatchTransformationRule<Match, ?> rule,
+            final Entry<String, ?>... parameterFilter) {
         executor.startExecution(FIRE_ALL_CURRENT_TRANSACTION_FILTER_RULE_NAME + rule.getName());
         fireAllCurrent(rule.getRuleSpecification(), new MatchParameterFilter(parameterFilter));
         executor.endExecution(FIRE_ALL_CURRENT_TRANSACTION_FILTER_RULE_NAME + rule.getName());
@@ -212,10 +215,11 @@ public class BatchTransformationStatements {
     /**
      * Returns the number of current activations of the rule.
      * 
-     * @since 1.5
+     * @since 2.0
      */
-    public <Match extends IPatternMatch> int countAllCurrent(final BatchTransformationRule<Match, ?> rule,
-            final Pair<String, ?>... parameterFilter) {
+    @SafeVarargs
+    public final <Match extends IPatternMatch> int countAllCurrent(final BatchTransformationRule<Match, ?> rule,
+            final Entry<String, ?>... parameterFilter) {
         return countAllCurrent(rule.getRuleSpecification(), new MatchParameterFilter(parameterFilter));
     }
 
@@ -264,9 +268,11 @@ public class BatchTransformationStatements {
      * 
      * <p>
      * <strong>Warning</strong>: the selection criteria is undefined - it is neither random nor controllable
+     * @since 2.0
      */
-    public <Match extends IPatternMatch> void fireOne(final BatchTransformationRule<Match, ?> rule,
-            final Pair<String, ?>... parameterFilter) {
+    @SafeVarargs
+    public final <Match extends IPatternMatch> void fireOne(final BatchTransformationRule<Match, ?> rule,
+            final Entry<String, ?>... parameterFilter) {
         executor.startExecution((FIRE_ONE_TRANSACTION_FILTER_RULE_NAME + rule.getName()));
         fireOne(rule.getRuleSpecification(), new MatchParameterFilter(parameterFilter));
         executor.endExecution((FIRE_ONE_TRANSACTION_FILTER_RULE_NAME + rule.getName()));

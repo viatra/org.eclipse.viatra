@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
+
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -20,7 +23,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -76,7 +78,11 @@ public class EventDrivenTransformationRuleFactory {
             return this;
         }
 
-        public EventDrivenTransformationRuleBuilder<Match, Matcher> filter(Pair<String, Object>... parameters) {
+        /**
+         * @since 2.0
+         */
+        @SafeVarargs
+        public final EventDrivenTransformationRuleBuilder<Match, Matcher> filter(Entry<String, Object>... parameters) {
             return this.filter(new MatchParameterFilter(parameters));
         }
 
@@ -112,5 +118,12 @@ public class EventDrivenTransformationRuleFactory {
     public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRule<Match, Matcher> filterRule(
             EventDrivenTransformationRule<Match, Matcher> rule, EventFilter<? super Match> filter) {
         return new EventDrivenTransformationRule<Match, Matcher>(rule, filter);
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public static SimpleEntry<String, Object> operator_mappedTo(String key, Object value) {
+        return new SimpleEntry<String, Object>(key, value);
     }
 }
