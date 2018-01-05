@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
@@ -32,11 +32,8 @@ public class ActivationLifeCycle {
     private Table<ActivationState, EventType, ActivationState> stateTransitionTable;
     private ActivationState inactiveState;
     
-    /**
-     * 
-     */
     protected ActivationLifeCycle(ActivationState inactiveState) {
-        checkArgument(inactiveState != null, "Inactive state cannot be null");
+        Preconditions.checkArgument(inactiveState != null, "Inactive state cannot be null");
         this.inactiveState = inactiveState;
     }
     
@@ -51,8 +48,8 @@ public class ActivationLifeCycle {
      * @return the next state if defined, null otherwise
      */
     public ActivationState nextActivationState(final ActivationState currentState, final EventType event) {
-        checkNotNull(currentState, "Cannot find next state for null current state");
-        checkNotNull(event, "Cannot find next state for null event");
+        Objects.requireNonNull(currentState, "Cannot find next state for null current state");
+        Objects.requireNonNull(event, "Cannot find next state for null event");
         if(stateTransitionTable != null) {
             return stateTransitionTable.get(currentState, event);
         } else {
@@ -74,9 +71,9 @@ public class ActivationLifeCycle {
      * @return true, if the life-cycle changed
      */
     public boolean addStateTransition(final ActivationState from, final EventType event, final ActivationState to) {
-        checkNotNull(from, "From state cannot be null!");
-        checkNotNull(event, "Event cannot be null!");
-        checkNotNull(to, "To state cannot be null!");
+        Objects.requireNonNull(from, "From state cannot be null!");
+        Objects.requireNonNull(event, "Event cannot be null!");
+        Objects.requireNonNull(to, "To state cannot be null!");
         if(stateTransitionTable == null) {
             stateTransitionTable = HashBasedTable.create();
         }
@@ -115,7 +112,7 @@ public class ActivationLifeCycle {
      * @return the copy of the life-cycle
      */
     public static ActivationLifeCycle copyOf(final ActivationLifeCycle lifeCycle) {
-        checkNotNull(lifeCycle,"Null life cycle cannot be copied!");
+        Objects.requireNonNull(lifeCycle,"Null life cycle cannot be copied!");
         ActivationLifeCycle lc = new ActivationLifeCycle(lifeCycle.inactiveState);
         lc.stateTransitionTable = HashBasedTable.create(lifeCycle.stateTransitionTable);
         return lc;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 
@@ -36,7 +36,7 @@ public abstract class Job<EventAtom> {
      * Creates a new job corresponding to the given state.
      */
     protected Job(final ActivationState activationState) {
-        this.activationState = checkNotNull(activationState, "Cannot create job with null activation state!");
+        this.activationState = Objects.requireNonNull(activationState, "Cannot create job with null activation state!");
     }
     
     /**

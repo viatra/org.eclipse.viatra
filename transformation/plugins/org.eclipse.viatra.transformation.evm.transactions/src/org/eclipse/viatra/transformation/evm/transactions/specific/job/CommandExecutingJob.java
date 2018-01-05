@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.transactions.specific.job;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Job;
@@ -40,7 +39,7 @@ public abstract class CommandExecutingJob<EventAtom> extends Job<EventAtom>{
      */
     public CommandExecutingJob(final ActivationState enablingState, final EventAtomEditingDomainProvider<EventAtom> provider) {
         super(enablingState);
-        checkArgument(provider != null, "Provider cannot be null!");
+        Preconditions.checkArgument(provider != null, "Provider cannot be null!");
         this.provider = provider;
     }
 

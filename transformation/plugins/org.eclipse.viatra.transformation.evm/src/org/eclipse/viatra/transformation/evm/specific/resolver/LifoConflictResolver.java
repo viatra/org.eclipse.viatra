@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.resolver;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
-
-import com.google.common.collect.Sets;
 
 /**
  * 
@@ -67,12 +65,12 @@ public class LifoConflictResolver implements ConflictResolver {
 
         @Override
         public Set<Activation<?>> getConflictingActivations() {
-            return Collections.unmodifiableSet(Sets.newLinkedHashSet(activations));
+            return Collections.unmodifiableSet(new LinkedHashSet<>(activations));
         }
 
         @Override
         public boolean addActivation(Activation<?> activation) {
-            checkArgument(activation != null, ACTIVATION_CANNOT_BE_NULL);
+            Preconditions.checkArgument(activation != null, ACTIVATION_CANNOT_BE_NULL);
             if (activation.equals(activations.peek())) {
                 // no change required
                 return false;
@@ -89,7 +87,7 @@ public class LifoConflictResolver implements ConflictResolver {
 
         @Override
         public boolean removeActivation(Activation<?> activation) {
-            checkArgument(activation != null, ACTIVATION_CANNOT_BE_NULL);
+            Preconditions.checkArgument(activation != null, ACTIVATION_CANNOT_BE_NULL);
             return activations.remove(activation);
         }
     }

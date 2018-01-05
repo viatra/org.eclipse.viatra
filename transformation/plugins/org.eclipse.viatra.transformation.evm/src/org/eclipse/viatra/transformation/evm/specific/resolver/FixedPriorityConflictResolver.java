@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.resolver;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
-
-import com.google.common.collect.Maps;
 
 /**
  * This conflict resolver uses Integer value priorities assigned to rules.
@@ -33,7 +31,7 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
     protected Map<RuleSpecification<?>, Integer> priorities;
     
     public FixedPriorityConflictResolver() {
-        priorities = Maps.newHashMap();
+        priorities = new HashMap<>();
     }
 
     /**
@@ -46,7 +44,7 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
      * @param priority
      */
     public void setPriority(RuleSpecification<?> specification, int priority) {
-        checkArgument(specification != null, "Specification cannot be null!");
+        Preconditions.checkArgument(specification != null, "Specification cannot be null!");
         Integer oldPriority = priorities.get(specification);
         if(oldPriority != null && oldPriority == priority) {
             return; // no change required

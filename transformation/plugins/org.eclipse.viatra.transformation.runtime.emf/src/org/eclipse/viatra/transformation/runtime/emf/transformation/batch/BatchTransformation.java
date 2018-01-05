@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Executor;
 import org.eclipse.viatra.transformation.evm.api.IExecutor;
@@ -34,8 +35,6 @@ import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
 import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.TransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
-
-import com.google.common.base.Preconditions;
 
 /**
  * A base class for batch transformations.

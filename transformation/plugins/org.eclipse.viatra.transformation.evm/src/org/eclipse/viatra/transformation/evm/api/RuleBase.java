@@ -12,10 +12,11 @@
 
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -26,7 +27,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 
@@ -53,7 +53,7 @@ public class RuleBase {
      *            the {@link Agenda} instance
      */
     protected RuleBase(final EventRealm eventRealm, final Agenda agenda) {
-        this.eventRealm = checkNotNull(eventRealm, "Cannot create RuleBase with null event source");
+        this.eventRealm = Objects.requireNonNull(eventRealm, "Cannot create RuleBase with null event source");
         this.ruleInstanceTable = HashBasedTable.create();
         this.logger = agenda.getLogger();
         this.agenda = agenda;
@@ -69,8 +69,8 @@ public class RuleBase {
      */
     protected <EventAtom> RuleInstance<EventAtom> instantiateRule(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
-        checkNotNull(specification, "Cannot instantiate null rule!");
-        checkNotNull(filter, "Cannot instantiate rule with null filter!");
+        Objects.requireNonNull(specification, "Cannot instantiate null rule!");
+        Objects.requireNonNull(filter, "Cannot instantiate rule with null filter!");
         final RuleInstance<EventAtom> instance = findInstance(specification, filter);
         if (instance != null) {
             return instance;
@@ -88,7 +88,7 @@ public class RuleBase {
      * @return true, if the instance was part of the RuleBase
      */
     protected <EventAtom> boolean removeRule(final RuleInstance<EventAtom> instance) {
-        checkNotNull(instance, "Cannot remove null rule instance!");
+        Objects.requireNonNull(instance, "Cannot remove null rule instance!");
         return removeRule(instance.getSpecification(), instance.getFilter());
     }
 
@@ -102,8 +102,8 @@ public class RuleBase {
      */
     protected <EventAtom> boolean removeRule(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
-        checkNotNull(specification, "Cannot remove null rule specification!");
-        checkNotNull(filter, "Cannot remove instance for null filter");
+        Objects.requireNonNull(specification, "Cannot remove null rule specification!");
+        Objects.requireNonNull(filter, "Cannot remove instance for null filter");
         final RuleInstance<?> instance = findInstance(specification, filter);
         if (instance != null) {
             instance.dispose();
@@ -140,7 +140,7 @@ public class RuleBase {
      * @return an immutable copy of the set of rule instances
      */
     public Set<RuleInstance<?>> getRuleInstances() {
-        return ImmutableSet.copyOf(ruleInstanceTable.values());
+        return Collections.unmodifiableSet(new HashSet<>(ruleInstanceTable.values()));
     }
 
     /**
@@ -153,8 +153,8 @@ public class RuleBase {
      */
     public <EventAtom> RuleInstance<EventAtom> getInstance(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
-        checkNotNull(specification, "Cannot get instance for null specification");
-        checkNotNull(filter, "Cannot get instance for null filter");
+        Objects.requireNonNull(specification, "Cannot get instance for null specification");
+        Objects.requireNonNull(filter, "Cannot get instance for null filter");
 
         return findInstance(specification, filter);
     }

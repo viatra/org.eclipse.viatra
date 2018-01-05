@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class AdaptableEVMFactory {
     private static AdaptableEVMFactory instance;
@@ -27,8 +26,8 @@ public class AdaptableEVMFactory {
     }
     
     protected AdaptableEVMFactory(){
-        adaptableEVMInstances = Lists.newArrayList();
-        listeners = Lists.newArrayList();
+        adaptableEVMInstances = new ArrayList<>();
+        listeners = new ArrayList<>();
     }
     
     public List<AdaptableEVM> getAdaptableEVMInstances() {
@@ -68,7 +67,7 @@ public class AdaptableEVMFactory {
     }
     protected void notifyListeners() {
         for (IAdaptableEVMFactoryListener adaptableEVMFactoryListener : listeners) {
-            adaptableEVMFactoryListener.adaptableEVMPoolChanged(Lists.newArrayList(adaptableEVMInstances));
+            adaptableEVMFactoryListener.adaptableEVMPoolChanged(new ArrayList<>(adaptableEVMInstances));
         }
     }
     

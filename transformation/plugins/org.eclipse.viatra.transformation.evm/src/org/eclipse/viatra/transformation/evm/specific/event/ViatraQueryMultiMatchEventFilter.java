@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Collection;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-
-import com.google.common.base.Objects;
 
 /**
  * Multi pattern match event filter.
@@ -60,22 +58,22 @@ public class ViatraQueryMultiMatchEventFilter<Match extends IPatternMatch> imple
     }
 
     protected ViatraQueryMultiMatchEventFilter(Collection<Match> filterMatches, ViatraQueryFilterSemantics semantics) {
-        checkArgument(filterMatches != null, "Cannot create filter with null matches");
+        Preconditions.checkArgument(filterMatches != null, "Cannot create filter with null matches");
         this.semantics = semantics;
         this.filterMatches = filterMatches;
     }
     
     public static <Match extends IPatternMatch> ViatraQueryMultiMatchEventFilter<Match> createFilter(Collection<Match> eventAtoms, ViatraQueryFilterSemantics semantics) {
-        checkArgument(eventAtoms != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
+        Preconditions.checkArgument(eventAtoms != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
         for (Match eventAtom : eventAtoms) {
-            checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
+            Preconditions.checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
         }
         return new ViatraQueryMultiMatchEventFilter<Match>(eventAtoms, semantics);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(filterMatches);
+        return Objects.hash(filterMatches);
     }
 
     @Override
@@ -88,7 +86,7 @@ public class ViatraQueryMultiMatchEventFilter<Match extends IPatternMatch> imple
             return false;
         @SuppressWarnings("rawtypes")
         ViatraQueryMultiMatchEventFilter other = (ViatraQueryMultiMatchEventFilter) obj;
-        return Objects.equal(filterMatches, other.filterMatches);
+        return Objects.equals(filterMatches, other.filterMatches);
     }
     
 }

@@ -1,0 +1,323 @@
+/**
+ * Copyright (c) 2004-2013, Abel Hegedus, Zoltan Ujhelyi and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Abel Hegedus, Zoltan Ujhelyi - initial API and implementation
+ *   Peter Lunk - revised Transformation API structure for adapter support
+ */
+package org.eclipse.viatra.transformation.runtime.emf.transformation.batch;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.ConflictSetIterator;
+import org.eclipse.viatra.transformation.evm.api.IExecutor;
+import org.eclipse.viatra.transformation.evm.api.RuleEngine;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
+import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
+import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
+import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation;
+import org.eclipse.xtext.xbase.lib.Pair;
+
+/**
+ * Utility class for simple rule usage
+ * 
+ * @author Abel Hegedus, Zoltan Ujhelyi, Peter Lunk
+ */
+public class BatchTransformationStatements {
+    private final ViatraQueryEngine queryEngine;
+
+    private final RuleEngine ruleEngine;
+
+    private final IExecutor executor;
+
+    BatchTransformationStatements(final BatchTransformation transformation, final IExecutor executor) {
+        this.ruleEngine = transformation.ruleEngine;
+        this.executor = executor;
+        this.queryEngine = transformation.queryEngine;
+    }
+
+    /**
+     * Executes the selected rule with the selected filter as long as there are possible matches of its preconditions
+     * and the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts only one of
+     * the conflicting matches will cause an execution.
+     * @since 2.0
+     */
+    public <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
+            final Predicate<Match> breakCondition) {
+        executor.startExecution(("Fire_until_transaction_condition_ruleName: " + rule.getName()));
+        fireUntil(rule.getRuleSpecification(), breakCondition, rule.getRuleSpecification().createEmptyFilter());
+        executor.endExecution(("Fire_until_transaction_condition_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rule with the selected filter as long as there are possible matches of its precondition and
+     * the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts only one of the
+     * conflicting matches will cause an execution.
+     * @since 2.0
+     */
+    public <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
+            final Predicate<Match> breakCondition, final Pair<String, ?>... filterParameters) {
+        executor.startExecution(("Fire_until_transaction_filter_condition_ruleName: " + rule.getName()));
+        fireUntil(rule.getRuleSpecification(), breakCondition, new MatchParameterFilter(filterParameters));
+        executor.endExecution(("Fire_until_transaction_filter_condition_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rule with the selected filter as long as there are possible matches of its precondition and
+     * the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts only one of the
+     * conflicting matches will cause an execution.
+     * @since 2.0
+     */
+    public <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
+            final Predicate<Match> breakCondition, final EventFilter<? super Match> filter) {
+        executor.startExecution(("Fire_until_transaction_filter_condition_ruleName: " + rule.getName()));
+        fireUntil(rule.getRuleSpecification(), breakCondition, filter);
+        executor.endExecution(("Fire_until_transaction_filter_condition_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rules with the selected filter as long as there are possible matches of any of their
+     * preconditions and the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts
+     * only one of the conflicting matches will cause an execution.
+     * @since 2.0
+     */
+    public void fireUntil(final BatchTransformationRuleGroup rules, final Predicate<IPatternMatch> breakCondition) {
+        executor.startExecution("Fire_until_transaction_condition_ruleGroup");
+        registerRules(rules);
+        final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(rules.getFilteredRuleMap());
+        fireUntil(conflictSet, breakCondition);
+        conflictSet.dispose();
+        executor.endExecution("Fire_until_transaction_condition_ruleGroup");
+    }
+
+    /**
+     * Executes the selected rule with the selected filter as long as there are possible matches of its precondition.
+     * The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will cause an
+     * execution.
+     */
+    public <Match extends IPatternMatch> void fireWhilePossible(final BatchTransformationRule<Match, ?> rule) {
+        executor.startExecution(("Fire_while_possible_transaction_ruleName: " + rule.getName()));
+        fireUntil(rule, it -> false);
+        executor.endExecution(("Fire_while_possible_transaction_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rule with the selected filter as long as there are possible matches of its preconditions.
+     * The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will cause an
+     * execution.
+     */
+    public <Match extends IPatternMatch> void fireWhilePossible(final BatchTransformationRule<Match, ?> rule,
+            final EventFilter<? super Match> filter) {
+        this.executor.startExecution(("Fire_while_possible_transaction_filter_ruleName: " + rule.getName()));
+        this.<Match> fireUntil(rule, it -> false, filter);
+        this.executor.endExecution(("Fire_while_possible_transaction_filter_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rules with the selected filter as long as there are possible matches of any of their
+     * preconditions. The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will
+     * cause an execution.
+     */
+    public void fireWhilePossible(final BatchTransformationRuleGroup rules) {
+        executor.startExecution("Fire_while_possible_transaction_ruleGroup");
+        fireUntil(rules, it -> false);
+        executor.endExecution("Fire_while_possible_transaction_ruleGroup");
+    }
+
+    /**
+     * Executes the selected rule with the selected filter on its current match set of the precondition.
+     */
+    public <Match extends IPatternMatch> void fireAllCurrent(final BatchTransformationRule<Match, ?> rule) {
+        executor.startExecution(("Fire_all_current_transaction_ruleName: " + rule.getName()));
+        fireAllCurrent(rule.getRuleSpecification(), rule.getRuleSpecification().createEmptyFilter());
+        executor.endExecution(("Fire_all_current_transaction_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rule with the selected filter on its current match set of the precondition.
+     */
+    public <Match extends IPatternMatch> void fireAllCurrent(final BatchTransformationRule<Match, ?> rule,
+            final Pair<String, ?>... parameterFilter) {
+        executor.startExecution(("Fire_all_current_transaction_filter_ruleName: " + rule.getName()));
+        fireAllCurrent(rule.getRuleSpecification(), new MatchParameterFilter(parameterFilter));
+        executor.endExecution(("Fire_all_current_transaction_filter_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Executes the selected rule with the selected filter on its current match set of the precondition.
+     */
+    public <Match extends IPatternMatch> void fireAllCurrent(final BatchTransformationRule<Match, ?> rule,
+            final EventFilter<? super Match> filter) {
+        executor.startExecution(("Fire_all_current_transaction_filter_ruleName: " + rule.getName()));
+        fireAllCurrent(rule.getRuleSpecification(), filter);
+        executor.endExecution(("Fire_all_current_transaction_filter_ruleName: " + rule.getName()));
+    }
+
+    public <Match extends IPatternMatch> boolean registerRule(final RuleSpecification<Match> ruleSpecification) {
+        return registerRule(ruleSpecification, ruleSpecification.createEmptyFilter());
+    }
+
+    public <Match extends IPatternMatch> boolean registerRule(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        return ruleEngine.addRule(ruleSpecification, filter);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void registerRules(final BatchTransformationRuleGroup rules) {
+        Set<IQuerySpecification<?>> preconditions = rules.stream().filter(Objects::nonNull)
+                .map(it -> it.getPrecondition()).collect(Collectors.toSet());
+        GenericQueryGroup.of(preconditions).prepare(this.queryEngine);
+
+        rules.stream().filter(Objects::nonNull).forEach(
+                it -> ruleEngine.addRule(it.getRuleSpecification(), ((EventFilter<IPatternMatch>) it.getFilter())));
+    }
+
+    /**
+     * Returns the number of current activations of the rule.
+     * 
+     * @since 1.5
+     */
+    public <Match extends IPatternMatch> int countAllCurrent(final BatchTransformationRule<Match, ?> rule) {
+        return countAllCurrent(rule.getRuleSpecification(), rule.getRuleSpecification().createEmptyFilter());
+    }
+
+    /**
+     * Returns the number of current activations of the rule.
+     * 
+     * @since 1.5
+     */
+    public <Match extends IPatternMatch> int countAllCurrent(final BatchTransformationRule<Match, ?> rule,
+            final Pair<String, ?>... parameterFilter) {
+        return countAllCurrent(rule.getRuleSpecification(), new MatchParameterFilter(parameterFilter));
+    }
+
+    /**
+     * Returns the number of current activations of the rule.
+     * 
+     * @since 1.5
+     */
+    public <Match extends IPatternMatch> int countAllCurrent(final BatchTransformationRule<Match, ?> rule,
+            final EventFilter<? super Match> filter) {
+        return countAllCurrent(rule.getRuleSpecification(), filter);
+    }
+
+    public <Match extends IPatternMatch> boolean disposeRule(final RuleSpecification<Match> ruleSpecification) {
+        return disposeRule(ruleSpecification, ruleSpecification.createEmptyFilter());
+    }
+
+    public <Match extends IPatternMatch> boolean disposeRule(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        return ruleEngine.removeRule(ruleSpecification, filter);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void disposeRules(final BatchTransformationRuleGroup rules) {
+        rules.stream().filter(Objects::nonNull).forEach(it -> {
+            ruleEngine.removeRule(it.getRuleSpecification(), ((EventFilter<IPatternMatch>) it.getFilter()));
+        });
+    }
+
+    /**
+     * Selects and fires an activation of the selected rule with no corresponding filter.
+     * </p>
+     * 
+     * <p>
+     * <strong>Warning</strong>: the selection criteria undefined - it is neither random nor controllable
+     */
+    public <Match extends IPatternMatch> void fireOne(final BatchTransformationRule<Match, ?> rule) {
+        executor.startExecution(("Fire_one_transaction_ruleName: " + rule.getName()));
+        fireOne(rule.getRuleSpecification(), rule.getRuleSpecification().createEmptyFilter());
+        executor.endExecution(("Fire_one_transaction_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Selects and fires an activation of the selected rule with a corresponding filter
+     * </p>
+     * 
+     * <p>
+     * <strong>Warning</strong>: the selection criteria is undefined - it is neither random nor controllable
+     */
+    public <Match extends IPatternMatch> void fireOne(final BatchTransformationRule<Match, ?> rule,
+            final Pair<String, ?>... parameterFilter) {
+        executor.startExecution(("Fire_one_transaction_filter_ruleName: " + rule.getName()));
+        fireOne(rule.getRuleSpecification(), new MatchParameterFilter(parameterFilter));
+        executor.endExecution(("Fire_one_transaction_filter_ruleName: " + rule.getName()));
+    }
+
+    /**
+     * Selects and fires an activation of the selected rule with a corresponding filter.
+     * </p>
+     * 
+     * <p>
+     * <strong>Warning</strong>: the selection criteria is undefined - it is neither random nor controllable
+     */
+    public <Match extends IPatternMatch> void fireOne(final BatchTransformationRule<Match, ?> rule,
+            final EventFilter<? super Match> filter) {
+        executor.startExecution(("Fire_one_transaction_filter_ruleName: " + rule.getName()));
+        fireOne(rule.getRuleSpecification(), filter);
+        executor.endExecution(("Fire_one_transaction_filter_ruleName: " + rule.getName()));
+    }
+
+    private <Match extends IPatternMatch> boolean fireOne(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        registerRule(ruleSpecification, filter);
+        final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
+        conflictSet.getConflictingActivations().stream().findFirst()
+                .ifPresent(head -> executor.execute(Collections.<Activation<?>> singleton(head).iterator()));
+        conflictSet.dispose();
+        return disposeRule(ruleSpecification, filter);
+    }
+
+    private <Match extends IPatternMatch> boolean fireAllCurrent(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        registerRule(ruleSpecification, filter);
+        
+        final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
+        executor.execute(conflictSet.getConflictingActivations().iterator());
+        
+        conflictSet.dispose();
+        return disposeRule(ruleSpecification, filter);
+    }
+
+    private <Match extends IPatternMatch> int countAllCurrent(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        registerRule(ruleSpecification, filter);
+        final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
+        int count = conflictSet.getConflictingActivations().size();
+        conflictSet.dispose();
+        
+        disposeRule(ruleSpecification, filter);
+        return count;
+    }
+
+    private <Match extends IPatternMatch> boolean fireUntil(final RuleSpecification<Match> ruleSpecification,
+            final Predicate<Match> breakCondition, final EventFilter<? super Match> filter) {
+        registerRule(ruleSpecification, filter);
+        final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
+        this.executor.execute(
+                new ConflictSetIterator(ruleEngine.createScopedConflictSet(ruleSpecification, filter), breakCondition));
+        conflictSet.dispose();
+        return disposeRule(ruleSpecification, filter);
+    }
+
+    private <Match extends IPatternMatch> void fireUntil(final ScopedConflictSet conflictSet,
+            final Predicate<Match> breakCondition) {
+        this.executor.execute(new ConflictSetIterator(conflictSet, breakCondition));
+    }
+}

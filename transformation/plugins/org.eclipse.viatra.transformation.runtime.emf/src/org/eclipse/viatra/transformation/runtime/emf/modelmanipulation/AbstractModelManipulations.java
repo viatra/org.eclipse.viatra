@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.runtime.emf.modelmanipulation;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -21,9 +22,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Abstract base class for model manipulation implementation. It checks for the preconditions of the operations, and the
@@ -129,7 +128,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 
     @Override
     public void addTo(EObject container, EStructuralFeature feature, Object element) throws ModelManipulationException {
-        addTo(container, feature, ImmutableList.of(element));
+        addTo(container, feature, Collections.singleton(element));
     }
     
     @Override

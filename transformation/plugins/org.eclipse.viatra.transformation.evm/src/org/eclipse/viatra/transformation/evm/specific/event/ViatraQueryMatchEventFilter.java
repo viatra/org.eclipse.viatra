@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-
-import com.google.common.base.Objects;
 
 /**
  * @author Abel Hegedus
@@ -38,7 +37,7 @@ public class ViatraQueryMatchEventFilter<Match extends IPatternMatch> implements
     }
 
     protected ViatraQueryMatchEventFilter(Match filterMatch) {
-        checkArgument(filterMatch != null, "Cannot create filter with null match");
+        Preconditions.checkArgument(filterMatch != null, "Cannot create filter with null match");
         this.filterMatch = filterMatch;
     }
     
@@ -48,14 +47,14 @@ public class ViatraQueryMatchEventFilter<Match extends IPatternMatch> implements
     protected ViatraQueryMatchEventFilter() {}
     
     public static <Match extends IPatternMatch> ViatraQueryMatchEventFilter<Match> createFilter(Match eventAtom) {
-        checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
-        checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
+        Preconditions.checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
+        Preconditions.checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
         return new ViatraQueryMatchEventFilter<Match>(eventAtom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(filterMatch);
+        return Objects.hash(filterMatch);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class ViatraQueryMatchEventFilter<Match extends IPatternMatch> implements
             return false;
         @SuppressWarnings("rawtypes")
         ViatraQueryMatchEventFilter other = (ViatraQueryMatchEventFilter) obj;
-        return Objects.equal(filterMatch, other.filterMatch);
+        return Objects.equals(filterMatch, other.filterMatch);
     }
     
 }

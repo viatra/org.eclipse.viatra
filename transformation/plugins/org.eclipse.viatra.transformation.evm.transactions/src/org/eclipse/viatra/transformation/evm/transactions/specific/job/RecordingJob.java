@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.transactions.specific.job;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.CompositeJob;
 import org.eclipse.viatra.transformation.evm.api.Context;
@@ -75,7 +74,7 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
 
     public RecordingJob(final Job<EventAtom> recordedJob, final EventAtomEditingDomainProvider<EventAtom> provider) {
         super(recordedJob);
-        checkArgument(provider != null, "Provider cannot be null!");
+        Preconditions.checkArgument(provider != null, "Provider cannot be null!");
         this.provider = provider;
     }
 

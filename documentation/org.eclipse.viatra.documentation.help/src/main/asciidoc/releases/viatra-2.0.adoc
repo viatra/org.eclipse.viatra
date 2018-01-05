@@ -29,6 +29,8 @@ There were a few cases, where Guava types such as Functions or Predicates were v
  * `PQueries#directlyReferencedQueriesFunction`: returns a Java 8 function
  * `PQueries#queryStatusPredicate`: returns a Java 8 predicate
  * `CorePatternLanguageHelper#getReferencedPatternsTransitive` accepts a Java 8 predicate as a parameter
+ * `ConflictSetIterator` accepts a Java 8 predicate as a constructor parameter
+ * `BatchTransformationStatements#fireUntil` accepts a Java 8 predicate as a condition
  
 === Avoid returning null values in the API
 

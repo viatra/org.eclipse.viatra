@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.job;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -41,7 +41,7 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
      */
     public StatelessJob(final CRUDActivationStateEnum activationStateEnum, final IMatchProcessor<Match> matchProcessor) {
         super(activationStateEnum);
-        this.matchProcessor = checkNotNull(matchProcessor,
+        this.matchProcessor = Objects.requireNonNull(matchProcessor,
                 "StatelessJob cannot be instantiated with null match processor");
     }
 

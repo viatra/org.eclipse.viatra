@@ -13,8 +13,7 @@ package org.eclipse.viatra.transformation.evm.update;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * This provider implementation uses the ViatraQueryEngine model update listener as

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleInstance;
@@ -30,8 +30,6 @@ import org.eclipse.viatra.transformation.evm.notification.AttributeMonitor;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
-
-import com.google.common.collect.Maps;
 
 public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventHandlerAdapter<Match> {
 
@@ -58,11 +56,11 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
     protected void prepareEventHandler() {
         super.prepareEventHandler();
         
-        attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
+        attributeMonitor = Objects.requireNonNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         ViatraQueryEventSource<Match> eventSource = (ViatraQueryEventSource<Match>) getSource();
         eventSource.addHandler(this);
         attributeMonitor.addAttributeMonitorListener(eventSource.getAttributeMonitorListener());
-        unregisterListener = checkNotNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
+        unregisterListener = Objects.requireNonNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
         getInstance().addActivationNotificationListener(unregisterListener, false);
     }
 
@@ -73,7 +71,7 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
     @Override
     protected Map<EventType, EventProcessorAdapter<Match>> prepareEventProcessors() {
     
-        Map<EventType,EventProcessorAdapter<Match>> processors = Maps.newHashMap();
+        Map<EventType,EventProcessorAdapter<Match>> processors = new HashMap<>();
         processors.put(CRUDEventTypeEnum.CREATED, new EventProcessorAdapter<Match>(getInstance()) {
             @Override
             protected void activationExists(Event<Match> event, Activation<Match> activation) {
@@ -98,7 +96,7 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
 
             @Override
             protected void activationMissing(Event<Match> event) {
-                checkState(false, "Atom %s updated without existing activation in rule instance %s!", event.getEventAtom(), this);
+                Preconditions.checkState(false, "Atom %s updated without existing activation in rule instance %s!", event.getEventAtom(), this);
             }
         });
         processors.put(CRUDEventTypeEnum.DELETED, new EventProcessorAdapter<Match>(getInstance()) {
@@ -109,7 +107,7 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
 
             @Override
             protected void activationMissing(Event<Match> event) {
-                checkState(false, "Match %s disappeared without existing activation in rule instance %s!", event.getEventAtom(), this);
+                Preconditions.checkState(false, "Match %s disappeared without existing activation in rule instance %s!", event.getEventAtom(), this);
             }
         });
         return processors;

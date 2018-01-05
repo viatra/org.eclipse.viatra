@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.event.adapter;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
+import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.Event;
 import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSource;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -34,11 +32,11 @@ public abstract class EventSourceAdapter<EventAtom> implements EventSource<Event
     private final Set<EventHandler<EventAtom>> handlers;
 
     public EventSourceAdapter(EventSourceSpecification<EventAtom> specification, EventRealm realm) {
-        checkArgument(realm != null, "Cannot create event source for null realm!");
-        checkArgument(specification != null, "Cannot create event source for null source specification!");
+        Preconditions.checkArgument(realm != null, "Cannot create event source for null realm!");
+        Preconditions.checkArgument(specification != null, "Cannot create event source for null source specification!");
         this.specification = specification;
         this.realm = realm;
-        this.handlers = Sets.newHashSet();
+        this.handlers = new HashSet<>();
     }
 
     
@@ -53,7 +51,7 @@ public abstract class EventSourceAdapter<EventAtom> implements EventSource<Event
     }
 
     public boolean addHandler(EventHandler<EventAtom> handler) {
-        checkArgument(handler != null, HANDLER_NULL_MSG);
+        Preconditions.checkArgument(handler != null, HANDLER_NULL_MSG);
         boolean empty = handlers.isEmpty();
         beforeHandlerAdded(handler, empty);
         boolean added = handlers.add(handler);
@@ -66,7 +64,7 @@ public abstract class EventSourceAdapter<EventAtom> implements EventSource<Event
 
 
     public boolean removeHandler(EventHandler<EventAtom> handler) {
-        checkArgument(handler != null, HANDLER_NULL_MSG);
+        Preconditions.checkArgument(handler != null, HANDLER_NULL_MSG);
         beforeHandlerRemoved(handler, handlers.size() == 1);
         boolean removed = handlers.remove(handler);
         if(removed) {

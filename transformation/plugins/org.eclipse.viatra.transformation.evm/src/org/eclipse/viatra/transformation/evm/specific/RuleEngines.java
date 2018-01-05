@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -49,7 +48,7 @@ public class RuleEngines {
      */
     public static RuleEngine createViatraQueryRuleEngine(final ViatraQueryEngine engine,
             final Set<RuleSpecification<?>> specifications) {
-        checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
+        Objects.requireNonNull(specifications, "Cannot create rule engine with null rule specification set");
         RuleEngine ruleEngine = createViatraQueryRuleEngine(engine);
         for (RuleSpecification<?> ruleSpecification : specifications) {
             ruleEngine.addRule(ruleSpecification);

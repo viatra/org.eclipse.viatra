@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
@@ -57,8 +56,8 @@ public final class EventDrivenVM {
      */
     public static ExecutionSchema createExecutionSchema(final EventRealm eventRealm,
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<?>> specifications) {
-        checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
-        checkNotNull(specifications, "Cannot create execution schema with null rule specification set");
+        Objects.requireNonNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
+        Objects.requireNonNull(specifications, "Cannot create execution schema with null rule specification set");
         IExecutor executor = new Executor();
         RuleBase ruleBase = new RuleBase(eventRealm, new Agenda());
         ScheduledExecution execution = new ScheduledExecution(ruleBase, executor);

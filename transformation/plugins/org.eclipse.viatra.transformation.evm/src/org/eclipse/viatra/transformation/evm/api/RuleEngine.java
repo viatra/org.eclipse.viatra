@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -22,7 +23,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -36,9 +36,6 @@ import com.google.common.collect.Multimap;
  */
 public class RuleEngine {
 
-    /**
-     * 
-     */
     private static final String FILTER_MUST_BE_SPECIFIED = "Filter must be specified";
     private static final String RULE_SPECIFICATION_MUST_BE_SPECIFIED = "Rule specification must be specified!";
     private RuleBase ruleBase;
@@ -49,7 +46,7 @@ public class RuleEngine {
      * @param ruleBase
      */
     protected RuleEngine(final RuleBase ruleBase) {
-        this.ruleBase = checkNotNull(ruleBase, "Cannot create rule engine with null ruleBase!");
+        this.ruleBase = Objects.requireNonNull(ruleBase, "Cannot create rule engine with null ruleBase!");
     }
 
     /**
@@ -63,7 +60,7 @@ public class RuleEngine {
     }
 
     public void setConflictResolver(ConflictResolver conflictResolver) {
-        checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
+        Objects.requireNonNull(conflictResolver, "Conflict resolver cannot be null!");
         ruleBase.getAgenda().setConflictResolver(conflictResolver);
     }
     
@@ -76,8 +73,8 @@ public class RuleEngine {
     }
     
     public ScopedConflictSet createScopedConflictSet(ConflictResolver conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
-        checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
-        checkNotNull(specifications, "Specification set cannot be null!");
+        Objects.requireNonNull(conflictResolver, "Conflict resolver cannot be null!");
+        Objects.requireNonNull(specifications, "Specification set cannot be null!");
         ScopedConflictSet scopedConflictSet = ruleBase.createScopedConflictSet(conflictResolver, specifications);
         return scopedConflictSet;
     }
@@ -104,8 +101,8 @@ public class RuleEngine {
      */
     public <EventAtom> boolean addRule(
             final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
-        checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
-        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(filter, FILTER_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         RuleInstance<EventAtom> instance = ruleBase.getInstance(specification, filter);
         boolean added = false;
         if(instance == null) {
@@ -156,7 +153,7 @@ public class RuleEngine {
      * @return an immutable set of conflicting activations
      */
     public Set<Activation<?>> getConflictingActivations() {
-        return ImmutableSet.copyOf(ruleBase.getAgenda().getConflictSet().getConflictingActivations());
+        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getAgenda().getConflictSet().getConflictingActivations()));
     }
     
     /**
@@ -165,8 +162,8 @@ public class RuleEngine {
      * @return an immutable set of the activations in the given state
      */
     public Set<Activation<?>> getActivations(final ActivationState state) {
-        checkNotNull(state, "Activation state must be specified!");
-        return ImmutableSet.copyOf(ruleBase.getAgenda().getActivations(state));
+        Objects.requireNonNull(state, "Activation state must be specified!");
+        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getAgenda().getActivations(state)));
     }
 
     /**
@@ -185,9 +182,9 @@ public class RuleEngine {
      * @return the immutable set of activations of the given filtered specification
      */
     public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
-        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
-        return ImmutableSet.copyOf(ruleBase.getInstance(specification, filter).getAllActivations());
+        Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(filter, FILTER_MUST_BE_SPECIFIED);
+        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getInstance(specification, filter).getAllActivations()));
     }
 
     /**
@@ -212,10 +209,10 @@ public class RuleEngine {
      */
     public <EventAtom> Set<Activation<EventAtom>> getActivations(
             final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter, final ActivationState state) {
-        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        checkNotNull(state, "Activation state must be specified!");
-        checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
-        return ImmutableSet.copyOf(ruleBase.getInstance(specification, filter).getActivations(state));
+        Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(state, "Activation state must be specified!");
+        Objects.requireNonNull(filter, FILTER_MUST_BE_SPECIFIED);
+        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getInstance(specification, filter).getActivations(state)));
     }
     
     /**
@@ -232,7 +229,7 @@ public class RuleEngine {
      * @return true, if the rule existed
      */
     public <EventAtom> boolean removeRule(final RuleSpecification<EventAtom> specification) {
-        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         return ruleBase.removeRule(specification, specification.createEmptyFilter());
     }
 
@@ -245,14 +242,11 @@ public class RuleEngine {
      */
     public <EventAtom> boolean removeRule(
             final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
-        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
+        Objects.requireNonNull(filter, FILTER_MUST_BE_SPECIFIED);
         return ruleBase.removeRule(specification, filter);
     }
 
-    /**
-     * @return the rule base
-     */
     protected RuleBase getRuleBase() {
         return ruleBase;
     }

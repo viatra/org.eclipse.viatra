@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.adapter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,8 +34,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
 import org.eclipse.viatra.transformation.evm.specific.resolver.ArbitraryOrderConflictResolver;
 
-import com.google.common.collect.Lists;
-
 /**
  * Class that is responsible for containing {@link IEVMAdapter} and {@link IEVMListener} objects, as well as dispatching
  * the events they are subscribed to. It also contains static methods for creating an adaptable {@link RuleEngine} and
@@ -44,8 +43,8 @@ import com.google.common.collect.Lists;
  *
  */
 public class AdaptableEVM {
-    private List<IEVMAdapter> adapters = Lists.newArrayList();
-    private List<IEVMListener> listeners = Lists.newArrayList();
+    private List<IEVMAdapter> adapters = new ArrayList<>();
+    private List<IEVMListener> listeners = new ArrayList<>();
     private String identifier;
        
     protected AdaptableEVM(String id) {

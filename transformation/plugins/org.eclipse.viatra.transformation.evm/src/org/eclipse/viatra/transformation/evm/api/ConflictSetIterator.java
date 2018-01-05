@@ -12,10 +12,9 @@ package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
-
-import com.google.common.base.Predicate;
 
 /**
  * Iterator that iterates through the elements of a {@link ConflictSet}.
@@ -30,17 +29,14 @@ public class ConflictSetIterator implements Iterator<Activation<?>> {
     private Activation<?> nextActivation;
     private boolean returned = true;
     
-    @SuppressWarnings("rawtypes")
     public ConflictSetIterator(ConflictSet conflictset) {
         this.conflictset = conflictset;
-        breakCondition = new Predicate() {
-            @Override
-            public boolean apply(Object input) {
-                return false;
-            }
-        };
+        breakCondition = input -> false;
     }
 
+    /**
+     * @since 2.0
+     */
     @SuppressWarnings("rawtypes")
     public ConflictSetIterator(ConflictSet conflictset, Predicate breakCondition) {
         this.conflictset = conflictset;
@@ -55,7 +51,7 @@ public class ConflictSetIterator implements Iterator<Activation<?>> {
             returned = false;
         }
         if (nextActivation != null) {
-            return !breakCondition.apply(nextActivation.getAtom());
+            return !breakCondition.test(nextActivation.getAtom());
         }
         return false;
     }

@@ -11,14 +11,20 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Level;
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
@@ -34,14 +40,6 @@ import org.eclipse.viatra.transformation.evm.specific.resolver.ArbitraryOrderCon
 import org.eclipse.viatra.transformation.runtime.emf.rules.EventDrivenTransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 public class EventDrivenTransformation {
     private ViatraQueryEngine queryEngine;
     private ExecutionSchema executionSchema;
@@ -51,9 +49,9 @@ public class EventDrivenTransformation {
         private ConflictResolver conflictResolver;
         private ViatraQueryEngine engine;
         private ISchedulerFactory schedulerFactory;
-        private List<EventDrivenTransformationRule<?, ?>> rules = Lists.newArrayList();
-        private List<IEVMAdapter> adapters = Lists.newArrayList();
-        private List<IEVMListener> listeners = Lists.newArrayList();
+        private List<EventDrivenTransformationRule<?, ?>> rules = new ArrayList<>();
+        private List<IEVMAdapter> adapters = new ArrayList<>();
+        private List<IEVMListener> listeners = new ArrayList<>();
 
         public EventDrivenTransformationBuilder setScope(EMFScope scope) {
             this.engine = ViatraQueryEngine.on(scope);
@@ -109,7 +107,7 @@ public class EventDrivenTransformation {
          */
         public EventDrivenTransformation build() {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
-            Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
+            Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = new HashMap<>();
 
             if (schedulerFactory == null) {
                 schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(engine);
@@ -126,8 +124,7 @@ public class EventDrivenTransformation {
                     ? vm.createAdaptableExecutionSchema(engine, schedulerFactory, conflictResolver)
                     : ExecutionSchemas.createViatraQueryExecutionSchema(engine, schedulerFactory, conflictResolver);
             
-            Iterable<IQuerySpecification<?>> preconditions = collectPreconditions();
-            GenericQueryGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
+            GenericQueryGroup.of(collectPreconditions()).prepare(engine);
             for (@SuppressWarnings("rawtypes") EventDrivenTransformationRule rule : rules) {
                 schema.addRule(rule.getRuleSpecification(), rule.getFilter());
                 rulesToAdd.put(rule.getRuleSpecification(), rule);
@@ -138,16 +135,9 @@ public class EventDrivenTransformation {
             return transformation;
         }
 
-        private Iterable<IQuerySpecification<?>> collectPreconditions() {
-            Iterable<EventDrivenTransformationRule<?, ?>> notNullRules = Iterables.filter(rules, Predicates.notNull());
-            Iterable<IQuerySpecification<?>> preconditions = Iterables.transform(notNullRules,
-                    new Function<EventDrivenTransformationRule<?, ?>, IQuerySpecification<?>>() {
-                        @Override
-                        public IQuerySpecification<?> apply(EventDrivenTransformationRule<?, ?> rule) {
-                            return rule.getPrecondition();
-                        }
-                    });
-            return Iterables.filter(preconditions, Predicates.notNull());
+        private Set<IQuerySpecification<?>> collectPreconditions() {
+            return rules.stream().filter(Objects::nonNull).map(EventDrivenTransformationRule::getPrecondition)
+                    .filter(Objects::nonNull).collect(Collectors.toSet());
         }
 
     }

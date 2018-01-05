@@ -11,29 +11,20 @@
 package org.eclipse.viatra.transformation.runtime.emf.rules;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * Helper collection for grouping transformation rules 
  */
 public class TransformationRuleGroup<Rule extends ITransformationRule<?, ?>> extends HashSet<Rule> {
-    
-    private final class RuleTransformerFunction implements
-            Function<Rule, RuleSpecification<?>> {
-        @Override
-        public RuleSpecification<?> apply(Rule rule) {
-            return (rule == null) ? null : rule.getRuleSpecification();
-        }
-    }
     
     private static final long serialVersionUID = 7057984500208333710L;
     
@@ -50,7 +41,7 @@ public class TransformationRuleGroup<Rule extends ITransformationRule<?, ?>> ext
     }
     
     public Set<RuleSpecification<?>> getRuleSpecifications() {
-        return Sets.newHashSet(Collections2.transform(this, new RuleTransformerFunction()));
+        return this.stream().filter(Objects::nonNull).map(Rule::getRuleSpecification).collect(Collectors.toSet());
     }
     
     public Multimap<RuleSpecification<?>, EventFilter<?>> getFilteredRuleMap() {

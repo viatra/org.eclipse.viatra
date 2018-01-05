@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 /**
  * The scheduler is used to define when the executor of a schema should start its execution strategy.
@@ -46,7 +46,7 @@ public abstract class Scheduler {
      * @param executor
      */
     protected Scheduler(final ScheduledExecution execution) {
-        this.execution = checkNotNull(execution, "Cannot create scheduler with null VIATRA Scheduled Execution!");
+        this.execution = Objects.requireNonNull(execution, "Cannot create scheduler with null VIATRA Scheduled Execution!");
     }
 
     /**

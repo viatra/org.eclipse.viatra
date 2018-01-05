@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -18,7 +19,6 @@ import org.eclipse.viatra.query.runtime.api.scope.IInstanceObserver;
 import org.eclipse.viatra.transformation.evm.notification.AttributeMonitor;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -31,9 +31,6 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
     private Multimap<Object, MatchType> observedMultimap;
     private IBaseIndex index;
     
-    /**
-     * 
-     */
     public LightweightAttributeMonitor(IBaseIndex index) {
         super();
         this.index = index;
@@ -85,7 +82,7 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
     }
 
     private Collection<Object> findAllObjects(MatchType atom){
-        Collection<Object> objs = Lists.newArrayList();
+        Collection<Object> objs = new ArrayList<>();
         for (String param : atom.parameterNames()) {
             Object location = atom.get(param);
             objs.add(location);

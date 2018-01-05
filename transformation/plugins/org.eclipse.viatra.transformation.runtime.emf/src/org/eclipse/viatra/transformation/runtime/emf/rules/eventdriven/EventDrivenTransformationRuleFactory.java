@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
@@ -21,7 +22,6 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 import org.eclipse.xtext.xbase.lib.Pair;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 

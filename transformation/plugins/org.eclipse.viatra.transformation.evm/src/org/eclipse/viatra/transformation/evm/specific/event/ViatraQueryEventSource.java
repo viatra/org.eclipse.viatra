@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.api.MatchUpdateAdapter;
 import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
 import org.eclipse.viatra.transformation.evm.api.event.adapter.EventSourceAdapter;
@@ -109,7 +108,7 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
     }
 
     public IAttributeMonitorListener<Match> getAttributeMonitorListener() {
-        checkState(attributeMonitorListener != null, "Event source not prepared yet!");
+        Preconditions.checkState(attributeMonitorListener != null, "Event source not prepared yet!");
         return attributeMonitorListener;
     }
     

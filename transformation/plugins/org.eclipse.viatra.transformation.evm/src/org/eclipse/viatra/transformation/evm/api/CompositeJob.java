@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Objects;
 
 /**
  * @author Abel Hegedus
@@ -21,11 +20,8 @@ public class CompositeJob<EventAtom> extends Job<EventAtom> {
 
     private Job<EventAtom> containedJob;
     
-    /**
-     * 
-     */
     protected CompositeJob(Job<EventAtom> job) {
-        super(checkNotNull(job, "Cannot compose null job!").getActivationState());
+        super(Objects.requireNonNull(job, "Cannot compose null job!").getActivationState());
         this.containedJob = job;
     }
     

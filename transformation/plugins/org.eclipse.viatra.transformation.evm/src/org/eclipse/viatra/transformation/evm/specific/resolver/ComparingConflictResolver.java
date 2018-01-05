@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.resolver;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -41,9 +39,6 @@ public class ComparingConflictResolver implements ConflictResolver {
         return new ComparingConflictSet(comparator);
     }
 
-    /**
-     * @return the comparator
-     */
     public Comparator<Activation<?>> getComparator() {
         return comparator;
     }
@@ -53,8 +48,8 @@ public class ComparingConflictResolver implements ConflictResolver {
         private SortedSet<Activation<?>> set;
         
         protected ComparingConflictSet(Comparator<Activation<?>> comparator) {
-            checkArgument(comparator != null, "Comparator cannot be null!");
-            set = Sets.newTreeSet(comparator);
+            Preconditions.checkArgument(comparator != null, "Comparator cannot be null!");
+            set = new TreeSet<>(comparator);
         }
         
         @Override
@@ -67,13 +62,13 @@ public class ComparingConflictResolver implements ConflictResolver {
     
         @Override
         public boolean addActivation(Activation<?> activation) {
-            checkArgument(activation != null, "Activation cannot be null!");
+            Preconditions.checkArgument(activation != null, "Activation cannot be null!");
             return set.add(activation);
         }
     
         @Override
         public boolean removeActivation(Activation<?> activation) {
-            checkArgument(activation != null, "Activation cannot be null!");
+            Preconditions.checkArgument(activation != null, "Activation cannot be null!");
             return set.remove(activation);
         }
 

@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.Collection;
+import java.util.Objects;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
@@ -75,15 +73,15 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * @throws IllegalArgumentException if filter is mutable
      */
     protected RuleInstance(final RuleSpecification<EventAtom> specification) {
-        this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
+        this.specification = Objects.requireNonNull(specification, "Cannot create rule instance for null specification!");
         this.activations = HashBasedTable.create();
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
     }
     
     public void setHandler(EventHandler<EventAtom> handler) {
-        checkArgument(handler != null, "Handler cannot be null!");
-        checkState(this.handler == null || handler.equals(this.handler), "Handler already set!");
+        Preconditions.checkArgument(handler != null, "Handler cannot be null!");
+        Preconditions.checkState(this.handler == null || handler.equals(this.handler), "Handler already set!");
         this.handler = handler;
     }
     
@@ -103,8 +101,8 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * @param context
      */
     public void fire(final Activation<EventAtom> activation, final Context context) {
-        checkNotNull(activation, "Cannot fire null activation!");
-        checkNotNull(context,"Cannot fire activation with null context");
+        Objects.requireNonNull(activation, "Cannot fire null activation!");
+        Objects.requireNonNull(context,"Cannot fire activation with null context");
         ActivationState activationState = activation.getState();
         EventAtom atom = activation.getAtom();
 
@@ -147,8 +145,8 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * @return the state of the activation after the transition
      */
     public ActivationState activationStateTransition(final Activation<EventAtom> activation, final EventType event) {
-        checkNotNull(activation, "Cannot perform state transition on null activation!");
-        checkNotNull(event, "Cannot perform state transition with null event!");
+        Objects.requireNonNull(activation, "Cannot perform state transition on null activation!");
+        Objects.requireNonNull(event, "Cannot perform state transition with null event!");
         ActivationState activationState = activation.getState();
         ActivationState nextActivationState = specification.getLifeCycle().nextActivationState(activationState, event);
         EventAtom atom = activation.getAtom();
@@ -205,7 +203,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
     }
 
     public EventFilter<? super EventAtom> getFilter(){
-        checkState(handler != null, "Cannot get filter, bacause handler is null!");
+        Preconditions.checkState(handler != null, "Cannot get filter, bacause handler is null!");
         return handler.getEventFilter();
     }
 
@@ -236,7 +234,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * @return the live set of activations in the given state
      */
     public Collection<Activation<EventAtom>> getActivations(final ActivationState state) {
-        checkNotNull(state, "Cannot return activations for null state");
+        Objects.requireNonNull(state, "Cannot return activations for null state");
         return activations.row(state).values();
     }
 

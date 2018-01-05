@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Job;
@@ -68,7 +67,7 @@ public final class Jobs {
             protected void handleError(final Activation<? extends EventAtom> activation, final Exception exception,
                     final Context context) {
                 // never happens!
-                checkState(false, "NopJob should never cause errors!");
+                Preconditions.checkState(false, "NopJob should never cause errors!");
             }
         };
     }

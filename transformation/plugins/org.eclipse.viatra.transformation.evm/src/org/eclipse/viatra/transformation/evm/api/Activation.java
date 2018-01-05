@@ -11,11 +11,9 @@
 
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
-
-import com.google.common.base.Objects;
 
 /**
  * An {@link Activation} is a created for a {@link RuleInstance} when the preconditions (LHS) are fully satisfied with
@@ -40,9 +38,9 @@ public class Activation<EventAtom> {
     private int cachedHash = -1;
 
     protected Activation(RuleInstance<EventAtom> instance, EventAtom atom, ActivationState initState) {
-        this.atom = checkNotNull(atom,"Cannot create activation with null patternmatch");
-        this.instance = checkNotNull(instance,"Cannot create activation with null instance");
-        this.state = checkNotNull(initState, "Cannot create activation with null initial state");
+        this.atom = Objects.requireNonNull(atom,"Cannot create activation with null patternmatch");
+        this.instance = Objects.requireNonNull(instance,"Cannot create activation with null instance");
+        this.state = Objects.requireNonNull(initState, "Cannot create activation with null initial state");
     }
 
     public EventAtom getAtom() {
@@ -76,7 +74,7 @@ public class Activation<EventAtom> {
      * @param state
      */
     protected void setState(final ActivationState state) {
-        this.state = checkNotNull(state, "Activation state cannot be null!");
+        this.state = Objects.requireNonNull(state, "Activation state cannot be null!");
         enabled = instance.getSpecification().getEnabledStates().contains(state);
     }
 
@@ -84,7 +82,7 @@ public class Activation<EventAtom> {
      * The activation will be fired; the appropriate job of the instance will be executed based on the activation state.
      */
     public void fire(final Context context) {
-        checkNotNull(context,"Cannot fire activation with null context");
+        Objects.requireNonNull(context,"Cannot fire activation with null context");
         instance.fire(this, context);
     }
 
@@ -94,7 +92,7 @@ public class Activation<EventAtom> {
             return true;
         } else if (obj instanceof Activation) {
             Activation<?> other = (Activation<?>) obj;
-            return (other.instance.equals(this.instance)) && (other.atom.equals(this.atom)
+            return (Objects.equals(other.instance, this.instance)) && (Objects.equals(other.atom, this.atom)
                     /*&& (other.state == this.state*/);
         } else {
             return false;
@@ -104,7 +102,7 @@ public class Activation<EventAtom> {
     @Override
     public int hashCode() {
         if (cachedHash == -1) {
-            cachedHash = Objects.hashCode(instance, atom/*, state*/);
+            cachedHash = Objects.hash(instance, atom/*, state*/);
         }
         return cachedHash;
     }

@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.event.adapter;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Map;
+import java.util.Objects;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleInstance;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
@@ -46,11 +45,11 @@ public abstract class EventProcessorAdapter<EventAtom> {
      * @param event
      */
     public void processEvent(Event<EventAtom> event) {
-        checkNotNull(event,"Cannot process null event!");
+        Objects.requireNonNull(event,"Cannot process null event!");
         
         Map<ActivationState, Activation<EventAtom>> column = getInstance().getActivations().column(event.getEventAtom());
         if(column.size() > 0) {
-            checkArgument(column.size() == 1, "%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple");
+            Preconditions.checkArgument(column.size() == 1, "%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple");
             Activation<EventAtom> act = column.values().iterator().next();
             activationExists(event, act);
         } else {

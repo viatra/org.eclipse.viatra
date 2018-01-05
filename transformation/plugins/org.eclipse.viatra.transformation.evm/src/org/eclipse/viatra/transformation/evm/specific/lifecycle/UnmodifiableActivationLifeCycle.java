@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.lifecycle;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
@@ -60,7 +60,7 @@ public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
         if(lifeCycle instanceof UnmodifiableActivationLifeCycle) {
             return (UnmodifiableActivationLifeCycle) lifeCycle;
         } else {
-            checkNotNull(lifeCycle,"Null life cycle cannot be copied!");
+            Objects.requireNonNull(lifeCycle,"Null life cycle cannot be copied!");
             UnmodifiableActivationLifeCycle lc = new UnmodifiableActivationLifeCycle(lifeCycle.getInactiveState());
             for (Cell<ActivationState, EventType, ActivationState> cell : lifeCycle.getStateTransitionTable().cellSet()) {
                 lc.internalAddStateTransition(cell.getRowKey(), cell.getColumnKey(), cell.getValue());

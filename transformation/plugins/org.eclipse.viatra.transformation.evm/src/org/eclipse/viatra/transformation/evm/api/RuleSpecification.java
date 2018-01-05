@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
@@ -23,7 +23,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -51,7 +50,7 @@ public class RuleSpecification<EventAtom> {
      */
     public RuleSpecification(final EventSourceSpecification<EventAtom> sourceSpecification, final ActivationLifeCycle lifeCycle,
             final Set<Job<EventAtom>> jobs) {
-        checkArgument(sourceSpecification != null, "Cannot create rule specification with null source definition!");
+        Preconditions.checkArgument(sourceSpecification != null, "Cannot create rule specification with null source definition!");
         this.sourceSpecification = sourceSpecification;
         this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
         this.jobs = HashMultimap.create();
@@ -63,7 +62,7 @@ public class RuleSpecification<EventAtom> {
                 states.add(state);
             }
         }
-        this.enabledStates = ImmutableSet.copyOf(states);
+        this.enabledStates = Collections.unmodifiableSet(new HashSet<>(states));
     }
     
     /**

@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
@@ -24,7 +23,7 @@ public class ViatraQueryEventRealm implements EventRealm {
     private ViatraQueryEngine engine;
     
     protected ViatraQueryEventRealm(ViatraQueryEngine engine) {
-        checkArgument(engine != null, "Cannot create event realm for null engine!");
+        Preconditions.checkArgument(engine != null, "Cannot create event realm for null engine!");
         this.engine = engine;
     }
     
@@ -34,7 +33,7 @@ public class ViatraQueryEventRealm implements EventRealm {
 
     protected <Match extends IPatternMatch> ViatraQueryEventSource<Match> createSource(
             EventSourceSpecification<Match> sourceSpecification) {
-        checkArgument(sourceSpecification instanceof ViatraQueryEventSourceSpecification,
+        Preconditions.checkArgument(sourceSpecification instanceof ViatraQueryEventSourceSpecification,
                 "Source definition must be ViatraQueryEventSourceSpecification!");
         ViatraQueryEventSource<Match> eventSource = new ViatraQueryEventSource<Match>(this,
                 (ViatraQueryEventSourceSpecification<Match>) sourceSpecification);

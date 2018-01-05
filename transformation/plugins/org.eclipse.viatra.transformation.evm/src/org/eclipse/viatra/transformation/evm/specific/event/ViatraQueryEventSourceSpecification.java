@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
@@ -31,7 +30,7 @@ public class ViatraQueryEventSourceSpecification<Match extends IPatternMatch> im
     private final EventFilter<Match> EMPTY_FILTER = new ViatraQueryMatchEventFilter<Match>();
     
     protected ViatraQueryEventSourceSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> factory) {
-        checkArgument(factory != null, "Cannot create source definition for null querySpecification!");
+        Preconditions.checkArgument(factory != null, "Cannot create source definition for null querySpecification!");
         this.querySpecification = factory;
     }
 

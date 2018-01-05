@@ -14,6 +14,7 @@ package org.eclipse.viatra.transformation.evm.api;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
@@ -21,7 +22,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSetUpdater;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 import org.eclipse.viatra.transformation.evm.specific.resolver.ArbitraryOrderConflictResolver;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 

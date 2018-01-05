@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.Event;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum;
@@ -37,8 +36,8 @@ public class ViatraQueryEvent<Match extends IPatternMatch> implements Event<Matc
     }
     
     protected ViatraQueryEvent(CRUDEventTypeEnum eventType, Match eventMatch) {
-        checkArgument(eventType != null, "Cannot create event with null type!");
-        checkArgument(eventMatch != null, "Cannot create event with null match!");
+        Preconditions.checkArgument(eventType != null, "Cannot create event with null type!");
+        Preconditions.checkArgument(eventMatch != null, "Cannot create event with null match!");
         this.eventType = eventType;
         this.eventMatch = eventMatch;
     }

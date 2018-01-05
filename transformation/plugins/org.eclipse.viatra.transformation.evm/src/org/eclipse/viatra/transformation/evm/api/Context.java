@@ -12,8 +12,7 @@ package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 /**
  * A context is an associative store that is accessible during the
@@ -48,7 +47,7 @@ public class Context {
      * @return the value in the context for the key
      */
     public Object get(final String key) {
-        Preconditions.checkNotNull(key, "Cannot get value for null!");
+        Objects.requireNonNull(key, "Cannot get value for null!");
         return sessionData.get(key);
     }
     
@@ -60,8 +59,8 @@ public class Context {
      * @return the previous value for the key, or null
      */
     public Object put(final String key, final Object value) {
-        Preconditions.checkNotNull(key, "Cannot put into null key!");
-        Preconditions.checkNotNull(value, "Cannot put null value (use remove for deletion)!");
+        Objects.requireNonNull(key, "Cannot put into null key!");
+        Objects.requireNonNull(value, "Cannot put null value (use remove for deletion)!");
         return sessionData.put(key, value);
     }
     

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * An execution schema is a special rule engine and a facade
  *  for accessing the EVM. In addition to the RuleEngine,
@@ -30,7 +28,7 @@ public class ExecutionSchema extends RuleEngine {
      * @param scheduler
      */
     protected ExecutionSchema(final Scheduler scheduler) {
-        super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecution().getRuleBase());
+        super(Objects.requireNonNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecution().getRuleBase());
         this.scheduler = scheduler;
     }
 

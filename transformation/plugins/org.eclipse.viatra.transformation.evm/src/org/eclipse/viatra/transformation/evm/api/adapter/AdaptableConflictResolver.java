@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.adapter;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Adaptable {@link ConflictResolver} implementation that enables an {@link IEVMAdapter} implementation to replace the

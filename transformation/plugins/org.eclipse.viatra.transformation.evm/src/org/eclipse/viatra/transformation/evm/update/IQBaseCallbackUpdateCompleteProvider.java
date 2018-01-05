@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.update;
 
+import java.util.Objects;
+
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-
-import com.google.common.base.Preconditions;
 
 /**
  * This provider implementation uses the IQBase after update callback as
@@ -33,7 +33,7 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
      */
     public IQBaseCallbackUpdateCompleteProvider(final IBaseIndex index) {
         super();
-        Preconditions.checkNotNull(index, "Cannot create provider with null helper!");
+        Objects.requireNonNull(index, "Cannot create provider with null helper!");
         this.modelUpdateListener = new BaseIndexListener();
         this.index = index;
     }

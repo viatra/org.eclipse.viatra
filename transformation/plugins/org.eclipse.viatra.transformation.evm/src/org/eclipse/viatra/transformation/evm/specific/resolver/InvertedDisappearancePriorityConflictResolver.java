@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.resolver;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
@@ -59,7 +58,7 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
 
         @Override
         public boolean addActivation(Activation<?> activation) {
-            checkArgument(activation != null, "Activation cannot be null!");
+            Preconditions.checkArgument(activation != null, "Activation cannot be null!");
             Integer rulePriority = getRulePriority(activation);
             // it is possible that the activation has changed state after it was added previously
             priorityBuckets.remove((-1) * rulePriority, activation);
@@ -68,7 +67,7 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
         
         @Override
         public boolean removeActivation(Activation<?> activation) {
-            checkArgument(activation != null, "Activation cannot be null!");
+            Preconditions.checkArgument(activation != null, "Activation cannot be null!");
             Integer rulePriority = getRulePriority(activation);
             // it is possible that the activation changed state before firing and is added to multiple buckets
             boolean removedFromInverted = priorityBuckets.remove((-1) * rulePriority, activation);
