@@ -50,7 +50,7 @@ class FlattenerCopier extends PBodyCopier {
     
     public FlattenerCopier(PQuery query, Map<PositivePatternCall, PBody> callsToFlatten) {
         super(query);
-        this.calls = callsToFlatten.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey(), entry -> new CallInformation(entry.getValue())));
+        this.calls = callsToFlatten.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> new CallInformation(entry.getValue())));
     }
     
     protected void copyVariable(PositivePatternCall contextPatternCall, PVariable variable, String newName) {

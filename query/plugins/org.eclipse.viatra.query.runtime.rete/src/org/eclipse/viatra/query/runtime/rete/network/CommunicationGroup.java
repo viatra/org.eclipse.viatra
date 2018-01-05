@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -277,7 +277,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 
         @Override
         public Map<MessageKind, Collection<Mailbox>> getMailboxes() {
-            Map<MessageKind, Collection<Mailbox>> map = new HashMap<>();
+            Map<MessageKind, Collection<Mailbox>> map = new EnumMap<>(MessageKind.class);
             map.put(MessageKind.ANTI_MONOTONE, antiMonotoneMailboxes);
             map.put(MessageKind.MONOTONE, monotoneMailboxes);
             map.put(MessageKind.DEFAULT, defaultMailboxes);

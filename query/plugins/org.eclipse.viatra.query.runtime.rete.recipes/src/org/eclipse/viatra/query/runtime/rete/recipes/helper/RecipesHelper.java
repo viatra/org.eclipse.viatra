@@ -10,7 +10,6 @@
  */
 package org.eclipse.viatra.query.runtime.rete.recipes.helper;
 
-
 import java.util.Collection;
 
 import org.eclipse.emf.common.util.EList;
@@ -24,11 +23,14 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 
 /**
  * Static helper class for easy construction of recipes.
+ * 
  * @author Bergmann Gabor
  */
 public class RecipesHelper {
-  private final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
-  
+    private static final RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
+    
+    private RecipesHelper() {/* Utility class constructor */}
+
     /**
      * @since 2.0
      */
@@ -38,7 +40,7 @@ public class RecipesHelper {
         mask.getSourceIndices().addAll(sourceIndices);
         return mask;
     }
-  
+
     public static Mask mask(final int sourceArity, final int... sourceIndices) {
         Mask mask = RecipesHelper.FACTORY.createMask();
         mask.setSourceArity(sourceArity);
@@ -48,20 +50,20 @@ public class RecipesHelper {
         }
         return mask;
     }
-  
+
     public static ProjectionIndexerRecipe projectionIndexerRecipe(final ReteNodeRecipe parent, final Mask mask) {
         ProjectionIndexerRecipe recipe = RecipesHelper.FACTORY.createProjectionIndexerRecipe();
         recipe.setParent(parent);
         recipe.setMask(mask);
         return recipe;
     }
-  
+
     public static ExpressionDefinition expressionDefinition(final Object evaluator) {
         ExpressionDefinition definition = RecipesHelper.FACTORY.createExpressionDefinition();
         definition.setEvaluator(evaluator);
         return definition;
     }
-  
+
     public static InputRecipe inputRecipe(final Object inputKey, final String inputKeyID, final int arity) {
         InputRecipe recipe = RecipesHelper.FACTORY.createInputRecipe();
         recipe.setInputKey(inputKey);
@@ -70,7 +72,7 @@ public class RecipesHelper {
         recipe.setTraceInfo(inputKeyID);
         return recipe;
     }
-  
+
     /**
      * Mask can be null in case no tuple reordering or trimming is needed
      */
