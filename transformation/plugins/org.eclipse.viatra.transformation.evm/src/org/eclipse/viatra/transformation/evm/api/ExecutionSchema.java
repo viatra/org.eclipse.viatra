@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
+import java.util.Objects;
+
 /**
  * An execution schema is a special rule engine and a facade
  *  for accessing the EVM. In addition to the RuleEngine,
