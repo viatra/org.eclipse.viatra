@@ -20,7 +20,7 @@ All code marked as deprecated has been removed from the codebase. Additionally, 
 
 === Reduction of Guava uses
 
-There were a few cases, where Guava types such as Functions or Predicates were visible in the API. In VIATRA 2.0, the trivial method calls were removed (to be handled via direct method references), while the remaining ones were replaced by the alternatives built-in to the Java 8 standard library. The following methods were affected:
+There were a few cases, where Guava types such as Functions or Predicates were visible in the API. In VIATRA 2.0, the trivial method calls were removed (to be handled via direct method references), while the remaining ones were replaced by the alternatives built-in to the Java 8 standard library. The following classes and methods were affected:
 
  * `PQueries#parameterDirectionPredicate`: returns Java 8 predicate
  * `PQueries#queryNameFunction`: can be replaced by a method reference of `PQuery::getFullyQualifiedName`
@@ -31,6 +31,7 @@ There were a few cases, where Guava types such as Functions or Predicates were v
  * `CorePatternLanguageHelper#getReferencedPatternsTransitive` accepts a Java 8 predicate as a parameter
  * `ConflictSetIterator` accepts a Java 8 predicate as a constructor parameter
  * `BatchTransformationStatements#fireUntil` accepts a Java 8 predicate as a condition
+ * `RecordingJob` does not record all created commands in a Table anymore; if the created commands are to be accessed, the RecordingJob should be initialized with a new command recorder instance that will be notified with each command after it was executed 
 
 
 === Removal of unnecessary Xtend library dependencies

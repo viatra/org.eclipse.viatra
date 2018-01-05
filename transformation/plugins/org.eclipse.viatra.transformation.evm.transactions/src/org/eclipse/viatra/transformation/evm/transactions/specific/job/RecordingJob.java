@@ -20,12 +20,10 @@ import org.eclipse.viatra.transformation.evm.api.CompositeJob;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Job;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
 /**
- * A stateless job implementation that executes its action inside a {@link RecordingCommand}
- * if there is a {@link TransactionalEditingDomain} available.
+ * A stateless job implementation that executes its action inside a {@link RecordingCommand} if there is a
+ * {@link TransactionalEditingDomain} available. It is possible to access all created commands by adding a session
+ * recorder implementation to the build.
  *
  * @author Abel Hegedus
  *
@@ -36,30 +34,18 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
     public static final String RECORDING_JOB = "org.eclipse.viatra.transformation.evm.specifc.RecordingJobExecution";
     public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.viatra.transformation.evm.specific.RecordingJob.SessionData";
     private final EventAtomEditingDomainProvider<EventAtom> provider;
+    private final ICommandRecorder<EventAtom> commandRecorder;
+
     /**
-     * Data transfer class for storing the commands created by recording jobs.
-     *
-     * @author Abel Hegedus
-     *
+     * @since 2.0
      */
-    public static class RecordingJobContextData {
-
-        private final Table<Activation<?>, RecordingJob<?>, Command> table;
+    public interface ICommandRecorder<EventAtom> {
 
         /**
-         * Creates a new data transfer object
+         * Reports that a command that was just executed based on the current activation over the given context.
          */
-        public RecordingJobContextData() {
-            this.table = HashBasedTable.create();
-        }
-
-        /**
-         * @return the table
-         */
-        public Table<Activation<?>, RecordingJob<?>, Command> getTable() {
-            return table;
-        }
-
+        void recordCommandExecution(final Activation<? extends EventAtom> activation, final Context context,
+                final Command command);
     }
 
     /**
@@ -70,12 +56,34 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
     public RecordingJob(final Job<EventAtom> recordedJob) {
         super(recordedJob);
         this.provider = null;
+        this.commandRecorder = null;
     }
 
     public RecordingJob(final Job<EventAtom> recordedJob, final EventAtomEditingDomainProvider<EventAtom> provider) {
         super(recordedJob);
         Preconditions.checkArgument(provider != null, "Provider cannot be null!");
         this.provider = provider;
+        this.commandRecorder = null;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public RecordingJob(final Job<EventAtom> recordedJob, ICommandRecorder<EventAtom> commandRecorder) {
+        super(recordedJob);
+        this.provider = null;
+        this.commandRecorder = commandRecorder;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public RecordingJob(final Job<EventAtom> recordedJob, final EventAtomEditingDomainProvider<EventAtom> provider,
+            ICommandRecorder<EventAtom> commandRecorder) {
+        super(recordedJob);
+        Preconditions.checkArgument(provider != null, "Provider cannot be null!");
+        this.provider = provider;
+        this.commandRecorder = commandRecorder;
     }
 
     @Override
@@ -94,14 +102,16 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
             command.setLabel(RECORDING_JOB);
             domain.getCommandStack().execute(command);
 
-            updateSessionData(activation, context, command);
+            if (commandRecorder != null) {
+                commandRecorder.recordCommandExecution(activation, context, command);
+            }
         }
     }
 
     /**
-     * This method is used to find a target that can be used for getting the {@link TransactionalEditingDomain}.
-     * It tries to retrieve the domain from the context, otherwise it tries to find an EObject parameter in
-     * the event atom of the activation.
+     * This method is used to find a target that can be used for getting the {@link TransactionalEditingDomain}. It
+     * tries to retrieve the domain from the context, otherwise it tries to find an EObject parameter in the event atom
+     * of the activation.
      *
      * @param activation
      * @param context
@@ -114,25 +124,5 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
         }
         return domainTarget;
     }
-
-    /**
-     * Updates the data transfer object in the context with the command that was just executed.
-     *
-     * @param activation
-     * @param context
-     * @param command
-     */
-    private void updateSessionData(final Activation<? extends EventAtom> activation, final Context context, final Command command) {
-        final Object data = context.get(RECORDING_JOB_SESSION_DATA_KEY);
-        RecordingJobContextData result = null;
-        if (data instanceof RecordingJobContextData) {
-            result = (RecordingJobContextData) data;
-        } else {
-            result = new RecordingJobContextData();
-            context.put(RECORDING_JOB_SESSION_DATA_KEY, result);
-        }
-        result.getTable().put(activation, this, command);
-    }
-
 
 }
