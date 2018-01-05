@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -30,14 +31,13 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchO
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 
 /**
  * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
-public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> implements IIteratingSearchOperation {
+public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation implements IIteratingSearchOperation {
 
     private EDataType dataType;
     
@@ -87,7 +87,7 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Collections.singletonList(position);
     }
     
     /**

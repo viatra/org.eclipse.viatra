@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,8 +24,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
-
-import com.google.common.collect.Lists;
 
 /**
  * Iterates all available {@link EStructuralFeature} elements using an {@link NavigationHelper VIATRA Base
@@ -84,7 +83,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+        return Arrays.asList(sourcePosition, targetPosition);
     }
 
     /**

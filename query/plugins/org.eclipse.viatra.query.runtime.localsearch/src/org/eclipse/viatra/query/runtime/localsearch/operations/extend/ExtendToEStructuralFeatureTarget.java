@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 /**
  * Iterates over all sources of {@link EStructuralFeature}
  */
-public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
+public class ExtendToEStructuralFeatureTarget extends ExtendOperation {
 
     private int sourcePosition;
     private EStructuralFeature feature;

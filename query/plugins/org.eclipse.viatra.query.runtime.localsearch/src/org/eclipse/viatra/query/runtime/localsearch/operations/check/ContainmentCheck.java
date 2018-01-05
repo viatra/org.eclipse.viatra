@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -18,8 +19,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.collect.Lists;
 
 /**
  * A simple operation that checks whether a {@link EStructuralFeature} connects two selected variables.
@@ -61,7 +60,7 @@ public class ContainmentCheck extends CheckOperation {
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(childPosition, containerPosition, new Integer[0]);
+        return Arrays.asList(childPosition, containerPosition);
     }
 
 }

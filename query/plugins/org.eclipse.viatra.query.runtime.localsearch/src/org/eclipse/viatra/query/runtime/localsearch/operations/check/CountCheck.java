@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -18,8 +19,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOp
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
-
-import com.google.common.collect.Lists;
 
 /**
  * Calculates the count of matches for a called matcher
@@ -59,7 +58,7 @@ public class CountCheck extends CheckOperation implements IPatternMatcherOperati
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Collections.singletonList(position);
     }
     
     @Override

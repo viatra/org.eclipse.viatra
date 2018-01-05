@@ -41,8 +41,8 @@ public class StartLocalSearchHandler extends AbstractHandler {
             final ISelection selection = HandlerUtil.getCurrentSelection(event);
             if (selection instanceof IStructuredSelection) {
                 final Object obj = ((IStructuredSelection) selection).iterator().next();
-                if (obj instanceof IFilteredMatcherContent) {
-                    IFilteredMatcherContent content = (IFilteredMatcherContent) obj;
+                if (obj instanceof IFilteredMatcherContent<?>) {
+                    IFilteredMatcherContent<?> content = (IFilteredMatcherContent<?>) obj;
                     ViatraQueryMatcher<?> matcher = content.getMatcher();
                     
                     final IQuerySpecification<?> specification = matcher.getSpecification();

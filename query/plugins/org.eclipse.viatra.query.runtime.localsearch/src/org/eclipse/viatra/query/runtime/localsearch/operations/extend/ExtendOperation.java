@@ -21,10 +21,10 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
  * @author Zoltan Ujhelyi, Akos Horvath
  * 
  */
-public abstract class ExtendOperation<T> implements ISearchOperation {
+public abstract class ExtendOperation implements ISearchOperation {
 
     protected int position;
-    protected Iterator<T> it;
+    protected Iterator<?> it;
 
     /**
      * @param position the frame position all values are to be added
@@ -44,7 +44,7 @@ public abstract class ExtendOperation<T> implements ISearchOperation {
     @Override
     public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (it.hasNext()) {
-            T next = it.next();
+            Object next = it.next();
             frame.setValue(position, next);
             return true;
         } else {

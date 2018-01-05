@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * 
  * @author Zoltan Ujhelyi
  */
-public class CountOperation extends ExtendOperation<Integer> implements IPatternMatcherOperation{
+public class CountOperation extends ExtendOperation implements IPatternMatcherOperation{
 
     private final CallInformation information; 
     private final VolatileModifiableMaskedTuple maskedTuple;

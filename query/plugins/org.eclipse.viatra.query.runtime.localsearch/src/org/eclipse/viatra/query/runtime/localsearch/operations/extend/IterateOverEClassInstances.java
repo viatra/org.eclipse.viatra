@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -24,8 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
-import com.google.common.collect.Lists;
-
 /**
  * Iterates all available {@link EClass} instances using an {@link NavigationHelper VIATRA Base indexer}. It is
  * assumed that the base indexer has been registered for the selected type.
@@ -33,7 +30,7 @@ import com.google.common.collect.Lists;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverEClassInstances extends ExtendOperation<EObject> implements IIteratingSearchOperation{
+public class IterateOverEClassInstances extends ExtendOperation implements IIteratingSearchOperation{
 
     private final EClass clazz;
     private final EClassTransitiveInstancesKey type;
@@ -49,12 +46,9 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
         return clazz;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf());
-        // XXX This casting is only required for API backwards compatibility
-        it = (Iterator<EObject>) values.iterator();
+        it = context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
     }
     
     @Override
@@ -64,7 +58,7 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Collections.singletonList(position);
     }
     
     /**

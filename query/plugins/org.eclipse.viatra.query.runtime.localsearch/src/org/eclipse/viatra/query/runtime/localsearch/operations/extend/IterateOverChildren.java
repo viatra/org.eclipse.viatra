@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverChildren extends ExtendOperation<EObject> {
+public class IterateOverChildren extends ExtendOperation {
 
 
     private int sourcePosition;

@@ -52,7 +52,7 @@ public class SearchOperationViewerNode {
     public SearchOperationViewerNode(ISearchOperation searchOperation, SearchPlanExecutor planExecutor) {
         this.searchOperation = searchOperation;
         this.planExecutor = planExecutor;
-        if (searchOperation instanceof ExtendOperation<?>) {
+        if (searchOperation instanceof ExtendOperation) {
             operationKind = OperationKind.EXTEND;
         } else if (searchOperation instanceof NACOperation) {
             operationKind = OperationKind.NAC;

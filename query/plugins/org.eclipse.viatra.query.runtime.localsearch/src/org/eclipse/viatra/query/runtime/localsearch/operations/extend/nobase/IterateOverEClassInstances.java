@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -23,14 +22,12 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
-import com.google.common.collect.Lists;
-
 /**
  * Iterates all available {@link EClass} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  * @author Zoltan Ujhelyi
  */
-public class IterateOverEClassInstances extends AbstractIteratingExtendOperation<EObject> implements IIteratingSearchOperation{
+public class IterateOverEClassInstances extends AbstractIteratingExtendOperation implements IIteratingSearchOperation{
 
     private EClass clazz;
 
@@ -43,12 +40,10 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
         return clazz;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        // The resulting iterator can be safely casted to EObject iterator as its content is filtered to an EClass
         final Class<?> ic = clazz.getInstanceClass();
-        it = (Iterator<EObject>) getModelContents().filter(ic::isInstance).map(ic::cast).iterator();
+        it = getModelContents().filter(ic::isInstance).iterator();
     }
     
     @Override
@@ -58,7 +53,7 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Collections.singletonList(position);
     }
 
     /**

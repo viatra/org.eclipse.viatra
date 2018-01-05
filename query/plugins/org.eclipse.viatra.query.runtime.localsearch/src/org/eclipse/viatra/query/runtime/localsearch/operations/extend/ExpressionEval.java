@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ExpressionEval extends ExtendOperation<Object> {
+public class ExpressionEval extends ExtendOperation {
 
     IExpressionEvaluator evaluator;
     Map<String, Integer> nameMap;

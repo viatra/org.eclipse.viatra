@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
@@ -53,7 +52,7 @@ public class InequalityCheck extends CheckOperation {
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(sourceLocation, targetLocation, new Integer[0]);
+        return Arrays.asList(sourceLocation, targetLocation);
     }
 
 }

@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * @author Balázs Grill
  * @since 1.4
  */
-public class AggregatorExtend extends ExtendOperation<Object> implements IPatternMatcherOperation{
+public class AggregatorExtend extends ExtendOperation implements IPatternMatcherOperation{
 
     private final AggregatorConstraint aggregator;
     private final CallInformation information; 

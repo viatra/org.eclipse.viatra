@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +24,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformat
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
-import com.google.common.collect.Lists;
-
 /**
  * Checking for a transitive closure expressed as a local search pattern matcher. The matched pattern must have two
  * parameters of the same model type.
@@ -33,7 +32,7 @@ import com.google.common.collect.Lists;
  * @since 1.7
  * 
  */
-public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Object> implements IPatternMatcherOperation {
+public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation implements IPatternMatcherOperation {
 
     /**
      * Calculates the transitive closure of a pattern match in a forward direction (first parameter bound, second
@@ -135,7 +134,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation<Obje
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(seedPosition, position, new Integer[0]);
+        return Arrays.asList(seedPosition, position);
     }
 
 }

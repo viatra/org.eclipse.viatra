@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,8 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetA
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
-
-import com.google.common.collect.Lists;
 
 /**
  * Calculates the aggregated value of a column based on the given {@link AggregatorConstraint}
@@ -79,7 +78,7 @@ public class AggregatorCheck extends CheckOperation implements IPatternMatcherOp
     
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Collections.singletonList(position);
     }
     
     @Override

@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
  * @author Marton Bur
  *
  */
-public class ExtendConstant extends ExtendOperation<Object> {
+public class ExtendConstant extends ExtendOperation {
 
     private Object value;
 

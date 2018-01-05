@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-
-import com.google.common.collect.Lists;
 
 /**
  * This operation handles constants in search plans by checking if a variable is bound to a certain constant value. Such
@@ -41,7 +40,7 @@ public class CheckConstant extends CheckOperation {
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Lists.asList(position, new Integer[0]);
+        return Collections.singletonList(position);
     }
     
     @Override

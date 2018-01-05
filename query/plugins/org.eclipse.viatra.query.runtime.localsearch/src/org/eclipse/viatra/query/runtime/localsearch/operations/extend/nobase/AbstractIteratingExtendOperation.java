@@ -28,9 +28,8 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOper
  * 
  * @author Grill Balázs
  *
- * @param <T>
  */
-public abstract class AbstractIteratingExtendOperation<T> extends ExtendOperation<T> {
+public abstract class AbstractIteratingExtendOperation extends ExtendOperation {
 
     private final EMFScope scope;
     

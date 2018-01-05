@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverContainers extends ExtendOperation<EObject> {
+public class IterateOverContainers extends ExtendOperation {
 
 
     /**

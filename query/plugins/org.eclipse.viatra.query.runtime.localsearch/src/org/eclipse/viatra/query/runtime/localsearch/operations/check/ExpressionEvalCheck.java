@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +20,6 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Grill Balázs
@@ -42,9 +41,7 @@ public class ExpressionEvalCheck extends CheckOperation {
     @Override
     public List<Integer> getVariablePositions() {
         // XXX not sure if this is the correct implementation to get the affected variable indicies
-        List<Integer> variables = Lists.newArrayList();
-        variables.addAll(nameMap.values());
-        return variables;
+        return new ArrayList<>(nameMap.values());
     }
 
     @Override

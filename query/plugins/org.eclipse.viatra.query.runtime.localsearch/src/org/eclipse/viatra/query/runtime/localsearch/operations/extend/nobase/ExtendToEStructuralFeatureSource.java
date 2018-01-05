@@ -29,7 +29,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOper
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */
-public class ExtendToEStructuralFeatureSource extends ExtendOperation<Object> {
+public class ExtendToEStructuralFeatureSource extends ExtendOperation {
 
     private int targetPosition;
     private EStructuralFeature feature;
