@@ -174,13 +174,7 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
          * resource equality is unnecessary.
          */
         lookupCrossReference(((CrossReference) assignment.getTerminal()), context, acceptor,
-                Predicates.and(featureDescriptionPredicate, new Predicate<IEObjectDescription>() {
-
-                    @Override
-                    public boolean apply(IEObjectDescription input) {
-                        return !("true".equals(input.getUserData("private")));
-                    }
-                }));
+                Predicates.and(featureDescriptionPredicate, input -> !("true".equals(input.getUserData("private")))));
     }
     
     /**

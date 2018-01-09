@@ -12,9 +12,11 @@ package org.eclipse.viatra.integration.graphiti;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,18 +27,13 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
+import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 /**
  * Model connector implementation for the Graphiti model editors.
@@ -132,16 +129,13 @@ public class GraphitiModelConnector extends EMFModelConnector {
     @Override
     protected Collection<EObject> getSelectedEObjects(ISelection selection) {
         if (selection instanceof IStructuredSelection) {
-            //XXX after Graphiti 0.9 GraphitiShapeEditPart would be the related type, but that is not available in 0.8
-            Iterator<ContainerShapeEditPart> selectionIterator = Iterators.filter((((IStructuredSelection) selection).iterator()), ContainerShapeEditPart.class);
-            return Lists.newArrayList(Iterators.filter(Iterators.transform(selectionIterator, new Function<ContainerShapeEditPart, EObject>() {
-
-                @Override
-                public EObject apply(ContainerShapeEditPart input) {
-                            return Graphiti.getLinkService()
-                                    .getBusinessObjectForLinkedPictogramElement(input.getPictogramElement());
-                }
-            }), Predicates.notNull()));
+            return Arrays.stream(((IStructuredSelection) selection).toArray())
+            .filter(GraphitiShapeEditPart.class::isInstance)
+            .map(GraphitiShapeEditPart.class::cast)
+            .map(input -> Graphiti.getLinkService()
+                    .getBusinessObjectForLinkedPictogramElement(input.getPictogramElement()))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
         } else {
             return super.getSelectedEObjects();
         }

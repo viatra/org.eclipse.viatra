@@ -33,7 +33,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -317,18 +316,15 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     /**
      * Selection listener for the "forward reveal" feature.
      */
-    private final ISelectionListener forwardRevealListener = new ISelectionListener() {
-        @Override
-        public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-            if (!ViewersMultiSandboxView.this.equals(part) && selection instanceof IStructuredSelection) {
-                ArrayList<Notifier> r = new ArrayList<>();
-                for (Object _target : ((IStructuredSelection) selection).toArray()) {
-                    if (_target instanceof Notifier) {
-                        r.add((Notifier) _target);
-                    }
+    private final ISelectionListener forwardRevealListener = (part, selection) -> {
+        if (!ViewersMultiSandboxView.this.equals(part) && selection instanceof IStructuredSelection) {
+            ArrayList<Notifier> r = new ArrayList<>();
+            for (Object _target : ((IStructuredSelection) selection).toArray()) {
+                if (_target instanceof Notifier) {
+                    r.add((Notifier) _target);
                 }
-                setSelection(new StructuredSelection(r));
             }
+            setSelection(new StructuredSelection(r));
         }
     };
     

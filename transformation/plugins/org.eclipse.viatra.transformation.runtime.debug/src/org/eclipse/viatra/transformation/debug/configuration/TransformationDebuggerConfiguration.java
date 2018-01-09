@@ -29,7 +29,7 @@ public class TransformationDebuggerConfiguration implements IAdapterConfiguratio
     private List<IEVMListener> listeners = new ArrayList<>();
 
     public TransformationDebuggerConfiguration() {
-        this("Transformation_" + Long.valueOf(System.nanoTime()).toString());
+        this("Transformation_" + Long.toString(System.nanoTime()));
     }
 
     public TransformationDebuggerConfiguration(final String ID) {

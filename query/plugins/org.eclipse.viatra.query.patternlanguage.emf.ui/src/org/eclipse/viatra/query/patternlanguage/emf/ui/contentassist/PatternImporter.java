@@ -28,10 +28,8 @@ import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork.Void;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 /**
@@ -73,15 +71,10 @@ final class PatternImporter extends ReplacementTextApplier {
                         return ImportState.SAMEPACKAGE;
                     }
                     final VQLImportSection importSection = model.getImportPackages();
-                    PatternImport relatedImport = Iterables.find(importSection.getPatternImport(),
-                            new Predicate<PatternImport>() {
-
-                                @Override
-                                public boolean apply(PatternImport decl) {
-                                    return targetPattern.equals(decl.getPattern())
-                                            || targetPattern.getName().equals(decl.getPattern().getName());
-                                }
-                            }, null);
+                    PatternImport relatedImport = importSection.getPatternImport().stream()
+                            .filter(decl -> targetPattern.equals(decl.getPattern())
+                                    || targetPattern.getName().equals(decl.getPattern().getName()))
+                            .findFirst().orElse(null);
                     if (relatedImport == null) {
 
                         return ImportState.NONE;

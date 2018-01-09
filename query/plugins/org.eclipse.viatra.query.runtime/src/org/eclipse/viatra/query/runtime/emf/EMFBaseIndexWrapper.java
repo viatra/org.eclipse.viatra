@@ -116,11 +116,7 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
     public boolean addInstanceObserver(final IInstanceObserver observer,
             Object observedObject) {
         if (observedObject instanceof EObject) {
-            EObjectObserver emfObserver = instanceObservers.get(observer);
-            if (emfObserver == null) {		
-                emfObserver = new EObjectObserver(observer);
-                instanceObservers.put(observer, emfObserver);
-            }
+            EObjectObserver emfObserver = instanceObservers.computeIfAbsent(observer, EObjectObserver::new);
             boolean success = 
                     navigationHelper.addLightweightEObjectObserver(emfObserver, (EObject) observedObject);
             if (success) emfObserver.usageCount++;

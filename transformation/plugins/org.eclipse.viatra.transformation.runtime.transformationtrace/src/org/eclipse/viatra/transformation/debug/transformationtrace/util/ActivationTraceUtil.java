@@ -18,6 +18,8 @@ import org.eclipse.viatra.transformation.debug.transformationtrace.model.RulePar
 
 public class ActivationTraceUtil {
 
+    private ActivationTraceUtil() { /* Hidden utility class constructor */ }
+    
     public static boolean compareActivationCodes(final ActivationTrace a1, final ActivationTrace a2) {
         List<RuleParameterTrace> a1RuleParameterTraces = a1.getRuleParameterTraces();
         List<RuleParameterTrace> a2ruleParameterTraces = a2.getRuleParameterTraces();

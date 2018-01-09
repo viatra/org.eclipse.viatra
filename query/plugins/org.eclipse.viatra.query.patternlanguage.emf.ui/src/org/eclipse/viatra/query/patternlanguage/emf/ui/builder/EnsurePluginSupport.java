@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.builder;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -24,8 +25,6 @@ import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFrag
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
-import org.eclipse.xtext.xbase.lib.Functions;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -179,14 +178,7 @@ public class EnsurePluginSupport {
     private void removeSameExtensions(Collection<Pair<String, String>> removeFrom, Iterable<ExtensionData> searchList) {
         // not remove a removable if exist in the current extension map
         for (final ExtensionData ext : searchList) {
-            Pair<String, String> found = IterableExtensions.findFirst(removeFrom,
-                    new Functions.Function1<Pair<String, String>, Boolean>() {
-                        @Override
-                        public Boolean apply(Pair<String, String> p) {
-                            return (p.getKey().equals(ext.getId())) && (p.getValue().equals(ext.getPoint()));
-                        }
-                    });
-            removeFrom.remove(found);
+            removeFrom.removeIf(p -> Objects.equals(p.getKey(), ext.getId()) && Objects.equals(p.getValue(), ext.getPoint()));
         }
     }
 

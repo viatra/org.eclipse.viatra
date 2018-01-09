@@ -38,7 +38,6 @@ import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
@@ -115,13 +114,7 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     }
 
     private TypeInformation collectConstraints(final Pattern pattern) {
-        final TypeInformation types = cache.get(this, pattern.eResource(), new Provider<TypeInformation>() {
-
-            @Override
-            public TypeInformation get() {
-                return new TypeInformation(typeSystem);
-            }
-        });
+        final TypeInformation types = cache.get(this, pattern.eResource(), () -> new TypeInformation(typeSystem));
 
         // XXX requiring an ordered call graph might be expensive, but it avoids inconsistent errors during type inference
         // The UNTYPED_PARAMETER_PREDICATE is used to return a reduced call graph where pattern with only declared types are (transitively) ignored.

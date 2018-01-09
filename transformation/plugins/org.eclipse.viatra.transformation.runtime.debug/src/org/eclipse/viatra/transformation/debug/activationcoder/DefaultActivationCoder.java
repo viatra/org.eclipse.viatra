@@ -27,31 +27,26 @@ import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
  * @author Peter Lunk
  */
 public class DefaultActivationCoder implements IActivationCoder {
+    
     @Override
     public ActivationTrace createActivationCode(final Activation<?> activation) {
         final RuleSpecification<?> specification = activation.getInstance().getSpecification();
         Preconditions.checkState(!specification.getName().isEmpty(),
                 "Rule specification has no defined name:" + specification.toString());
         final ActivationTrace trace = new ActivationTrace(specification.getName());
-        try {
-            final IPatternMatch match = ((IPatternMatch) activation.getAtom());
-            boolean running = true;
-            int i = 0;
-            while (running) {
-                {
-                    final Object param = match.get(i);
-                    if ((param instanceof EObject)) {
-                        final String paramName = match.parameterNames().get(i);
-                        trace.getRuleParameterTraces()
-                                .add(new RuleParameterTrace(paramName, EcoreUtil.getURI(((EObject) param)).toString()));
-                        i++;
-                    } else {
-                        running = false;
-                    }
-                }
+        final IPatternMatch match = ((IPatternMatch) activation.getAtom());
+        boolean running = true;
+        int i = 0;
+        while (running) {
+            final Object param = match.get(i);
+            if ((param instanceof EObject)) {
+                final String paramName = match.parameterNames().get(i);
+                trace.getRuleParameterTraces()
+                        .add(new RuleParameterTrace(paramName, EcoreUtil.getURI(((EObject) param)).toString()));
+                i++;
+            } else {
+                running = false;
             }
-        } catch (ClassCastException e) {
-            e.printStackTrace();
         }
         return trace;
     }

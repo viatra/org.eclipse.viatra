@@ -25,11 +25,7 @@ import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.util.UriUtil;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-
 import org.eclipse.xtext.workspace.IProjectConfig;
-import org.eclipse.xtext.workspace.ISourceFolder;
 import org.eclipse.xtext.workspace.ProjectConfigAdapter;
 
 /**
@@ -74,16 +70,12 @@ public class PatternLanguageShouldGenerate implements IShouldGenerate {
     private boolean isInSourceFolder(IProjectConfig config, final URI uri) {
         if (config.findSourceFolderContaining(uri) == null) {
             // XXX: If classpath entry has a trailing slash, an empty segment is added to the URI
-            return Iterables.any(config.getSourceFolders(), new Predicate<ISourceFolder>() {
-
-                @Override
-                public boolean apply(ISourceFolder folder) {
-                    URI folderUri = folder.getPath();
-                    if (folderUri.segment(folderUri.segmentCount() - 1).isEmpty()) {
-                        return UriUtil.isPrefixOf(folderUri.trimSegments(1), uri);
-                    }
-                    return false;
+            return config.getSourceFolders().stream().anyMatch(folder -> {
+                URI folderUri = folder.getPath();
+                if (folderUri.segment(folderUri.segmentCount() - 1).isEmpty()) {
+                    return UriUtil.isPrefixOf(folderUri.trimSegments(1), uri);
                 }
+                return false;
             });
         } else {
             return true;

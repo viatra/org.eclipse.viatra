@@ -13,7 +13,10 @@ package org.eclipse.viatra.addon.validation.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,8 +27,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -108,14 +109,7 @@ public class ConstraintExtensionRegistry {
     }
 
     private static Iterable<IConstraintSpecification> unwrapConstraintSpecifications(Collection<IProvider<IConstraintSpecification>> providers) {
-        Iterable<IProvider<IConstraintSpecification>> notNullProviders = Iterables.filter(providers, Predicates.notNull());
-        Iterable<IConstraintSpecification> constraintSpecifications = Iterables.transform(notNullProviders, new Function<IProvider<IConstraintSpecification>, IConstraintSpecification>() {
-            @Override
-            public IConstraintSpecification apply(IProvider<IConstraintSpecification> provider) {
-                return provider.get();
-            }
-        });
-        return constraintSpecifications;
+        return providers.stream().filter(Objects::nonNull).map(Supplier::get).collect(Collectors.toList());
     }
 
     /**

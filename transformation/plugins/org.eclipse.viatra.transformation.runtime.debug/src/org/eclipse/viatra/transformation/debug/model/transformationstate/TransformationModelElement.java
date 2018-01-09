@@ -87,7 +87,7 @@ public class TransformationModelElement implements Serializable{
     }
     
     public List<TransformationModelElement> getChildren() {
-        return containedElements.values().stream().flatMap(i -> i.stream()).collect(Collectors.toList());
+        return containedElements.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
     
     public void setCrossReferences(Map<String, List<TransformationModelElement>> crossReferences) {

@@ -310,13 +310,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         private void sendListUpdate(final ListDiff diff) {
             Realm realm = getRealm();
             Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
-            realm.exec(new Runnable() {
-        
-                @Override
-                public void run() {
-                    if (!isDisposed()) {
-                        fireListChange(diff);
-                    }
+            realm.exec(() -> {
+                if (!isDisposed()) {
+                    fireListChange(diff);
                 }
             });
         }

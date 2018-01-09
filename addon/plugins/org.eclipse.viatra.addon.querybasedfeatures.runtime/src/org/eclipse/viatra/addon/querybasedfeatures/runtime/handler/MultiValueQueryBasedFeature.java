@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeature;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -58,14 +57,8 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
             }
             IPatternMatch match = getMatcher().newEmptyMatch();
             match.set(getSourceParamName(), source);
-            getMatcher().forEachMatch(match, new IMatchProcessor<IPatternMatch>() {
-
-                @Override
-                public void process(IPatternMatch match) {
-                    values.add(getTargetValue(match));
-                }
-            });
-            return values;// matcher.getAllValues(targetParamName, match);
+            getMatcher().forEachMatch(match, m -> values.add(getTargetValue(m)));
+            return values;
         }
     }
 
@@ -89,11 +82,7 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
     
     private void addToManyRefMemory(InternalEObject source, Object added) {
         if (isCached()) {
-            List<Object> values = manyRefMemory.get(source);
-            if (values == null) {
-                values = new BasicEList<>();
-                manyRefMemory.put(source, values);
-            }
+            List<Object> values = manyRefMemory.computeIfAbsent(source, s -> new BasicEList<>());
             values.add(added);
         }
     }

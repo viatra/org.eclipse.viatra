@@ -137,30 +137,26 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     @Fix(EMFIssueCodes.MISSING_PACKAGE_IMPORT)
     public void addMissingPackageImport(final Issue issue, IssueResolutionAcceptor acceptor) {
         
-        acceptor.accept(issue, "Add missing import", "Add missing import", null, new IModification() {
-            
-            @Override
-            public void apply(IModificationContext context) throws BadLocationException {
-                final IXtextDocument document = context.getXtextDocument();
-                Integer offset = document.readOnly(new IUnitOfWork<Integer, XtextResource>() {
+        acceptor.accept(issue, "Add missing import", "Add missing import", null, (IModification) context -> {
+            final IXtextDocument document = context.getXtextDocument();
+            Integer offset = document.readOnly(new IUnitOfWork<Integer, XtextResource>() {
 
-                    @Override
-                    public Integer exec(XtextResource state) {
-                        final VQLImportSection importSection = (VQLImportSection) 
-                                Iterators.find(state.getAllContents(), Predicates.instanceOf(VQLImportSection.class), null);
-                        final ICompositeNode node = NodeModelUtils.getNode(importSection);
-                        
-                        return Integer.valueOf(node.getTotalEndOffset());
-                    }
-                });
-                if (offset != null) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("\n");
-                    sb.append("import \"");
-                    sb.append(issue.getData()[0]);
-                    sb.append("\"");
-                    document.replace(offset, 0, sb.toString());
+                @Override
+                public Integer exec(XtextResource state) {
+                    final VQLImportSection importSection = (VQLImportSection) 
+                            Iterators.find(state.getAllContents(), Predicates.instanceOf(VQLImportSection.class), null);
+                    final ICompositeNode node = NodeModelUtils.getNode(importSection);
+                    
+                    return Integer.valueOf(node.getTotalEndOffset());
                 }
+            });
+            if (offset != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("\n");
+                sb.append("import \"");
+                sb.append(issue.getData()[0]);
+                sb.append("\"");
+                document.replace(offset, 0, sb.toString());
             }
         });
     }

@@ -40,7 +40,6 @@ import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.resource.DerivedStateAwareResource;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -91,16 +90,8 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
     }
 
     private void setDeclaredParameter(Pattern pattern, final VariableReference reference) {
-        Variable declaration = Iterables.find(pattern.getParameters(), new Predicate<Variable>() {
-   
-            @Override
-            public boolean apply(Variable variable) {
-                return Objects.equals(variable.getName(), reference.getVar());
-            }
-        }, null);
-        if (declaration != null) {
-            reference.setVariable(declaration);
-        }
+        pattern.getParameters().stream().filter(variable -> Objects.equals(variable.getName(), reference.getVar()))
+                .findFirst().ifPresent(reference::setVariable);
     }
 
     private EList<Variable> getAllVariablesInBody(PatternBody body, EList<Variable> previous) {

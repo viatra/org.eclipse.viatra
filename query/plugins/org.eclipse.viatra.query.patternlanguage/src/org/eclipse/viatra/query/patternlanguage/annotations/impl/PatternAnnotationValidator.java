@@ -23,9 +23,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -65,61 +62,27 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
         this.validator = validator;
     }
 
-    private static final class AnnotationParameterName implements Function<AnnotationParameter, String> {
-        @Override
-        public String apply(AnnotationParameter input) {
-            Preconditions.checkNotNull(input);
-            return input.getName();
-        }
-    }
-
-    private static final class AnnotationDefinitionParameterName implements
-            Function<PatternAnnotationParameter, String> {
-
-        @Override
-        public String apply(PatternAnnotationParameter input) {
-            Preconditions.checkNotNull(input);
-            return input.getName();
-        }
-
-    }
-
     @Override
     public Iterable<String> getAllAvailableParameterNames() {
-        return Iterables.transform(definedAttributes, new AnnotationDefinitionParameterName());
+        return Iterables.transform(definedAttributes, PatternAnnotationParameter::getName);
     }
 
     private Iterable<String> getParameterNames(Annotation annotation) {
-        return Iterables.transform(annotation.getParameters(), new AnnotationParameterName());
+        return Iterables.transform(annotation.getParameters(), AnnotationParameter::getName);
     }
 
     @Override
     public Iterable<String> getMissingMandatoryAttributes(Annotation annotation) {
         final Iterable<String> actualAttributeNames = getParameterNames(annotation);
-        final Iterable<PatternAnnotationParameter> filteredParameters = Iterables.filter(
-                definedAttributes, new Predicate<PatternAnnotationParameter>() {
-
-                    @Override
-                    public boolean apply(PatternAnnotationParameter input) {
-                        Preconditions.checkNotNull(input);
-                        return input.isMandatory() && !Iterables.contains(actualAttributeNames, input.getName());
-                    }
-                });
-        return Iterables.transform(filteredParameters, new AnnotationDefinitionParameterName());
+        final Iterable<PatternAnnotationParameter> filteredParameters = Iterables.filter(definedAttributes,
+                input -> input.isMandatory() && !Iterables.contains(actualAttributeNames, input.getName()));
+        return Iterables.transform(filteredParameters, PatternAnnotationParameter::getName);
     }
 
     @Override
     public Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation) {
-        final Iterable<String> parameterNames = Iterables.transform(definedAttributes,
-                new AnnotationDefinitionParameterName());
-        return Iterables.filter(annotation.getParameters(), new Predicate<AnnotationParameter>() {
-
-            @Override
-            public boolean apply(AnnotationParameter input) {
-                Preconditions.checkNotNull(input);
-                return !Iterables.contains(parameterNames, input.getName());
-            }
-        });
+        final Iterable<String> parameterNames = Iterables.transform(definedAttributes, PatternAnnotationParameter::getName);
+        return Iterables.filter(annotation.getParameters(), input -> !Iterables.contains(parameterNames, input.getName()));
     }
 
     @Override

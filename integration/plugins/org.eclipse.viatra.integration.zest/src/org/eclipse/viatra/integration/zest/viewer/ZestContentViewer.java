@@ -328,12 +328,7 @@ public class ZestContentViewer extends ContentViewer {
         contentNodeMap.put(contentNode, node);
 
         // label
-        ZestProperties.setLabel(node, new Provider<String>() {
-            @Override
-            public String get() {
-                return labelProvider.getText(contentNode);
-            }
-        });
+        ZestProperties.setLabel(node, () -> labelProvider.getText(contentNode));
 
         // icon
         // TODO: use provider
@@ -345,13 +340,7 @@ public class ZestContentViewer extends ContentViewer {
         // tooltip
         if (labelProvider instanceof IToolTipProvider) {
             final IToolTipProvider toolTipProvider = (IToolTipProvider) labelProvider;
-            ZestProperties.setTooltip(node, new Provider<String>() {
-
-                @Override
-                public String get() {
-                    return toolTipProvider.getToolTipText(contentNode);
-                }
-            });
+            ZestProperties.setTooltip(node, () -> toolTipProvider.getToolTipText(contentNode));
         }
 
         String textCssStyle = "";

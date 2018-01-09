@@ -324,15 +324,9 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      * @param accumulator
      *            the existing set to fill with the values
      */
+    @SuppressWarnings("unchecked")
     protected <T> void rawAccumulateAllValues(final int position, Object[] parameters, final Set<T> accumulator) {
-        rawForEachMatch(parameters, new IMatchProcessor<Match>() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void process(Match match) {
-                accumulator.add((T) match.get(position));
-            }
-        });
+        rawForEachMatch(parameters, match -> accumulator.add((T) match.get(position)));
     }
 
     @Override

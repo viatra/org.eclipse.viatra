@@ -45,7 +45,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Iterables;
@@ -156,18 +155,8 @@ public class SurrogateQueryTest {
                     if(targetValues.size() != numberOfMatches){
                         incorrectValuesFound = true;
                         final Set<Object> allValues = matcher.getAllValues(match.parameterNames().get(1), match);
-                        Iterable<Object> notInTargetList = Lists.newArrayList(Iterables.filter(allValues, new Predicate<Object>() {
-                            @Override
-                            public boolean apply(Object input) {
-                                return !targetValues.contains(input);
-                            }
-                        }));
-                        Iterable<?> notInMatches = Lists.newArrayList(Iterables.filter(targetValues, new Predicate<Object>() {
-                            @Override
-                            public boolean apply(Object input) {
-                                return !allValues.contains(input);
-                            }
-                        }));
+                        Iterable<Object> notInTargetList = Lists.newArrayList(Iterables.filter(allValues, input -> !targetValues.contains(input)));
+                        Iterable<?> notInMatches = Lists.newArrayList(Iterables.filter(targetValues, input -> !allValues.contains(input)));
                         System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
                         System.out.println("-> Not in eGet():\n  " + notInTargetList);
                         System.out.println("-> Not in matches:\n  " + notInMatches);
@@ -244,18 +233,8 @@ public class SurrogateQueryTest {
                 if(targetValues.size() != numberOfMatches){
                     incorrectValuesFound = true;
                     final Set<Object> allValues = matcher.getAllValues(match.parameterNames().get(1), match);
-                    Iterable<Object> notInTargetList = Lists.newArrayList(Iterables.filter(allValues, new Predicate<Object>() {
-                        @Override
-                        public boolean apply(Object input) {
-                            return !targetValues.contains(input);
-                        }
-                    }));
-                    Iterable<?> notInMatches = Lists.newArrayList(Iterables.filter(targetValues, new Predicate<Object>() {
-                        @Override
-                        public boolean apply(Object input) {
-                            return !allValues.contains(input);
-                        }
-                    }));
+                    Iterable<Object> notInTargetList = Lists.newArrayList(Iterables.filter(allValues, input -> !targetValues.contains(input)));
+                    Iterable<?> notInMatches = Lists.newArrayList(Iterables.filter(targetValues, input -> !allValues.contains(input)));
                     System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
                     System.out.println("-> Not in eGet():\n  " + notInTargetList);
                     System.out.println("-> Not in matches:\n  " + notInMatches);

@@ -60,7 +60,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
@@ -456,29 +455,26 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
         final BaseMatcher<Match> bm = (BaseMatcher<Match>) matcher;
 
-        final IUpdateable updateDispatcher = new IUpdateable() {
-            @Override
-            public void update(Tuple updateElement, boolean isInsertion) {
-                Match match = null;
-                try {
-                    match = bm.newMatch(updateElement.getElements());
-                    if (isInsertion)
-                        listener.notifyAppearance(match);
-                    else
-                        listener.notifyDisappearance(match);
-                } catch (Throwable e) { // NOPMD
-                    if (e instanceof Error)
-                        throw (Error) e;
-                    logger.warn(
-                            String.format(
-                                    "The incremental pattern matcher encountered an error during %s a callback on %s of match %s of pattern %s. Error message: %s. (Developer note: %s in %s callback)",
-                                    match == null ? "preparing" : "invoking", isInsertion ? "insertion" : "removal",
-                                    match == null ? updateElement.toString() : match.prettyPrint(),
-                                    matcher.getPatternName(), e.getMessage(), e.getClass().getSimpleName(), listener),
-                            e);
-                }
-
+        final IUpdateable updateDispatcher = (updateElement, isInsertion) -> {
+            Match match = null;
+            try {
+                match = bm.newMatch(updateElement.getElements());
+                if (isInsertion)
+                    listener.notifyAppearance(match);
+                else
+                    listener.notifyDisappearance(match);
+            } catch (Throwable e) { // NOPMD
+                if (e instanceof Error)
+                    throw (Error) e;
+                logger.warn(
+                        String.format(
+                                "The incremental pattern matcher encountered an error during %s a callback on %s of match %s of pattern %s. Error message: %s. (Developer note: %s in %s callback)",
+                                match == null ? "preparing" : "invoking", isInsertion ? "insertion" : "removal",
+                                match == null ? updateElement.toString() : match.prettyPrint(),
+                                matcher.getPatternName(), e.getMessage(), e.getClass().getSimpleName(), listener),
+                        e);
             }
+
         };
 
         IQueryResultProvider resultProvider = getUnderlyingResultProvider(bm);

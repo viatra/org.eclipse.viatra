@@ -198,18 +198,15 @@ public class ReteEngine implements IQueryBackend {
         // String fqn = namespace + "." + name;
         matcher = matchers.get(query);
         if (matcher == null) {
-            constructionWrapper(new Callable<Void>() {
-                @Override
-                public Void call()  {
-                    RecipeTraceInfo prodNode;
-                    prodNode = boundary.accessProductionTrace(query);
+            constructionWrapper(() -> {
+                RecipeTraceInfo prodNode;
+                prodNode = boundary.accessProductionTrace(query);
 
-                    RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
-                            prodNode);
-                    retePatternMatcher.setTag(query);
-                    matchers.put(query, retePatternMatcher);
-                    return null;
-                }
+                RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
+                        prodNode);
+                retePatternMatcher.setTag(query);
+                matchers.put(query, retePatternMatcher);
+                return null;
             });
             matcher = matchers.get(query);
         }
@@ -231,14 +228,11 @@ public class ReteEngine implements IQueryBackend {
      */
     public synchronized void buildMatchersCoalesced(final Collection<PQuery> specifications) {
         ensureInitialized();
-        constructionWrapper(new Callable<Void>() {
-            @Override
-            public Void call()  {
-                for (PQuery specification : specifications) {
-                    boundary.accessProductionNode(specification);
-                }
-                return null;
+        constructionWrapper(() -> {
+            for (PQuery specification : specifications) {
+                boundary.accessProductionNode(specification);
             }
+            return null;
         });
     }
 

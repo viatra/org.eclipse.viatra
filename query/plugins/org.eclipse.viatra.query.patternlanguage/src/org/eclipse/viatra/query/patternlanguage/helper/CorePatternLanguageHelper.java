@@ -75,7 +75,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.inject.Provider;
 
 public final class CorePatternLanguageHelper {
 
@@ -333,16 +332,14 @@ public final class CorePatternLanguageHelper {
             return patterns;
         } else {
             Pair<Pattern, Predicate<Pattern>> key = new Pair<>(pattern, filter);
-            return cache.get(key, pattern.eResource(), new Provider<Set<Pattern>>() {
-
-                @Override
-                public Set<Pattern> get() {
-                    Set<Pattern> patterns = new HashSet<>();
-                    calculateReferencedPatternsTransitive(pattern, patterns, filter);
-                    return patterns;
-                }
-            });
+            return cache.get(key, pattern.eResource(), () -> calculateReferencedPatternsTransitive(pattern, filter));
         }
+    }
+    
+    private static Set<Pattern> calculateReferencedPatternsTransitive(Pattern pattern, final Predicate<Pattern> filter) {
+        Set<Pattern> patterns = new HashSet<>();
+        calculateReferencedPatternsTransitive(pattern, patterns, filter);
+        return patterns;
     }
     
     private static void calculateReferencedPatternsTransitive(Pattern pattern, Set<Pattern> addedPatterns, final Predicate<Pattern> filter) {

@@ -605,20 +605,17 @@ public class PatternLanguageValidator extends AbstractPatternLanguageValidator i
         return (isNegativePatternCall(call) ? "neg " : "") + call.getPatternRef().getName();
     }
 
-    private static final Comparator<PatternCall> patternCallComparator = new Comparator<PatternCall>() {
-        @Override
-        public int compare(PatternCall p1, PatternCall p2) {
-            Pattern pr1 = p1.getPatternRef();
-            Pattern pr2 = p2.getPatternRef();
-            if (pr1.eIsProxy() && !pr2.eIsProxy()) {
-                return -1;
-            } else if (!pr1.eIsProxy() && pr2.eIsProxy()) {
-                return +1;
-            } else if (pr1.eIsProxy() && pr2.eIsProxy()) {
-                return 0;
-            }
-            return pr1.getName().compareTo(pr2.getName());
+    private static final Comparator<PatternCall> patternCallComparator = (p1, p2) -> {
+        Pattern pr1 = p1.getPatternRef();
+        Pattern pr2 = p2.getPatternRef();
+        if (pr1.eIsProxy() && !pr2.eIsProxy()) {
+            return -1;
+        } else if (!pr1.eIsProxy() && pr2.eIsProxy()) {
+            return +1;
+        } else if (pr1.eIsProxy() && pr2.eIsProxy()) {
+            return 0;
         }
+        return pr1.getName().compareTo(pr2.getName());
     };
 
     private static class CallGraphProvider implements Provider<Map<PatternCall, Set<PatternCall>>> {

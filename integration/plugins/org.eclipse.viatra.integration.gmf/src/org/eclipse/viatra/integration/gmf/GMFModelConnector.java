@@ -12,9 +12,11 @@
 package org.eclipse.viatra.integration.gmf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
@@ -33,11 +35,6 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 /**
  * Model connector implementation for the GMF editors.
@@ -128,14 +125,12 @@ public class GMFModelConnector extends EMFModelConnector {
     @Override
     protected Collection<EObject> getSelectedEObjects(ISelection selection) {
         if (selection instanceof IStructuredSelection) {
-            Iterator<IGraphicalEditPart> selectionIterator = Iterators.filter((((IStructuredSelection) selection).iterator()), IGraphicalEditPart.class);
-            return Lists.newArrayList(Iterators.filter(Iterators.transform(selectionIterator, new Function<IGraphicalEditPart, EObject>() {
-
-                @Override
-                public EObject apply(IGraphicalEditPart input) {
-                    return input.resolveSemanticElement();
-                }
-            }), Predicates.notNull()));
+            return Arrays.stream(((IStructuredSelection) selection).toArray())
+                .filter(IGraphicalEditPart.class::isInstance)
+                .map(IGraphicalEditPart.class::cast)
+                .map(IGraphicalEditPart::resolveSemanticElement)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         } else {
             return super.getSelectedEObjects();
         }

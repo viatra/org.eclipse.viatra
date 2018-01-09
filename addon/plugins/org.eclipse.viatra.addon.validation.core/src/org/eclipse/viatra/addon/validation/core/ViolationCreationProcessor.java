@@ -44,21 +44,16 @@ public class ViolationCreationProcessor implements IMatchProcessor<IPatternMatch
         Map<String, Object> keyObjectMap = constraint.getSpecification().getKeyObjects(match);
 
         if (!keyObjectMap.isEmpty()) {
-
-            ViolationKey key = constraint.getViolationKey(match);
-
-            Violation violation = violationMap.get(key);
-
-            if (violation == null) {
-                violation = new Violation();
+            violationMap.computeIfAbsent(constraint.getViolationKey(match), key -> {
+                Violation violation = new Violation();
                 violation.setConstraint(constraint);
                 violation.setKeyObjects(constraint.getSpecification().getKeyObjects(match));
                 violation.setMessage(ViatraQueryRuntimeHelper.getMessage(match, constraint.getSpecification()
                         .getMessageFormat()));
-                violationMap.put(key, violation);
-            }
+                violation.addMatch(match);
+                return violation;
+            });
 
-            violation.addMatch(match);
         } else {
             logger.error("Error getting Violation key objects!");
         }

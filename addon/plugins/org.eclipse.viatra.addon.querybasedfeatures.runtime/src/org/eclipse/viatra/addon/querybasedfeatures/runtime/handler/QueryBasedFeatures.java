@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybasedfeatures.runtime.handler;
 
-import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
-import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -59,46 +56,34 @@ public class QueryBasedFeatures {
     }
     
     public static boolean checkEcorePackageAnnotation(EPackage pckg) {
-        return Iterables.any(pckg.getEAnnotations(), new Predicate<EAnnotation>() {
-            @Override
-            public boolean apply(EAnnotation annotation) {
-                if(QueryBasedFeatures.ECORE_ANNOTATION.equals(annotation.getSource())){
-                    return Iterables.any(annotation.getDetails().entrySet(), new Predicate<Entry<String, String>>() {
-                        @Override
-                        public boolean apply(Entry<String, String> entry) {
-                            if(QueryBasedFeatures.SETTING_DELEGATES_KEY.equals(entry.getKey())){
-                                StringTokenizer delegateTokents = new StringTokenizer(entry.getValue());
-                                while(delegateTokents.hasMoreTokens()){
-                                    if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(delegateTokents.nextToken())){
-                                        return true;
-                                    }
-                                }
+        return Iterables.any(pckg.getEAnnotations(), annotation -> {
+            if(QueryBasedFeatures.ECORE_ANNOTATION.equals(annotation.getSource())){
+                return Iterables.any(annotation.getDetails().entrySet(), entry -> {
+                    if(QueryBasedFeatures.SETTING_DELEGATES_KEY.equals(entry.getKey())){
+                        StringTokenizer delegateTokents = new StringTokenizer(entry.getValue());
+                        while(delegateTokents.hasMoreTokens()){
+                            if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(delegateTokents.nextToken())){
+                                return true;
                             }
-                            return false;
                         }
-                    });
-                }
-                return false;
+                    }
+                    return false;
+                });
             }
+            return false;
         });
     }
 
     public static boolean checkFeatureAnnotation(EStructuralFeature feature, final String patternFQN) {
-        return Iterables.any(feature.getEAnnotations(), new Predicate<EAnnotation>() {
-            @Override
-            public boolean apply(EAnnotation annotation) {
-                if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(annotation.getSource())){
-                    return Iterables.any(annotation.getDetails().entrySet(), new Predicate<Entry<String, String>>() {
-                        @Override
-                        public boolean apply(Entry<String, String> entry) {
-                            boolean keyOK = QueryBasedFeatures.PATTERN_FQN_KEY.equals(entry.getKey());
-                            boolean valueOK = patternFQN.equals(entry.getValue());
-                            return keyOK && valueOK;
-                        }
-                    });
-                }
-                return false;
+        return Iterables.any(feature.getEAnnotations(), annotation -> {
+            if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(annotation.getSource())){
+                return Iterables.any(annotation.getDetails().entrySet(), entry -> {
+                    boolean keyOK = QueryBasedFeatures.PATTERN_FQN_KEY.equals(entry.getKey());
+                    boolean valueOK = patternFQN.equals(entry.getValue());
+                    return keyOK && valueOK;
+                });
             }
+            return false;
         });
     }
 }

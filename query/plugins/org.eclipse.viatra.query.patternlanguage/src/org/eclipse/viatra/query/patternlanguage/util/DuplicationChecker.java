@@ -56,12 +56,7 @@ public class DuplicationChecker {
     IQualifiedNameConverter nameConverter;
 
     private static Predicate<IContainer> contains(final IResourceDescription resourceDescription) {
-        return new Predicate<IContainer>() {
-            @Override
-            public boolean apply(IContainer container) {
-                return Iterables.contains(container.getResourceDescriptions(), resourceDescription);
-            }
-        };
+        return container -> Iterables.contains(container.getResourceDescriptions(), resourceDescription);
     }
 
     public Set<IEObjectDescription> findDuplicates(Pattern pattern) {
