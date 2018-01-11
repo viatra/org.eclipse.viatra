@@ -18,7 +18,6 @@ Export-Package: org.eclipse.viatra.transformation.evm.api;
  org.eclipse.viatra.transformation.evm.api.resolver;
   uses:="com.google.common.collect",
  org.eclipse.viatra.transformation.evm.notification,
- org.eclipse.viatra.transformation.evm.qrm,
  org.eclipse.viatra.transformation.evm.specific,
  org.eclipse.viatra.transformation.evm.specific.crud,
  org.eclipse.viatra.transformation.evm.specific.event,

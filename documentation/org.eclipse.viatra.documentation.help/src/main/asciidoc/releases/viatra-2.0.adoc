@@ -31,7 +31,8 @@ There were a few cases, where Guava types such as Functions or Predicates were v
  * `CorePatternLanguageHelper#getReferencedPatternsTransitive` accepts a Java 8 predicate as a parameter
  * `ConflictSetIterator` accepts a Java 8 predicate as a constructor parameter
  * `BatchTransformationStatements#fireUntil` accepts a Java 8 predicate as a condition
- * `RecordingJob` does not record all created commands in a Table anymore; if the created commands are to be accessed, the RecordingJob should be initialized with a new command recorder instance that will be notified with each command after it was executed 
+ * `RecordingJob` does not record all created commands in a Table anymore; if the created commands are to be accessed, the RecordingJob should be initialized with a new command recorder instance that will be notified with each command after it was executed
+ * The `QueryResultMultimap` and `EVMBasedQueryResultMultimap` classes provided a Multimap interface for query matches; given they limited uses through the years, were simply removed.
 
 
 === Removal of unnecessary Xtend library dependencies
