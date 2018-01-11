@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,9 +27,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeInfoProviderConstr
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 
 /**
  * @author Gabor Bergmann
@@ -159,14 +157,13 @@ public class TypeHelper {
      */
     public static Set<TypeJudgement> typeClosure(Set<TypeJudgement> preclosedBaseSet, Set<TypeJudgement> delta,
             IQueryMetaContext context) {
-        delta = delta.stream().filter(input -> !preclosedBaseSet.contains(input)).collect(Collectors.toSet());
-        if (delta.isEmpty())
+        Queue<TypeJudgement> queue = delta.stream().filter(input -> !preclosedBaseSet.contains(input)).collect(Collectors.toCollection(LinkedList::new)); 
+        if (queue.isEmpty())
             return preclosedBaseSet;
-
+        
         Set<TypeJudgement> closure = new HashSet<TypeJudgement>(preclosedBaseSet);
-        Queue<TypeJudgement> queue = new LinkedList<TypeJudgement>(delta);
 
-        SetMultimap<TypeJudgement, TypeJudgement> conditionalImplications = HashMultimap.create();
+        Map<TypeJudgement, Set<TypeJudgement>> conditionalImplications = new HashMap<>();
         for (TypeJudgement typeJudgement : closure) {
             conditionalImplications.putAll(typeJudgement.getConditionalImpliedJudgements(context));
         }
@@ -178,18 +175,22 @@ public class TypeHelper {
                 queue.addAll(deltaType.getDirectlyImpliedJudgements(context));
 
                 // conditional implications, source key processed before, this is the condition key
-                queue.addAll(conditionalImplications.get(deltaType));
+                final Set<TypeJudgement> implicationSet = conditionalImplications.get(deltaType);
+                if (implicationSet != null) {
+                     queue.addAll(implicationSet);
+                }
 
                 // conditional implications, this is the source key
-                SetMultimap<TypeJudgement, TypeJudgement> deltaConditionalImplications = deltaType
+                Map<TypeJudgement, Set<TypeJudgement>> deltaConditionalImplications = deltaType
                         .getConditionalImpliedJudgements(context);
-                for (TypeJudgement condition : deltaConditionalImplications.keySet()) {
-                    if (closure.contains(condition)) {
+                for (Entry<TypeJudgement, Set<TypeJudgement>> entry : deltaConditionalImplications.entrySet()) {
+                    if (closure.contains(entry.getKey())) {
                         // condition processed before
-                        queue.addAll(deltaConditionalImplications.get(condition));
+                        queue.addAll(entry.getValue());
                     } else {
                         // condition not processed yet
-                        conditionalImplications.putAll(condition, deltaConditionalImplications.get(condition));
+                        conditionalImplications.computeIfAbsent(entry.getKey(), key -> new HashSet<>())
+                                .addAll(entry.getValue());
                     }
                 }
             }

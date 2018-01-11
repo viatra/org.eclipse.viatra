@@ -13,9 +13,9 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Common abstract class for implementers of {@link IQueryMetaContext}
@@ -27,11 +27,11 @@ import com.google.common.collect.SetMultimap;
 public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
     
     /**
-     * @since 1.6
+     * @since 2.0
      */
     @Override
-    public SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey) {
-        return HashMultimap.create(0, 0);
+    public Map<InputKeyImplication, Set<InputKeyImplication>> getConditionalImplications(IInputKey implyingKey) {
+        return new HashMap<>();
     }
 
     /**

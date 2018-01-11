@@ -38,9 +38,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
 /**
  * The meta context information for EMF scopes.
  * 
@@ -259,15 +256,15 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     }
     
     @Override
-    public SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey) {
+    public Map<InputKeyImplication, Set<InputKeyImplication>> getConditionalImplications(IInputKey implyingKey) {
         ensureValidKey(implyingKey);
         if (implyingKey instanceof EClassUnscopedTransitiveInstancesKey) {
             EClass emfKey = ((EClassUnscopedTransitiveInstancesKey) implyingKey).getEmfKey();
             
-            SetMultimap<InputKeyImplication, InputKeyImplication> result = HashMultimap.create(1,1);
+            Map<InputKeyImplication, Set<InputKeyImplication>> result = new HashMap<>();
             result.put(
                     new InputKeyImplication(implyingKey, EOBJECT_SCOPED_KEY, Arrays.asList(0)),
-                    new InputKeyImplication(implyingKey, new EClassTransitiveInstancesKey(emfKey), Arrays.asList(0))
+                    new HashSet<>(Arrays.asList(new InputKeyImplication(implyingKey, new EClassTransitiveInstancesKey(emfKey), Arrays.asList(0))))
             );
             return result;
         } else return super.getConditionalImplications(implyingKey);

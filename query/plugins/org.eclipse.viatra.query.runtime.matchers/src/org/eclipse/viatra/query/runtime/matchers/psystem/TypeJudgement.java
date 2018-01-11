@@ -13,7 +13,8 @@ package org.eclipse.viatra.query.runtime.matchers.psystem;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -23,9 +24,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilte
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 
 /**
  * A judgement that means that the given tuple of variables will represent a tuple of values that is a member of the extensional relation identified by the given input key.
@@ -114,20 +112,12 @@ public class TypeJudgement {
     }
     
     /**
-     * @since 1.6
+     * @since 2.0
      */
-    public SetMultimap<TypeJudgement, TypeJudgement> getConditionalImpliedJudgements(IQueryMetaContext context) {
-        SetMultimap<TypeJudgement, TypeJudgement> results = HashMultimap.create();
-        
-        SetMultimap<InputKeyImplication, InputKeyImplication> implications = context.getConditionalImplications(this.inputKey);
-        for (Entry<InputKeyImplication, InputKeyImplication> entry : implications.entries()) {
-            results.put(
-                    transcribeImplication(entry.getKey()),
-                    transcribeImplication(entry.getValue())
-            );            
-        }
-        
-        return results;
+    public Map<TypeJudgement, Set<TypeJudgement>> getConditionalImpliedJudgements(IQueryMetaContext context) {
+        return context.getConditionalImplications(this.inputKey).entrySet().stream().collect(Collectors.toMap(
+                entry -> transcribeImplication(entry.getKey()),
+                entry -> entry.getValue().stream().map(this::transcribeImplication).collect(Collectors.toSet())));
     }
     
     

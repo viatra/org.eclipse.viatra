@@ -15,8 +15,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.SetMultimap;
-
 /**
  * Provides metamodel information (relationship of input keys) to query evaluator backends at runtime and at query planning time.
  * 
@@ -60,9 +58,9 @@ public interface IQueryMetaContext {
      * <p> Note that for the obvious reasons, enumerable keys can only be implied by enumerable keys (either as the implying key or as the additional condition).
      * <p> Note that symmetry is not required, i.e. the additional conditions do not have to list the same conditional implication.
      * @return multi-map, where the keys are additional conditions and the values are input key implications jointly implied by the condition and the given implying key.
-     * @since 1.6
+     * @since 2.0
      */
-    SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey);
+    Map<InputKeyImplication, Set<InputKeyImplication>> getConditionalImplications(IInputKey implyingKey);
 	
 	/**
 	 * Returns functional dependencies of the input key expressed in terms of column indices.

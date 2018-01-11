@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.matchers.planning.operations;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 
 /**
