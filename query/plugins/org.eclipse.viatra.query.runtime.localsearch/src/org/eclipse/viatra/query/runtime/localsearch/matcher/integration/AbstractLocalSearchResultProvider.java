@@ -399,5 +399,14 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         LocalSearchHints configuration = overrideDefaultHints(query);
         return configuration;
     }
-
+    
+    /**
+     * Forgets all stored plans in this result provider. If no plans are stored, nothing happens.
+     * 
+     * @since 2.0
+     * @noreference This method is not intended to be referenced by clients; it should only used by {@link LocalSearchBackend}.
+     */
+    public void forgetAllPlans() {
+        planCache.clear();
+    }
 }

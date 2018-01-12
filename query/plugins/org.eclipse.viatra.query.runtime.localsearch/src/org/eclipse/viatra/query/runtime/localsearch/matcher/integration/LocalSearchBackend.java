@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider;
@@ -26,6 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
@@ -169,4 +175,53 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     public ICache getCache() {
         return generalCache;
     }
+    
+    /**
+     * Updates the previously stored search plans for one or more given queries, computing a new set of plans if
+     * necessary. The new plans created are the same that would be created by executing prepare on the given query
+     * definitions.
+     * 
+     * @since 2.0
+     */
+    public void recomputePlans(PQuery... queries) {
+        recomputePlans(Arrays.stream(queries).flatMap(query -> resultProviderCache.get(query).stream()));
+    }
+    
+    /**
+     * Updates the previously stored search plans for one or more given queries, computing a new set of plans if
+     * necessary The new plans created are the same that would be created by executing prepare on the given query
+     * definitions.
+     * 
+     * @since 2.0
+     */
+    public void recomputePlans(Collection<PQuery> queries) {
+        recomputePlans(queries.stream().flatMap(query -> resultProviderCache.get(query).stream()));
+    }
+    
+    /**
+     * Updates the previously stored search plans for one or more given queries, computing a new set of plans if
+     * necessary The new plans created are the same that would be created by executing prepare on the given query
+     * definitions.
+     * 
+     * @since 2.0
+     */
+    public void recomputePlans() {
+        recomputePlans(resultProviderCache.values().stream());
+    }
+    
+    private void recomputePlans(Stream<AbstractLocalSearchResultProvider> resultProviders) {
+        try {
+            context.getRuntimeContext().coalesceTraversals(() -> {
+                resultProviders.forEach(resultProvider -> {
+                    resultProvider.forgetAllPlans();
+                    resultProvider.prepare();
+                });
+                return null;
+            });
+        } catch (InvocationTargetException e) {
+            throw new ViatraQueryException("Error while rebuilding plans: " + e.getMessage(),
+                    "Error while rebuilding plans", e);
+        }
+    }
+    
 }
