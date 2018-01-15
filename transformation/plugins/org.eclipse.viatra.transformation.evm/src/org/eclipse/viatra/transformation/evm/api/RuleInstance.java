@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
@@ -213,10 +214,11 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
 
     /**
      * 
-     * @return the live table of activations
+     * @return the live map of activations of a given atom
+     * @since 2.0
      */
-    public Table<ActivationState, EventAtom, Activation<EventAtom>> getActivations() {
-        return activations;
+    public Map<ActivationState, Activation<EventAtom>> getActivations(EventAtom atom) {
+        return activations.column(atom);
     }
     
     

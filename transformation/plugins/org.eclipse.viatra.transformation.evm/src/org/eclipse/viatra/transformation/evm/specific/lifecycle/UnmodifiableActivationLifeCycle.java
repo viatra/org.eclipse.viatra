@@ -16,8 +16,6 @@ import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
-import com.google.common.collect.Table.Cell;
-
 /**
  * This class represents life-cycles that cannot be modified. 
  * Attempts to add new transitions will result in {@link UnsupportedOperationException}.
@@ -62,8 +60,8 @@ public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
         } else {
             Objects.requireNonNull(lifeCycle,"Null life cycle cannot be copied!");
             UnmodifiableActivationLifeCycle lc = new UnmodifiableActivationLifeCycle(lifeCycle.getInactiveState());
-            for (Cell<ActivationState, EventType, ActivationState> cell : lifeCycle.getStateTransitionTable().cellSet()) {
-                lc.internalAddStateTransition(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
+            for (Transition cell : lifeCycle.getStateTransitions()) {
+                lc.internalAddStateTransition(cell.getFrom(), cell.getEvent(), cell.getTo());
             }
             return lc; 
         }

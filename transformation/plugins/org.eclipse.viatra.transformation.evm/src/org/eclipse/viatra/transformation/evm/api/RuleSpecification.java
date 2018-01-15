@@ -12,7 +12,9 @@ package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
@@ -21,9 +23,6 @@ import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * A rule specification specifies how the set of individual
@@ -37,7 +36,7 @@ import com.google.common.collect.Multimap;
 public class RuleSpecification<EventAtom> {
 
     private final ActivationLifeCycle lifeCycle;
-    private final Multimap<ActivationState, Job<EventAtom>> jobs;
+    private final Map<ActivationState, Set<Job<EventAtom>>> jobs;
     private final Set<ActivationState> enabledStates;
     private final EventSourceSpecification<EventAtom> sourceSpecification;
     private String name;
@@ -53,12 +52,12 @@ public class RuleSpecification<EventAtom> {
         Preconditions.checkArgument(sourceSpecification != null, "Cannot create rule specification with null source definition!");
         this.sourceSpecification = sourceSpecification;
         this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
-        this.jobs = HashMultimap.create();
+        this.jobs = new HashMap<>();
         Set<ActivationState> states = new HashSet<ActivationState>();
         if (jobs != null && !jobs.isEmpty()) {
             for (Job<EventAtom> job : jobs) {
                 ActivationState state = job.getActivationState();
-                this.jobs.put(state, job);
+                this.jobs.computeIfAbsent(state, st -> new HashSet<>()).add(job);
                 states.add(state);
             }
         }
@@ -133,7 +132,10 @@ public class RuleSpecification<EventAtom> {
     }
 
 
-    public Multimap<ActivationState, Job<EventAtom>> getJobs() {
+    /**
+     * @since 2.0
+     */
+    public Map<ActivationState, Set<Job<EventAtom>>> getJobs() {
         return jobs;
     }
 

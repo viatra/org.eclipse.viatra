@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 /**
  * A life cycle describes how the state of an activation changes 
@@ -29,8 +33,67 @@ import com.google.common.collect.Table;
  */
 public class ActivationLifeCycle {
     
-    private Table<ActivationState, EventType, ActivationState> stateTransitionTable;
-    private ActivationState inactiveState;
+    /**
+     * @since 2.0
+     */
+    public static class Transition {
+        private final ActivationState from;
+        private final EventType event;
+        private final ActivationState to;
+
+        public Transition(ActivationState from, EventType event, ActivationState to) {
+            super();
+            Objects.requireNonNull(from, "From state cannot be null!");
+            Objects.requireNonNull(event, "Event cannot be null!");
+            Objects.requireNonNull(to, "To state cannot be null!");
+            
+            this.from = from;
+            this.event = event;
+            this.to = to;
+        }
+
+        public ActivationState getFrom() {
+            return from;
+        }
+
+        public EventType getEvent() {
+            return event;
+        }
+
+        public ActivationState getTo() {
+            return to;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(from, event, to);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Transition other = (Transition) obj;
+            return Objects.equals(from, other.from) && Objects.equals(event, other.event)
+                    && Objects.equals(to, other.to);
+        }
+
+        @Override
+        public String toString() {
+            return "Transition " + from + " --(" + event + ")--> " + to;
+        }
+        
+        
+    }
+    
+    //LinkedHashSet is used to maintain a deterministic ordering of transitions
+    private final Set<Transition> transitions = new LinkedHashSet<>();
+    private final Map<ActivationState, Map<EventType, Transition>> transitionMap = new HashMap<>();
+    private final ActivationState inactiveState;
     
     protected ActivationLifeCycle(ActivationState inactiveState) {
         Preconditions.checkArgument(inactiveState != null, "Inactive state cannot be null");
@@ -50,11 +113,8 @@ public class ActivationLifeCycle {
     public ActivationState nextActivationState(final ActivationState currentState, final EventType event) {
         Objects.requireNonNull(currentState, "Cannot find next state for null current state");
         Objects.requireNonNull(event, "Cannot find next state for null event");
-        if(stateTransitionTable != null) {
-            return stateTransitionTable.get(currentState, event);
-        } else {
-            return null;
-        }
+        
+        return findTargetTransition(currentState, event).map(Transition::getTo).orElse(null);
     }
     
     /**
@@ -71,17 +131,33 @@ public class ActivationLifeCycle {
      * @return true, if the life-cycle changed
      */
     public boolean addStateTransition(final ActivationState from, final EventType event, final ActivationState to) {
-        Objects.requireNonNull(from, "From state cannot be null!");
-        Objects.requireNonNull(event, "Event cannot be null!");
-        Objects.requireNonNull(to, "To state cannot be null!");
-        if(stateTransitionTable == null) {
-            stateTransitionTable = HashBasedTable.create();
-        }
-        if(to.equals(stateTransitionTable.get(from, event))) {
+        return addStateTransition(new Transition(from, event, to));
+    }
+
+    /**
+     * Extends the life cycle with a new transition that is created 
+     * from the given state, labeled with the given event and leading
+     *  to the given state. 
+     * 
+     * If the (from,event) transition already exists in the life-cycle,
+     * it is overwritten with the given to state.
+     * 
+     * @param from the source state of the transition
+     * @param event the event causing the transition
+     * @param to the target state of the transition
+     * @return true, if the life-cycle changed
+     * @since 2.0
+     */
+    public boolean addStateTransition(Transition transition) {
+        Objects.requireNonNull(transition);
+        
+        findConflictingTransition(transition).filter(conflicting -> Objects.equals(transition, conflicting))
+                .ifPresent(transitions::remove);
+        if (transitions.contains(transition)) {
             return false;
         } else {
-            stateTransitionTable.put(from, event, to);
-            return true;
+            transitionMap.computeIfAbsent(transition.from, tr -> new HashMap<>()).put(transition.event, transition);
+            return transitions.add(transition);
         }
     }
 
@@ -92,7 +168,7 @@ public class ActivationLifeCycle {
      * @return true, if there is a transition from the given state, false otherwise
      */
     public boolean containsFrom(final ActivationState state) {
-        return stateTransitionTable.containsRow(state);
+        return transitionMap.containsKey(state) && !transitionMap.get(state).isEmpty();
     }
     
     /**
@@ -102,7 +178,7 @@ public class ActivationLifeCycle {
      * @return true, if there is a transition to the given state, false otherwise
      */
     public boolean containsTo(final ActivationState state) {
-        return stateTransitionTable.containsValue(state);
+        return transitions.stream().anyMatch(tr -> Objects.equals(tr.to, state));
     }
     
     /**
@@ -113,8 +189,9 @@ public class ActivationLifeCycle {
      */
     public static ActivationLifeCycle copyOf(final ActivationLifeCycle lifeCycle) {
         Objects.requireNonNull(lifeCycle,"Null life cycle cannot be copied!");
+        
         ActivationLifeCycle lc = new ActivationLifeCycle(lifeCycle.inactiveState);
-        lc.stateTransitionTable = HashBasedTable.create(lifeCycle.stateTransitionTable);
+        lifeCycle.transitions.forEach(lc::addStateTransition);
         return lc;
     }
     
@@ -125,21 +202,27 @@ public class ActivationLifeCycle {
     /**
      * Returns a copy of the transition table.
      * 
-     * @return the copy of the stateTransitionTable
+     * @since 2.0
      */
-    public Table<ActivationState, EventType, ActivationState> getStateTransitionTable() {
-        return HashBasedTable.create(stateTransitionTable);
+    public Set<Transition> getStateTransitions() {
+        return new HashSet<>(transitions);
     }
     
-    /**
-     * @return the inactiveState
-     */
     public ActivationState getInactiveState() {
         return inactiveState;
     }
     
     @Override
     public String toString() {
-        return String.format("%s{table=%s}", getClass().getName(), stateTransitionTable);
+        return String.format("%s{transitions=%s}", getClass().getName(),
+                transitions.stream().map(Object::toString).collect(Collectors.joining(", ")));
+    }
+    
+    private Optional<Transition> findConflictingTransition(Transition tr) {
+        return findTargetTransition(tr.from, tr.event);
+    }
+    
+    private Optional<Transition> findTargetTransition(ActivationState from, EventType event) {
+        return Optional.ofNullable(transitionMap.get(from)).map(table -> table.get(event));
     }
 }

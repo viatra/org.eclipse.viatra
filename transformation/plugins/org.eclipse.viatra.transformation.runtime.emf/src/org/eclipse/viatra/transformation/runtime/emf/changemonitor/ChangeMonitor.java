@@ -104,7 +104,7 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     public void addRule(RuleSpecification<IPatternMatch> rule) {
         rules.add(rule);
-        Multimap<ActivationState, Job<IPatternMatch>> jobs = rule.getJobs();
+        Map<ActivationState, Set<Job<IPatternMatch>>> jobs = rule.getJobs();
         if (started) {
             executionSchema.addRule(rule);
         }

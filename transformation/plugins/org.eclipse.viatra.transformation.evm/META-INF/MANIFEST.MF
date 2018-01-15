@@ -5,9 +5,7 @@ Bundle-SymbolicName: org.eclipse.viatra.transformation.evm;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[2.0.0,2.1.0)"
-Export-Package: org.eclipse.viatra.transformation.evm.api;
-  uses:="com.google.common.base,
-   com.google.common.collect",
+Export-Package: org.eclipse.viatra.transformation.evm.api,
  org.eclipse.viatra.transformation.evm.api.adapter;
   x-friends:="org.eclipse.viatra.transformation.runtime.debug,
    org.eclipse.viatra.transformation.runtime.emf,
@@ -15,16 +13,14 @@ Export-Package: org.eclipse.viatra.transformation.evm.api;
    org.eclipse.viatra.transformation.runtime.tracer",
  org.eclipse.viatra.transformation.evm.api.event,
  org.eclipse.viatra.transformation.evm.api.event.adapter,
- org.eclipse.viatra.transformation.evm.api.resolver;
-  uses:="com.google.common.collect",
+ org.eclipse.viatra.transformation.evm.api.resolver,
  org.eclipse.viatra.transformation.evm.notification,
  org.eclipse.viatra.transformation.evm.specific,
  org.eclipse.viatra.transformation.evm.specific.crud,
  org.eclipse.viatra.transformation.evm.specific.event,
  org.eclipse.viatra.transformation.evm.specific.job,
  org.eclipse.viatra.transformation.evm.specific.lifecycle,
- org.eclipse.viatra.transformation.evm.specific.resolver;
-  uses:="com.google.common.collect",
+ org.eclipse.viatra.transformation.evm.specific.resolver,
  org.eclipse.viatra.transformation.evm.specific.scheduler,
  org.eclipse.viatra.transformation.evm.update
 Bundle-Vendor: Eclipse VIATRA Project

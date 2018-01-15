@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.resolver;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -20,9 +23,7 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 
 import java.util.Set;
-
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
+import java.util.stream.Collectors;
 
 /**
  * @author Abel Hegedus
@@ -32,41 +33,39 @@ public class ScopedConflictSet implements ConflictSet{
 
     private final ChangeableConflictSet changeableConflictSet;
     private final RuleBase ruleBase;
-    private final Multimap<RuleSpecification<?>, EventFilter<?>> specificationFilters;
+    private final Map<RuleSpecification<?>, Set<EventFilter<?>>> specificationFilters;
     public IActivationNotificationListener listener;
 
     /**
-     *
+     * @since 2.0
      */
-    public ScopedConflictSet(final RuleBase ruleBase, final ConflictResolver conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specificationFilters) {
+    public ScopedConflictSet(final RuleBase ruleBase, final ConflictResolver conflictResolver, final Map<RuleSpecification<?>, Set<EventFilter<?>>> specificationFilters) {
         this.ruleBase = ruleBase;
         this.changeableConflictSet = conflictResolver.createConflictSet();
-        this.specificationFilters = ImmutableMultimap.copyOf(specificationFilters);
+        this.specificationFilters = Collections.unmodifiableMap(specificationFilters.entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> new HashSet<>(entry.getValue()))));
         this.listener = new ConflictSetUpdater(changeableConflictSet);
-        for (final Entry<RuleSpecification<?>, EventFilter<?>> entry : specificationFilters.entries()) {
+        for (final Entry<RuleSpecification<?>, Set<EventFilter<?>>> entry : specificationFilters.entrySet()) {
             final RuleSpecification<?> ruleSpecification = entry.getKey();
-            registerListenerFromInstance(ruleSpecification, entry.getValue());
+            entry.getValue().forEach(value -> registerListenerFromInstance(ruleSpecification, value));
         }
     }
 
     /**
-     * @return the specificationFilters
+     * @since 2.0
      */
-    public Multimap<RuleSpecification<?>, EventFilter<?>> getSpecificationFilters() {
+    public Map<RuleSpecification<?>, Set<EventFilter<?>>> getSpecificationFilters() {
         return specificationFilters;
     }
 
-    /**
-     * @return the listener
-     */
     protected IActivationNotificationListener getListener() {
         return listener;
     }
 
     public void dispose() {
-        for (final Entry<RuleSpecification<?>, EventFilter<?>> entry : specificationFilters.entries()) {
+        for (final Entry<RuleSpecification<?>, Set<EventFilter<?>>> entry : specificationFilters.entrySet()) {
             final RuleSpecification<?> ruleSpecification = entry.getKey();
-            unregisterListenerFromInstance(ruleSpecification, entry.getValue());
+            entry.getValue().forEach(value -> unregisterListenerFromInstance(ruleSpecification, value));
         }
     }
 

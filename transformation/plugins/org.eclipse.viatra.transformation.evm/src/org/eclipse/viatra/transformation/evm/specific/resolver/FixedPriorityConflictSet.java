@@ -17,14 +17,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
-
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 /**
  * This conflict set resolves conflicts between activations based on
@@ -38,7 +36,7 @@ import com.google.common.collect.Multimaps;
  */
 public class FixedPriorityConflictSet implements ChangeableConflictSet {
 
-    protected final Multimap<Integer, Activation<?>> priorityBuckets;
+    protected final Map<Integer, Set<Activation<?>>> priorityBuckets;
     private Map<RuleSpecification<?>, Integer> priorityMap;
     private FixedPriorityConflictResolver resolver;
     
@@ -46,9 +44,8 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
         this.resolver = resolver;
         Preconditions.checkArgument(priorities != null, "Priority map cannot be null!");
         priorityMap = new HashMap<>(priorities);
-        Map<Integer, Collection<Activation<?>>> treeMap = new TreeMap<Integer, Collection<Activation<?>>>();
-        Multimap<Integer, Activation<?>> multimap = Multimaps.newSetMultimap(treeMap, HashSet::new);
-        this.priorityBuckets = multimap;
+        this.priorityBuckets = new TreeMap<>(); 
+        priorities.values().forEach(key -> priorityBuckets.computeIfAbsent(key, k -> new HashSet<>()));
     }
     
     /**
@@ -77,14 +74,14 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
     public boolean addActivation(Activation<?> activation) {
         Preconditions.checkArgument(activation != null, "Activation cannot be null!");
         Integer rulePriority = getRulePriority(activation);
-        return priorityBuckets.put(rulePriority, activation);
+        return priorityBuckets.get(rulePriority).add(activation);
     }
 
     @Override
     public boolean removeActivation(Activation<?> activation) {
         Preconditions.checkArgument(activation != null, "Activation cannot be null!");
         Integer rulePriority = getRulePriority(activation);
-        return priorityBuckets.remove(rulePriority, activation);
+        return priorityBuckets.get(rulePriority).remove(activation);
     }
 
     protected void setPriority(RuleSpecification<?> specification, int priority) {
@@ -98,7 +95,7 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
             }
         }
         priorityBuckets.get(rulePriority).removeAll(removed);
-        priorityBuckets.putAll(priority, removed);
+        priorityBuckets.computeIfAbsent(rulePriority, pr -> new HashSet<>()).addAll(removed);
     }
 
     @Override
@@ -119,7 +116,8 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
      */
     @Override
     public Set<Activation<?>> getConflictingActivations() {
-        return Collections.unmodifiableSet(new HashSet<>(priorityBuckets.values()));
+        return Collections.unmodifiableSet(
+                priorityBuckets.values().stream().flatMap(i -> i.stream()).collect(Collectors.toSet()));
     }
     
 

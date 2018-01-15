@@ -11,9 +11,13 @@
 package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
@@ -22,9 +26,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-
 /**
  * A rule engine is a facade for accessing the EVM, it allows
  * the retrieval of all activations and filtered access by state,
@@ -32,6 +33,7 @@ import com.google.common.collect.Multimap;
  *  of rules.   
  * 
  * @author Abel Hegedus
+ * @since 2.0
  * 
  */
 public class RuleEngine {
@@ -65,14 +67,22 @@ public class RuleEngine {
     }
     
     public <EventAtom> ScopedConflictSet createScopedConflictSet(RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> eventFilter) {
-        return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), ImmutableMultimap.<RuleSpecification<?>, EventFilter<?>>of(specification, eventFilter));
-    }
-    
-    public ScopedConflictSet createScopedConflictSet(Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+        Map<RuleSpecification<?>, Set<EventFilter<?>>> specifications = new HashMap<>();
+        specifications.put(specification, Collections.singleton(eventFilter));
         return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), specifications);
     }
     
-    public ScopedConflictSet createScopedConflictSet(ConflictResolver conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+    /**
+     * @since 2.0
+     */
+    public ScopedConflictSet createScopedConflictSet(Map<RuleSpecification<?>, Set<EventFilter<?>>> specifications) {
+        return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), specifications);
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public ScopedConflictSet createScopedConflictSet(ConflictResolver conflictResolver, Map<RuleSpecification<?>, Set<EventFilter<?>>> specifications) {
         Objects.requireNonNull(conflictResolver, "Conflict resolver cannot be null!");
         Objects.requireNonNull(specifications, "Specification set cannot be null!");
         ScopedConflictSet scopedConflictSet = ruleBase.createScopedConflictSet(conflictResolver, specifications);
@@ -128,16 +138,19 @@ public class RuleEngine {
     public <EventAtom> boolean containsRule(
             final RuleSpecification<EventAtom> specification,
             EventFilter<? super EventAtom> filter) {
-        return ruleBase.getRuleSpecificationMultimap().containsEntry(
-                specification, filter);
+        final Map<RuleSpecification<?>, Set<EventFilter<?>>> ruleSpecificationMultimap = ruleBase.getRuleSpecificationMultimap();
+        return ruleSpecificationMultimap.containsKey(specification) &&
+                ruleSpecificationMultimap.get(specification).contains(filter);
     }
     
     /**
      * 
      * @return a copy of the multimap containing all activations
+     * @since 2.0
      */
-    public Multimap<ActivationState, Activation<?>> getActivations() {
-        return ImmutableMultimap.copyOf(ruleBase.getAgenda().getActivations());
+    public Map<ActivationState, Set<Activation<?>>> getActivations() {
+        return Collections.unmodifiableMap(ruleBase.getAgenda().getActivations().entrySet().stream()
+                .collect(Collectors.toMap(Entry::getKey, entry -> new HashSet<>(entry.getValue()))));
     }
 
     /**
@@ -217,9 +230,11 @@ public class RuleEngine {
     
     /**
      * @return the immutable set of rules in the EVM
+     * @since 2.0
      */
-    public Multimap<RuleSpecification<?>, EventFilter<?>> getRuleSpecificationMultimap(){
-        return ImmutableMultimap.copyOf(ruleBase.getRuleSpecificationMultimap());
+    public Map<RuleSpecification<?>, Set<EventFilter<?>>> getRuleSpecificationMultimap(){
+        return Collections.unmodifiableMap(ruleBase.getRuleSpecificationMultimap().entrySet().stream()
+                .collect(Collectors.toMap(Entry::getKey, entry -> new HashSet<>(entry.getValue()))));
     }
 
     /**

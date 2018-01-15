@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -26,9 +28,6 @@ import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.runtime.emf.rules.ITransformationRule;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-
 public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>>
         implements ITransformationRule<Match, Matcher> {
     private final String name;
@@ -36,13 +35,16 @@ public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher 
     private final RuleSpecification<Match> ruleSpecification;
     private final EventFilter<? super Match> filter;
 
+    /**
+     * @since 2.0
+     */
     public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-            Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+            Map<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
             EventFilter<? super Match> filter) {
         this.name = name;
-        Set<Job<Match>> jobs = Sets.newHashSet();
+        Set<Job<Match>> jobs = new HashSet<>();
 
-        for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
+        for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entrySet()) {
             CRUDActivationStateEnum state = stateAction.getKey();
             IMatchProcessor<Match> action = stateAction.getValue();
 

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,8 +27,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
 
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 
 /**
@@ -127,13 +126,12 @@ public class RuleBase {
         return eventRealm;
     }
 
-    public Multimap<RuleSpecification<?>, EventFilter<?>> getRuleSpecificationMultimap() {
-        final Multimap<RuleSpecification<?>, EventFilter<?>> ruleMap = HashMultimap.create();
-        final Map<RuleSpecification<?>, Map<EventFilter<?>, RuleInstance<?>>> rowMap = ruleInstanceTable.rowMap();
-        for (final Entry<RuleSpecification<?>, Map<EventFilter<?>, RuleInstance<?>>> entry : rowMap.entrySet()) {
-            ruleMap.putAll(entry.getKey(), entry.getValue().keySet());
-        }
-        return ruleMap;
+    /**
+     * @since 2.0
+     */
+    public Map<RuleSpecification<?>, Set<EventFilter<?>>> getRuleSpecificationMultimap() {
+        return ruleInstanceTable.rowMap().entrySet().stream()
+                .collect(Collectors.toMap(Entry::getKey, entry -> entry.getValue().keySet()));
     }
 
     /**
@@ -171,9 +169,10 @@ public class RuleBase {
      *
      * @param conflictResolver
      * @param specifications
+     * @since 2.0
      */
     public ScopedConflictSet createScopedConflictSet(final ConflictResolver conflictResolver,
-            final Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+            final Map<RuleSpecification<?>, Set<EventFilter<?>>> specifications) {
         final ScopedConflictSet set = new ScopedConflictSet(this, conflictResolver, specifications);
         return set;
     }

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
+import java.util.HashSet;
+
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
@@ -40,7 +42,7 @@ public final class DefaultActivationNotificationListener implements IActivationN
         agenda.getActivations().remove(oldState, activation);
         final ActivationState state = activation.getState();
         if(!state.isInactive()) {
-            agenda.getActivations().put(state, activation);
+            agenda.getActivations().computeIfAbsent(state, st -> new HashSet<>()).add(activation);
         }
         agenda.getConflictSetUpdater().activationChanged(activation, oldState, event);
     }
@@ -53,7 +55,7 @@ public final class DefaultActivationNotificationListener implements IActivationN
         }
         agenda.getConflictSetUpdater().activationCreated(activation, inactiveState);
         final ActivationState state = activation.getState();
-        agenda.getActivations().put(state, activation);
+        agenda.getActivations().computeIfAbsent(state, st -> new HashSet<>()).add(activation);
     }
 
     @Override

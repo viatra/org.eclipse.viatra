@@ -12,6 +12,10 @@
 package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
@@ -22,9 +26,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSetUpdater;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 import org.eclipse.viatra.transformation.evm.specific.resolver.ArbitraryOrderConflictResolver;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 /**
  * Sole purpose is the management all and ordering of enabled activations!
  *
@@ -33,46 +34,39 @@ import com.google.common.collect.Multimap;
  */
 public class Agenda {
 
-    private final Multimap<ActivationState, Activation<?>> activations;
+    private final Map<ActivationState, Set<Activation<?>>> activations;
     private ChangeableConflictSet conflictSet;
     private IActivationNotificationListener activationListener;
     private ConflictSetUpdater updatingListener;
     private final Logger logger;
     
     
-    /**
-    *
-    */
     public Agenda() {
         this(new ArbitraryOrderConflictResolver());
     }
     
-    
-    /**
-     *
-     */
     public Agenda(final ConflictResolver conflictResolver) {
         this.logger = Logger.getLogger(this.toString());
-        this.activations = HashMultimap.create();
+        this.activations = new HashMap<>();
         this.conflictSet = conflictResolver.createConflictSet();
         this.updatingListener = new ConflictSetUpdater(conflictSet);
         this.setActivationListener(new DefaultActivationNotificationListener(this));
     }
     
-    /**
-    *
-    */
     public Agenda(final ConflictResolver conflictResolver, IActivationNotificationListener activationListener) {
         this.logger = Logger.getLogger(this.toString());
         this.setActivationListener(activationListener);
         Preconditions.checkState(this.getActivationListener() != null, "Activation Listener is null!");
-        this.activations = HashMultimap.create();
+        this.activations = new HashMap<>();
         this.conflictSet = conflictResolver.createConflictSet();
         this.updatingListener = new ConflictSetUpdater(conflictSet);
        
    }
 
-    public Multimap<ActivationState, Activation<?>> getActivations() {
+    /**
+     * @since 2.0
+     */
+    public Map<ActivationState, Set<Activation<?>>> getActivations() {
         return activations;
     }
 
@@ -87,7 +81,7 @@ public class Agenda {
     }
 
     public Collection<Activation<?>> getAllActivations() {
-        return getActivations().values();
+        return getActivations().values().stream().flatMap(i -> i.stream()).collect(Collectors.toSet());
     }
 
     public IActivationNotificationListener getActivationListener() {

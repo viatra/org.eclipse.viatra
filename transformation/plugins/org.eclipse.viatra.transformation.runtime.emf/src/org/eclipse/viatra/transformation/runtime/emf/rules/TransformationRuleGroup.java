@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.rules;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * Helper collection for grouping transformation rules 
@@ -44,12 +43,15 @@ public class TransformationRuleGroup<Rule extends ITransformationRule<?, ?>> ext
         return this.stream().filter(Objects::nonNull).map(Rule::getRuleSpecification).collect(Collectors.toSet());
     }
     
-    public Multimap<RuleSpecification<?>, EventFilter<?>> getFilteredRuleMap() {
-        Multimap<RuleSpecification<?>, EventFilter<?>> map = HashMultimap.<RuleSpecification<?>, EventFilter<?>>create();
+    /**
+     * @since 2.0
+     */
+    public Map<RuleSpecification<?>, Set<EventFilter<?>>> getFilteredRuleMap() {
+        Map<RuleSpecification<?>, Set<EventFilter<?>>> map = new HashMap<>();
         for (Rule element : this) {
             RuleSpecification<?> spec = element.getRuleSpecification();
             EventFilter<?> filter = element.getFilter() != null ? element.getFilter() : spec.createEmptyFilter();
-            map.put(spec, filter);
+            map.computeIfAbsent(spec, sp -> new HashSet<>()).add(filter);
         }
         return map;
     }

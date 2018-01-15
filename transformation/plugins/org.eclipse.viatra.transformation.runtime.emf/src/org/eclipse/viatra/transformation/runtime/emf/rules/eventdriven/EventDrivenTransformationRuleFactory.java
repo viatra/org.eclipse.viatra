@@ -11,6 +11,8 @@
 package org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
@@ -24,15 +26,12 @@ import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 public class EventDrivenTransformationRuleFactory {
 
     public class EventDrivenTransformationRuleBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
         private String name = "";
         private IQuerySpecification<Matcher> precondition;
-        private Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = HashMultimap.create();
+        private Map<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = new HashMap<>();
         private EventFilter<? super Match> filter;
         private boolean isUpdateJobAdded = false;
         private boolean isDeleteJobAdded = false;
@@ -68,7 +67,7 @@ public class EventDrivenTransformationRuleFactory {
             default:
                 throw new IllegalArgumentException("Unsupported activation state for action");
             }
-            
+            Preconditions.checkArgument(!stateActions.containsKey(state), "Duplicate action for state %s", state.toString());
             stateActions.put(state, action);
             return this;
         }
@@ -107,7 +106,7 @@ public class EventDrivenTransformationRuleFactory {
     
     private <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRule<Match, Matcher> createRule(
             String name, IQuerySpecification<Matcher> precondition,
-            Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+            Map<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
             EventFilter<? super Match> filter) {
         return new EventDrivenTransformationRule<Match, Matcher>(name, precondition, stateActions, lifeCycle, filter);
     }
