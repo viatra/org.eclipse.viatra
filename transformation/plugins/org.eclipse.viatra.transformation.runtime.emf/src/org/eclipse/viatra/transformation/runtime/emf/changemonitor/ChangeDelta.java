@@ -10,40 +10,34 @@
  */
 package org.eclipse.viatra.transformation.runtime.emf.changemonitor;
 
-import com.google.common.collect.Multimap;
-
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
 /**
- * Class representing the changes in a given instance model since the last checkpoint. It contains three MultiMaps which
- * contain the changed elements sorted by the detecting QuerySpecifications.
+ * Class representing the changes in a given instance model since the last checkpoint. It is implemented as a set of
+ * {@link QueryResultChangeDelta} instances that store deltas grouped by {@link IQuerySpecification} instances.
  * 
  * @author Lunk Péter
  */
 public class ChangeDelta {
-    public final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appeared;
+    private Map<IQuerySpecification<?>, QueryResultChangeDelta> map;
 
-    public final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updated;
-
-    public final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappeared;
-
-    public ChangeDelta(
-            final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appeared,
-            final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updated,
-            final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappeared) {
+    /**
+     * @since 2.0
+     */
+    public ChangeDelta(Map<IQuerySpecification<?>, QueryResultChangeDelta> delta) {
         super();
-        this.appeared = appeared;
-        this.updated = updated;
-        this.disappeared = disappeared;
+        this.map = delta;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(appeared, updated, disappeared);
+        return Objects.hash(map);
 
     }
 
@@ -57,24 +51,75 @@ public class ChangeDelta {
             return false;
         ChangeDelta other = (ChangeDelta) obj;
 
-        return Objects.equals(appeared, other.appeared) && Objects.equals(updated, other.updated)
-                && Objects.equals(disappeared, other.disappeared);
+        return Objects.equals(map, other.map);
     }
 
     @Override
     public String toString() {
-        return String.format("CHANGE: appeared = %s; updated = %s; disappeared = %s", appeared, updated, disappeared);
+        return map.entrySet().stream().map(
+                entry -> String.format("CHANGE: query: %s; changes %s", entry.getKey(), entry.getValue().toString()))
+                .collect(Collectors.joining(", "));
+                
     }
 
-    public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> getAppeared() {
-        return this.appeared;
+    /**
+     * Return a list of query specifications that have corresponding changes.
+     * @since 2.0
+     */
+    public Set<IQuerySpecification<?>> getChangedQuerySpecifications() {
+        return map.keySet().stream().filter(spec -> map.containsKey(spec) && map.get(spec).hasChanges())
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Returns a set of matches added in the selected change delta for the given query specification
+     * 
+     * @since 2.0
+     */
+    public Set<? extends IPatternMatch> getAppeared(IQuerySpecification<?> specification) {
+        return this.map.get(specification).getAppeared();
+    }
+    
+    /**
+     * Returns a set of matches added to the selected change delta for all query specifications
+     * @since 2.0
+     */
+    public Set<? extends IPatternMatch> getAllAppeared() {
+        return this.map.values().stream().flatMap(delta -> delta.getAppeared().stream()).collect(Collectors.toSet());
     }
 
-    public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> getUpdated() {
-        return this.updated;
+    /**
+     * Returns a set of matches updated in the selected change delta for the given query specification
+     * 
+     * @since 2.0
+     */
+    public Set<? extends IPatternMatch> getUpdated(IQuerySpecification<?> specification) {
+        return this.map.get(specification).getUpdated();
     }
 
-    public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> getDisappeared() {
-        return this.disappeared;
+    /**
+     * Returns a set of matches updated in the selected change delta for all query specifications
+     * @since 2.0
+     */
+    public Set<? extends IPatternMatch> getAllUpdated() {
+        return this.map.values().stream().flatMap(delta -> delta.getUpdated().stream()).collect(Collectors.toSet());
     }
+    
+    /**
+     * Returns a set of matches disappeared in the selected change delta for the given query specification
+     * 
+     * @since 2.0
+     */
+    public Set<? extends IPatternMatch> getDisappeared(IQuerySpecification<?> specification) {
+        return this.map.get(specification).getDisappeared();
+    }
+    
+    /**
+     * Returns a set of matches disappeared in the selected change delta for all query specifications
+     * @since 2.0
+     */
+    public Set<? extends IPatternMatch> getAllDisappeared() {
+        return this.map.values().stream().flatMap(delta -> delta.getDisappeared().stream()).collect(Collectors.toSet());
+    }
+    
 }

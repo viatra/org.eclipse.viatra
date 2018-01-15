@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.changemonitor;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,10 +35,6 @@ import org.eclipse.viatra.transformation.evm.specific.job.EnableJob;
 import org.eclipse.viatra.transformation.evm.specific.job.StatelessJob;
 import org.eclipse.viatra.transformation.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-
 /**
  * Class responsible for monitoring changes in a specified model. It uses {@link IQuerySpecification} objects or EMV
  * Rules defined by the user to achieve this.
@@ -56,12 +51,8 @@ import com.google.common.collect.Sets;
  */
 @SuppressWarnings("unchecked")
 public class ChangeMonitor extends IChangeMonitor {
-    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appearBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updateBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappearBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appearAccumulator;
-    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updateAccumulator;
-    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappearAccumulator;
+    private Map<IQuerySpecification<?>, QueryResultChangeDelta> changesBetweenCheckpoints;
+    private Map<IQuerySpecification<?>, QueryResultChangeDelta> accumulator;
     private Set<RuleSpecification<IPatternMatch>> rules;
     private Map<IQuerySpecification<?>, RuleSpecification<IPatternMatch>> specs;
     private Set<Job<?>> allJobs;
@@ -78,12 +69,8 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     public ChangeMonitor(ViatraQueryEngine engine) {
         super(engine);
-        this.appearBetweenCheckpoints = ArrayListMultimap.create();
-        this.updateBetweenCheckpoints = ArrayListMultimap.create();
-        this.disappearBetweenCheckpoints = ArrayListMultimap.create();
-        this.appearAccumulator = ArrayListMultimap.create();
-        this.updateAccumulator = ArrayListMultimap.create();
-        this.disappearAccumulator = ArrayListMultimap.create();
+        this.changesBetweenCheckpoints = new HashMap<>();
+        this.accumulator = new HashMap<>();
 
         allJobs = new HashSet<Job<?>>();
         rules = new HashSet<RuleSpecification<IPatternMatch>>();
@@ -170,14 +157,10 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     @Override
     public ChangeDelta createCheckpoint() {
-        appearBetweenCheckpoints = appearAccumulator;
-        updateBetweenCheckpoints = updateAccumulator;
-        disappearBetweenCheckpoints = disappearAccumulator;
-        appearAccumulator = ArrayListMultimap.create();
-        updateAccumulator = ArrayListMultimap.create();
-        disappearAccumulator = ArrayListMultimap.create();
+        changesBetweenCheckpoints = accumulator;
+        accumulator = new HashMap<>();
 
-        return new ChangeDelta(appearBetweenCheckpoints, updateBetweenCheckpoints, disappearBetweenCheckpoints);
+        return new ChangeDelta(changesBetweenCheckpoints);
     }
 
     /**
@@ -186,7 +169,7 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     @Override
     public ChangeDelta getDeltaSinceLastCheckpoint() {
-        return new ChangeDelta(appearAccumulator, updateAccumulator, disappearAccumulator);
+        return new ChangeDelta(accumulator);
     }
 
     /**
@@ -249,7 +232,7 @@ public class ChangeMonitor extends IChangeMonitor {
         };
 
         // Create Jobs
-        Set<Job<IPatternMatch>> jobs = Sets.newHashSet();
+        Set<Job<IPatternMatch>> jobs = new HashSet<>();
         Job<IPatternMatch> appear = new StatelessJob<IPatternMatch>(CRUDActivationStateEnum.CREATED,
                 appearProcessor);
         Job<IPatternMatch> disappear = new StatelessJob<IPatternMatch>(CRUDActivationStateEnum.DELETED,
@@ -270,10 +253,7 @@ public class ChangeMonitor extends IChangeMonitor {
      * @param match
      */
     protected void registerUpdate(IPatternMatch match) {
-        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        Collection<IPatternMatch> updateMatches = updateAccumulator
-                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);        	
-        updateMatches.add(match);
+        accumulator.computeIfAbsent(match.specification(), QueryResultChangeDelta::new).getUpdated().add(match);
         
     }
 
@@ -283,10 +263,7 @@ public class ChangeMonitor extends IChangeMonitor {
      * @param match
      */
     protected void registerAppear(IPatternMatch match) {
-        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        Collection<IPatternMatch> appearMatches = appearAccumulator
-                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
-        appearMatches.add(match);
+        accumulator.computeIfAbsent(match.specification(), QueryResultChangeDelta::new).getAppeared().add(match);
     }
 
     /**
@@ -295,14 +272,12 @@ public class ChangeMonitor extends IChangeMonitor {
      * @param match
      */
     protected void registerDisappear(IPatternMatch match) {
-        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        
-        Collection<IPatternMatch> appearMatches = appearAccumulator
-                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
-        Collection<IPatternMatch> updateMatches = updateAccumulator
-                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
-        Collection<IPatternMatch> disappearMatches = disappearAccumulator
-                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
+        Set<IPatternMatch> appearMatches = accumulator
+                .computeIfAbsent(match.specification(), QueryResultChangeDelta::new).getAppeared();
+        Set<IPatternMatch> updateMatches = accumulator
+                .computeIfAbsent(match.specification(), QueryResultChangeDelta::new).getUpdated();
+        Set<IPatternMatch> disappearMatches = accumulator
+                .computeIfAbsent(match.specification(), QueryResultChangeDelta::new).getDisappeared();
         
         if (updateMatches.contains(match))
             updateMatches.remove(match);
@@ -312,9 +287,6 @@ public class ChangeMonitor extends IChangeMonitor {
         }else{
             disappearMatches.add(match);
         }
-        
-            
-        
-        
     }
+    
 }
