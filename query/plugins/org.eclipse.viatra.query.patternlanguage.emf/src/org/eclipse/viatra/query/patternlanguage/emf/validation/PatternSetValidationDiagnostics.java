@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.validation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -17,7 +18,6 @@ import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Stateless validator for a set of patterns. Used to validate patterns for editor-less environments.
@@ -26,8 +26,8 @@ import com.google.common.collect.Sets;
  * 
  */
 public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
-    Set<Issue> foundErrors = Sets.newHashSet();
-    Set<Issue> foundWarnings = Sets.newHashSet();
+    Set<Issue> foundErrors = new HashSet<>();
+    Set<Issue> foundWarnings = new HashSet<>();
 
     /**
      * A set of issue codes to ignore in this validator.   
@@ -72,11 +72,11 @@ public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
     }
 
     public Set<Issue> getAllErrors() {
-        return Sets.newHashSet(foundErrors);
+        return new HashSet<>(foundErrors);
     }
 
     public Set<Issue> getAllWarnings() {
-        return Sets.newHashSet(foundWarnings);
+        return new HashSet<>(foundWarnings);
     }
 
     public void logErrors(Logger logger) {

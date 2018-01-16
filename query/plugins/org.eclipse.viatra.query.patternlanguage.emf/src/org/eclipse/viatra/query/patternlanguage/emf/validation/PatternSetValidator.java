@@ -11,21 +11,18 @@
 package org.eclipse.viatra.query.patternlanguage.emf.validation;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
-import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
-import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
-import org.eclipse.xtext.diagnostics.Severity;
-import org.eclipse.xtext.validation.IDiagnosticConverter;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
@@ -37,26 +34,11 @@ import com.google.inject.Inject;
 public class PatternSetValidator {
 
     @Inject
-    private Diagnostician diagnostician;
-    @Inject
-    private IDiagnosticConverter converter;
+    private IResourceValidator validator;
 
     public PatternSetValidationDiagnostics validate(Resource resource) {
-        BasicDiagnostic chain = new BasicDiagnostic();
         PatternSetValidationDiagnostics collectedIssues = new PatternSetValidationDiagnostics();
-
-        for (Diagnostic diag : resource.getErrors()) {
-            if (diag instanceof AbstractDiagnostic) {
-                AbstractDiagnostic abstractDiagnostic = (AbstractDiagnostic) diag;
-                converter.convertResourceDiagnostic(abstractDiagnostic, Severity.ERROR, collectedIssues);
-            }
-        }
-        for (EObject obj : resource.getContents()) {
-            diagnostician.validate(obj, chain);
-        }
-        for (org.eclipse.emf.common.util.Diagnostic diag : chain.getChildren()) {
-            converter.convertValidatorDiagnostic(diag, collectedIssues);
-        }
+        validator.validate(resource, CheckMode.ALL, null).stream().forEach(collectedIssues::accept);
         return collectedIssues;
     }
 
@@ -79,7 +61,6 @@ public class PatternSetValidator {
     public PatternSetValidationDiagnostics validateTransitively(Pattern pattern) {
         Set<Pattern> patternsToValidate = PatternLanguageHelper.getReferencedPatternsTransitive(pattern);
         return validate(patternsToValidate);
-
     }
 
     /**
@@ -88,32 +69,18 @@ public class PatternSetValidator {
      * @param patternSet
      */
     public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
-        BasicDiagnostic chain = new BasicDiagnostic();
         PatternSetValidationDiagnostics collectedIssues = new PatternSetValidationDiagnostics();
-        Set<Resource> containerResources = new HashSet<>();
-        for (Pattern pattern : patternSet) {
-            Resource resource = pattern.eResource();
-            if (resource != null) {
-                containerResources.add(resource);
-            }
-        }
+        Set<Resource> containerResources = patternSet.stream().map(EObject::eResource).filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        
         for (Resource resource : containerResources) {
-            for (Diagnostic diag : resource.getErrors()) {
-                if (diag instanceof AbstractDiagnostic) {
-                    AbstractDiagnostic abstractDiagnostic = (AbstractDiagnostic) diag;
-                    URI uri = abstractDiagnostic.getUriToProblem();
-                    EObject obj = resource.getEObject(uri.fragment());
-                    if (EcoreUtil.isAncestor(patternSet, obj)) {
-                        converter.convertResourceDiagnostic(abstractDiagnostic, Severity.ERROR, collectedIssues);
-                    }
-                }
-            }
-        }
-        for (Pattern pattern : patternSet) {
-            diagnostician.validate(pattern, chain);
-        }
-        for (org.eclipse.emf.common.util.Diagnostic diag : chain.getChildren()) {
-            converter.convertValidatorDiagnostic(diag, collectedIssues);
+            validator.validate(resource, CheckMode.ALL, null).stream().filter(
+                    issue -> {
+                        URI uri = issue.getUriToProblem();
+                        return Objects.equals(resource.getURI(), uri.trimFragment())
+                                && EcoreUtil.isAncestor(patternSet, resource.getEObject(uri.fragment()));
+                    })
+                    .forEach(collectedIssues::accept);
         }
         return collectedIssues;
     }
