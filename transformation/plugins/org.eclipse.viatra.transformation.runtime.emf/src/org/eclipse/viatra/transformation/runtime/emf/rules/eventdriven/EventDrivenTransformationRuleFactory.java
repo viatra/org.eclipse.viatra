@@ -11,7 +11,7 @@
 package org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,7 +31,7 @@ public class EventDrivenTransformationRuleFactory {
     public class EventDrivenTransformationRuleBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
         private String name = "";
         private IQuerySpecification<Matcher> precondition;
-        private Map<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = new HashMap<>();
+        private Map<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = new EnumMap<>(CRUDActivationStateEnum.class);
         private EventFilter<? super Match> filter;
         private boolean isUpdateJobAdded = false;
         private boolean isDeleteJobAdded = false;

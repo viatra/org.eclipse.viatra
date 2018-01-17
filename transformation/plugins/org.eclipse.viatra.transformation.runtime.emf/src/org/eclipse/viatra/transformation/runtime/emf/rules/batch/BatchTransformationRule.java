@@ -43,7 +43,7 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
      * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation
      * again.
      */
-    public final static ActivationLifeCycle STATELESS_RULE_LIFECYCLE = getStatelessRuleLifecycle();
+    public static final ActivationLifeCycle STATELESS_RULE_LIFECYCLE = getStatelessRuleLifecycle();
             
     private static ActivationLifeCycle getStatelessRuleLifecycle() {
         ActivationLifeCycle cycle = ActivationLifeCycle.create(CRUDActivationStateEnum.INACTIVE);
@@ -60,7 +60,7 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
      * Lifecycle for a rule that stores the list of fired activations; thus effectively forbids re-firing the same
      * activation.
      */
-    public final static ActivationLifeCycle STATEFUL_RULE_LIFECYCLE = Lifecycles.getDefault(false, false);
+    public static final ActivationLifeCycle STATEFUL_RULE_LIFECYCLE = Lifecycles.getDefault(false, false);
 
     protected String ruleName;
 

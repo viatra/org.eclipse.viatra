@@ -39,7 +39,7 @@ public final class DefaultActivationNotificationListener implements IActivationN
             agenda.getLogger().debug(
                 String.format("%s -- %s --> %s on %s", oldState, event, activation.getState(), activation));
         }
-        agenda.getActivations().remove(oldState, activation);
+        agenda.getActivations().get(oldState).remove(activation);
         final ActivationState state = activation.getState();
         if(!state.isInactive()) {
             agenda.getActivations().computeIfAbsent(state, st -> new HashSet<>()).add(activation);

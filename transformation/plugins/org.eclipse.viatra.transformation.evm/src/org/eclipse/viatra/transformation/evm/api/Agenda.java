@@ -81,7 +81,7 @@ public class Agenda {
     }
 
     public Collection<Activation<?>> getAllActivations() {
-        return getActivations().values().stream().flatMap(i -> i.stream()).collect(Collectors.toSet());
+        return getActivations().values().stream().flatMap(Set::stream).collect(Collectors.toSet());
     }
 
     public IActivationNotificationListener getActivationListener() {

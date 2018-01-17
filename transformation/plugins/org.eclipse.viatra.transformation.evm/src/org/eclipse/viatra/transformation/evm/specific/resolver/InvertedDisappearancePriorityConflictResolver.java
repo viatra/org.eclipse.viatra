@@ -61,7 +61,7 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
             Preconditions.checkArgument(activation != null, "Activation cannot be null!");
             Integer rulePriority = getRulePriority(activation);
             // it is possible that the activation has changed state after it was added previously
-            priorityBuckets.remove((-1) * rulePriority, activation);
+            super.removeActivation(activation, (-1) * rulePriority);
             return super.addActivation(activation);
         }
         
@@ -70,8 +70,8 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
             Preconditions.checkArgument(activation != null, "Activation cannot be null!");
             Integer rulePriority = getRulePriority(activation);
             // it is possible that the activation changed state before firing and is added to multiple buckets
-            boolean removedFromInverted = priorityBuckets.remove((-1) * rulePriority, activation);
-            boolean removed = super.removeActivation(activation);
+            boolean removedFromInverted = super.removeActivation(activation, (-1) * rulePriority);
+            boolean removed = super.removeActivation(activation, rulePriority);
             return removed || removedFromInverted;
         }
 

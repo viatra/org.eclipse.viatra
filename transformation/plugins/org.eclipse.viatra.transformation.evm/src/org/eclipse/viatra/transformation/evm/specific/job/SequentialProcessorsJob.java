@@ -32,14 +32,7 @@ public class SequentialProcessorsJob<Match extends IPatternMatch> extends Statel
      */
     public SequentialProcessorsJob(CRUDActivationStateEnum cRUDActivationStateEnum,
             final List<? extends IMatchProcessor<Match>> matchProcessors) {
-        super(cRUDActivationStateEnum, new IMatchProcessor<Match>() {
-            @Override
-            public void process(Match match) {
-                for (IMatchProcessor<Match> matchProcessor : matchProcessors) {
-                    matchProcessor.process(match);
-                }
-            }
-        });
+        super(cRUDActivationStateEnum, match -> matchProcessors.forEach(processor -> processor.process(match)));
     }
 
 }

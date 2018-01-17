@@ -152,7 +152,12 @@ public class ActivationLifeCycle {
         Objects.requireNonNull(transition);
         
         findConflictingTransition(transition).filter(conflicting -> Objects.equals(transition, conflicting))
-                .ifPresent(transitions::remove);
+                .ifPresent(t -> {
+                    transitions.remove(t);
+                    if (transitionMap.containsKey(t.from)) {
+                        transitionMap.get(t.from).remove(t.event);
+                    }
+                });
         if (transitions.contains(transition)) {
             return false;
         } else {

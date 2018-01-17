@@ -64,12 +64,7 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
      * @return the prepared attribute monitor listener; must not be null
      */
     protected IAttributeMonitorListener<Match> prepareAttributeMonitorListener() {
-        return new IAttributeMonitorListener<Match>(){
-            @Override
-            public void notifyUpdate(Match atom) {
-                notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.UPDATED, atom));
-            }
-        };
+        return atom -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.UPDATED, atom));
     }
     
     /**
@@ -77,28 +72,13 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
      * @return the prepared update listener; must not be null
      */
     protected IMatchUpdateListener<Match> prepareMatchUpdateListener(){
-        IMatchProcessor<Match> matchAppearProcessor = new IMatchProcessor<Match>() {
-            @Override
-            public void process(Match match) {
-                notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.CREATED, match));
-            }
-        };
-        IMatchProcessor<Match> matchDisppearProcessor = new IMatchProcessor<Match>() {
-            @Override
-            public void process(Match match) {
-                notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.DELETED, match));
-            }
-        };
+        IMatchProcessor<Match> matchAppearProcessor = match -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.CREATED, match));
+        IMatchProcessor<Match> matchDisppearProcessor = match -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.DELETED, match));
         return new MatchUpdateAdapter<Match>(matchAppearProcessor, matchDisppearProcessor);
     }
     
     private void resendEventsForExistingMatches(final EventHandler<Match> handler) {
-        matcher.forEachMatch(new IMatchProcessor<Match>() {
-            @Override
-            public void process(Match match) {
-                handler.handleEvent(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.CREATED, match));
-            }
-        });
+        matcher.forEachMatch(match -> handler.handleEvent(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.CREATED, match)));
     }
 
     @Override

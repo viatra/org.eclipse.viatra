@@ -52,7 +52,7 @@ public class Activation<EventAtom> {
     }
     
     /**
-     * An activatio is enabled, if the there are jobs corresponding
+     * An activation is enabled, if the there are jobs corresponding
      *  to the state of the activation.
      * 
      * @return true, if there are jobs for the current state

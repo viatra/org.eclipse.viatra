@@ -95,8 +95,8 @@ public class ChangeMonitor extends IChangeMonitor {
         if (started) {
             executionSchema.addRule(rule);
         }
-        for (ActivationState state : jobs.keySet()) {
-            for (Job<?> job : jobs.get(state)) {
+        for (Set<Job<IPatternMatch>> jobEntries : jobs.values()) {
+            for (Job<?> job : jobEntries) {
                 if (started) {
                     EnableJob<?> enableJob = (EnableJob<?>) job;
                     enableJob.setEnabled(true);
@@ -209,27 +209,9 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     protected Set<Job<IPatternMatch>> createDefaultProcessorJobs() {
         // Define default MatchProcessors
-        IMatchProcessor<IPatternMatch> appearProcessor = new IMatchProcessor<IPatternMatch>() {
-            @Override
-            public void process(IPatternMatch match) {
-
-                registerAppear(match);
-            }
-        };
-        IMatchProcessor<IPatternMatch> disappearProcessor = new IMatchProcessor<IPatternMatch>() {
-            @Override
-            public void process(IPatternMatch match) {
-
-                registerDisappear(match);
-
-            }
-        };
-        IMatchProcessor<IPatternMatch> updateProcessor = new IMatchProcessor<IPatternMatch>() {
-            @Override
-            public void process(IPatternMatch match) {
-                registerUpdate(match);
-            }
-        };
+        IMatchProcessor<IPatternMatch> appearProcessor = this::registerAppear;
+        IMatchProcessor<IPatternMatch> disappearProcessor = this::registerDisappear;
+        IMatchProcessor<IPatternMatch> updateProcessor = this::registerUpdate;
 
         // Create Jobs
         Set<Job<IPatternMatch>> jobs = new HashSet<>();

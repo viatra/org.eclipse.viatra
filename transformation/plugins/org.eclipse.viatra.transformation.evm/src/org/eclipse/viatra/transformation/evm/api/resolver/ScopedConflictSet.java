@@ -43,7 +43,7 @@ public class ScopedConflictSet implements ConflictSet{
         this.ruleBase = ruleBase;
         this.changeableConflictSet = conflictResolver.createConflictSet();
         this.specificationFilters = Collections.unmodifiableMap(specificationFilters.entrySet().stream()
-                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> new HashSet<>(entry.getValue()))));
+                .collect(Collectors.toMap(Entry::getKey, entry -> new HashSet<>(entry.getValue()))));
         this.listener = new ConflictSetUpdater(changeableConflictSet);
         for (final Entry<RuleSpecification<?>, Set<EventFilter<?>>> entry : specificationFilters.entrySet()) {
             final RuleSpecification<?> ruleSpecification = entry.getKey();

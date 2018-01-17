@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -23,6 +24,7 @@ import org.eclipse.viatra.transformation.evm.notification.ActivationNotification
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationProvider;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -123,7 +125,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      */
     protected void doFire(final Activation<EventAtom> activation, final ActivationState activationState, final EventAtom atom, final Context context) {
         if (activations.contains(activationState, atom)) {
-            Collection<Job<EventAtom>> jobs = specification.getJobs(activationState);
+            Collection<Job<EventAtom>> jobs = Optional.fromNullable(specification.getJobs(activationState)).or(Collections.emptyList());
             activationStateTransition(activation, EventType.RuleEngineEventType.FIRE);
             for (Job<? super EventAtom> job : jobs) {
                 try {
