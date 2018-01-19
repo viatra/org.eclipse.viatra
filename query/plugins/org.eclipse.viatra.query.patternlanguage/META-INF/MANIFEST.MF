@@ -40,3 +40,4 @@ Export-Package: org.eclipse.viatra.query.patternlanguage;uses:="com.google.injec
  org.eclipse.viatra.query.patternlanguage.validation,
  org.eclipse.viatra.query.patternlanguage.validation.whitelist
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.PatternLanguagePlugin
+Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage

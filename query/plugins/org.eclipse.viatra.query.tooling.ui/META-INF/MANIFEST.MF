@@ -55,4 +55,5 @@ Export-Package: org.eclipse.viatra.query.tooling.ui,
    com.google.common.collect",
  org.eclipse.viatra.query.tooling.ui.util
 Import-Package: org.apache.log4j;version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.query.tooling.ui
 

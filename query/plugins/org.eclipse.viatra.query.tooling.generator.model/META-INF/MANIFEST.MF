@@ -33,3 +33,4 @@ Export-Package: org.eclipse.viatra.query.tooling.generator.model;
  org.eclipse.viatra.query.tooling.generator.model.validation
 Import-Package: org.apache.log4j
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.tooling.generator.model

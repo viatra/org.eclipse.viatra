@@ -21,3 +21,4 @@ Import-Package: com.google.inject,
   com.google.inject.multibindings,
   org.apache.log4j;version="1.2.0"
 Bundle-Vendor: The Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.runtime.cps.tests

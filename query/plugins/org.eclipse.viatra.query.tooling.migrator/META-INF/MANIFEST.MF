@@ -20,4 +20,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.tooling.migrator
 

@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.emf.edit;bundle-version="2.9.0";resolution:=optional
  org.eclipse.viatra.transformation.runtime.debug;bundle-version="[0.20.0,0.21.0)"
 Export-Package: org.eclipse.viatra.transformation.tracer
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.viatra.transformation.runtime.tracer

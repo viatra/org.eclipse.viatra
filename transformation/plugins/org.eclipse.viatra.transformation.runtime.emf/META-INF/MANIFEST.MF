@@ -19,3 +19,4 @@ Export-Package: org.eclipse.viatra.transformation.runtime.emf.changemonitor,
  org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven
 Import-Package: 
  org.apache.log4j;version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.transformation.runtime.emf

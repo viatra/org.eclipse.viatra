@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.viatra.integration.uml;bundle-version="1.0.0",
  org.mockito;bundle-version="1.9.5",
  org.hamcrest;bundle-version="1.1.0"
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.integration.uml.test

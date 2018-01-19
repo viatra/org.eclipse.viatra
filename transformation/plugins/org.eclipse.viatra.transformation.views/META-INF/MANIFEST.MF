@@ -22,3 +22,4 @@ Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;bundle-version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.transformation.views

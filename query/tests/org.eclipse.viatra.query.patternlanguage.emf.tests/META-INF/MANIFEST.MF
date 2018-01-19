@@ -29,3 +29,4 @@ Export-Package: org.eclipse.viatra.query.patternlanguage.emf.tests,
  org.eclipse.viatra.query.patternlanguage.emf.tests.util
 Import-Package: org.apache.log4j;version="1.2.15",
  com.google.inject.multibindings
+Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.emf.tests

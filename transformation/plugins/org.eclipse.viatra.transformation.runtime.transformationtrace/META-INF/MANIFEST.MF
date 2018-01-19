@@ -12,3 +12,4 @@ Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.11.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eclipse.viatra.transformation.runtime.transformationtrace

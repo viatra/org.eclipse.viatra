@@ -17,3 +17,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs
 Bundle-Activator: org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin
 Bundle-ClassPath: .
+Automatic-Module-Name: org.eclipse.viatra.addon.viewers.tooling.ui

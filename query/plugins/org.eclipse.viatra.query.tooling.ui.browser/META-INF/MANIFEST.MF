@@ -30,4 +30,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-Activator: org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.query.tooling.ui.browser
 

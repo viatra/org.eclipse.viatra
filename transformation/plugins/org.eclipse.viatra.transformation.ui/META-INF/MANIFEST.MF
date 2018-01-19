@@ -13,4 +13,5 @@ Require-Bundle: org.eclipse.jdt.ui,
  org.eclipse.ui.ide,
  org.eclipse.jdt.core
 Export-Package: org.eclipse.viatra.transformation.ui.util
+Automatic-Module-Name: org.eclipse.viatra.transformation.ui
 

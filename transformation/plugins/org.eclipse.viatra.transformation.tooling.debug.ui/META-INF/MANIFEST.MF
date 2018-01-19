@@ -22,3 +22,4 @@ Require-Bundle: org.eclipse.xtend.lib;bundle-version="[2.12.0,3.0.0)",
 Bundle-Activator: org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.transformation.tooling.debug.ui

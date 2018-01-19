@@ -28,3 +28,4 @@ Export-Package: org.eclipse.viatra.query.tooling.core.generator;
  org.eclipse.viatra.query.tooling.core.targetplatform
 Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.tooling.core

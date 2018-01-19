@@ -13,3 +13,4 @@ Import-Package: com.google.common.base;version="15.0.0",
  com.google.common.collect;version="15.0.0",
  org.apache.log4j;version="1.2.15"
 Eclipse-ExtensibleAPI: true
+Automatic-Module-Name: org.eclipse.viatra.addon.querybasedfeatures.runtime

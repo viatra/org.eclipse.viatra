@@ -25,3 +25,4 @@ Export-Package: org.eclipse.viatra.query.tooling.generator.model.ui.contentassis
  org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr.internal
 Bundle-Activator: org.eclipse.viatra.query.tooling.generator.model.ui.internal.GeneratorModelActivator
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.tooling.generator.model.ui

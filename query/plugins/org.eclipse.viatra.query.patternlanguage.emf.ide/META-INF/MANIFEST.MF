@@ -15,3 +15,4 @@ Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ide,
  org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr,
  org.eclipse.viatra.query.patternlanguage.emf.ide.contentassist.antlr.internal,
  org.eclipse.viatra.query.patternlanguage.emf.ide.highlight
+Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.emf.ide

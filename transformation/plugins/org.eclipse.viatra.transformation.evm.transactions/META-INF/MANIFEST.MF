@@ -12,3 +12,4 @@ Export-Package: org.eclipse.viatra.transformation.evm.transactions.specific,
  org.eclipse.viatra.transformation.evm.transactions.update
 Bundle-Vendor: Eclipse VIATRA Project
 Import-Package: org.apache.log4j;version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.transformation.evm.transactions

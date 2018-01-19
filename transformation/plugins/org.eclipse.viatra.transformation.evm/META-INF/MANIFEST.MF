@@ -27,3 +27,4 @@ Bundle-Vendor: Eclipse VIATRA Project
 Import-Package: com.google.common.base;version="15.0.0",
  com.google.common.collect;version="15.0.0",
  org.apache.log4j;version="1.2.15"
+Automatic-Module-Name: org.eclipse.viatra.transformation.evm

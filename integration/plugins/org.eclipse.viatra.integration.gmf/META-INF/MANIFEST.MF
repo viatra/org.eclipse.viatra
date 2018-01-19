@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions;bundle-version="3.4.300"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.viatra.integration.gmf

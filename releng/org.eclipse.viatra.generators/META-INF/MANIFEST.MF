@@ -23,3 +23,4 @@ Require-Bundle: org.eclipse.emf.mwe2.launch,
  org.eclipse.viatra.query.rcptt.queries;resolution:=optional
 Import-Package: org.apache.log4j
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.generators

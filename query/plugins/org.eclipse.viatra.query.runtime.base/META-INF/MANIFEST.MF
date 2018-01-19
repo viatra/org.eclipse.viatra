@@ -20,3 +20,4 @@ Export-Package: org.eclipse.viatra.query.runtime.base.api,
  org.eclipse.viatra.query.runtime.base.comprehension,
  org.eclipse.viatra.query.runtime.base.exception
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.runtime.base

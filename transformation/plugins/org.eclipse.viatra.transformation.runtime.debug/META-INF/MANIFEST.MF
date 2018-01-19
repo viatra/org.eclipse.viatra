@@ -17,3 +17,4 @@ Export-Package: org.eclipse.viatra.transformation.debug.activationcoder,
  org.eclipse.viatra.transformation.debug.configuration,
  org.eclipse.viatra.transformation.debug.model.breakpoint,
  org.eclipse.viatra.transformation.debug.model.transformationstate
+Automatic-Module-Name: org.eclipse.viatra.transformation.runtime.debug

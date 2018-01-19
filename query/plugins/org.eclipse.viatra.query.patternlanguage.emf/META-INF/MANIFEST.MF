@@ -39,4 +39,5 @@ Export-Package: org.eclipse.viatra.query.patternlanguage.emf;uses:="com.google.i
  org.eclipse.viatra.query.patternlanguage.emf.util,
  org.eclipse.viatra.query.patternlanguage.emf.validation;uses:="org.eclipse.viatra.query.patternlanguage.validation"
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguagePlugin
+Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.emf
 

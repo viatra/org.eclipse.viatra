@@ -42,3 +42,4 @@ Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui;
   uses:="com.google.common.base",
  org.eclipse.viatra.query.patternlanguage.emf.ui.util
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin
+Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.emf.ui

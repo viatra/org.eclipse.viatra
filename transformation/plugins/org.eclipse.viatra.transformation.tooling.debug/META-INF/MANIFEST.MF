@@ -24,3 +24,4 @@ Export-Package: org.eclipse.viatra.transformation.debug.activator,
  org.eclipse.viatra.transformation.debug.model,
  org.eclipse.viatra.transformation.debug.model.breakpoint,
  org.eclipse.viatra.transformation.debug.util
+Automatic-Module-Name: org.eclipse.viatra.transformation.tooling.debug

@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.emf.ecore,
   org.eclipse.viatra.examples.cps.model;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.apache.log4j
+Automatic-Module-Name: org.eclipse.viatra.query.rcptt.queries
