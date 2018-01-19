@@ -26,9 +26,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.ViatraBasePlugin;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 /**
  * @author Abel Hegedus
  * 
@@ -39,7 +36,6 @@ public class WellbehavingDerivedFeatureRegistry {
     private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = Collections.newSetFromMap(new WeakHashMap<EStructuralFeature, Boolean>());
     private static Collection<EClass> contributedWellbehavingDerivedClasses = Collections.newSetFromMap(new WeakHashMap<EClass, Boolean>());
     private static Collection<EPackage> contributedWellbehavingDerivedPackages = Collections.newSetFromMap(new WeakHashMap<EPackage, Boolean>());
-    private static Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
 
     private WellbehavingDerivedFeatureRegistry() {
     }
@@ -111,16 +107,11 @@ public class WellbehavingDerivedFeatureRegistry {
                         registerWellbehavingDerivedPackage(pckg);
                     }
                 }
-                contributingPluginOfFeatureMap.put(featureIdBuilder.toString(), contributorName);
             }
         } catch (Exception e) {
             final Logger logger = Logger.getLogger(WellbehavingDerivedFeatureRegistry.class);
             logger.error("Well-behaving feature registration failed", e);
         }
-    }
-
-    public static Multimap<String, String> getContributingPluginOfFeatureMap() {
-        return contributingPluginOfFeatureMap;
     }
 
     /**

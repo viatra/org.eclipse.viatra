@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import com.google.common.collect.SortedMultiset;
-import com.google.common.collect.TreeMultiset;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 
 /**
  * Incrementally computes the minimum or maximum of java.lang.Comparable values, using the default comparison
@@ -22,17 +22,20 @@ import com.google.common.collect.TreeMultiset;
  * @since 1.4
  */
 public class ExtremumOperator<T extends Comparable<T>>
-        implements IMultisetAggregationOperator<T, SortedMultiset<T>, T> {
+        implements IMultisetAggregationOperator<T, SortedMap<T, Integer>, T> {
     
     public enum Extreme {
         MIN, MAX;
         
-        public <T> T pickFrom(SortedMultiset<T> nonEmptyMultiSet) {
+        /**
+         * @since 2.0
+         */
+        public <T> T pickFrom(SortedMap<T, Integer> nonEmptyMultiSet) {
             switch(this) {
             case MIN: 
-                return nonEmptyMultiSet.firstEntry().getElement(); 
+                return nonEmptyMultiSet.firstKey(); 
             case MAX:
-                return nonEmptyMultiSet.lastEntry().getElement();
+                return nonEmptyMultiSet.lastKey();
             default:
                 return null;
             }
@@ -68,28 +71,40 @@ public class ExtremumOperator<T extends Comparable<T>>
         return extreme.name().toLowerCase();
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public SortedMultiset<T> createNeutral() {
-        return TreeMultiset.create();
+    public SortedMap<T, Integer> createNeutral() {
+        return new TreeMap<>();
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public boolean isNeutral(SortedMultiset<T> result) {
+    public boolean isNeutral(SortedMap<T, Integer> result) {
         return result.isEmpty();
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public SortedMultiset<T> update(SortedMultiset<T> oldResult, T updateValue, boolean isInsertion) {
-        if (isInsertion) {
-            oldResult.add(updateValue);
-        } else {
-            oldResult.remove(updateValue);
-        }
+    public SortedMap<T, Integer> update(SortedMap<T, Integer> oldResult, T updateValue, boolean isInsertion) {
+        oldResult.compute(updateValue, (value, c) -> {
+            int count = (c == null) ? 0 : c;
+            int result = (isInsertion) ? count+1 : count-1;  
+            return (result == 0) ? null : result;
+        });
         return oldResult;
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public T getAggregate(SortedMultiset<T> result) {
+    public T getAggregate(SortedMap<T, Integer> result) {
         return result.isEmpty() ? null : 
             extreme.pickFrom(result);
     }

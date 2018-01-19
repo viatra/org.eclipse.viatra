@@ -23,9 +23,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
-
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 
 // TODO IBiDirectionalGraphDataSource
 public class EMFDataSource implements IGraphDataSource<EObject> {
@@ -34,7 +33,7 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
     private Set<EReference> references;
     private Set<EClass> classes;
     private NavigationHelper navigationHelper;
-    private Multiset<EObject> allEObjects; // contains objects even if only appearing as sources or targets
+    private IMultiset<EObject> allEObjects; // contains objects even if only appearing as sources or targets
 
     /**
      * @param navigationHelper
@@ -51,7 +50,7 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
 
     @Override
     public Set<EObject> getAllNodes() {
-        return getAllEObjects().elementSet();
+        return getAllEObjects().keySet();
     }
 
     @Override
@@ -113,33 +112,31 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
     }
 
     private void nodeAdditionInternal(EObject node) {
-        boolean news = !getAllEObjects().contains(node);
-        allEObjects.add(node);
-        if (news)
+        if (allEObjects.addOne(node))
             for (IGraphObserver<EObject> o : observers) {
                 o.nodeInserted(node);
             }
     }
 
     private void nodeRemovalInternal(EObject node) {
-        getAllEObjects().remove(node);
-        boolean news = !allEObjects.contains(node);
-        if (news)
+        if (getAllEObjects().removeOne(node))
             for (IGraphObserver<EObject> o : observers) {
                 o.nodeDeleted(node);
             }
     }
 
-    protected Multiset<EObject> getAllEObjects() {
+    protected IMultiset<EObject> getAllEObjects() {
         if (allEObjects == null) {
-            allEObjects = HashMultiset.create();
+            allEObjects = CollectionsFactory.createMultiset();
             for (EClass clazz : classes) {
-                allEObjects.addAll(navigationHelper.getAllInstances(clazz));
+                for (EObject obj : navigationHelper.getAllInstances(clazz)) {                    
+                    allEObjects.addOne(obj);
+                }
             }
             for (EReference ref : references) {
                 navigationHelper.processAllFeatureInstances(ref, (source, target) -> {
-                    allEObjects.add(source);
-                    allEObjects.add((EObject) target);
+                    allEObjects.addOne(source);
+                    allEObjects.addOne((EObject) target);
                 });
             }
         }
