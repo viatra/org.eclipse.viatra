@@ -1219,9 +1219,8 @@
           name="CPS metamodels"
           activeRepositoryList="">
         <requirement
-            name="org.eclipse.viatra.examples.cps.metamodel.feature"
-            namespace="org.eclipse.update.feature"
-            filter="(org.eclipse.update.install.features=true)"/>
+            name="org.eclipse.viatra.examples.cps.metamodel.feature.feature.group"
+            filter=""/>
         <repositoryList
             name="">
           <repository
