@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Default implementation based on Java Collections.
@@ -122,5 +123,11 @@ public class JavaBagMemory<T> extends HashMap<T, Integer> implements IMultiset<T
     public String toString() {
         return "TM" + super.toString();
     }
-
+    /**
+     * @since 2.0
+     */
+    @Override
+    public Set<T> distinctValues() {
+        return super.keySet();
+    }
 }

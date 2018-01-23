@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.retevis.views;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -67,14 +66,14 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider {
                     text.append(formatSizeWithBuckets(memory.getTotalSize(), memory.getKeysetSize()));
                 } else if (node instanceof IterableIndexer) {
                     IterableIndexer iterableIndexer = (IterableIndexer) node;
-                    Collection<Tuple> signatures = iterableIndexer.getSignatures();
+                    Iterable<Tuple> signatures = iterableIndexer.getSignatures();
+                    int bucketCount = iterableIndexer.getBucketCount();
                     boolean identityIndexer = false;
                     if (recipe instanceof IndexerRecipe) {
                         Mask mask = ((IndexerRecipe) recipe).getMask();
                         identityIndexer = (mask.getSourceArity() == 
                                 new HashSet<Integer>(mask.getSourceIndices()).size());
                     }
-                    int bucketCount = signatures.size();
                     int allTuples = 0;
                     if (identityIndexer) {
                         allTuples = bucketCount;

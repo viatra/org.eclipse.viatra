@@ -188,7 +188,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
                 for (Entry<Object, IMultiset<EObject>> entry : valueToHolderMap.entrySet()) {
                     Object value = entry.getKey();
                     IMultiset<EObject> holders = entry.getValue();
-                    for (EObject holder : holders.keySet()) {
+                    for (EObject holder : holders.distinctValues()) {
                         int count = holders.getCount(holder);
                         
                         IMultiset<Object> valuesOfHolder = holderToValueMap.computeIfAbsent(holder,
@@ -209,7 +209,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             if (valueToHolderMap != null) {
                 for (Entry<Object, IMultiset<EObject>> entry : valueToHolderMap.entrySet()) {
                     Object value = entry.getKey();
-                    for (EObject eObject : entry.getValue().keySet()) {
+                    for (EObject eObject : entry.getValue().distinctValues()) {
                         processor.process(eObject, value);
                     }
                 }
@@ -228,7 +228,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             IMultiset<EObject> holdersMultiset = getValueToHolderMap().get(value);
             if (holdersMultiset == null) 
                 return Collections.emptySet();
-            else return holdersMultiset.keySet();
+            else return holdersMultiset.distinctValues();
         }
 
 
@@ -236,7 +236,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             IMultiset<Object> valuesMultiset = getHolderToValueMap().get(holder);
             if (valuesMultiset == null) 
                 return Collections.emptySet();
-            else return valuesMultiset.keySet();
+            else return valuesMultiset.distinctValues();
         }
 
         public boolean isInstance(EObject source, Object target) {
@@ -300,7 +300,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
 
     
     public Set<Object> getFeatureKeysPointingTo(Object target) {
-        return getValueToFeatureMap().get(target).keySet();
+        return getValueToFeatureMap().get(target).distinctValues();
     }
     
     private Map<Object, IMultiset<Object>> getValueToFeatureMap() {
@@ -375,7 +375,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
     // START ********* DataTypeMap *********
     public Set<Object> getDistinctDataTypeInstances(final Object keyType) {
         IMultiset<Object> values = dataTypeMap.get(keyType);
-        return values == null ? Collections.emptySet() : values.keySet();
+        return values == null ? Collections.emptySet() : values.distinctValues();
     }
 
     public void removeDataTypeMap(final Object keyType) {

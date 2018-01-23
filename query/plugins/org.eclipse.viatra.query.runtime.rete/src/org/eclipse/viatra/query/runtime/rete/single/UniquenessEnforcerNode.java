@@ -337,7 +337,7 @@ public class UniquenessEnforcerNode extends StandardNode
 
     public MemoryNullIndexer getNullIndexer() {
         if (memoryNullIndexer == null) {
-            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory.keySet(), this, this, specializedListeners);
+            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory.distinctValues(), this, this, specializedListeners);
             communicationTracker.registerDependency(this, memoryNullIndexer);
         }
         return memoryNullIndexer;
@@ -345,7 +345,7 @@ public class UniquenessEnforcerNode extends StandardNode
 
     public MemoryIdentityIndexer getIdentityIndexer() {
         if (memoryIdentityIndexer == null) {
-            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory.keySet(), this, this, specializedListeners);
+            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory.distinctValues(), this, this, specializedListeners);
             communicationTracker.registerDependency(this, memoryIdentityIndexer);
         }
         return memoryIdentityIndexer;

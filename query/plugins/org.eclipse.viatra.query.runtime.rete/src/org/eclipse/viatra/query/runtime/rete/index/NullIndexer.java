@@ -72,6 +72,11 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
     public Iterator<Tuple> iterator() {
         return getTuples().iterator();
     }
+    
+    @Override
+    public int getBucketCount() {
+        return getTuples().isEmpty() ? 0 : 1;
+    }
 
     @Override
     public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement) {

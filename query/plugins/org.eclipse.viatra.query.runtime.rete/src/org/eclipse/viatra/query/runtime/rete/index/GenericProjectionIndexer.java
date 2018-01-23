@@ -49,10 +49,19 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     }
 
     @Override
-    public Collection<Tuple> getSignatures() {
+    public Iterable<Tuple> getSignatures() {
         return memory.getSignatures();
     }
 
+    /**
+     * @since 2.0
+     */
+    @Override
+    public int getBucketCount() {
+        return memory.getKeysetSize();
+    }
+    
+    
     @Override
     public Receiver getActiveNode() {
         return this;

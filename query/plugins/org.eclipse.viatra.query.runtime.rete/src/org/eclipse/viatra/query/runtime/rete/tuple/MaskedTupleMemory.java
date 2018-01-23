@@ -12,38 +12,40 @@
 package org.eclipse.viatra.query.runtime.rete.tuple;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MarkedSet;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 
 /**
  * @author Gabor Bergmann
  * 
- *         Indexes a collection of Tuples according to their masks.
+ *         Indexes a collection of Tuples by their signature (i.e. footprint, projection) obtained according to a mask.
  *         Must belong to an owner {@link Node}.
+ *         
+ *         <p> TODO experiment with memory-saving alternatives, 
+ *          e.g. if the mask has width 1, 
+ *          {@link #signatureToTuples} can be keyed by the unary values instead of tuples.
+ *         
+ *         
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     /**
      * Maps a signature tuple to the bucket of tuples with the given signature.
-     * <p> Invariant: Value is either <ul>
-     *  <li>a {@link Tuple} if there is only that one tuple in the bucket, or </li>
-     *  <li>a {@link MarkedSet} if there are 2 or more tuples in the in the bucket.</li>
-     * </ul>
-     * If the signature has no associated tuples in the memory, the map must not contain the signature as key.
+     * @since 2.0
      */
-    protected Map<Tuple, Object> matchings;
+    protected IMultiLookup<Tuple, Tuple> signatureToTuples;
 
     /**
-     * The mask used to index the matchings
+     * The mask by which the tuples are indexed.
      */
     protected TupleMask mask;
 
@@ -62,187 +64,129 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     public MaskedTupleMemory(TupleMask mask, Node owner) {
         this.mask = mask;
         this.owner = owner;
-        matchings = CollectionsFactory.createMap();
+        signatureToTuples = CollectionsFactory.<Tuple, Tuple>createMultiLookup(
+                Object.class, BucketType.SETS, Object.class);
     }
 
     /**
-     * Adds a pattern occurence to the memory
+     * Adds a tuple occurrence to the memory
      * 
-     * @param ps
+     * @param tuple new tuple added to the memory
      * 
-     * @return true if new signature encountered
+     * @return true if new signature encountered (according to the mask)
      */
-    public boolean add(Tuple ps) {
-        Tuple signature = mask.transform(ps);
-        return add(ps, signature);
+    public boolean add(Tuple tuple) {
+        Tuple signature = mask.transform(tuple);
+        return add(tuple, signature);
     }
 
     /**
-     * Adds a pattern occurence to the memory, with given signature
+     * Adds a tuple occurrence to the memory, with given signature
      * 
-     * @param ps
-     * @param signature
+     * @param tuple new tuple added to the memory
+     * @param signature precomputed footprint of the tuple according to the mask
      * 
-     * @return true if new signature encountered
+     * @return true if new signature encountered (according to the mask)
      */
     @SuppressWarnings("unchecked")
-    public boolean add(Tuple ps, Tuple signature) {
-        Object old = matchings.get(signature);
-        boolean change = (old == null);
-
-        if (change) { // key was not present
-            matchings.put(signature, ps);
-        } else { // key was already present
-            MarkedSet<Tuple> coll;
-            if (old instanceof MarkedSet) { // ... as set
-                coll = (MarkedSet<Tuple>) old;
-            } else { // ... as singleton
-                coll = CollectionsFactory.createMarkedSet();
-                coll.add((Tuple) old);
-                matchings.put(signature, coll);
-            }
-            if (!coll.add(ps)) {
-                throw new IllegalStateException(
-                        String.format(
-                                "Duplicate insertion of tuple %s into node %s", 
-                                ps, owner));
-            }
+    public boolean add(Tuple tuple, Tuple signature) {
+        try {
+            return signatureToTuples.addPair(signature, tuple) == ChangeGranularity.KEY;
+        } catch (IllegalStateException ex) { // ignore worthless internal exception details
+            throw new IllegalStateException(
+                    String.format(
+                            "Duplicate insertion of tuple %s into node %s", 
+                            tuple, owner));
         }
-
-        return change;
+    
     }
 
     /**
-     * Removes a pattern occurence from the memory
+     * Removes a tuple occurrence from the memory
      * 
-     * @return true if this was the the last occurence of the signature
+     * @param tuple old tuple removed from the memory
+     * 
+     * @return true if this was the the last occurrence of the signature (according to the mask)
      */
-    public boolean remove(Tuple ps) {
-        Tuple signature = mask.transform(ps);
-        return remove(ps, signature);
+    public boolean remove(Tuple tuple) {
+        Tuple signature = mask.transform(tuple);
+        return remove(tuple, signature);
     }
 
     /**
-     * Removes a pattern occurence from the memory, with given signature
+     * Removes a tuple occurrence from the memory, with given signature
      * 
-     * @return true if this was the the last occurence of the signature
+     * @param tuple old tuple removed from the memory
+     * @param signature precomputed footprint of the tuple according to the mask
+     * 
+     * @return true if this was the the last occurrence of the signature (according to the mask)
      */
-    public boolean remove(Tuple ps, Tuple signature) {
-        Object old = matchings.get(signature);
-        if (old instanceof MarkedSet<?>) { // collection
-            @SuppressWarnings("unchecked")
-            MarkedSet<Tuple> coll = (MarkedSet<Tuple>) old;
-            if (coll.remove(ps)) {
-                if (1 == coll.size()) { // only one remains
-                    Tuple remainingSingleton = coll.iterator().next();
-                    matchings.put(signature, remainingSingleton);
-                }
-                return false; // at least one remains anyway
-            }
-        } else if (ps.equals(old)) { // matching singleton
-            matchings.remove(signature);
-            return true;
+    public boolean remove(Tuple tuple, Tuple signature) {
+        try {
+            return signatureToTuples.removePair(signature, tuple) == ChangeGranularity.KEY;
+        } catch (IllegalStateException ex) { // ignore worthless internal exception details
+            throw new IllegalStateException(
+                    String.format(
+                            "Duplicate deletion of tuple %s from node %s", 
+                            tuple, owner));
         }
-        throw new IllegalStateException(
-                String.format(
-                        "Duplicate deletion of tuple %s from node %s", 
-                        ps, owner));
     }
 
     /**
-     * Retrieves entries that have the specified signature
+     * Retrieves tuples that have the specified signature
      * 
-     * @return collection of matchings found
+     * @return collection of tuples found, null if none
      */
     @SuppressWarnings("unchecked")
     public Collection<Tuple> get(Tuple signature) {
-        Object bucket = matchings.get(signature);
-        if (bucket instanceof MarkedSet<?>) {
-            return (MarkedSet<Tuple>) bucket;
-        } else { // singleton or empty
-            if (bucket == null) 
-                return null;
-            return Collections.singleton((Tuple)bucket);
-        }
+        IMemoryView<Tuple> bucket = signatureToTuples.lookup(signature);
+        return bucket == null ? null : bucket.distinctValues();
     }
 
     public void clear() {
-        matchings.clear();
+        signatureToTuples.clear();
     }
 
     /**
-     * Retrieves a read-only collection of exactly those signatures for which at least one tuple is stored
-     * 
-     * @return collection of significant signatures
+     * Retrieves a read-only view of exactly those signatures for which at least one tuple is stored
+     * @since 2.0
      */
-    public Collection<Tuple> getSignatures() {
-        return matchings.keySet();
+    public Iterable<Tuple> getSignatures() {
+        return signatureToTuples.distinctKeys();
     }
 
+    /**
+     * Iterates over distinct tuples stored in the memory, regardless of their signatures.
+     */
     public Iterator<Tuple> iterator() {
-        return new MaskedPatternIterator(this);
+        return signatureToTuples.distinctValues().iterator();
     }
 
-    
-    private static final Iterator<Tuple> EMPTY_ITERATOR = Collections.<Tuple>emptySet().iterator(); 
-    class MaskedPatternIterator implements Iterator<Tuple> {
-        Iterator<Object> signatureGroup;
-        Iterator<Tuple> element;
-        
-        public MaskedPatternIterator(MaskedTupleMemory memory) {
-            signatureGroup = memory.matchings.values().iterator();
-            element = EMPTY_ITERATOR;
-        }
-
-        public boolean hasNext() {
-            return (element.hasNext() || signatureGroup.hasNext());
-        }
-
-        @SuppressWarnings("unchecked")
-        public Tuple next() throws NoSuchElementException {
-            if (element.hasNext())
-                return element.next();
-            else if (signatureGroup.hasNext()) {
-                Object bucket = signatureGroup.next();
-                if (bucket instanceof MarkedSet<?>) {
-                    element = ((MarkedSet<Tuple>) bucket).iterator();
-                    return element.next();
-                } else {
-                    element = EMPTY_ITERATOR;
-                    return (Tuple) bucket;
-                }
-            } else
-                throw new NoSuchElementException();
-        }
-
-        /**
-         * Not implemented
-         */
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-    }
 
     @Override
     public String toString() {
-        return "MTM<" + mask + "|" + matchings + ">";
+        return "MTM<" + mask + "|" + signatureToTuples + ">";
     }
 
+    /**
+     * @return the total number of distinct tuples stored.
+     * 
+     * <p> This is currently not cached but computed on demand. 
+     * It is therefore not efficient, and shall only be used for debug / profiling purposes.
+     */
     public int getTotalSize() {
         int i = 0;
-        for (Object v : matchings.values()) {
-            if (v instanceof MarkedSet<?>) {
-                i+=((MarkedSet<?>) v).size();
-            } else {
-                i++;
-            }
+        for (Tuple key : signatureToTuples.distinctKeys()) {
+            i += signatureToTuples.lookup(key).size();
         }
         return i;
     }
     
+    /**
+     * @return the number of distinct signatures of all stored tuples.
+     */
     public int getKeysetSize() {
-        return matchings.keySet().size();
+        return signatureToTuples.countKeys();
     }
 
     /**

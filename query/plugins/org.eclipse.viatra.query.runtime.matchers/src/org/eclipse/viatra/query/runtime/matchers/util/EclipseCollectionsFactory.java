@@ -19,9 +19,8 @@ import java.util.Set;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.collections.impl.factory.Sets;
-import org.eclipse.collections.impl.set.mutable.UnifiedSet;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.ICollectionsFramework;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MarkedSet;
 
 /**
  * @author Gabor Bergmann
@@ -68,14 +67,63 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
         // Lists.mutable.empty
 
     }
-
+    
     @Override
-    public <E> MarkedSet<E> createMarkedSet() {
-        return new EclipseCollectionsMarkedSet<E>();
+    public <K, V> IMultiLookup<K, V> createMultiLookup(
+            Class<? super K> fromKeys, 
+            BucketType toBuckets,
+            Class<? super V> ofValues) 
+    {
+        boolean longKeys = Long.class.equals(fromKeys);
+        boolean objectKeys = Object.class.equals(fromKeys);
+        if (! (longKeys || objectKeys)) throw new IllegalArgumentException(fromKeys.getName());
+        boolean longValues = Long.class.equals(ofValues);
+        boolean objectValues = Object.class.equals(ofValues);
+        if (! (longValues || objectValues)) throw new IllegalArgumentException(ofValues.getName());
+        
+        if (longKeys) { // K == java.lang.Long
+            if (longValues) { // V == java.lang.Long
+                switch(toBuckets) {
+                case MULTISETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromLongs.ToMultisets.OfLongs();
+                case SETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromLongs.ToSets.OfLongs();
+                default:
+                    throw new IllegalArgumentException(toBuckets.toString());
+                }
+            } else { // objectValues
+                switch(toBuckets) {
+                case MULTISETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromLongs.ToMultisets.OfObjects();
+                case SETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromLongs.ToSets.OfObjects();
+                default:
+                    throw new IllegalArgumentException(toBuckets.toString());
+                }
+            }
+        } else { // objectKeys
+            if (longValues) { // V == java.lang.Long
+                switch(toBuckets) {
+                case MULTISETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToMultisets.OfLongs();
+                case SETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToSets.OfLongs();
+                default:
+                    throw new IllegalArgumentException(toBuckets.toString());
+                }
+            } else { // objectValues
+                switch(toBuckets) {
+                case MULTISETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToMultisets.OfObjects();
+                case SETS:
+                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToSets.OfObjects();
+                default:
+                    throw new IllegalArgumentException(toBuckets.toString());
+                }
+            }
+        }
     }
     
-    private static class EclipseCollectionsMarkedSet<E> extends UnifiedSet<E> implements MarkedSet<E> {
-        
-    }
+
 
 }

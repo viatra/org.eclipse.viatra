@@ -11,8 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.rete.index;
 
-import java.util.Collection;
-
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
@@ -24,7 +22,14 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 public interface IterableIndexer extends Indexer, Iterable<Tuple> {
 
     /**
-     * A collection consisting of exactly those signatures whose tuple group is not empty CONTRACT: do not modify
+     * A view consisting of exactly those signatures whose tuple group is not empty
+     * @since 2.0
      */
-    public Collection<Tuple> getSignatures();
+    public Iterable<Tuple> getSignatures();
+
+    /**
+     * @return the number of signatures whose tuple group is not empty
+     * @since 2.0
+     */
+    public int getBucketCount();
 }

@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.MaskedTuple;
 
+// UNFINISHED, not used yet
 public class TransitiveClosureNodeIndexer extends StandardIndexer implements IterableIndexer {
     private TransitiveClosureNode tcNode;
     private IncSCCAlg<Object> tcAlg;
@@ -83,6 +84,11 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
         return null;
     }
 
+    @Override
+    public int getBucketCount() {
+        throw new UnsupportedOperationException();
+    }
+    
     public Collection<Tuple> getSignatures() {
         return asTupleCollection(tcAlg.getTcRelation());
     }

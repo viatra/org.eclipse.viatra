@@ -50,7 +50,7 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
 
     @Override
     public Set<EObject> getAllNodes() {
-        return getAllEObjects().keySet();
+        return getAllEObjects().distinctValues();
     }
 
     @Override

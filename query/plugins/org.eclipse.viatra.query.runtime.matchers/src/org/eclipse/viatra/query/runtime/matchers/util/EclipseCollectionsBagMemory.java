@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
@@ -54,6 +55,11 @@ public abstract class EclipseCollectionsBagMemory<T> extends ObjectIntHashMap<T>
     @Override
     public String toString() {
         return "TM" + super.toString();
+    }
+    
+    @Override
+    public Set<T> distinctValues() {
+        return super.keySet();
     }
 
 }

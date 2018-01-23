@@ -57,7 +57,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         for (Entry<V, IMultiset<V>> entry : rA.tuplesForward.entrySet()) {
             V source = entry.getKey();
             IMultiset<V> targetBag = entry.getValue();
-            for (V target : targetBag.keySet()) {
+            for (V target : targetBag.distinctValues()) {
                 this.addTuple(source, target, targetBag.getCount(target));
             }
         }
@@ -198,7 +198,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         for (Entry<V, IMultiset<V>> outerEntry : this.tuplesForward.entrySet()) {
             V source = outerEntry.getKey();
             IMultiset<V> targets = outerEntry.getValue();
-            for (V target: targets.keySet()) {
+            for (V target: targets.distinctValues()) {
                 sb.append("{(" + source + "," + target + ")," + targets.getCount(target) + "} ");
             }
         }
@@ -210,7 +210,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         IMultiset<V> tupEnds = tuplesForward.get(source);
         if (tupEnds == null)
             return null;
-        return tupEnds.keySet();
+        return tupEnds.distinctValues();
     }
 
     /**
@@ -225,7 +225,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
             IMultiset<V> tupStarts = tuplesBackward.get(target);
             if (tupStarts == null)
                 return null;
-            return tupStarts.keySet();
+            return tupStarts.distinctValues();
         } else {
             return null;
         }

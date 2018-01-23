@@ -60,6 +60,11 @@ public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
     public Collection<Tuple> getSignatures() {
         return getTuples();
     }
+    
+    @Override
+    public int getBucketCount() {
+        return getTuples().size();
+    }
 
     public Iterator<Tuple> iterator() {
         return getTuples().iterator();

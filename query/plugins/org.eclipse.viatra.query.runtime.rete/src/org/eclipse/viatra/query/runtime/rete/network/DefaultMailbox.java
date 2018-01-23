@@ -72,7 +72,7 @@ public class DefaultMailbox implements Mailbox {
     }
 
     protected Set<Tuple> keySet() {
-        return getActiveQueue().keySet();
+        return getActiveQueue().distinctValues();
     }
 
     @Override

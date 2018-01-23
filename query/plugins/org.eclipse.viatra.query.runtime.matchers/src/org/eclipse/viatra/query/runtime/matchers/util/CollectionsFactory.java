@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.ArrayList;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,17 +69,6 @@ public final class CollectionsFactory
     public static <T> Set<T> emptySet(Object key) {
         return FRAMEWORK.createSet();
     }
-    
-    /**
-     * Instantiates a new empty set. 
-     * The set must be of a special type that is not allowed to be instantiated in any way except by a call to this method.
-     * @see MarkedSet
-     * 
-     * @since 1.7
-     */
-    public static <E> MarkedSet<E> createMarkedSet() {
-        return FRAMEWORK.createMarkedSet();
-    }
 
     /**
      * Instantiates a new empty multiset.
@@ -119,6 +107,34 @@ public final class CollectionsFactory
     }
     
     /**
+     * Instantiates a size-optimized multimap from keys to sets of values.
+     * <p>For a single key, many values can be associated according to the given bucket semantics.
+     * <p>The keys and values are stored as type fromKeys resp. ofValues; 
+     *  currently Object.class and Long.class are supported.
+     * @since 2.0
+     */
+    public static <K, V> IMultiLookup<K, V> createMultiLookup(
+            Class<? super K> fromKeys, BucketType toBuckets, Class<? super V> ofValues) {
+        return FRAMEWORK.createMultiLookup(fromKeys, toBuckets, ofValues);
+    }
+
+    
+   /**
+     * @since 2.0
+     * TODO add delta buckets
+     */
+   public static enum BucketType {
+       /**
+        * A single key-value pair is stored at most once
+        */
+       SETS,
+       /**
+        * Duplicate key-value pairs allowed
+        */
+       MULTISETS
+   }
+   
+    /**
      * The collections framework of the current configuration.
      * @since 1.7
      */
@@ -134,27 +150,17 @@ public final class CollectionsFactory
         public abstract <K,V> Map<K,V> createMap(Map<K,V> initial);
         public abstract <E> Set<E> createSet();
         public abstract <E> Set<E> createSet(Collection<E> initial);
-        public abstract <E> MarkedSet<E> createMarkedSet();
         public abstract <T> IMultiset<T> createMultiset();
         public abstract <T> IDeltaBag<T> createDeltaBag();
         public abstract <O> List<O> createObserverList();
-    }
-    
-    /**
-     * A special set that is not allowed to be instantiated in any way except through {@link CollectionsFactory}.
-     * 
-     * <p> The reason for this marker interface is that instances can represent a set of payloads, 
-     *  and may be put into a heterogeneous collection together with single payload objects. 
-     *  In that scenario, an instanceof check can always distinguish payload objects from marked sets of payload objects, 
-     *  even if the payload objects happen to inherit from {@link Set}.  
-     * 
-     * @noimplement This interface is not intended to be implemented by clients.
-     * @since 1.7
-     */
-    public static interface MarkedSet<E> extends Set<E> {
         
+        /**
+         * @since 2.0
+         */
+        public abstract <K, V> IMultiLookup<K, V> createMultiLookup(
+                Class<? super K> fromKeys, BucketType toBuckets, Class<? super V> ofValues);
     }
-    
+                
     /**
      * Fall-back implementation with Java Collections.
      * @since 1.7
@@ -195,11 +201,11 @@ public final class CollectionsFactory
         public <T> IDeltaBag<T> createDeltaBag() {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        public <E> MarkedSet<E> createMarkedSet() {
-            throw new UnsupportedOperationException();
-        }
         
+        @Override
+        public <K, V> IMultiLookup<K, V> createMultiLookup(Class<? super K> fromKeys, BucketType toBuckets,
+                Class<? super V> ofValues) {
+            throw new UnsupportedOperationException();
+        }        
     }    
 }
