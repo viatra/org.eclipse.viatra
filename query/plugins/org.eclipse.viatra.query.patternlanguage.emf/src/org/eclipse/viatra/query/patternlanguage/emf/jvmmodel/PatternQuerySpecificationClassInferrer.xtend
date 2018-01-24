@@ -17,17 +17,16 @@ import java.util.List
 import java.util.Set
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ExecutionType
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterDirection
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ExecutionType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterDirection
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
@@ -108,7 +107,7 @@ class PatternQuerySpecificationClassInferrer {
             querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, withPatternSpecificMatcher)
             querySpecificationClass.inferExpressions(pattern)
         } catch (IllegalStateException ex) {
-            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+            feedback.reportError(pattern, ex.message, IssueCodes.OTHER_ISSUE, Severity.ERROR,
                 IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
         }
     }
@@ -200,14 +199,14 @@ class PatternQuerySpecificationClassInferrer {
 
         pQueryClass.members += pattern.toConstructor[
             visibility = JvmVisibility::PRIVATE
-            body = '''super(«PVisibility».«CorePatternLanguageHelper.calculatePVisibility(pattern)»);'''
+            body = '''super(«PVisibility».«PatternLanguageHelper.calculatePVisibility(pattern)»);'''
         ]
 
         pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(String)) [
             visibility = JvmVisibility::PUBLIC
             annotations += annotationRef(Override)
             body = '''
-                return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
+                return "«PatternLanguageHelper::getFullyQualifiedName(pattern)»";
             '''
         ]
         pQueryClass.members += pattern.toMethod("getParameterNames", typeRef(List, typeRef(String))) [
@@ -332,7 +331,7 @@ class PatternQuerySpecificationClassInferrer {
         }
 
         def inferExpressions(JvmDeclaredType querySpecificationClass, Pattern pattern) {
-            pattern.bodies.map[CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(it)].flatten.forEach [ ex |
+            pattern.bodies.map[PatternLanguageHelper.getAllTopLevelXBaseExpressions(it)].flatten.forEach [ ex |
                 querySpecificationClass.members += ex.toMethod(expressionMethodName(ex), inferredType(ex)) [
                     it.visibility = JvmVisibility::PRIVATE
                     it.static = true
@@ -367,7 +366,7 @@ class PatternQuerySpecificationClassInferrer {
                 «FOR annotation : pattern.annotations»
                     {
                         «PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
-                        «FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
+                        «FOR attribute : PatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
                             annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);
                         «ENDFOR»
                         addAnnotation(annotation);

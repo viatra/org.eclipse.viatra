@@ -25,12 +25,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.runtime.IExtensions;
 import org.eclipse.viatra.query.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
@@ -187,7 +187,7 @@ public class CleanSupport {
                             context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
                             return;
                         }
-                        final String foundFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+                        final String foundFQN = PatternLanguageHelper.getFullyQualifiedName(pattern);
                         if (!foundFQN.equals(fqn)){
                             // Incorrect old version found, executing full clean
                             context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
@@ -241,7 +241,7 @@ public class CleanSupport {
                 }
             } catch (Exception e) {
                 String msg = String.format("Exception when executing clean for '%s' in fragment '%s'",
-                        CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass()
+                        PatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass()
                                 .getCanonicalName());
                 logger.error(msg, e);
             }

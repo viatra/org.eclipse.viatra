@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.validators;
 
-import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 
 import com.google.inject.Inject;
 
@@ -46,7 +46,7 @@ public abstract class AbstractAnnotationValidator implements IPatternAnnotationA
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         Pattern pattern = (Pattern) annotation.eContainer();
-        ValueReference labelRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "label");
+        ValueReference labelRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "label");
         if (labelRef instanceof StringValue) {
             String value = ((StringValue) labelRef).getValue();
             expressionValidator.validateStringExpression(value, pattern, labelRef, validator);

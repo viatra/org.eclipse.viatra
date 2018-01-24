@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.viatra.query.patternlanguage.annotation">
+         point="org.eclipse.viatra.query.patternlanguage.emf.annotation">
       <annotation
             name="Optional">
       </annotation>
@@ -37,10 +37,14 @@
             genModel="model/typetest.genmodel"/>
    </extension>
    <extension
-         point="org.eclipse.viatra.query.patternlanguage.purewhitelist">
+         point="org.eclipse.viatra.query.patternlanguage.emf.purewhitelist">
       <pure-element
             fully-qualified-name="org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass"
             type="class">
+      </pure-element>
+      <pure-element
+            fully-qualified-name="package.Class.method()"
+            type="method">
       </pure-element>
    </extension>
 

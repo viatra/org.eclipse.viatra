@@ -22,19 +22,19 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
-import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
@@ -72,11 +72,11 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         // 2. first parameter or "source" (if set) is EClassifier -> Source
         Variable source = null;
-        ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "source");
+        ValueReference ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "source");
         if (ref == null) {
             source = pattern.getParameters().get(0);
         } else if (ref instanceof VariableValue) {
-            source = CorePatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
+            source = PatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
             if (pattern.getParameters().get(0).equals(source)) {
                 validator.warning("The 'source' parameter is not needed if it is the first pattern parameter.", ref,
                         PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
@@ -97,7 +97,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         String featureName = null;
         EObject contextForFeature = null;
         EStructuralFeature contextESFForFeature = null;
-        ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+        ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
         if (ref == null) {
             featureName = pattern.getName();
             contextForFeature = pattern;
@@ -158,11 +158,11 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         // 4. second parameter or "target" (if set) is compatible(?) with feature type -> Target
         Variable target = null;
-        ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "target");
+        ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "target");
         if (ref == null) {
             target = pattern.getParameters().get(1);
         } else if (ref instanceof VariableValue) {
-            target = CorePatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
+            target = PatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
             if (pattern.getParameters().get(1).equals(target)) {
                 validator.warning("The 'target' parameter is not needed if it is the second pattern parameter.", ref,
                         PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
@@ -178,7 +178,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         
         // 5. "kind" (if set) is valid enum value
         QueryBasedFeatureKind kind = null;
-        ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "kind");
+        ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "kind");
         if (ref instanceof StringValue) {
             String kindStr = ((StringValue) ref).getValue();
             if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SINGLE_REFERENCE).equals(kindStr)) {
@@ -220,9 +220,9 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                     PATTERN_ISSUE_CODE);
         }
         // 6. keepCache (if set) is correct for the kind
-        ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
+        ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
         if (ref instanceof BoolValue) {
-            boolean keepCache = CorePatternLanguageHelper.getValue(ref, Boolean.class); 
+            boolean keepCache = PatternLanguageHelper.getValue(ref, Boolean.class); 
             if(!keepCache) {
                 if (kind == null) {
                     validator.error("Cacheless behavior only available for single and many kinds.", ref,
@@ -245,12 +245,12 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         URI uri = ePackage.eResource().getURI();
         // only file and platform resource URIs are considered safely writable
         if(!(uri.isFile() || uri.isPlatformResource())) {
-            ValueReference useModelCodeRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
+            ValueReference useModelCodeRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
             boolean useModelCode = false;
             if(useModelCodeRef != null){
-                useModelCode = CorePatternLanguageHelper.getValue(useModelCodeRef, Boolean.class);
+                useModelCode = PatternLanguageHelper.getValue(useModelCodeRef, Boolean.class);
             }
-            String patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+            String patternFQN = PatternLanguageHelper.getFullyQualifiedName(pattern);
             boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);
             
             if(!annotationsOK){
@@ -268,9 +268,9 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
     }
 
     private boolean checkFeatureUniquenessOnQBFAnnotations(Annotation annotation, IIssueCallback validator, Pattern pattern) {
-        Collection<Annotation> qbfAnnotations = CorePatternLanguageHelper.getAnnotationsByName(pattern, "QueryBasedFeature");
+        Collection<Annotation> qbfAnnotations = PatternLanguageHelper.getAnnotationsByName(pattern, "QueryBasedFeature");
         if(qbfAnnotations.size() > 1) {
-            ValueReference feature = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+            ValueReference feature = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
             if(feature == null) {
                 validator.error("Feature must be specified when multiple QueryBasedFeature annotations are used on a single pattern.", annotation,
                         PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
@@ -278,7 +278,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
             } else {
                 String featureName = ((StringValue) feature).getValue();
                 for (Annotation antn : qbfAnnotations) {
-                    ValueReference otherFeature = CorePatternLanguageHelper.getFirstAnnotationParameter(antn, "feature");
+                    ValueReference otherFeature = PatternLanguageHelper.getFirstAnnotationParameter(antn, "feature");
                     if(otherFeature != null) {
                         String otherFeatureName = ((StringValue) otherFeature).getValue();
                         if(featureName.equals(otherFeatureName)) {

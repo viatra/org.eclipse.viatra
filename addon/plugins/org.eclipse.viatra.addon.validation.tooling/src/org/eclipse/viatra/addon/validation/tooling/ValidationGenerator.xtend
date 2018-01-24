@@ -13,23 +13,21 @@ package org.eclipse.viatra.addon.validation.tooling
 
 import com.google.inject.Inject
 import org.eclipse.core.runtime.Path
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.util.Strings
 
-import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
+import static extension org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper.*
 
 class ValidationGenerator implements IGenerationFragment {
 
@@ -67,7 +65,7 @@ class ValidationGenerator implements IGenerationFragment {
         val extensionList = newArrayList(p)
 
         val patternModel = pattern.eContainer as PatternModel;
-        for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
+        for (imp : getPackageImportsIterable(patternModel)) {
             val pack = imp.EPackage;
             val genPackage = vqGenModelProvider.findGenPackage(pattern, pack);
 
@@ -127,7 +125,7 @@ class ValidationGenerator implements IGenerationFragment {
                             }
 
                             val patternModel = pattern.eContainer as PatternModel;
-                            for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
+                            for (imp : getPackageImportsIterable(patternModel)) {
                                 val pack = imp.EPackage;
                                 val genPackage = vqGenModelProvider.findGenPackage(pattern, pack);
 
@@ -162,7 +160,7 @@ class ValidationGenerator implements IGenerationFragment {
     }
 
     def constraintContributionId(Pattern pattern) {
-        return VALIDATIONEXTENSION_PREFIX + CorePatternLanguageHelper::getFullyQualifiedName(pattern)
+        return VALIDATIONEXTENSION_PREFIX + getFullyQualifiedName(pattern)
     }
 
     def menuContributionId(String editorId) {
@@ -170,7 +168,7 @@ class ValidationGenerator implements IGenerationFragment {
     }
 
     def getElementOfConstraintAnnotation(Annotation annotation, String elementName) {
-        val ap = CorePatternLanguageHelper::getFirstAnnotationParameter(annotation, elementName)
+        val ap = getFirstAnnotationParameter(annotation, elementName)
         return switch (ap) {
             StringValue: ap.value
             VariableValue: ap.value.^var

@@ -13,9 +13,9 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.imports
 
 import com.google.inject.Inject
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage$Literals
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage$Literals
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -37,7 +37,7 @@ class PackageDeclarationTest {
     def simplePackage() {
         val model = parseHelper.parse('
             package school
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);
@@ -50,7 +50,7 @@ class PackageDeclarationTest {
     @Test
     def noPackage() {
         val model = parseHelper.parse('
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);
@@ -62,7 +62,7 @@ class PackageDeclarationTest {
     def hierarchicPackage() {
         val model = parseHelper.parse('
             package hu.bme.mit.school;
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);
@@ -77,7 +77,7 @@ class PackageDeclarationTest {
     def capitalizedPackageName() {
                 val model = parseHelper.parse('
             package School
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);

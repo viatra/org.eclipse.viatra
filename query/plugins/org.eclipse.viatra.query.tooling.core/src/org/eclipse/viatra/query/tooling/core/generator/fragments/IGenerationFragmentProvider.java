@@ -12,7 +12,7 @@
 package org.eclipse.viatra.query.tooling.core.generator.fragments;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 
 /**
  * An interface for collecting code generation fragments for specific patterns. The concrete value is injected using the

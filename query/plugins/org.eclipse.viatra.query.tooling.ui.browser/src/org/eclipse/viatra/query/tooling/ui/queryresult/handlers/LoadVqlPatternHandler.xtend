@@ -17,13 +17,13 @@ import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.commands.ExecutionException
 import org.eclipse.ui.IEditorPart
 import org.eclipse.ui.handlers.HandlerUtil
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.ui.editor.XtextEditor
 import org.eclipse.jface.dialogs.MessageDialog
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import java.util.Set
 
 /**
@@ -48,7 +48,7 @@ class LoadVqlPatternHandler extends AbstractHandler {
                     val iterator = state.allContents
                     iterator.forEach[pattern | 
                         if (pattern instanceof Pattern) {
-                            fqns.add(CorePatternLanguageHelper.getFullyQualifiedName(pattern))
+                            fqns.add(PatternLanguageHelper.getFullyQualifiedName(pattern))
                             iterator.prune
                         }
                     ]

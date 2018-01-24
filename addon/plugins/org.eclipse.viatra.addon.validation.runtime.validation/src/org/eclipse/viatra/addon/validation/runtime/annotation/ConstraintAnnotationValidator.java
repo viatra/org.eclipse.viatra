@@ -16,19 +16,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
@@ -69,7 +69,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     }
 
     private void validateSymmetry(Annotation annotation, IIssueCallback validator, Pattern pattern, List<Variable> keyList) {
-        Collection<ValueReference> symmetricLists = CorePatternLanguageHelper.getAnnotationParameters(annotation,
+        Collection<ValueReference> symmetricLists = PatternLanguageHelper.getAnnotationParameters(annotation,
                 "symmetric");
         for (ValueReference symmetry : symmetricLists) {
             List<Variable> symmetryList = Lists.newArrayList();
@@ -100,7 +100,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
 
     private List<Variable> validateKeys(Annotation annotation, IIssueCallback validator, final Pattern pattern) {
         List<Variable> keyList = Lists.newArrayList();
-        ValueReference keyRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "key");
+        ValueReference keyRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "key");
         if (keyRef instanceof ListValue) {
             keyList = computeVariableListFromListValue(validator, pattern, keyRef, INVALID_KEY_PARAMETERS);
         }
@@ -132,7 +132,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
         }
         
         for (StringValue key : stringValueList) {
-            Optional<Variable> parameterByName = CorePatternLanguageHelper.getParameterByName(pattern, key.getValue());
+            Optional<Variable> parameterByName = PatternLanguageHelper.getParameterByName(pattern, key.getValue());
             if (parameterByName.isPresent()) {
                 variables.add(parameterByName.get());
                 validator.warning("Deprecated: remove quotes to use variable reference instead!", key, null, issueCode);
@@ -167,7 +167,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     }
 
     private void validateSeverity(Annotation annotation, IIssueCallback validator) {
-        ValueReference severityRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "severity");
+        ValueReference severityRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "severity");
 
         if (severityRef instanceof StringValue) {
             String value = ((StringValue) severityRef).getValue();
@@ -179,7 +179,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     }
 
     private void validateMessage(Annotation annotation, IIssueCallback validator, Pattern pattern) {
-        ValueReference messageRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "message");
+        ValueReference messageRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "message");
         if (messageRef instanceof StringValue) {
             String value = ((StringValue) messageRef).getValue();
             expressionValidator.validateStringExpression(value, pattern, messageRef, validator);

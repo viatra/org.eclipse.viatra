@@ -11,9 +11,9 @@
 package org.eclipse.viatra.query.patternlanguage.emf.formatting;
 
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
-import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.EMFPatternModelElements;
-import org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess.AnnotationElements;
-import org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess.PatternElements;
+import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.PatternModelElements;
+import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.AnnotationElements;
+import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.PatternElements;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
@@ -27,13 +27,13 @@ public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
     protected void configureFormatting(FormattingConfig c) {
         EMFPatternLanguageGrammarAccess grammar = (EMFPatternLanguageGrammarAccess) getGrammarAccess();
 
-        EMFPatternModelElements patternModelAccess = grammar.getEMFPatternModelAccess();
-        c.setLinewrap(2).after(patternModelAccess.getPackageNameAssignment_1_1());
-        c.setLinewrap(1).after(patternModelAccess.getImportPackagesAssignment_2());
-        c.setLinewrap().before(patternModelAccess.getPatternsAssignment_3());
-        c.setLinewrap(2).before(patternModelAccess.getPatternsAssignment_3());
-        c.setLinewrap(2).between(patternModelAccess.getPatternsAssignment_3(),
-                patternModelAccess.getPatternsAssignment_3());
+        PatternModelElements patternModelAccess = grammar.getPatternModelAccess();
+        c.setLinewrap(2).after(patternModelAccess.getPackageNameAssignment_0_1());
+        c.setLinewrap(1).after(patternModelAccess.getImportPackagesAssignment_1());
+        c.setLinewrap().before(patternModelAccess.getPatternsAssignment_2());
+        c.setLinewrap(2).before(patternModelAccess.getPatternsAssignment_2());
+        c.setLinewrap(2).between(patternModelAccess.getPatternsAssignment_2(),
+                patternModelAccess.getPatternsAssignment_2());
         
         PatternElements patternAccess = grammar.getPatternAccess();
         c.setLinewrap(1).after(patternAccess.getAnnotationsAssignment_0());

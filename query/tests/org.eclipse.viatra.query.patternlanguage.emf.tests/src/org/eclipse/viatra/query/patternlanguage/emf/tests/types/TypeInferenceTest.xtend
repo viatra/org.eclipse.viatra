@@ -14,8 +14,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
@@ -28,12 +28,11 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -76,7 +75,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
         
         val param = model.patterns.get(0).parameters.get(0)
         val type = typeInferrer.getType(param)
@@ -99,8 +98,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param1 = model.patterns.get(0).parameters.get(0)
@@ -131,9 +130,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param1 = model.patterns.get(0).parameters.get(0)
@@ -159,8 +158,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param1 = model.patterns.get(0).parameters.get(0)
@@ -187,10 +186,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param11 = model.patterns.get(0).parameters.get(0)
@@ -220,8 +219,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param1 = model.patterns.get(0).parameters.get(0)
@@ -243,7 +242,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
                 GrandChild2(parameter); 
             }
         ''')
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertError(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
         
     }
     @Test
@@ -274,7 +273,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
             } 
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
         
         val parameter1 = model.patterns.get(0).parameters.get(0)
         val variable1 = model.patterns.get(0).bodies.get(0).variables.get(0)
@@ -344,7 +343,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         assertEquals(classifierToInputKey(ENamedElement), fType)
         
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -376,10 +375,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
         assertEquals(classifierToInputKey(EClassifier), bType)
         
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE),
-            getWarningCode(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::FEATURE_NOT_REPRESENTABLE),
+            getWarningCode(IssueCodes::FEATURE_NOT_REPRESENTABLE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -393,7 +392,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -411,7 +410,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -429,7 +428,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -447,7 +446,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -471,8 +470,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -496,7 +495,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertWarning(EMFIssueCodes::PARAMETER_TYPE_INVALID)
+        tester.validate(model).assertWarning(IssueCodes::PARAMETER_TYPE_INVALID)
     }
     
     @Test
@@ -534,8 +533,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes.VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -558,7 +557,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         tester.validate(model).assertAll(
             //No error as supertype was inferred for the parameter of the call
             //getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -574,7 +573,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -625,8 +624,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::PARAMETER_TYPE_AMBIGUOUS),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::PARAMETER_TYPE_AMBIGUOUS),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -692,8 +691,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::RECURSIVE_PATTERN_CALL),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val param = model.patterns.get(0).parameters.get(0)
@@ -734,8 +733,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
             } 
         ')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -749,7 +748,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
                 EDataType(parameter);
             } 
         ')
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertError(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
         
         val param = model.patterns.get(0).parameters.get(0)
         val type = typeInferrer.getType(param)
@@ -767,7 +766,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
                 EClass(parameter);
             } 
         ')
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertError(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
         
         val param = model.patterns.get(0).parameters.get(0)
         val type = typeInferrer.getType(param)
@@ -785,7 +784,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
                 EClass(parameter);
             } 
         ')
-        tester.validate(model).assertWarning(EMFIssueCodes::PARAMETER_TYPE_INVALID)
+        tester.validate(model).assertWarning(IssueCodes::PARAMETER_TYPE_INVALID)
         
         val param = model.patterns.get(0).parameters.get(0)
         val localVariable = model.patterns.get(0).bodies.get(0).variables.get(0)
@@ -812,8 +811,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
            }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         
         val helperPattern = model.patterns.get(0)
@@ -830,7 +829,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
     @Test
     def mistypedNegativePatternCall() {
         val model = parseHelper.parse('''
-           import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+           import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
            
            pattern helper(v : VariableValue) = {
                VariableValue(v);

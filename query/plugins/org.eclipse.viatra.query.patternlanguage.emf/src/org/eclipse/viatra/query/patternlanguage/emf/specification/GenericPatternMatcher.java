@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.specification;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.runtime.api.GenericMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;

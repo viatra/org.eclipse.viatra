@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.formatting.EMFPatternLanguageFormatter;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
@@ -22,23 +23,23 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.EMFPatternLanguageLi
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.MetamodelProviderService;
+import org.eclipse.viatra.query.patternlanguage.emf.scoping.PatternLanguageResourceDescriptionStrategy;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.ResourceSetMetamodelProviderService;
 import org.eclipse.viatra.query.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.util.ResourceDiagnosticFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfigProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
+import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
-import org.eclipse.viatra.query.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
-import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
-import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.xtext.formatting.IFormatter;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -183,5 +184,12 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     @Override
     public Class<? extends IFormatter> bindIFormatter() {
         return EMFPatternLanguageFormatter.class;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public Class<? extends PatternAnnotationProvider> bindPatternAnnotationProvider() {
+        return PatternAnnotationProvider.class;
     }
 }

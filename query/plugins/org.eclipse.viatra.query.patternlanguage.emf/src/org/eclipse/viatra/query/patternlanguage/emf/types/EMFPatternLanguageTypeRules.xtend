@@ -11,12 +11,12 @@
 package org.eclipse.viatra.query.patternlanguage.emf.types
 
 import com.google.inject.Inject
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue
-import org.eclipse.viatra.query.patternlanguage.typing.PatternLanguageTypeRules
-import org.eclipse.viatra.query.patternlanguage.typing.TypeInformation
-import org.eclipse.viatra.query.patternlanguage.typing.judgements.TypeJudgement
-import org.eclipse.viatra.query.patternlanguage.typing.BottomTypeKey
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue
+import org.eclipse.viatra.query.patternlanguage.emf.types.PatternLanguageTypeRules
+import org.eclipse.viatra.query.patternlanguage.emf.types.TypeInformation
+import org.eclipse.viatra.query.patternlanguage.emf.types.judgements.TypeJudgement
+import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey
 
 /**
  * @author Zoltan Ujhelyi
@@ -26,6 +26,9 @@ class EMFPatternLanguageTypeRules extends PatternLanguageTypeRules {
    
    @Inject EMFTypeSystem typeSystem
    
+   /**
+    * @since 2.0
+    */
    def dispatch void inferTypes(EClassifierConstraint constraint, TypeInformation information) {
         val type = if (typeSystem.isValidType(constraint.type)) {
             typeSystem.extractTypeDescriptor(constraint.type)
@@ -35,6 +38,9 @@ class EMFPatternLanguageTypeRules extends PatternLanguageTypeRules {
         information.provideType(new TypeJudgement(constraint.^var, type))
     }
    
+   /**
+    * @since 2.0
+    */
    def dispatch void inferTypes(EnumValue reference, TypeInformation information) {
        val type = if (reference.enumeration === null) {
            // A previous resolution error will prevent type inference to work - it will be reported elsewhere

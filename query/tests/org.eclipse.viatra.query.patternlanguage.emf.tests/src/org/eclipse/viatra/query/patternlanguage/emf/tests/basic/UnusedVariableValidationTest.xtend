@@ -15,8 +15,7 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -24,7 +23,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
@@ -51,34 +50,34 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testSymbolicVariableNoReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(p) = {
                 Pattern(h);
                 Pattern.name(h, "");
             }'
         )
-        tester.validate(model).assertAll(getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING))
     }
 
     @Test
     def testSymbolicVariableOnePositiveReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(p) = {
                 Pattern(p);
             }'
         )
-        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
 
     @Test
     def testParametersEqualityError() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(p, p2) = {
                 p == p2;
@@ -94,7 +93,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testSymbolicVariableOneNegativeReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(p) = {
                 Pattern(p);
@@ -105,7 +104,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -113,7 +112,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testSymbolicVariableOneReadOnlyReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             pattern helper(p) = {
@@ -128,7 +127,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -136,7 +135,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testSymbolicVariableNoPositiveReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(p) = {
                 Pattern(p);
@@ -151,8 +150,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -160,7 +159,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testSymbolicVariablePositiveReferenceAsParameter() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(p) = {
                 Pattern(p);
@@ -173,8 +172,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
             }'
         )
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -182,7 +181,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testSymbolicVariableAllReferences() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(p) = {
                 Pattern(p);
@@ -197,9 +196,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
             }'
         )
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -207,7 +206,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableOnePositiveReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(c) = {
                 Pattern(c);
@@ -216,8 +215,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -225,7 +224,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableOneNegativeReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(P) = {
                 Pattern(P);
@@ -237,9 +236,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -247,7 +246,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableOneReadOnlyReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             pattern helper(p) = {
@@ -262,9 +261,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -272,7 +271,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableMultiplePositiveReferences() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(c) = {
                 Pattern(c);
@@ -281,8 +280,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
             }'
         )
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -290,7 +289,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableOnePositiveOneNegativeReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(p) = {
                 Pattern(p);
@@ -302,9 +301,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
             }'
         )
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -312,7 +311,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableOnePositiveOneReadOnlyReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             pattern helper(p) = {
@@ -327,16 +326,16 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
             }'
         )
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
     def testMultipleUseOfSingleUseVariables() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(c) = {
                 Pattern(c);
@@ -347,15 +346,15 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE),
             getErrorCode(IssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
     def testReadOnlyReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern testPattern(c) = {
                 Pattern(c);
@@ -365,8 +364,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::LOCAL_VARIABLE_READONLY),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -374,7 +373,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableMultipleNegativeReferences() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern helper(p) = {
                 Pattern(p);
@@ -392,10 +391,10 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -403,7 +402,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableOneNegativeOneReadOnlyReference() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             pattern helper(p) = {
@@ -419,9 +418,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -429,7 +428,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
     def testLocalVariableMultipleReadOnlyReferences() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             pattern helper(p) = {
@@ -446,9 +445,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -492,7 +491,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
+            getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING)
         )
     }
 }

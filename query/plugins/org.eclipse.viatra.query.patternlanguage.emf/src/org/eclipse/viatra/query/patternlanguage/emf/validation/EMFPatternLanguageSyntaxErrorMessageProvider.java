@@ -36,7 +36,7 @@ public class EMFPatternLanguageSyntaxErrorMessageProvider extends SyntaxErrorMes
                             && Character.isJavaIdentifierStart(unexpectedTokenTypeName.replace("'", "").charAt(0))) {
                         return new SyntaxErrorMessage(
                                 "Keywords of the query language are to be prefixed with the ^ character when used as an identifier",
-                                EMFIssueCodes.IDENTIFIER_AS_KEYWORD);
+                                IssueCodes.IDENTIFIER_AS_KEYWORD);
                     } else if (unexpectedTokenTypeName.startsWith(RULE_PREFIX)) {
                         return new SyntaxErrorMessage(String.format(
                                 "Mismatched input: %s '%s' found instead of the expected identifier",

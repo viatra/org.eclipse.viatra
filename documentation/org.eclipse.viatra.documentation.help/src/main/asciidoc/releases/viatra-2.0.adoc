@@ -18,6 +18,19 @@ All code marked as deprecated has been removed from the codebase. Additionally, 
 * Query-by-example has been removed
 * EVM-JDT integration has been removed
 
+
+=== Removal of EMF-independent pattern language project
+
+VIATRA 2.0 removes support for query languages not relying on EMF metamodels but retaining the structure of the VQL language. This feature is not used at all, but increases language maintenance costs significantly. Most users of the VIATRA framework should not be affected at all, but all related API changes are listed below.
+
+ * The projects `org.eclipse.viatra.patternlanguage`, `org.eclipse.viatra.patternlanguage.ui` and `org.eclipse.viatra.patternlanguage.tests` were merged with their EMF-specific counterparts, respectively `org.eclipse.viatra.patternlanguage.emf`, `org.eclipse.viatra.patternlanguage.emf.ui` and `org.eclipse.viatra.patternlanguage.emf.tests`.
+ * The EMF models representing the ASTs have been merged into a simple EMF model, and moved to a new package:
+   * The metamodel is available with the nsURI of `http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage`
+   * All generated classes are available from the package `org.eclipse.viatra.query.patternlanguage.emf.vql`
+   * The generated class structure is the same as previous versions.
+ * The extensions `org.eclipse.viatra.patternlanguage.annotations` and `org.eclipse.viatra.patternlanguage.whitelist` was moved into the patternlanguage.emf project, thus it's IDs were updated to `org.eclipse.viatra.patternlanguage.emf.annotations` and `org.eclipse.viatra.patternlanguage.emf.whitelist`, respectively.
+ * The classes `CorePatternLanguageHelper` and `EMFPatternLanguageHelper` were merged into a shared `PatternLanguageHelper` class.
+
 === Reduction of Guava uses
 
 There were a few cases, where Guava types such as Functions or Predicates were visible in the API. In VIATRA 2.0, the trivial method calls were removed (to be handled via direct method references), while the remaining ones were replaced by the alternatives built-in to the Java 8 standard library. The following classes and methods were affected:

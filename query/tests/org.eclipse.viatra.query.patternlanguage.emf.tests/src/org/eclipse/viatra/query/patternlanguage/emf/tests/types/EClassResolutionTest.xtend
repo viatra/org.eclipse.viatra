@@ -19,12 +19,11 @@ import com.google.inject.Inject
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Test
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import static org.junit.Assert.*
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.emf.ecore.EcorePackage
 
@@ -40,7 +39,7 @@ class EClassResolutionTest {
     def eClassResolutionSuccess() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);
@@ -74,7 +73,7 @@ class EClassResolutionTest {
     def eClassResolutionFailed() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 UndefinedType(Name);
@@ -83,7 +82,7 @@ class EClassResolutionTest {
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
         val type = constraint.type as ClassType
-        type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
+        type.assertError(PatternLanguagePackage$Literals::CLASS_TYPE, 
             Diagnostic::LINKING_DIAGNOSTIC, "UndefinedType")		
     }
     
@@ -98,7 +97,7 @@ class EClassResolutionTest {
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
         val type = constraint.type as ClassType
-        type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
+        type.assertError(PatternLanguagePackage$Literals::CLASS_TYPE, 
             Diagnostic::LINKING_DIAGNOSTIC, "Pattern")		
     }
 }

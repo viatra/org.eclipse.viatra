@@ -14,7 +14,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests;
 import java.util.Collection;
 
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.xtext.junit4.AbstractXtextTests;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.XtextRunner;
@@ -28,12 +28,12 @@ import com.google.inject.Inject;
 public abstract class AbstractEMFPatternLanguageTest extends AbstractXtextTests {
 
     static final ImmutableSet<String> defaultPackages = ImmutableSet
-            .of("http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage");
+            .of("http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage");
     
     @Inject
     EValidator.Registry validationRegistry;
     @Inject
-    EMFPatternLanguagePackage languagePackage;
+    PatternLanguagePackage languagePackage;
 
     public String addImports(String content, Collection<String> packages) {
         StringBuilder sb = new StringBuilder();

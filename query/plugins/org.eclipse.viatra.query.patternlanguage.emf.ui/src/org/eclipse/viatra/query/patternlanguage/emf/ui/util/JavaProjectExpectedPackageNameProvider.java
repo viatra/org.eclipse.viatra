@@ -21,8 +21,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
 import org.eclipse.xtext.util.Pair;
 

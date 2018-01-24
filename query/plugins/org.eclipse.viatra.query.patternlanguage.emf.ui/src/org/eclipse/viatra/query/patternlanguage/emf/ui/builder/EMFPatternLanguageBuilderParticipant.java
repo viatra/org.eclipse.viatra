@@ -25,17 +25,16 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig;
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
@@ -172,7 +171,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             EObject obj = it.next();
             if (obj instanceof Pattern) {
                 Pattern pattern = (Pattern) obj;
-                boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
+                boolean isPublic = !PatternLanguageHelper.isPrivate(pattern);
                 if (isPublic) {
                     executeGeneratorFragments(context.getBuiltProject(), pattern);
                     ensureSupport.exportPackage(project, util.getPackageName(pattern));
@@ -197,7 +196,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             EObject obj = it.next();
             if (obj instanceof PatternModel) {
                 PatternModel patternModel = (PatternModel) obj;
-                for (PackageImport packageImport : EMFPatternLanguageHelper.getPackageImportsIterable(patternModel)) {
+                for (PackageImport packageImport : PatternLanguageHelper.getPackageImportsIterable(patternModel)) {
                     GenPackage genPackage = genmodelProvider.findGenPackage(packageImport, packageImport.getEPackage());
                     if (genPackage != null) {
                         String modelPluginID = genPackage.getGenModel().getModelPluginID();
@@ -225,7 +224,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 executeGeneratorFragment(fragment, modelProject, pattern);
             } catch (Exception e) {
                 String msg = String.format("Exception when executing generation for '%s' in fragment '%s'",
-                        CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass()
+                        PatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass()
                                 .getCanonicalName());
                 logger.error(msg, e);
             }

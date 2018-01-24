@@ -13,11 +13,11 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.resolution
 
 import com.google.inject.Inject
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositionConstraint
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -26,7 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -40,7 +40,7 @@ class VariableResolutionTest {
     def parameterResolution() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);
@@ -57,7 +57,7 @@ class VariableResolutionTest {
     def singleUseResolution() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern.parameters(Name,_parameter);
@@ -74,7 +74,7 @@ class VariableResolutionTest {
     def anonymVariablesResolution() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern helper(A,B,C) = {
                 Pattern(A);
                 Pattern(B);
@@ -96,7 +96,7 @@ class VariableResolutionTest {
     def parameterResolutionFailed() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name2);
@@ -114,7 +114,7 @@ class VariableResolutionTest {
     def constraintVariableResolution() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name2);

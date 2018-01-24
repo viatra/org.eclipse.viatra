@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
@@ -85,8 +85,8 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
                 warning(String.format(
                         "To refer elements from the Package %s the bundle %s must be added as dependency",
                         ePackage.getNsURI(), modelPluginID), importDecl,
-                        EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
-                        EMFIssueCodes.IMPORT_DEPENDENCY_MISSING, modelPluginID);
+                        PatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
+                        IssueCodes.IMPORT_DEPENDENCY_MISSING, modelPluginID);
             }
         } catch (CoreException e) {
             logger.error("Error while checking the dependencies of the import declaration", e);
@@ -111,7 +111,7 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
         String clazz = metamodelProvider.getQualifiedClassName(classifier, classifier);
         if (clazz != null && !clazz.isEmpty() && typeReferences.findDeclaredType(clazz, typeDecl) == null) {
             error(String.format("Couldn't find type %s on the project's classpath", clazz), typeDecl, null,
-                    EMFIssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
+                    IssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
         }
     }
 }

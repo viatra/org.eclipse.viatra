@@ -13,13 +13,13 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
@@ -61,6 +61,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
      * @param pattern
      *            the pattern for which the matcher is to be constructed.
      * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
     public GenericEMFPatternPQuery(Pattern pattern) {
         this(pattern, false);
@@ -76,9 +77,10 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
      *            {@link #initializeBodies(Set) } method
      *
      * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
     public GenericEMFPatternPQuery(Pattern pattern, boolean delayedInitialization) {
-        super(CorePatternLanguageHelper.calculatePVisibility(pattern));
+        super(PatternLanguageHelper.calculatePVisibility(pattern));
         this.pattern = pattern;
         if (delayedInitialization) {
             setStatus(PQueryStatus.UNINITIALIZED);
@@ -87,6 +89,9 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
         }
     }
     
+    /**
+     * @since 2.0
+     */
     public Pattern getPattern() {
         return pattern;
     }
@@ -105,7 +110,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
 
     @Override
     public String getFullyQualifiedName() {
-        return CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
+        return PatternLanguageHelper.getFullyQualifiedName(getPattern());
     }
 
     @Override

@@ -17,9 +17,9 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
@@ -94,7 +94,7 @@ class ModelLoadHelper {
      */
     def initializeMatcherFromModel(PatternModel model, ViatraQueryEngine engine, String patternName) {
         val patterns = model.patterns.filter [
-            patternName == CorePatternLanguageHelper.getFullyQualifiedName(it)
+            patternName == PatternLanguageHelper.getFullyQualifiedName(it)
         ]
         Preconditions.checkState(patterns.size == 1, "No pattern found with name %s", patternName)
         val builder = new SpecificationBuilder(engine.registeredQuerySpecifications)

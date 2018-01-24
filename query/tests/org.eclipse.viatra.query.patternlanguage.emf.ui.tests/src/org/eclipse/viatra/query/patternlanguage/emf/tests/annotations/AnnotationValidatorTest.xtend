@@ -14,7 +14,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.annotations
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.Before
 import org.junit.Test
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
 import org.eclipse.xtext.testing.InjectWith
@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguag
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.ui.tests.EMFPatternLanguageUiInjectorProvider
 
 @RunWith(typeof(XtextRunner))

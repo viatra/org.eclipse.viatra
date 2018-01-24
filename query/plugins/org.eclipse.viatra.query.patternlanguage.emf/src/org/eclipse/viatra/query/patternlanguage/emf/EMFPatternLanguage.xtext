@@ -8,77 +8,171 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-grammar org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage with org.eclipse.viatra.query.patternlanguage.PatternLanguage
+grammar org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage with org.eclipse.xtext.xbase.Xbase
 
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
-import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as core
 import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 import "http://www.eclipse.org/xtext/xbase/Xtype" as xtype
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
-import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage"
+PatternModel:
+    ('package' packageName=QualifiedName ';'?)?
+    importPackages=VQLImportSection patterns+=Pattern*;
 
-EMFPatternModel returns core::PatternModel:
-	{PatternModel}
-	('package' packageName = QualifiedName ';'?)?
-	importPackages=VQLImportSection
-	patterns+=Pattern*;
-	
-//@Override is only available after Xtext 2.11
-VQLImportSection :
-	{VQLImportSection}
-	(
-	packageImport+=PackageImport |
-	patternImport+=PatternImport |
-	importDeclarations+=XImportDeclaration
-	)*
-;
-	
+VQLImportSection:
+    {VQLImportSection} (packageImport+=PackageImport | patternImport+=PatternImport |
+    importDeclarations+=XImportDeclaration)*;
+
 PackageImport:
-	'import' 'epackage'? ePackage = [ecore::EPackage|STRING] ';'? ('as' alias=ID)?
-;
+    'import' 'epackage'? ePackage=[ecore::EPackage|STRING] ';'? ('as' alias=ID)?;
 
 PatternImport:
-	'import' 'pattern'? pattern = [core::Pattern|QualifiedName] ';'?
-;
+    'import' 'pattern'? pattern=[Pattern|QualifiedName] ';'?;
 
-//@Override is only available after Xtext 2.11
+@Override
 XImportDeclaration returns xtype::XImportDeclaration:
-	'import' 'java' (
-		(static?='static' extension?='extension'? importedType=[types::JvmDeclaredType|QualifiedName] '.' '*') 
-		| importedType=[types::JvmDeclaredType|QualifiedName] 
-		| importedNamespace=QualifiedNameWithWildcard) ';'?
+    'import' 'java' ((static?='static' extension?='extension'? importedType=[types::JvmDeclaredType|QualifiedName] '.'
+    '*') | importedType=[types::JvmDeclaredType|QualifiedName] | importedNamespace=QualifiedNameWithWildcard) ';'?;
+
+Pattern:
+    annotations+=Annotation*
+    modifiers=Modifiers
+    'pattern'
+    name=ID
+    '('
+    (parameters+=Parameter (',' parameters+=Parameter)*)?
+    ')'
+    '='?
+    bodies+=PatternBody ('or' bodies+=PatternBody)*;
+
+Annotation:
+    '@'
+    name=ID
+    ('(' parameters+=AnnotationParameter (',' parameters+=AnnotationParameter)* ')')?;
+
+AnnotationParameter:
+    name=ID '=' value=AnnotationValueReference;
+
+Modifiers:
+    {Modifiers} (
+    //injective?='injective' &
+    private?='private'? &
+    execution=ExecutionTypeModifier?);
+
+enum ExecutionTypeModifier returns ExecutionType:
+    search | incremental;
+
+enum ParameterDirectionModifier returns ParameterDirection:
+    in | out;
+
+Parameter:
+    direction=ParameterDirectionModifier?
+    name=ID
+    (':' type=Type | ':' type=JavaType)?;
+
+VariableReference:
+    aggregator?='#'? var=ID |
+    aggregator?='#';
+  
+Type returns EntityType:
+    {ClassType}
+    (metamodel=[PackageImport] '::' )? classname=[ecore::EClassifier]
 ;
 
-//@Override is only available after Xtext 2.11
-Constraint returns core::Constraint:
-	CheckConstraint	| TypeCheckConstraint |
-	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
-	| EClassifierConstraint                                 // Additions
+RefType returns ReferenceType:
+    {ReferenceType} refname=[ecore::EStructuralFeature];
+
+JavaType returns EntityType:
+    {JavaType} 'java' classRef=[types::JvmDeclaredType|QualifiedName];
+
+PatternBody:
+    {PatternBody}
+    (name=ID)?
+    '{'
+    ((constraints+=Constraint ';'))*
+    '}';
+
+Constraint:
+    CheckConstraint | TypeCheckConstraint |
+    CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
+    | EClassifierConstraint // Additions
 ;
+
+TypeCheckConstraint:
+    type = JavaType '(' var=VariableReference ')'
+;
+
+PatternCompositionConstraint:
+    negative?='neg'? call=PatternCall;
+
+    //'count' 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
+//parameters+=ValueReference)*)? ')';
+PatternCall:
+    'find' patternRef=[Pattern|QualifiedName] transitive?='+'? '(' (parameters+=ValueReference (','
+    parameters+=ValueReference)*)? ')';
+
+CompareConstraint:
+    leftOperand=ValueReference feature=CompareFeature rightOperand=ValueReference;
+
+enum CompareFeature:
+    equality='==' | inequality='!=';
+
+CheckConstraint:
+    'check' '(' expression=XExpression ')';
+
+PathExpressionConstraint:
+    head=PathExpressionHead;
+
+PathExpressionHead:
+    type=Type '.' tail=PathExpressionTail '(' src=VariableReference ',' dst=ValueReference ')';
+
+PathExpressionTail:
+    type=RefType ('.' tail=PathExpressionTail)?;
+
+ValueReference:
+    LiteralValueReference | VariableValue | ComputationValue;
+
+AnnotationValueReference returns ValueReference:
+    ValueReference | ListValue;
+
+LiteralValueReference returns ValueReference:
+    NumberValue | StringValue | BoolValue | EnumValue;
+
+StringValue returns LiteralValueReference:
+    {StringValue} value=STRING;
+
+NumberValue returns LiteralValueReference:
+    {NumberValue} value=XNumberLiteral;
+
+@Override XNumberLiteral returns xbase::XNumberLiteral:
+    {xbase::XNumberLiteral} value=Number;
+
+BoolValue returns BoolValue:
+    value=XBooleanLiteral;
+
+@Override
+XBooleanLiteral returns xbase::XBooleanLiteral:
+    {xbase::XBooleanLiteral} ('false' | 'FALSE' | isTrue?='true' | isTrue?="TRUE");
+
+VariableValue:
+    value=VariableReference;
+
+ListValue:
+    '{' values+=ValueReference (',' values+=ValueReference)* '}';
+
+ComputationValue:
+    AggregatedValue | FunctionEvaluationValue;
+
+FunctionEvaluationValue:
+    'eval' '(' expression=XExpression ')';
+
+AggregatedValue:
+// TODO aggregator should be QualifiedName
+    aggregator=[types::JvmDeclaredType|ValidID] call=PatternCall;
 
 EClassifierConstraint:
-	type = Type  '(' var = VariableReference ')'
-;
-
-//@Override is only available after Xtext 2.11
-Type returns core::EntityType:
-	{ClassType}
-	(metamodel=[PackageImport] '::' )? classname=[ecore::EClassifier]
-;
-
-//@Override is only available after Xtext 2.11
-RefType returns core::RelationType:
-	{ReferenceType}
-	refname=[ecore::EStructuralFeature]
-;
-
-//@Override is only available after Xtext 2.11
-LiteralValueReference returns core::ValueReference:
-	NumberValue | StringValue | BoolValue 			//Copied from PatternLanguage 
-	| EnumValue							//Additions
-;
+    type=Type '(' var=VariableReference ')';
 
 EnumValue:
-	(enumeration = [ecore::EEnum])? '::' literal = [ecore::EEnumLiteral]
-;
+    (enumeration=[ecore::EEnum])? '::' literal=[ecore::EEnumLiteral];

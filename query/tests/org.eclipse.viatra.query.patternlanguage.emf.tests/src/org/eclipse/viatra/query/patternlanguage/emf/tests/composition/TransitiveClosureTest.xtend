@@ -15,8 +15,7 @@ import com.google.inject.Injector
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -50,7 +49,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
     def void validClosure() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
                 Pattern.bodies.constraints(p1,c);
@@ -70,7 +69,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
         val model = parseHelper.parse(
             '''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern patternDependency(p1 : Pattern, p2 : Pattern, c) = {
                 Pattern.bodies.constraints(p1,c);
@@ -84,7 +83,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
             }'''
         )
         tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE));
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE));
     }
 
     @Test
@@ -92,7 +91,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
         val model = parseHelper.parse(
             '''
                 package org.eclipse.viatra.query.patternlanguage.emf.tests
-                import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+                import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
                 
                 pattern bodyOfPattern(p : Pattern, b : PatternBody) {
                     Pattern.bodies(p, b);
@@ -110,7 +109,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
     def void negatedClosure() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
                 Pattern.bodies.constraints(p1,c);
@@ -129,7 +128,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
     def void aggregatedClosure() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
                 Pattern.bodies.constraints(p1,c);
@@ -143,6 +142,6 @@ class TransitiveClosureTest extends AbstractValidatorTest {
             }'
         )
         tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE),
-            getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING));
+            getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING));
     }
 }

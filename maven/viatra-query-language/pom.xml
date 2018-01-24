@@ -11,17 +11,6 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.viatra</groupId>
-            <artifactId>org.eclipse.viatra.query.patternlanguage</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.viatra</groupId>
             <artifactId>org.eclipse.viatra.query.patternlanguage.emf</artifactId>
             <version>${project.version}</version>
             <exclusions>

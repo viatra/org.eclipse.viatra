@@ -23,7 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.addon.databinding.runtime.validation.ObservableValuePatternValidator
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.viatra.query.patternlanguage.emf.ui.tests.EMFPatternLanguageUiInjectorProvider
 
@@ -48,7 +48,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionShortName() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "p")
             pattern pattern2(p : Pattern) = {
@@ -62,7 +62,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionFullName() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "p.name")
             pattern pattern2(p : Pattern) = {
@@ -75,7 +75,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void labelExpressionFullName() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", labelExpression = "$p.name$")
             pattern pattern2(p : Pattern) = {
@@ -88,7 +88,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void labelExpressionFullNameUnescaped() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", labelExpression = "p.name")
             pattern pattern2(p : Pattern) = {
@@ -102,7 +102,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionEmpty() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "")
             pattern pattern2(p : Pattern) = {
@@ -116,7 +116,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionMismatch1() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name")
             pattern pattern2(p : Pattern) = {
@@ -129,7 +129,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionMismatch2() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "p", labelExpression="label $p.name$")
             pattern pattern2(p : Pattern) = {
@@ -143,7 +143,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionInDollars() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "$p.name$")
             pattern pattern2(p : Pattern) = {
@@ -157,7 +157,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionInvalidParameter1() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "p1")
             pattern pattern2(p : Pattern) = {
@@ -170,7 +170,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionInvalidParameter2() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "p1.name")
             pattern pattern2(p : Pattern) = {
@@ -183,7 +183,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
     def void expressionInvalidFeature() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @ObservableValue(name = "name", expression = "p.notExists")
             pattern pattern2(p : Pattern) = {

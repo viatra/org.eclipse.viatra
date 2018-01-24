@@ -22,7 +22,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.viatra.query.patternlanguage.emf.ui.tests.EMFPatternLanguageUiInjectorProvider
 
@@ -47,7 +47,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void tooFewParameters() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature
             pattern pattern2(p : Pattern) = {
@@ -62,7 +62,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void emptyFeatureName() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature(feature = "")
             pattern pattern2(p : Pattern, pb : PatternBody) = {
@@ -77,7 +77,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void notFoundFeature() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature
             pattern pattern2(p : Pattern, pb : PatternBody) = {
@@ -92,7 +92,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void multipleAnnotations() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature
             @QueryBasedFeature
@@ -111,7 +111,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void ambiguousAnnotations() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature(feature = "x")
             @QueryBasedFeature(feature = "x")
@@ -130,7 +130,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void incorrectFeature() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature
             pattern bodies(p : Pattern, pb : PatternBody) = {
@@ -148,7 +148,7 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
     def void notVolatileFeature() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             @QueryBasedFeature
             pattern variables(pb : PatternBody, v : Variable) = {

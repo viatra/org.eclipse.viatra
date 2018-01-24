@@ -28,21 +28,20 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
-import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -82,7 +81,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                     return IScope.NULLSCOPE;
                 }
                 return scope_EPackage(importDecl, ref);
-            } else if (EcoreUtil2.isAssignableFrom(EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT, refType)) {
+            } else if (EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.PACKAGE_IMPORT, refType)) {
                 return scope_PackageImport(ctx);
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM, refType)) {
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
@@ -184,7 +183,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
     protected IScope createReferencedPackagesScope(PatternModel model) {
         IScope scope = IScope.NULLSCOPE;
         
-        for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
+        for (PackageImport decl : PatternLanguageHelper.getPackageImportsIterable(model)) {
             if (decl.getEPackage() != null) {
                 scope = createClassifierScope(decl.getEPackage(), scope);
             }
@@ -208,7 +207,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
     private IScope scope_EEnum(EnumValue ctx) {
         PatternModel model = (PatternModel) getRootContainer(ctx);
         final Collection<EEnum> enums = Lists.newArrayList();
-        for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
+        for (PackageImport decl : PatternLanguageHelper.getPackageImportsIterable(model)) {
             if (decl.getEPackage() != null) {
                 Iterables.addAll(enums, Iterables.filter(decl.getEPackage().getEClassifiers(), EEnum.class));
             }

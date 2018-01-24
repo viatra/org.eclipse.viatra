@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <fragment>
-     <extension point="org.eclipse.viatra.query.patternlanguage.annotation">
+     <extension point="org.eclipse.viatra.query.patternlanguage.emf.annotation">
     <annotation additionalValidator="org.eclipse.viatra.addon.viewers.runtime.validators.ItemValidator" description="An element to display in a JFace viewer" name="Item">
       <annotationparameter description="The pattern parameter the Item will represent in the viewer." mandatory="true" multiple="false" name="item" type="variablereference"/>
       <annotationparameter description="The label to describe the item. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$." mandatory="false" multiple="false" name="label" type="string"/>

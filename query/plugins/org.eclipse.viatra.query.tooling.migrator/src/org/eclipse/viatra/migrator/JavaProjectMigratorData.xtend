@@ -18,8 +18,8 @@ import org.osgi.framework.Version
 
 abstract class JavaProjectMigratorData {
     
-    protected static val stable = new VersionRange(new Version(1,2,0), true, new Version(2,0,0), false);
-    protected static val incubation = new VersionRange(new Version(0,12,0), true, new Version(0,13,0), false);
+    protected static val stable = new VersionRange(new Version(2,0,0), true, new Version(3,0,0), false);
+    protected static val incubation = new VersionRange(new Version(0,20,0), true, new Version(0,21,0), false);
     
     protected static val bundleRenames = <String,String>newLinkedHashMap(
         "org.eclipse.incquery.databinding.runtime" -> "org.eclipse.viatra.addon.databinding.runtime",
@@ -222,7 +222,16 @@ abstract class JavaProjectMigratorData {
             "org.eclipse.viatra.addon.viewers.runtime.model.Item" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Item",
             //Bug 488205
             "org.eclipse.viatra.query.runtime.base.itc.alg.incscc.Direction" -> "org.eclipse.viatra.query.runtime.matchers.util.Direction",
-            "org.eclipse.viatra.query.runtime.base.itc.alg.incscc.UnionFind" -> "org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind"
+            "org.eclipse.viatra.query.runtime.base.itc.alg.incscc.UnionFind" -> "org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind",
+            //Bug 529686
+            "org.eclipse.viatra.query.patternlanguage.patternLanguage" -> "org.eclipse.viatra.query.patternlanguage.emf.vql",
+            "org.eclipse.viatra.query.patternlanguage.patternLanguage.impl" -> "org.eclipse.viatra.query.patternlanguage.emf.vql.impl",
+            "org.eclipse.viatra.query.patternlanguage.patternLanguage.util" -> "org.eclipse.viatra.query.patternlanguage.emf.vql.util",
+            "org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage" -> "org.eclipse.viatra.query.patternlanguage.emf.vql",
+            "org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.impl" -> "org.eclipse.viatra.query.patternlanguage.emf.vql.impl",
+            "org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.util" -> "org.eclipse.viatra.query.patternlanguage.emf.vql.util",
+            "org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper" ->  "org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper",
+            "org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper" ->  "org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper"
         )
         
         /*

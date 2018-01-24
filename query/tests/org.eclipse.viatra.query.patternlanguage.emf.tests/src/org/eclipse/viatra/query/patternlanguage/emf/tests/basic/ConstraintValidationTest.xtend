@@ -14,8 +14,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.basic
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -24,7 +24,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
@@ -47,7 +46,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
     def intConstantCompareValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern constantCompareTest(A : Pattern) = {
                 Pattern(A);
                 1 == 2;
@@ -59,7 +58,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
     def stringDoubleConstantCompareValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern constantCompareTest(A : Pattern) = {
                 Pattern(A);
                 1.2 == "String";
@@ -67,14 +66,14 @@ class ConstraintValidationTest extends AbstractValidatorTest {
         ')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
             getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
-            getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
+            getErrorCode(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
         )
     }
     @Test
     def enumIntConstantCompareValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern constantCompareTest(A : Pattern) = {
                 Pattern(A);
                 false == 2;
@@ -82,7 +81,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
         ')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
             getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
-            getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
+            getErrorCode(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
         )
     }
     @Test
@@ -96,13 +95,13 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 ETypedElement.lowerValue(_, Name2);
             }
         ''')
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_STRICT_WARNING)
     }
     @Test
     def leftVariableCompareValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern constantCompareTest(Name) = {
                 Name == "Test";
                 StringValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
@@ -110,14 +109,14 @@ class ConstraintValidationTest extends AbstractValidatorTest {
             }
         ')
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
     def leftNewVariableCompareValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern constantCompareTest(A : Pattern) = {
                 Pattern(A);
                 Name2 == "Test";
@@ -125,13 +124,13 @@ class ConstraintValidationTest extends AbstractValidatorTest {
                 StringValue(Name3);					// Then this line can be deleted.
             }
         ')
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_STRICT_WARNING)
     }
     @Test
     def bothVariableCompareValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern constantCompareTest(Name : Pattern) = {
                 Name == Name2;
@@ -166,6 +165,6 @@ class ConstraintValidationTest extends AbstractValidatorTest {
               EClass.eAttributes.upperBound(Y,X);
             }
         ')
-        tester.validate(model).assertWarning(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE)
+        tester.validate(model).assertWarning(IssueCodes::FEATURE_NOT_REPRESENTABLE)
     }
 }

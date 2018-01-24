@@ -15,9 +15,8 @@ import com.google.inject.Inject
 import java.util.Arrays
 import java.util.List
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
@@ -29,7 +28,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.diagnostics.Severity
 import java.util.Objects
 
@@ -67,7 +66,7 @@ class PatternMatchClassInferrer {
             inferMatchClassMethods(pattern, typeRef(querySpecificationClass))
             inferMatchInnerClasses(pattern)
         } catch (IllegalStateException ex) {
-            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+            feedback.reportError(pattern, ex.message, IssueCodes.OTHER_ISSUE, Severity.ERROR,
                 IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
         }
     }

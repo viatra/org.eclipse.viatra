@@ -12,11 +12,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -86,7 +85,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
             }
         ')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL),
+            getErrorCode(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL),
             getWarningCode(IssueCodes.MISTYPED_PARAMETER)
         )
     }
@@ -147,7 +146,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
                 find Good(10);
             }
         ')
-        tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
+        tester.validate(model).assertError(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
     }
 
     @Test
@@ -211,7 +210,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
             getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
-            getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
+            getErrorCode(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
         )
     }
 
@@ -231,7 +230,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
                 "test" == count find Good(X);
             }
         ')
-        tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
+        tester.validate(model).assertError(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
     }
 
     @Test
@@ -260,7 +259,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
                 EClass.name(X, 10);
             }
         ')
-        tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
+        tester.validate(model).assertError(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
     }
 
     @Test
@@ -278,7 +277,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
                 EClass.name(X, count find Good(_));
             }
         ')
-        tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
+        tester.validate(model).assertError(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
     }
 
     @Test
@@ -309,7 +308,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
             }
         '''
         )
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertError(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
     }
     
     @Test
@@ -340,7 +339,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
             }
         '''
         )
-        tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
+        tester.validate(model).assertError(IssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
     }
     
     @Test
@@ -375,7 +374,7 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
             }
         '''
         )
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertError(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
     }
     
     @Test
@@ -410,6 +409,6 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
             }
         '''
         )
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertError(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
     }
 }

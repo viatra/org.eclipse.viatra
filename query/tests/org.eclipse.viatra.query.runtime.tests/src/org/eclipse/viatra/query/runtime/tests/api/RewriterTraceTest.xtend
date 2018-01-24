@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.runtime.tests.api
 import com.google.inject.Inject
 import java.util.Map
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
@@ -51,7 +51,7 @@ class RewriterTraceTest {
         var String patternCode = 
         '''
         package org.eclipse.viatra.query.patternlanguage.emf.tests
-        import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+        import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
         pattern p(p : Pattern) = {
             Pattern(p);
         }

@@ -13,11 +13,11 @@ package org.eclipse.viatra.query.patternlanguage.emf.ide.highlight;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra.query.patternlanguage.annotations.PatternAnnotationProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.ILeafNode;

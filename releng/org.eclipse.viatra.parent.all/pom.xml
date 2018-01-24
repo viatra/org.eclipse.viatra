@@ -14,7 +14,6 @@
 		<module>../../releng/org.eclipse.viatra.parent.incubation</module>
 
 		<!-- Query -->
-		<module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.ui</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf.ui</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.generator.model</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.generator.model.ui</module>
@@ -23,7 +22,6 @@
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.browser</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.debug</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.migrator</module>
-		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.tests</module>
 		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.emf.tests</module>
 		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.emf.ui.tests</module>
 		<module>../../query/tests/org.eclipse.viatra.query.runtime.tests</module>

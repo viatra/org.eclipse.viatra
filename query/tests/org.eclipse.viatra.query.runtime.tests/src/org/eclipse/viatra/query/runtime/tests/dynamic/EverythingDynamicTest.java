@@ -24,20 +24,19 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguagePlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -95,11 +94,11 @@ public class EverythingDynamicTest {
         ((List<EObject>) bookStoreObject.eGet(bookStore_Books)).add(bookObject);
 
         // Create the dynamic pattern
-        PatternModel patternModel = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+        PatternModel patternModel = PatternLanguageFactory.eINSTANCE.createPatternModel();
         patternModel.setPackageName("TestPatternPackage");
-        PackageImport packageImport = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
+        PackageImport packageImport = PatternLanguageFactory.eINSTANCE.createPackageImport();
         packageImport.setEPackage(bookStoreEPackage);
-        VQLImportSection importSection = EMFPatternLanguageFactory.eINSTANCE.createVQLImportSection();
+        VQLImportSection importSection = PatternLanguageFactory.eINSTANCE.createVQLImportSection();
         patternModel.setImportPackages(importSection);
         importSection.getPackageImport().add(packageImport);
 
@@ -122,9 +121,9 @@ public class EverythingDynamicTest {
         parameterRef.getReferences().add(variableReference);
         patternBody.getVariables().add(parameterRef);
 
-        ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
+        ClassType classType = PatternLanguageFactory.eINSTANCE.createClassType();
         classType.setClassname(bookEClass);
-        EClassifierConstraint classifierConstraint = EMFPatternLanguageFactory.eINSTANCE.createEClassifierConstraint();
+        EClassifierConstraint classifierConstraint = PatternLanguageFactory.eINSTANCE.createEClassifierConstraint();
         classifierConstraint.setVar(variableReference);
         classifierConstraint.setType(classType);
         patternBody.getConstraints().add(classifierConstraint);

@@ -13,9 +13,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -26,7 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics
 import org.junit.Assert
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
@@ -142,7 +141,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 eval(i.toLowerCase) == n;
             }
         ''')
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_STRICT_WARNING)
     }
 
     @Test
@@ -219,7 +218,7 @@ class CartesianProductTest extends AbstractValidatorTest{
         ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -302,7 +301,7 @@ class CartesianProductTest extends AbstractValidatorTest{
         ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -342,7 +341,7 @@ class CartesianProductTest extends AbstractValidatorTest{
         ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -360,9 +359,9 @@ class CartesianProductTest extends AbstractValidatorTest{
         ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -385,7 +384,7 @@ class CartesianProductTest extends AbstractValidatorTest{
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_SOFT_WARNING)
     }
 
     @Test
@@ -407,7 +406,7 @@ class CartesianProductTest extends AbstractValidatorTest{
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_SOFT_WARNING)
     }
 
     @Test
@@ -423,7 +422,7 @@ class CartesianProductTest extends AbstractValidatorTest{
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_SOFT_WARNING)
     }
 
     @Test
@@ -438,7 +437,7 @@ class CartesianProductTest extends AbstractValidatorTest{
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_STRICT_WARNING)
     }
 
     @Test
@@ -453,7 +452,7 @@ class CartesianProductTest extends AbstractValidatorTest{
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+        tester.validate(model).assertWarning(IssueCodes::CARTESIAN_STRICT_WARNING)
     }
 
 }

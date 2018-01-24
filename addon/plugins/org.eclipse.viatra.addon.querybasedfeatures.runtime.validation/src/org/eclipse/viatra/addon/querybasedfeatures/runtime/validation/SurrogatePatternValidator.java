@@ -21,17 +21,17 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 /**
@@ -87,7 +87,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
         String featureName = null;
         EObject contextForFeature = null;
         EStructuralFeature contextESFForFeature = null;
-        ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
+        ValueReference ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
         if (ref == null) {
             featureName = pattern.getName();
             contextForFeature = pattern;
@@ -159,9 +159,9 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
     }
 
     private boolean checkFeatureUniquenessOnSurrogateAnnotations(Annotation annotation, IIssueCallback validator, Pattern pattern) {
-        Collection<Annotation> qbfAnnotations = CorePatternLanguageHelper.getAnnotationsByName(pattern, "Surrogate");
+        Collection<Annotation> qbfAnnotations = PatternLanguageHelper.getAnnotationsByName(pattern, "Surrogate");
         if(qbfAnnotations.size() > 1) {
-            ValueReference feature = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
+            ValueReference feature = PatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
             if(feature == null) {
                 validator.error("Feature must be specified when multiple Surrogate annotations are used on a single pattern.", annotation,
                         PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
@@ -169,7 +169,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
             } else {
                 String featureName = ((StringValue) feature).getValue();
                 for (Annotation antn : qbfAnnotations) {
-                    ValueReference otherFeature = CorePatternLanguageHelper.getFirstAnnotationParameter(antn, FEATURE_PARAMETER_NAME);
+                    ValueReference otherFeature = PatternLanguageHelper.getFirstAnnotationParameter(antn, FEATURE_PARAMETER_NAME);
                     if(otherFeature != null) {
                         String otherFeatureName = ((StringValue) otherFeature).getValue();
                         if(featureName.equals(otherFeatureName)) {

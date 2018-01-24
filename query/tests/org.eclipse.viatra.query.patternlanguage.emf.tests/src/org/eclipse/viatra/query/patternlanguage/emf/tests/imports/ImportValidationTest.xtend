@@ -13,11 +13,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.imports
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -52,8 +51,8 @@ class ImportValidationTest extends AbstractValidatorTest {
     def duplicateImport() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name) = {
                 Pattern(Name);
@@ -62,9 +61,9 @@ class ImportValidationTest extends AbstractValidatorTest {
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
-            getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::DUPLICATE_IMPORT),
+            getWarningCode(IssueCodes::DUPLICATE_IMPORT),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         );
     }
 
@@ -82,7 +81,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -102,7 +101,7 @@ class ImportValidationTest extends AbstractValidatorTest {
         model.assertNoErrors
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -121,7 +120,7 @@ class ImportValidationTest extends AbstractValidatorTest {
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 }

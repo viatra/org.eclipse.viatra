@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.util;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 
 /**
  * Utility methods for working with the Eclipse workspace
@@ -27,6 +27,7 @@ public interface IWorkspaceUtilities {
      * @param pattern
      *            {@link Pattern}
      * @return {@link IFile}
+     * @since 2.0
      */
     IFile getIFile(Pattern pattern);
 

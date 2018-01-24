@@ -13,13 +13,12 @@ package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 
 import com.google.inject.Inject
 import org.apache.log4j.Logger
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
@@ -77,7 +76,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
         val config = getConfiguration(pattern)
 
         if (!pattern.name.nullOrEmpty) {
-            val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
+            val isPublic = !PatternLanguageHelper::isPrivate(pattern);
             try {
                 if (isPublic) {
                     switch (config.matcherGenerationStrategy) {
@@ -224,7 +223,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                 acceptor.accept(groupClass) [
                     initializePatternGroup(model, _typeReferenceBuilder, config, false)
                 ]
-                if (model.patterns.exists[CorePatternLanguageHelper.isPrivate(it)]) {
+                if (model.patterns.exists[PatternLanguageHelper.isPrivate(it)]) {
                     val privateGroupClass = model.inferPatternGroupClass(_typeReferenceBuilder, config, true)
                     acceptor.accept(privateGroupClass) [
                         initializePatternGroup(model, _typeReferenceBuilder, config, true)

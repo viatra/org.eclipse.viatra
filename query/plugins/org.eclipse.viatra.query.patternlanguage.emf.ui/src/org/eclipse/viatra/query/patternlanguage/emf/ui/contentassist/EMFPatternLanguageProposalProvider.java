@@ -26,26 +26,36 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionElement;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionElement;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.CrossReference;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
+import org.eclipse.xtext.common.types.xtext.ui.ITypesProposalProvider;
+import org.eclipse.xtext.common.types.xtext.ui.TypeMatchFilters;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.ILeafNode;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -56,11 +66,13 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor.Delegate;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
 import org.eclipse.xtext.xbase.ui.hover.XbaseInformationControlInput;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -72,6 +84,8 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     private static final Set<String> FILTERED_KEYWORDS = Sets.newHashSet("pattern");
 
     @Inject
+    private PatternAnnotationProvider annotationProvider;
+    @Inject
     IScopeProvider scopeProvider;
     @Inject
     ReferenceProposalCreator crossReferenceProposalCreator;
@@ -79,6 +93,13 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     IQualifiedNameConverter nameConverter;
     @Inject
     private EMFPatternLanguageGrammarAccess ga;
+
+    @Inject
+    private ValidFeatureDescription featureDescriptionPredicate;
+    @Inject
+    private IJvmTypeProvider.Factory jvmTypeProviderFactory;
+    @Inject
+    private ITypesProposalProvider typeProposalProvider;
 
     @Override
     public void createProposals(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
@@ -170,9 +191,11 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         }
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public void completeType_Typename(EObject model, Assignment assignment, ContentAssistContext context,
-            ICompletionProposalAcceptor acceptor) {
+    public void complete_PackageImport(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         PatternModel pModel = null;
         EObject root = getRootContainer(model);
         if (root instanceof PatternModel) {
@@ -207,7 +230,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         myContextBuilder.setPrefix(availablePrefix.toString());
 
         ContentAssistContext myContext = myContextBuilder.toContext();
-        for (PackageImport declaration : EMFPatternLanguageHelper.getPackageImportsIterable(pModel)) {
+        for (PackageImport declaration : PatternLanguageHelper.getPackageImportsIterable(pModel)) {
             if (declaration.getEPackage() != null) {
                 createClassifierProposals(declaration, model, myContext, acceptor);
             }
@@ -251,12 +274,15 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         return false;
     }
 
+    /**
+     * @since 2.0
+     */
     public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         IScope scope = scopeProvider.getScope(model.getTail(),
-                EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
+                PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
         crossReferenceProposalCreator.lookupCrossReference(scope, model,
-                EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME, acceptor,
+                PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME, acceptor,
                 Predicates.<IEObjectDescription> alwaysTrue(),
                 getProposalFactory(ruleCall.getRule().getName(), context));
     }
@@ -318,4 +344,139 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         }
  
     }
+    
+    private boolean isReferrable(Variable v) {
+        return v!= null && !v.eIsProxy() && 
+                !v.getName().startsWith("_") && !PatternLanguageHelper.hasAggregateReference(v);
+    }
+    
+    private boolean isReferrable(IEObjectDescription desc) {
+        if (desc != null && EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.VARIABLE, desc.getEClass())) {
+            Variable v = (Variable) desc.getEObjectOrProxy();
+            return v!= null && !v.eIsProxy() && 
+                    !v.getName().startsWith("_") && !PatternLanguageHelper.hasAggregateReference(v);
+        }
+        return false;
+    }
+    
+    
+    /**
+     * @since 2.0
+     */
+    @Override
+    public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        for (String annotationName : annotationProvider.getAllAnnotationNames()) {
+            if (annotationProvider.isDeprecated(annotationName)) {
+                continue;
+            }
+            String prefixedName = String.format("@%s", annotationName);
+            String prefix = context.getPrefix();
+            ContentAssistContext modifiedContext = context;
+            INode lastNode = context.getLastCompleteNode();
+            if ("".equals(prefix) && lastNode.getSemanticElement() instanceof Annotation) {
+                Annotation previousNode = (Annotation) lastNode.getSemanticElement();
+                String annotationPrefix = previousNode.getName();
+                if (previousNode.getParameters().isEmpty()
+                        && !annotationProvider.getAllAnnotationNames().contains(annotationPrefix)) {
+                    modifiedContext = context.copy()
+                            .setReplaceRegion(new Region(lastNode.getOffset(), lastNode.getLength() + prefix.length()))
+                            .toContext();
+                    prefixedName = annotationName;
+                }
+            }
+            ICompletionProposal proposal = createCompletionProposal(prefixedName, prefixedName, null, modifiedContext);
+            if (proposal instanceof ConfigurableCompletionProposal) {
+                ((ConfigurableCompletionProposal) proposal).setAdditionalProposalInfo(annotationProvider
+                        .getAnnotationObject(annotationName));
+                ((ConfigurableCompletionProposal) proposal).setHover(getHover());
+            }
+            acceptor.accept(proposal);
+        }
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public void complete_AnnotationParameter(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        if (model instanceof Annotation) {
+            Annotation annotation = (Annotation) model;
+            for (String paramName : annotationProvider.getAnnotationParameters(annotation.getName())) {
+                String outputName = String.format("%s = ", paramName);
+                ICompletionProposal proposal = createCompletionProposal(outputName, paramName, null, context);
+                if (proposal instanceof ConfigurableCompletionProposal) {
+                    ((ConfigurableCompletionProposal) proposal).setAdditionalProposalInfo(annotationProvider
+                            .getAnnotationParameter(annotation.getName(), paramName));
+                    ((ConfigurableCompletionProposal) proposal).setHover(getHover());
+                }
+                acceptor.accept(proposal);
+            }
+        }
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public void complete_VariableReference(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        IScope scope = scopeProvider.getScope(model, PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE);
+        crossReferenceProposalCreator.lookupCrossReference(scope, model,
+                PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE, acceptor,
+                this::isReferrable,
+                getProposalFactory(ruleCall.getRule().getName(), context));
+
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    protected void createLocalVariableAndImplicitProposals(EObject context, Anchor anchor,
+            ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
+        String prefix = contentAssistContext.getPrefix();
+        if (prefix.length() > 0 && !Character.isJavaIdentifierStart(prefix.charAt(0))) {
+            return;
+        }
+
+        final PatternBody body = EcoreUtil2.getContainerOfType(context, PatternBody.class);
+        for (Variable v : Iterables.filter(body.getVariables(), this::isReferrable)) {
+            ICompletionProposal proposal = createCompletionProposal(v.getName(), contentAssistContext);
+            acceptor.accept(proposal);
+        }
+
+        proposeDeclaringTypeForStaticInvocation(context, null /* ignore */, contentAssistContext, acceptor);
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public void completePatternCall_PatternRef(EObject model, Assignment assignment, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        /*
+         * filter not local, private patterns (private patterns in other resources) this information stored in the
+         * userdata of the EObjectDescription EObjectDescription only created for not local eObjects, so check for
+         * resource equality is unnecessary.
+         */
+        lookupCrossReference(((CrossReference) assignment.getTerminal()), context, acceptor,
+                Predicates.and(featureDescriptionPredicate, input -> !("true".equals(input.getUserData("private")))));
+    }
+    
+    /**
+     * @since 2.0
+     */
+    @Override
+    public void completeAggregatedValue_Aggregator(EObject model, Assignment assignment, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        final IJvmTypeProvider jvmTypeProvider = jvmTypeProviderFactory
+                .createTypeProvider(model.eResource().getResourceSet());
+        final JvmType interfaceToImplement = jvmTypeProvider.findTypeByName(IAggregatorFactory.class.getName());
+        typeProposalProvider.createSubTypeProposals(interfaceToImplement, this, context,
+                PatternLanguagePackage.Literals.AGGREGATED_VALUE__AGGREGATOR, TypeMatchFilters.canInstantiate(),
+                acceptor);
+    }
+    
 }

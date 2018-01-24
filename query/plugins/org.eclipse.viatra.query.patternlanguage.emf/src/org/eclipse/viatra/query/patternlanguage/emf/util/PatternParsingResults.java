@@ -13,10 +13,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import java.util.List;
 
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -89,7 +89,7 @@ public final class PatternParsingResults {
     public Iterable<IQuerySpecification<?>> getQuerySpecifications() {
         List<IQuerySpecification<?>> specList = Lists.newArrayList();
         for (Pattern pattern : patterns) {
-            boolean isPrivate = CorePatternLanguageHelper.isPrivate(pattern);
+            boolean isPrivate = PatternLanguageHelper.isPrivate(pattern);
             IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> spec = builder
                     .getOrCreateSpecification(pattern);
             if (!isPrivate) {

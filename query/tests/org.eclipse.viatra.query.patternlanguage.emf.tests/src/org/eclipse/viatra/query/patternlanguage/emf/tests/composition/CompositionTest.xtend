@@ -15,8 +15,8 @@ import com.google.inject.Injector
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
@@ -54,7 +54,7 @@ class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPat
     def void testSimpleComposition() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern calledPattern(p : Pattern) = {
                 Pattern(p);
@@ -71,7 +71,7 @@ class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPat
     def void testRecursiveComposition() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern calledPattern(p : Pattern) = {
                 Pattern(p);
@@ -86,7 +86,7 @@ class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPat
     def void testNegativeComposition() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern calledPattern(p : Pattern) = {
                 Pattern(p);
@@ -102,7 +102,7 @@ class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPat
         val model = parseHelper.parse(
             '
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern callPattern(p : Pattern) = {
                 find calledPatternMissing(p);

@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.common.base.Predicate;
@@ -113,6 +113,7 @@ public class OldVersionHelper {
      * 
      * <strong>Note</strong>: This code should be called only when the proxyURI represents something in an existing
      * project. It is not a problem is the proxyURI is unresolvable, but the project part has to exist.
+     * @since 2.0
      */
     public Pattern findPattern(URI proxyURI) throws JavaModelException {
         return findOldVersion(proxyURI);

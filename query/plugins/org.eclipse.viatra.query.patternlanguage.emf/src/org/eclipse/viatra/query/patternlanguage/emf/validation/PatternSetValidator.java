@@ -21,8 +21,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.IDiagnosticConverter;
@@ -64,6 +64,7 @@ public class PatternSetValidator {
      * Returns the validation results of a single pattern
      * 
      * @param pattern
+     * @since 2.0
      */
     public PatternSetValidationDiagnostics validate(Pattern pattern) {
         return validate(ImmutableList.of(pattern));
@@ -73,9 +74,10 @@ public class PatternSetValidator {
      * Returns the validation results of a single pattern and all its (transitively )referenced patterns.
      * 
      * @param pattern
+     * @since 2.0
      */
     public PatternSetValidationDiagnostics validateTransitively(Pattern pattern) {
-        Set<Pattern> patternsToValidate = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern);
+        Set<Pattern> patternsToValidate = PatternLanguageHelper.getReferencedPatternsTransitive(pattern);
         return validate(patternsToValidate);
 
     }

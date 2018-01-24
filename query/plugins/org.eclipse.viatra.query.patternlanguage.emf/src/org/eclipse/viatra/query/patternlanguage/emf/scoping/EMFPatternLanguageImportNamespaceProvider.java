@@ -14,9 +14,9 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
@@ -66,7 +66,7 @@ public class EMFPatternLanguageImportNamespaceProvider extends XImportSectionNam
                 + parentNormalizers.size());
         for (PatternImport imp : patternImportDeclarations) {
             ImportNormalizer resolver = createImportedNamespaceResolver(
-                    CorePatternLanguageHelper.getFullyQualifiedName(imp.getPattern()), ignoreCase);
+                    PatternLanguageHelper.getFullyQualifiedName(imp.getPattern()), ignoreCase);
             if (resolver != null) {
                 result.add(resolver);
             }

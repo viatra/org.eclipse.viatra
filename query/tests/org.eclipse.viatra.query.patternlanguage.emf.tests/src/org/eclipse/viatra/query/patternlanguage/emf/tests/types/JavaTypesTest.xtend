@@ -14,8 +14,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -62,7 +62,7 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -90,7 +90,7 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
         )
     }
     @Test
@@ -117,7 +117,7 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR)
         )
     }
     @Test
@@ -132,7 +132,7 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -147,8 +147,8 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 

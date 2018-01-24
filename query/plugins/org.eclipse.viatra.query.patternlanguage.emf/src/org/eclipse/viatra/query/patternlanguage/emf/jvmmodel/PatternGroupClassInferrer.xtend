@@ -13,9 +13,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
 import org.eclipse.xtext.common.types.JvmConstructor

@@ -356,26 +356,19 @@
           xsi:type="launching:LaunchTask"
           predecessor="viatra.xtext.pregen"
           successor="viatra.xtext.postgen"
-          launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
-        <description></description>
-      </setupTask>
-      <setupTask
-          xsi:type="launching:LaunchTask"
-          predecessor="viatra.xtext.pregen"
-          successor="viatra.xtext.postgen"
           launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
         <description></description>
       </setupTask>
       <setupTask
           xsi:type="launching:LaunchTask"
           predecessor="viatra.xtext.postgen"
-          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.8"
+          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.7"
           launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
         <description></description>
       </setupTask>
       <setupTask
           xsi:type="launching:LaunchTask"
-          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.7"
+          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.6"
           launcher="org.eclipse.viatra.setup/GeneratePatternLanguageTestMetamodel.mwe2.launch">
         <description></description>
       </setupTask>
@@ -518,6 +511,19 @@
         <setupTask
             xsi:type="launching:LaunchTask"
             launcher="org.eclipse.viatra.setup/GenerateViewersRuntimeQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            predecessor="viatra.query.prequerygen"
+            filter=""
+            launcher="org.eclipse.viatra.setup/GenerateCPSFrameworkQueries.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            predecessor="viatra.query.prequerygen"
+            launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
           <description></description>
         </setupTask>
       </setupTask>
@@ -1227,19 +1233,6 @@
               url="http://download.eclipse.org/viatra/examples/cps/0.1.0.201707100825"/>
         </repositoryList>
       </targlet>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.query.prequerygen"
-        filter=""
-        launcher="org.eclipse.viatra.setup/GenerateCPSFrameworkQueries.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.query.prequerygen"
-        launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
-      <description></description>
     </setupTask>
   </stream>
   <stream name="1.2-maintenance">

@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.addon.viewers.runtime.notation.HierarchyPolicy;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 
 
 /**
@@ -40,7 +40,7 @@ public class ItemValidator extends AbstractAnnotationValidator {
         // Label validation is handled in parent class
         super.executeAdditionalValidation(annotation, validator);
         
-        ValueReference hierarchyRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "hierarchy");
+        ValueReference hierarchyRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "hierarchy");
         if (hierarchyRef instanceof StringValue) {
             String value = ((StringValue) hierarchyRef).getValue();
             

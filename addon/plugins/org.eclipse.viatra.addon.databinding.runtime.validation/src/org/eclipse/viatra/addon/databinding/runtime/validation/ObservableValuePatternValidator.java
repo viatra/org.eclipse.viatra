@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.databinding.runtime.validation;
 
-import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 
 import com.google.inject.Inject;
 
@@ -44,8 +44,8 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
         if (annotation.getParameters().isEmpty())
             return;
         Pattern pattern = (Pattern) annotation.eContainer();
-        ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "expression");
-        ValueReference labelRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "labelExpression");
+        ValueReference ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "expression");
+        ValueReference labelRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "labelExpression");
 
         if (ref == null && labelRef == null) {
             validator.error("Specify either the parameter 'expression' or 'labelExpression'", annotation,

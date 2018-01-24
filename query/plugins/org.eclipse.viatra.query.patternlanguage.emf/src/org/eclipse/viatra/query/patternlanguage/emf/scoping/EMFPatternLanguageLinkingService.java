@@ -22,10 +22,10 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.linking.impl.DefaultLinkingService;
@@ -45,10 +45,10 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 
     @Override
     public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) {
-        if (Objects.equals(ref, EMFPatternLanguagePackage.eINSTANCE.getPackageImport_EPackage()) && context instanceof PackageImport
+        if (Objects.equals(ref, PatternLanguagePackage.eINSTANCE.getPackageImport_EPackage()) && context instanceof PackageImport
                 && node instanceof ILeafNode) {
             return getPackage((PackageImport) context, (ILeafNode) node);
-        } else if (Objects.equals(ref, EMFPatternLanguagePackage.eINSTANCE.getEnumValue_Literal()) && context instanceof EnumValue
+        } else if (Objects.equals(ref, PatternLanguagePackage.eINSTANCE.getEnumValue_Literal()) && context instanceof EnumValue
                 && node instanceof ILeafNode) {
             return getEnumLiteral((EnumValue) context, node);
         }

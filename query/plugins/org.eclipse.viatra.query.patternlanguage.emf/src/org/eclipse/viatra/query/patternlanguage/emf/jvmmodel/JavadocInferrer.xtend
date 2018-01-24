@@ -12,10 +12,9 @@
 package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 
 import com.google.inject.Inject
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor
 

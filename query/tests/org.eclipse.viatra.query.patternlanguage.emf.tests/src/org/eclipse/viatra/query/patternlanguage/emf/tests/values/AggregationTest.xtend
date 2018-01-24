@@ -18,19 +18,18 @@ import org.eclipse.xtext.testing.InjectWith
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.junit.Test
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer
 import org.junit.Assert
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.junit.Before
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
@@ -58,7 +57,7 @@ class AggregationTest extends AbstractValidatorTest {
     def void testCountNothingPassed() {
         parseHelper.parse(
             '''package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
             pattern calledPattern(p : Pattern, v: Variable) = {
@@ -77,7 +76,7 @@ class AggregationTest extends AbstractValidatorTest {
     def void testCountSomeStuffPassed() {
         parseHelper.parse(
             '''package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
             pattern calledPattern(p : Pattern, v: Variable) = {
@@ -97,7 +96,7 @@ class AggregationTest extends AbstractValidatorTest {
     def void testCountSomeStuffPassedNoReturn() {
         parseHelper.parse(
             '''package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern calledPattern(p : Pattern, v: Variable) = {
                 Pattern(p);
@@ -115,7 +114,7 @@ class AggregationTest extends AbstractValidatorTest {
     def void testCountAllPassed() {
         parseHelper.parse(
             '''package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
             pattern calledPattern(c : Circle, v: Red) = {
@@ -134,7 +133,7 @@ class AggregationTest extends AbstractValidatorTest {
     @Test
     def void testCountTypeChecking() {
         val parsed = parseHelper.parse('''
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern parameterCount(call : PatternCall, c) {
                 c == count find parameter(call, _);
@@ -153,7 +152,7 @@ class AggregationTest extends AbstractValidatorTest {
     @Test
     def void testCountWithAggregate() {
         val parsed = parseHelper.parse('''
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern parameter(call : PatternCall, parameter : ValueReference) {
                 PatternCall.parameters(call, parameter);
@@ -171,7 +170,7 @@ class AggregationTest extends AbstractValidatorTest {
     @Test
     def void testCountWithAggregate2() {
         val parsed = parseHelper.parse('''
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern parameter(call : PatternCall, parameter : ValueReference) {
                 PatternCall.parameters(call, parameter);
@@ -192,7 +191,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse(
             '''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern callerPattern(p : Pattern, output) = {
                 Pattern(p);
@@ -213,7 +212,7 @@ class AggregationTest extends AbstractValidatorTest {
             '''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
                     
@@ -291,7 +290,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern parameterCount(c) {
                  c == min find helper(_call, #number);   
@@ -303,8 +302,8 @@ class AggregationTest extends AbstractValidatorTest {
             }
             ''')
         tester.validate(parsed).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -315,7 +314,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern parameterCount(c : java Integer) {
                  c == min find helper(_call, #number);   
@@ -337,7 +336,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern parameterCount(c) {
@@ -350,8 +349,8 @@ class AggregationTest extends AbstractValidatorTest {
             }
             ''')
         tester.validate(parsed).assertAll(
-            getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }    
     @Test
@@ -360,7 +359,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern sumCPU(n) {
@@ -382,8 +381,8 @@ class AggregationTest extends AbstractValidatorTest {
             }
             ''')
         tester.validate(parsed).assertAll(
-            getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }    
     @Test
@@ -391,7 +390,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern parameterCount(c) {
@@ -404,9 +403,9 @@ class AggregationTest extends AbstractValidatorTest {
             }
             ''')
         tester.validate(parsed).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -418,7 +417,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern parameterCount(c) {
@@ -432,8 +431,8 @@ class AggregationTest extends AbstractValidatorTest {
             ''')
         tester.validate(parsed).assertAll(
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -445,7 +444,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern parameterCount(c) {
@@ -458,9 +457,9 @@ class AggregationTest extends AbstractValidatorTest {
             }
             ''')
         tester.validate(parsed).assertAll(
-            getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -474,7 +473,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern smallestValue(call : PatternCall, value : EInt) {
@@ -500,7 +499,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern smallestValue(value) {
@@ -525,7 +524,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern smallestValue(value) {
@@ -541,7 +540,7 @@ class AggregationTest extends AbstractValidatorTest {
         )
         tester.validate(parsed).assertAll(
             getErrorCode(IssueCodes.DUBIUS_VARIABLE_NAME),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -550,7 +549,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern smallestValue(value) {
@@ -574,7 +573,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern smallestValue(value : IntValue) {
@@ -598,7 +597,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/emf/2002/Ecore"
             
             pattern smallestValue(value : IntValue) {
@@ -622,7 +621,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             private pattern bodiesOfPattern(p : Pattern, b : PatternBody) {
                 Pattern.bodies(p, b);
@@ -634,7 +633,7 @@ class AggregationTest extends AbstractValidatorTest {
             '''
         )
         tester.validate(parsed).assertAll(
-            getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR)
+            getErrorCode(IssueCodes.VARIABLE_TYPE_INVALID_ERROR)
         )
     }
     
@@ -643,7 +642,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern p(a){
                 Expression(a);
@@ -656,7 +655,7 @@ class AggregationTest extends AbstractValidatorTest {
             '''
         )
         tester.validate(parsed).assertAll(
-            getInfoCode(EMFIssueCodes.MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes.MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -665,7 +664,7 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern p(a){
                 Pattern(a);
@@ -679,7 +678,7 @@ class AggregationTest extends AbstractValidatorTest {
         )
         tester.validate(parsed).assertAll(
             getWarningCode(IssueCodes.MISTYPED_PARAMETER),
-            getInfoCode(EMFIssueCodes.MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes.MISSING_PARAMETER_TYPE)
         )
     }
 

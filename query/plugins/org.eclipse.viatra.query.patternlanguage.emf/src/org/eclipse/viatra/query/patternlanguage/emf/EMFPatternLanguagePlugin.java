@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelistExtensionLoader;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -28,6 +29,7 @@ public class EMFPatternLanguagePlugin implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {
         instance = this;
+        PureWhitelistExtensionLoader.load();
     }
 
     @Override

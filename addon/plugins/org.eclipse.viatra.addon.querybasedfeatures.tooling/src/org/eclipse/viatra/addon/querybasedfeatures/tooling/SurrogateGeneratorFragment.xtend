@@ -15,18 +15,18 @@ import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 
-import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
+import static extension org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper.*
+import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory
 import org.eclipse.viatra.query.runtime.extensibility.ViatraQueryRuntimeConstants
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider

@@ -25,12 +25,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.xtext.validation.Issue;
 
@@ -141,7 +141,7 @@ public class PatternSanitizer {
                 continue;
             }
 
-            final String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(current);
+            final String fullyQualifiedName = PatternLanguageHelper.getFullyQualifiedName(current);
             final boolean duplicate = patternsByName.containsKey(fullyQualifiedName)
                     || newPatternsByName.containsKey(fullyQualifiedName);
             if (duplicate) {
@@ -184,7 +184,7 @@ public class PatternSanitizer {
                                         Pattern errorPattern = (Pattern) errorContainer;
                                         problemsByPattern.put(currentPattern, new PProblem(
                                                 String.format("Query depends on erroneous pattern %s", 
-                                                        CorePatternLanguageHelper.getFullyQualifiedName(errorPattern))));
+                                                        PatternLanguageHelper.getFullyQualifiedName(errorPattern))));
                                         inadmissible.add(currentPattern);
                                         
                                         // skip this error - do not indicate directly for this pattern 
@@ -231,7 +231,7 @@ public class PatternSanitizer {
 
         while (!unexplored.isEmpty()) {
             Pattern current = unexplored.pollFirst();
-            final Set<Pattern> referencedPatterns = CorePatternLanguageHelper.getReferencedPatterns(current);
+            final Set<Pattern> referencedPatterns = PatternLanguageHelper.getReferencedPatterns(current);
             for (Pattern referenced : referencedPatterns) {
                 if (!admittedPatterns.contains(referenced) && !toBeValidated.contains(referenced)) {
                     toBeValidated.add(referenced);
@@ -282,7 +282,7 @@ public class PatternSanitizer {
      * @param pattern
      */
     public void forgetPattern(Pattern pattern) {
-        String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        String fqn = PatternLanguageHelper.getFullyQualifiedName(pattern);
         problemsByPattern.removeAll(pattern);
         rejectedPatterns.remove(pattern);
         admittedPatterns.remove(pattern);

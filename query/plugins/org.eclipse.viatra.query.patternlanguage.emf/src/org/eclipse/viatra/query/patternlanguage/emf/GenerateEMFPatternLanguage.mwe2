@@ -19,8 +19,7 @@ import org.eclipse.xtext.xtext.generator.model.project.*
 
 var projectName = "org.eclipse.viatra.query.patternlanguage.emf"
 var runtimeProject = "../${projectName}"
-var metamodel = "platform:/resource/${projectName}/model/EMFPatternLanguage.genmodel"
-var parentMetamodel = "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/PatternLanguage.genmodel"
+var metamodel = "platform:/resource/${projectName}/model/PatternLanguage.genmodel"
 
 Workflow {
     bean = StandaloneSetup {
@@ -32,7 +31,7 @@ Workflow {
         registerGeneratedEPackage = "org.eclipse.xtext.xtype.XtypePackage"
         registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
 
-        registerGenModelFile = parentMetamodel
+        registerGenModelFile = metamodel
     }
 
     component = DirectoryCleaner {

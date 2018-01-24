@@ -19,13 +19,12 @@ import com.google.inject.Inject
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import static org.junit.Assert.*
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.junit.Test
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -40,7 +39,7 @@ class EReferenceResolutionTest {
     def referenceResolution() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name : Pattern, Body) = {
                 Pattern.bodies(Name, Body);
@@ -58,7 +57,7 @@ class EReferenceResolutionTest {
     def referenceResolutionChain() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name : Pattern, Constraint) = {
                 Pattern.bodies.constraints(Name, Constraint);
@@ -79,7 +78,7 @@ class EReferenceResolutionTest {
     def referenceResolutionEscapedKeyword() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern keywordAsIdentifier(A,B) = {
                 EClassifierConstraint.^var(A,B); 
@@ -89,20 +88,20 @@ class EReferenceResolutionTest {
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
         val type = constraint.head.tail.type as ReferenceType
-        assertEquals(type.refname, EMFPatternLanguagePackage$Literals::ECLASSIFIER_CONSTRAINT__VAR)
+        assertEquals(type.refname, PatternLanguagePackage$Literals::ECLASSIFIER_CONSTRAINT__VAR)
     }
     
     @Test
     def referenceResolutionInvalid(){
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern resolutionTest(Name : Pattern, Constraint) = {
                 Pattern.notExist(Name, Constraint);
             }
         ')
-        model.assertError(EMFPatternLanguagePackage$Literals::REFERENCE_TYPE,
+        model.assertError(PatternLanguagePackage$Literals::REFERENCE_TYPE,
             Diagnostic::LINKING_DIAGNOSTIC, "notExist")
     }
 }

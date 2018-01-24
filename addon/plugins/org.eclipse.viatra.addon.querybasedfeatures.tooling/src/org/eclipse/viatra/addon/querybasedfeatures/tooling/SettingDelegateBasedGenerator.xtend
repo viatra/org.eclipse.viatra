@@ -14,10 +14,10 @@ import java.io.IOException
 import java.util.ArrayList
 import org.eclipse.emf.ecore.EcoreFactory
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 
-import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
+import static extension org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper.*
 
 /**
  * @author Abel Hegedus

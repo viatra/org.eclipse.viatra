@@ -17,19 +17,17 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.typing.AbstractTypeInferrer;
-import org.eclipse.viatra.query.patternlanguage.typing.TypeInformation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Expression;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.xtext.EcoreUtil2;
@@ -106,7 +104,7 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     public Set<IInputKey> getAllPossibleTypes(Expression var) {
         final Pattern containingPattern = EcoreUtil2.getContainerOfType(var, Pattern.class);
         TypeInformation information = collectConstraints(containingPattern);
-        if (CorePatternLanguageHelper.isParameter(var)) {
+        if (PatternLanguageHelper.isParameter(var)) {
             return ImmutableSet.of(information.getType((Variable) var));
         } else {
             return information.getAllTypes(var);
@@ -118,11 +116,11 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
 
         // XXX requiring an ordered call graph might be expensive, but it avoids inconsistent errors during type inference
         // The UNTYPED_PARAMETER_PREDICATE is used to return a reduced call graph where pattern with only declared types are (transitively) ignored.
-        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern, true, NON_NULL.and(UNTYPED_PATTERN_PREDICATE));
+        final Set<Pattern> patternsToCheck = PatternLanguageHelper.getReferencedPatternsTransitive(pattern, true, NON_NULL.and(UNTYPED_PATTERN_PREDICATE));
         patternsToCheck.add(pattern);
         
         for (Pattern patternToCheck : patternsToCheck) {
-            CorePatternLanguageHelper.getReferencedPatterns(patternToCheck).stream()
+            PatternLanguageHelper.getReferencedPatterns(patternToCheck).stream()
                 .filter(NON_NULL.and(TYPED_PATTERN_PREDICATE))
                 // Ensure called parameter types are loaded
                 .forEach(typedCall -> rules.loadParameterVariableTypes(typedCall, types));

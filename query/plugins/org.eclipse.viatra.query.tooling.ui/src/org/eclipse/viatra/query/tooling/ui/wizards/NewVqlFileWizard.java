@@ -38,16 +38,15 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ExecutionType;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ExecutionType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.ObjectParameter;
 
@@ -152,17 +151,17 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
         URI fileURI = URI.createPlatformResourceURI(fullPath, false);
         Resource resource = resourceSet.createResource(fileURI);
 
-        PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+        PatternModel pm = PatternLanguageFactory.eINSTANCE.createPatternModel();
 
         // Setting package name
         if (packageName != null && !packageName.isEmpty()) {
             pm.setPackageName(packageName.replace("/", "."));
         }
 
-        pm.setImportPackages(EMFPatternLanguageFactory.eINSTANCE.createVQLImportSection());
+        pm.setImportPackages(PatternLanguageFactory.eINSTANCE.createVQLImportSection());
         // Setting imports
         for (EPackage importedPackage : imports) {
-            PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
+            PackageImport importDecl = PatternLanguageFactory.eINSTANCE.createPackageImport();
             importDecl.setEPackage(importedPackage);
             pm.getImportPackages().getPackageImport().add(importDecl);
         }
@@ -185,7 +184,7 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
                 Parameter var = PatternLanguageFactory.eINSTANCE.createParameter();
                 var.setName(parameter.getParameterName());
 
-                ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
+                ClassType classType = PatternLanguageFactory.eINSTANCE.createClassType();
                 // it is enough to set only the class name for the class type
                 classType.setClassname(parameter.getObject());
                 var.setType(classType);

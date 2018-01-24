@@ -19,13 +19,13 @@ import com.google.inject.Inject
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Test
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import static org.junit.Assert.*
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 
 @RunWith(typeof(XtextRunner))
@@ -89,7 +89,7 @@ class EnumResolutionTest {
                 GenModel.runtimeVersion(Model, ::NOTEXIST);
             }
         ')
-        model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
+        model.assertError(PatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "NOTEXIST")
     }
     @Test
@@ -104,7 +104,7 @@ class EnumResolutionTest {
             }
         ')
         //XXX With better type inference this error message should be replaced
-        model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
+        model.assertError(PatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "EMF23")
     }
         
@@ -123,7 +123,7 @@ class EnumResolutionTest {
                 find runtimeVersion(::EMF24);
             }
         ')
-        model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
+        model.assertError(PatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "EMF24")
     }
     
@@ -139,7 +139,7 @@ class EnumResolutionTest {
                 Version == ::EMF23;
             }
         ')
-        model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
+        model.assertError(PatternLanguagePackage$Literals::ENUM_VALUE,
             Diagnostic::LINKING_DIAGNOSTIC, "EMF23")
     }
     

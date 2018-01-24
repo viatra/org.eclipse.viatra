@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.tests.api;
 
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
@@ -59,7 +59,7 @@ public class QueryEvaluationsHintTest {
         ResourceSetImpl rs = new ResourceSetImpl();
         engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs));
         String patternCode = "package org.eclipse.viatra.query.patternlanguage.emf.tests\n"
-                            + "import \"http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage\"\n"
+                            + "import \"http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage\"\n"
                             + "pattern p(p : Pattern) = {\n"
                             + " Pattern(p);\n"
                             + "}";

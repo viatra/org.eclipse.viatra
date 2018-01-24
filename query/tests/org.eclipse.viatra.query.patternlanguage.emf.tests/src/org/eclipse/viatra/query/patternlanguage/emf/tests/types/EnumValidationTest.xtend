@@ -19,12 +19,12 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.junit.Test
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.junit.Before
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
@@ -102,7 +102,7 @@ class EnumValidationTest extends AbstractValidatorTest {
                 GenModel.runtimeVersion(Model, GenDelegationKind::None);
             }
         ')
-        tester.validate(model).assertError(EMFIssueCodes::INVALID_ENUM_LITERAL)
+        tester.validate(model).assertError(IssueCodes::INVALID_ENUM_LITERAL)
     }
     @Test
     def validateEnumConstraintPatternCall() {
@@ -121,7 +121,7 @@ class EnumValidationTest extends AbstractValidatorTest {
             }
         ')
         tester.validate(model).assertAll(
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     

@@ -19,38 +19,38 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.helper.JavaTypesHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositionConstraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.TypeCheckConstraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
@@ -81,7 +81,7 @@ public class PatternBodyTransformer {
     public PatternBodyTransformer(Pattern pattern) {
         super();
         this.pattern = pattern;
-        patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        patternFQN = PatternLanguageHelper.getFullyQualifiedName(pattern);
         
         Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
         typeSystem = injector.getInstance(EMFTypeSystem.class);
@@ -256,11 +256,11 @@ public class PatternBodyTransformer {
             if (call.getParameters().size() != 2)
                 throw new SpecificationBuilderException(
                         "Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.",
-                        new String[] { CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                        new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
                         "Transitive closure only supported for binary patterns.", pattern);
             else if (constraint.isNegative())
                 throw new SpecificationBuilderException("Unsupported negated transitive closure of {1} in pattern {2}",
-                        new String[] { CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                        new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
                         "Unsupported negated transitive closure", pattern);
             else
                 acceptor.acceptBinaryTransitiveClosure(variableNames, patternRef);
@@ -326,7 +326,7 @@ public class PatternBodyTransformer {
         } else if (reference instanceof EnumValue) {// EMF-specific
             return acceptor.createConstantVariable(((EnumValue) reference).getLiteral().getInstance());
         } else if (reference instanceof BoolValue) {
-            return acceptor.createConstantVariable(CorePatternLanguageHelper.getValue(reference, Boolean.class));
+            return acceptor.createConstantVariable(PatternLanguageHelper.getValue(reference, Boolean.class));
         } else
             throw new SpecificationBuilderException(
                     "Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",

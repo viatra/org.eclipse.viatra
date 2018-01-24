@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <fragment>
   <extension
-         point="org.eclipse.viatra.query.patternlanguage.annotation">
+         point="org.eclipse.viatra.query.patternlanguage.emf.annotation">
       <annotation
             additionalValidator="org.eclipse.viatra.addon.querybasedfeatures.runtime.validation.QueryBasedFeaturePatternValidator"
             description="This annotation is used to mark a pattern as a query definition for a query-based feature."

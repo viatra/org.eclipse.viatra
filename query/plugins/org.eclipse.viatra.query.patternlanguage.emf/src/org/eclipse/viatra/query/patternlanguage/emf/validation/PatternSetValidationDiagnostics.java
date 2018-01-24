@@ -34,9 +34,9 @@ public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
      */
     private final ImmutableSet<String> ignoredIssues = ImmutableSet.of(
             /* Classpath validators are ignored as they are only relevant during code generation. */
-            EMFIssueCodes.IQR_NOT_ON_CLASSPATH,
-            EMFIssueCodes.JDK_NOT_ON_CLASSPATH,
-            EMFIssueCodes.TYPE_NOT_ON_CLASSPATH
+            IssueCodes.IQR_NOT_ON_CLASSPATH,
+            IssueCodes.JDK_NOT_ON_CLASSPATH,
+            IssueCodes.TYPE_NOT_ON_CLASSPATH
             );
             
     

@@ -15,12 +15,12 @@ import java.util.Objects;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternImport;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ReplacementTextApplier;
@@ -51,7 +51,7 @@ final class PatternImporter extends ReplacementTextApplier {
 
     public PatternImporter(Pattern targetPattern) {
         this.targetPattern = targetPattern;
-        targetPackage = CorePatternLanguageHelper.getPackageName(targetPattern);
+        targetPackage = PatternLanguageHelper.getPackageName(targetPattern);
     }
 
     @Override
@@ -104,18 +104,18 @@ final class PatternImporter extends ReplacementTextApplier {
                         if (importSection.getImportDeclarations().size() + importSection.getPackageImport().size()
                                 + importSection.getPatternImport().size() == 0) {
                             //Empty import sections need to be replaced to generate white space after the package declaration
-                            VQLImportSection newSection = EMFPatternLanguageFactory.eINSTANCE.createVQLImportSection();
+                            VQLImportSection newSection = PatternLanguageFactory.eINSTANCE.createVQLImportSection();
                             ((PatternModel) importSection.eContainer()).setImportPackages(newSection);
                             importSection = newSection;
                         }
-                        PatternImport newImport = EMFPatternLanguageFactory.eINSTANCE.createPatternImport();
+                        PatternImport newImport = PatternLanguageFactory.eINSTANCE.createPatternImport();
                         newImport.setPattern(targetPattern);
                         importSection.getPatternImport().add(newImport);
 
                     }
                 });
                 //Two new lines + "import " + pattern fqn
-                cursorOffset += 2 + 7 + CorePatternLanguageHelper.getFullyQualifiedName(targetPattern).length();
+                cursorOffset += 2 + 7 + PatternLanguageHelper.getFullyQualifiedName(targetPattern).length();
             }
             proposal.setCursorPosition(cursorOffset);
         }
@@ -127,7 +127,7 @@ final class PatternImporter extends ReplacementTextApplier {
         if (importStatus != ImportState.CONFLICTING) {
             return targetPattern.getName();
         } else {
-            return CorePatternLanguageHelper.getFullyQualifiedName(targetPattern);
+            return PatternLanguageHelper.getFullyQualifiedName(targetPattern);
         }
     }
 }

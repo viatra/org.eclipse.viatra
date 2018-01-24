@@ -14,8 +14,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -25,7 +25,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
@@ -73,12 +72,12 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
             getErrorCode(IssueCodes::CHECK_MUST_BE_BOOLEAN),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -104,10 +103,10 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -131,10 +130,10 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -159,10 +158,10 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -188,10 +187,10 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+            getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     

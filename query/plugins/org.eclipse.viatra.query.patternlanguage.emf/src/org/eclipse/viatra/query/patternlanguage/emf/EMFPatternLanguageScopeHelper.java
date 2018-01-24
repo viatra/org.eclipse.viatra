@@ -12,11 +12,14 @@ package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
 
+/**
+ * @since 2.0
+ */
 public final class EMFPatternLanguageScopeHelper {
 
     public static final String NOT_AN_ENUMERATION_REFERENCE_ERROR = "Not an enumeration reference";
@@ -24,6 +27,9 @@ public final class EMFPatternLanguageScopeHelper {
     private EMFPatternLanguageScopeHelper() {
     }
 
+    /**
+     * @since 2.0
+     */
     public static EEnum calculateEnumerationType(PathExpressionHead head) throws ResolutionException {
         if (head.getTail() == null) {
             throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
@@ -31,6 +37,9 @@ public final class EMFPatternLanguageScopeHelper {
         return calculateEnumerationType(head.getTail());
     }
 
+    /**
+     * @since 2.0
+     */
     public static EEnum calculateEnumerationType(PathExpressionTail tail) throws ResolutionException {
         EClassifier classifier = calculateExpressionType(tail);
         if (classifier instanceof EEnum) {
@@ -39,6 +48,9 @@ public final class EMFPatternLanguageScopeHelper {
         throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
     }
 
+    /**
+     * @since 2.0
+     */
     public static EClassifier calculateExpressionType(PathExpressionHead head) throws ResolutionException {
         if (head.getTail() == null) {
             throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
@@ -46,6 +58,9 @@ public final class EMFPatternLanguageScopeHelper {
         return calculateExpressionType(head.getTail());
     }
 
+    /**
+     * @since 2.0
+     */
     public static EClassifier calculateExpressionType(PathExpressionTail tail) throws ResolutionException {
         if (tail.getTail() == null) {
             Type type = tail.getType();
@@ -55,6 +70,9 @@ public final class EMFPatternLanguageScopeHelper {
         }
     }
 
+    /**
+     * @since 2.0
+     */
     public static PathExpressionHead getExpressionHead(PathExpressionTail tail) {
         if (tail.eContainer() instanceof PathExpressionHead) {
             return (PathExpressionHead) tail.eContainer();

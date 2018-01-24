@@ -12,12 +12,12 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 
 import java.util.List;
 
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider;
@@ -57,6 +57,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
      * @param xExpression
      *            the expression to evaluate
      * @param pattern
+     * @since 2.0
      */
     public XBaseEvaluator(XExpression xExpression, Pattern pattern) {
         super();
@@ -68,7 +69,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
             interpreter.setClassLoader(classLoader);
         }
         PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
-        List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
+        List<Variable> usedVariables = PatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
         usedNames = Iterables.transform(usedVariables, Variable::getName);
     }
 

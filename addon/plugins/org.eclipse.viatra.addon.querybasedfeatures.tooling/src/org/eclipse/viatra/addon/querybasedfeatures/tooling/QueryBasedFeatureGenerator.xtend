@@ -17,12 +17,12 @@ import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFrag
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 
-import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
+import static extension org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper.*
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
 
 /**

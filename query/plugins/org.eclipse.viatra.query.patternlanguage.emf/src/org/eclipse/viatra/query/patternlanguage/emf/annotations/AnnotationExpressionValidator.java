@@ -15,14 +15,14 @@ import java.util.StringTokenizer;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Expression;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -57,6 +57,7 @@ public class AnnotationExpressionValidator {
      *            a reference for the annotation parameter for error localization
      * @param validator
      *            the validator to report the found issues
+     * @since 2.0
      */
     public void validateParameterString(String expression, Pattern pattern, ValueReference ref, IIssueCallback validator) {
         if (expression.contains(".")) {
@@ -64,7 +65,7 @@ public class AnnotationExpressionValidator {
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
         }
 
-        Optional<Variable> parameter = CorePatternLanguageHelper.getParameterByName(pattern, expression);
+        Optional<Variable> parameter = PatternLanguageHelper.getParameterByName(pattern, expression);
         if (!parameter.isPresent()) {
             validator.error(String.format("Unknown parameter name %s", expression), ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
@@ -83,6 +84,7 @@ public class AnnotationExpressionValidator {
      *            a reference for the annotation parameter for error localization
      * @param validator
      *            the validator to report the found issues
+     * @since 2.0
      */
     public void validateModelExpression(String expression, Pattern pattern, ValueReference ref, IIssueCallback validator) {
         String[] tokens = expression.split("\\.");
@@ -92,7 +94,7 @@ public class AnnotationExpressionValidator {
             return;
         }
 
-        Optional<Variable> parameter = CorePatternLanguageHelper.getParameterByName(pattern, tokens[0]);
+        Optional<Variable> parameter = PatternLanguageHelper.getParameterByName(pattern, tokens[0]);
         if (!parameter.isPresent()) {
             validator.error(String.format("Unknown parameter name %s", tokens[0]), ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
@@ -144,12 +146,6 @@ public class AnnotationExpressionValidator {
     /**
      * Checks whether an {@link EClassifier} defines a feature with the selected name; if not, reports an error for the
      * selected reference.
-     * 
-     * @param classifier
-     * @param featureName
-     * @param ref
-     * @param validator
-     * @param userSpecified TODO
      */
     private void checkClassifierFeature(EClassifier classifier, String featureName, Expression ref,
             IIssueCallback validator, boolean userSpecified) {
@@ -183,6 +179,7 @@ public class AnnotationExpressionValidator {
      *            a reference for the annotation parameter for error localization
      * @param validator
      *            the validator to report the found issues
+     * @since 2.0
      */
     public void validateStringExpression(String expression, Pattern pattern, ValueReference ref,
             IIssueCallback validator) {

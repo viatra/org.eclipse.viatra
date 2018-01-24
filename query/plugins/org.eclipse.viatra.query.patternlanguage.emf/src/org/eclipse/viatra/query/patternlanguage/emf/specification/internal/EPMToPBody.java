@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericEMFPatternPQuery;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -132,7 +132,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
 
     private PQuery findCalledPQuery(Pattern patternRef) {
         IQuerySpecification<?> calledSpecification = patternMap
-                .get(CorePatternLanguageHelper.getFullyQualifiedName(patternRef));
+                .get(PatternLanguageHelper.getFullyQualifiedName(patternRef));
         if (calledSpecification == null) {
             // This should only happen in case of erroneous links, e.g. link to a proxy Pattern or similar
             // otherwise pattern would be found in the name map (see SpecificationBuilder logic)

@@ -16,7 +16,7 @@ import java.util.Map.Entry
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
@@ -56,7 +56,7 @@ class CoverageTest {
         val ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(rs), engineOptions)
         val String patternCode ='''
         package org.eclipse.viatra.query.patternlanguage.emf.tests
-        import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+        import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
         pattern p(p) = {
             Pattern(p);
         }'''

@@ -21,9 +21,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.VQLImportSection;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -67,7 +66,7 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         }
     }
 
-    @Fix(EMFIssueCodes.IDENTIFIER_AS_KEYWORD)
+    @Fix(IssueCodes.IDENTIFIER_AS_KEYWORD)
     public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
         acceptor.accept(issue, "Prefix Identifier", "Adds a ^ prefix to the identifier", null, new IModification() {
 
@@ -79,11 +78,11 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         });
     }
 
-    @Fix(EMFIssueCodes.MISSING_PARAMETER_TYPE)
+    @Fix(IssueCodes.MISSING_PARAMETER_TYPE)
     public void inferMissingParameterType(final Issue issue, IssueResolutionAcceptor acceptor) {
         for (final String data : issue.getData()) {
-            if (data.startsWith(EMFIssueCodes.JAVA_TYPE_PREFIX)) {
-                final String typeName = data.substring(EMFIssueCodes.JAVA_TYPE_PREFIX.length());
+            if (data.startsWith(IssueCodes.JAVA_TYPE_PREFIX)) {
+                final String typeName = data.substring(IssueCodes.JAVA_TYPE_PREFIX.length());
                 acceptor.accept(issue, "Insert Java type '" + typeName + "'",
                         "Declares the inferred type " + typeName + " for the variable.",
                         null, new IModification() {
@@ -114,7 +113,7 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         }
     }
     
-    @Fix(EMFIssueCodes.PARAMETER_TYPE_AMBIGUOUS)
+    @Fix(IssueCodes.PARAMETER_TYPE_AMBIGUOUS)
     public void addAmbiguousParameterType(final Issue issue, IssueResolutionAcceptor acceptor) {
         for (final String data : issue.getData()) {
             acceptor.accept(issue, "Insert type '" + data + "'", 
@@ -134,7 +133,7 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         }
     }
     
-    @Fix(EMFIssueCodes.MISSING_PACKAGE_IMPORT)
+    @Fix(IssueCodes.MISSING_PACKAGE_IMPORT)
     public void addMissingPackageImport(final Issue issue, IssueResolutionAcceptor acceptor) {
         
         acceptor.accept(issue, "Add missing import", "Add missing import", null, (IModification) context -> {
@@ -161,13 +160,13 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         });
     }
 
-    @Fix(EMFIssueCodes.IMPORT_DEPENDENCY_MISSING)
+    @Fix(IssueCodes.IMPORT_DEPENDENCY_MISSING)
     public void addDependency(final Issue issue, IssueResolutionAcceptor acceptor) {
         acceptor.accept(issue, "Add dependency", "Add the required bundle to the manifest.mf file.", null,
                 new AddDependency(issue));
     }
     
-    @Fix(EMFIssueCodes.IQR_NOT_ON_CLASSPATH)
+    @Fix(IssueCodes.IQR_NOT_ON_CLASSPATH)
     public void addLibrary(final Issue issue, IssueResolutionAcceptor acceptor) {
         if (issue.getData().length > 1) {
             return;

@@ -17,15 +17,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.EPMToPBody;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.NameToSpecificationMap;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternSanitizer;
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -59,9 +59,10 @@ import com.google.common.collect.Sets;
  * The SpecificationBuilder is stateful: it stores all previously built specifications, allowing further re-use.
  *
  * @author Zoltan Ujhelyi
+ * @since 2.0
  *
  */
-public class SpecificationBuilder {
+public final class SpecificationBuilder {
 
     private NameToSpecificationMap patternMap;
     /**
@@ -117,6 +118,7 @@ public class SpecificationBuilder {
      *
      * @param pattern
      * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern) {
@@ -132,16 +134,20 @@ public class SpecificationBuilder {
      *            if set to true, detailed pattern validation is skipped - true for model inferrer; not recommended for
      *            generic API
      * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern, boolean skipPatternValidation) {
         return getOrCreateSpecification(pattern, Lists.<IQuerySpecification<?>>newArrayList(), skipPatternValidation);
     }
 
+    /**
+     * @since 2.0
+     */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) {
         Preconditions.checkArgument(pattern != null && !pattern.eIsProxy(), "Cannot create specification from a null pattern");
-        String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        String fqn = PatternLanguageHelper.getFullyQualifiedName(pattern);
         Preconditions.checkArgument(fqn != null && !"".equals(fqn), "Pattern name cannot be empty");
         Preconditions.checkArgument(!patternNameMap.containsKey(fqn) || pattern.equals(patternNameMap.get(fqn)),
                 "This builder already contains a different pattern with the fqn %s of the newly added pattern.", fqn);
@@ -161,19 +167,19 @@ public class SpecificationBuilder {
     }
 
     protected IQuerySpecification<?> buildSpecification(Pattern pattern, boolean skipPatternValidation, List<IQuerySpecification<?>> newSpecifications) {
-        String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        String fqn = PatternLanguageHelper.getFullyQualifiedName(pattern);
         Preconditions.checkArgument(!patternMap.containsKey(fqn), "Builder already stores query with the name of %s",
                 fqn);
         if (sanitizer.admit(pattern, skipPatternValidation)) {
             Set<Pattern> newPatterns = Sets.newHashSet(Sets.filter(sanitizer.getAdmittedPatterns(),
                     (Predicate<Pattern>) pattern1 -> {
-                        final String name = CorePatternLanguageHelper.getFullyQualifiedName(pattern1);
+                        final String name = PatternLanguageHelper.getFullyQualifiedName(pattern1);
                         return !pattern1.eIsProxy() && !"".equals(name)
                                && !patternMap.containsKey(name);
                     }));
             // Initializing new query specifications
             for (Pattern newPattern : newPatterns) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
+                String patternFqn = PatternLanguageHelper.getFullyQualifiedName(newPattern);
                 GenericEMFPatternPQuery pquery = new GenericEMFPatternPQuery(newPattern, true);
                 pquery.setEvaluationHints(buildHints(newPattern));
                 GenericQuerySpecification specification = new GenericQuerySpecification(pquery);
@@ -183,7 +189,7 @@ public class SpecificationBuilder {
             }
             // Updating bodies
             for (Pattern newPattern : newPatterns) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
+                String patternFqn = PatternLanguageHelper.getFullyQualifiedName(newPattern);
                 GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
                 GenericEMFPatternPQuery pQuery = specification.getInternalQueryRepresentation();
                 try {
@@ -200,7 +206,7 @@ public class SpecificationBuilder {
             }
         } else {
             for (Pattern rejectedPattern : sanitizer.getRejectedPatterns()) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
+                String patternFqn = PatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
                 if (!patternMap.containsKey(patternFqn)) {
                     GenericQuerySpecification rejected = new GenericQuerySpecification(new GenericEMFPatternPQuery(rejectedPattern, true));
                     for (PProblem problem: sanitizer.getProblemByPattern(rejectedPattern)) 
@@ -227,7 +233,7 @@ public class SpecificationBuilder {
         for (Annotation annotation : pattern.getAnnotations()) {
             PAnnotation pAnnotation = new PAnnotation(annotation.getName());
             for (Entry<String, Object> attribute : 
-                CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries()) 
+                PatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries()) 
             {
                 pAnnotation.addAttribute(attribute.getKey(), attribute.getValue());
             }
@@ -237,6 +243,7 @@ public class SpecificationBuilder {
 
     /**
      * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
     public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) {
         Set<PBody> bodies = getBodies(pattern, query);
@@ -246,6 +253,7 @@ public class SpecificationBuilder {
 
     /**
      * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
     public Set<PBody> getBodies(Pattern pattern, PQuery query) {
         PatternBodyTransformer transformer = new PatternBodyTransformer(pattern);
@@ -258,8 +266,11 @@ public class SpecificationBuilder {
         return pBodies;
     }
 
+    /**
+     * @since 2.0
+     */
     public IQuerySpecification<?> getSpecification(Pattern pattern) {
-        String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        String fqn = PatternLanguageHelper.getFullyQualifiedName(pattern);
         return getSpecification(fqn);
     }
 

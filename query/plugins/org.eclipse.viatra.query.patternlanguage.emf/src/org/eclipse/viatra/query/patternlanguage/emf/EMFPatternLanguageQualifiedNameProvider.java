@@ -11,11 +11,16 @@
 package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra.query.patternlanguage.naming.PatternNameProvider;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.eclipse.xtext.xbase.scoping.XbaseQualifiedNameProvider;
 
 import com.google.inject.Inject;
 
@@ -23,14 +28,29 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  * 
  */
-public class EMFPatternLanguageQualifiedNameProvider extends PatternNameProvider {
+@SuppressWarnings("restriction")
+public class EMFPatternLanguageQualifiedNameProvider extends XbaseQualifiedNameProvider {
 
     @Inject
     private IQualifiedNameConverter nameConverter;
 
     @Override
     public QualifiedName getFullyQualifiedName(EObject obj) {
-        if (obj instanceof Annotation) {
+        if (obj instanceof PatternModel) {
+            PatternModel model = (PatternModel) obj;
+            String modelClassName = StringExtensions.toFirstUpper(PatternLanguageHelper.getModelFileName(model));
+            String modelPackageName = model.getPackageName();
+            if (modelClassName != null && !modelClassName.isEmpty() && modelPackageName != null && !modelPackageName.isEmpty()) {
+                return nameConverter.toQualifiedName(model.getPackageName()).append(modelClassName);
+            }
+        } if (obj instanceof Pattern) {
+            Pattern pattern = (Pattern) obj;
+            return nameConverter.toQualifiedName(PatternLanguageHelper.getFullyQualifiedName(pattern));
+        } else if (obj instanceof PatternBody) {
+            PatternBody patternBody = (PatternBody) obj;
+            Pattern pattern = (Pattern) patternBody.eContainer();
+            return getFullyQualifiedName(pattern).append(Integer.toString(pattern.getBodies().indexOf(patternBody)));
+        } else if (obj instanceof Annotation) {
             Annotation annotation = (Annotation) obj;
             String name = annotation.getName();
             return nameConverter.toQualifiedName("annotation." + name);

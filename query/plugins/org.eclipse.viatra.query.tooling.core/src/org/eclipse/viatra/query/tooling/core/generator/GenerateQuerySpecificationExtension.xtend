@@ -11,12 +11,12 @@
 package org.eclipse.viatra.query.tooling.core.generator
 
 import com.google.inject.Inject
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.runtime.IExtensions
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup
 import org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 class GenerateQuerySpecificationExtension {
 
@@ -35,7 +35,7 @@ class GenerateQuerySpecificationExtension {
                         contribAttribute(it, "group",
                             typeof(SingletonExtensionFactory).canonicalName + ":" + groupClass.qualifiedName)
                         model.patterns.filter[public].filterNull.map[
-                            CorePatternLanguageHelper.getFullyQualifiedName(it)
+                            PatternLanguageHelper.getFullyQualifiedName(it)
                         ].forEach[ fqn |
                             contribElement(it, "query-specification") [
                                 contribAttribute(it, "fqn", fqn)

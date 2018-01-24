@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf;
 
+import java.util.Objects;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.xtext.resource.IGlobalServiceProvider.ResourceServiceProviderImpl;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.IResourceServiceProvider.Registry;
@@ -38,8 +39,7 @@ public class EMFPatternLanguageServiceProvider extends ResourceServiceProviderIm
     public <T> T findService(EObject eObject, Class<T> serviceClazz) {
         Resource res = eObject.eResource();
         String nsURI = eObject.eClass().getEPackage().getNsURI();
-        if (res == null
-                && (nsURI.equals(PatternLanguagePackage.eNS_URI) || nsURI.equals(EMFPatternLanguagePackage.eNS_URI))) {
+        if (res == null && Objects.equals(nsURI, PatternLanguagePackage.eNS_URI)) {
             T service = serviceProvider.get(serviceClazz);
             return service;
         } else {

@@ -21,7 +21,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 
 @RunWith(typeof(XtextRunner))
@@ -48,35 +48,35 @@ class BackendSelectionTest {
 
     @Test
     def incrementalPatternTest() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             incremental pattern name(D: EClass) = {
                 EClass(D);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOK
     }
     
     @Test
     def searchPatternTest() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
             search pattern name(D: EClass) = {
                 EClass(D);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOK
     }
     
     @Test
     def privateSearchPatternTest() {
-        val model = parseHelper.parse('
+        val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -87,7 +87,7 @@ class BackendSelectionTest {
             search pattern useName(D: EClass) = {
                 find name(D);
             }
-        ')
+        ''')
         model.assertNoErrors
         tester.validate(model).assertOK
     }

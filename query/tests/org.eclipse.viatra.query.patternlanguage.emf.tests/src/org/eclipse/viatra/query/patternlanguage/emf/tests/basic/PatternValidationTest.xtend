@@ -13,11 +13,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -47,7 +46,7 @@ class PatternValidationTest extends AbstractValidatorTest {
     def emptyBodyValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern resolutionTest(A) = {}')
         tester.validate(model).assertAll(getErrorCode(IssueCodes::PATTERN_BODY_EMPTY), getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED))
     }
@@ -55,7 +54,7 @@ class PatternValidationTest extends AbstractValidatorTest {
     def emptyParameterListValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
         pattern resolutionTest() = {Pattern(A);}')
         tester.validate(model).assertAll(getWarningCode(IssueCodes::MISSING_PATTERN_PARAMETERS), getWarningCode(IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE))
     }
@@ -64,61 +63,61 @@ class PatternValidationTest extends AbstractValidatorTest {
     def unusedPrivatePatternValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             private pattern unusedPrivatePattern(Pattern) {
                 Pattern(Pattern);
             }
         ')
-        tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN), getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
     
     @Test
     def singleUseParameterValidation() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern unusedPrivatePattern(_Pattern) {
                 Pattern(_Pattern);
             }
         ')
-        tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SINGLEUSE_PARAMETER), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::SINGLEUSE_PARAMETER), getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
     
     @Test
     def dubiusSingleUseVariable() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern unusedPrivatePattern(p) {
                 Pattern(p);
                 Pattern.name(p, _p);
             }
         ''')
-        tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
     
     @Test
     def dubiusSingleUseVariable2() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern unusedPrivatePattern(p : Pattern) {
                 Pattern.name(_, _p);
             }
         ''')
-        tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING))
     }
     
     @Test
     def dubiusSingleUseVariableCapitalization() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             pattern unusedPrivatePattern(p) {
                 Pattern(p);
                 Pattern.name(p, _P);
             }
         ''')
-        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
 }

@@ -15,7 +15,7 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.viatra.addon.validation.runtime.annotation.ConstraintAnnotationValidator
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
@@ -24,7 +24,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.viatra.query.patternlanguage.emf.ui.tests.EMFPatternLanguageUiInjectorProvider
 
@@ -48,7 +48,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest {
 
     val patternFileHeader = '''
         package org.eclipse.viatra.query.patternlanguage.emf.tests
-        import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+        import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
         '''
 
     val singleParameterPatternDefinition = '''

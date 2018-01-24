@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
-import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -50,7 +50,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testNoRecursion() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 Pattern(p);
@@ -67,7 +67,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testSelfRecursion() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 Pattern(p);
@@ -82,7 +82,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testSelfRecursionNeg() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 Pattern(p);
@@ -115,7 +115,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testChainNoRecursion() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 find p2(p);
@@ -138,7 +138,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testChainNoRecursionNeg() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 neg find p2(p);
@@ -161,7 +161,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testCycleRecursion() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 find p2(p);
@@ -192,7 +192,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testCycleRecursionNeg() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
             pattern p1(p : Pattern) = {
                 find p2(p);
@@ -222,7 +222,7 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
     def void testCycleRecursionMultiPath() {
         val model = parseHelper.parse(
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             
             pattern p1(p : Pattern) = {
                 find p2(p);

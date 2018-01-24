@@ -17,12 +17,11 @@ import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternModelAcceptor
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator
