@@ -65,7 +65,7 @@ public class EMFPatternLanguageGeneratorConfig extends GeneratorConfig {
         }
         
         public static MatcherGenerationStrategy defaultValue() {
-            return SEPARATE_CLASS;
+            return NESTED_CLASS;
         }
     }
 
