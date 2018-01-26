@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
 
 /**
  * {@link IMatchProcessor} implementation inferrer.
@@ -50,6 +51,7 @@ class PatternMatchProcessorClassInferrer {
         this.annBuilder = annBuilder
 
         val processorClass = pattern.toClass(pattern.processorClassName(config.matcherGenerationStrategy)) [
+            static = config.matcherGenerationStrategy == MatcherGenerationStrategy.NESTED_CLASS
             packageName = processorPackageName
             documentation = pattern.javadocProcessorClass.toString
             abstract = true
