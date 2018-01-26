@@ -9,6 +9,14 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 === Dependency updates
 Update minimum version of required dependencies 
 
+=== Code generator updates
+
+In VIATRA 2.0, the default behavior of query code generator was updated to reduce the number of generated files. This means, no `.util` package is generated, match and matcher code is generated as embedded subclasses, and match processors are not generated anymore.
+ 
+If necessary, the old generator behavior can be set by relying on the VQL Compiler settings.
+
+image::releases/17_viatra_compiler.png[]
+
 === Deprecated code removal
 
 All code marked as deprecated has been removed from the codebase. Additionally, further components were removed

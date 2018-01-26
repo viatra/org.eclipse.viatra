@@ -50,7 +50,7 @@ public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPrefe
             super.initializeBuilderPreferences(store);
             store.setDefault(PREF_GENERATE_MANIFEST_ENTRIES, true);
             store.setDefault(PREF_GENERATE_ECLIPSE_EXTENSIONS, true);
-            store.setDefault(PREF_GENERATE_MATCH_PROCESSOR, true);
+            store.setDefault(PREF_GENERATE_MATCH_PROCESSOR, false);
             store.setDefault(PREF_MATCHER_GENERATION_STRATEGY, EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy.defaultValue().toString());
         }
         

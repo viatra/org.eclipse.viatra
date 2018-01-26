@@ -69,7 +69,7 @@ public class EMFPatternLanguageGeneratorConfig extends GeneratorConfig {
         }
     }
 
-    private boolean generateMatchProcessors = true;
+    private boolean generateMatchProcessors = false;
     private MatcherGenerationStrategy matcherGenerationStrategy = MatcherGenerationStrategy.defaultValue();
     private boolean updateManifest = true;
     private boolean generateExtensions = true;

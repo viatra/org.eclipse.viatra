@@ -94,7 +94,7 @@ class VQLCompilerOptionsTest extends AbstractWorkbenchTest {
     
     @Test
     def void groupPatternClashWithDefaultSettings() {
-        testFileCreationAndBuild(TEST_CONTENTS_CONFLICT, 0)
+        testFileCreationAndBuild(TEST_CONTENTS_CONFLICT, 1)
     }
     
     @Test
