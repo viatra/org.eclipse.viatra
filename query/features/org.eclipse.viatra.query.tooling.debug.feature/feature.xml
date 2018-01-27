@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.tooling.debug.feature"
       label="VIATRA Query Debug (requires Eclipse Juno+)"
-      version="1.7.0.qualifier"
+      version="1.7.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

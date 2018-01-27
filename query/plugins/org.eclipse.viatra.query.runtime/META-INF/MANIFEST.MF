@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query Runtime
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime;singleton:=true
-Bundle-Version: 1.7.0.qualifier
+Bundle-Version: 1.7.1.qualifier
 Bundle-Activator: org.eclipse.viatra.query.runtime.ViatraQueryRuntimePlugin
 Require-Bundle: org.eclipse.viatra.query.runtime.rete;bundle-version="[1.7.0,1.8.0)";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.0";visibility:=reexport,

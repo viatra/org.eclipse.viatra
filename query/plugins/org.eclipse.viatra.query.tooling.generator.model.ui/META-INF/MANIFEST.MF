@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query Generator Model Editor
-Bundle-Version: 1.7.0.qualifier
+Bundle-Version: 1.7.1.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.generator.model.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version="[1.7.0,1.8.0)";visibility:=reexport,

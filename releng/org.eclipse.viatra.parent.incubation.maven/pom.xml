@@ -34,7 +34,7 @@
         <groupId>org.eclipse.viatra</groupId>
         <!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
         <artifactId>org.eclipse.viatra.parent.core</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.7.1-SNAPSHOT</version>
         <relativePath>../org.eclipse.viatra.parent.core/pom.xml</relativePath>
     </parent>
     <repositories>

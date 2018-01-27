@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA-CEP Event Processing Language (VEPL) UI (Incubation)
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 0.17.1.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.cep.vepl.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.viatra.cep.vepl;bundle-version="[0.17.0,0.18.0)";visibility:=reexport,
