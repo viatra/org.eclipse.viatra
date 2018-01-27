@@ -22,8 +22,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 /**

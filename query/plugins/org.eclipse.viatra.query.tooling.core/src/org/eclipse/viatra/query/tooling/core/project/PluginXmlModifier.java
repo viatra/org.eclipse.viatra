@@ -70,11 +70,7 @@ public class PluginXmlModifier {
                 document.appendChild(root);
             }
             loadExtensionData(document);
-        } catch (SAXException e) {
-            throw wrapException(e);
-        } catch (IOException e) {
-            throw wrapException(e);
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             throw wrapException(e);
         }
     }

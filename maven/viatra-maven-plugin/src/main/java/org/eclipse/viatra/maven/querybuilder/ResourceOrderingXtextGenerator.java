@@ -34,7 +34,6 @@ import org.eclipse.xtext.maven.XtextGenerator;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -149,7 +148,7 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
     protected void internalExecute() throws MojoExecutionException {
         Map<String, LanguageAccess> languageMap = new LanguageAccessFactory().createLanguageAccess(getLanguages(), this
                 .getClass().getClassLoader());
-        Iterable<String> classPathEntries = filter(getClasspathElements(), emptyStringFilter());
+        Iterable<String> classPathEntries = filter(getClasspathElements(), input -> !Strings.isEmpty(input.trim()));
         Injector injector = Guice.createInjector(new StandaloneBuilderModule());
         ResourceOrderingStandaloneBuilder builder = injector.getInstance(ResourceOrderingStandaloneBuilder.class); // XXX StandaloneBuilder has been changed to ResourceOrderingStandaloneBuilder
         builder.setBaseDir(project.getBasedir().getAbsolutePath());
@@ -196,14 +195,6 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
             throw new IllegalArgumentException("Couldn't create directory '" + tmpClassDirectory + "'.");
         }
         return tmpDir;
-    }
-
-    private Predicate<String> emptyStringFilter() {
-        return new Predicate<String>() {
-            public boolean apply(String input) {
-                return !Strings.isEmpty(input.trim());
-            }
-        };
     }
 
     public List<String> getClasspathElements() {

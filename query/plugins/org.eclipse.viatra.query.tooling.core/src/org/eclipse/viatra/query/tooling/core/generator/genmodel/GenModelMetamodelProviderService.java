@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -36,6 +38,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.GeneratorModelHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.BaseMetamodelProviderService;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelReference;
@@ -48,13 +51,9 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.FilteringScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -64,14 +63,6 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     @Inject
     private IVQGenmodelProvider provider;
     
-    private static final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
-        @Override
-        public QualifiedName apply(IEObjectDescription desc) {
-            Preconditions.checkNotNull(desc);
-
-            return desc.getQualifiedName();
-        }
-    }
     private static final class ParentScopeFilter implements Predicate<IEObjectDescription> {
 
         private final Iterable<IEObjectDescription> referencedPackages;
@@ -83,9 +74,9 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
 
         @Override
         public boolean apply(IEObjectDescription desc) {
-            Preconditions.checkNotNull(desc);
+            Objects.requireNonNull(desc);
 
-            return !Iterables.contains(Iterables.transform(referencedPackages, new NameTransformerFunction()),
+            return !Iterables.contains(Iterables.transform(referencedPackages, IEObjectDescription::getQualifiedName),
                     desc.getQualifiedName());
         }
     }
@@ -111,24 +102,19 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
 
     @Override
     public IScope getAllMetamodelObjects(IScope delegateScope, EObject ctx) {
-        Preconditions.checkNotNull(ctx, "Context is required");
-        Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
+        Objects.requireNonNull(ctx, "Context is required");
+        Iterable<IEObjectDescription> referencedPackages = new ArrayList<>();
         ViatraQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
         if (generatorModel != null) {
             for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
                 Iterable<IEObjectDescription> packages = Iterables.transform(
                         getAllGenPackages(generatorModelReference.getGenmodel()),
-                        new Function<GenPackage, IEObjectDescription>() {
-                            @Override
-                            public IEObjectDescription apply(GenPackage from) {
-                                Preconditions.checkNotNull(from);
-
-                                EPackage ePackage = from.getEcorePackage();
-                                QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(ePackage
-                                        .getNsURI());
-                                return EObjectDescription.create(qualifiedName, ePackage,
-                                        Collections.singletonMap("nsURI", "true"));
-                            }
+                        from -> {
+                            EPackage ePackage = from.getEcorePackage();
+                            QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(ePackage
+                                    .getNsURI());
+                            return EObjectDescription.create(qualifiedName, ePackage,
+                                    Collections.singletonMap("nsURI", "true"));
                         });
                 referencedPackages = Iterables.concat(referencedPackages, packages);
             }
@@ -143,17 +129,11 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     public Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.hasNature(ViatraQueryNature.NATURE_ID),
                 "Only works for VIATRA Query projects");
-        Set<EPackage> referencedPackages = Sets.newLinkedHashSet();
+        Set<EPackage> referencedPackages = new LinkedHashSet<>();
         ViatraQueryGeneratorModel generatorModel = getGeneratorModel(project);
         for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
             referencedPackages.addAll(Lists.transform(getAllGenPackages(generatorModelReference.getGenmodel()),
-                    new Function<GenPackage, EPackage>() {
-                        @Override
-                        public EPackage apply(GenPackage desc) {
-                            Preconditions.checkNotNull(desc);
-                            return desc.getEcorePackage();
-                        }
-                    }));
+                    desc -> desc.getEcorePackage()));
         }
 
         referencedPackages.addAll(getGenmodelRegistry().getPackages());
@@ -225,13 +205,13 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     public void saveGeneratorModel(IProject project, ViatraQueryGeneratorModel generatorModel) throws IOException {
         Resource eResource = generatorModel.eResource();
         if (eResource != null) {
-            eResource.save(Maps.newHashMap());
+            eResource.save(new HashMap<>());
         } else {
             URI uri = getGenmodelURI(project);
             ResourceSet set = new ResourceSetImpl();
             Resource resource = set.createResource(uri);
             resource.getContents().add(generatorModel);
-            resource.save(Maps.newHashMap());
+            resource.save(new HashMap<>());
         }
 
     }
@@ -264,25 +244,17 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     private GenPackage findGenPackage(ViatraQueryGeneratorModel vqGenModel, ResourceSet set, final String packageNsUri) {
         // vqGenModel is null if loading a pattern from the registry
         // in this case only fallback to package Registry works
-        if (vqGenModel != null) {
-            Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
-            for (GeneratorModelReference generatorModelReference : vqGenModel.getGenmodels()) {
-                genPackageIterable = Iterables.concat(genPackageIterable,
-                        getAllGenPackages(generatorModelReference.getGenmodel()));
-            }
-            Iterable<GenPackage> genPackages = Iterables.filter(genPackageIterable, new Predicate<GenPackage>() {
-                @Override
-                public boolean apply(GenPackage genPackage) {
-                    Preconditions.checkNotNull(genPackage, "Checked genpackage must not be null");
-                    return packageNsUri.equals(genPackage.getEcorePackage().getNsURI());
-                }
-            });
-            Iterator<GenPackage> it = genPackages.iterator();
-            if (it.hasNext()) {
-                return it.next();
-            }
+        if (vqGenModel == null) {
+            return null;
         }
-        return null;
+        
+        List<GenPackage> genPackageIterable = new ArrayList<>();
+        for (GeneratorModelReference generatorModelReference : vqGenModel.getGenmodels()) {
+            genPackageIterable.addAll(getAllGenPackages(generatorModelReference.getGenmodel()));
+        }
+        return genPackageIterable.stream()
+                .filter(genPackage -> Objects.equals(packageNsUri, genPackage.getEcorePackage().getNsURI()))
+                .findFirst().orElse(null);
     }
 
     private List<GenPackage> getAllGenPackages(GenModel genModel) {

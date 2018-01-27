@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgent;
 import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgentListener;
@@ -82,35 +81,32 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
 
         });
         
-        ISelectionListener listener = new ISelectionListener() {
-            @Override
-            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-                if (!selection.isEmpty() && selection instanceof StructuredSelection) {
-                    
-                    Object firstElement = ((StructuredSelection) selection).getFirstElement();
-                    try {
-                        if (firstElement instanceof TransformationThread) {
-                            currentThread = (TransformationThread) firstElement;
-                            if(!currentThread.isTerminated()){
-                                maintainTabs();
-                                currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
-                            }
-                            
-                        } else if(firstElement instanceof TransformationStackFrame){
-                            TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
-                            currentThread =  thread;
-                            if(!currentThread.isTerminated()){
-                                maintainTabs();
-                                currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
-                            }
+        ISelectionListener listener = (part, selection) -> {
+            if (!selection.isEmpty() && selection instanceof StructuredSelection) {
+                
+                Object firstElement = ((StructuredSelection) selection).getFirstElement();
+                try {
+                    if (firstElement instanceof TransformationThread) {
+                        currentThread = (TransformationThread) firstElement;
+                        if(!currentThread.isTerminated()){
+                            maintainTabs();
+                            currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
                         }
-                    } catch (Exception e) {
-                        TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
+                        
+                    } else if(firstElement instanceof TransformationStackFrame){
+                        TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
+                        currentThread =  thread;
+                        if(!currentThread.isTerminated()){
+                            maintainTabs();
+                            currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
+                        }
                     }
-                    
+                } catch (Exception e) {
+                    TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
                 }
-
+                
             }
+
         };
 
         sService.addSelectionListener(DEBUG_VIEW, listener);
@@ -160,12 +156,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
     @Override
     public void transformationStateChanged(TransformationState state) {
         if(currentThread.getTransformationState().equals(state)){
-            tabFolder.getDisplay().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    maintainTabs();
-                }
-            });
+            tabFolder.getDisplay().asyncExec(() -> maintainTabs());
         }
         
     }
@@ -173,14 +164,9 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
     @Override
     public void terminated(IDebuggerHostAgent agent) {
         if(currentThread.getHostAgent().equals(agent)){
-            tabFolder.getDisplay().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    disposeTabs();
-                    currentThread = null;
-                }
-
-                
+            tabFolder.getDisplay().asyncExec(() -> {
+                disposeTabs();
+                currentThread = null;
             });
         }
         
@@ -214,12 +200,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
         
         private TabbedSelectionProviderWrapper() {
             fListenerList = new ListenerList(ListenerList.IDENTITY);
-            fListener = new ISelectionChangedListener() {
-                @Override
-                public void selectionChanged(SelectionChangedEvent event) {
-                    fireSelectionChanged(event);
-                }
-            };
+            fListener = event -> fireSelectionChanged(event);
         }
 
         public void setActiveProvider(ISelectionProvider provider) {

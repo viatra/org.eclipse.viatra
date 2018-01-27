@@ -67,7 +67,6 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
     private ISelection selection;
     private IWorkbench workbench;
     private final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    private IPath filePath;
 
     @Inject
     private Injector injector;
@@ -144,7 +143,7 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
         IResource containerResource = root.findMember(new Path(containerName));
         ResourceSet resourceSet = page2.getResourceSet();
 
-        filePath = containerResource.getFullPath().append(packageName + "/" + fileName);
+        IPath filePath = containerResource.getFullPath().append(packageName).append(fileName);
         IFile file = root.getFile(filePath);
         String fullPath = filePath.toString();
 
@@ -195,7 +194,7 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
         }
         resource.getContents().add(pm);
 
-        resource.save(Collections.EMPTY_MAP);
+        resource.save(Collections.emptyMap());
         containerResource.refreshLocal(0, new NullProgressMonitor());
         return file;
     }

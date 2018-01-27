@@ -66,7 +66,7 @@ public class OperationListContentProvider implements ITreeContentProvider {
     @Override
     public boolean hasChildren(Object element) {
         if(element instanceof SearchOperationViewerNode){
-            return ((SearchOperationViewerNode) element).getChildren().size() > 0;
+            return !((SearchOperationViewerNode) element).getChildren().isEmpty();
         }
         return false;
     }

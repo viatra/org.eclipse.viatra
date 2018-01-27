@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -39,11 +38,10 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
 import org.eclipse.viatra.query.tooling.core.preferences.ToolingCorePreferenceConstants;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -81,24 +79,21 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
     public TargetPlatformMetamodelsIndex() {
         IPreferenceStore preferenceStore = ViatraQueryGeneratorPlugin.INSTANCE.getPreferenceStore();
         this.automaticIndexing = !preferenceStore.getBoolean(ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE);
-        preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
-                    @Override
-                    public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-                        if (Objects.equals(event.getProperty(), ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE)) {
-                            // Note that if the property is set through non-typed API, it may be a String instead of Boolean.
-                            Object value = event.getNewValue();
-                            Boolean disableUpdatePreference = false;
-                            if (value instanceof Boolean) {
-                                disableUpdatePreference = (Boolean)value;
-                            } else if (value instanceof String) {
-                                disableUpdatePreference = Boolean.valueOf(value.toString());
-                            }
-                            automaticIndexing = !disableUpdatePreference;
-                            // always update once after preference change
-                            indexUpToDate = false;
-                        }
-                    }
-                });
+        preferenceStore.addPropertyChangeListener(event -> {
+            if (Objects.equals(event.getProperty(), ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE)) {
+                // Note that if the property is set through non-typed API, it may be a String instead of Boolean.
+                Object value = event.getNewValue();
+                Boolean disableUpdatePreference = false;
+                if (value instanceof Boolean) {
+                    disableUpdatePreference = (Boolean)value;
+                } else if (value instanceof String) {
+                    disableUpdatePreference = Boolean.valueOf(value.toString());
+                }
+                automaticIndexing = !disableUpdatePreference;
+                // always update once after preference change
+                indexUpToDate = false;
+            }
+        });
     }
     
     private void update(){
@@ -278,7 +273,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         synchronized (TargetPlatformMetamodelsIndex.class) {
             update();
             
-            return Iterables.filter(new ArrayList<>(entries.values()), Predicates.notNull());
+            return Iterables.filter(new ArrayList<>(entries.values()), Objects::nonNull);
         }
     }
 

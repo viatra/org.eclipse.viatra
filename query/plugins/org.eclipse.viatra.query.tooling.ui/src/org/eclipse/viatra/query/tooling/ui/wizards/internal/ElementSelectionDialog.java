@@ -28,7 +28,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -145,12 +144,10 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 
         text.setText((filter == null ? "" : filter));
 
-        Listener listener = new Listener() {
-            public void handleEvent(Event e) {
-                importFilter.filterString = filterText.getText();
-                tableViewer.refresh();
-                // filterElements(filterText.getText());
-            }
+        Listener listener = e -> {
+            importFilter.filterString = filterText.getText();
+            tableViewer.refresh();
+            // filterElements(filterText.getText());
         };
         text.addListener(SWT.Modify, listener);
 

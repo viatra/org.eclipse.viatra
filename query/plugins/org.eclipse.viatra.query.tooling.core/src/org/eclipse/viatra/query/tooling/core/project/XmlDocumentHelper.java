@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
 public final class XmlDocumentHelper {
 
     private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
-    {
+    static {
         // Following settings required to maintain original lexical information
         FACTORY.setCoalescing(false);
         FACTORY.setExpandEntityReferences(false);

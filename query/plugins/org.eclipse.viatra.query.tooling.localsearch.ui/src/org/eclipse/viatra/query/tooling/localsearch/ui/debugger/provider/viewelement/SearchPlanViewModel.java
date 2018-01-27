@@ -63,7 +63,7 @@ public class SearchPlanViewModel {
     }
 
     private void doStepInto(List<SearchOperationViewerNode> sameLevelElements) {
-        if(sameLevelElements .size() == 0){
+        if (sameLevelElements.isEmpty()) {
             return;
         }
         SearchPlanExecutor planExecutor = sameLevelElements.get(0).getPlanExecutor();
@@ -101,7 +101,7 @@ public class SearchPlanViewModel {
     }
 
     private void doStepBack(List<SearchOperationViewerNode> sameLevelElements) {
-        if(sameLevelElements.size() == 0){
+        if (sameLevelElements.isEmpty()) {
             return;
         }
         SearchOperationViewerNode firstNode = sameLevelElements.get(0);

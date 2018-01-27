@@ -23,9 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
@@ -133,13 +131,9 @@ public class SelectViatraQueryProjectPage extends WizardPage {
             }
         });
 
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                if (getContainer().getCurrentPage() != null) {
-                    getContainer().updateButtons();
-                }
+        viewer.addSelectionChangedListener(event -> {
+            if (getContainer().getCurrentPage() != null) {
+                getContainer().updateButtons();
             }
         });
 
@@ -185,7 +179,7 @@ public class SelectViatraQueryProjectPage extends WizardPage {
     @Override
     public boolean isPageComplete() {
         return !viewer.getSelection().isEmpty()
-                && !(getSelectedProject().findMember(ViatraQueryNature.VQGENMODEL) != null);
+                && getSelectedProject().findMember(ViatraQueryNature.VQGENMODEL) == null;
     }
 
 }

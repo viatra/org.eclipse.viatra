@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.core.generator;
 
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 /**

@@ -233,13 +233,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                 return;
             }
             Iterator<JvmTypeReference> it = aggregator.getSuperTypes().iterator();
-            if (Iterators.all(it, new Predicate<JvmTypeReference>() {
-
-                @Override
-                public boolean apply(JvmTypeReference input) {
-                    return input == null || input.eIsProxy() || !typeReferences.is(input, clazz);
-                }
-            })) {
+            if (Iterators.all(it, input -> input == null || input.eIsProxy() || !typeReferences.is(input, clazz))) {
                 error(String.format("%s is not an aggregator definition.", aggregator.getSimpleName()),
                         PatternLanguagePackage.Literals.AGGREGATED_VALUE__AGGREGATOR, IssueCodes.INVALID_AGGREGATOR);
                 return;
@@ -845,19 +839,8 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
 
     @Check(CheckType.NORMAL)
     public void checkNegativeCallParameters(PatternCompositionConstraint constraint) {
-        Predicate<ValueReference> isSingleUseVariable = new Predicate<ValueReference>() {
-
-            @Override
-            public boolean apply(ValueReference input) {
-                if (input instanceof VariableValue) {
-                    VariableValue variableValue = (VariableValue) input;
-                    return variableValue.getValue().getVar().startsWith("_");
-                } else {
-                    return false;
-                }
-            }
-
-        };
+        Predicate<ValueReference> isSingleUseVariable = input -> 
+            input instanceof VariableValue ? ((VariableValue) input).getValue().getVar().startsWith("_") : false;
         if (constraint.isNegative()) {
             List<ValueReference> callVariables = constraint.getCall().getParameters();
             List<Variable> patternParameters = constraint.getCall().getPatternRef().getParameters();

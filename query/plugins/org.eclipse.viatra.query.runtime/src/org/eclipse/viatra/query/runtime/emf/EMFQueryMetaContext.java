@@ -114,10 +114,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     @Override
     public boolean isStateless(IInputKey key) {
         ensureValidKey(key);
-        if (key instanceof JavaTransitiveInstancesKey || key instanceof EClassUnscopedTransitiveInstancesKey) 
-            return true;
-        else
-            return false;
+        return key instanceof JavaTransitiveInstancesKey || key instanceof EClassUnscopedTransitiveInstancesKey;
     }
 
     @Override

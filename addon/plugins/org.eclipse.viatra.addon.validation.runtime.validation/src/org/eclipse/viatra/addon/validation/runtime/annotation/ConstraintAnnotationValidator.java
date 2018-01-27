@@ -32,8 +32,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -107,13 +105,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
         if (keyList.isEmpty()) {
             validator.error("No key defined!", keyRef, null, INVALID_KEY_PARAMETERS);
         } else {
-            boolean atLeastOneEClassKey = Iterables.any(keyList, new Predicate<Variable>() {
-                @Override
-                public boolean apply(Variable key) {
-                    IInputKey classifier = typeInferrer.getType(key);
-                    return (classifier instanceof EClassTransitiveInstancesKey);
-                }
-            });
+            boolean atLeastOneEClassKey = Iterables.any(keyList, key -> (typeInferrer.getType(key) instanceof EClassTransitiveInstancesKey));
             if (!atLeastOneEClassKey) {
                 validator.warning("At least one key should be EClass to make location possible!", keyRef, null,
                         INVALID_KEY_PARAMETERS);
@@ -157,12 +149,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     private Iterable<VariableReference> transformVariableReferenceList(ValueReference listParameter) {
         EList<ValueReference> listValues = ((ListValue) listParameter).getValues();
         Iterable<VariableValue> keyStringValues = Iterables.filter(listValues, VariableValue.class);
-        Iterable<VariableReference> keyParamList = Iterables.transform(keyStringValues, new Function<VariableValue, VariableReference>() {
-            @Override
-            public VariableReference apply(VariableValue ref) {
-                return ref.getValue();
-            }
-        });
+        Iterable<VariableReference> keyParamList = Iterables.transform(keyStringValues, VariableValue::getValue);
         return keyParamList;
     }
 

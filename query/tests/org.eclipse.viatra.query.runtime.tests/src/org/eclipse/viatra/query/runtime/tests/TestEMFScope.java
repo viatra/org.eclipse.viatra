@@ -43,7 +43,6 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteRecipe;
 import org.junit.Test;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -190,12 +189,7 @@ public class TestEMFScope {
     }
     
     private Set<Object> getFirstParamsInMatchSet(Collection<? extends IPatternMatch> matches) {
-        Set<Object> actualObjects1 = ImmutableSet.copyOf(Iterables.transform(matches, new Function<IPatternMatch, Object>() {
-            @Override
-            public Object apply(IPatternMatch match) {
-                return match.get(0);
-            }
-        }));
+        Set<Object> actualObjects1 = ImmutableSet.copyOf(Iterables.transform(matches, match -> match.get(0)));
         return actualObjects1;
     }
 

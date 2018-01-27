@@ -49,7 +49,7 @@ public final class ResourceDiagnosticFeedback implements IErrorFeedback {
         Resource resource = ctx.eResource();
         if (resource != null) {
             EList<Diagnostic> errors = resource.getErrors();
-            errors.add(new EObjectDiagnosticImpl(Severity.ERROR, markerType, message, ctx, null, -1, null));
+            errors.add(new EObjectDiagnosticImpl(Severity.ERROR, markerType, message, resource.getContents().get(0), null, -1, null));
         }
 
     }

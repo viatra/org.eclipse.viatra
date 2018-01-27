@@ -13,10 +13,8 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -81,17 +79,13 @@ public abstract class AbstractBackendSelectionControl extends WorkbenchWindowCon
         viewer.setSelection(
                 queryBackendFactory != null ? new StructuredSelection(queryBackendFactory) : new StructuredSelection());
         
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                final ISelection select = event.getSelection();
-                if (select instanceof IStructuredSelection){
-                    IStructuredSelection selection = (IStructuredSelection) select;
-                    Object o = selection.getFirstElement();
-                    if (o instanceof IQueryBackendFactory){
-                        applyBackendSelection((IQueryBackendFactory) o);
-                    }
+        viewer.addSelectionChangedListener(event -> {
+            final ISelection select = event.getSelection();
+            if (select instanceof IStructuredSelection){
+                IStructuredSelection selection = (IStructuredSelection) select;
+                Object o = selection.getFirstElement();
+                if (o instanceof IQueryBackendFactory){
+                    applyBackendSelection((IQueryBackendFactory) o);
                 }
             }
         });

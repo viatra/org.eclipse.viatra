@@ -32,11 +32,11 @@ public class QueryBackendRegistry {
     /**
      * Default backend implementation.
      */
-    private final IQueryBackendFactory defaultBackendFactory = new ReteBackendFactory();
-    private final IQueryBackendFactory defaultCachingBackendFactory= defaultBackendFactory;
-    private final IQueryBackendFactory localSearchBackendFactory = LocalSearchBackendFactory.INSTANCE;
+    private static final IQueryBackendFactory DEFAULT_BACKEND = new ReteBackendFactory();
+    private static final IQueryBackendFactory DEFAULT_CACHING_BACKEND = DEFAULT_BACKEND;
+    private static final IQueryBackendFactory LOCAL_SEARCH_BACKEND = LocalSearchBackendFactory.INSTANCE;
     
-    private Collection<IQueryBackendFactory> queryBackendFactories = Lists.newArrayList(defaultBackendFactory, localSearchBackendFactory);
+    private Collection<IQueryBackendFactory> queryBackendFactories = Lists.newArrayList(DEFAULT_BACKEND, LOCAL_SEARCH_BACKEND);
 
     /**
      * Default caching backend implementation (in case the regular default is non-caching).
@@ -55,13 +55,13 @@ public class QueryBackendRegistry {
      * @return the default backend
      */
     public IQueryBackendFactory getDefaultBackend() {
-        return defaultBackendFactory;
+        return DEFAULT_BACKEND;
     }
     /**
      * @return the default caching backend, if a caching backend is explicitly requested
      */
     public IQueryBackendFactory getDefaultCachingBackendClass() {
-        return defaultCachingBackendFactory;
+        return DEFAULT_CACHING_BACKEND;
     }
     
     /**

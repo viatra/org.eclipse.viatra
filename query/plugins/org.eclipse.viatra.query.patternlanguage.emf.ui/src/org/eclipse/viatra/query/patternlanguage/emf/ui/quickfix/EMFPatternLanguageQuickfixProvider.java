@@ -26,13 +26,11 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModification;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.xbase.ui.quickfix.XbaseQuickfixProvider;
 
@@ -138,16 +136,12 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         
         acceptor.accept(issue, "Add missing import", "Add missing import", null, (IModification) context -> {
             final IXtextDocument document = context.getXtextDocument();
-            Integer offset = document.readOnly(new IUnitOfWork<Integer, XtextResource>() {
-
-                @Override
-                public Integer exec(XtextResource state) {
-                    final VQLImportSection importSection = (VQLImportSection) 
-                            Iterators.find(state.getAllContents(), Predicates.instanceOf(VQLImportSection.class), null);
-                    final ICompositeNode node = NodeModelUtils.getNode(importSection);
-                    
-                    return Integer.valueOf(node.getTotalEndOffset());
-                }
+            Integer offset = document.readOnly(state -> {
+                final VQLImportSection importSection = (VQLImportSection) 
+                        Iterators.find(state.getAllContents(), Predicates.instanceOf(VQLImportSection.class), null);
+                final ICompositeNode node = NodeModelUtils.getNode(importSection);
+                
+                return Integer.valueOf(node.getTotalEndOffset());
             });
             if (offset != null) {
                 StringBuilder sb = new StringBuilder();

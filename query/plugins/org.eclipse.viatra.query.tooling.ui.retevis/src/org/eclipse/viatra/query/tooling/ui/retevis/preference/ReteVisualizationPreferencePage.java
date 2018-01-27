@@ -13,8 +13,6 @@ package org.eclipse.viatra.query.tooling.ui.retevis.preference;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -53,12 +51,7 @@ public class ReteVisualizationPreferencePage extends PreferencePage implements I
                 "&Display networks for called patterns", control);
         traverseSubpatternCallModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
         traverseSubpatternCallModeEditor.load();
-        traverseSubpatternCallModeEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent event) {
-                store.setValue(ReteVisualizationPreferenceConstants.DISPLAY_CALLED_NETWORKS_MODE, traverseSubpatternCallModeEditor.getBooleanValue());
-            }
-        });
+        traverseSubpatternCallModeEditor.setPropertyChangeListener(event -> store.setValue(ReteVisualizationPreferenceConstants.DISPLAY_CALLED_NETWORKS_MODE, traverseSubpatternCallModeEditor.getBooleanValue()));
         
         return control;
     }

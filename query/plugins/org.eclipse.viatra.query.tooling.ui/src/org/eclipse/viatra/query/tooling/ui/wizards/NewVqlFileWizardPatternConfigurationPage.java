@@ -36,7 +36,6 @@ import org.eclipse.viatra.query.tooling.ui.wizards.internal.ObjectListLabelProvi
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.ObjectParameter;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -56,10 +55,6 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
     private Text patternText;
     private ListDialogField<String> importList;
     private ListDialogField<ObjectParameter> objectList;
-    private ImportListLabelProvider importListLabelProvider;
-    private ObjectListLabelProvider objectListLabelProvider;
-    private ImportListAdapter importListAdapter;
-    private ObjectListAdapter objectListAdapter;
     public boolean parameterSet;
 
     @Inject
@@ -82,8 +77,8 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
                 .getPreviousPage();
         resourceSet = resourceSetProvider.get(firstPage.getProject());
 
-        importListAdapter = new ImportListAdapter(metamodelLoader);
-        importListLabelProvider = new ImportListLabelProvider();
+        ImportListAdapter importListAdapter = new ImportListAdapter(metamodelLoader);
+        ImportListLabelProvider importListLabelProvider = new ImportListLabelProvider();
 
         importList = new ListDialogField<>(importListAdapter, buttonLiterals, importListLabelProvider);
         importList.setLabelText("&Imported packages:");
@@ -94,8 +89,8 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
 
     private void createObjectSelectionControl(Composite parent, int nColumns) {
         String[] buttonLiterals = new String[] { "Add", "Modify", "Remove" };
-        objectListAdapter = new ObjectListAdapter(this, importList, metamodelLoader);
-        objectListLabelProvider = new ObjectListLabelProvider();
+        ObjectListAdapter objectListAdapter = new ObjectListAdapter(this, importList, metamodelLoader);
+        ObjectListLabelProvider objectListLabelProvider = new ObjectListLabelProvider();
 
         objectList = new ListDialogField<>(objectListAdapter, buttonLiterals, objectListLabelProvider);
         objectList.setLabelText("&Pattern parameters:");
@@ -189,12 +184,7 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
      * @return the list of imports
      */
     public List<EPackage> getImports() {
-        return Lists.transform(importList.getElements(), new Function<String, EPackage>() {
-
-            @Override
-            public EPackage apply(String input) {
-                return metamodelLoader.loadPackage(resourceSet, input);
-            }});
+        return Lists.transform(importList.getElements(), input -> metamodelLoader.loadPackage(resourceSet, input));
     }
 
     /**

@@ -13,10 +13,8 @@ package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -73,17 +71,13 @@ public class TransformationBrowserConfigurationControl extends WorkbenchWindowCo
         viewer.setSelection(new StructuredSelection(TransformationViewConfiguration.RULE_BROWSER));
         applyConfligurationSelection(TransformationViewConfiguration.RULE_BROWSER);
         
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                final ISelection select = event.getSelection();
-                if (select instanceof IStructuredSelection){
-                    IStructuredSelection selection = (IStructuredSelection) select;
-                    Object o = selection.getFirstElement();
-                    if (o instanceof TransformationViewConfiguration){
-                        applyConfligurationSelection((TransformationViewConfiguration) o);
-                    }
+        viewer.addSelectionChangedListener(event -> {
+            final ISelection select = event.getSelection();
+            if (select instanceof IStructuredSelection){
+                IStructuredSelection selection = (IStructuredSelection) select;
+                Object o = selection.getFirstElement();
+                if (o instanceof TransformationViewConfiguration){
+                    applyConfligurationSelection((TransformationViewConfiguration) o);
                 }
             }
         });

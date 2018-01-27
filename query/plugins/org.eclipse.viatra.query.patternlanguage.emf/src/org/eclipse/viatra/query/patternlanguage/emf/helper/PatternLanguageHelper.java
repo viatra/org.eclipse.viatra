@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -61,6 +62,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.xbase.XExpression;
@@ -71,13 +73,11 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * @since 2.0
@@ -234,10 +234,11 @@ public final class PatternLanguageHelper {
     public static List<Variable> getUsedVariables(XExpression xExpression, Iterable<Variable> allVariables){
         if (xExpression == null) return Collections.emptyList();
         List<EObject> contents = Lists.newArrayList(xExpression.eAllContents());
-        Iterable<XFeatureCall> featuredCalls = (xExpression instanceof XFeatureCall) ? 
-                Iterables.concat(ImmutableList.of((XFeatureCall)xExpression), Iterables.filter(contents, XFeatureCall.class))
-                : Iterables.filter(contents, XFeatureCall.class);
-        final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, XFeatureCall::getConcreteSyntaxFeatureName));
+        Stream<XFeatureCall> contentStream = contents.stream().filter(XFeatureCall.class::isInstance).map(XFeatureCall.class::cast);
+        Stream<XFeatureCall> featuredCalls = (xExpression instanceof XFeatureCall) 
+                ? Stream.concat(Stream.of((XFeatureCall)xExpression), contentStream)
+                : contentStream;
+        final Set<String> valNames = featuredCalls.map(XFeatureCall::getConcreteSyntaxFeatureName).collect(Collectors.toSet()); 
         Iterable<Variable> calledVariables = Iterables.filter(allVariables, var -> valNames.contains(var.getName()));
         return IterableExtensions.sortBy(calledVariables, Variable::getName);
     }
@@ -544,7 +545,6 @@ public final class PatternLanguageHelper {
                     }
                 }
             } else if (valueReference instanceof FunctionEvaluationValue) {
-                // TODO this is constant empty?
                 FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
                 final List<Variable> usedVariables =
                         getUsedVariables(eval.getExpression(),

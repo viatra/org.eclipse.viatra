@@ -11,14 +11,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.retevis.views;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -52,11 +54,8 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferenceConstants;
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * 
@@ -78,11 +77,11 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
 
     
     // XXX NOOO mutable state
-    private Map<ReteNodeRecipe, Node> nodeTrace = Maps.newHashMap();
+    private Map<ReteNodeRecipe, Node> nodeTrace = new HashMap<>();
     
     @Override
     protected EMFScope extractModelSource(List<Object> objects) {
-        Map<ReteNodeRecipe, Node> recipeToReteMap = Maps.newHashMap();
+        Map<ReteNodeRecipe, Node> recipeToReteMap = new HashMap<>();
         // compute full Rete to Recipe map
         // compute recipe node set to display
         Set<ReteNodeRecipe> recipeSet = computeRecipeSet(objects, recipeToReteMap);
@@ -99,9 +98,9 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
      */
     private Set<ReteNodeRecipe> computeRecipeSet(List<Object> objects, Map<ReteNodeRecipe, Node> recipeToReteMap) {
 
-        Set<ReteNodeRecipe> recipeSet = Sets.newHashSet();
+        Set<ReteNodeRecipe> recipeSet = new HashSet<>();
         
-        for (IFilteredMatcherContent patternMatcherContent : Iterables.filter(objects, IFilteredMatcherContent.class)) {
+        for (IFilteredMatcherContent<?> patternMatcherContent : Iterables.filter(objects, IFilteredMatcherContent.class)) {
             ViatraQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
             if (matcher == null)
                 continue;
@@ -134,7 +133,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
      * recipes.
      */
     private Map<ReteNodeRecipe, Node> computeNodeTrace(final ReteEngine reteEngine) {
-        Map<ReteNodeRecipe, Node> recipeToNodeMap = Maps.newHashMap();
+        Map<ReteNodeRecipe, Node> recipeToNodeMap = new HashMap<>();
         Set<RecipeTraceInfo> recipeTraces = reteEngine.getReteNet().getRecipeTraces();
         for (RecipeTraceInfo info : recipeTraces) {
             Node node = info.getNode();
@@ -157,15 +156,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
         }
         ResourceSet resourceSet = new ResourceSetImpl();
         Resource resource = resourceSet.createResource(URI.createURI("temp"));
-        Iterable<EObject> roots = Iterables.transform(recipeSet, new Function<ReteNodeRecipe, EObject>() {
-
-            @Override
-            public EObject apply(ReteNodeRecipe input) {
-                // Do not mess up containment hierarchy
-                return EcoreUtil.getRootContainer(input);
-            }
-        });
-        resource.getContents().addAll(Sets.newHashSet(roots));
+        resource.getContents().addAll(recipeSet.stream().map(EcoreUtil::getRootContainer).collect(Collectors.toSet()));
         return new EMFScope(resourceSet, new BaseIndexOptions());
     }
 
@@ -175,7 +166,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
      * 
      */
     private Set<ReteNodeRecipe> getRecipeNodeParents(ReteNodeRecipe recipe) {
-        Set<ReteNodeRecipe> parents = Sets.newHashSet();
+        Set<ReteNodeRecipe> parents = new HashSet<>();
         collectRecipeNodeParents(recipe, parents, true);
         return parents;
     }
@@ -205,7 +196,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
      * Based on the recipe metamodel, return the immediate parents of a given recipe
      */
     private Set<ReteNodeRecipe> getImmediateParentsOfRecipe(ReteNodeRecipe recipe, boolean isRootRecipe) {
-        Set<ReteNodeRecipe> nextParentsToCollect = Sets.newHashSet();
+        Set<ReteNodeRecipe> nextParentsToCollect = new HashSet<>();
         if (recipe instanceof IndexerBasedAggregatorRecipe) {
             ReteNodeRecipe aggregatorParent = ((IndexerBasedAggregatorRecipe) recipe).getParent();
             nextParentsToCollect.add(aggregatorParent);

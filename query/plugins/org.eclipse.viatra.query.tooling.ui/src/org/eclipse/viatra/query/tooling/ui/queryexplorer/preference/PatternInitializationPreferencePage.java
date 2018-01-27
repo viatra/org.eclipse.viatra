@@ -14,8 +14,6 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.preference;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -63,16 +61,7 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
                 "&Wildcard mode", control);
         wildcardModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
         wildcardModeEditor.load();
-        wildcardModeEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void propertyChange(PropertyChangeEvent event) {
-                store.setValue(PreferenceConstants.WILDCARD_MODE, wildcardModeEditor.getBooleanValue());
-                // the mentioned replace method did not work for me
-                ViatraQueryGUIPlugin.getDefault().savePluginPreferences();
-            }
-        });
+        wildcardModeEditor.setPropertyChangeListener(event -> store.setValue(PreferenceConstants.WILDCARD_MODE, wildcardModeEditor.getBooleanValue()));
         
         // Label separator= new Label(control, SWT.HORIZONTAL | SWT.SEPARATOR);
         // separator.setLayoutData(layoutData);
@@ -84,16 +73,7 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
                 "&Dynamic EMF mode", control);
         dynamicEMFModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
         dynamicEMFModeEditor.load();
-        dynamicEMFModeEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void propertyChange(PropertyChangeEvent event) {
-                store.setValue(PreferenceConstants.DYNAMIC_EMF_MODE, dynamicEMFModeEditor.getBooleanValue());
-                // the mentioned replace method did not work for me
-                ViatraQueryGUIPlugin.getDefault().savePluginPreferences();
-            }
-        });
+        dynamicEMFModeEditor.setPropertyChangeListener(event -> store.setValue(PreferenceConstants.DYNAMIC_EMF_MODE, dynamicEMFModeEditor.getBooleanValue()));
         
         return control;
     }

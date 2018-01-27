@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +21,8 @@ import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -34,12 +34,9 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
@@ -61,9 +58,6 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.Operati
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 /**
  * 
  * @author Marton Bur
@@ -81,10 +75,9 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
     private ZestContentViewer graphViewer;
     
-    private SashForm planSashForm;
     private CTabFolder matchesTabFolder;
 
-    private Map<String, TableViewer> matchViewersMap = Maps.newHashMap();
+    private Map<String, TableViewer> matchViewersMap = new HashMap<>();
 
     private LocalSearchDebugger debugger;
     private Thread planExecutorThread = null;
@@ -153,7 +146,7 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         parent.setLayoutData(new FillLayout());
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
 
-        planSashForm = new SashForm(sashForm, SWT.VERTICAL);
+        SashForm planSashForm = new SashForm(sashForm, SWT.VERTICAL);
 
         // TreeViewer for the plan
         createTreeViewer(planSashForm);
@@ -240,15 +233,12 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
     }
 
     public void refreshView() {
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                operationListViewer.refresh();
-                graphViewer.refresh();
-                Collection<TableViewer> tableViewers = matchViewersMap.values();
-                for (TableViewer tableViewer : tableViewers) {
-                    tableViewer.refresh();
-                }
+        getViewSite().getShell().getDisplay().syncExec(() -> {
+            operationListViewer.refresh();
+            graphViewer.refresh();
+            Collection<TableViewer> tableViewers = matchViewersMap.values();
+            for (TableViewer tableViewer : tableViewers) {
+                tableViewer.refresh();
             }
         });
         
@@ -283,55 +273,37 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
     private void getOrCreateMatchesTab(final String tabTitle) {
         // This method is called from a non-ui thread so that a syncexec is required here
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                CTabItem item = new CTabItem(getMatchesTabFolder(), SWT.NULL);
-                item.setText(tabTitle);		
+        getViewSite().getShell().getDisplay().syncExec(() -> {
+            CTabItem item = new CTabItem(getMatchesTabFolder(), SWT.NULL);
+            item.setText(tabTitle);		
 
-                // Mark as active
-                getMatchesTabFolder().setSelection(item);
-                
-                // Table viewer for the matches
-                Composite container = new Composite(getMatchesTabFolder(),SWT.NONE);
-                container.setLayout(new FillLayout());
-                final TableViewer viewer = createTableViewer(container);
-                
-                viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-                    @Override
-                    public void selectionChanged(SelectionChangedEvent event) {
-                        if(event.getSelection() instanceof IStructuredSelection){
-                            IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-                            MatchingFrame frame = (MatchingFrame) selection.getFirstElement();
-                            graphViewer.setInput(frame);
-                            graphViewer.refresh();
-                        }
-                    }
-                });
-                
-                matchViewersMap.put(tabTitle, viewer);
-                
-                viewer.refresh();
-                List<MatchingFrame> matchViewerInput = Lists.<MatchingFrame>newArrayList();
-                viewer.setData(VIEWER_KEY, matchViewerInput);
-                viewer.setInput(matchViewerInput);
-                
-                item.setControl(container);
-                item.addListener(SWT.FOCUSED, new Listener() {
-                    
-                    @Override
-                    public void handleEvent(Event event) {
-                        viewer.setSelection(null);
-                    }
-                }); 
-                item.addListener(SWT.FocusIn, new Listener() {
-                    
-                    @Override
-                    public void handleEvent(Event event) {
-                        viewer.setSelection(null);
-                    }
-                }); 
-            }
+            // Mark as active
+            getMatchesTabFolder().setSelection(item);
+            
+            // Table viewer for the matches
+            Composite container = new Composite(getMatchesTabFolder(),SWT.NONE);
+            container.setLayout(new FillLayout());
+            final TableViewer viewer = createTableViewer(container);
+            
+            viewer.addSelectionChangedListener(event -> {
+                if(event.getSelection() instanceof IStructuredSelection){
+                    IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                    MatchingFrame frame = (MatchingFrame) selection.getFirstElement();
+                    graphViewer.setInput(frame);
+                    graphViewer.refresh();
+                }
+            });
+            
+            matchViewersMap.put(tabTitle, viewer);
+            
+            viewer.refresh();
+            List<MatchingFrame> matchViewerInput = new ArrayList<>();
+            viewer.setData(VIEWER_KEY, matchViewerInput);
+            viewer.setInput(matchViewerInput);
+            
+            item.setControl(container);
+            item.addListener(SWT.FOCUSED, event -> viewer.setSelection(null)); 
+            item.addListener(SWT.FocusIn, event -> viewer.setSelection(null)); 
         });
         
     }

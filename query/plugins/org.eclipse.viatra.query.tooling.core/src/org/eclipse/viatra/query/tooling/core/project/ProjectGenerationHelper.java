@@ -43,6 +43,7 @@ import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.runtime.ViatraQueryRuntimePlugin;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -52,8 +53,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -553,7 +552,7 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
-            removePackageExports(service, bundleDesc, dependencies);
+            removePackageExports(bundleDesc, dependencies);
             bundleDesc.apply(monitor);
         } finally {
             if (context != null && ref != null) {
@@ -580,13 +579,7 @@ public abstract class ProjectGenerationHelper {
                 exportList.add(export);
             }
         }
-        exportList.addAll(Collections2.transform(missingExports, new Function<String, IPackageExportDescription>() {
-
-            @Override
-            public IPackageExportDescription apply(String input) {
-                return service.newPackageExport(input, null, true, null);
-            }
-        }));
+        exportList.addAll(Collections2.transform(missingExports, input -> service.newPackageExport(input, null, true, null)));
 
         bundleDesc.setPackageExports(exportList.toArray(new IPackageExportDescription[exportList.size()]));
     }
@@ -594,12 +587,10 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
      *
-     * @param service
      * @param bundleDesc
      * @param exports
      */
-    static void removePackageExports(final IBundleProjectService service, IBundleProjectDescription bundleDesc,
-            final List<String> exports) {
+    static void removePackageExports(IBundleProjectDescription bundleDesc, final List<String> exports) {
         IPackageExportDescription[] packageExports = bundleDesc.getPackageExports();
         List<IPackageExportDescription> exportList = new ArrayList<>();
         if (packageExports != null) {
@@ -737,21 +728,11 @@ public abstract class ProjectGenerationHelper {
     private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath,
             final List<String> requiredSourceFolders, final IBundleProjectService service) {
         
-        final Collection<String> existingSourceEntries = (oldClasspath == null) ? Lists.<String>newArrayList() : getExistingSourceEntries(oldClasspath);
+        final Collection<String> existingSourceEntries = (oldClasspath == null) ? new ArrayList<>() : getExistingSourceEntries(oldClasspath);
         
-        Collection<String> missingSourceFolders = Collections2.filter(requiredSourceFolders, new Predicate<String>() {
-            @Override
-            public boolean apply(String entry) {
-                return !existingSourceEntries.contains(entry);
-            }
-        });
+        Collection<String> missingSourceFolders = Collections2.filter(requiredSourceFolders, entry -> !existingSourceEntries.contains(entry));
         Collection<IBundleClasspathEntry> newClasspathEntries = Collections2.transform(missingSourceFolders,
-                new Function<String, IBundleClasspathEntry>() {
-                    @Override
-                    public IBundleClasspathEntry apply(String input) {
-                        return service.newBundleClasspathEntry(new Path(input), null, null);
-                    }
-                });
+                input -> service.newBundleClasspathEntry(new Path(input), null, null));
 
         List<IBundleClasspathEntry> modifiedClasspathEntries = Lists.newArrayList(oldClasspath);
         modifiedClasspathEntries.addAll(newClasspathEntries);
@@ -760,19 +741,9 @@ public abstract class ProjectGenerationHelper {
     
     private static Collection<String> getExistingSourceEntries(final IBundleClasspathEntry[] oldClasspath) {
         Collection<IBundleClasspathEntry> classPathSourceList = Collections2.filter(Lists.newArrayList(oldClasspath),
-                new Predicate<IBundleClasspathEntry>() {
-                    @Override
-                    public boolean apply(IBundleClasspathEntry entry) {
-                        return entry.getSourcePath() != null && !entry.getSourcePath().isEmpty();
-                    }
-                });
+                entry -> entry.getSourcePath() != null && !entry.getSourcePath().isEmpty());
         return Collections2.transform(classPathSourceList,
-                new Function<IBundleClasspathEntry, String>() {
-                    @Override
-                    public String apply(IBundleClasspathEntry entry) {
-                        return entry.getSourcePath().toString();
-                    }
-                });
+                entry -> entry.getSourcePath().toString());
     }
 
     public static String getBundleSymbolicName(IProject project) {

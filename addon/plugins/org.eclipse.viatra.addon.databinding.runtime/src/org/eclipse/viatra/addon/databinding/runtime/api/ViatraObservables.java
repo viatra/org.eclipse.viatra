@@ -11,6 +11,7 @@
 package org.eclipse.viatra.addon.databinding.runtime.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,10 +37,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Utility class for observing VIATRA Query related objects, such as match sets, match parameters.
@@ -47,6 +45,7 @@ import com.google.common.collect.Maps;
  * @author Abel Hegedus
  *
  */
+@SuppressWarnings("rawtypes")
 public final class ViatraObservables {
 
     public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
@@ -179,7 +178,7 @@ public final class ViatraObservables {
     public static List<IObservableValue> observeFeatures(IPatternMatch match, IValueChangeListener changeListener,
             String message) {
         if (message == null) {
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
 
         List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
@@ -290,7 +289,7 @@ public final class ViatraObservables {
      * @param query
      */
     public static Map<String, ObservableDefinition> calculateObservableValues(IQuerySpecification<?> query) {
-        Map<String, ObservableDefinition> propertyMap = Maps.newHashMap();
+        Map<String, ObservableDefinition> propertyMap = new HashMap<>();
         for (String v : query.getParameterNames()) {
             ObservableDefinition def = new ObservableDefinition(v, v,
                     ObservableType.OBSERVABLE_FEATURE);

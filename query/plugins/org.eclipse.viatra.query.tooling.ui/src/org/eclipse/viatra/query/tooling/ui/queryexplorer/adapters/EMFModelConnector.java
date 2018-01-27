@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,15 +40,14 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Model connector implementation for the default EMF generated model editors.
@@ -70,7 +70,7 @@ public class EMFModelConnector implements IModelConnector {
         super();
         this.logger = ViatraQueryGUIPlugin.getDefault().getLog();
         this.editorPart = editorPart;
-        this.listeners = Sets.newHashSet();
+        this.listeners = new HashSet<>();
     }
 
     @Override
@@ -157,10 +157,7 @@ public class EMFModelConnector implements IModelConnector {
             }
         }
 
-        if (paths.size() > 0) {
-            return new TreeSelection(paths.toArray(new TreePath[1]));
-        }
-        return new TreeSelection();
+        return paths.isEmpty() ? new TreeSelection() : new TreeSelection(paths.toArray(new TreePath[1]));
     }
 
     protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
@@ -208,14 +205,12 @@ public class EMFModelConnector implements IModelConnector {
     
     public boolean addListener(IModelConnectorListener listener) {
         Preconditions.checkArgument(listener != null, LISTENER_NULL_MSG);
-        boolean added = listeners.add(listener);
-        return added;
+        return listeners.add(listener);
     }
 
     public boolean removeListener(IModelConnectorListener listener) {
         Preconditions.checkArgument(listener != null, LISTENER_NULL_MSG);
-        boolean removed = listeners.remove(listener);
-        return removed;
+        return listeners.remove(listener);
     }
     
 }

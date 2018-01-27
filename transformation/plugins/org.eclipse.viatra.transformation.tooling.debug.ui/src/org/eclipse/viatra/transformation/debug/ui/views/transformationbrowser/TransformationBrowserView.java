@@ -16,10 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -27,7 +24,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgent;
 import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgentListener;
@@ -61,54 +57,47 @@ public class TransformationBrowserView extends ViewPart
         treeViewer.setContentProvider(new RuleBrowserContentProvider(this));
         treeViewer.setLabelProvider(new RuleBrowserLabelProvider(this));
 
-        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                if (event.getSelection() instanceof IStructuredSelection) {
-                    selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
-                }
+        treeViewer.addSelectionChangedListener(event -> {
+            if (event.getSelection() instanceof IStructuredSelection) {
+                selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
             }
         });
         
-        ISelectionListener listener = new ISelectionListener() {
-            @Override
-            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-                if (!selection.isEmpty() && selection instanceof StructuredSelection) {
-                    Object firstElement = ((StructuredSelection) selection).getFirstElement();
-                    try {
-                        if (firstElement instanceof TransformationThread) {
-                            currentThread = (TransformationThread) firstElement;
-                            Object[] expandedElements = treeViewer.getExpandedElements();
-                            if(!currentThread.isTerminated()){
-                                treeViewer.setInput(currentThread);
-                                treeViewer.setExpandedElements(expandedElements);
-                                currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
-                            }else{
-                                treeViewer.setInput(new Object[0]);
-                                currentThread = null;
-                            }
-                        } else if(firstElement instanceof TransformationStackFrame){
-                            TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
-                            currentThread =  thread;
-                            Object[] expandedElements = treeViewer.getExpandedElements();
-                            if(!currentThread.isTerminated()){
-                                treeViewer.setInput(currentThread);
-                                treeViewer.setExpandedElements(expandedElements);
-                                currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
-                            }else{
-                                treeViewer.setInput(new Object[0]);
-                                currentThread = null;
-                            }
+        ISelectionListener listener = (part, selection) -> {
+            if (!selection.isEmpty() && selection instanceof StructuredSelection) {
+                Object firstElement = ((StructuredSelection) selection).getFirstElement();
+                try {
+                    if (firstElement instanceof TransformationThread) {
+                        currentThread = (TransformationThread) firstElement;
+                        Object[] expandedElements1 = treeViewer.getExpandedElements();
+                        if(!currentThread.isTerminated()){
+                            treeViewer.setInput(currentThread);
+                            treeViewer.setExpandedElements(expandedElements1);
+                            currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
+                        }else{
+                            treeViewer.setInput(new Object[0]);
+                            currentThread = null;
                         }
-                    } catch (Exception e) {
-                        TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
-                        ErrorDialog.openError(composite.getShell(), "An error has occured", e.getMessage(),
-                                new Status(IStatus.ERROR, TransformationDebugUIActivator.PLUGIN_ID, e.getMessage()));
+                    } else if(firstElement instanceof TransformationStackFrame){
+                        TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
+                        currentThread =  thread;
+                        Object[] expandedElements2 = treeViewer.getExpandedElements();
+                        if(!currentThread.isTerminated()){
+                            treeViewer.setInput(currentThread);
+                            treeViewer.setExpandedElements(expandedElements2);
+                            currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
+                        }else{
+                            treeViewer.setInput(new Object[0]);
+                            currentThread = null;
+                        }
                     }
+                } catch (Exception e) {
+                    TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
+                    ErrorDialog.openError(composite.getShell(), "An error has occured", e.getMessage(),
+                            new Status(IStatus.ERROR, TransformationDebugUIActivator.PLUGIN_ID, e.getMessage()));
                 }
-
             }
+
         };
         
         sService.addSelectionListener(DEBUG_VIEW, listener);
@@ -190,14 +179,10 @@ public class TransformationBrowserView extends ViewPart
     @Override
     public void transformationStateChanged(final TransformationState state) {
         if(currentThread.getTransformationState().equals(state)){
-            treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-
-                @Override
-                public void run() {
-                    Object[] expandedElements = treeViewer.getExpandedElements();
-                    treeViewer.setInput(currentThread);
-                    treeViewer.setExpandedElements(expandedElements);
-                }
+            treeViewer.getControl().getDisplay().asyncExec(() -> {
+                Object[] expandedElements = treeViewer.getExpandedElements();
+                treeViewer.setInput(currentThread);
+                treeViewer.setExpandedElements(expandedElements);
             });
         }
     }
@@ -205,12 +190,9 @@ public class TransformationBrowserView extends ViewPart
     @Override
     public void terminated(final IDebuggerHostAgent agent){
         if(currentThread.getHostAgent().equals(agent)){
-            treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    treeViewer.setInput(new Object[0]);
-                    currentThread = null;
-                }
+            treeViewer.getControl().getDisplay().asyncExec(() -> {
+                treeViewer.setInput(new Object[0]);
+                currentThread = null;
             });
         }
     }

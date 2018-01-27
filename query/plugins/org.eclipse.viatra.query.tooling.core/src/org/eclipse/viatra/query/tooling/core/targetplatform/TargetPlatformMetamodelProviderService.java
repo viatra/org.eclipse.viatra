@@ -30,7 +30,6 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
@@ -91,11 +90,7 @@ public class TargetPlatformMetamodelProviderService extends
             }
         }
         return new SimpleScope(IScope.NULLSCOPE, Iterables.filter(metamodels, 
-                new Predicate<IEObjectDescription>() {
-            public boolean apply(IEObjectDescription desc){
-                return desc.getEObjectOrProxy() != null;
-            }
-        }));
+                desc -> desc.getEObjectOrProxy() != null));
     }
     
     protected GenPackage internalFindGenPackage(ResourceSet resourceSet, String packageUri){

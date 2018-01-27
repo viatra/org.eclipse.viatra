@@ -34,14 +34,10 @@ import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -94,26 +90,23 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         Image img = fieldDecoration.getImage();
         portNumberDecorator.setImage(img);
         portNumberDecorator.hide();
-        portText.addModifyListener(new ModifyListener() {
-            @Override
-            public void modifyText(ModifyEvent e) {
-                try {
-                    Integer.parseInt(portText.getText());
-                    portID = portText.getText();
-                    portNumberDecorator.hide();
-                    
-                    setErrorMessage(null);
-                    getLaunchConfigurationDialog().updateMessage();
-                    getLaunchConfigurationDialog().updateButtons();
-                } catch (NumberFormatException e2) {
-                    portNumberDecorator.setDescriptionText(portText.getText()+" is not a valid port number.");
-                    portNumberDecorator.show();
+        portText.addModifyListener(e -> {
+            try {
+                Integer.parseInt(portText.getText());
+                portID = portText.getText();
+                portNumberDecorator.hide();
                 
-                    setErrorMessage(portText.getText()+" is not a valid port number.");
-                    getLaunchConfigurationDialog().updateMessage();
-                    
-                    ViatraQueryLoggingUtil.getDefaultLogger().error(e2.getMessage(), e2);
-                }
+                setErrorMessage(null);
+                getLaunchConfigurationDialog().updateMessage();
+                getLaunchConfigurationDialog().updateButtons();
+            } catch (NumberFormatException e2) {
+                portNumberDecorator.setDescriptionText(portText.getText()+" is not a valid port number.");
+                portNumberDecorator.show();
+            
+                setErrorMessage(portText.getText()+" is not a valid port number.");
+                getLaunchConfigurationDialog().updateMessage();
+                
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e2.getMessage(), e2);
             }
         });
         
@@ -134,19 +127,16 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                 return element.toString();
             }
         });
-        comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                selectedID = ((String) ((StructuredSelection) comboViewer.getSelection()).getFirstElement());
-                if(!selectedID.contains(CURRENTVERSION)){
-                    setErrorMessage(selectedID+" does not match the current version VIATRA version");
-                    getLaunchConfigurationDialog().updateMessage();
-                }else{
-                    setErrorMessage(null);
-                    getLaunchConfigurationDialog().updateMessage();
-                }
-                getLaunchConfigurationDialog().updateButtons();
+        comboViewer.addSelectionChangedListener(event -> {
+            selectedID = ((String) ((StructuredSelection) comboViewer.getSelection()).getFirstElement());
+            if(!selectedID.contains(CURRENTVERSION)){
+                setErrorMessage(selectedID+" does not match the current version VIATRA version");
+                getLaunchConfigurationDialog().updateMessage();
+            }else{
+                setErrorMessage(null);
+                getLaunchConfigurationDialog().updateMessage();
             }
+            getLaunchConfigurationDialog().updateButtons();
         });
         
 
@@ -158,12 +148,9 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         transformationTypeText = new Text(transformationTypeGrp, SWT.BORDER | SWT.READ_ONLY);
         transformationTypeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         
-        transformationTypeText.addModifyListener(new ModifyListener() {
-            @Override
-            public void modifyText(ModifyEvent e) {
-                typeName = transformationTypeText.getText();
-                getLaunchConfigurationDialog().updateButtons();
-            }
+        transformationTypeText.addModifyListener(e -> {
+            typeName = transformationTypeText.getText();
+            getLaunchConfigurationDialog().updateButtons();
         });
 
         Button btnSearchButton = new Button(transformationTypeGrp, SWT.NONE);

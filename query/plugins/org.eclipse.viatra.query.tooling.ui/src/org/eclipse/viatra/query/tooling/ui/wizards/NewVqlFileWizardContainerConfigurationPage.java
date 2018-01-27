@@ -33,8 +33,6 @@ import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -108,11 +106,7 @@ public class NewVqlFileWizardContainerConfigurationPage extends NewTypeWizardPag
         GridData gd_1 = new GridData(GridData.FILL_HORIZONTAL);
         gd_1.horizontalSpan = 3;
         fileText.setLayoutData(gd_1);
-        fileText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                validatePage();
-            }
-        });
+        fileText.addModifyListener(e -> validatePage());
 
         setControl(composite);
 

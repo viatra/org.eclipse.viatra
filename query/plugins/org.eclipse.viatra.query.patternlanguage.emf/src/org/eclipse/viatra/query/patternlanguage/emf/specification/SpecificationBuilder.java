@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.specification;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.EPMToPBody;
@@ -40,15 +44,11 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 
 /**
  * An instance class to initialize {@link PBody} instances from {@link Pattern} definitions. A single instance of this
@@ -70,7 +70,7 @@ public final class SpecificationBuilder {
      */
     private Map<String, Pattern> patternNameMap = new HashMap<>();
     private Multimap<PQuery, IQuerySpecification<?>> dependantQueries = Multimaps.newSetMultimap(
-            new HashMap<PQuery, Collection<IQuerySpecification<?>>>(), Sets::newHashSet);
+            new HashMap<>(), HashSet::new);
     private PatternSanitizer sanitizer = new PatternSanitizer(/*logger*/ null /* do not log all errors */);
 
     /**
@@ -107,9 +107,10 @@ public final class SpecificationBuilder {
      * {@link #patternNameMap}.
      */
     private void processPatternSpecifications() {
-        for (GenericQuerySpecification spec : Iterables.filter(patternMap.values(), GenericQuerySpecification.class)) {
-            patternNameMap.put(spec.getFullyQualifiedName(), spec.getInternalQueryRepresentation().getPattern());
-        }
+        patternMap.values().stream().filter(GenericQuerySpecification.class::isInstance)
+                .map(GenericQuerySpecification.class::cast)
+                .forEach(spec -> patternNameMap.put(spec.getFullyQualifiedName(),
+                        spec.getInternalQueryRepresentation().getPattern()));
     }
 
     /**
@@ -138,7 +139,7 @@ public final class SpecificationBuilder {
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern, boolean skipPatternValidation) {
-        return getOrCreateSpecification(pattern, Lists.<IQuerySpecification<?>>newArrayList(), skipPatternValidation);
+        return getOrCreateSpecification(pattern, new ArrayList<>(), skipPatternValidation);
     }
 
     /**
@@ -159,7 +160,7 @@ public final class SpecificationBuilder {
     }
 
     protected IQuerySpecification<?> buildSpecification(Pattern pattern) {
-        return buildSpecification(pattern, false, Lists.<IQuerySpecification<?>>newArrayList());
+        return buildSpecification(pattern, false, new ArrayList<>());
     }
 
     protected IQuerySpecification<?> buildSpecification(Pattern pattern, List<IQuerySpecification<?>> newSpecifications) {
@@ -171,12 +172,13 @@ public final class SpecificationBuilder {
         Preconditions.checkArgument(!patternMap.containsKey(fqn), "Builder already stores query with the name of %s",
                 fqn);
         if (sanitizer.admit(pattern, skipPatternValidation)) {
-            Set<Pattern> newPatterns = Sets.newHashSet(Sets.filter(sanitizer.getAdmittedPatterns(),
-                    (Predicate<Pattern>) pattern1 -> {
-                        final String name = PatternLanguageHelper.getFullyQualifiedName(pattern1);
-                        return !pattern1.eIsProxy() && !"".equals(name)
+            Set<Pattern> newPatterns = sanitizer.getAdmittedPatterns().stream()
+                    .filter(p -> !p.eIsProxy())
+                    .filter(p -> {
+                        final String name = PatternLanguageHelper.getFullyQualifiedName(p);
+                        return !"".equals(name)
                                && !patternMap.containsKey(name);
-                    }));
+                    }).collect(Collectors.toSet());
             // Initializing new query specifications
             for (Pattern newPattern : newPatterns) {
                 String patternFqn = PatternLanguageHelper.getFullyQualifiedName(newPattern);
@@ -217,15 +219,13 @@ public final class SpecificationBuilder {
                 }
             }
         }
-        IQuerySpecification<?> specification = patternMap.get(fqn);
-        if (specification == null) {
+        IQuerySpecification<?> specification = patternMap.computeIfAbsent(fqn, name -> {
             GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(pattern, true));
             erroneousSpecification.getInternalQueryRepresentation().addError( new PProblem("Unable to compile pattern due to an unspecified error") );
             patternMap.put(fqn, erroneousSpecification);
             patternNameMap.put(fqn, pattern);
-            newSpecifications.add(erroneousSpecification);
-            specification = erroneousSpecification;
-        }
+            return erroneousSpecification;
+        });
         return specification;
     }
 
@@ -257,7 +257,7 @@ public final class SpecificationBuilder {
      */
     public Set<PBody> getBodies(Pattern pattern, PQuery query) {
         PatternBodyTransformer transformer = new PatternBodyTransformer(pattern);
-        Set<PBody> pBodies = Sets.newLinkedHashSet();
+        Set<PBody> pBodies = new LinkedHashSet<>();
         for (PatternBody body : pattern.getBodies()) {
             EPMToPBody acceptor = new EPMToPBody(pattern, query, patternMap);
             PBody pBody = transformer.transform(body, acceptor);
@@ -314,7 +314,7 @@ public final class SpecificationBuilder {
      * @returns the set of specifications that were removed from the builder
      */
     public Set<IQuerySpecification<?>> forgetSpecificationTransitively(IQuerySpecification<?> specification) {
-        Set<IQuerySpecification<?>> forgottenSpecifications = Sets.newHashSet();
+        Set<IQuerySpecification<?>> forgottenSpecifications = new HashSet<>();
         forgetSpecificationTransitively(specification, forgottenSpecifications);
         return forgottenSpecifications;
     }

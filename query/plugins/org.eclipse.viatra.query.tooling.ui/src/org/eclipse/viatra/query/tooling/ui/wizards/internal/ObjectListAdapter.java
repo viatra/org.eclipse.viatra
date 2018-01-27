@@ -64,12 +64,12 @@ public class ObjectListAdapter implements IListAdapter<ObjectParameter> {
 
     @Override
     public void selectionChanged(ListDialogField<ObjectParameter> field) {
-        if (field.getElements().size() > 0) {
-            field.enableButton(1, true);
-            page.parameterSet = true;
-        } else {
+        if (field.getElements().isEmpty()) {
             field.enableButton(1, false);
             page.parameterSet = false;
+        } else {
+            field.enableButton(1, true);
+            page.parameterSet = true;
         }
 
         page.validatePage();

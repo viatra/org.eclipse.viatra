@@ -13,7 +13,9 @@ package org.eclipse.viatra.query.patternlanguage.emf.types;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.types.judgements.AbstractTypeJudgement;
@@ -29,18 +31,14 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.EcoreUtil2;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 
 /**
  * This class is used to store type information for selected patterns
@@ -175,13 +173,7 @@ public class TypeInformation {
     }
 
     private void processConstraint(XbaseExpressionTypeJudgement constraint, Expression expression) {
-        if (Iterables.any(constraint.getDependingExpressions(), new Predicate<Expression>() {
-
-            @Override
-            public boolean apply(Expression input) {
-                return getMinimizedTypes(input).size() != 1;
-            }
-        })) {
+        if (constraint.getDependingExpressions().stream().anyMatch(input -> getMinimizedTypes(input).size() != 1)) {
             return;
         }
         final Set<IInputKey> knownTypes = expressionTypes.get(expression);
@@ -248,15 +240,8 @@ public class TypeInformation {
      */
     public Set<IInputKey> getAllPossibleParameterTypes(Variable parameter) {
         Preconditions.checkArgument(PatternLanguageHelper.isParameter(parameter), "Variable must represent a pattern parameter.");
-        return Sets.newHashSet(Iterables
-                .filter(Iterables.transform(PatternLanguageHelper.getLocalReferencesOfParameter(parameter),
-                        new Function<Variable, IInputKey>() {
-
-                            @Override
-                            public IInputKey apply(Variable input) {
-                                return getType(input);
-                            }
-                        }), Predicates.notNull()));
+        return PatternLanguageHelper.getLocalReferencesOfParameter(parameter).stream().map(this::getType)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     @Override
