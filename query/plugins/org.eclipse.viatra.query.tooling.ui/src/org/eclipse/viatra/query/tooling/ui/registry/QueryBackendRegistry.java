@@ -36,7 +36,7 @@ public class QueryBackendRegistry {
     private static final IQueryBackendFactory DEFAULT_CACHING_BACKEND = DEFAULT_BACKEND;
     private static final IQueryBackendFactory LOCAL_SEARCH_BACKEND = LocalSearchBackendFactory.INSTANCE;
     
-    private Collection<IQueryBackendFactory> queryBackendFactories = Lists.newArrayList(DEFAULT_BACKEND, LOCAL_SEARCH_BACKEND);
+    private static Collection<IQueryBackendFactory> queryBackendFactories = Lists.newArrayList(DEFAULT_BACKEND, LOCAL_SEARCH_BACKEND);
 
     /**
      * Default caching backend implementation (in case the regular default is non-caching).
