@@ -6,8 +6,8 @@ Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
 Id: _-a1aIPBHEeWlEbYJ7IoFCQ
-Runtime-Version: 2.0.2.201511100828
-Save-Time: 4/13/16 8:38 AM
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 1/27/18, 9:29 AM
 Testcase-Type: ecl
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
@@ -93,10 +93,8 @@ with [get-editor "test.vql" | get-text-viewer] {
 // Verify generated code
 get-button "Save (M1+S)" | click
 with [get-view "Project Explorer" | get-tree] {
-    get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/AllocatedApplicationInstancesMatch.java" 
-        | get-property caption | equals "AllocatedApplicationInstancesMatch.java" | verify-true
-    get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/AllocatedApplicationInstancesMatcher.java" 
-        | get-property caption | equals "AllocatedApplicationInstancesMatcher.java" | verify-true
+    get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/AllocatedApplicationInstances.java" 
+        | get-property caption | equals "AllocatedApplicationInstances.java" | verify-true
     get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/Test.java" 
         | get-property caption | equals "Test.java" | verify-true
 }
