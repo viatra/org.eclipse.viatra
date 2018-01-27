@@ -17,7 +17,7 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <jacoco.version>0.7.6.201602180812</jacoco.version>
         <jacoco.targetdir>${project.basedir}/../../jacoco</jacoco.targetdir>
-        <xtend.compiler.version>2.13.0</xtend.compiler.version>
+        <xtend.compiler.version>2.12.0</xtend.compiler.version>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -248,7 +248,7 @@
         <url>http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/</url>
     </scm>
     <ciManagement>
-        <url>https://hudson.eclipse.org/viatra/</url>
+        <url>https://ci.eclipse.org/viatra/</url>
         <system>Hudson</system>
     </ciManagement>
     <issueManagement>
