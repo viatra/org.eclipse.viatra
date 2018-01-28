@@ -1230,7 +1230,7 @@
         <repositoryList
             name="">
           <repository
-              url="http://download.eclipse.org/viatra/examples/cps/0.1.0.201707100825"/>
+              url="http://download.eclipse.org/viatra/examples/cps/2.0.0.201801280453"/>
         </repositoryList>
       </targlet>
     </setupTask>
