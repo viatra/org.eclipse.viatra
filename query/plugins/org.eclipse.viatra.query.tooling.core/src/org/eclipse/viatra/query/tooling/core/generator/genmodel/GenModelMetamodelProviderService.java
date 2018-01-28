@@ -133,7 +133,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
         ViatraQueryGeneratorModel generatorModel = getGeneratorModel(project);
         for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
             referencedPackages.addAll(Lists.transform(getAllGenPackages(generatorModelReference.getGenmodel()),
-                    desc -> desc.getEcorePackage()));
+                    GenPackage::getEcorePackage));
         }
 
         referencedPackages.addAll(getGenmodelRegistry().getPackages());

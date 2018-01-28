@@ -156,7 +156,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
     @Override
     public void transformationStateChanged(TransformationState state) {
         if(currentThread.getTransformationState().equals(state)){
-            tabFolder.getDisplay().asyncExec(() -> maintainTabs());
+            tabFolder.getDisplay().asyncExec(this::maintainTabs);
         }
         
     }
@@ -200,7 +200,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
         
         private TabbedSelectionProviderWrapper() {
             fListenerList = new ListenerList(ListenerList.IDENTITY);
-            fListener = event -> fireSelectionChanged(event);
+            fListener = this::fireSelectionChanged;
         }
 
         public void setActiveProvider(ISelectionProvider provider) {

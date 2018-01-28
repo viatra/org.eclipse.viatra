@@ -48,7 +48,6 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     private static final String PARAMETER_TYPE = "&Parameter type:";
     private static final String PARAMETER_NAME = "&Parameter name:";
     private static final String TITLE = "&Pattern parameter configuration";
-    private Text parameterName;
     private Text parameterType;
     private List<String> currentPackages;
     private ObjectParameter result;
@@ -81,7 +80,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
         gridData.horizontalSpan = 1;
         label.setLayoutData(gridData);
 
-        parameterName = new Text(composite, SWT.BORDER | SWT.SINGLE);
+        Text parameterName = new Text(composite, SWT.BORDER | SWT.SINGLE);
         parameterName.setText(result.getParameterName());
         parameterName.setEditable(true);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
