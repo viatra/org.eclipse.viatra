@@ -201,14 +201,11 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         if(matcher.ruleSpec !== null){
             schema.removeRule(matcher.ruleSpec)
         }
-        if(matcher.matcher !== null){
+        if (matcher.matcher !== null){
             // TODO deal with duplicates and dependencies
             builder.forgetSpecificationTransitively(matcher.matcher.specification)
         } else {
-            val spec = builder.getSpecification(matcher.entry.fullyQualifiedName)
-            if(spec !== null) {
-                builder.forgetSpecificationTransitively(spec)
-            }
+            builder.getSpecification(matcher.entry.fullyQualifiedName).ifPresent[builder.forgetSpecificationTransitively(it)]
         }
         return matcher
     }

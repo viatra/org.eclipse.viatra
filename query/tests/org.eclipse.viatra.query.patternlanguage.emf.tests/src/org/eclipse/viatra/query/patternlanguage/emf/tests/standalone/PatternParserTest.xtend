@@ -26,6 +26,20 @@ class PatternParserTest {
     }
     
     @Test
+    def void correctPatternTest() {
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, _);
+            }
+        '''
+        val results = PatternParsingUtil.parsePatternDefinitions(pattern)
+        assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size === 1)
+        assertFalse(results.hasError)
+    }
+    
+    @Test
     def void mistypedPatternTest() {
         val String pattern = '''
             import "http://www.eclipse.org/emf/2002/Ecore";
@@ -52,5 +66,24 @@ class PatternParserTest {
         val results = PatternParsingUtil.parsePatternDefinitions(pattern)
         assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].isEmpty)
         assertTrue(results.hasError)
-    } 
+    }
+    
+    @Test
+    def void duplicatePatternsTest() {
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName");
+            }
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val results = PatternParsingUtil.parsePatternDefinitions(pattern)
+        assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].isEmpty)
+        assertFalse(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.ERROR].isEmpty)
+        assertTrue(results.hasError)
+    }
 }

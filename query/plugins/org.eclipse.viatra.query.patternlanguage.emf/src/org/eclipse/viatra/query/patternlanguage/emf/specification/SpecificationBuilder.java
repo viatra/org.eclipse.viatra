@@ -18,14 +18,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.EPMToPBody;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.NameToSpecificationMap;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternSanitizer;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.ValidationHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
@@ -46,6 +49,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQuerySt
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -152,11 +156,7 @@ public final class SpecificationBuilder {
         Preconditions.checkArgument(fqn != null && !"".equals(fqn), "Pattern name cannot be empty");
         Preconditions.checkArgument(!patternNameMap.containsKey(fqn) || pattern.equals(patternNameMap.get(fqn)),
                 "This builder already contains a different pattern with the fqn %s of the newly added pattern.", fqn);
-        IQuerySpecification<?> specification = getSpecification(pattern);
-        if (specification == null) {
-            specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
-        }
-        return specification;
+        return getSpecification(pattern).orElse(buildSpecification(pattern, skipPatternValidation, createdPatternList));
     }
 
     protected IQuerySpecification<?> buildSpecification(Pattern pattern) {
@@ -210,25 +210,64 @@ public final class SpecificationBuilder {
             for (Pattern rejectedPattern : sanitizer.getRejectedPatterns()) {
                 String patternFqn = PatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
                 if (!patternMap.containsKey(patternFqn)) {
-                    GenericQuerySpecification rejected = new GenericQuerySpecification(new GenericEMFPatternPQuery(rejectedPattern, true));
-                    for (PProblem problem: sanitizer.getProblemByPattern(rejectedPattern)) 
-                        rejected.getInternalQueryRepresentation().addError(problem);
-                    patternMap.put(patternFqn, rejected);
-                    patternNameMap.put(patternFqn, rejectedPattern);
-                    newSpecifications.add(rejected);
+                    newSpecifications.add(doBuildErroneousSpecification(rejectedPattern,
+                            sanitizer.getProblemByPattern(rejectedPattern).stream(), true));
                 }
             }
         }
-        IQuerySpecification<?> specification = patternMap.computeIfAbsent(fqn, name -> {
-            GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(pattern, true));
-            erroneousSpecification.getInternalQueryRepresentation().addError( new PProblem("Unable to compile pattern due to an unspecified error") );
-            patternMap.put(fqn, erroneousSpecification);
-            patternNameMap.put(fqn, pattern);
-            return erroneousSpecification;
-        });
-        return specification;
+        return patternMap.computeIfAbsent(fqn, name -> buildErroneousSpecification(pattern,
+                "Unable to compile pattern due to an unspecified error", true));
     }
 
+    /**
+     * Creates an erroneous query specification from a given pattern object with a stream of precalculated issues. The
+     * resulting query specification may or may not be stored for future reference in this specification.
+     * 
+     * @param pattern
+     *            the pattern definition to start from
+     * @param errorMessage
+     *            an error message to fill the erroneous specification
+     * @param storeInMaps
+     *            if true, all future references for this query, including references by fqn; if a query is already
+     *            stored with this name, an {@link IllegalStateException} is thrown.
+     * 
+     * @since 2.0
+     */
+    public IQuerySpecification<?> buildErroneousSpecification(Pattern pattern, String errorMessage, boolean storeInMaps) {
+        return doBuildErroneousSpecification(pattern, Stream.of(new PProblem(errorMessage)), storeInMaps);
+    }
+    
+    /**
+     * Creates an erroneous query specification from a given pattern object with a stream of precalculated issues. The
+     * resulting query specification may or may not be stored for future reference in this specification.
+     * 
+     * @param pattern
+     *            the pattern definition to start from
+     * @param issues
+     *            a stream of issues that are to be stored in the created specification
+     * @param storeInMaps
+     *            if true, all future references for this query, including references by fqn; if a query is already
+     *            stored with this name, an {@link IllegalStateException} is thrown.
+     * 
+     * @since 2.0
+     */
+    public IQuerySpecification<?> buildErroneousSpecification(Pattern pattern, Stream<Issue> issues, boolean storeInMaps) {
+        return doBuildErroneousSpecification(pattern, issues.map(ValidationHelper::toPProblem), storeInMaps);
+    }
+    
+    private IQuerySpecification<?> doBuildErroneousSpecification(Pattern pattern, Stream<PProblem> problems, boolean storeInMaps) {
+        GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(pattern, true));
+        final GenericEMFPatternPQuery pQuery = erroneousSpecification.getInternalQueryRepresentation();
+        problems.forEach(pQuery::addError);
+        if (storeInMaps) {
+            String fqn = PatternLanguageHelper.getFullyQualifiedName(pattern);
+            Preconditions.checkState(!patternMap.containsKey(fqn), "The builder already contains a pattern with the qualified name %s", fqn);
+            patternMap.put(fqn, erroneousSpecification);
+            patternNameMap.put(fqn, pattern);
+        }
+        return erroneousSpecification;
+    }
+    
     protected void buildAnnotations(Pattern pattern, InitializablePQuery query) {
         for (Annotation annotation : pattern.getAnnotations()) {
             PAnnotation pAnnotation = new PAnnotation(annotation.getName());
@@ -267,15 +306,33 @@ public final class SpecificationBuilder {
     }
 
     /**
+     * Returns whether the builder knows a specification with the selected name
      * @since 2.0
      */
-    public IQuerySpecification<?> getSpecification(Pattern pattern) {
-        String fqn = PatternLanguageHelper.getFullyQualifiedName(pattern);
-        return getSpecification(fqn);
+    public boolean hasSpecification(Pattern pattern) {
+        return patternMap.containsKey(PatternLanguageHelper.getFullyQualifiedName(pattern));
+    }
+    
+    /**
+     * Returns whether the builder knows a specification with the selected name
+     * @since 2.0
+     */
+    public boolean hasSpecification(String fqn) {
+        return patternMap.containsKey(fqn);
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public Optional<IQuerySpecification<?>> getSpecification(Pattern pattern) {
+        return getSpecification(PatternLanguageHelper.getFullyQualifiedName(pattern));
     }
 
-    public IQuerySpecification<?> getSpecification(String fqn) {
-        return patternMap.get(fqn);
+    /**
+     * @since 2.0
+     */
+    public Optional<IQuerySpecification<?>> getSpecification(String fqn) {
+        return Optional.ofNullable(patternMap.get(fqn));
     }
 
     /**

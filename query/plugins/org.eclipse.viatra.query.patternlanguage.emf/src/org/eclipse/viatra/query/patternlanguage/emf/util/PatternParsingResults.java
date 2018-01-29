@@ -11,19 +11,22 @@
  */
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * @since 1.7
@@ -32,7 +35,6 @@ public final class PatternParsingResults {
     private final PatternSetValidationDiagnostics diag;
     private final List<Pattern> patterns;
     private final SpecificationBuilder builder;
-    
     
     public PatternParsingResults(List<Pattern> patterns, PatternSetValidationDiagnostics diag, SpecificationBuilder builder) {
         this.diag = diag;
@@ -46,6 +48,26 @@ public final class PatternParsingResults {
     
     public boolean hasError() {
         return !diag.getAllErrors().isEmpty();
+    }
+    
+    /**
+     * Returns a stream of issues found with a given pattern 
+     * @since 2.0
+     */
+    public List<Issue> getErrors(Pattern pattern) {
+        Preconditions.checkArgument(patterns.contains(pattern), "The referenced pattern %s is not parsed by the builder.", pattern.getName());
+        final Resource resource = pattern.eResource();
+        if (resource == null) {
+            return new ArrayList<>();
+        }
+        final ResourceSet rs = resource.getResourceSet();
+        if (rs == null) {
+            return new ArrayList<>();
+        }
+        
+        return diag.getAllErrors().stream().filter(issue -> 
+            EcoreUtil.isAncestor(pattern, rs.getEObject(issue.getUriToProblem(), false))
+        ).collect(Collectors.toList());
     }
     
     public boolean validationOK() {
@@ -87,15 +109,16 @@ public final class PatternParsingResults {
      * @return In case of parsing errors, the returned contents is undefined.
      */
     public Iterable<IQuerySpecification<?>> getQuerySpecifications() {
-        List<IQuerySpecification<?>> specList = Lists.newArrayList();
-        for (Pattern pattern : patterns) {
-            boolean isPrivate = PatternLanguageHelper.isPrivate(pattern);
-            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> spec = builder
-                    .getOrCreateSpecification(pattern);
-            if (!isPrivate) {
-                specList.add(spec);
-            }
-        }
-        return specList;
+        return patterns.stream()
+                .map(pattern -> {
+                    List<Issue> errors = getErrors(pattern);
+                    if (errors.isEmpty()) {
+                        return builder.getOrCreateSpecification(pattern);
+                    } else {
+                        return builder.buildErroneousSpecification(pattern, errors.stream(), false);
+                    }
+                })
+                .filter(spec -> spec.getVisibility() == PVisibility.PUBLIC)
+                .collect(Collectors.toList());
     }
 }

@@ -30,6 +30,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvid
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.ValidationHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.xtext.validation.Issue;
@@ -195,7 +196,7 @@ public class PatternSanitizer {
                         }
                         
                         // the detected error is directly in the current pattern, or so we assume
-                        problemsByPattern.put(currentPattern, new PProblem(error.getMessage()));
+                        problemsByPattern.put(currentPattern, ValidationHelper.toPProblem(error));
                         inadmissible.add(currentPattern);
                     }
                 }
