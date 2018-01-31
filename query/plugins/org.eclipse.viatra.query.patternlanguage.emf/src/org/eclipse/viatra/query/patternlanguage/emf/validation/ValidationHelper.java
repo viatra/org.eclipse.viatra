@@ -22,6 +22,6 @@ public class ValidationHelper {
     private ValidationHelper() {/* Utility class constructor */}
 
     public static PProblem toPProblem(Issue issue) {
-        return new PProblem(issue.getMessage());
+        return new PProblem(issue.getMessage(), issue.getLineNumber(), issue.getColumn());
     }
 }

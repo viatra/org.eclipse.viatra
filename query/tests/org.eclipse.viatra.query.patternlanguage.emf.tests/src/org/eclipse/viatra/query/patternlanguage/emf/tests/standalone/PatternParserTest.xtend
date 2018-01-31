@@ -64,9 +64,11 @@ class PatternParserTest {
             }
         '''
         val results = PatternParsingUtil.parsePatternDefinitions(pattern)
-        assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].isEmpty)
+        assertTrue(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.ERROR])
+        results.querySpecifications.map[it.internalQueryRepresentation.PProblems].flatten.exists[location.contains("Line 5")]
         assertTrue(results.hasError)
     }
+    
     
     @Test
     def void duplicatePatternsTest() {
@@ -82,8 +84,8 @@ class PatternParserTest {
             }
         '''
         val results = PatternParsingUtil.parsePatternDefinitions(pattern)
-        assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].isEmpty)
-        assertFalse(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.ERROR].isEmpty)
+        assertFalse(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.OK])
+        assertTrue(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.ERROR])
         assertTrue(results.hasError)
     }
 }
