@@ -21,7 +21,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -278,6 +280,9 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
+            if (Objects.equals(bundleDesc.getSymbolicName(), dependency)) {
+                return true;
+            }
             for (IRequiredBundleDescription require : bundleDesc.getRequiredBundles()) {
                 if (dependency.equals(require.getName())) {
                     return true;
@@ -338,8 +343,9 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
-            if (!dependencies.isEmpty()) {
-                ensureBundleDependencies(service, bundleDesc, dependencies);
+            List<String> nonSelfDependencies = dependencies.stream().filter(dependency -> !Objects.equals(bundleDesc.getSymbolicName(), dependency)).collect(Collectors.toList());
+            if (!nonSelfDependencies.isEmpty()) {
+                ensureBundleDependencies(service, bundleDesc, nonSelfDependencies);
             }
             if (!importPackages.isEmpty()) {
                 ensurePackageImports(service, bundleDesc, importPackages);
@@ -449,9 +455,8 @@ public abstract class ProjectGenerationHelper {
             }
             List<IRequiredBundleDescription> missingDependencies = Lists.transform(missingDependencyNames, new IDToRequireBundleTransformer(service));
 
-            // XXX for compatibility two different versions are needed
+            // Since Kepler setRequiredBundles overwrites existing dependencies
             Iterable<IRequiredBundleDescription> dependenciesToSet =
-                // Since Kepler setRequiredBundles overwrites existing dependencies
                 Iterables.concat(missingDependencies, Arrays.asList(existingDependencies));
 
             bundleDesc.setRequiredBundles(Iterables.toArray(dependenciesToSet, IRequiredBundleDescription.class));
