@@ -156,7 +156,7 @@ public final class SpecificationBuilder {
         Preconditions.checkArgument(fqn != null && !"".equals(fqn), "Pattern name cannot be empty");
         Preconditions.checkArgument(!patternNameMap.containsKey(fqn) || pattern.equals(patternNameMap.get(fqn)),
                 "This builder already contains a different pattern with the fqn %s of the newly added pattern.", fqn);
-        return getSpecification(pattern).orElse(buildSpecification(pattern, skipPatternValidation, createdPatternList));
+        return getSpecification(pattern).orElseGet(() -> buildSpecification(pattern, skipPatternValidation, createdPatternList));
     }
 
     protected IQuerySpecification<?> buildSpecification(Pattern pattern) {
