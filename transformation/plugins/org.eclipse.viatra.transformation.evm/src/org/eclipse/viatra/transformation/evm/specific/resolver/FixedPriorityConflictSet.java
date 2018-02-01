@@ -109,14 +109,16 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
         Integer oldPriority = getRulePriority(specification);
         priorityMap.put(specification, priority);
         final Set<Activation<?>> oldBucket = priorityBuckets.get(oldPriority);
-        Set<Activation<?>> removed = oldBucket.stream()
-                .filter(act -> specification.equals(act.getInstance().getSpecification()))
-                .collect(Collectors.toSet());
-        oldBucket.removeAll(removed);
-        if (oldBucket.isEmpty()) {
-            priorityBuckets.remove(oldPriority);
+        if (oldBucket != null) {
+            Set<Activation<?>> removed = oldBucket.stream()
+                    .filter(act -> specification.equals(act.getInstance().getSpecification()))
+                    .collect(Collectors.toSet());
+            oldBucket.removeAll(removed);
+            if (oldBucket.isEmpty()) {
+                priorityBuckets.remove(oldPriority);
+            }
+            priorityBuckets.computeIfAbsent(priority, pr -> new HashSet<>()).addAll(removed);
         }
-        priorityBuckets.computeIfAbsent(priority, pr -> new HashSet<>()).addAll(removed);
     }
 
     @Override
