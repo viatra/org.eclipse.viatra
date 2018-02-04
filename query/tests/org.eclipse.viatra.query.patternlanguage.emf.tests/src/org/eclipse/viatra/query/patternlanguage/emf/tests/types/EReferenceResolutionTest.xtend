@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 
 import org.junit.runner.RunWith
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.testing.XtextRunner
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -25,9 +24,10 @@ import org.junit.Test
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class EReferenceResolutionTest {
 
     @Inject

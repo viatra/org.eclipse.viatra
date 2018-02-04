@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.patternlanguage.emf.tests.values
 
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
 import org.eclipse.xtext.testing.InjectWith
@@ -31,9 +30,10 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class AggregationTest extends AbstractValidatorTest {
     @Inject
     ParseHelper<PatternModel> parseHelper

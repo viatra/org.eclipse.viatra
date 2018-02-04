@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
-@InjectWith(EMFPatternLanguageInjectorProvider.class)
+@InjectWith(CustomizedEMFPatternLanguageInjectorProvider.class)
 public class QueryEngineTest {
 
     @Inject

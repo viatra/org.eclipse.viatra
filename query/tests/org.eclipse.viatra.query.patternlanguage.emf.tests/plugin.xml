@@ -36,16 +36,11 @@
             class="org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage"
             genModel="model/typetest.genmodel"/>
    </extension>
-   <extension
-         point="org.eclipse.viatra.query.patternlanguage.emf.purewhitelist">
-      <pure-element
-            fully-qualified-name="org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass"
-            type="class">
-      </pure-element>
-      <pure-element
-            fully-qualified-name="package.Class.method()"
-            type="method">
-      </pure-element>
-   </extension>
+  <extension
+        point="org.eclipse.viatra.query.patternlanguage.emf.purewhitelist">
+     <whitelist-extension
+           provider="org.eclipse.viatra.query.patternlanguage.emf.tests.whitelist.TestWhitelistProvider">
+     </whitelist-extension>
+  </extension>
 
 </plugin>

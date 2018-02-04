@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
@@ -39,6 +38,9 @@ import com.google.common.collect.Iterators;
 
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     
+    private static final String WHITELIST_CONTEXT = "org.eclipse.viatra.documentation.help.whitelist";
+    private static final String USAGECOUNTING_CONTEXT = "org.eclipse.viatra.documentation.help.usagecounting";
+
     private static final class AddDependency implements IModification {
 
         private final Issue issue;
@@ -173,29 +175,27 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     
     @Fix(IssueCodes.LOCAL_VARIABLE_READONLY)
     public void explainUsageCounting1(final Issue issue, IssueResolutionAcceptor acceptor) {
-        explainUsageCounting(issue, acceptor);
+        explainWithHelp(issue, acceptor, USAGECOUNTING_CONTEXT);
     }
     @Fix(IssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
     public void explainUsageCounting2(final Issue issue, IssueResolutionAcceptor acceptor) {
-        explainUsageCounting(issue, acceptor);
+        explainWithHelp(issue, acceptor, USAGECOUNTING_CONTEXT);
     }
     @Fix(IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE)
     public void explainUsageCounting3(final Issue issue, IssueResolutionAcceptor acceptor) {
-        explainUsageCounting(issue, acceptor);
+        explainWithHelp(issue, acceptor, USAGECOUNTING_CONTEXT);
     }
     @Fix(IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED)
     public void explainUsageCounting4(final Issue issue, IssueResolutionAcceptor acceptor) {
-        explainUsageCounting(issue, acceptor);
+        explainWithHelp(issue, acceptor, USAGECOUNTING_CONTEXT);
+    }
+    @Fix(IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS)
+    public void explainImpureCall(final Issue issue, IssueResolutionAcceptor acceptor) {
+        explainWithHelp(issue, acceptor, WHITELIST_CONTEXT);
     }
 
-    private void explainUsageCounting(final Issue issue, IssueResolutionAcceptor acceptor) {
-        acceptor.accept(issue, "Explain message", "", null, new IModification() {
-            
-            @Override
-            public void apply(IModificationContext context) throws Exception {
-                IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
-                helpSystem.displayHelp("org.eclipse.viatra.documentation.help.usagecounting");
-            }
-        });
+    private void explainWithHelp(final Issue issue, IssueResolutionAcceptor acceptor, final String helpContextID) {
+        acceptor.accept(issue, "Explain message", "", null,
+                (IModification) context -> PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID));
     }
 }

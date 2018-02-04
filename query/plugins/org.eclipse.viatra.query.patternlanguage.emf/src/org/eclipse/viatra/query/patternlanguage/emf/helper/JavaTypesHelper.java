@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.helper;
 
+import java.util.Objects;
+
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.xbase.lib.Pure;
 
 /**
  * @author Zoltan Ujhelyi
@@ -33,5 +37,10 @@ public final class JavaTypesHelper {
         }
         boolean result = className.equals(type.getIdentifier());
         return result;
+    }
+    
+    public static boolean hasPureAnnotation(JvmOperation jvmOperation) {
+        return jvmOperation.getAnnotations().stream()
+                .anyMatch(ref -> Objects.equals(ref.getAnnotation().getQualifiedName(), Pure.class.getName()));
     }
 }

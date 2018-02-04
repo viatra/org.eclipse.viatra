@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
-@InjectWith(EMFPatternLanguageInjectorProvider.class)
+@InjectWith(CustomizedEMFPatternLanguageInjectorProvider.class)
 public class ParserTest {
 
     private static final String ANNOTATION_RULE = "Annotation";

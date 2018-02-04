@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 
 import com.google.inject.Inject
 import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
@@ -26,9 +25,10 @@ import static org.junit.Assert.assertThat
 import static org.hamcrest.CoreMatchers.*
 import org.junit.Ignore
 import org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class TypeSystemTest extends AbstractValidatorTest {
    
    @Inject

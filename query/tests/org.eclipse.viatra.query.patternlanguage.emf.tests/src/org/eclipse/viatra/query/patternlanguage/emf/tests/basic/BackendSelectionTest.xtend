@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
@@ -23,9 +22,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class BackendSelectionTest {
     
     @Inject

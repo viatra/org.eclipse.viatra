@@ -36,11 +36,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(XtextRunner) 
-@InjectWith(EMFPatternLanguageInjectorProvider)
+@InjectWith(CustomizedEMFPatternLanguageInjectorProvider)
 class CoverageTest {
     @Inject package ParseHelper<PatternModel> parseHelper
 

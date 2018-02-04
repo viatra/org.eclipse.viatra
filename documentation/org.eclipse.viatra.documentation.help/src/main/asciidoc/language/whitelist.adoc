@@ -1,0 +1,35 @@
+= Pure functions
+
+`check()`/`eval()` constraints only support calling Java methods that implement *pure functions* in a mathematical sense, meaning their output value must depend only on the values of their input parameters, and should not cause any side-effects.
+
+Calling arbitrary Java methods is problematic since they cannot be generally assumed to be pure. However, if you have a pure method and want to call it in these types of constraints, you have the following options:
+
+* If it is implemented by you, annotate it with the `@Pure` annotation of Xbase (`org.eclipse.xtext.xbase.lib.Pure`);
+* If you cannot modify its source code, e.g. it comes from a third-party library, or you do not want to have a dependency on Xbase lib, VIATRA supports manually registering these methods either via Java service loaders you can register an instance of `org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureElementProvider`. Using this approach, some standard library methods are marked as pure by default, including methods from `java.lang.Math` and `java.lang.String`.
+* Before VIATRA 2.0, the `org.eclipse.viatra.query.patternlanguage.purewhitelist` extension point was used to register such extensions; but this approach only works inside Eclipse installations.
+
+
+== Examples
+
+```
+pattern pure(b) {
+  Book.name(b,n);
+  check(n.toLowerCase == "abc");  // Pure, registered by the framework
+}
+```
+
+```
+pattern impure(b) {
+  Book.pages(b, n);
+  check(n < Math.random() * 100); // Impure; result of Math.random changes on every invocation
+}
+```
+
+```
+import com.google.common.primitives.Ints
+
+pattern sideeffect(b, n) {
+  Book.pages(b, n);
+  check(Ints.compare(n, 100) > 0); // Pure method but unknown by the framework, requires registering
+}
+```

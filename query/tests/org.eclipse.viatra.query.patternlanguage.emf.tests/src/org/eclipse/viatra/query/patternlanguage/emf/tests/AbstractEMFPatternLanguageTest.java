@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
-@InjectWith(EMFPatternLanguageInjectorProvider.class)
+@InjectWith(CustomizedEMFPatternLanguageInjectorProvider.class)
 public abstract class AbstractEMFPatternLanguageTest extends AbstractXtextTests {
 
     static final ImmutableSet<String> defaultPackages = ImmutableSet

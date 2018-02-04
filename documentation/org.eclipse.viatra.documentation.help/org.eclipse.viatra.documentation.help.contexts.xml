@@ -3,4 +3,7 @@
    <context id="usagecounting">
       <topic href="html/language/usagecounting.html" label="Usage Counting"/>
    </context>
+   <context id="whitelist">
+      <topic href="html/language/whitelist.html" label="Pure Whitelist"/>
+   </context>
 </contexts>

@@ -12,12 +12,16 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist
 
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtext.common.types.JvmOperation
-import com.google.common.annotations.VisibleForTesting
+import com.google.inject.Singleton
+import javax.inject.Inject
+import org.apache.log4j.Logger
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 
 /**
  * A whitelist that contains pure elements.
  * @since 2.0
  */
+ @Singleton
 class PureWhitelist {
 
     /**
@@ -51,14 +55,37 @@ class PureWhitelist {
 
     }
 
-    public static val INSTANCE = new PureWhitelist // XXX use DI to eliminate static state
-
-    private new() {
-    }
-
     val pureElements = <PureElement>newHashSet
+    var initialized = false
+    val IPureWhitelistExtensionProvider extensionProvider
+    val Logger logger
+
+    new() {
+        initialized = false
+        extensionProvider = new ServiceLoaderBasedWhitelistExtensionProvider
+        logger = ViatraQueryLoggingUtil.getLogger(PureWhitelist)
+    }
+    
+    /**
+     * If loadExtensions is false, instead of loading the list of known extensions start with an empty whitelist
+     */
+    new(boolean loadExtensions) {
+        initialized = !loadExtensions
+        extensionProvider = new ServiceLoaderBasedWhitelistExtensionProvider
+        logger = ViatraQueryLoggingUtil.getLogger(PureWhitelist)
+    }
+    
+    @Inject
+    new(IPureWhitelistExtensionProvider extensionProvider, Logger logger) {
+        initialized = false
+        this.extensionProvider = extensionProvider
+        this.logger = logger
+    }
+    
 
     def boolean contains(JvmOperation jvmOperation) {
+        loadKnownExtensions
+        
         pureElements.exists[covers(jvmOperation)]
     }
 
@@ -66,9 +93,17 @@ class PureWhitelist {
         pureElements.add(pureElement)
     }
     
-    @VisibleForTesting
-    def void clear() {
-        pureElements.clear
+    def void loadKnownExtensions() {
+        if (!initialized) {
+            for (provider : extensionProvider.pureElementExtensions) {
+                try {
+                    pureElements.addAll(provider.pureElements)                    
+                } catch (Exception e) {
+                    logger.error("Error while loading extensions from provider " + provider.class.name, e)
+                }
+            }
+            initialized = true
+        }
     }
 
 }

@@ -9,11 +9,11 @@
  */
 package org.eclipse.viatra.query.patternlanguage.emf.tests.whitelist
 
-import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PurityChecker
 import org.eclipse.xtext.common.types.TypesFactory
 import org.junit.Test
 
 import static org.junit.Assert.assertTrue
+import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper
 
 class TestPurityChecker {
 
@@ -28,7 +28,7 @@ class TestPurityChecker {
                 ]
             ]
         ]
-        assertTrue(PurityChecker.hasPureAnnotation(jvmOperation))
+        assertTrue(JavaTypesHelper.hasPureAnnotation(jvmOperation))
     }
 
 }

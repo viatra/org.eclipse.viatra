@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.DuplicationChecker;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
@@ -56,8 +57,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelistExtensionLoader;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PurityChecker;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelist;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 import org.eclipse.xtext.EcoreUtil2;
@@ -79,8 +79,8 @@ import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
+import org.eclipse.xtext.xbase.XbasePackage;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
-import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
@@ -185,6 +185,8 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     private DuplicationChecker duplicateChecker;
     @Inject
     private JvmModelAssociator associator;
+    @Inject
+    private PureWhitelist whitelist;
     
     @Override
     public void register(EValidatorRegistrar reg) {
@@ -811,7 +813,6 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     }
 
     private void checkForImpureJavaCallsInternal(XExpression xExpression, EStructuralFeature feature) {
-        Set<String> elementsWithWarnings = new HashSet<>();
         Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression),
                 xExpression.eAllContents());
         while (eAllContents.hasNext()) {
@@ -821,22 +822,20 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                 JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
                 if (jvmIdentifiableElement instanceof JvmOperation) {
                     JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
-                    if (!PurityChecker.isPure(jvmOperation) && !jvmOperation.eIsProxy()) {
-                        elementsWithWarnings.add(jvmOperation.getQualifiedName());
+                    if (!jvmOperation.eIsProxy() && !isPure(jvmOperation)) {
+                        warning("Impure method call " + jvmOperation.getQualifiedName(), xFeatureCall,
+                                XbasePackage.Literals.XABSTRACT_FEATURE_CALL__FEATURE,
+                                IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
                     }
                 }
             }
         }
-        if (!elementsWithWarnings.isEmpty()) {
-            warning("There is at least one potentially problematic java call in the check()/eval() expression. Custom java calls "
-                    + "are considered unsafe in VIATRA Query unless they are annotated with @"
-                    + Pure.class.getSimpleName() + " or registered with the "
-                    + PureWhitelistExtensionLoader.EXTENSION_ID
-                    + " extension point. The possible erroneous calls are the following: " + elementsWithWarnings + ".",
-                    xExpression.eContainer(), feature, IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
-        }
     }
 
+    private boolean isPure(JvmOperation jvmOperation) {
+        return JavaTypesHelper.hasPureAnnotation(jvmOperation) || whitelist.contains(jvmOperation);
+    }
+    
     @Check(CheckType.NORMAL)
     public void checkNegativeCallParameters(PatternCompositionConstraint constraint) {
         Predicate<ValueReference> isSingleUseVariable = input -> 

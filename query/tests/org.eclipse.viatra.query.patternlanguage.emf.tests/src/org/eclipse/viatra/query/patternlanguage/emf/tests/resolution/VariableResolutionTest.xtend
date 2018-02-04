@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.patternlanguage.emf.tests.resolution
 
 import com.google.inject.Inject
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
@@ -27,9 +26,10 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class VariableResolutionTest {
     @Inject
     ParseHelper<PatternModel> parseHelper

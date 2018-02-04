@@ -17,19 +17,14 @@ import org.junit.Before
 import org.junit.Test
 
 import static org.junit.Assert.assertTrue
-import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelistExtensionLoader
-import org.junit.After
 
 class TestPureWhitelist {
 
+    PureWhitelist whitelist
+
     @Before
     def void setUp() {
-        PureWhitelist.INSTANCE.clear // XXX NOOO static state
-    }
-
-    @After
-    def void tearDown() {
-        PureWhitelistExtensionLoader.load
+        whitelist = new PureWhitelist(false)
     }
 
     static val extension TypesFactory factory = TypesFactory.eINSTANCE
@@ -38,37 +33,37 @@ class TestPureWhitelist {
     def void pureMethod() {
         val methodName = "method"
         val type = PureElement.Type.METHOD
-        PureWhitelist.INSTANCE.add(new PureElement(methodName + "()", type))
+        whitelist.add(new PureElement(methodName + "()", type))
         val jvmOperation = createJvmOperation => [
             simpleName = methodName
         ]
-        assertTrue(PureWhitelist.INSTANCE.contains(jvmOperation))
+        assertTrue(whitelist.contains(jvmOperation))
     }
 
     @Test
     def void pureClass() {
         val className = "Class"
         val type = PureElement.Type.CLASS
-        PureWhitelist.INSTANCE.add(new PureElement(className, type))
+        whitelist.add(new PureElement(className, type))
         val jvmOperation = createJvmOperation
         createJvmGenericType => [
             simpleName = className
             members += jvmOperation
         ]
-        assertTrue(PureWhitelist.INSTANCE.contains(jvmOperation))
+        assertTrue(whitelist.contains(jvmOperation))
     }
 
     @Test
     def void purePackage() {
         val packageName = "package"
         val type = PureElement.Type.PACKAGE
-        PureWhitelist.INSTANCE.add(new PureElement(packageName, type))
+        whitelist.add(new PureElement(packageName, type))
         val JvmOperation jvmOperation = createJvmOperation
         createJvmGenericType => [
             it.packageName = packageName
             members += jvmOperation
         ]
-        assertTrue(PureWhitelist.INSTANCE.contains(jvmOperation))
+        assertTrue(whitelist.contains(jvmOperation))
     }
 
 }

@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.imports
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.testing.InjectWith
@@ -26,9 +25,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class ImportValidationTest extends AbstractValidatorTest {
 
     @Inject
@@ -101,6 +101,8 @@ class ImportValidationTest extends AbstractValidatorTest {
         model.assertNoErrors
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
@@ -118,6 +120,8 @@ class ImportValidationTest extends AbstractValidatorTest {
             }
         ')
         tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED),
             getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)

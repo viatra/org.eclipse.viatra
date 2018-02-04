@@ -39,6 +39,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvid
 import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureWhitelistExtensionProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.ServiceLoaderBasedWhitelistExtensionProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.xtext.formatting.IFormatter;
 import org.eclipse.xtext.linking.ILinkingService;
@@ -191,5 +193,12 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
      */
     public Class<? extends PatternAnnotationProvider> bindPatternAnnotationProvider() {
         return PatternAnnotationProvider.class;
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public Class<? extends IPureWhitelistExtensionProvider> bindIPureWhitelistExtensionProvider() {
+        return ServiceLoaderBasedWhitelistExtensionProvider.class;
     }
 }

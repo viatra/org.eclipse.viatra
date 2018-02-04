@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.composition
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
@@ -25,9 +24,10 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class RecursivePatternCallTest extends AbstractValidatorTest {
 
     @Inject

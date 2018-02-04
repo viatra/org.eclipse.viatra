@@ -9,28 +9,38 @@
  */
 package org.eclipse.viatra.query.patternlanguage.emf.tests.whitelist
 
+import com.google.inject.Inject
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelist
-import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelistExtensionLoader
 import org.eclipse.xtext.common.types.TypesFactory
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Test
+import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertTrue
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
+@RunWith(typeof(XtextRunner))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class TestPureWhitelistExtensionLoader {
+    
+    @Inject
+    PureWhitelist whitelist
     
     @Test
     def void loaded() {
         val extension factory = TypesFactory.eINSTANCE
-        PureWhitelistExtensionLoader.load
+        whitelist.loadKnownExtensions
         val jvmOperation = createJvmOperation => [
-            simpleName = "method" // see plugin.xml
+            // Registered by TestWhitelistProvider
+            simpleName = "method" 
         ]
         createJvmGenericType => [
             simpleName = "Class"
             packageName = "package"
             members += jvmOperation
         ]
-        assertTrue(PureWhitelist.INSTANCE.contains(jvmOperation))
+        assertTrue(whitelist.contains(jvmOperation))
     }
 
 }

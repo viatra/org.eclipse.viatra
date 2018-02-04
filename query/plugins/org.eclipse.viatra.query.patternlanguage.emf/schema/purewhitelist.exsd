@@ -22,7 +22,7 @@ See also &lt;a href=&quot;http://en.wikipedia.org/wiki/Pure_function&quot;&gt;ht
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="pure-element"/>
+            <element ref="whitelist-extension"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -51,31 +51,17 @@ See also &lt;a href=&quot;http://en.wikipedia.org/wiki/Pure_function&quot;&gt;ht
       </complexType>
    </element>
 
-   <element name="pure-element">
+   <element name="whitelist-extension">
       <complexType>
-         <attribute name="fully-qualified-name" type="string" use="required">
+         <attribute name="provider" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  An implementation of pure element provider
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureElementProvider"/>
+               </appInfo>
             </annotation>
-         </attribute>
-         <attribute name="type" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="method">
-                  </enumeration>
-                  <enumeration value="class">
-                  </enumeration>
-                  <enumeration value="package">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>

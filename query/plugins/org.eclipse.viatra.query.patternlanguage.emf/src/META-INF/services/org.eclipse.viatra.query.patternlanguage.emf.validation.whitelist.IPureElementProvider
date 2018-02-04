@@ -1,0 +1,4 @@
+org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.extensions.IntegerWhitelistProvider
+org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.extensions.MathWhitelistProvider
+org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.extensions.StringWhilelistProvider
+org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.extensions.OtherLibraryWhitelistProvider

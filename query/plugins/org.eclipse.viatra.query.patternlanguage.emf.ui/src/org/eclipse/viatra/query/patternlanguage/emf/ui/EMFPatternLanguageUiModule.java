@@ -43,6 +43,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.EclipseExtensionBasedWhitelistProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureWhitelistExtensionProvider;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.ExtensionBasedGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
@@ -253,5 +255,12 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
         return EMFPatternLanguageGeneratorEclipseConfigProvider.class;
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public Class<? extends IPureWhitelistExtensionProvider> bindIPureWhitelistExtensionProvider() {
+        return EclipseExtensionBasedWhitelistProvider.class;
     }
 }

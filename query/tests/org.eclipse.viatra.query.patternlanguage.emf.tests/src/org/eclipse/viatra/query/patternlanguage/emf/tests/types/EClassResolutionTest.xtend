@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.types
 import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
@@ -26,9 +25,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import static org.junit.Assert.*
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
 class EClassResolutionTest {
     @Inject
     ParseHelper<PatternModel> parseHelper
