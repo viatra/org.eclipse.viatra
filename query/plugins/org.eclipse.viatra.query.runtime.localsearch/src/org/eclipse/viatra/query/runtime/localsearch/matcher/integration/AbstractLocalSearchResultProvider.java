@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -329,49 +330,61 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     @Override
     public boolean hasMatch(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
+        // TODO the following implementation would be better for lazy stream
+        //return matcher.streamMatches(parameters).findAny().isPresent();
         return matcher.hasMatch(parameters);
     }
 
     @Override
     public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
+        // TODO the following implementation would be better for lazy stream
+        //return matcher.streamMatches(parameterSeedMask, parameters).findAny().isPresent();
         return matcher.hasMatch(parameterSeedMask, parameters);
     }
 
     @Override
-    public Tuple getOneArbitraryMatch(Object[] parameters) {
+    public Optional<Tuple> getOneArbitraryMatch(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        return matcher.getOneArbitraryMatch(parameters);
+        // TODO the following implementation would be better for lazy stream
+        //return matcher.streamMatches(parameters).findAny();
+        return Optional.ofNullable(matcher.getOneArbitraryMatch(parameters));
     }
 
     @Override
-    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
+    public Optional<Tuple> getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
-        return matcher.getOneArbitraryMatch(parameterSeedMask, parameters);
+        // TODO the following implementation would be better for lazy stream
+        //return matcher.streamMatches(parameterSeedMask, parameters).findAny();
+        return Optional.ofNullable(matcher.getOneArbitraryMatch(parameterSeedMask, parameters));
     }
 
     @Override
     public int countMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
+        // TODO the following implementation would be better for lazy stream
+        //return (int)matcher.streamMatches(parameters).count();
         return matcher.countMatches(parameters);
     }
     
     @Override
     public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
+        // TODO the following implementation would be better for lazy stream
+        //return (int)matcher.streamMatches(parameterSeedMask, parameters).count();
         return matcher.countMatches(parameterSeedMask, parameters);
     }
 
     @Override
-    public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
+    public Stream<Tuple> getAllMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        return matcher.getAllMatches(parameters);
+        return matcher.streamMatches(parameters);
     }
     
     @Override
-    public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
+    public Stream<Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
-        return matcher.getAllMatches(parameterSeedMask, parameters);
+        return matcher.streamMatches(parameterSeedMask, parameters);
     }
 
     @Override

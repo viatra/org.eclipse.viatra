@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
+import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 
@@ -108,4 +110,20 @@ public class ExtremumOperator<T extends Comparable<T>>
         return result.isEmpty() ? null : 
             extreme.pickFrom(result);
     }
+    
+    /**
+     * @since 2.0
+     */
+    @Override
+    public T aggregateStream(Stream<T> stream) {
+        switch (extreme) {
+        case MIN:
+            return stream.min(Comparator.naturalOrder()).orElse(null);
+        case MAX:
+            return stream.max(Comparator.naturalOrder()).orElse(null);
+        default:
+            return null;
+        }
+    }
+    
 }

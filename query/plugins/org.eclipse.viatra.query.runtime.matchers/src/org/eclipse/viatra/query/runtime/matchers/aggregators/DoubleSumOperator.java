@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMemorylessAggregationOperator;
 
 /**
@@ -49,4 +52,14 @@ public class DoubleSumOperator extends AbstractMemorylessAggregationOperator<Dou
                 oldResult + updateValue : 
                 oldResult - updateValue;
     }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public Double aggregateStream(Stream<Double> stream) {
+        return stream.collect(Collectors.summingDouble(Double::doubleValue));
+    }
+    
+    
 }

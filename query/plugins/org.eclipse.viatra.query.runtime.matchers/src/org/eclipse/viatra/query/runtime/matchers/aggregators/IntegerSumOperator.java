@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMemorylessAggregationOperator;
 
 /**
@@ -48,6 +51,14 @@ public class IntegerSumOperator extends AbstractMemorylessAggregationOperator<In
         return isInsertion ? 
                 oldResult + updateValue : 
                 oldResult - updateValue;
+    }
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    public Integer aggregateStream(Stream<Integer> stream) {
+        return stream.collect(Collectors.summingInt(Integer::intValue));
     }
 
 }

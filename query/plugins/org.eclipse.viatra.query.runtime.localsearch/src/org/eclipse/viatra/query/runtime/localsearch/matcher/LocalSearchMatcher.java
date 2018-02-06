@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
@@ -65,12 +62,14 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         
         protected SearchPlanExecutor currentPlan;
         protected MatchingFrame frame;
+        //protected final Set<ITuple> matchSet; TODO not necessary until getAllmatches eagerly collect results
         protected VolatileModifiableMaskedTuple parametersOfFrameView; 
         private boolean isNextMatchCalculated;
         
         public PlanExecutionIterator(final Iterator<SearchPlanExecutor> planIterator) {
             this.planIterator = planIterator;
             isNextMatchCalculated = false;
+            //matchSet = new HashSet<>();
         }
 
         protected boolean selectNextPlan() {
@@ -112,7 +111,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
                 return false;
             }
             boolean foundMatch = currentPlan.execute(frame);
-            while ((!foundMatch) && planIterator.hasNext()) {
+            while ((!foundMatch) && planIterator.hasNext() /*&& !matchSet.contains(parametersOfFrameView)*/) {
                 foundMatch = selectNextPlan() && currentPlan.execute(frame);
             }
             isNextMatchCalculated = foundMatch;
@@ -125,9 +124,10 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
                 throw new NoSuchElementException("No more matches available.");
             }
             isNextMatchCalculated = false;
-            return parametersOfFrameView.toImmutable();
+            final Tuple match = parametersOfFrameView.toImmutable();
+            //matchSet.add(match);
+            return match;
         }
-
     }
 
     private class PlanExecutionIteratorWithArrayParameters extends PlanExecutionIterator {
@@ -253,14 +253,15 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     }
 
     public boolean hasMatch() {
-        boolean hasMatch = hasMatch(new Object[0]);
-        return hasMatch;
+        //TODO can be removed after streamMatches is lazy
+        return hasMatch(new Object[0]);
     }
 
     /**
      * @since 1.7
      */
     public boolean hasMatch(Object[] parameterValues) {
+        //TODO can be removed after streamMatches is lazy
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
         boolean hasMatch = it.hasNext();
@@ -272,6 +273,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
      * @since 1.7
      */
     public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameterValues) {
+        //TODO can be removed after streamMatches is lazy
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
         boolean hasMatch = it.hasNext();
@@ -280,14 +282,15 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     }
 
     public int countMatches() {
-        int countMatches = countMatches(new Object[0]);
-        return countMatches;
+        //TODO can be removed after streamMatches is lazy
+        return countMatches(new Object[0]);
     }
 
     /**
      * @since 1.7
      */
     public int countMatches(Object[] parameterValues) {
+        //TODO can be removed after streamMatches is lazy
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
         
@@ -306,6 +309,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
      * @since 1.7
      */
     public int countMatches(TupleMask parameterSeedMask, ITuple parameterValues) {
+        //TODO can be removed after streamMatches is lazy
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
         
@@ -359,10 +363,6 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         return returnValue;
     }
 
-    public Collection<Tuple> getAllMatches() {
-        return getAllMatches(new Object[0]);
-    }
-
     private void matchingStarted() {
         for (ILocalSearchAdapter adapter : adapters) {
             adapter.patternMatchingStarted(this);
@@ -374,31 +374,41 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
             adapter.patternMatchingFinished(this);
         }		
     }
-
+    
     /**
-     * @since 1.7
+     * @since 2.0
      */
-    public Collection<Tuple> getAllMatches(final Object[] parameterValues) {
+    public Stream<Tuple> streamMatches(final Object[] parameterValues) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
-        Set<Tuple> results = StreamSupport
-                .stream(Spliterators.spliteratorUnknownSize(it, Spliterator.IMMUTABLE | Spliterator.DISTINCT), false)
-                .collect(Collectors.toSet());
+        //TODO not collecting the results here causes plan executions to overlap with each other, causing very strange issues
+        //most likely a manifestation of bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=528377
+//        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,
+//                Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.DISTINCT), false);
+        Set<Tuple> results = new HashSet<>();
+        while(it.hasNext()) {
+            results.add(it.next());
+        }
         matchingFinished();
-        return results;
+        return results.stream();
     }
     
     /**
-     * @since 1.7
+     * @since 2.0
      */
-    public Iterable<Tuple> getAllMatches(TupleMask parameterSeedMask, final ITuple parameterValues) {
+    public Stream<Tuple> streamMatches(TupleMask parameterSeedMask, final ITuple parameterValues) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
-        Set<Tuple> results = StreamSupport
-                .stream(Spliterators.spliteratorUnknownSize(it, Spliterator.IMMUTABLE | Spliterator.DISTINCT), false)
-                .collect(Collectors.toSet());
+        //TODO not collecting the results here causes plan executions to overlap with each other, causing very strange issues
+        //most likely a manifestation of bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=528377
+//        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,
+//                Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.DISTINCT), false);
+        Set<Tuple> results = new HashSet<>();
+        while(it.hasNext()) {
+            results.add(it.next());
+        }
         matchingFinished();
-        return results;
+        return results.stream();
     }
     
     /**

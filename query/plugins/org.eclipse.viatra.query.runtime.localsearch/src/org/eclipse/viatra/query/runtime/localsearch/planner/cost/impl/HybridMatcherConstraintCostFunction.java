@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +70,11 @@ public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintC
         // Iterate over all matches and count together matches that has equal values on
         // aggregateKeys positions. The cost of the pattern call is considered to be the
         // Maximum of these counted values
-        Collection<? extends Tuple> matches = resultProvider.getAllMatches(filter);
         
         int result = 0;
-        for (Tuple match : matches) {
+        // NOTE: a stream is not an iterable (cannot be iterated more than once), so to use it in a for-loop
+        // it has to be wrapped; in the following line a lambda is used to implement Iterable#iterator()
+        for (Tuple match : (Iterable<Tuple>) () -> resultProvider.getAllMatches(filter).iterator()) {
             Tuple extracted = Tuples.flatTupleOf(aggregateKeys.stream().map(match::get).toArray());
             int count = (aggregatedCounts.containsKey(extracted)) 
                 ? aggregatedCounts.get(extracted) + 1

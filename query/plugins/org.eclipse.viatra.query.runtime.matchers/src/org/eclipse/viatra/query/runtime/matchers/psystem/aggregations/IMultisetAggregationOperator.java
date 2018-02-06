@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.aggregators.ExtremumOperator;
 
@@ -72,4 +73,10 @@ public interface IMultisetAggregationOperator<Domain, Accumulator, AggregateResu
      */
     AggregateResult getAggregate(Accumulator result);
 
+    /**
+     * Calculates the aggregate results from a given stream of values; all values are considered as inserted
+     * @return the aggregate result, or null if no result can be calculated (e.g. because of an empty stream)
+     * @since 2.0
+     */
+    AggregateResult aggregateStream(Stream<Domain> stream);
 }

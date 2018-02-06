@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -21,7 +22,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformat
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 /**
@@ -57,14 +57,12 @@ public class AggregatorExtend extends ExtendOperation implements IPatternMatcher
         
     }
 
-    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn) {
-        Accumulator accumulator = operator.createNeutral();
-        for(Tuple match : matcher.getAllMatches(information.getParameterMask(), maskedTuple)){
-            @SuppressWarnings("unchecked")
-            Domain column = (Domain) match.get(aggregatedColumn);
-            accumulator = operator.update(accumulator, column, true);
-        }
-        return operator.getAggregate(accumulator);
+    @SuppressWarnings("unchecked")
+    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(
+            IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn) {
+        final Stream<Domain> valueStream = matcher.getAllMatches(information.getParameterMask(), maskedTuple)
+                        .map(match -> (Domain) match.get(aggregatedColumn));
+        return operator.aggregateStream(valueStream);
     }
     
     @Override

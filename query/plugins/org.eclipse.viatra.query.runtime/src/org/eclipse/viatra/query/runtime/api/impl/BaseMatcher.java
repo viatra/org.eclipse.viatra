@@ -11,11 +11,11 @@
 
 package org.eclipse.viatra.query.runtime.api.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -111,12 +111,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      * @return matches represented as a Match object.
      */
     protected Collection<Match> rawGetAllMatches(Object[] parameters) {
-        Collection<? extends Tuple> m = backend.getAllMatches(parameters);
-        Collection<Match> matches = new ArrayList<Match>();
         // clones the tuples into a match object to protect the Tuples from modifications outside of the ReteMatcher
-        for (Tuple t : m)
-            matches.add(tupleToMatch(t));
-        return matches;
+        return backend.getAllMatches(parameters).map(this::tupleToMatch).collect(Collectors.toList());
     }
 
     @Override
@@ -141,11 +137,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      * @return a match represented as a Match object, or null if no match is found.
      */
     protected Match rawGetOneArbitraryMatch(Object[] parameters) {
-        Tuple t = backend.getOneArbitraryMatch(parameters);
-        if (t != null)
-            return tupleToMatch(t);
-        else
-            return null;
+        return backend.getOneArbitraryMatch(parameters).map(this::tupleToMatch).orElse(null);
     }
 
     @Override
@@ -214,10 +206,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      *            the action that will process each pattern match.
      */
     protected void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
-        Collection<? extends Tuple> m = backend.getAllMatches(parameters);
-        // clones the tuples into match objects to protect the Tuples from modifications outside of the ReteMatcher
-        for (Tuple t : m)
-            processor.process(tupleToMatch(t));
+        backend.getAllMatches(parameters).map(this::tupleToMatch).forEach(processor::process);
     }
 
     @Override
@@ -255,13 +244,10 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      *         not invoked
      */
     protected boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
-        Tuple t = backend.getOneArbitraryMatch(parameters);
-        if (t != null) {
-            processor.process(tupleToMatch(t));
+        return backend.getOneArbitraryMatch(parameters).map(this::tupleToMatch).map(m -> {
+            processor.process(m);
             return true;
-        } else {
-            return false;
-        }
+        }).orElse(false);
     }
 
     // with input binding as pattern-specific parameters: not declared in interface

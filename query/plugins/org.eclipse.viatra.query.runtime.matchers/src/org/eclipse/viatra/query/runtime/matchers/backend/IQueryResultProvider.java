@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
-import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -80,8 +81,9 @@ public interface IQueryResultProvider {
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
      * @return a match represented in the internal {@link Tuple} representation.
+     * @since 2.0
      */
-    public Tuple getOneArbitraryMatch(Object[] parameters);
+    public Optional<Tuple> getOneArbitraryMatch(Object[] parameters);
     
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
@@ -95,9 +97,9 @@ public interface IQueryResultProvider {
      *            parameterSeedMask, so that for each considered match tuple,
      *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold
      * @return a match represented in the internal {@link Tuple} representation.
-     * @since 1.7
+     * @since 2.0
      */
-    public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters); 
+    public Optional<Tuple> getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameters); 
     
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
@@ -106,8 +108,9 @@ public interface IQueryResultProvider {
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
      * @return matches represented in the internal {@link Tuple} representation.
+     * @since 2.0
      */
-    public Collection<? extends Tuple> getAllMatches(Object[] parameters);
+    public Stream<Tuple> getAllMatches(Object[] parameters);
     
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
@@ -120,9 +123,9 @@ public interface IQueryResultProvider {
      *            parameterSeedMask, so that for each considered match tuple,
      *            projectedParameterSeed.equals(parameterSeedMask.transform(match)) should hold
      * @return matches represented in the internal {@link Tuple} representation.
-     * @since 1.7
+     * @since 2.0
      */
-    public Iterable<? extends Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters); 
+    public Stream<Tuple> getAllMatches(TupleMask parameterSeedMask, ITuple parameters); 
     
     /**
      * The underlying query evaluator backend.

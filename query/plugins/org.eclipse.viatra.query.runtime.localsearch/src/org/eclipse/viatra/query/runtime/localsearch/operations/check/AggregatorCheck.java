@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -21,7 +22,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformat
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
 
 /**
@@ -36,9 +36,9 @@ public class AggregatorCheck extends CheckOperation implements IPatternMatcherOp
     private final int position;
     private final AggregatorConstraint aggregator;
     private final CallInformation information;
+    
     private final VolatileModifiableMaskedTuple maskedTuple;
     private IQueryResultProvider matcher;
-    
     
     /**
      * @since 1.7
@@ -65,15 +65,14 @@ public class AggregatorCheck extends CheckOperation implements IPatternMatcherOp
         return result == null ? false : Objects.equals(frame.getValue(position), result);
     }
 
-    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn, MatchingFrame initialFrame) {
+    @SuppressWarnings("unchecked")
+    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(
+            IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn,
+            MatchingFrame initialFrame) {
         maskedTuple.updateTuple(initialFrame);
-        Accumulator accumulator = operator.createNeutral();
-        for(Tuple match : matcher.getAllMatches(information.getParameterMask(), maskedTuple)){
-            @SuppressWarnings("unchecked")
-            Domain column = (Domain) match.get(aggregatedColumn);
-            accumulator = operator.update(accumulator, column, true);
-        }
-        return operator.getAggregate(accumulator);
+        final Stream<Domain> valueStream = matcher.getAllMatches(information.getParameterMask(), maskedTuple)
+                .map(match -> (Domain) match.get(aggregatedColumn));
+        return operator.aggregateStream(valueStream);
     }
     
     @Override

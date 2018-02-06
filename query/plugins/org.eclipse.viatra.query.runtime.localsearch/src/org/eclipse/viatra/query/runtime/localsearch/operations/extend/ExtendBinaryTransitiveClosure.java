@@ -113,13 +113,13 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation impl
             Object currentValue = seedsToEvaluate.poll();
             seedsEvaluated.add(currentValue);
             final Object[] mappedFrame = calculateCallFrame(currentValue);
-            for (Tuple match : matcher.getAllMatches(mappedFrame)) {
+            matcher.getAllMatches(mappedFrame).forEach(match -> {
                 Object foundTarget = getTarget(match);
                 targetsFound.add(foundTarget);
                 if (!seedsEvaluated.contains(foundTarget)) {
                     seedsToEvaluate.add(foundTarget);
                 }
-            }
+            });
         }
 
         it = targetsFound.iterator();

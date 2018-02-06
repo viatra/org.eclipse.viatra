@@ -70,7 +70,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IPat
             Object currentValue = sourcesToEvaluate.poll();
             sourceEvaluated.add(currentValue);
             mappedFrame[0] = currentValue;
-            for (Tuple match : matcher.getAllMatches(mappedFrame)) {
+            for (Tuple match : (Iterable<Tuple>) () -> matcher.getAllMatches(mappedFrame).iterator()) {
                 Object foundTarget = match.get(1);
                 if (targetValue.equals(foundTarget)) {
                     return true;

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMemorylessAggregationOperator;
 
 /**
@@ -50,5 +53,12 @@ public class LongSumOperator extends AbstractMemorylessAggregationOperator<Long,
                 oldResult - updateValue;
     }
 
-
+    /**
+     * @since 2.0
+     */
+    @Override
+    public Long aggregateStream(Stream<Long> stream) {
+        return stream.collect(Collectors.summingLong(Long::longValue));
+    }
+    
 }

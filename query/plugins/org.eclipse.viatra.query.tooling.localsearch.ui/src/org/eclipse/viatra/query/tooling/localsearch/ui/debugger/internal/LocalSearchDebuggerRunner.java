@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.internal;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
@@ -30,14 +31,10 @@ public final class LocalSearchDebuggerRunner implements Runnable {
 
     @Override
     public void run() {
-        try {
-            final LocalSearchMatcher localSearchMatcher = lsResultProvider.newLocalSearchMatcher(adornment);
-            debugger.setStartHandlerCalled(true);
+        final LocalSearchMatcher localSearchMatcher = lsResultProvider.newLocalSearchMatcher(adornment);
+        debugger.setStartHandlerCalled(true);
 
-            // Initiate the matching
-            localSearchMatcher.getAllMatches();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        // Initiate the matching
+        localSearchMatcher.streamMatches(new Object[0]).collect(Collectors.toSet());
     }
 }
