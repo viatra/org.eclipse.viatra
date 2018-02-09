@@ -64,8 +64,7 @@ public class PDisjunction {
      */
     public Set<PQuery> getDirectReferredQueries() {
         return this.getBodies().stream().
-                map(PQueries.directlyReferencedQueriesFunction()).
-                <PQuery>flatMap(o -> o).
+                flatMap(PQueries.directlyReferencedQueriesFunction()). // flatten stream of streams
                 collect(Collectors.toSet());
     }
 

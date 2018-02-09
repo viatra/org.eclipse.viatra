@@ -51,6 +51,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
@@ -223,13 +224,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      * @param requiredIndexingServices
      */
     protected void indexReferredTypesOfQuery(PQuery query, IndexingService requiredIndexingServices) {
-        for (PBody body : query.getDisjunctBodies().getBodies()) {
-            for (PConstraint constraint : body.getConstraints()) {
-                if (constraint instanceof TypeConstraint) {
-                    runtimeContext.ensureIndexed(((TypeConstraint) constraint).getSupplierKey(), requiredIndexingServices);
-                }
-            }
-        }
+        PQueries.directlyRequiredTypesOfQuery(query, true /*only enumerables are considered for indexing */).forEach(
+                inputKey -> runtimeContext.ensureIndexed(inputKey, requiredIndexingServices)
+        );
     }
     
     private Set<PQuery> getDirectPositiveDependencies() {
