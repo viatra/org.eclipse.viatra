@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.extensions;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureElementProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelist.PureElement;
-
-import com.ibm.icu.math.BigDecimal;
 
 /**
  * @author Zoltan Ujhelyi
