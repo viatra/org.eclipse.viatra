@@ -162,6 +162,7 @@ The contents of the EMap instances can be modified like in every other instance 
 ==== Querying EMaps from VIATRA Query patterns
 
 Here is an example query to extract the key-value pairs from an EMap:
+
 [source,vql]
 ----
   pattern emapPattern(K : EString, V : EString) {
@@ -181,7 +182,12 @@ As explained on the <<advanced-constraints,Advanced Pattern Constraints section>
 
 First of all, there are cases where recursion is plain nonsense, such as this query:
 
- ```pattern meaningless(x) { neg find meaningless(x); }```
+[source,vql]
+----
+pattern meaningless(x) {
+  neg find meaningless(x);
+}
+----
 
 For every choice of value of the variable `x`, it is a match of pattern `meaningless` if and only if it is not a match of the same pattern. It is easy to see that this is a contradiction - do not expect VIATRA Query to be useful for evaluating such queries. 
 
@@ -194,7 +200,7 @@ Suppose that we have elements of type `Node` forming a containment hierarchy of 
 [source,vql]
 ----
 pattern qualifiedName(node : Node, name) { 
-    // for a child element, compose from parent's qualified name
+    // for a child element, compose from parents qualified name
     find parent(node, parentNode);
     Node.simpleName(node, simpleName);
     find qualifiedName(parent, parentName); // recursive call
@@ -275,6 +281,7 @@ In order to better understand what is going on under the hood, we need to introd
 The Delete and REDerive evaluation mode helps in correctly computing the results in scenarios like this. The difference in the evaluation is as follows. When the A -> B edge is deleted, we decrement the counter of alternative derivations at Bill for Ann's secret from 2 to 1, ''but'' instead of concluding that Ann's secret is still known because of the remaining derivation, we kind of put the remaining derivation onto the side and temporarily forget about it. We do that because we want to see if that alternative still holds, and we do not want to falsely reinforce anybody by using that alternative. First, we let all the deletions to purge whatever needs to be purged, and only then start re-deriving information from what has survived the delete phase. What this means is that upon the deletion of the A -> B edge, Bill will say that he also does not know Ann's secret anymore (even though he has put aside the fact that he heard it from Mike). In response to that, Jane will also say that she does not know the secret, and, finally, Mike will also revoke his knowledge about that. The last bit is crucial because that one invalidates Bill's alternative information that was put aside before. The deletion phase has ended, and no tuples remained in the temporary store, which also means that we cannot re-derive anything. The evaluation has correctly derived that nobody knows Ann's secret once she is not talking to Bill anymore. 
  
 There are some important things to note:
+
 * The first one is related to the non-DRED evaluation. The VIATRA Queries engine propagates tuples as long as the results of some pattern(s) change, that is, until a fixpoint is reached. When we concluded that after the deletion of A -> B everybody still knows Ann's secret, the engine has reached a fixpoint, but it was not the LEAST (or minimal) fixpoint. Intuitively, we associated the non-minimal fixpoint to a wrong pattern result. 
 * Another important aspect is that Delete and REDerive evaluation is not required if the model is changed only through insertions even if we have both kinds of cycles (patterns + instance models). This is because insertions are just expanding the results of patterns, and the previously explained cyclic reinforcement is not an issue in this case.  
 * Note that for the very common special case of transitive closures, the dedicated language element (transitive pattern call) is still likely to be more efficient than the DRED-based recursive solutions. 
