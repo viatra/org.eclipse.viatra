@@ -799,20 +799,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
         if (checkConstraint.getExpression() != null) {
-            checkForImpureJavaCallsInternal(checkConstraint.getExpression(),
-                PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION);
+            checkForImpureJavaCallsInternal(checkConstraint.getExpression());
         }
     }
 
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInEvalExpressions(FunctionEvaluationValue eval) {
         if (eval.getExpression() != null) {
-            checkForImpureJavaCallsInternal(eval.getExpression(),
-                PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE__EXPRESSION);
+            checkForImpureJavaCallsInternal(eval.getExpression());
         }
     }
 
-    private void checkForImpureJavaCallsInternal(XExpression xExpression, EStructuralFeature feature) {
+    private void checkForImpureJavaCallsInternal(XExpression xExpression) {
         Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression),
                 xExpression.eAllContents());
         while (eAllContents.hasNext()) {

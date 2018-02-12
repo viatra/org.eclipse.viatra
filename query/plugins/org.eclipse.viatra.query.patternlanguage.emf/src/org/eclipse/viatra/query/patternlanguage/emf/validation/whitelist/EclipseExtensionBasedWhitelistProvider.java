@@ -28,7 +28,7 @@ import com.google.inject.Inject;
  */
 public class EclipseExtensionBasedWhitelistProvider implements IPureWhitelistExtensionProvider {
 
-    public static String EXTENSION_ID = "org.eclipse.viatra.query.patternlanguage.emf.purewhitelist";
+    public static final String EXTENSION_ID = "org.eclipse.viatra.query.patternlanguage.emf.purewhitelist";
     
     @Inject
     Logger logger;

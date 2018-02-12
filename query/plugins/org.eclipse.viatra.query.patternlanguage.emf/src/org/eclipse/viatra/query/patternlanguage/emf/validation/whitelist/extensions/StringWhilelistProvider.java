@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.extensions;
 
-import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
