@@ -645,6 +645,8 @@
           name="org.eclipse.viatra.query.sdk.feature.source.feature.group"/>
       <repository
           url="https://hudson.eclipse.org/viatra/job/${viatra.hudson.ci.build.job.name}/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
+      <repository
+          url="http://download.eclipse.org/collections/9.0.0/repository"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
