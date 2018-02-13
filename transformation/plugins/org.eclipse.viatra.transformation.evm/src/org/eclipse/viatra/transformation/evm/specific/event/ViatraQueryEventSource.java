@@ -48,8 +48,9 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
     
     @Override
     protected void afterHandlerRemoved(EventHandler<Match> handler, boolean handlersEmpty) {
-        if(handlersEmpty) {
-            ((AdvancedViatraQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
+        final AdvancedViatraQueryEngine engine = (AdvancedViatraQueryEngine)this.matcher.getEngine();
+        if(handlersEmpty && !engine.isDisposed()) {
+            engine.removeMatchUpdateListener(this.matcher, matchUpdateListener);
         }
     }
    
@@ -83,7 +84,10 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
 
     @Override
     public void dispose() {
-        ((AdvancedViatraQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
+        final AdvancedViatraQueryEngine engine = (AdvancedViatraQueryEngine)this.matcher.getEngine();
+        if (!engine.isDisposed()) {
+            engine.removeMatchUpdateListener(this.matcher, matchUpdateListener);
+        }
         super.dispose();
     }
 

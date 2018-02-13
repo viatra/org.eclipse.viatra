@@ -362,4 +362,9 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      */
     public abstract boolean isUpdatePropagationDelayed();
 
+    /**
+     * Returns true if the {@link #dispose()} method was called on this engine previously.
+     * @since 2.0
+     */
+    public abstract boolean isDisposed();
 }

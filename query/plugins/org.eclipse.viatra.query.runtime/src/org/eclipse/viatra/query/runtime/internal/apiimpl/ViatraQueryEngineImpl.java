@@ -708,4 +708,9 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
         }
     }
 
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+    
 }
