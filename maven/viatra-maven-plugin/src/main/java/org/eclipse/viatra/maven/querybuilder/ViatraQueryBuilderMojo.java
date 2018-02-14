@@ -154,7 +154,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
     private boolean useEclipseGeneratorPreferences = true;
     
     /**
-     * @parameter default-value="SEPARATE_CLASS"
+     * @parameter default-value="NESTED_CLASS"
      * @since 1.7
      */
     private MatcherGenerationStrategy matcherGeneration;
@@ -163,7 +163,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * @parameter
      * @since 1.7
      */
-    private boolean generateMatchProcessors = true;
+    private boolean generateMatchProcessors = false;
     
     /**
      * Location of the VIATRA Compiler settings file.
