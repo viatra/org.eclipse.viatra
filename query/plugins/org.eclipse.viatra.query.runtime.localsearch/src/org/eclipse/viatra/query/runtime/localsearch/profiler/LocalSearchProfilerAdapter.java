@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptable;
@@ -95,19 +96,17 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
 
     @Override
     public void patternMatchingStarted(LocalSearchMatcher lsMatcher) {
-        MatcherReference key = new MatcherReference(lsMatcher.getPlanDescriptor().getQuery(), lsMatcher.getPlanDescriptor().getAdornment());
+        MatcherReference key = new MatcherReference(lsMatcher.getPlanDescriptor().getQuery(),
+                lsMatcher.getPlanDescriptor().getAdornment());
         PlanProfile pp = profile.computeIfAbsent(key, input -> new PlanProfile(lsMatcher));
         pp.register(lsMatcher);
     }
 
     @Override
     public void patternMatchingFinished(LocalSearchMatcher lsMatcher) {
-        MatcherReference key = new MatcherReference(lsMatcher.getPlanDescriptor().getQuery(), lsMatcher.getPlanDescriptor().getAdornment());
-        profile.computeIfPresent(key, (ref, pp) -> {
-            pp.unRegister(lsMatcher);
-            // Remove entry
-            return null;
-        });
+        MatcherReference key = new MatcherReference(lsMatcher.getPlanDescriptor().getQuery(),
+                lsMatcher.getPlanDescriptor().getAdornment());
+        Optional.ofNullable(profile.get(key)).ifPresent(pp -> pp.unRegister(lsMatcher));
     }
 
     @Override
