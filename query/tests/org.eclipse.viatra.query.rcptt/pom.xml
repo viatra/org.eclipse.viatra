@@ -17,7 +17,6 @@
 		<module>org.eclipse.viatra.query.rcptt.queries.validation</module>
 		<module>org.eclipse.viatra.query.rcptt.queries.feature</module>
 		<module>org.eclipse.viatra.query.rcptt.product</module>
-		<module>org.eclipse.viatra.query.rcptt.tests</module>
 	</modules>
 	
 	<properties>
@@ -70,4 +69,19 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+	<profiles>
+        <profile>
+            <id>run-ui-tests</id>
+            <activation>
+                 <activeByDefault>false</activeByDefault>
+                 <property>
+                     <name>runUITests</name>
+                     <value>true</value>
+                 </property>
+            </activation>
+            <modules>
+                 <module>org.eclipse.viatra.query.rcptt.tests</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

@@ -30,6 +30,7 @@
 		<module>../../query/tests/org.eclipse.viatra.query.testing.snapshot</module>
 		<module>../../query/tests/org.eclipse.viatra.query.testing.core</module>
 		<module>../../query/tests/org.eclipse.viatra.query.testing.ui</module>
+		<module>../../query/tests/org.eclipse.viatra.query.rcptt</module>
 		<module>../../query/features/org.eclipse.viatra.query.runtime.feature</module>
         <module>../../query/features/org.eclipse.viatra.query.ide.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.language.feature</module>
@@ -143,19 +144,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<profiles>
-		<profile>
-			<id>run-ui-tests</id>
-			<activation>
-			     <activeByDefault>false</activeByDefault>
-			     <property>
-			         <name>runUITests</name>
-			         <value>true</value>
-			     </property>
-			</activation>
-			<modules>
-			     <module>../../query/tests/org.eclipse.viatra.query.rcptt</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>

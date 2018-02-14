@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.viatra.query.rcptt.queries
 Bundle-SymbolicName: org.eclipse.viatra.query.rcptt.queries;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Export-Package: org.eclipse.viatra.gui.tests.queries,
-  org.eclipse.viatra.gui.tests.queries.util
+Export-Package: org.eclipse.viatra.gui.tests.queries
 Require-Bundle: org.eclipse.emf.ecore,
   org.eclipse.viatra.query.runtime,
   org.eclipse.xtext.xbase.lib,
