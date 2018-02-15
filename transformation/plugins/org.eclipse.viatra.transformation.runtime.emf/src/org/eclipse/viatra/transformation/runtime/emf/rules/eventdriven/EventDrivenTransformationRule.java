@@ -43,13 +43,20 @@ public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher 
             EventFilter<? super Match> filter) {
         this.name = name;
         Set<Job<Match>> jobs = new HashSet<>();
-
+        boolean createdJobAdded = false;
         for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entrySet()) {
             CRUDActivationStateEnum state = stateAction.getKey();
             IMatchProcessor<Match> action = stateAction.getValue();
 
             jobs.add(Jobs.newStatelessJob(state, action));
+            if (state == CRUDActivationStateEnum.CREATED) {
+                createdJobAdded = true;
+            }
         }
+        if (!createdJobAdded) {
+            jobs.add(Jobs.newNopJob(CRUDActivationStateEnum.CREATED));
+        }
+        
         this.precondition = precondition;
         ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs, name);
         this.filter = filter;
