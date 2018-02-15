@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -156,12 +154,7 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         // Create pop-up menu over the tree viewer
         MenuManager menuManager = new MenuManager();
         menuManager.setRemoveAllWhenShown(true);
-        menuManager.addMenuListener(new IMenuListener() {
-            @Override
-            public void menuAboutToShow(IMenuManager mgr) {
-                mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-            }
-        });
+        menuManager.addMenuListener(mgr -> mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS)));
         Control control = queryTreeViewer.getControl();
         control.setMenu(menuManager.createContextMenu(control));
         getSite().registerContextMenu(ID,menuManager, queryTreeViewer);
@@ -188,22 +181,18 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     }
 
     public void resetView() {
-        BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
-            
-            @Override
-            public void run() {
-                try {
-                    // Initializer job cannot really be cancelled; wait for it to finish
-                    initializerJob.join();
-                    updater.disconnectIndexFromRegistry();
-                    updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
-                } catch (InterruptedException e) {
-                    String logMessage = "Error while resetting Query Registry: " + e.getMessage();
-                    ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
-                            ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), logMessage, e));
-                    // Maintaining interrupted state
-                    Thread.currentThread().interrupt();
-                }
+        BusyIndicator.showWhile(getSite().getShell().getDisplay(), () -> {
+            try {
+                // Initializer job cannot really be cancelled; wait for it to finish
+                initializerJob.join();
+                updater.disconnectIndexFromRegistry();
+                updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
+            } catch (InterruptedException e) {
+                String logMessage = "Error while resetting Query Registry: " + e.getMessage();
+                ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
+                        ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), logMessage, e));
+                // Maintaining interrupted state
+                Thread.currentThread().interrupt();
             }
         });
     }

@@ -11,7 +11,9 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -31,14 +33,12 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 
 /**
  * @author Abel Hegedus
@@ -53,18 +53,12 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     
     private final ListMultimap<ViatraQueryEngine, QueryBasedFeature> delayedFeatures;
     
-    /**
-     * 
-     */
     public QueryBasedFeatureSettingDelegateFactory() {
         engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedViatraQueryEngine>>();
-        specificationMap = Maps.newHashMap();
+        specificationMap = new HashMap<>();
         delayedFeatures = ArrayListMultimap.create();
     }
     
-    /**
-     * @return the specificationMap
-     */
     public Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getSpecificationMap() {
         return specificationMap;
     }
@@ -98,7 +92,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
      * 
      * @param eStructuralFeature
      * @return the delegate wrapped in optional or absent if it is null or not a query based feature
-     * @since 1.3
+     * @since 2.0
      */
     public Optional<QueryBasedFeatureSettingDelegate> getSettingDelegate(EStructuralFeature eStructuralFeature) {
         QueryBasedFeatureSettingDelegate settingDelegate = null;
@@ -109,7 +103,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
                 settingDelegate = (QueryBasedFeatureSettingDelegate) delegate;
             }
         }
-        return Optional.fromNullable(settingDelegate);
+        return Optional.ofNullable(settingDelegate);
     }
     
     @Override

@@ -16,9 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.AbstractViewerStateListener;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * @author Zoltan Ujhelyi
@@ -54,7 +52,7 @@ public class ListContentProvider extends AbstractViewerStateListener implements 
         if (state == null) {
             return new Object[0];
         }
-        return Iterables.toArray(state.getItems(), Item.class);
+        return state.getItems().toArray(new Item[state.getItems().size()]);
     }
 
     @Override

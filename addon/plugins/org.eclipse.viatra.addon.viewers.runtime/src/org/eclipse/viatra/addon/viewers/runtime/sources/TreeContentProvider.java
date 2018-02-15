@@ -20,8 +20,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.AbstractViewerStateListener;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * @author Zoltan Ujhelyi

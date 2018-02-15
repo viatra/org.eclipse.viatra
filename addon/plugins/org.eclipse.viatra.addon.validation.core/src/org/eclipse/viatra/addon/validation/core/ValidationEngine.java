@@ -12,8 +12,6 @@
 
 package org.eclipse.viatra.addon.validation.core;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +27,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -71,8 +70,8 @@ public class ValidationEngine implements IValidationEngine {
     }
     
     protected ValidationEngine(ViatraQueryEngine engine, Logger logger) {
-        checkArgument(engine != null, "Engine cannot be null");
-        checkArgument(logger != null, "Logger cannot be null");
+        Preconditions.checkArgument(engine != null, "Engine cannot be null");
+        Preconditions.checkArgument(logger != null, "Logger cannot be null");
         this.queryEngine = engine;
         this.logger = logger;
         

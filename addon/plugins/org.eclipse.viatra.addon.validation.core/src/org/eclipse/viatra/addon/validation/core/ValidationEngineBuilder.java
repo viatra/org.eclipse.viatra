@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.validation.core;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * 
@@ -50,16 +48,16 @@ public class ValidationEngineBuilder {
      *   new validation engine cannot be determined
      */
     public IValidationEngine build() {
-        checkState(queryEngine != null, "Must initialize engine before building!");
+        Preconditions.checkState(queryEngine != null, "Must initialize engine before building!");
         if(logger == null){
             logger = Logger.getLogger(ValidationEngine.class);
         }
-        checkState(logger != null, "Must initialize logger before building!");
+        Preconditions.checkState(logger != null, "Must initialize logger before building!");
         return new ValidationEngine(queryEngine, logger);
     }
     
     public ValidationEngineBuilder setEngine(ViatraQueryEngine engine) {
-        checkArgument(engine != null, "Engine cannot be null!");
+        Preconditions.checkArgument(engine != null, "Engine cannot be null!");
         this.queryEngine = engine;
         return this;
     }

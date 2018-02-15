@@ -53,7 +53,6 @@ import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
@@ -111,14 +110,10 @@ public class QueryResultView extends ViewPart {
         }
         
         private IRegistryView createView() {
-            return QuerySpecificationRegistry.getInstance().createView(new IRegistryViewFilter() {
-                
-                @Override
-                public boolean isEntryRelevant(final IQuerySpecificationRegistryEntry entry) {
-                    boolean sourceSame = Objects.equals(entry.getSourceIdentifier(), sourceId);
-                    boolean fqnRelevant = sourceFQNs.contains(entry.getFullyQualifiedName());
-                    return sourceSame && fqnRelevant;
-                }
+            return QuerySpecificationRegistry.getInstance().createView((IRegistryViewFilter) entry -> {
+                boolean sourceSame = Objects.equals(entry.getSourceIdentifier(), sourceId);
+                boolean fqnRelevant = sourceFQNs.contains(entry.getFullyQualifiedName());
+                return sourceSame && fqnRelevant;
             });
         }
     }
@@ -374,13 +369,9 @@ public class QueryResultView extends ViewPart {
 
     public void wipeEngine() {
         if(input != null && !input.isReadOnlyEngine()){
-            BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
-
-                @Override
-                public void run() {
-                    cancelLoadProcess();
-                    input.resetInput();
-                }
+            BusyIndicator.showWhile(getSite().getShell().getDisplay(), () -> {
+                cancelLoadProcess();
+                input.resetInput();
             });
         }
     }

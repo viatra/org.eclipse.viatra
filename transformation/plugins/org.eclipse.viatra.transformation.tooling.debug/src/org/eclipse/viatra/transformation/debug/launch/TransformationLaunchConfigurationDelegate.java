@@ -69,13 +69,11 @@ public class TransformationLaunchConfigurationDelegate implements ILaunchConfigu
                 TransformationDebugProcess process = new TransformationDebugProcess(launch, "FAILED");
                 process.terminate();
                 launch.addProcess(process);
-                PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                        ErrorDialog.openError(activeShell, DebuggerHostEndpoint.COMM_ERROR_TITLE,
-                                DebuggerHostEndpoint.COMM_ERROR_MSG,
-                                new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage()));
-                    }
+                PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+                    Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                    ErrorDialog.openError(activeShell, DebuggerHostEndpoint.COMM_ERROR_TITLE,
+                            DebuggerHostEndpoint.COMM_ERROR_MSG,
+                            new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage()));
                 });
             }
 

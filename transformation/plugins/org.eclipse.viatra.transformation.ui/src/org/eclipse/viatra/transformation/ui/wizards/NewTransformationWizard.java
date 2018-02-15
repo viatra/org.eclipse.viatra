@@ -102,21 +102,18 @@ public class NewTransformationWizard extends NewElementWizard {
 
             selectAndReveal(resource);
             final Display display = getShell().getDisplay();
-            display.asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    IEditorPart editor;
-                    try {
-                        editor = IDE.openEditor(JavaPlugin.getActivePage(), (IFile) resource);
-                        if (editor instanceof ITextEditor) {
-                            final ITextEditor textEditor = (ITextEditor) editor;
-                            ISelectionProvider selectionProvider = textEditor.getSelectionProvider();
-                            ISelection selection = new TextSelection(size - 2, 0);
-                            selectionProvider.setSelection(selection);
-                        }
-                    } catch (PartInitException e) {
-                        throw new RuntimeException(e);
+            display.asyncExec(() -> {
+                IEditorPart editor;
+                try {
+                    editor = IDE.openEditor(JavaPlugin.getActivePage(), (IFile) resource);
+                    if (editor instanceof ITextEditor) {
+                        final ITextEditor textEditor = (ITextEditor) editor;
+                        ISelectionProvider selectionProvider = textEditor.getSelectionProvider();
+                        ISelection selection = new TextSelection(size - 2, 0);
+                        selectionProvider.setSelection(selection);
                     }
+                } catch (PartInitException e) {
+                    throw new RuntimeException(e);
                 }
             });
             return true;

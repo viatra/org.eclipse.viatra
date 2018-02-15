@@ -12,18 +12,17 @@ package org.eclipse.viatra.addon.databinding.runtime.collection;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics;
-
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 
 /**
  * Builder API for observable pattern match collections (lists and sets). 
@@ -149,6 +148,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
     /**
      * The given converter function is used on each match and the end result is put into the
      * observable collection.
+     * @since 2.0
      */
     public ObservablePatternMatchCollectionBuilder<M> setConverter(Function<M, ?> converter){
         this.converter = converter;

@@ -11,15 +11,14 @@
 package org.eclipse.viatra.addon.viewers.runtime.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 /**
  * <p>A wrapper class for filter definitions. It is used to create filtered observable Sets for patterns. A filter
@@ -44,7 +43,7 @@ public class ViewerDataFilter {
      * Initializes an empty data filter.
      */
     public ViewerDataFilter() {
-        filterDefinitions = Maps.newHashMap();
+        filterDefinitions = new HashMap<>();
     }
 
     /**
@@ -53,7 +52,7 @@ public class ViewerDataFilter {
      * @param filters
      */
     private ViewerDataFilter(Map<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filters) {
-        filterDefinitions = Maps.newHashMap(filters);
+        filterDefinitions = new HashMap<>(filters);
     }
 
     /**

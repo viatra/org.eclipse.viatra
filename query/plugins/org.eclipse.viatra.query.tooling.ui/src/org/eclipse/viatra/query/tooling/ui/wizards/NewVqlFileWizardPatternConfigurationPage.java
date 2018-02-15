@@ -21,8 +21,6 @@ import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -120,11 +118,7 @@ public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
         GridData gd_1 = new GridData(GridData.FILL_HORIZONTAL);
         gd_1.horizontalSpan = 3;
         patternText.setLayoutData(gd_1);
-        patternText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                validatePage();
-            }
-        });
+        patternText.addModifyListener(e -> validatePage());
 
         label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
         GridData gd_2 = new GridData(GridData.FILL_HORIZONTAL);

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,9 +29,8 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.collect.Lists;
 
 /**
  * 
@@ -144,7 +141,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
      * @since 1.3
      */
     public void initializeSettingDelegate(Notifier rootNotifier) {
-        checkArgument(rootNotifier != null, "Notifier cannot be null");
+        Preconditions.checkArgument(rootNotifier != null, "Notifier cannot be null");
         initializeSettingDelegateInternal(rootNotifier);
     }
 
@@ -190,7 +187,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
                     if(iterator.hasNext() && iterator.next().equals(queryBasedFeature)){
                         initializeDelayedFeature(queryBasedFeature, delayedFeatures);
                         // delayed query-based features are initialized 
-                        ArrayList<QueryBasedFeature> delayedFeatureList = Lists.newArrayList(delayedFeatures);
+                        ArrayList<QueryBasedFeature> delayedFeatureList = new ArrayList<>(delayedFeatures);
                         for (QueryBasedFeature delayedFeature : delayedFeatureList) {
                             initializeDelayedFeature(delayedFeature, delayedFeatures);
                         }

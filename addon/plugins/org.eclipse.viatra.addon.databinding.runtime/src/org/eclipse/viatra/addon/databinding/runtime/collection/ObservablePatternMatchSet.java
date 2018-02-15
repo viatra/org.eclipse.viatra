@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
@@ -30,9 +31,6 @@ import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 /**
  * Observable view of a match set for a given {@link ViatraQueryMatcher} on a model (match sets of an
@@ -156,6 +154,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         protected final Function<Match, ?> converter;
         protected final Map<Match, Object> matchToItem = new HashMap<Match, Object>();
         
+        /**
+         * @since 2.0
+         */
         public SetCollectionUpdate(Function<Match, ?> converter) {
             if(converter != null) {
                 this.converter = converter;
@@ -173,7 +174,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             }
             
             cache.add(item);
-            final SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(item), Collections.emptySet());
+            final SetDiff diff = Diffs.createSetDiff(Collections.singleton(item), Collections.emptySet());
             Realm realm = getRealm();
             Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
             realm.exec(() -> {
@@ -191,7 +192,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             }
             
             cache.remove(item);
-            final SetDiff diff = Diffs.createSetDiff(Collections.emptySet(), Sets.newHashSet(item));
+            final SetDiff diff = Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(item));
             Realm realm = getRealm();
             Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
             realm.exec(() -> {

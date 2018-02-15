@@ -11,6 +11,7 @@
 package org.eclipse.viatra.addon.databinding.runtime.collection;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -18,8 +19,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-
-import com.google.common.base.Function;
 
 /**
  * Internal interface for building observable pattern match collections.
@@ -37,6 +36,7 @@ public interface ObservablePatternMatchCollection<M extends IPatternMatch> {
      * 
      * @param converter used to transform matches to other type of objects
      * @param comparator used to order the content of lists
+     * @since 2.0
      */
     void createUpdater(Function<M, ? extends Object> converter, Comparator<M> comparator);
     

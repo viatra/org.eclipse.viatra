@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
@@ -31,10 +32,6 @@ import org.eclipse.viatra.transformation.views.traceability.Trace;
 import org.eclipse.viatra.transformation.views.traceability.Traceability;
 import org.eclipse.viatra.transformation.views.traceability.TraceabilityUtil;
 import org.eclipse.viatra.transformation.views.traceability.generic.GenericTracedPQuery;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Utility class for view models.
@@ -68,7 +65,7 @@ public final class ViewModelUtil {
     
     public static Collection<EObject> delete(GenericPatternMatch match) {
         Trace trace = (Trace) match.get(GenericTracedPQuery.TRACE_PARAMETER);
-        ArrayList<EObject> ret = Lists.newArrayList(trace.getTargets());
+        ArrayList<EObject> ret = new ArrayList<>(trace.getTargets());
         if (trace.eContainer() instanceof Traceability) {
             ((Traceability)trace.eContainer()).getTraces().remove(trace);
         } else {
@@ -83,25 +80,12 @@ public final class ViewModelUtil {
     }
     
     private static Collection<EObject> selectEObjects(Object[] sources) {
-
-        return Arrays.asList(Collections2.filter(Arrays.asList(sources), new Predicate<Object>() {
-
-            @Override
-            public boolean apply(Object source) {
-                return (source instanceof EObject);
-            }
-        }).toArray(new EObject[0]));
+        return Arrays.stream(sources).filter(EObject.class::isInstance).map(EObject.class::cast)
+                .collect(Collectors.toList());
     }
 
     private static Collection<Object> selectObjects(Object[] sources) {
-
-        return Collections2.filter(Arrays.asList(sources), new Predicate<Object>() {
-
-            @Override
-            public boolean apply(Object source) {
-                return !(source instanceof EObject);
-            }
-        });
+        return Arrays.stream(sources).filter(source -> !(source instanceof EObject)).collect(Collectors.toList());
     }
     
     public static ResourceSet getOrCreateResourceSet(Notifier baseNotifier) {

@@ -11,6 +11,8 @@
 package org.eclipse.viatra.addon.databinding.runtime.collection;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -35,9 +37,6 @@ import org.eclipse.viatra.transformation.evm.specific.Schedulers;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
 import org.eclipse.viatra.transformation.evm.specific.job.SequentialProcessorsJob;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Utility class to prepare a rule in an agenda for an observable collection. For use cases, see
@@ -94,12 +93,12 @@ public final class ObservableCollectionHelper {
 
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
         Job<Match> updateJob = Jobs.newErrorLoggingJob(new SequentialProcessorsJob<Match>(
-                CRUDActivationStateEnum.UPDATED, ImmutableList.of(
+                CRUDActivationStateEnum.UPDATED, Arrays.asList(
                         new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate),
                         new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate)
                 )));
-        ImmutableSet<Job<Match>> allJobs = ImmutableSet.<Job<Match>> builder().addAll(jobs).add(updateJob).build();
-        return Rules.newMatcherRuleSpecification(querySpecification, Lifecycles.getDefault(true, true), allJobs);
+        jobs.add(updateJob);
+        return Rules.newMatcherRuleSpecification(querySpecification, Lifecycles.getDefault(true, true), jobs);
     }
     
     /**
@@ -119,11 +118,14 @@ public final class ObservableCollectionHelper {
 
     private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate) {
+        Set<Job<Match>> jobs = new HashSet<>();
         Job<Match> insertJob = Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED,
                 new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate)));
+        jobs.add(insertJob);
         Job<Match> deleteJob = Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
                 new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate)));
-        return ImmutableSet.of(insertJob, deleteJob);
+        jobs.add(deleteJob);
+        return jobs;
     }
 
     protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(ViatraQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {

@@ -12,6 +12,7 @@ package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,9 +25,6 @@ import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate.Factory
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate.Factory.Registry;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 /**
  * A helper class to initialize query-based features in cases where the default behavior (on-demand initialization in
@@ -103,7 +101,7 @@ public class QueryBasedFeatureSetup {
     }
 
     private static Set<EPackage> filterPackagesWithQBFs(EPackage... ePackages) {
-        Set<EPackage> packagesWithQBFs = Sets.newHashSet();
+        Set<EPackage> packagesWithQBFs = new HashSet<>();
         for (EPackage ePkg : ePackages) {
             if (hasQBFSettingDelegate(ePkg)) {
                 packagesWithQBFs.add(ePkg);
@@ -122,7 +120,7 @@ public class QueryBasedFeatureSetup {
     }
 
     private static Set<EStructuralFeature> getQBFeaturesOfPackages(Set<EPackage> packagesWithQBFs) {
-        Set<EStructuralFeature> qbfFeatures = Sets.newHashSet();
+        Set<EStructuralFeature> qbfFeatures = new HashSet<>();
         for (EPackage ePkg : packagesWithQBFs) {
             TreeIterator<EObject> allContents = ePkg.eAllContents();
             while (allContents.hasNext()) {
@@ -140,14 +138,12 @@ public class QueryBasedFeatureSetup {
 
     private static Set<EStructuralFeature> initializeFeatures(Notifier rootNotifier,
             QueryBasedFeatureSettingDelegateFactory qbfFactory, Set<EStructuralFeature> qbfFeatures) {
-        Set<EStructuralFeature> initializedQBFFeatures = Sets.newHashSet();
+        Set<EStructuralFeature> initializedQBFFeatures = new HashSet<>();
         for (EStructuralFeature eStructuralFeature : qbfFeatures) {
-            Optional<QueryBasedFeatureSettingDelegate> optional = qbfFactory.getSettingDelegate(eStructuralFeature);
-            if (optional.isPresent()) {
-                QueryBasedFeatureSettingDelegate delegate = optional.get();
+            qbfFactory.getSettingDelegate(eStructuralFeature).ifPresent(delegate -> {
                 delegate.initializeSettingDelegate(rootNotifier);
                 initializedQBFFeatures.add(eStructuralFeature);
-            }
+            });
         }
         return initializedQBFFeatures;
     }

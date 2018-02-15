@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.tooling.debug.variables.values;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,11 +88,7 @@ public class MatchParameterValue extends ViatraQueryDebugValue {
                     fVariables.add(new JDIFieldVariable((JDIDebugTarget) getDebugTarget(), field, (ObjectReference) fValue.getValue(),
                             fLogicalParent));
                 }
-                Collections.sort(fVariables, new Comparator<IJavaVariable>() {
-                    public int compare(IJavaVariable a, IJavaVariable b) {
-                        return sortChildren(a, b);
-                    }
-                });
+                Collections.sort(fVariables, this::sortChildren);
             }
 
             return fVariables;

@@ -18,7 +18,5 @@ Export-Package: org.eclipse.viatra.addon.databinding.runtime.adapter,
  org.eclipse.viatra.addon.databinding.runtime.observables,
  org.eclipse.viatra.addon.databinding.runtime.util
 Bundle-Vendor: Eclipse VIATRA Project
-Import-Package: com.google.common.base;version="15.0.0",
- com.google.common.collect;version="15.0.0"
 Eclipse-ExtensibleAPI: true
 Automatic-Module-Name: org.eclipse.viatra.addon.databinding.runtime

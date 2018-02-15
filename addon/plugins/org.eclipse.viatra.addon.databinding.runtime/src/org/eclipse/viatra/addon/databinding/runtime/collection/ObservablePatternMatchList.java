@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.databinding.runtime.collection;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -35,11 +39,6 @@ import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
-
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Observable view of a match set for a given {@link ViatraQueryMatcher} on a model (match sets of an
@@ -219,7 +218,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         
         EventFilter<Match> oldFilter = matchFilter;
         matchFilter = Rules.newSingleMatchFilter(filter);
-        if(Objects.equal(matchFilter, oldFilter)) {
+        if(Objects.equals(matchFilter, oldFilter)) {
             // same filter, do nothing
             return;
         }
@@ -255,6 +254,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         private List<Match> oldCache = null;
         private Set<Match> removed;
 
+        /**
+         * @since 2.0
+         */
         public ListCollectionUpdate(Function<Match, ?> converter, Comparator<Match> comparator) {
             if (converter != null) {
                 this.converter = converter;
@@ -347,9 +349,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         
         private List<Match> pauseUpdates() {
             if(nextDiff == null) {
-                oldCache = Lists.newArrayList(cache);
+                oldCache = new ArrayList<>(cache);
                 nextDiff = Diffs.computeLazyListDiff(oldCache,cache);
-                removed = Sets.newHashSet();
+                removed = new HashSet<>();
                 return oldCache;
             }
             return Collections.emptyList();
@@ -357,7 +359,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         
         private void resumeUpdates() {
             if(nextDiff != null) {
-                List<ListDiffEntry> entries = Lists.newArrayListWithCapacity(removed.size());
+                List<ListDiffEntry> entries = new ArrayList<>(removed.size());
                 for (Match match : removed) {
                     // delayed removal of items
                     ListDiffEntry diffEntry = removeItem(match);

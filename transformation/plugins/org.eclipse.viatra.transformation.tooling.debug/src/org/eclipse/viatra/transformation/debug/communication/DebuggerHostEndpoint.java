@@ -276,22 +276,18 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
     private void handleCommunicationError(final Exception e) {
         terminateListeners();
         ViatraQueryLoggingUtil.getDefaultLogger().error("Communication error: "+e.getMessage());
-        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                ErrorDialog.openError(activeShell, COMM_ERROR_TITLE, COMM_ERROR_MSG, new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage())); 
-            }
+        PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+            Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            ErrorDialog.openError(activeShell, COMM_ERROR_TITLE, COMM_ERROR_MSG, new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage())); 
         });
     }
     
     private void handleConditinalBreakpointError(final ViatraDebuggerException e) {
         terminateListeners();
         ViatraQueryLoggingUtil.getDefaultLogger().error("Invalid Conditional Breakpoint: "+e.getMessage());
-        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                ErrorDialog.openError(activeShell, BRKP_ERROR_TITLE, BRKP_ERROR_MSG, new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage())); 
-            }
+        PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+            Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            ErrorDialog.openError(activeShell, BRKP_ERROR_TITLE, BRKP_ERROR_MSG, new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage())); 
         });
     }
 }

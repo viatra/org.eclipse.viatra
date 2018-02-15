@@ -20,8 +20,7 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.integration.zest.viewer.IGraphEdgeContentProvider;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Content provider for Zest graphs. The implementation is more performant than

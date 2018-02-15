@@ -12,14 +12,10 @@ package org.eclipse.viatra.transformation.ui.wizards;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
@@ -119,15 +115,8 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
         });
         transformationTypeViewer.setInput(TransformationType.values());
         transformationTypeViewer.setSelection(new StructuredSelection(transformationType));
-        transformationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                transformationType = (TransformationType) ((StructuredSelection) transformationTypeViewer
-                        .getSelection()).getFirstElement();
-
-            }
-        });
+        transformationTypeViewer.addSelectionChangedListener(event -> transformationType = (TransformationType) ((StructuredSelection) transformationTypeViewer
+                .getSelection()).getFirstElement());
 
         final Button loggingCheckbox = new Button(composite, SWT.CHECK);
         FormData fd_loggingCheckbox = new FormData();
@@ -190,13 +179,7 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
             }
         });
         
-        sessionNameText.addModifyListener(new ModifyListener() {
-            
-            @Override
-            public void modifyText(ModifyEvent e) {
-                transformationSessionName = sessionNameText.getText();
-            }
-        });
+        sessionNameText.addModifyListener(e -> transformationSessionName = sessionNameText.getText());
     }
 
 
