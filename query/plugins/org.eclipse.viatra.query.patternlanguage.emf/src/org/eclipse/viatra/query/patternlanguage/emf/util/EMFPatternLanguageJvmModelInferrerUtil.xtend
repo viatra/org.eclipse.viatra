@@ -55,6 +55,8 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
+import org.eclipse.xtext.nodemodel.INode
+import org.eclipse.xtext.nodemodel.ICompositeNode
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -278,27 +280,41 @@ class EMFPatternLanguageJvmModelInferrerUtil {
           return javadocString.trim
       }
       
-      /**
+    /**
      * Returns the file header comment at the beginning of the text corresponding
      * to the pattern model.
      * The comment text is escaped, so it does not include stars in multi-line comments.
      * 
      * @since 1.3
      */
-      def getFileComment(PatternModel patternModel) {
+      def String getFileComment(PatternModel patternModel) {
           val patternNode = NodeModelUtils.getNode(patternModel)
-          val possibleFileComment = patternNode?.firstChild?.nextSibling
-          if (possibleFileComment !== null) {
-            val grammarElement = possibleFileComment.grammarElement
-            if (grammarElement == grammar.getML_COMMENTRule) {
-                val multiLineCommentText = possibleFileComment.text.escape
+          return getHeaderComment(patternNode, '''Generated from «patternModel.eResource?.URI»''')
+      }
+      
+      def String getPatternComment(Pattern pattern) {
+          val patternNode = NodeModelUtils.getNode(pattern)
+          return getHeaderComment(patternNode, "")
+      }
+      
+      private def String getHeaderComment(ICompositeNode node, String defaultComment) {
+        return extractComment(node?.firstChild?.nextSibling, defaultComment)
+      }
+
+      private def String extractComment(INode node, String defaultComment) {
+        if (node !== null) {
+            val grammarElement = node.grammarElement
+            if (grammarElement == grammar.WSRule) {
+                return node.nextSibling.extractComment(defaultComment)
+            } else if (grammarElement == grammar.getML_COMMENTRule) {
+                val multiLineCommentText = node.text.escape
                 return multiLineCommentText
             } else if (grammarElement == grammar.SL_COMMENTRule) {
-                val singleLineCommentText = possibleFileComment.text.escape
+                val singleLineCommentText = node.text.escape
                 return singleLineCommentText
             }
         }
-          return '''Generated from «patternModel.eResource?.URI»'''
+        return defaultComment
       }
       
       /**

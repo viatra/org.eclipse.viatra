@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMF
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageEObjectHover;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeScopeProvider;
@@ -64,6 +65,7 @@ import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -259,5 +261,13 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends IGeneratorConfigProvider> bindIGeneratorConfigProvider() {
         return EMFPatternLanguageGeneratorEclipseConfigProvider.class;
+    }
+    
+    /**
+     * @since 1.7.2
+     */
+    @Override
+    public Class<? extends IEObjectHover> bindIEObjectHover() {
+        return EMFPatternLanguageEObjectHover.class;
     }
 }
