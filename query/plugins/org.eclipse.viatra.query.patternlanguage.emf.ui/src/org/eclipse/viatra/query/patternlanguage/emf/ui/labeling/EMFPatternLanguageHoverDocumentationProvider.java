@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.ui.labeling;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem;
@@ -46,6 +52,8 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
     private ITypeSystem typeSystem;
     @Inject
     private ITypeInferrer typeInferrer;
+    @Inject
+    private EMFPatternLanguageJvmModelInferrerUtil inferrerUtil;
 
     @Override
     public String computeDocumentation(EObject object) {
@@ -79,7 +87,7 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         } else if (object instanceof Pattern) {
             Pattern pattern = (Pattern) object;
             StringBuilder sb = new StringBuilder();
-            sb.append(super.computeDocumentation(pattern));
+            sb.append(inferrerUtil.getPatternComment(pattern));
             sb.append("<p><strong>Parameters:</strong></p>");
             sb.append("<ul>");
             for (Variable variable : pattern.getParameters()) {
@@ -99,9 +107,9 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
             sb.append("</ul>");
             return sb.toString();
         }
-        return super.computeDocumentation(object);
+        return computeDocumentation(object);
     }
-
+    
     private String calculateVariableHover(Variable variable) {
         JvmTypeReference type = typeInferrer.getJvmType(variable, variable); 
         IInputKey emfType = typeInferrer.getType(variable); 
@@ -117,15 +125,16 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         return String.format("<b>EMF Type</b>: %s<br /><b>Java Type</b>: %s", emfTypeString, javaTypeString);
     }
 
-    /**
-     * @param emfType
-     * @return
-     */
     private String getTypeString(EClassifier emfType) {
         String emfTypeString;
         final String packageUri = emfType.getEPackage() != null ? "(<i>" + emfType.getEPackage().getNsURI() + "</i>)" : "";
         emfTypeString = String.format("%s %s", emfType.getName(), packageUri);
         return emfTypeString;
+    }
+
+    @Override
+    protected String getDerivedElementInformation(EObject o) {
+        return (o instanceof Pattern) ? null : super.getDerivedElementInformation(o);
     }
 
 }

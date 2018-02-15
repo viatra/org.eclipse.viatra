@@ -66,11 +66,13 @@ import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
+import org.eclipse.xtext.xbase.ui.hover.XbaseDispatchingEObjectTextHover;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -262,5 +264,13 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
      */
     public Class<? extends IPureWhitelistExtensionProvider> bindIPureWhitelistExtensionProvider() {
         return EclipseExtensionBasedWhitelistProvider.class;
+    }
+    
+    /**
+     * @since 2.0
+     */
+    @Override
+    public Class<? extends IEObjectHover> bindIEObjectHover() {
+        return XbaseDispatchingEObjectTextHover.class;
     }
 }
