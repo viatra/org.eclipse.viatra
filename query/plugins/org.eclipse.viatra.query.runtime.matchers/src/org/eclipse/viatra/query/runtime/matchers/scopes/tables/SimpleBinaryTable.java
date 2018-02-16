@@ -1,0 +1,287 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2018, Gabor Bergmann, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Gabor Bergmann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.stream.StreamSupport;
+
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
+
+/**
+ * Simple source-target bidirectional mapping.
+ * 
+ * <p>
+ * TODO: specialize for to-one features and unique to-many features
+ * <p>
+ * TODO: on-demand construction of valueToHolderMap
+ * <p>
+ * TODO: support for lean indexing, opposites, long surrogate ids, etc.
+ * 
+ * @since 2.0
+ * @author Gabor Bergmann
+ */
+public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
+        implements ITableWriterBinary.Table<Source, Target> {
+
+    /**
+     * value -> holder(s)
+     * <p>
+     * this is currently the primary store, may hold duplicates depending on the unique parameter
+     */
+    private IMultiLookup<Target, Source> valueToHolderMap;
+    /**
+     * holder -> value(s); constructed on-demand, null if unused
+     */
+    private IMultiLookup<Source, Target> holderToValueMap;
+    private int totalRowCount = 0;
+    private boolean unique;
+
+    /**
+     * @param unique
+     *            client promises to only insert a given tuple with multiplicity one
+     */
+    public SimpleBinaryTable(IInputKey inputKey, ITableContext tableContext, boolean unique) {
+        super(inputKey, tableContext);
+        this.unique = unique;
+        valueToHolderMap = CollectionsFactory.createMultiLookup(Object.class,
+                unique ? BucketType.SETS : BucketType.MULTISETS, Object.class);
+        if (2 != inputKey.getArity())
+            throw new IllegalArgumentException(inputKey.toString());
+    }
+
+    @Override
+    public void write(Direction direction, Source holder, Target value) {
+        if (direction == Direction.INSERT) {
+            try {
+                // TODO we currently assume V2H map exists
+                boolean changed = addToValueToHolderMap(value, holder);
+                if (holderToValueMap != null) {
+                    addToHolderToValueMap(value, holder);
+                }
+                if (changed)
+                    totalRowCount++;
+            } catch (IllegalStateException ex) { // if unique table and duplicate tuple
+                String msg = String.format(
+                        "Error: trying to add duplicate value %s to the unique feature %s of host object %s. This indicates some errors in underlying model representation.",
+                        value, getInputKey().getPrettyPrintableName(), holder);
+                logError(msg);
+            }
+        } else { // DELETE
+            try {
+                // TODO we currently assume V2H map exists
+                boolean changed = removeFromValueToHolderMap(value, holder);
+                if (holderToValueMap != null) {
+                    removeFromHolderToValueMap(value, holder);
+                }
+                if (changed)
+                    totalRowCount--;
+            } catch (IllegalStateException ex) { // if unique table and duplicate tuple
+                String msg = String.format(
+                        "Error: trying to remove non-existing value %s from the feature %s of host object %s. This indicates some errors in underlying model representation.",
+                        value, getInputKey().getPrettyPrintableName(), holder);
+                logError(msg);
+            }
+        }
+    }
+
+    private boolean addToHolderToValueMap(Target value, Source holder) {
+        return ChangeGranularity.DUPLICATE != holderToValueMap.addPair(holder, value);
+    }
+
+    private boolean addToValueToHolderMap(Target value, Source holder) {
+        return ChangeGranularity.DUPLICATE != valueToHolderMap.addPair(value, holder);
+    }
+
+    private boolean removeFromHolderToValueMap(Target value, Source holder) throws IllegalStateException {
+        return ChangeGranularity.DUPLICATE != holderToValueMap.removePair(holder, value);
+    }
+
+    private boolean removeFromValueToHolderMap(Target value, Source holder) throws IllegalStateException {
+        return ChangeGranularity.DUPLICATE != valueToHolderMap.removePair(value, holder);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public int countTuples(TupleMask seedMask, ITuple seed) {
+        switch (seedMask.getSize()) {
+        case 0: // unseeded
+            // TODO we currently assume V2H map exists
+            return totalRowCount;
+        case 1: // lookup by source or target
+            int seedIndex = seedMask.indices[0];
+            if (seedIndex == 0) { // lookup by source
+                Source source = (Source) seed.get(0);
+                return getDistinctValuesOfHolder(source).size();
+            } else if (seedIndex == 1) { // lookup by target
+                Target target = (Target) seed.get(0);
+                return getDistinctHoldersOfValue(target).size();
+            } else
+                throw new IllegalArgumentException(seedMask.toString());
+        case 2: // containment check
+            // hack: if mask is not identity, then it is [1,0]/2, which is its own inverse
+            Source source = (Source) seedMask.getValue(seed, 0);
+            Target target = (Target) seedMask.getValue(seed, 1);
+            if (containsRow(source, target))
+                return 1;
+            else
+                return 0;
+        default:
+            throw new IllegalArgumentException(seedMask.toString());
+        }
+    }
+
+    @Override
+    public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
+        switch (seedMask.getSize()) {
+        case 0: // unseeded
+            // TODO we currently assume V2H map exists
+            return new Iterable<Tuple>() {
+                @Override
+                public Iterator<Tuple> iterator() {
+                    return StreamSupport.stream(getAllDistinctValues().spliterator(), false)
+                            .flatMap((value) -> valueToHolderMap.lookup(value).distinctValues().stream()
+                                    .map((source) -> Tuples.staticArityFlatTupleOf(source, value)))
+                            .iterator();
+                }
+            };
+
+        case 1: // lookup by source or target
+            int seedIndex = seedMask.indices[0];
+            if (seedIndex == 0) { // lookup by source
+                return new Iterable<Tuple>() {
+                    @Override
+                    public Iterator<Tuple> iterator() {
+                        @SuppressWarnings("unchecked")
+                        Source source = (Source) seed.get(0);
+                        return getDistinctValuesOfHolder(source).stream()
+                                .map((target) -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
+                    }
+                };
+            } else if (seedIndex == 1) { // lookup by target
+                return new Iterable<Tuple>() {
+                    @Override
+                    public Iterator<Tuple> iterator() {
+                        @SuppressWarnings("unchecked")
+                        Target target = (Target) seed.get(0);
+                        return getDistinctHoldersOfValue(target).stream()
+                                .map((source) -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
+                    }
+                };
+
+            } else
+                throw new IllegalArgumentException(seedMask.toString());
+        case 2: // containment check
+            // hack: if mask is not identity, then it is [1,0]/2, which is its own inverse
+            @SuppressWarnings("unchecked")
+            Source source = (Source) seedMask.getValue(seed, 0);
+            @SuppressWarnings("unchecked")
+            Target target = (Target) seedMask.getValue(seed, 1);
+
+            if (containsRow(source, target))
+                return Collections.singleton(Tuples.staticArityFlatTupleOf(source, target));
+            else
+                return Collections.emptySet();
+        default:
+            throw new IllegalArgumentException(seedMask.toString());
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed) {
+        if (seedMask.getSize() != 1)
+            throw new IllegalArgumentException(seedMask.toString());
+
+        int seedIndex = seedMask.indices[0];
+        if (seedIndex == 0) { // lookup by source
+            return getDistinctValuesOfHolder((Source) seed.get(0));
+        } else if (seedIndex == 1) { // lookup by target
+            return getDistinctHoldersOfValue((Target) seed.get(0));
+        } else
+            throw new IllegalArgumentException(seedMask.toString());
+
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean containsTuple(ITuple seed) {
+        return containsRow((Source) seed.get(0), (Target) seed.get(1));
+    }
+
+    public boolean containsRow(Source source, Target target) {
+        // TODO we currently assume V2H map exists
+        if (valueToHolderMap != null) {
+            IMemoryView<Source> holders = valueToHolderMap.lookup(target);
+            return holders != null && holders.containsNonZero(source);
+        } else
+            throw new UnsupportedOperationException("TODO implement");
+    }
+
+    public Iterable<Source> getAllDistinctHolders() {
+        return getHolderToValueMap().distinctKeys();
+    }
+
+    public Iterable<Target> getAllDistinctValues() {
+        return getValueToHolderMap().distinctKeys();
+    }
+
+    public Set<Source> getDistinctHoldersOfValue(Target value) {
+        IMemoryView<Source> holdersMultiset = getValueToHolderMap().lookup(value);
+        if (holdersMultiset == null)
+            return Collections.emptySet();
+        else
+            return holdersMultiset.distinctValues();
+    }
+
+    public Set<Target> getDistinctValuesOfHolder(Source holder) {
+        IMemoryView<Target> valuesMultiset = getHolderToValueMap().lookup(holder);
+        if (valuesMultiset == null)
+            return Collections.emptySet();
+        else
+            return valuesMultiset.distinctValues();
+    }
+
+    private IMultiLookup<Source, Target> getHolderToValueMap() {
+        if (holderToValueMap == null) {
+            holderToValueMap = CollectionsFactory.createMultiLookup(Object.class, BucketType.SETS, // no duplicates, as
+                                                                                                   // this is the
+                                                                                                   // secondary
+                                                                                                   // collection
+                    Object.class);
+
+            // TODO we currently assume V2H map exists
+            for (Target value : valueToHolderMap.distinctKeys()) {
+                for (Source holder : valueToHolderMap.lookup(value).distinctValues()) {
+                    holderToValueMap.addPair(holder, value);
+                }
+            }
+        }
+        return holderToValueMap;
+    }
+
+    private IMultiLookup<Target, Source> getValueToHolderMap() {
+        // TODO we currently assume V2H map exists
+        return valueToHolderMap;
+    }
+
+}
