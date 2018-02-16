@@ -13,10 +13,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.standalone
 import static org.junit.Assert.*
 
 import org.junit.Test
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.junit.BeforeClass
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
 
 class PatternParserTest {
     
@@ -34,7 +34,7 @@ class PatternParserTest {
              EClass.name(c, _);
             }
         '''
-        val results = PatternParsingUtil.parsePatternDefinitions(pattern)
+        val results = PatternParser.parser.parse(pattern) 
         assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size === 1)
         assertFalse(results.hasError)
     }
@@ -48,7 +48,7 @@ class PatternParserTest {
              EClass.name(_, c);
             }
         '''
-        val results = PatternParsingUtil.parsePatternDefinitions(pattern)
+        val results = PatternParser.parser.parse(pattern)
         assertTrue(results.querySpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].isEmpty)
         assertTrue(results.hasError)
     }
@@ -63,7 +63,7 @@ class PatternParserTest {
              find a(c);
             }
         '''
-        val results = PatternParsingUtil.parsePatternDefinitions(pattern)
+        val results = PatternParser.parser.parse(pattern)
         assertTrue(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.ERROR])
         results.querySpecifications.map[it.internalQueryRepresentation.PProblems].flatten.exists[location.contains("Line 5")]
         assertTrue(results.hasError)
@@ -83,7 +83,7 @@ class PatternParserTest {
              EClass.name(c, "someName2");
             }
         '''
-        val results = PatternParsingUtil.parsePatternDefinitions(pattern)
+        val results = PatternParser.parser.parse(pattern)
         assertFalse(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.OK])
         assertTrue(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.ERROR])
         assertTrue(results.hasError)

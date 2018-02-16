@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.util.LongValueConstant
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.LongValueConstantWithCheckQuerySpecification
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingUtil
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
@@ -34,6 +33,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import com.google.inject.Injector
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
 
 /**
  * This test reproduces bug 520878. As the bug only affects the generated code, this test executes the same patterns with {@link GenericQuerySpecification}
@@ -82,7 +82,7 @@ class LongLiteralTest {
         val hint = backendType.hints
         val modelProvider = new PatternBasedMatchSetModelProvider(hint)
         
-        val patterns = PatternParsingUtil.parseQueryDefinitions('''
+        val patterns = PatternParser.parser.withInjector(injector).parse('''
 			package test
 			import "http://org.eclipse.viatra/model/cps"        
 			
@@ -94,7 +94,7 @@ class LongLiteralTest {
 			    ApplicationType.exeFileSize(appT, value);
 			    check(value == 0l);
 			}        
-		''', injector)
+		''').querySpecifications
         
         val equalityMatchSet = modelProvider.getMatchSetRecord(rs, patterns.findFirst[it.fullyQualifiedName == "test.longValueConstant"] as IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, null)
         val withCheckMatchSet = modelProvider.getMatchSetRecord(rs, patterns.findFirst[it.fullyQualifiedName == "test.longValueConstantWithCheck"] as IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, null)

@@ -12,7 +12,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
@@ -25,9 +25,11 @@ import com.google.inject.Injector;
  * 
  * @author Peter Lunk
  * @since 1.5
+ * @deprecated use the new {@link PatternParser.Builder} infrastructure instead
  */
 public class PatternParsingUtil {
-    public static final String PPERROR = "The VIATRA query language parser infrastructure is not initialized, pattern parsing is not supported.";
+    
+    public static final String PPERROR = PatternParser.Builder.PPERROR;
 
     private PatternParsingUtil() {
         // Empty utility constructor
@@ -51,8 +53,8 @@ public class PatternParsingUtil {
      */
     public static PatternParsingResults parsePatternDefinitions(String patternString, Injector injector) {
         Preconditions.checkState(injector != null, PPERROR);
-        PatternParser parser = injector.getInstance(PatternParser.class);
-        return parser.parse(patternString, new SpecificationBuilder());
+        
+        return PatternParser.parser().withInjector(injector).parse(patternString);
     }
 
     /**
