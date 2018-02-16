@@ -73,9 +73,9 @@
 <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.13.0.v20160608-1043"/>
 <repository location="http://download.eclipse.org/releases/neon/201606221000"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.collections" version="9.0.0.v20170920-0536"/>
-<repository location="http://download.eclipse.org/collections/9.0.0/repository"/>
+<location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
+  <unit id="org.eclipse.collections.feature.feature.group" version="9.2.0.v20180518-1448"/>
+  <repository location="http://download.eclipse.org/collections/9.2.0/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.viatra.examples.cps.metamodel.feature.feature.group" version="2.0.0.201801280931"/>

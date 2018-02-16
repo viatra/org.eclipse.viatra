@@ -23,13 +23,11 @@ import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
  * @author Gabor Bergmann
  * @since 2.0
  */
-public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
-
-    LongHashSet wrapped = new LongHashSet();
+public class EclipseCollectionsLongSetMemory extends LongHashSet implements ISetMemory<Long> {
 
     @Override
     public boolean addOne(Long value) {
-        return wrapped.add(value);
+        return super.add(value);
     }
 
     @Override
@@ -41,24 +39,19 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
 
     @Override
     public boolean removeOne(Long value) {
-        if (!wrapped.remove(value))
+        if (!super.remove(value))
             throw new IllegalStateException();
         return true;
     }
 
     @Override
     public void clearAllOf(Long value) {
-        wrapped.remove(value);
-    }
-
-    @Override
-    public void clear() {
-        wrapped.clear();
+        super.remove(value);
     }
 
     @Override
     public int getCount(Long value) {
-        return wrapped.contains(value) ? 1 : 0;
+        return super.contains(value) ? 1 : 0;
     }
     
     @Override
@@ -68,7 +61,7 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
 
     @Override
     public boolean containsNonZero(Long value) {
-        return wrapped.contains(value);
+        return super.contains(value);
     }
     
     @Override
@@ -77,28 +70,18 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
     }
 
     @Override
-    public int size() {
-        return wrapped.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return wrapped.isEmpty();
-    }
-
-    @Override
     public Iterator<Long> iterator() {
-        return iteratorOf(wrapped);
+        return iteratorOf(this);
     }
 
     @Override
     public Set<Long> distinctValues() {
-        return new SetWrapper(wrapped);
+        return new SetWrapper(this);
     }
     
     @Override
-    public String toString() {
-        return wrapped.toString();
+    public boolean isEmpty() {
+        return super.isEmpty();
     }
     
     /**

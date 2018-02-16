@@ -41,5 +41,5 @@ Bundle-ClassPath: .
 Import-Package: com.google.common.base;version="15.0.0",
  com.google.common.collect;version="15.0.0",
  org.apache.log4j;version="1.2.15"
-Require-Bundle: org.eclipse.collections;bundle-version="9.0.0"
+Require-Bundle: org.eclipse.collections;bundle-version="9.2.0"
 Automatic-Module-Name: org.eclipse.viatra.query.runtime.matchers
