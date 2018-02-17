@@ -27,6 +27,7 @@ import com.google.inject.Injector;
  * @since 1.5
  * @deprecated use the new {@link PatternParser.Builder} infrastructure instead
  */
+@Deprecated
 public class PatternParsingUtil {
     
     public static final String PPERROR = PatternParser.Builder.PPERROR;

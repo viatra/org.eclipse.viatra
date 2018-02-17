@@ -21,9 +21,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-
 import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -49,12 +46,9 @@ class HTMLPrinter {
         final Display display = Display.getDefault();
         if (display != null && !display.isDisposed()) {
             try {
-                display.asyncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        cacheColors(display);
-                        installColorUpdater(display);
-                    }
+                display.asyncExec(() -> {
+                    cacheColors(display);
+                    installColorUpdater(display);
                 });
             } catch (SWTError err) {
                 // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294
@@ -107,12 +101,7 @@ class HTMLPrinter {
     }
 
     private static void installColorUpdater(final Display display) {
-        display.addListener(SWT.Settings, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                cacheColors(display);
-            }
-        });
+        display.addListener(SWT.Settings, event -> cacheColors(display));
     }
 
     private static String replace(String text, char c, String s) {
