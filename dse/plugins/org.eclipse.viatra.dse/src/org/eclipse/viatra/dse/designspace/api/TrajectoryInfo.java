@@ -14,14 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
-
-import com.google.common.base.Preconditions;
 
 public class TrajectoryInfo {
 
@@ -34,7 +33,7 @@ public class TrajectoryInfo {
     private final List<Map<String, Double>> measuredCosts;
 
     public TrajectoryInfo(Object initialStateId) {
-        Preconditions.checkNotNull(initialStateId);
+        Objects.requireNonNull(initialStateId);
 
         stateIds = new ArrayList<>();
         stateIds.add(initialStateId);
@@ -72,7 +71,9 @@ public class TrajectoryInfo {
         stateIds.add(newStateId);
         trajectory.add(activationId);
         rules.add(rule);
-        this.measuredCosts.add(measuredCosts);
+        if (!measuredCosts.isEmpty()) {
+            this.measuredCosts.add(measuredCosts);
+        }
     }
 
     public void backtrack() {

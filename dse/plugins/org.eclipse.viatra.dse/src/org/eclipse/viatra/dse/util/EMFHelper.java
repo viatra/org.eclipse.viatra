@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,8 +41,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * This class contains static helper methods.
@@ -71,7 +71,7 @@ public final class EMFHelper {
      * @return The EditingDomain.
      */
     public static EditingDomain getEditingDomain(Notifier notifier) {
-        Preconditions.checkNotNull(notifier);
+        Objects.requireNonNull(notifier);
         if (notifier instanceof EObject) {
             EObject eObject = (EObject) notifier;
             return AdapterFactoryEditingDomain.getEditingDomainFor(eObject);
@@ -148,7 +148,7 @@ public final class EMFHelper {
      */
     public static void saveModel(Notifier model, String fileName) {
 
-        Preconditions.checkNotNull(model);
+        Objects.requireNonNull(model);
         Preconditions.checkArgument(fileName != null && !fileName.isEmpty(), "File name is null or empty.");
 
         int extensionIndex = fileName.lastIndexOf('.');
@@ -181,7 +181,7 @@ public final class EMFHelper {
 
     private static void saveResource(Resource resource) {
         try {
-            resource.save(Collections.EMPTY_MAP);
+            resource.save(Collections.emptyMap());
         } catch (IOException e) {
             logger.error(e);
         }
@@ -226,7 +226,7 @@ public final class EMFHelper {
             if (contents.size() > 1) {
                 logger.warn("Resource has more than one root.");
             }
-            if (contents.size() < 1) {
+            if (contents.isEmpty()) {
                 return null;
             } else {
                 return contents.get(0);
@@ -237,7 +237,7 @@ public final class EMFHelper {
             if (resources.size() > 1) {
                 logger.warn("ResourceSet has more than one resources.");
             }
-            if (resources.size() < 1) {
+            if (resources.isEmpty()) {
                 return null;
             } else {
                 return getRootEObject(resources.get(0));
@@ -254,9 +254,7 @@ public final class EMFHelper {
     public static void registerExtensionForXmiSerializer(String ext) {
         Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
         Map<String, Object> m = reg.getExtensionToFactoryMap();
-        if (m.get(ext) == null) {
-            m.put(ext, new XMIResourceFactoryImpl());
-        }
+        m.computeIfAbsent(ext, e -> new XMIResourceFactoryImpl());
     }
 
     /**
@@ -272,7 +270,7 @@ public final class EMFHelper {
     }
 
     private static Notifier clone(Notifier notifier, Copier copier, ResourceSet resourceSetToCloneTo) {
-        Preconditions.checkNotNull(copier);
+        Objects.requireNonNull(copier);
         
         if (notifier instanceof EObject) {
             EObject eObject = (EObject) notifier;

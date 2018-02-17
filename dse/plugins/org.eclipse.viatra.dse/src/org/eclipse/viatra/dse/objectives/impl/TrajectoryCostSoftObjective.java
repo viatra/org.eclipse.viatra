@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -21,9 +22,8 @@ import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
-
-import com.google.common.base.Preconditions;
 
 /**
  * This soft objective calculates a fitness value based on the length of the trajectory. Costs to the rules can be
@@ -57,7 +57,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      * @return The actual instance to enable builder pattern like usage.
      */
     public TrajectoryCostSoftObjective withRuleCost(BatchTransformationRule<?, ?> rule, double cost) {
-        Preconditions.checkNotNull(rule);
+        Objects.requireNonNull(rule);
         if (fixCosts == null) {
             fixCosts = new HashMap<BatchTransformationRule<?, ?>, Double>();
         }
@@ -75,8 +75,8 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      */
     public TrajectoryCostSoftObjective withActivationCost(BatchTransformationRule<?, ?> rule,
             ActivationFitnessProcessor activationCostProcessor) {
-        Preconditions.checkNotNull(rule);
-        Preconditions.checkNotNull(activationCostProcessor);
+        Objects.requireNonNull(rule);
+        Objects.requireNonNull(activationCostProcessor);
         if (activationCostProcessors == null) {
             activationCostProcessors = new HashMap<BatchTransformationRule<?, ?>, ActivationFitnessProcessor>();
         }

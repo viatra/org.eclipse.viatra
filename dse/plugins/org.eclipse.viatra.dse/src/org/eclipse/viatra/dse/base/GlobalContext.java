@@ -171,7 +171,7 @@ public class GlobalContext {
         logger.info("Thread finished, active threads: " + runningThreads.size());
 
         // is the first part necessary?
-        if (runningThreads.size() == 0) {
+        if (runningThreads.isEmpty()) {
             state = ExplorationProcessState.COMPLETED;
             threadPool.shutdown();
 
@@ -186,7 +186,7 @@ public class GlobalContext {
     }
 
     public synchronized boolean isDone() {
-        return state == ExplorationProcessState.COMPLETED && runningThreads.size() == 0;
+        return state == ExplorationProcessState.COMPLETED && runningThreads.isEmpty();
     }
 
     public synchronized boolean isNotStarted() {

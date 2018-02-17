@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
@@ -89,12 +88,7 @@ public class DepthFirstStrategy implements IStrategy {
     }
 
     private void startThreads() {
-        context.startAllThreads(new IStrategyFactory() {
-            @Override
-            public IStrategy createStrategy() {
-                return new DepthFirstStrategy(maxDepth);
-            }
-        });
+        context.startAllThreads(() -> new DepthFirstStrategy(maxDepth));
     }
 
     @Override

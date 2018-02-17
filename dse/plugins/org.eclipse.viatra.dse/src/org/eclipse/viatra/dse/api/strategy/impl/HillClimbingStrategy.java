@@ -79,7 +79,7 @@ public class HillClimbingStrategy implements IStrategy {
             }
             double numberOfTransitionsToTry = transitionsToTry.size() * percentOfOpenedStates;
 
-            for (; numberOfTransitionsToTry > 0 && transitionsToTry.size() > 0; numberOfTransitionsToTry--) {
+            for (; numberOfTransitionsToTry > 0 && !transitionsToTry.isEmpty(); numberOfTransitionsToTry--) {
                 int index = random.nextInt(transitionsToTry.size());
                 Object transition = transitionsToTry.remove(index);
 

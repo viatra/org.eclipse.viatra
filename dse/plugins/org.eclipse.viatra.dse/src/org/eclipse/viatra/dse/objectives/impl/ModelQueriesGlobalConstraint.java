@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -41,8 +42,8 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
 
     public ModelQueriesGlobalConstraint(String name,
             List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints) {
-        Preconditions.checkNotNull(name, "Name of the global constraint cannot be null.");
-        Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
+        Objects.requireNonNull(name, "Name of the global constraint cannot be null.");
+        Objects.requireNonNull(constraints, "The list of constraints cannot be null.");
 
         this.name = name;
         this.constraints = constraints;

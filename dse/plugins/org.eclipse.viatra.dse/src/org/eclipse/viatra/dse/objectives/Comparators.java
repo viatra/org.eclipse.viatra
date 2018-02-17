@@ -19,27 +19,14 @@ import java.util.Comparator;
  */
 public class Comparators {
 
-    public static final Comparator<Double> HIGHER_IS_BETTER = new Comparator<Double>() {
-        @Override
-        public int compare(Double o1, Double o2) {
-            return o1.compareTo(o2);
-        }
-    };
+    private Comparators() { /*Utility class constructor*/ }
+    
+    public static final Comparator<Double> HIGHER_IS_BETTER = (o1, o2) -> o1.compareTo(o2);
 
-    public static final Comparator<Double> LOWER_IS_BETTER = new Comparator<Double>() {
-        @Override
-        public int compare(Double o1, Double o2) {
-            return o2.compareTo(o1);
-        }
-    };
+    public static final Comparator<Double> LOWER_IS_BETTER = (o1, o2) -> o2.compareTo(o1);
     
-    private static final Double ZERO = new Double(0);
+    private static final Double ZERO = Double.valueOf(0);
     
-    public static final Comparator<Double> DIFFERENCE_TO_ZERO_IS_BETTER = new Comparator<Double>() {
-        @Override
-        public int compare(Double o1, Double o2) {
-            return ZERO.compareTo(Math.abs(o1)-Math.abs(o2));
-        }
-    };
+    public static final Comparator<Double> DIFFERENCE_TO_ZERO_IS_BETTER = (o1, o2) -> ZERO.compareTo(Math.abs(o1)-Math.abs(o2));
     
 }

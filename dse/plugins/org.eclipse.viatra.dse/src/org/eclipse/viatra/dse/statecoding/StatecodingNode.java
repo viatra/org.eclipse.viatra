@@ -24,12 +24,7 @@ public class StatecodingNode {
     private StatecodingDependencyGraph graph;
 
     private final EClass clazz;
-    private Set<EAttribute> attributes = new TreeSet<EAttribute>(new Comparator<EAttribute>() {
-        @Override
-        public int compare(EAttribute o1, EAttribute o2) {
-            return o1.getName().compareTo(o2.getName());
-        }
-    });
+    private Set<EAttribute> attributes = new TreeSet<EAttribute>(Comparator.comparing(EAttribute::getName));
     private List<StatecodingDependency> dependencies = new ArrayList<StatecodingDependency>();
     private boolean stateCodeIsId = false;
     private StatecodingNodeType statecodingNodeType = StatecodingNodeType.CREATE_AND_DELETE;

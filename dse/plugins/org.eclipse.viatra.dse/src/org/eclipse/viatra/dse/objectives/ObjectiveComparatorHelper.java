@@ -11,13 +11,12 @@ package org.eclipse.viatra.dse.objectives;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * This class is responsible to compare and sort fitness values. {@link TrajectoryFitness} instances can be added to an
@@ -197,13 +196,7 @@ public class ObjectiveComparatorHelper {
                 final String m = objective.getName();
                 TrajectoryFitness[] sortedFront = front.toArray(new TrajectoryFitness[0]);
                 // sort using m-th objective value
-                Arrays.sort(sortedFront, new Comparator<TrajectoryFitness>() {
-                    @Override
-                    public int compare(TrajectoryFitness o1, TrajectoryFitness o2) {
-                        objective.getComparator().compare(o1.fitness.get(m), o2.fitness.get(m));
-                        return 0;
-                    }
-                });
+                Arrays.sort(sortedFront, (o1, o2) -> objective.getComparator().compare(o1.fitness.get(m), o2.fitness.get(m)));
                 // so that boundary points are always selected
                 sortedFront[0].crowdingDistance = Double.POSITIVE_INFINITY;
                 sortedFront[sortedFront.length - 1].crowdingDistance = Double.POSITIVE_INFINITY;

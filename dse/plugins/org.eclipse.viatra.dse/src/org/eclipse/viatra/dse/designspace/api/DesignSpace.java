@@ -51,11 +51,11 @@ public class DesignSpace implements IDesignSpace {
     @Override
     public synchronized void addState(Object sourceStateId, Object firedActivationId, Object newStateId) {
 
-        List<Object> activtionIds = statesAndActivations.get(newStateId);
+        List<Object> activationIds = statesAndActivations.get(newStateId);
 
-        if (activtionIds == null) {
-            activtionIds = new ArrayList<Object>();
-            statesAndActivations.put(newStateId, activtionIds);
+        if (activationIds == null) {
+            activationIds = new ArrayList<Object>();
+            statesAndActivations.put(newStateId, activationIds);
 
             if (sourceStateId == null) {
                 rootStates.add(newStateId);
@@ -63,14 +63,14 @@ public class DesignSpace implements IDesignSpace {
             }
         }
 
-        activtionIds = statesAndActivations.get(sourceStateId);
+        activationIds = statesAndActivations.get(sourceStateId);
 
-        if (activtionIds == null) {
-            activtionIds = new ArrayList<Object>();
-            activtionIds.add(firedActivationId);
-            statesAndActivations.put(sourceStateId, activtionIds);
+        if (activationIds == null) {
+            activationIds = new ArrayList<Object>();
+            activationIds.add(firedActivationId);
+            statesAndActivations.put(sourceStateId, activationIds);
         } else {
-            activtionIds.add(firedActivationId);
+            activationIds.add(firedActivationId);
         }
     }
 

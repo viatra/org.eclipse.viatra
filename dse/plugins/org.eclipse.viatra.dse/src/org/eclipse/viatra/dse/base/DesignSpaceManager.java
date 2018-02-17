@@ -124,14 +124,11 @@ public class DesignSpaceManager {
 
         BatchTransformationRule<?, ?> rule = getRuleByActivation(activation);
 
-        Map<String, Double> measureCosts = null;
+        Map<String, Double> measureCosts = new HashMap<String, Double>();
         if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(rule)) {
             IPatternMatch match = (IPatternMatch) activation.getAtom();
             ActivationFitnessProcessor processor = activationFitnessProcessors.get(rule);
             double fitness = processor.process(match);
-            if (measureCosts == null) {
-                measureCosts = new HashMap<String, Double>();
-            }
             measureCosts.put(activationFitnessProcessorNames.get(rule), fitness);
         }
 
@@ -242,14 +239,11 @@ public class DesignSpaceManager {
 
             BatchTransformationRule<?, ?> rule = getRuleByActivation(activation);
 
-            Map<String, Double> measureCosts = null;
+            Map<String, Double> measureCosts = new HashMap<String, Double>();
             if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(rule)) {
                 IPatternMatch match = (IPatternMatch) activation.getAtom();
                 ActivationFitnessProcessor processor = activationFitnessProcessors.get(rule);
                 double fitness = processor.process(match);
-                if (measureCosts == null) {
-                    measureCosts = new HashMap<String, Double>();
-                }
                 measureCosts.put(activationFitnessProcessorNames.get(rule), fitness);
             }
 
@@ -427,24 +421,6 @@ public class DesignSpaceManager {
 
     public Object getCurrentState() {
         return trajectory.getCurrentStateId();
-    }
-
-    private Activation<?> getActivationByIdFromConflictSet(Object soughtActivationId) {
-        for (Activation<?> activation : conflictSet.getNextActivations()) {
-            
-            // we ignore not fireable Activations. These shouldn't be here
-            // anyway TODO check if this code makes sense
-            if (!activation.isEnabled()) {
-                continue;
-            }
-            
-            IPatternMatch match = (IPatternMatch) activation.getAtom();
-            Object activationId = stateCoder.createActivationCode(match);
-            if (activationId.equals(soughtActivationId)) {
-                return activation;
-            }
-        }
-        return null;
     }
 
     public SolutionTrajectory createSolutionTrajectroy() {

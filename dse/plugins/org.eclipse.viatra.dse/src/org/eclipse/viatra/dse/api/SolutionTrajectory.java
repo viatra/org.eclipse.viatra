@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.base.DseIdPoolHelper;
-import org.eclipse.viatra.dse.base.DseIdPoolHelper.IGetRuleExecutions;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -31,6 +28,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -65,10 +63,10 @@ public class SolutionTrajectory {
 
     public SolutionTrajectory(final List<Object> activationCodes,
             final List<BatchTransformationRule<?, ?>> transformationRules, final IStateCoderFactory stateCoderFactory) {
-        checkNotNull(transformationRules, "Parameter transformationRules cannot be null!");
-        checkNotNull(stateCoderFactory, "Parameter stateCoderFactory cannot be null!");
-        checkNotNull(activationCodes, "Parameter activations cannot be null!");
-        checkState(transformationRules.size() == activationCodes.size(),
+        Objects.requireNonNull(transformationRules, "Parameter transformationRules cannot be null!");
+        Objects.requireNonNull(stateCoderFactory, "Parameter stateCoderFactory cannot be null!");
+        Objects.requireNonNull(activationCodes, "Parameter activations cannot be null!");
+        Preconditions.checkState(transformationRules.size() == activationCodes.size(),
                 "The two List parameters must be the same in size.");
 
         this.activationCodes = activationCodes;
@@ -94,18 +92,14 @@ public class SolutionTrajectory {
         stateCoder.init(model);
         currentIndex = 0;
         DseIdPoolHelper.INSTANCE.disposeByThread();
-        DseIdPoolHelper.INSTANCE.registerRules(new IGetRuleExecutions() {
-            
-            @Override
-            public int getRuleExecutions(BatchTransformationRule<?, ?> rule) {
-                int id = 0;
-                for (BatchTransformationRule<?,?> r : transformationRules.subList(0, currentIndex)) {
-                    if (r.equals(rule)) {
-                        id ++;
-                    }
+        DseIdPoolHelper.INSTANCE.registerRules(rule -> {
+            int id = 0;
+            for (BatchTransformationRule<?,?> r : transformationRules.subList(0, currentIndex)) {
+                if (r.equals(rule)) {
+                    id ++;
                 }
-                return id;
             }
+            return id;
         }, new HashSet<BatchTransformationRule<?,?>>(transformationRules));
     }
 
@@ -183,7 +177,7 @@ public class SolutionTrajectory {
 
     @SuppressWarnings("unchecked")
     private void doNextTransformation(int index) {
-        checkNotNull(model, "The model cannot be null! Use the setModel method.");
+        Objects.requireNonNull(model, "The model cannot be null! Use the setModel method.");
 
         // cast for the ".process(match)" method.
         BatchTransformationRule<?, ?> tr = transformationRules.get(index);
@@ -227,7 +221,7 @@ public class SolutionTrajectory {
      * @return True, if it was successful.
      */
     public boolean undoLastTransformation() {
-        checkNotNull(editingDomain, "To be able to undo the transformation initialize with editing domain.");
+        Objects.requireNonNull(editingDomain, "To be able to undo the transformation initialize with editing domain.");
 
         if (currentIndex > 0) {
             editingDomain.getCommandStack().undo();

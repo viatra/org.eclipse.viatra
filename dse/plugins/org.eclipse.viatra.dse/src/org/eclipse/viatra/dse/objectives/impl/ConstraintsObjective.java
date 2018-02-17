@@ -11,6 +11,7 @@ package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -20,8 +21,6 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-
-import com.google.common.base.Preconditions;
 
 /**
  * This objective serves as soft and as hard objective at the same time by defining two lists of VIATRA Query
@@ -80,8 +79,8 @@ public class ConstraintsObjective extends BaseObjective {
     public ConstraintsObjective(String name, List<QueryConstraint> softConstraints,
             List<QueryConstraint> hardConstraints) {
         super(name);
-        Preconditions.checkNotNull(softConstraints, "The list of soft constraints cannot be null.");
-        Preconditions.checkNotNull(hardConstraints, "The list of hard constraints cannot be null.");
+        Objects.requireNonNull(softConstraints, "The list of soft constraints cannot be null.");
+        Objects.requireNonNull(hardConstraints, "The list of hard constraints cannot be null.");
 
         this.softConstraints = softConstraints;
         this.hardConstraints = hardConstraints;
@@ -202,7 +201,7 @@ public class ConstraintsObjective extends BaseObjective {
     public Double getFitness(ThreadContext context) {
 
         if (softConstraints.isEmpty()) {
-            return new Double(0d);
+            return 0d;
         }
 
         double result = 0;
@@ -213,7 +212,7 @@ public class ConstraintsObjective extends BaseObjective {
             softMatches.set(i, Integer.valueOf(countMatches));
         }
 
-        return new Double(result);
+        return result;
     }
 
     @Override

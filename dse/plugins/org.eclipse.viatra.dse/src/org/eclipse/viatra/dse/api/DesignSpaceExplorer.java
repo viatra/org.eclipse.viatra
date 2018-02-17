@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,6 +37,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -158,7 +156,7 @@ public class DesignSpaceExplorer {
      *            The transformationRule.
      */
     public void addTransformationRule(BatchTransformationRule<?, ?> rule) {
-        checkArgument(rule != null);
+        Preconditions.checkArgument(rule != null);
         for (BatchTransformationRule<?, ?> rule2 : globalContext.getTransformations()) {
             if (rule.getPrecondition().equals(rule2.getPrecondition())) {
                 throw new DSEException(
@@ -342,9 +340,9 @@ public class DesignSpaceExplorer {
     }
 
     private void initExploration(IStrategy strategy) {
-        checkArgument(model != null, MODEL_NOT_YET_GIVEN);
-        checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
-        checkState(!globalContext.getTransformations().isEmpty(),
+        Preconditions.checkArgument(model != null, MODEL_NOT_YET_GIVEN);
+        Preconditions.checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
+        Preconditions.checkState(!globalContext.getTransformations().isEmpty(),
                 "At least one transformation rule must be added to start the exploration.");
 
         if (globalContext.getStateCoderFactory() == null) {
@@ -495,7 +493,7 @@ public class DesignSpaceExplorer {
      * @author Andras Szabolcs Nagy
      *
      */
-    public static enum DseLoggingLevel {
+    public enum DseLoggingLevel {
         OFF, WARN, BASIC, VERBOSE_STRATEGY, VERBOSE_FULL
     }
 

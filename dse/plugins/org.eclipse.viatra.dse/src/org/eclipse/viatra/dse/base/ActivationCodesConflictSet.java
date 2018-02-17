@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.dse.statecode.IStateCoder;
@@ -22,8 +23,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
 
-import com.google.common.base.Preconditions;
-
 public class ActivationCodesConflictSet implements ChangeableConflictSet {
 
     private static class ActivationCodesMultiBiMap {
@@ -32,12 +31,7 @@ public class ActivationCodesConflictSet implements ChangeableConflictSet {
 
         public void addActivation(Activation<?> activation, Object activationCode) {
             activationsToCodes.put(activation, activationCode);
-            Set<Activation<?>> activationSet = codesToActivations.get(activationCode);
-            if (activationSet == null) {
-                activationSet = new HashSet<>();
-                codesToActivations.put(activationCode, activationSet);
-            }
-            activationSet.add(activation);
+            codesToActivations.computeIfAbsent(activationCode, k -> new HashSet<>()).add(activation);
         }
 
         public void removeActivaion(Activation<?> activation) {
@@ -69,7 +63,7 @@ public class ActivationCodesConflictSet implements ChangeableConflictSet {
     }
 
     public ActivationCodesConflictSet(ConflictSet nextActivationsConflictSet, IStateCoder stateCoder) {
-        Preconditions.checkNotNull(nextActivationsConflictSet);
+        Objects.requireNonNull(nextActivationsConflictSet);
         this.nextActivationsConflictSet = nextActivationsConflictSet;
         this.stateCoder = stateCoder;
         activationCodes = new ActivationCodesMultiBiMap();

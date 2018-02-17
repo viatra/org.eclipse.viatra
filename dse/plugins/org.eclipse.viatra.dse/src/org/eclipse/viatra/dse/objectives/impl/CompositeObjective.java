@@ -12,11 +12,11 @@ package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.IObjective;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * This objective collects a list of other objectives. It returns the weighted sum of the objectives.
@@ -33,8 +33,8 @@ public class CompositeObjective extends BaseObjective {
 
     public CompositeObjective(String name, List<IObjective> objectives, List<Double> weights) {
         super(name);
-        Preconditions.checkNotNull(objectives, "The list of objectives cannot be null.");
-        Preconditions.checkNotNull(weights, "The list of weights cannot be null.");
+        Objects.requireNonNull(objectives, "The list of objectives cannot be null.");
+        Objects.requireNonNull(weights, "The list of weights cannot be null.");
         Preconditions.checkState(objectives.size() == weights.size(), "The size of the objectives and weights must match.");
         this.objectives = objectives;
         this.weights = weights;

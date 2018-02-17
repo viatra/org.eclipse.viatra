@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +35,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -120,7 +119,7 @@ public class ThreadContext implements IDseStrategyContext{
      * @param parentGuidance
      */
     public ThreadContext(final GlobalContext globalContext, IStrategy strategy, Notifier model) {
-        checkArgument(model != null, "Cannot initialize ThreadContext on a null model.");
+        Preconditions.checkArgument(model != null, "Cannot initialize ThreadContext on a null model.");
         this.globalContext = globalContext;
         this.strategy = strategy;
         this.model = model;
@@ -130,8 +129,9 @@ public class ThreadContext implements IDseStrategyContext{
      * Initializes the {@link ThreadContext} by initializing the underlying {@link ViatraQueryEngine} and
      * {@link RuleEngine}. {@link Guidance} initialization is also happening within this method.
      * 
+     * @throws DSEException
      */
-    public void init() throws DSEException {
+    public void init() {
 
         AtomicBoolean isFirst = globalContext.getFirstThreadContextIniting();
         AtomicBoolean isFirstReady = globalContext.getFirstThreadContextInited();
@@ -148,7 +148,7 @@ public class ThreadContext implements IDseStrategyContext{
             }
         }
         // prohibit re-initialization
-        checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
+        Preconditions.checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
 
         try {
             // initialize query engine

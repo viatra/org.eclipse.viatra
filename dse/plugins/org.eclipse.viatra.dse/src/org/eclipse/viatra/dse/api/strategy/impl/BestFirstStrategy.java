@@ -106,16 +106,8 @@ public class BestFirstStrategy implements IStrategy {
         this.solutionStore = context.getGlobalContext().getSolutionStore();
         final ObjectiveComparatorHelper objectiveComparatorHelper = context.getObjectiveComparatorHelper();
 
-        Comparator<TrajectoryWithFitness> comparator = new Comparator<BestFirstStrategy.TrajectoryWithFitness>() {
-
-            @Override
-            public int compare(TrajectoryWithFitness o1, TrajectoryWithFitness o2) {
-                return objectiveComparatorHelper.compare(o2.fitness, o1.fitness);
-            }
-        };
-
-        trajectoiresToExplore = new PriorityQueue<TrajectoryWithFitness>(11, comparator);
-
+        trajectoiresToExplore = new PriorityQueue<TrajectoryWithFitness>(11,
+                (o1, o2) -> objectiveComparatorHelper.compare(o2.fitness, o1.fitness));
     }
 
     @Override

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
+import java.util.Objects;
+
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
-
-import com.google.common.base.Preconditions;
 
 /**
  * An instance of this class is a specification of a graph transformation rule on a given metamodel. Such a rule
@@ -29,7 +29,7 @@ import com.google.common.base.Preconditions;
  *            A VIATRA Query pattern match - left hand side of the rule
  * @param <Matcher>
  *            A VIATRA Query pattern matcher - left hand side of the rule
- * 
+ * @deprecated
  */
 @Deprecated
 public class DSETransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> extends
@@ -39,9 +39,9 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
             IMatchProcessor<Match> action) {
         super(name, querySpec, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
 
-        Preconditions.checkNotNull(name);
-        Preconditions.checkNotNull(querySpec);
-        Preconditions.checkNotNull(action);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(querySpec);
+        Objects.requireNonNull(action);
 
     }
 

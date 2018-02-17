@@ -24,7 +24,7 @@ public class LeveledObjectivesHelper {
     }
 
     public IObjective[][] initLeveledObjectives() {
-        if (objectives.size() == 0) {
+        if (objectives.isEmpty()) {
             leveledObjectives = new IObjective[0][0];
             return leveledObjectives;
         }
@@ -104,12 +104,7 @@ public class LeveledObjectivesHelper {
 
     private IObjective[] getSortedByLevelObjectives(List<IObjective> objectives) {
         IObjective[] objectivesArray = objectives.toArray(new IObjective[objectives.size()]);
-        Arrays.sort(objectivesArray, new Comparator<IObjective>() {
-            @Override
-            public int compare(IObjective o1, IObjective o2) {
-                return Integer.valueOf(o1.getLevel()).compareTo(o2.getLevel());
-            }
-        });
+        Arrays.sort(objectivesArray, Comparator.comparingInt(IObjective::getLevel)); 
         return objectivesArray;
     }
 

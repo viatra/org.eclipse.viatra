@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -50,14 +49,11 @@ public class BreadthFirstStrategy implements IStrategy {
         public final CyclicBarrier barrier;
 
         public BfsSharedObject(int numberOfThreads) {
-            barrier = new CyclicBarrier(numberOfThreads, new Runnable() {
-                @Override
-                public void run() {
-                    boolean oldValue = pushToQueue1.get();
-                    pushToQueue1.set(!oldValue);
-                    if (trajectoryQueue1.isEmpty() && trajectoryQueue2.isEmpty()) {
-                        designSpaceTraversed.set(true);
-                    }
+            barrier = new CyclicBarrier(numberOfThreads, () -> {
+                boolean oldValue = pushToQueue1.get();
+                pushToQueue1.set(!oldValue);
+                if (trajectoryQueue1.isEmpty() && trajectoryQueue2.isEmpty()) {
+                    designSpaceTraversed.set(true);
                 }
             });
         }
@@ -213,12 +209,7 @@ public class BreadthFirstStrategy implements IStrategy {
     }
 
     private void startThreads() {
-        context.startAllThreads(new IStrategyFactory() {
-            @Override
-            public IStrategy createStrategy() {
-                return new BreadthFirstStrategy(maxDepth);
-            }
-        });
+        context.startAllThreads(() -> new BreadthFirstStrategy(maxDepth));
     }
 
     @Override

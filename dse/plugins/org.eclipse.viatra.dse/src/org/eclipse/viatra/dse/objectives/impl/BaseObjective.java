@@ -10,12 +10,11 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
-
-import com.google.common.base.Preconditions;
 
 /**
  * This abstract class implements the basic functionality of an objective ({@link IObjective} namely its name,
@@ -35,7 +34,7 @@ public abstract class BaseObjective implements IObjective {
     protected Comparator<Double> fitnessConstraintComparator;
 
     public BaseObjective(String name) {
-        Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
+        Objects.requireNonNull(name, "Name of the objective cannot be null.");
         this.name = name;
     }
 

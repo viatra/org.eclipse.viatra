@@ -35,7 +35,7 @@ import com.google.common.collect.Ordering;
  */
 public class ValueComparableEObjectStringMap extends TreeMap<EObject, String> {
 
-    private final static class EObjectComparator implements Comparator<EObject> {
+    private static final class EObjectComparator implements Comparator<EObject> {
         @Override
         public int compare(EObject o1, EObject o2) {
             return Integer.valueOf(System.identityHashCode(o1)).compareTo(Integer.valueOf(System.identityHashCode(o2)));
@@ -53,6 +53,7 @@ public class ValueComparableEObjectStringMap extends TreeMap<EObject, String> {
         this.innerMap = innerMap;
     }
 
+    @Override
     public String put(EObject keyEObject, String stringValue) {
         if (innerMap.containsKey(keyEObject)) {
             remove(keyEObject);
