@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor
+import org.eclipse.viatra.query.runtime.api.IQueryGroup
 
 /**
  * @noreference
@@ -64,6 +65,11 @@ class JavadocInferrer {
     def javadocQuerySpecificationClass(Pattern pattern) '''
         A pattern-specific query specification that can instantiate «pattern.findMatcherClass?.simpleName» in a type-safe way.
         
+        <p>Original source:
+                <code><pre>
+                «pattern.serializeToJavadoc»
+        </pre></code>
+        
         @see «pattern.findMatcherClass?.simpleName»
         @see «pattern.findMatchClass?.simpleName»
     '''
@@ -77,7 +83,7 @@ class JavadocInferrer {
     def javadocMatcherConstructorEngine(Pattern pattern) '''
         Initializes the pattern matcher within an existing VIATRA Query engine.
         If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
-        The match set will be incrementally refreshed upon updates.
+        
         @param engine the existing VIATRA Query engine in which this matcher will be created.
         @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
     '''
@@ -85,7 +91,7 @@ class JavadocInferrer {
     def javadocMatcherStaticOnEngine(Pattern pattern) '''
         Initializes the pattern matcher within an existing VIATRA Query engine.
         If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
-        The match set will be incrementally refreshed upon updates.
+        
         @param engine the existing VIATRA Query engine in which this matcher will be created.
         @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
     '''
@@ -208,7 +214,7 @@ class JavadocInferrer {
         «IF includePrivate»
             <p>A private group that includes private patterns as well. Only intended use case is for pattern testing.
         «ELSE»
-            <p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
+            <p>Use the static instance as any {@link «IQueryGroup»}, to conveniently prepare
             a VIATRA Query engine for matching all patterns originally defined in file «model.modelFileName».vql,
             in order to achieve better performance than one-by-one on-demand matcher initialization.
         «ENDIF»
