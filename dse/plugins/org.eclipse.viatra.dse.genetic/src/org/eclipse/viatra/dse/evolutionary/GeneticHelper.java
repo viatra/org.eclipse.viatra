@@ -17,6 +17,8 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 
 public class GeneticHelper {
 
+    private GeneticHelper() {/* Hidden utility class constructor */}
+    
     public static Object getByIndex(Collection<Object> availableTransitions, int index) {
         int i = 0;
         Iterator<Object> iterator = availableTransitions.iterator();

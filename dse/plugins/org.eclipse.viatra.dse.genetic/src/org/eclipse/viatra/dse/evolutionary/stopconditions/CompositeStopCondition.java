@@ -19,7 +19,7 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class CompositeStopCondition implements IStopCondition {
 
-    public static enum CompositeType {
+    public enum CompositeType {
         AND, OR
     }
 

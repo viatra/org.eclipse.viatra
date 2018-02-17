@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -217,12 +216,7 @@ public class EvolutionaryStrategy implements IStrategy {
     }
 
     protected void startThreads() {
-        context.startAllThreads(new IStrategyFactory() {
-            @Override
-            public IStrategy createStrategy() {
-                return new EvolutionaryStrategy();
-            }
-        });
+        context.startAllThreads(() -> new EvolutionaryStrategy());
     }
 
     protected void generateChildren() {

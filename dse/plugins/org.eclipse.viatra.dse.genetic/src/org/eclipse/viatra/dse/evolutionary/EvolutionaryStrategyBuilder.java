@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary;
 
+import java.util.Objects;
+
 import org.eclipse.viatra.dse.evolutionary.EvolutionaryStrategy.EvolutionaryStrategySharedObject;
 import org.eclipse.viatra.dse.evolutionary.crossovers.CutAndSpliceCrossover;
 import org.eclipse.viatra.dse.evolutionary.crossovers.SwapTransitionCrossover;
@@ -34,8 +36,7 @@ import org.eclipse.viatra.dse.evolutionary.reproduction.SimpleReproductionStrate
 import org.eclipse.viatra.dse.evolutionary.stopconditions.ConstantParetoFrontStopCondition;
 import org.eclipse.viatra.dse.evolutionary.survival.FirstNSolutionsSurvivalStrategy;
 import org.eclipse.viatra.dse.evolutionary.survival.ParetoSurvivalStrategy;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 public class EvolutionaryStrategyBuilder {
 
@@ -101,13 +102,13 @@ public class EvolutionaryStrategyBuilder {
     }
 
     public EvolutionaryStrategy build() {
-        Preconditions.checkNotNull(strategy.so.initialPopulationSelector, "Initial population selector is not set!");
-        Preconditions.checkNotNull(strategy.so.evaluationStrategy, "Evaluation strategy is not set!");
-        Preconditions.checkNotNull(strategy.so.survivalStrategy, "Survival strategy is not set!");
-        Preconditions.checkNotNull(strategy.so.reproductionStrategy, "Reproductions strategy is not set!");
-        Preconditions.checkNotNull(strategy.so.parentSelectionStrategy, "Parent selection strategy is not set!");
-        Preconditions.checkNotNull(strategy.so.stopCondition, "Stop condition is not set!");
-        Preconditions.checkNotNull(strategy.so.mutationRate, "Mutation rate is not set!");
+        Objects.requireNonNull(strategy.so.initialPopulationSelector, "Initial population selector is not set!");
+        Objects.requireNonNull(strategy.so.evaluationStrategy, "Evaluation strategy is not set!");
+        Objects.requireNonNull(strategy.so.survivalStrategy, "Survival strategy is not set!");
+        Objects.requireNonNull(strategy.so.reproductionStrategy, "Reproductions strategy is not set!");
+        Objects.requireNonNull(strategy.so.parentSelectionStrategy, "Parent selection strategy is not set!");
+        Objects.requireNonNull(strategy.so.stopCondition, "Stop condition is not set!");
+        Objects.requireNonNull(strategy.so.mutationRate, "Mutation rate is not set!");
         Preconditions.checkArgument(!(strategy.so.mutations.isEmpty() && strategy.so.crossovers.isEmpty()),
                 "No mutation nor crossover operations added!");
         Preconditions.checkArgument(strategy.so.initialPopulationSize > 0,

@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.evolutionary.initialselectors;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -22,11 +23,10 @@ import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.specific.ConflictResolvers;
 import org.eclipse.viatra.transformation.evm.specific.resolver.FixedPriorityConflictResolver;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
-
-import com.google.common.base.Preconditions;
 
 /**
  * 
@@ -89,7 +89,7 @@ public class FixedPriorityInitialSelector implements IInitialPopulationSelector 
         dsm = context.getDesignSpaceManager();
         initialPopulation = new HashSet<TrajectoryFitness>(populationSize);
 
-        Preconditions.checkNotNull(objective, "Hard objective is missing for FixedPriorityInitialSelector.");
+        Objects.requireNonNull(objective, "Hard objective is missing for FixedPriorityInitialSelector.");
         Preconditions.checkState(objective.isHardObjective(), "Given objective is not hard objective for FixedPriorityInitialSelector.");
 
         for (BatchTransformationRule<?, ?> batchTransformationRule : context.getGlobalContext().getTransformations()) {
