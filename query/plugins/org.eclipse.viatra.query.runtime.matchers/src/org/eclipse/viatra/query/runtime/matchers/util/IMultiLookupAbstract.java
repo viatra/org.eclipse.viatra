@@ -89,7 +89,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     // generic multi-lookup logic
    
     @Override
-    default public Bucket lookup(Key key) {
+    public default Bucket lookup(Key key) {
         Object object = lowLevelGet(key);
         if (object == null) return null;
         if (object instanceof MarkedMemory) return (Bucket) object;
@@ -97,7 +97,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     }
 
     @Override
-    default public ChangeGranularity addPair(Key key, Value value) {
+    public default ChangeGranularity addPair(Key key, Value value) {
         Object old = lowLevelPutIfAbsent(key, value);
         boolean keyChange = (old == null);
 
@@ -128,7 +128,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     }
 
     @Override
-    default public ChangeGranularity removePair(Key key, Value value) {
+    public default ChangeGranularity removePair(Key key, Value value) {
         Object old = lowLevelGet(key);
         if (old instanceof MarkedMemory) { // ... as collection
             @SuppressWarnings("unchecked")
@@ -148,7 +148,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
         }
     }
 
-    default public void handleSingleton(Key key, Bucket bucket) {
+    public default void handleSingleton(Key key, Bucket bucket) {
         Value remainingSingleton = asSingleton(bucket);
         if (remainingSingleton != null) { // only one remains
             lowLevelPut(key, remainingSingleton);
@@ -156,7 +156,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     }
 
     @Override
-    default public Iterable<Value> distinctValues() {
+    public default Iterable<Value> distinctValues() {
         return new Iterable<Value>() {
             private final Iterator<Value> EMPTY_ITERATOR = Collections.<Value>emptySet().iterator(); 
             @Override
@@ -191,6 +191,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
                     /**
                      * Not implemented
                      */
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
@@ -275,35 +276,35 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
         public MarkedSet<Value> createMarkedSet();
 
         @Override
-        default public boolean negativesAllowed() {
+        public default boolean negativesAllowed() {
             return false;
         }
 
         @Override
-        default public boolean addToBucket(MarkedSet<Value> bucket, Value value) {
+        public default boolean addToBucket(MarkedSet<Value> bucket, Value value) {
             if (bucket.addOne(value)) return true; 
             else throw new IllegalStateException();
         }
 
         @Override
-        default public boolean removeFromBucket(MarkedSet<Value> bucket, Value value) {
+        public default boolean removeFromBucket(MarkedSet<Value> bucket, Value value) {
             return bucket.removeOne(value);
         }
 
         @Override
-        default public Value asSingleton(MarkedSet<Value> bucket) {
+        public default Value asSingleton(MarkedSet<Value> bucket) {
             return bucket.size() == 1 ? bucket.iterator().next() : null;
         }
 
         @Override
-        default public MarkedSet<Value> createSingletonBucket(Value value) {
+        public default MarkedSet<Value> createSingletonBucket(Value value) {
             MarkedSet<Value> result = createMarkedSet();
             result.addOne(value);
             return result;
         }
 
         @Override
-        default public MarkedSet<Value> createDeltaBucket(Value positive, Value negative) {
+        public default MarkedSet<Value> createDeltaBucket(Value positive, Value negative) {
             throw new IllegalStateException();
         }        
     }
@@ -328,36 +329,36 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
         public MarkedMemory.MarkedMultiset<Value> createMarkedMultiset();
 
         @Override
-        default public boolean negativesAllowed() {
+        public default boolean negativesAllowed() {
             return false;
         }
 
         @Override
-        default public boolean addToBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value) {
+        public default boolean addToBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value) {
             return bucket.addOne(value); 
         }
 
         @Override
-        default public boolean removeFromBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value) {
+        public default boolean removeFromBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value) {
             return bucket.removeOne(value);
         }
 
         @Override
-        default public Value asSingleton(MarkedMemory.MarkedMultiset<Value> bucket) {
+        public default Value asSingleton(MarkedMemory.MarkedMultiset<Value> bucket) {
             if (bucket.size() != 1) return null;
             Value candidate = bucket.iterator().next();
             return bucket.getCount(candidate) == 1 ? candidate : null;
         }
 
         @Override
-        default public MarkedMemory.MarkedMultiset<Value> createSingletonBucket(Value value) {
+        public default MarkedMemory.MarkedMultiset<Value> createSingletonBucket(Value value) {
             MarkedMemory.MarkedMultiset<Value> result = createMarkedMultiset();
             result.addOne(value);
             return result;
         }
 
         @Override
-        default public MarkedMemory.MarkedMultiset<Value> createDeltaBucket(Value positive, Value negative) {
+        public default MarkedMemory.MarkedMultiset<Value> createDeltaBucket(Value positive, Value negative) {
             throw new IllegalStateException();
         }        
     }
@@ -365,5 +366,4 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     
     // TODO add ToDeltaBagsAbstract
 
-};
-
+}

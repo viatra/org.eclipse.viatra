@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
@@ -26,14 +25,16 @@ import org.eclipse.viatra.query.runtime.matchers.util.MarkedMemory.MarkedSet;
  * @author Gabor Bergmann
  * @since 2.0
  */
-class EclipseCollectionsMultiLookup
-{
+class EclipseCollectionsMultiLookup {
+    
+    private EclipseCollectionsMultiLookup() {/* Hidden utility class constructor */}
+    
     private static class MarkedSetImpl<Value> extends EclipseCollectionsSetMemory<Value> implements MarkedMemory.MarkedSet<Value> {}
     private static class MarkedMultisetImpl<Value> extends EclipseCollectionsMultiset<Value> implements MarkedMemory.MarkedMultiset<Value> {}
     private static class MarkedLongSetImpl extends EclipseCollectionsLongSetMemory implements MarkedMemory.MarkedSet<Long> {}
     private static class MarkedLongMultisetImpl extends EclipseCollectionsLongMultiset implements MarkedMemory.MarkedMultiset<Long> {}
 
-    public static abstract class FromObjects<Key, Value, Bucket extends MarkedMemory<Value>> 
+    public abstract static class FromObjects<Key, Value, Bucket extends MarkedMemory<Value>> 
         extends UnifiedMap<Key, Object> implements IMultiLookupAbstract<Key, Value, Bucket> {
         
         @Override
@@ -69,7 +70,7 @@ class EclipseCollectionsMultiLookup
         }
         
         
-        public static abstract class ToSets<Key, Value> extends FromObjects<Key, Value, MarkedSet<Value>> 
+        public abstract static class ToSets<Key, Value> extends FromObjects<Key, Value, MarkedSet<Value>> 
             implements IMultiLookupAbstract.ToSetsAbstract<Key, Value>
         {
             public static class OfObjects<Key, Value> extends ToSets<Key, Value> {                
@@ -88,7 +89,7 @@ class EclipseCollectionsMultiLookup
             
         }
         
-        public static abstract class ToMultisets<Key, Value> extends FromObjects<Key, Value, MarkedMultiset<Value>> 
+        public abstract static class ToMultisets<Key, Value> extends FromObjects<Key, Value, MarkedMultiset<Value>> 
             implements IMultiLookupAbstract.ToMultisetsAbstract<Key, Value>
         {
             public static class OfObjects<Key, Value> extends ToMultisets<Key, Value> {                
@@ -109,7 +110,7 @@ class EclipseCollectionsMultiLookup
        
     }
     
-    public static abstract class FromLongs<Value, Bucket extends MarkedMemory<Value>> 
+    public abstract static class FromLongs<Value, Bucket extends MarkedMemory<Value>> 
     extends LongObjectHashMap<Object> implements IMultiLookupAbstract<Long, Value, Bucket> {
 
         @Override
@@ -143,17 +144,10 @@ class EclipseCollectionsMultiLookup
         }
         @Override
         public Iterable<Long> lowLevelKeySet() {
-            return new Iterable<Long>() {
-                @Override
-                public Iterator<Long> iterator() {
-                    return EclipseCollectionsLongSetMemory.iteratorOf(FromLongs.super.keysView());
-                }
-            }; 
+            return () -> EclipseCollectionsLongSetMemory.iteratorOf(FromLongs.super.keysView()); 
         }
-        
     
-    
-    public static abstract class ToSets<Value> extends FromLongs<Value, MarkedSet<Value>> 
+    public abstract static class ToSets<Value> extends FromLongs<Value, MarkedSet<Value>> 
         implements IMultiLookupAbstract.ToSetsAbstract<Long, Value>
     {
         public static class OfObjects<Value> extends ToSets<Value> {                
@@ -172,7 +166,7 @@ class EclipseCollectionsMultiLookup
         
     }
     
-    public static abstract class ToMultisets<Value> extends FromLongs<Value, MarkedMultiset<Value>> 
+    public abstract static class ToMultisets<Value> extends FromLongs<Value, MarkedMultiset<Value>> 
         implements IMultiLookupAbstract.ToMultisetsAbstract<Long, Value>
     {
         public static class OfObjects<Value> extends ToMultisets<Value> {                

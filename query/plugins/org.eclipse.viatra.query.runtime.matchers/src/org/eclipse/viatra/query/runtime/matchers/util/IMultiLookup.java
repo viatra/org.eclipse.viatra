@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-
 /**
  * A multi-map that associates sets / multisets / delta sets of values to each key.
  * 

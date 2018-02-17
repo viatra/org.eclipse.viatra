@@ -699,12 +699,7 @@ public class ReteRecipeCompiler {
 
         List<PVariable> projectedVariables = new ArrayList<PVariable>(operation.getToVariables());
         // Determinizing... TODO add smarter ordering here?
-        Collections.sort(projectedVariables, new Comparator<PVariable>() {
-            @Override
-            public int compare(PVariable o1, PVariable o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Collections.sort(projectedVariables, Comparator.comparing(PVariable::getName)); 
 
         final TrimmerRecipe trimmerRecipe = CompilerHelper.makeTrimmerRecipe(compiledParent, projectedVariables);
 

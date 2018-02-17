@@ -123,7 +123,7 @@ public final class CollectionsFactory
      * @since 2.0
      * TODO add delta buckets
      */
-   public static enum BucketType {
+   public enum BucketType {
        /**
         * A single key-value pair is stored at most once
         */
