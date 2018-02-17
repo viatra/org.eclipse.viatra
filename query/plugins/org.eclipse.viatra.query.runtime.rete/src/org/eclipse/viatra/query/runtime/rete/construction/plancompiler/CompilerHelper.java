@@ -226,10 +226,10 @@ public class CompilerHelper {
         List<Integer> posetIndices = new ArrayList<Integer>();
         List<IInputKey> filtered = new ArrayList<IInputKey>();
         boolean posetKey = false;
-        int i = -1;
+        int index = -1;
 
         for (Set<IInputKey> _keys : keys) {
-            ++i;
+            ++index;
             posetKey = false;
 
             for (IInputKey key : _keys) {
@@ -241,15 +241,15 @@ public class CompilerHelper {
             }
 
             if (posetKey) {
-                posetIndices.add(i);
+                posetIndices.add(index);
             } else {
-                coreIndices.add(i);
+                coreIndices.add(index);
             }
         }
 
         result.comparator = context.getPosetComparator(filtered);
-        result.coreMask = RecipesHelper.mask(i, coreIndices);
-        result.posetMask = RecipesHelper.mask(i, posetIndices);
+        result.coreMask = RecipesHelper.mask(index + 1, coreIndices);
+        result.posetMask = RecipesHelper.mask(index + 1, posetIndices);
 
         return result;
     }

@@ -14,11 +14,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.viatra.query.runtime.rete.network.BaseNode;
-import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -50,7 +50,7 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
      * @since 1.6
      */
     protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this, this.reteContainer);
+        return new AdaptiveMailbox(this, this.reteContainer);
     }
     
     @Override

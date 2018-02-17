@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**

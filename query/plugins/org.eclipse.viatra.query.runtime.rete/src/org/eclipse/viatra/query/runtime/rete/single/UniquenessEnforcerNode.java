@@ -26,16 +26,16 @@ import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup;
-import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
-import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareReceiver;
+import org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.Tunnel;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.PosetAwareMailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
 
@@ -53,7 +53,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * @noextend This class is not intended to be subclassed by clients. 
  */
 public class UniquenessEnforcerNode extends StandardNode
-        implements Tunnel, RederivableNode, MonotonicityAwareReceiver {
+        implements Tunnel, RederivableNode, PosetAwareReceiver {
 
     protected Collection<Supplier> parents;
     protected IMultiset<Tuple> memory;
@@ -133,6 +133,11 @@ public class UniquenessEnforcerNode extends StandardNode
         this.mailbox = instantiateMailbox();
         reteContainer.registerClearable(this.mailbox);
     }
+    
+    @Override
+    public boolean isInDRedMode() {
+        return this.deleteRederiveEvaluation;
+    }
 
     @Override
     public TupleMask getCoreMask() {
@@ -154,9 +159,9 @@ public class UniquenessEnforcerNode extends StandardNode
      */
     protected Mailbox instantiateMailbox() {
         if (coreMask != null && posetMask != null && posetComparator != null) {
-            return new MonotonicityAwareMailbox(this, this.reteContainer);
+            return new PosetAwareMailbox(this, this.reteContainer);
         } else {
-            return new DefaultMailbox(this, this.reteContainer);
+            return new AdaptiveMailbox(this, this.reteContainer);
         }
     }
 

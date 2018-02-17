@@ -282,10 +282,23 @@ public class TupleMask {
      * @since 1.7
      */
     public Tuple transform(ITuple original) {
-        Object signature[] = new Object[indices.length];
-        for (int i = 0; i < indices.length; ++i)
-            signature[i] = original.get(indices[i]);
-        return Tuples.flatTupleOf(signature);
+        switch (indices.length) {
+        case 0:
+            return FlatTuple0.INSTANCE;
+        case 1:
+            return new FlatTuple1(original.get(indices[0]));
+        case 2:
+            return new FlatTuple2(original.get(indices[0]), original.get(indices[1]));
+        case 3:
+            return new FlatTuple3(original.get(indices[0]), original.get(indices[1]), original.get(indices[2]));
+        case 4:
+            return new FlatTuple4(original.get(indices[0]), original.get(indices[1]), original.get(indices[2]), original.get(indices[3]));
+        default:
+            Object signature[] = new Object[indices.length];
+            for (int i = 0; i < indices.length; ++i)
+                signature[i] = original.get(indices[i]);
+            return new FlatTuple(signature);
+        }
     }
     
     /**

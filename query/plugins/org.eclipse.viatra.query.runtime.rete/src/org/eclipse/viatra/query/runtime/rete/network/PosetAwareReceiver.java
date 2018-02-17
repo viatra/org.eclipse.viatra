@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
  * @author Tamas Szabo
  * @since 1.6
  */
-public interface MonotonicityAwareReceiver extends Receiver {
+public interface PosetAwareReceiver extends Receiver {
 
     public TupleMask getCoreMask();
     

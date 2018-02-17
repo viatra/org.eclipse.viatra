@@ -21,14 +21,14 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
-import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
-import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 
 /**
@@ -72,7 +72,7 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
      * @since 1.6
      */
     protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this, this.reteContainer);
+        return new AdaptiveMailbox(this, this.reteContainer);
     }
     
     @Override

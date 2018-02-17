@@ -25,4 +25,11 @@ public interface RederivableNode extends Node, IGroupable {
      */
     public void rederiveOne();
     
+    /**
+     * Returns true if this node actually runs in DRed mode (not necessarily). 
+     * 
+     * @return true if the node is operating in DRed mode
+     */
+    public boolean isInDRedMode();
+    
 }

@@ -27,15 +27,15 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.StandardIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup;
-import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
-import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareReceiver;
+import org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.PosetAwareMailbox;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
 /**
@@ -50,7 +50,7 @@ import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
  * @since 1.4
  */
 public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends SingleInputNode
-        implements Clearable, IAggregatorNode, RederivableNode, MonotonicityAwareReceiver {
+        implements Clearable, IAggregatorNode, RederivableNode, PosetAwareReceiver {
 
     /**
      * @since 1.6
@@ -158,13 +158,18 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
             TupleMask groupMask, int aggregatedColumn) {
         this(reteContainer, operator, false, groupMask, TupleMask.selectSingle(aggregatedColumn, groupMask.sourceWidth), null);
     }
+    
+    @Override
+    public boolean isInDRedMode() {
+        return this.deleteRederiveEvaluation;
+    }
 
     @Override
     protected Mailbox instantiateMailbox() {
         if (groupMask != null && columnMask != null && posetComparator != null) {
-            return new MonotonicityAwareMailbox(this, this.reteContainer);
+            return new PosetAwareMailbox(this, this.reteContainer);
         } else {
-            return new DefaultMailbox(this, this.reteContainer);
+            return new AdaptiveMailbox(this, this.reteContainer);
         }
     }
 

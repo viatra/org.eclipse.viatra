@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.rete" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.AggregatorNode">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.AggregatorNode"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.CountNode">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.CountNode"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.AggregatorRecipeImpl">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.AggregatorRecipeImpl"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/ColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode">
         <filter comment="Use of aggregator api" id="643850349">
             <message_arguments>
                 <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
                 <message_argument value="ColumnAggregatorNode&lt;Domain, Accumulator, AggregateResult&gt;"/>
                 <message_argument value="ColumnAggregatorNode(ReteContainer, IMultisetAggregationOperator&lt;Domain,Accumulator,AggregateResult&gt;, TupleMask, int)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Internal API usage" id="643850349">
-            <message_arguments>
-                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="ColumnAggregatorNode&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="ColumnAggregatorNode(ReteContainer, IMultisetAggregationOperator&lt;Domain,Accumulator,AggregateResult&gt;, boolean, TupleMask, TupleMask, IPosetComparator)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/matcher/HintConfigurator.java" type="org.eclipse.viatra.query.runtime.rete.matcher.HintConfigurator">
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="IQueryBackendHintProvider"/>
-                <message_argument value="HintConfigurator"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/matcher/RetePatternMatcher.java" type="org.eclipse.viatra.query.runtime.rete.matcher.RetePatternMatcher">
-        <filter comment="Internal API implementation" id="574619656">
-            <message_arguments>
-                <message_argument value="IQueryResultProvider"/>
-                <message_argument value="RetePatternMatcher"/>
             </message_arguments>
         </filter>
     </resource>

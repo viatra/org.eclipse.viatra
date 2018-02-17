@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.util.Options;

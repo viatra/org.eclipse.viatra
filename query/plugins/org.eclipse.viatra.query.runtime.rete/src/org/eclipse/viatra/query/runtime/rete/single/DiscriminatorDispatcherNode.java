@@ -18,9 +18,9 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
-import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
  * Node that sends tuples off to different buckets (attached as children of type {@link DiscriminatorBucketNode}), 
