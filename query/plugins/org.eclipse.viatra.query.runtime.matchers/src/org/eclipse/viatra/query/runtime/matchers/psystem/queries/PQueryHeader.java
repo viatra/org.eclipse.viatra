@@ -80,5 +80,15 @@ public interface PQueryHeader {
      * @since 2.0
      */
     public PVisibility getVisibility();
+    
+    /**
+     * Returns the non-qualified name of the query. By default this means returning the qualified name after the last
+     * '.' character.
+     * 
+     * @since 2.0
+     */
+    public default String getSimpleName() {
+        return PQueries.calculateSimpleName(getFullyQualifiedName());
+    }
 
 }
