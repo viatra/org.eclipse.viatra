@@ -23,8 +23,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
-import com.google.common.base.Preconditions;
-
 /**
  * This global constraint collects a list of VIATRA Query pattern and checks if any of them has a match on along a trajectory.
  * If any of the patterns has a match then it is unsatisfied and the exploration should backtrack.

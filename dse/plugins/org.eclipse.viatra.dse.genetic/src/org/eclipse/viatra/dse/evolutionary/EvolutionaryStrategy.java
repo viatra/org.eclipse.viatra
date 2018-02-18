@@ -216,7 +216,7 @@ public class EvolutionaryStrategy implements IStrategy {
     }
 
     protected void startThreads() {
-        context.startAllThreads(() -> new EvolutionaryStrategy());
+        context.startAllThreads(EvolutionaryStrategy::new);
     }
 
     protected void generateChildren() {

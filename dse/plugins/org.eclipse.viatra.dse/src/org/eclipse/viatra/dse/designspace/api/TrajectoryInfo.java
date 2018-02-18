@@ -71,9 +71,7 @@ public class TrajectoryInfo {
         stateIds.add(newStateId);
         trajectory.add(activationId);
         rules.add(rule);
-        if (!measuredCosts.isEmpty()) {
-            this.measuredCosts.add(measuredCosts);
-        }
+        this.measuredCosts.add(measuredCosts);
     }
 
     public void backtrack() {

@@ -145,7 +145,7 @@ public class RandomSearchStrategy implements IStrategy {
     }
 
     private void startThreads() {
-        context.startAllThreads(() -> new RandomSearchStrategy());
+        context.startAllThreads(RandomSearchStrategy::new);
     }
 
     private static Object getByIndex(Collection<Object> availableTransitions, int index) {

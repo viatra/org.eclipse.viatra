@@ -11,7 +11,6 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 
