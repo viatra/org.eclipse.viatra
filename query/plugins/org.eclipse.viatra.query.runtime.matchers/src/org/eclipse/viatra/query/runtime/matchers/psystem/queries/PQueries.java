@@ -96,4 +96,12 @@ public final class PQueries {
         return traceables;
     }
 
+    /**
+     * Calculates the simple name related from a given qualified name by finding the part after the last '.' character.
+     * 
+     * @since 2.0
+     */
+    public static String calculateSimpleName(String qualifiedName) {
+        return qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+    }
 }
