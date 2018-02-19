@@ -58,6 +58,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.xtext.nodemodel.ICompositeNode
 import org.eclipse.xtext.nodemodel.INode
+import org.eclipse.xtext.TerminalRule
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -306,14 +307,17 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     private def String extractComment(INode node, String defaultComment) {
         if (node !== null) {
             val grammarElement = node.grammarElement
-            if (grammarElement == grammar.WSRule) {
+            if (grammarElement instanceof TerminalRule) {
+                val rule = grammarElement
+                if (rule.name == grammar.WSRule.name) {
                 return node.nextSibling.extractComment(defaultComment)
-            } else if (grammarElement == grammar.getML_COMMENTRule) {
-                val multiLineCommentText = node.text.escape
-                return multiLineCommentText
-            } else if (grammarElement == grammar.SL_COMMENTRule) {
-                val singleLineCommentText = node.text.escape
-                return singleLineCommentText
+                } else if (rule.name == grammar.getML_COMMENTRule.name) {
+                    val multiLineCommentText = node.text.escape
+                    return multiLineCommentText
+                } else if (rule.name == grammar.SL_COMMENTRule.name) {
+                    val singleLineCommentText = node.text.escape
+                    return singleLineCommentText
+                }
             }
         }
         return defaultComment
