@@ -45,6 +45,15 @@ public class EMFPatternLanguageStandaloneSetup extends EMFPatternLanguageStandal
         public Class<? extends IGenerator> bindIGenerator() {
             return IGenerator.NullGenerator.class;
         }
+        
+        /**
+         * @since 2.0
+         */
+        public void configureClasspathValidation(Binder binder) {
+            binder.bind(Boolean.class)
+            .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY))
+            .toInstance(false);
+        }
     }
     
     /**

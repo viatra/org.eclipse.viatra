@@ -210,4 +210,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
                 .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.SEPARATE_PATTERN_PARSER_RUNS_KEY))
                 .toInstance(true);
     }
+    
+    /**
+     * @since 2.0
+     */
+    public void configureClasspathValidation(Binder binder) {
+        binder.bind(Boolean.class)
+        .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY))
+        .toInstance(true);
+    }
 }

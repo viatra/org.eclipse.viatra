@@ -24,4 +24,9 @@ public class EMFPatternLanguageConfigurationConstants {
      * Configuration key for {@link PatternParser} class to decide whether pattern parser runs need to be separated.
      */
     public static final String SEPARATE_PATTERN_PARSER_RUNS_KEY = "SEPARATE_PATTERN_PARSER_RUNS";
+    
+    /**
+     * Configuration key for enabling or disabling classpath validation
+     */
+    public static final String VALIDATE_CLASSPATH_KEY = "VALIDATE_CLASSPATH";
 }
