@@ -201,4 +201,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     public Class<? extends IPureWhitelistExtensionProvider> bindIPureWhitelistExtensionProvider() {
         return ServiceLoaderBasedWhitelistExtensionProvider.class;
     }
+    
+    /**
+     * @since 2.0
+     */
+    public void configurePatternReuse(Binder binder) {
+        binder.bind(Boolean.class)
+                .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.SEPARATE_PATTERN_PARSER_RUNS_KEY))
+                .toInstance(true);
+    }
 }
