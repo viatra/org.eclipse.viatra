@@ -51,94 +51,94 @@ import com.google.inject.name.Named;
  * @since 2.0
  */
 public class PatternParser {
-    
-	public static final String SYNTHETIC_URI_PREFIX = "__synthetic";
 
-	public static class Builder {
-	    public static final String PPERROR = "The VIATRA query language parser infrastructure is not initialized, pattern parsing is not supported.";
-		
-		private Injector injector = null;
-		private Set<URI> libraryURIs = new HashSet<>();
-		private Set<IQuerySpecification<?>> specifications = new HashSet<>();
-		
-		/**
-		 * Provide a specific injector instance to use with this parser
-		 */
-		public Builder withInjector(Injector injector) {
-			this.injector = injector;
-			return this;
-		}
-		
-		/**
-		 * Provide an URI to a VQL file that can be used as a library.
-		 */
-		public Builder withLibrary(URI libraryURI) {
-			libraryURIs.add(libraryURI);
-			return this;
-		}
-		
-		/**
+    public static final String SYNTHETIC_URI_PREFIX = "__synthetic";
+
+    public static class Builder {
+        public static final String PPERROR = "The VIATRA query language parser infrastructure is not initialized, pattern parsing is not supported.";
+
+        private Injector injector = null;
+        private Set<URI> libraryURIs = new HashSet<>();
+        private Set<IQuerySpecification<?>> librarySpecifications = new HashSet<>();
+
+        /**
+         * Provide a specific injector instance to use with this parser
+         */
+        public Builder withInjector(Injector injector) {
+            this.injector = injector;
+            return this;
+        }
+
+        /**
+         * Provide an URI to a VQL file that can be used as a library.
+         */
+        public Builder withLibrary(URI libraryURI) {
+            libraryURIs.add(libraryURI);
+            return this;
+        }
+
+        /**
          * Provide an URI to a VQL file that can be used as a library, together with a set of query specifications
          * already created from this library. This can be used to include the generated query specifications for the
          * given library.
          */
-		public Builder withLibrary(URI libraryURI, Collection<IQuerySpecification<?>> specifications) {
-			libraryURIs.add(libraryURI);
-			this.specifications.addAll(specifications);
-			return this;
-		}
-		
-		private Injector getInjector() {
-			if (injector == null) {
-				return Objects.requireNonNull(XtextInjectorProvider.INSTANCE.getInjector(), PPERROR);
-			}
-			return injector;
-		}
-		
-		/**
-		 * Initializes the pattern parser instance
-		 */
-		public PatternParser build() {
-			PatternParser parser = new PatternParser(specifications, libraryURIs); 
-			getInjector().injectMembers(parser);
-			return parser;
-		}
-		
-		/**
+        public Builder withLibrary(URI libraryURI, Collection<IQuerySpecification<?>> specifications) {
+            libraryURIs.add(libraryURI);
+            this.librarySpecifications.addAll(specifications);
+            return this;
+        }
+
+        private Injector getInjector() {
+            if (injector == null) {
+                return Objects.requireNonNull(XtextInjectorProvider.INSTANCE.getInjector(), PPERROR);
+            }
+            return injector;
+        }
+
+        /**
+         * Initializes the pattern parser instance
+         */
+        public PatternParser build() {
+            PatternParser parser = new PatternParser(librarySpecifications, libraryURIs);
+            getInjector().injectMembers(parser);
+            return parser;
+        }
+
+        /**
          * Creates a single-use pattern parser instance and collects the parsing results for the selected text, then the
          * forgets the used parser instance.
          */
-		public PatternParsingResults parse(String text) {
-			return build().parse(text);
-			
-		}
-	}
-	
+        public PatternParsingResults parse(String text) {
+            return build().parse(text);
+
+        }
+    }
+
     @Inject
     private IResourceFactory resourceFactory;
-    
+
     @Inject
     private FileExtensionProvider extensionProvider;
-    
+
     @Inject
     private PatternSetValidator validator;
-    
+
     private String fileExtension;
 
     private SpecificationBuilder builder;
 
     private ResourceSet resourceSet;
-    
-	private final Set<URI> libraryURIs;
-	private final Set<IQuerySpecification<?>> specifications;
-	
-	@Named(EMFPatternLanguageConfigurationConstants.SEPARATE_PATTERN_PARSER_RUNS_KEY)
-	private final boolean reuseSpecificationBuilder;
-    
+
+    private final Set<URI> libraryURIs;
+    private final Set<IQuerySpecification<?>> librarySpecifications;
+
+    @Named(EMFPatternLanguageConfigurationConstants.SEPARATE_PATTERN_PARSER_RUNS_KEY)
+    private final boolean reuseSpecificationBuilder;
+
     public static Builder parser() {
-    		return new Builder();
+        return new Builder();
     }
-    
+
     @Inject
     public void createResourceSet(Provider<XtextResourceSet> resourceSetProvider) {
         this.resourceSet = resourceSetProvider.get();
@@ -146,43 +146,43 @@ public class PatternParser {
             resourceSet.getResource(uri, true);
         }
     }
-    
-    private PatternParser(Set<IQuerySpecification<?>> specifications, Set<URI> libraryURIs) {
-    		this.specifications = specifications;
-		this.libraryURIs = libraryURIs;
-		this.reuseSpecificationBuilder = false;
+
+    private PatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs) {
+        this.librarySpecifications = new HashSet<>(librarySpecifications);
+        this.libraryURIs = libraryURIs;
+        this.reuseSpecificationBuilder = false;
     }
-    
+
     public PatternParsingResults parse(String text) {
-    		Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
+        Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
         fileExtension = extensionProvider.getPrimaryFileExtension();
         return parse(text, resourceSet);
     }
-    
+
     protected PatternParsingResults parse(InputStream in, URI uriToUse, Map<?, ?> options, ResourceSet resourceSet) {
         Resource resource = resource(in, uriToUse, options, resourceSet);
         EList<EObject> contents = resource.getContents();
-        
+
         List<Pattern> patterns = new ArrayList<>();
         PatternSetValidationDiagnostics diagnostics = validator.validate(resource);
         for (EObject eObject : contents) {
-            if(eObject instanceof PatternModel){
-                for(Pattern pattern :((PatternModel) eObject).getPatterns()){
+            if (eObject instanceof PatternModel) {
+                for (Pattern pattern : ((PatternModel) eObject).getPatterns()) {
                     patterns.add(pattern);
                 }
             }
         }
         return new PatternParsingResults(patterns, diagnostics, getOrCreateSpecificationBuilder());
     }
-    
-    protected PatternParsingResults parse(String text, ResourceSet resourceSetToUse){
+
+    protected PatternParsingResults parse(String text, ResourceSet resourceSetToUse) {
         return parse(getAsStream(text), computeUnusedUri(resourceSetToUse), null, resourceSetToUse);
     }
 
-    protected PatternParsingResults parse(String text, URI uriToUse, ResourceSet resourceSetToUse){
+    protected PatternParsingResults parse(String text, URI uriToUse, ResourceSet resourceSetToUse) {
         return parse(getAsStream(text), uriToUse, null, resourceSetToUse);
     }
-    
+
     protected URI computeUnusedUri(ResourceSet resourceSet) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + fileExtension);
@@ -195,7 +195,7 @@ public class PatternParser {
     protected InputStream getAsStream(CharSequence text) {
         return new LazyStringInputStream(text == null ? "" : text.toString());
     }
-    
+
     protected Resource resource(InputStream in, URI uriToUse, Map<?, ?> options, ResourceSet resourceSet) {
         Resource resource = resourceFactory.createResource(uriToUse);
         resourceSet.getResources().add(resource);
@@ -206,12 +206,12 @@ public class PatternParser {
             throw new WrappedException(e);
         }
     }
-    
+
     private SpecificationBuilder getOrCreateSpecificationBuilder() {
-    		if (reuseSpecificationBuilder && builder != null) {
-    			return builder;
-    		}
-		return builder = new SpecificationBuilder(specifications);
-	}
-    
+        if (reuseSpecificationBuilder && builder != null) {
+            return builder;
+        }
+        return builder = new SpecificationBuilder(librarySpecifications);
+    }
+
 }
