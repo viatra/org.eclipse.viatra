@@ -49,6 +49,7 @@ public class EMFPatternLanguageStandaloneSetup extends EMFPatternLanguageStandal
         /**
          * @since 2.0
          */
+        @Override
         public void configureClasspathValidation(Binder binder) {
             binder.bind(Boolean.class)
             .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY))
@@ -68,6 +69,7 @@ public class EMFPatternLanguageStandaloneSetup extends EMFPatternLanguageStandal
      *
      */
     public static class StandaloneParserWithSeparateModules extends StandaloneParserModule {
+        @Override
         public void configurePatternReuse(Binder binder) {
             binder.bind(Boolean.class)
                     .annotatedWith(

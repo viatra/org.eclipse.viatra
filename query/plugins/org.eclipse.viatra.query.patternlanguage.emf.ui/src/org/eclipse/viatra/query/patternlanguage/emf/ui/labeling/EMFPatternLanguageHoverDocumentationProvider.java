@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
@@ -205,7 +206,7 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
 
     private String getGenmodelDocumentation(EModelElement classifier) {
         return Optional.fromNullable(classifier.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel"))
-                .transform(ann -> ann.getDetails())
+                .transform(EAnnotation::getDetails)
                 .transform(details -> details.get("documentation"))
                 .transform(doc -> "<p>" + doc + "</p>")
                 .or("");

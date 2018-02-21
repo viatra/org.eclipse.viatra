@@ -45,8 +45,12 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
     private Logger logger;
     @Inject
     private IMetamodelProvider metamodelProvider;
-    @Named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY)
     private boolean classpathValidationEnabled;
+    
+    @Inject
+    public void enableClasspathValidation(@Named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY) boolean classpathValidationEnabled) {
+        this.classpathValidationEnabled = classpathValidationEnabled;
+    }
     
     @Check(CheckType.NORMAL)
     public void checkImportDependency(PackageImport importDecl) {
@@ -82,10 +86,6 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
 
     protected void checkModelPluginDependencyOnProject(PackageImport importDecl, IProject project, EPackage ePackage,
             String modelPluginID) {
-        if (!classpathValidationEnabled) {
-            return;
-        }
-        
         try {
             if (ProjectGenerationHelper.isOpenPDEProject(project) 
                     && modelPluginID != null && !modelPluginID.isEmpty() && !modelPluginID.equals(project.getName())

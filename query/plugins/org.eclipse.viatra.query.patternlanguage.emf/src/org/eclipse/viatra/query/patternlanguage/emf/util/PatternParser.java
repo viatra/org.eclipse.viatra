@@ -131,14 +131,17 @@ public class PatternParser {
 
     private final Set<URI> libraryURIs;
     private final Set<IQuerySpecification<?>> librarySpecifications;
-
-    @Named(EMFPatternLanguageConfigurationConstants.SEPARATE_PATTERN_PARSER_RUNS_KEY)
-    private final boolean reuseSpecificationBuilder;
+    private boolean reuseSpecificationBuilder;
 
     public static Builder parser() {
         return new Builder();
     }
 
+    @Inject
+    public void enableReuseSpecificationBuilder(@Named(EMFPatternLanguageConfigurationConstants.SEPARATE_PATTERN_PARSER_RUNS_KEY) boolean reuseSpecificationBuilder) {
+        this.reuseSpecificationBuilder = reuseSpecificationBuilder;
+    }
+    
     @Inject
     public void createResourceSet(Provider<XtextResourceSet> resourceSetProvider) {
         this.resourceSet = resourceSetProvider.get();
@@ -150,7 +153,7 @@ public class PatternParser {
     private PatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs) {
         this.librarySpecifications = new HashSet<>(librarySpecifications);
         this.libraryURIs = libraryURIs;
-        this.reuseSpecificationBuilder = false;
+        this.reuseSpecificationBuilder = true;
     }
 
     public PatternParsingResults parse(String text) {
@@ -208,10 +211,10 @@ public class PatternParser {
     }
 
     private SpecificationBuilder getOrCreateSpecificationBuilder() {
-        if (reuseSpecificationBuilder && builder != null) {
-            return builder;
+        if (!reuseSpecificationBuilder || builder == null) {
+            builder = new SpecificationBuilder(librarySpecifications);
         }
-        return builder = new SpecificationBuilder(librarySpecifications);
+        return builder; 
     }
 
 }
