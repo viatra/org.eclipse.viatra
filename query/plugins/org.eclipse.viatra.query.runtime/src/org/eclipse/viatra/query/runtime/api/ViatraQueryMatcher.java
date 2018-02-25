@@ -26,16 +26,16 @@ import java.util.Set;
 public interface ViatraQueryMatcher<Match extends IPatternMatch> {
     // REFLECTION
     /** The pattern that will be matched. */
-    public abstract IQuerySpecification<? extends ViatraQueryMatcher<Match>> getSpecification();
+    IQuerySpecification<? extends ViatraQueryMatcher<Match>> getSpecification();
 
     /** Fully qualified name of the pattern. */
-    public abstract String getPatternName();
+    String getPatternName();
 
     /** Returns the index of the symbolic parameter with the given name. */
-    public abstract Integer getPositionOfParameter(String parameterName);
+    Integer getPositionOfParameter(String parameterName);
 
     /** Returns the array of symbolic parameter names. */
-    public abstract List<String> getParameterNames();
+    List<String> getParameterNames();
 
     // ALL MATCHES
     /**
@@ -43,7 +43,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * 
      * @return matches represented as a Match object.
      */
-    public abstract Collection<Match> getAllMatches();
+    Collection<Match> getAllMatches();
 
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
@@ -53,7 +53,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            a fixed value.
      * @return matches represented as a Match object.
      */
-    public abstract Collection<Match> getAllMatches(Match partialMatch);
+    Collection<Match> getAllMatches(Match partialMatch);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
@@ -63,7 +63,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * 
      * @return a match represented as a Match object, or null if no match is found.
      */
-    public abstract Match getOneArbitraryMatch();
+    Match getOneArbitraryMatch();
 
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
@@ -74,7 +74,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            a fixed value.
      * @return a match represented as a Match object, or null if no match is found.
      */
-    public abstract Match getOneArbitraryMatch(Match partialMatch);
+    Match getOneArbitraryMatch(Match partialMatch);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
@@ -85,7 +85,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @return true if there exists a valid match of the pattern.
      * @since 1.7
      */
-    public abstract boolean hasMatch();
+    boolean hasMatch();
     
     /**
      * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match, under
@@ -96,7 +96,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            to a fixed value.
      * @return true if the input is a valid (partial) match of the pattern.
      */
-    public abstract boolean hasMatch(Match partialMatch);
+    boolean hasMatch(Match partialMatch);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
@@ -106,7 +106,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * 
      * @return the number of pattern matches found.
      */
-    public abstract int countMatches();
+    int countMatches();
 
     /**
      * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
@@ -116,7 +116,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            a fixed value.
      * @return the number of pattern matches found.
      */
-    public abstract int countMatches(Match partialMatch);
+    int countMatches(Match partialMatch);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
@@ -127,7 +127,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @param processor
      *            the action that will process each pattern match.
      */
-    public abstract void forEachMatch(IMatchProcessor<? super Match> processor);
+    void forEachMatch(IMatchProcessor<? super Match> processor);
 
     /**
      * Executes the given processor on each match of the pattern that conforms to the given fixed values of some
@@ -138,7 +138,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @param processor
      *            the action that will process each pattern match.
      */
-    public abstract void forEachMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
+    void forEachMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
@@ -151,7 +151,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            the action that will process the selected match.
      * @return true if the pattern has at least one match, false if the processor was not invoked
      */
-    public abstract boolean forOneArbitraryMatch(IMatchProcessor<? super Match> processor);
+    boolean forOneArbitraryMatch(IMatchProcessor<? super Match> processor);
 
     /**
      * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
@@ -164,7 +164,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @return true if the pattern has at least one match with the given parameter values, false if the processor was
      *         not invoked
      */
-    public abstract boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
+    boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
     
@@ -176,7 +176,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * 
      * @return the empty match
      */
-    public abstract Match newEmptyMatch();
+    Match newEmptyMatch();
 
     /**
      * Returns a new (partial) Match object for the matcher. 
@@ -189,7 +189,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            the fixed value of pattern parameters, or null if not bound.
      * @return the (partial) match object.
      */
-    public abstract Match newMatch(Object... parameters);
+    Match newMatch(Object... parameters);
 
     /**
      * Retrieve the set of values that occur in matches for the given parameterName.
@@ -199,7 +199,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @return the Set of all values for the given parameter, null if the parameter with the given name does not exists,
      *         empty set if there are no matches
      */
-    public abstract Set<Object> getAllValues(final String parameterName);
+    Set<Object> getAllValues(final String parameterName);
 
     /**
      * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed
@@ -213,12 +213,12 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @return the Set of all values for the given parameter, null if the parameter with the given name does not exists
      *         or if the parameter with the given name is set in partialMatch, empty set if there are no matches
      */
-    public abstract Set<Object> getAllValues(final String parameterName, Match partialMatch);
+    Set<Object> getAllValues(final String parameterName, Match partialMatch);
 
     /**
      * Returns the engine that the matcher uses.
      * 
      * @return the engine
      */
-    public abstract ViatraQueryEngine getEngine();
+    ViatraQueryEngine getEngine();
 }
