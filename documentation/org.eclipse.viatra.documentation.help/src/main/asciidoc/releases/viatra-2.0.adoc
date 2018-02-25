@@ -4,6 +4,16 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-20]]
 = VIATRA 2.0
 
+== New and Noteworthy
+
+=== Query Editing
+
+Hover help support was enhanced in VIATRA 2.0, specifically, a lot of elements now display hover that previously did not, including EClass and EReference types and variable references. Furthermore, calculating these hovers should be more efficient now, resulting in better performance in case of large number of patterns and/or complex metamodel hierarchies.
+
+image::releases/20_hover_eclass.png[Hover for EClass,429,207]
+image::releases/20_hover_ereference.png[Hover for EReferences,568,271]
+image::releases/20_hover_varref.png[Hover for Variable References,670,129]
+
 == Migrating to VIATRA 2.0
 
 === Dependency updates
@@ -20,6 +30,7 @@ image::releases/17_viatra_compiler.png[]
 === Deprecated code removal
 
 All code marked as deprecated has been removed from the codebase. Additionally, further components were removed
+
 * CEP has been removed
 * Xcore integration has been removed
 * C++ local search implementatation has been removed
@@ -62,18 +73,18 @@ The transformation API used the `Pair` class from the Xtend standard library to 
 
 The following methods were affected by this change:
 
- * `MatchParameterFilter` accepts an array of Map Entries instead of Xtend Pairs
- * `BatchTransformationStatements` accepts an array of Map Entries instead of Xtend Pairs as parameters on various methods
- * `EventDrivenTransformationBuilder#filter` accepts an array of Map Entries instead of Xtend Pairs
+* `MatchParameterFilter` accepts an array of Map Entries instead of Xtend Pairs
+* `BatchTransformationStatements` accepts an array of Map Entries instead of Xtend Pairs as parameters on various methods
+* `EventDrivenTransformationBuilder#filter` accepts an array of Map Entries instead of Xtend Pairs
 
 To migrate your code, you can do one of the following:
 
- * If you are using Xtend code, and the `"name" -> value` syntax does not compile anymore, add the following import declaration in the header: `import static extension org.eclipse.viatra.transformation.runtime.emf.transformation.TransformationExtensions.*`
- * If you are not using Xtend, or you don't want to rely on the mapped to operator, simply instantiate these entries with the call `new SimpleEntry<>("name", value)`.
+* If you are using Xtend code, and the `"name" -> value` syntax does not compile anymore, add the following import declaration in the header: `import static extension org.eclipse.viatra.transformation.runtime.emf.transformation.TransformationExtensions.*`
+* If you are not using Xtend, or you don't want to rely on the mapped to operator, simply instantiate these entries with the call `new SimpleEntry<>("name", value)`.
 
 === Avoid returning null values in the API
 
-A few APIs in VIATRA returned null if no possible values could be found. Given VIATRA 2.0 depends on Java 8, such APIs were reworked to return url:https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html[Optional] values instead.
+A few APIs in VIATRA returned null if no possible values could be found. Given VIATRA 2.0 depends on Java 8, such APIs were reworked to return link:https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html[Optional] values instead.
 
 The affected methods are the following:
 

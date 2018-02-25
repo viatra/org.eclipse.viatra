@@ -85,6 +85,8 @@
        </topic>
    </topic>
    <topic href="html/releases.html" label="Release Information">
+      <topic href="html/releases.html#viatra-20" label="VIATRA 2.0">
+      </topic>
       <topic href="html/releases.html#viatra-17" label="VIATRA 1.7">
       </topic>
       <topic href="html/releases.html#viatra-16" label="VIATRA 1.6">
