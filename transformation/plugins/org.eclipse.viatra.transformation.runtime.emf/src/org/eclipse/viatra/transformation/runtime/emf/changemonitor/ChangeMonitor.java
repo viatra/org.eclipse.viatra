@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -209,9 +209,9 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     protected Set<Job<IPatternMatch>> createDefaultProcessorJobs() {
         // Define default MatchProcessors
-        IMatchProcessor<IPatternMatch> appearProcessor = this::registerAppear;
-        IMatchProcessor<IPatternMatch> disappearProcessor = this::registerDisappear;
-        IMatchProcessor<IPatternMatch> updateProcessor = this::registerUpdate;
+        Consumer<IPatternMatch> appearProcessor = this::registerAppear;
+        Consumer<IPatternMatch> disappearProcessor = this::registerDisappear;
+        Consumer<IPatternMatch> updateProcessor = this::registerUpdate;
 
         // Create Jobs
         Set<Job<IPatternMatch>> jobs = new HashSet<>();

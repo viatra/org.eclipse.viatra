@@ -11,8 +11,8 @@
 package org.eclipse.viatra.transformation.evm.specific.job;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
@@ -31,8 +31,8 @@ public class SequentialProcessorsJob<Match extends IPatternMatch> extends Statel
      * @param matchProcessors
      */
     public SequentialProcessorsJob(CRUDActivationStateEnum cRUDActivationStateEnum,
-            final List<? extends IMatchProcessor<Match>> matchProcessors) {
-        super(cRUDActivationStateEnum, match -> matchProcessors.forEach(processor -> processor.process(match)));
+            final List<? extends Consumer<Match>> matchProcessors) {
+        super(cRUDActivationStateEnum, match -> matchProcessors.forEach(processor -> processor.accept(match)));
     }
 
 }

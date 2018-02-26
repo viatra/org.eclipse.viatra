@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -39,14 +39,14 @@ public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher 
      * @since 2.0
      */
     public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-            Map<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+            Map<CRUDActivationStateEnum, ? extends Consumer<Match>> stateActions, ActivationLifeCycle lifeCycle,
             EventFilter<? super Match> filter) {
         this.name = name;
         Set<Job<Match>> jobs = new HashSet<>();
         boolean createdJobAdded = false;
-        for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entrySet()) {
+        for (Entry<CRUDActivationStateEnum, ? extends Consumer<Match>> stateAction : stateActions.entrySet()) {
             CRUDActivationStateEnum state = stateAction.getKey();
-            IMatchProcessor<Match> action = stateAction.getValue();
+            Consumer<Match> action = stateAction.getValue();
 
             jobs.add(Jobs.newStatelessJob(state, action));
             if (state == CRUDActivationStateEnum.CREATED) {

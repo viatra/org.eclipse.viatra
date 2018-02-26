@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
+import java.util.function.Consumer;
+
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -73,8 +74,8 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
      * @return the prepared update listener; must not be null
      */
     protected IMatchUpdateListener<Match> prepareMatchUpdateListener(){
-        IMatchProcessor<Match> matchAppearProcessor = match -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.CREATED, match));
-        IMatchProcessor<Match> matchDisppearProcessor = match -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.DELETED, match));
+        Consumer<Match> matchAppearProcessor = match -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.CREATED, match));
+        Consumer<Match> matchDisppearProcessor = match -> notifyHandlers(new ViatraQueryEvent<Match>(CRUDEventTypeEnum.DELETED, match));
         return new MatchUpdateAdapter<Match>(matchAppearProcessor, matchDisppearProcessor);
     }
     

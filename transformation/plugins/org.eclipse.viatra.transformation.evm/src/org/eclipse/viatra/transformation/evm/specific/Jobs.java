@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
+import java.util.function.Consumer;
+
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -42,9 +43,10 @@ public final class Jobs {
      *
      * @param cRUDActivationStateEnum
      * @param processor
+     * @since 2.0
      */
     public static <Match extends IPatternMatch> Job<Match> newStatelessJob(
-            final CRUDActivationStateEnum cRUDActivationStateEnum, final IMatchProcessor<Match> processor) {
+            final CRUDActivationStateEnum cRUDActivationStateEnum, final Consumer<Match> processor) {
         return new StatelessJob<Match>(cRUDActivationStateEnum, processor);
     }
 

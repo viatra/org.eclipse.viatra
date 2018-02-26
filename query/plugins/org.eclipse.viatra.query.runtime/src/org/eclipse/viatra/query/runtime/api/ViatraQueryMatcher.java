@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -103,6 +104,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
      *            a fixed value.
      * @return a match represented as a Match object, or an empty Optional if no match is found.
+     * @since 2.0
      */
     Optional<Match> getOneArbitraryMatch(Match partialMatch);
 
@@ -156,8 +158,9 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * 
      * @param processor
      *            the action that will process each pattern match.
+     * @since 2.0
      */
-    void forEachMatch(IMatchProcessor<? super Match> processor);
+    void forEachMatch(Consumer<? super Match> processor);
 
     /**
      * Executes the given processor on each match of the pattern that conforms to the given fixed values of some
@@ -167,8 +170,9 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @param processor
      *            the action that will process each pattern match.
+     * @since 2.0
      */
-    void forEachMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
+    void forEachMatch(Match partialMatch, Consumer<? super Match> processor);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
@@ -180,8 +184,9 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @param processor
      *            the action that will process the selected match.
      * @return true if the pattern has at least one match, false if the processor was not invoked
+     * @since 2.0
      */
-    boolean forOneArbitraryMatch(IMatchProcessor<? super Match> processor);
+    boolean forOneArbitraryMatch(Consumer<? super Match> processor);
 
     /**
      * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
@@ -193,8 +198,9 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      *            the action that will process the selected match.
      * @return true if the pattern has at least one match with the given parameter values, false if the processor was
      *         not invoked
+     * @since 2.0
      */
-    boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
+    boolean forOneArbitraryMatch(Match partialMatch, Consumer<? super Match> processor);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
     

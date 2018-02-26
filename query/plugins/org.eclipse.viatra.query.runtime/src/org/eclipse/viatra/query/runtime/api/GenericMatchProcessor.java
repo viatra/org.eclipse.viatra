@@ -11,13 +11,17 @@
 
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.function.Consumer;
+
 /**
  * A generic, abstract match processor for handling matches as arrays.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  * @author Bergmann Gábor
+ * @deprecated Should be unnecessary starting with VIATRA 2.0; a {@link Consumer} implementation should be an appropriate replacement.
  */
+@Deprecated
 public abstract class GenericMatchProcessor implements IMatchProcessor<IPatternMatch> {
 
     @Override

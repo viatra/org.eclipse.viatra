@@ -16,8 +16,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
+import java.util.function.Consumer
 
 /**
  * @noreference
@@ -40,7 +40,7 @@ class JavadocInferrer {
         or to specify the bound (fixed) input parameters when issuing a query.
         
         @see «pattern.findMatcherClass?.simpleName»
-        «IF pattern.findInferredClass(IMatchProcessor) !== null» @see «pattern.findInferredClass(IMatchProcessor)?.simpleName»«ENDIF»
+        «IF pattern.findInferredClass(Consumer) !== null» @see «pattern.findInferredClass(Consumer)?.simpleName»«ENDIF»
     '''
 
     def javadocMatcherClass(Pattern pattern) '''
@@ -58,7 +58,7 @@ class JavadocInferrer {
         </pre></code>
         
         @see «pattern.findMatchClass?.simpleName»
-        «IF pattern.findInferredClass(IMatchProcessor) !== null» @see «pattern.findInferredClass(IMatchProcessor)?.simpleName»«ENDIF»
+        «IF pattern.findInferredClass(Consumer) !== null» @see «pattern.findInferredClass(Consumer)?.simpleName»«ENDIF»
         @see «pattern.findInferredSpecification?.simpleName»
     '''
 

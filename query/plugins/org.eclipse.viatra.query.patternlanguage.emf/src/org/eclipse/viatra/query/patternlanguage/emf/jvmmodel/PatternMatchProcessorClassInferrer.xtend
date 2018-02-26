@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
@@ -24,9 +23,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
+import java.util.function.Consumer
 
 /**
- * {@link IMatchProcessor} implementation inferrer.
+ * Generated match processor implementation inferrer.
  * 
  * @author Mark Czotter
  * @noreference
@@ -41,7 +41,7 @@ class PatternMatchProcessorClassInferrer {
     @Extension private JvmAnnotationReferenceBuilder annBuilder
 
     /**
-     * Infers the {@link IMatchProcessor} implementation class from a {@link Pattern}.
+     * Infers the {@link Consumer} implementation class from a {@link Pattern}.
      */
     def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName,
         JvmType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder,
@@ -54,7 +54,7 @@ class PatternMatchProcessorClassInferrer {
             packageName = processorPackageName
             documentation = pattern.javadocProcessorClass.toString
             abstract = true
-            superTypes += typeRef(IMatchProcessor, typeRef(matchClass))
+            superTypes += typeRef(Consumer, typeRef(matchClass))
             fileHeader = pattern.fileComment
         ]
         return processorClass
@@ -65,7 +65,7 @@ class PatternMatchProcessorClassInferrer {
      */
     def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmType matchClassRef) {
         try {
-            processorClass.members += pattern.toMethod("process", null) [
+            processorClass.members += pattern.toMethod("accept", null) [
                 returnType = typeRef(Void::TYPE)
                 documentation = pattern.javadocProcessMethod.toString
                 abstract = true
@@ -73,12 +73,12 @@ class PatternMatchProcessorClassInferrer {
                     it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                 }
             ]
-            processorClass.members += pattern.toMethod("process", null) [
+            processorClass.members += pattern.toMethod("accept", null) [
                 returnType = typeRef(Void::TYPE)
                 annotations += annotationRef(Override)
                 parameters += pattern.toParameter("match", typeRef(matchClassRef))
                 body = '''
-                    process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
+                    accept(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
                 '''
             ]
         } catch (IllegalStateException ex) {

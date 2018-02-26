@@ -11,8 +11,8 @@
 package org.eclipse.viatra.transformation.runtime.emf.rules.batch;
 
 import java.util.Collections;
+import java.util.function.Consumer;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -70,7 +70,7 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
 
     private final IQuerySpecification<MATCHER> precondition;
 
-    private final IMatchProcessor<MATCH> action;
+    private final Consumer<MATCH> action;
 
     private final EventFilter<MATCH> filter;
 
@@ -78,15 +78,21 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
         this("", null, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, null);
     }
 
+    /**
+     * @since 2.0
+     */
     @SuppressWarnings("unchecked")
     public BatchTransformationRule(final String rulename, final IQuerySpecification<MATCHER> matcher,
-            final ActivationLifeCycle lifecycle, final IMatchProcessor<MATCH> action) {
+            final ActivationLifeCycle lifecycle, final Consumer<MATCH> action) {
         this(rulename, matcher, lifecycle, action,
                 ViatraQueryMatchEventFilter.createFilter(((MATCH) matcher.newEmptyMatch().toImmutable())));
     }
 
+    /**
+     * @since 2.0
+     */
     public BatchTransformationRule(final String rulename, final IQuerySpecification<MATCHER> matcher,
-            final ActivationLifeCycle lifecycle, final IMatchProcessor<MATCH> action, final EventFilter<MATCH> filter) {
+            final ActivationLifeCycle lifecycle, final Consumer<MATCH> action, final EventFilter<MATCH> filter) {
         this.ruleName = rulename;
         this.precondition = matcher;
         this.action = action;
@@ -130,9 +136,10 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
     }
 
     /**
-     * Return an IMatchProcessor representing the model manipulation executed by the rule.
+     * Return a {@link Consumer} representing the model manipulation executed by the rule.
+     * @since 2.0
      */
-    public IMatchProcessor<MATCH> getAction() {
+    public Consumer<MATCH> getAction() {
         return action;
     }
 

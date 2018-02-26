@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.function.Consumer;
+
 /**
  * A "lambda" action that can be executed on each match of a pattern.
  * 
@@ -18,9 +20,10 @@ package org.eclipse.viatra.query.runtime.api;
  * {@link GenericMatchProcessor} or the user-friendly pattern-specific generated match processor classes.
  * 
  * @author Bergmann Gábor
- * 
+ * @deprecated Starting with VIATRA 2.0, a {@link Consumer} instance provides an appropriate alternative for this class.
  */
-public interface IMatchProcessor<Match extends IPatternMatch> {
+@Deprecated
+public interface IMatchProcessor<Match extends IPatternMatch> extends Consumer<Match> {
     /**
      * Defines the action that is to be executed on each match.
      * 
@@ -28,4 +31,12 @@ public interface IMatchProcessor<Match extends IPatternMatch> {
      *            a single match of the pattern that must be processed by the implementation of this method
      */
     public void process(Match match);
+
+    /**
+     * @since 2.0
+     */
+    @Override
+    default void accept(Match t) {
+        process(t);
+    }
 }

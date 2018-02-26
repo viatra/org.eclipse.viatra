@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.function.Consumer;
+
 /**
  * A default implementation of {@link IMatchUpdateListener} that contains two match processors, one for appearance, one
  * for disappearance. Any of the two can be null; in this case, corresponding notifications will be ignored.
@@ -22,13 +24,13 @@ package org.eclipse.viatra.query.runtime.api;
  */
 public class MatchUpdateAdapter<Match extends IPatternMatch> implements IMatchUpdateListener<Match> {
 
-    IMatchProcessor<Match> appearCallback;
-    IMatchProcessor<Match> disappearCallback;
+    Consumer<Match> appearCallback;
+    Consumer<Match> disappearCallback;
 
     /**
      * Constructs an instance without any match processors registered yet.
      * 
-     * Use {@link #setAppearCallback(IMatchProcessor)} and {@link #setDisappearCallback(IMatchProcessor)} to specify
+     * Use {@link #setAppearCallback(Consumer)} and {@link #setDisappearCallback(Consumer)} to specify
      * optional match processors for match appearance and disappearance, respectively.
      */
     public MatchUpdateAdapter() {
@@ -40,12 +42,13 @@ public class MatchUpdateAdapter<Match extends IPatternMatch> implements IMatchUp
      * 
      * @param appearCallback
      *            a match processor that will be invoked on each new match that appears. If null, no callback will be
-     *            executed on match appearance. See {@link IMatchProcessor} for details on how to implement.
+     *            executed on match appearance. See {@link Consumer} for details on how to implement.
      * @param disappearCallback
      *            a match processor that will be invoked on each existing match that disappears. If null, no callback
-     *            will be executed on match disappearance. See {@link IMatchProcessor} for details on how to implement.
+     *            will be executed on match disappearance. See {@link Consumer} for details on how to implement.
+     * @since 2.0
      */
-    public MatchUpdateAdapter(IMatchProcessor<Match> appearCallback, IMatchProcessor<Match> disappearCallback) {
+    public MatchUpdateAdapter(Consumer<Match> appearCallback, Consumer<Match> disappearCallback) {
         super();
         setAppearCallback(appearCallback);
         setDisappearCallback(disappearCallback);
@@ -54,47 +57,51 @@ public class MatchUpdateAdapter<Match extends IPatternMatch> implements IMatchUp
     /**
      * @return the match processor that will be invoked on each new match that appears. If null, no callback will be
      *         executed on match appearance.
+     * @since 2.0
      */
-    public IMatchProcessor<Match> getAppearCallback() {
+    public Consumer<Match> getAppearCallback() {
         return appearCallback;
     }
 
     /**
      * @param appearCallback
      *            a match processor that will be invoked on each new match that appears. If null, no callback will be
-     *            executed on match appearance. See {@link IMatchProcessor} for details on how to implement.
+     *            executed on match appearance. See {@link Consumer} for details on how to implement.
+     * @since 2.0
      */
-    public void setAppearCallback(IMatchProcessor<Match> appearCallback) {
+    public void setAppearCallback(Consumer<Match> appearCallback) {
         this.appearCallback = appearCallback;
     }
 
     /**
      * @return the match processor that will be invoked on each existing match that disappears. If null, no callback
      *         will be executed on match disappearance.
+     * @since 2.0
      */
-    public IMatchProcessor<Match> getDisappearCallback() {
+    public Consumer<Match> getDisappearCallback() {
         return disappearCallback;
     }
 
     /**
      * @param disappearCallback
      *            a match processor that will be invoked on each existing match that disappears. If null, no callback
-     *            will be executed on match disappearance. See {@link IMatchProcessor} for details on how to implement.
+     *            will be executed on match disappearance. See {@link Consumer} for details on how to implement.
+     * @since 2.0
      */
-    public void setDisappearCallback(IMatchProcessor<Match> disappearCallback) {
+    public void setDisappearCallback(Consumer<Match> disappearCallback) {
         this.disappearCallback = disappearCallback;
     }
 
     @Override
     public void notifyAppearance(Match match) {
         if (appearCallback != null)
-            appearCallback.process(match);
+            appearCallback.accept(match);
     }
 
     @Override
     public void notifyDisappearance(Match match) {
         if (disappearCallback != null)
-            disappearCallback.process(match);
+            disappearCallback.accept(match);
     }
 
 }

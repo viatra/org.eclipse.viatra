@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.api;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.command.ChangeCommand;
@@ -22,7 +23,6 @@ import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -190,15 +190,15 @@ public class SolutionTrajectory {
             Object matchHash = stateCoder.createActivationCode(match);
             if (matchHash.equals(activationCode)) {
                 @SuppressWarnings("rawtypes")
-                final IMatchProcessor action = tr.getAction();
+                final Consumer action = tr.getAction();
 
                 if (editingDomain == null) {
-                    action.process(match);
+                    action.accept(match);
                 } else {
                     ChangeCommand cc = new ChangeCommand(model) {
                         @Override
                         protected void doExecute() {
-                            action.process(match);
+                            action.accept(match);
                         }
                     };
                     editingDomain.getCommandStack().execute(cc);

@@ -20,9 +20,7 @@ import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.apache.log4j.Logger
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import java.util.HashSet
 import java.util.Set
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
 import java.util.Collection
@@ -39,6 +37,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGener
 import java.util.stream.Collectors
 import java.util.Optional
 import java.util.stream.Stream
+import java.util.function.Consumer
 
 /**
  * {@link ViatraQueryMatcher} implementation inferrer.
@@ -209,7 +208,7 @@ class PatternMatcherClassInferrer {
                         parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                     }
                     parameters +=
-                        pattern.toParameter("processor", typeRef(IMatchProcessor, typeRef(matchClass).wildcardSuper))
+                        pattern.toParameter("processor", typeRef(Consumer, typeRef(matchClass).wildcardSuper))
                     body = '''
                         rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
                     '''
@@ -221,7 +220,7 @@ class PatternMatcherClassInferrer {
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                 }
                 parameters +=
-                    pattern.toParameter("processor", typeRef(IMatchProcessor, typeRef(matchClass).wildcardSuper))
+                    pattern.toParameter("processor", typeRef(Consumer, typeRef(matchClass).wildcardSuper))
                 body = '''
                     return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
                 '''

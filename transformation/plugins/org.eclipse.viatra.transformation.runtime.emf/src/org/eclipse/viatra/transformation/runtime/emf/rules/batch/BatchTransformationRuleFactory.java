@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.rules.batch;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
+import java.util.function.Consumer;
+
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -21,7 +22,7 @@ public class BatchTransformationRuleFactory {
     public class BatchTransformationRuleBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
         
         private IQuerySpecification<Matcher> fPrecondition;
-        private IMatchProcessor<Match> fAction;
+        private Consumer<Match> fAction;
         private String fName = "";
         private EventFilter<Match> fFilter;
         
@@ -43,8 +44,9 @@ public class BatchTransformationRuleFactory {
 
         /**
          * Sets the model manipulation actions of the rule.
+         * @since 2.0
          */
-        public BatchTransformationRuleBuilder<Match, Matcher> action(IMatchProcessor<Match> action) {
+        public BatchTransformationRuleBuilder<Match, Matcher> action(Consumer<Match> action) {
             this.fAction = action;
             return this;
         }

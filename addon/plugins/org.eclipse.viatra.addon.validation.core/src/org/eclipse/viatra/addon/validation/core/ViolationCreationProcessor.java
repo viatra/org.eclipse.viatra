@@ -13,10 +13,10 @@
 package org.eclipse.viatra.addon.validation.core;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.violationkey.ViolationKey;
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
  * @author Balint Lorand
  * 
  */
-public class ViolationCreationProcessor implements IMatchProcessor<IPatternMatch> {
+public class ViolationCreationProcessor implements Consumer<IPatternMatch> {
 
     private Constraint constraint;
     private Map<ViolationKey, Violation> violationMap;
@@ -38,8 +38,11 @@ public class ViolationCreationProcessor implements IMatchProcessor<IPatternMatch
         this.violationMap = violationMap;
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public void process(IPatternMatch match) {
+    public void accept(IPatternMatch match) {
 
         Map<String, Object> keyObjectMap = constraint.getSpecification().getKeyObjects(match);
 

@@ -180,7 +180,7 @@ class SnapshotHelper {
      */
     def <Match extends IPatternMatch> MatchSetRecord createMatchSetRecordForMatcher(ViatraQueryMatcher<Match> matcher, Match filter){
         val matchSetRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
-        matcher.forEachMatch(filter,[ match |
+        matcher.forEachMatch(filter, [ match |
             matchSetRecord.matches.add(createMatchRecordForMatch(match))
         ] );
         return matchSetRecord

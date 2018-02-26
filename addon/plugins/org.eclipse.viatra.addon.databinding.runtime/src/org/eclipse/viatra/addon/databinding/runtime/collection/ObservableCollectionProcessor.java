@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.databinding.runtime.collection;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
+import java.util.function.Consumer;
+
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
@@ -23,7 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Direction;
  * 
  * @param <Match>
  */
-public class ObservableCollectionProcessor<Match extends IPatternMatch> implements IMatchProcessor<Match> {
+public class ObservableCollectionProcessor<Match extends IPatternMatch> implements Consumer<Match> {
 
     private final Direction direction;
     private final IObservablePatternMatchCollectionUpdate<Match> collection;
@@ -41,8 +42,11 @@ public class ObservableCollectionProcessor<Match extends IPatternMatch> implemen
         this.collection = collection;
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public void process(Match match) {
+    public void accept(Match match) {
         if (direction == Direction.INSERT) {
             collection.addMatch(match);
         } else {

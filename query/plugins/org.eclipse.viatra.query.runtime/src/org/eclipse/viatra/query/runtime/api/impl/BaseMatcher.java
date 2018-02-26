@@ -15,10 +15,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -218,30 +218,31 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      * @pre size of input array must be equal to the number of parameters.
      * @param action
      *            the action that will process each pattern match.
+     * @since 2.0
      */
-    protected void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
-        backend.getAllMatches(parameters).map(this::tupleToMatch).forEach(processor::process);
+    protected void rawForEachMatch(Object[] parameters, Consumer<? super Match> processor) {
+        backend.getAllMatches(parameters).map(this::tupleToMatch).forEach(processor);
     }
 
     @Override
-    public void forEachMatch(IMatchProcessor<? super Match> processor) {
+    public void forEachMatch(Consumer<? super Match> processor) {
         rawForEachMatch(emptyArray(), processor);
     }
 
     @Override
-    public void forEachMatch(Match match, IMatchProcessor<? super Match> processor) {
+    public void forEachMatch(Match match, Consumer<? super Match> processor) {
         rawForEachMatch(match.toArray(), processor);
     }
 
     // with input binding as pattern-specific parameters: not declared in interface
 
     @Override
-    public boolean forOneArbitraryMatch(IMatchProcessor<? super Match> processor) {
+    public boolean forOneArbitraryMatch(Consumer<? super Match> processor) {
         return rawForOneArbitraryMatch(emptyArray(), processor);
     }
 
     @Override
-    public boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor) {
+    public boolean forOneArbitraryMatch(Match partialMatch, Consumer<? super Match> processor) {
         return rawForOneArbitraryMatch(partialMatch.toArray(), processor);
     }
 
@@ -256,10 +257,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      *            the action that will process the selected match.
      * @return true if the pattern has at least one match with the given parameter values, false if the processor was
      *         not invoked
+     * @since 2.0
      */
-    protected boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
+    protected boolean rawForOneArbitraryMatch(Object[] parameters, Consumer<? super Match> processor) {
         return backend.getOneArbitraryMatch(parameters).map(this::tupleToMatch).map(m -> {
-            processor.process(m);
+            processor.accept(m);
             return true;
         }).orElse(false);
     }

@@ -11,8 +11,8 @@
 package org.eclipse.viatra.transformation.evm.specific.job;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
@@ -20,26 +20,28 @@ import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 /**
- * This class represents a {@link Job} that uses an {@link IMatchProcessor} 
+ * This class represents a {@link Job} that uses an {@link Consumer} 
  * on the match of the activation when executed.
  * 
  * @author Abel Hegedus
  */
 public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
 
-    private IMatchProcessor<Match> matchProcessor;
+    private Consumer<Match> matchProcessor;
     
     /**
      * @return the matchProcessor executed by the job
+     * @since 2.0
      */
-    public IMatchProcessor<Match> getMatchProcessor() {
+    public Consumer<Match> getMatchProcessor() {
         return matchProcessor;
     }
 
     /**
      * Creates a stateless job for the given state and processor.
+     * @since 2.0
      */
-    public StatelessJob(final CRUDActivationStateEnum activationStateEnum, final IMatchProcessor<Match> matchProcessor) {
+    public StatelessJob(final CRUDActivationStateEnum activationStateEnum, final Consumer<Match> matchProcessor) {
         super(activationStateEnum);
         this.matchProcessor = Objects.requireNonNull(matchProcessor,
                 "StatelessJob cannot be instantiated with null match processor");
@@ -47,7 +49,7 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
 
     @Override
     protected void execute(final Activation<? extends Match> activation, final Context context) {
-        matchProcessor.process(activation.getAtom());
+        matchProcessor.accept(activation.getAtom());
     }
 
     @Override
