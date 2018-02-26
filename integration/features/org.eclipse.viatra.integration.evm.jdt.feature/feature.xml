@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.integration.evm.jdt.feature"
       label="VIATRA EVM Integration for JDT (Incubation)"
-      version="0.17.1.qualifier"
+      version="0.17.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

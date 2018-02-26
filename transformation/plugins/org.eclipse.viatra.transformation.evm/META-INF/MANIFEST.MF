@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Event-Driven Virtual Machine
 Bundle-SymbolicName: org.eclipse.viatra.transformation.evm;singleton:=true
-Bundle-Version: 1.7.1.qualifier
+Bundle-Version: 1.7.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.7.0,1.8.0)"
 Export-Package: org.eclipse.viatra.transformation.evm.api;

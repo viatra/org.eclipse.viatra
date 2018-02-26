@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Transformation Debug Tooling UI (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.transformation.tooling.debug.ui;singleton:=true
-Bundle-Version: 0.17.1.qualifier
+Bundle-Version: 0.17.2.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.xtend.lib;bundle-version="[2.9.0,3.0.0)",

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Rete Visualization (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.ui.retevis;singleton:=true
-Bundle-Version: 0.17.1.qualifier
+Bundle-Version: 0.17.2.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.tooling.ui.retevis
 Require-Bundle: org.eclipse.viatra.query.runtime.rete.recipes;bundle-version="[1.7.0,1.8.0)",

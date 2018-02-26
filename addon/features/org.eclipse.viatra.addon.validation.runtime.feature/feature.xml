@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.validation.runtime.feature"
       label="VIATRA Validation Framework Runtime"
-      version="1.7.1.qualifier"
+      version="1.7.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
