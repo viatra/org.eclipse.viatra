@@ -49,12 +49,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
                 String message = "[QueryBasedFeature] Single reference derived feature has multiple possible values, returning one arbitrary value";
                 ViatraQueryLoggingUtil.getLogger(getClass()).warn(message);
             }
-            IPatternMatch patternMatch = getMatcher().getOneArbitraryMatch(match);
-            if (patternMatch != null) {
-                return getTargetValue(patternMatch);
-            } else {
-                return null;
-            }
+            return getMatcher().getOneArbitraryMatch(match).map(this::getTargetValue).orElse(null);
         }
     }
 

@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -43,7 +44,6 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteRecipe;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -73,7 +73,7 @@ public class TestEMFScope {
         EMFScope scope = new EMFScope(container);
         
         Collection<? extends IPatternMatch> matches0 = getMatches(pattern, scope);
-        assertEquals(ImmutableList.of(), matches0);
+        assertEquals(Collections.emptySet(), matches0);
         
         container.getRecipeNodes().add(object1);
         Set<ReteNodeRecipe> expectedObjects1 = ImmutableSet.of(object1);

@@ -13,7 +13,9 @@ package org.eclipse.viatra.query.runtime.api;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Interface for a VIATRA Query matcher associated with a graph pattern.
@@ -54,16 +56,44 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @return matches represented as a Match object.
      */
     Collection<Match> getAllMatches(Match partialMatch);
-
+    
+    /**
+     * Returns a stream of all pattern matches.
+     * <p>
+     * <strong>WARNING</strong> If the result set changes while the stream is evaluated, the set of matches included in
+     * the stream are unspecified. In such cases, either rely on {@link #getAllMatches()} or collect the results of the
+     * stream in end-user code.
+     * 
+     * @return matches represented as a Match object.
+     * @since 2.0
+     */
+    Stream<Match> streamAllMatches();
+    
+    /**
+     * Returns a stream of all matches of the pattern that conform to the given fixed values of some parameters.
+     * <p>
+     * <strong>WARNING</strong> If the result set changes while the stream is evaluated, the set of matches included in
+     * the stream are unspecified. In such cases, either rely on {@link #getAllMatches()} or collect the results of the
+     * stream in end-user code.
+     * 
+     * @param partialMatch
+     *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
+     *            a fixed value.
+     * @return matches represented as a Match object.
+     * @since 2.0
+     */
+    Stream<Match> streamAllMatches(Match partialMatch);
+    
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 
     // SINGLE MATCH
     /**
      * Returns an arbitrarily chosen pattern match. Neither determinism nor randomness of selection is guaranteed.
      * 
-     * @return a match represented as a Match object, or null if no match is found.
+     * @return a match represented as a Match object, or an empty Optional if no match is found.
+     * @since 2.0
      */
-    Match getOneArbitraryMatch();
+    Optional<Match> getOneArbitraryMatch();
 
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
@@ -72,9 +102,9 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
      * @param partialMatch
      *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
      *            a fixed value.
-     * @return a match represented as a Match object, or null if no match is found.
+     * @return a match represented as a Match object, or an empty Optional if no match is found.
      */
-    Match getOneArbitraryMatch(Match partialMatch);
+    Optional<Match> getOneArbitraryMatch(Match partialMatch);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
 

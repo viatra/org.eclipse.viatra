@@ -12,10 +12,11 @@
 package org.eclipse.viatra.query.runtime.api.impl;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -26,6 +27,7 @@ import org.eclipse.viatra.query.runtime.internal.apiimpl.QueryResultWrapper;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Base implementation of ViatraQueryMatcher.
@@ -99,31 +101,42 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
 
     @Override
     public Collection<Match> getAllMatches() {
-        return rawGetAllMatches(emptyArray());
+        return rawStreamAllMatches(emptyArray()).collect(Collectors.toSet());
+    }
+    
+    @Override
+    public Stream<Match> streamAllMatches() {
+        return rawStreamAllMatches(emptyArray());
     }
 
     /**
-     * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
+     * Returns a stream of all matches of the pattern that conform to the given fixed values of some parameters.
      *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
      * @return matches represented as a Match object.
+     * @since 2.0
      */
-    protected Collection<Match> rawGetAllMatches(Object[] parameters) {
+    protected Stream<Match> rawStreamAllMatches(Object[] parameters) {
         // clones the tuples into a match object to protect the Tuples from modifications outside of the ReteMatcher
-        return backend.getAllMatches(parameters).map(this::tupleToMatch).collect(Collectors.toList());
+        return backend.getAllMatches(parameters).map(this::tupleToMatch);
     }
 
     @Override
     public Collection<Match> getAllMatches(Match partialMatch) {
-        return rawGetAllMatches(partialMatch.toArray());
+        return rawStreamAllMatches(partialMatch.toArray()).collect(Collectors.toSet());
+    }
+    
+    @Override
+    public Stream<Match> streamAllMatches(Match partialMatch) {
+        return rawStreamAllMatches(partialMatch.toArray());
     }
 
     // with input binding as pattern-specific parameters: not declared in interface
 
     @Override
-    public Match getOneArbitraryMatch() {
+    public Optional<Match> getOneArbitraryMatch() {
         return rawGetOneArbitraryMatch(emptyArray());
     }
 
@@ -135,13 +148,14 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
      * @return a match represented as a Match object, or null if no match is found.
+     * @since 2.0
      */
-    protected Match rawGetOneArbitraryMatch(Object[] parameters) {
-        return backend.getOneArbitraryMatch(parameters).map(this::tupleToMatch).orElse(null);
+    protected Optional<Match> rawGetOneArbitraryMatch(Object[] parameters) {
+        return backend.getOneArbitraryMatch(parameters).map(this::tupleToMatch);
     }
 
     @Override
-    public Match getOneArbitraryMatch(Match partialMatch) {
+    public Optional<Match> getOneArbitraryMatch(Match partialMatch) {
         return rawGetOneArbitraryMatch(partialMatch.toArray());
     }
 
@@ -265,16 +279,16 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
 
     @Override
     public Set<Object> getAllValues(final String parameterName) {
-        return rawGetAllValues(getPositionOfParameter(parameterName), emptyArray());
+        return rawStreamAllValues(getPositionOfParameter(parameterName), emptyArray()).collect(Collectors.toSet());
     }
 
     @Override
     public Set<Object> getAllValues(final String parameterName, Match partialMatch) {
-        return rawGetAllValues(getPositionOfParameter(parameterName), partialMatch.toArray());
+        return rawStreamAllValues(getPositionOfParameter(parameterName), partialMatch.toArray()).collect(Collectors.toSet());
     }
-
+    
     /**
-     * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed
+     * Retrieve a stream of values that occur in matches for the given parameterName, that conforms to the given fixed
      * values of some parameters.
      *
      * @param position
@@ -282,20 +296,17 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
      * @param parameters
      *            a parameter array corresponding to a partial match of the pattern where each non-null field binds the
      *            corresponding pattern parameter to a fixed value.
-     * @return the Set of all values in the given position, null if no parameter with the given position exists or if
-     *         parameters[position] is set, empty set if there are no matches
+     * @return the stream of all values in the given position
+     * @throws IllegalArgumentException
+     *             if length of parameters array does not equal to number of parameters
+     * @throws IndexOutOfBoundsException
+     *             if position is not appropriate for the current parameter size
+     * @since 2.0
      */
-    protected Set<Object> rawGetAllValues(final int position, Object[] parameters) {
-        if (position >= 0 && position < getParameterNames().size()) {
-            if (parameters.length == getParameterNames().size()) {
-                if (parameters[position] == null) {
-                    final Set<Object> results = new HashSet<Object>();
-                    rawAccumulateAllValues(position, parameters, results);
-                    return results;
-                }
-            }
-        }
-        return null;
+    protected Stream<Object> rawStreamAllValues(final int position, Object[] parameters) {
+        Preconditions.checkElementIndex(position, getParameterNames().size());
+        Preconditions.checkArgument(parameters.length == getParameterNames().size());
+        return rawStreamAllMatches(parameters).map(match -> match.get(position));
     }
 
     /**
@@ -314,7 +325,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     protected <T> void rawAccumulateAllValues(final int position, Object[] parameters, final Set<T> accumulator) {
         rawForEachMatch(parameters, match -> accumulator.add((T) match.get(position)));
     }
-
+    
     @Override
     public ViatraQueryEngine getEngine() {
         return engine;

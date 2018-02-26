@@ -66,8 +66,9 @@ class APICpsTest {
         val pm = queryInput
 
         val matcher = pm.initializeMatcherFromModel(sns.EMFRootForSnapshot, TESTED_PATTERN)
-        val match = matcher.oneArbitraryMatch
-        assertNotNull(match)
+        val matchOpt = matcher.oneArbitraryMatch
+        assertTrue(matchOpt.present)
+        val match = matchOpt.get
         assertEquals(match.specification, matcher.specification)
         assertArrayEquals(match.parameterNames, matcher.parameterNames)
         for (int i : 0 .. match.parameterNames.size - 1)
@@ -81,9 +82,10 @@ class APICpsTest {
         val pm = queryInput
 
         val matcher = pm.initializeMatcherFromModel(sns.EMFRootForSnapshot, TESTED_PATTERN)
-        val sampleMatch = matcher.oneArbitraryMatch
-        assertNotNull(sampleMatch)
-
+        val sampleMatchOpt = matcher.oneArbitraryMatch
+        assertTrue(sampleMatchOpt.present)
+        
+        val sampleMatch = sampleMatchOpt.get
         val sampleMatchAsArray = sampleMatch.toArray
         assertNotNull(sampleMatchAsArray)
         assertEquals(sampleMatchAsArray.size, sampleMatch.parameterNames.size)
@@ -98,8 +100,10 @@ class APICpsTest {
         val pm = queryInput
 
         val matcher = pm.initializeMatcherFromModel(sns.EMFRootForSnapshot, TESTED_PATTERN)
-        val sampleMatch = matcher.oneArbitraryMatch
-        assertNotNull(sampleMatch)
+        val sampleMatchOpt = matcher.oneArbitraryMatch
+        assertTrue(sampleMatchOpt.present)
+        
+        val sampleMatch = sampleMatchOpt.get
 
         val sampleMatchAsArray = sampleMatch.toArray
         assertNotNull(sampleMatchAsArray)
@@ -130,8 +134,10 @@ class APICpsTest {
         }
         assertTrue(match.mutable)
 
-        val sampleMatch = matcher.oneArbitraryMatch
-        assertNotNull(sampleMatch)
+        val sampleMatchOpt = matcher.oneArbitraryMatch
+        assertTrue(sampleMatchOpt.present)
+        
+        val sampleMatch = sampleMatchOpt.get
         for (int i : 0 .. match.parameterNames.size - 1) {
             match.set(i, sampleMatch.get(i));
             assertEquals(match.get(i), sampleMatch.get(i))
@@ -154,8 +160,11 @@ class APICpsTest {
         val sns = snapshot
 
         val matcher = TransitionsOfApplicationTypeMatcher.on(ViatraQueryEngine.on(new EMFScope(sns.EMFRootForSnapshot)))
-        val match = matcher.oneArbitraryMatch
-        assertNotNull(match)
+        val matchOpt = matcher.oneArbitraryMatch
+        assertTrue(matchOpt.present)
+        
+        val match = matchOpt.get
+        
         assertEquals(match.specification, matcher.specification)
         assertArrayEquals(match.parameterNames, matcher.parameterNames)
         for (int i : 0 .. match.parameterNames.size - 1) {
@@ -171,11 +180,11 @@ class APICpsTest {
         val sns = snapshot
 
         val matcher = TransitionsOfApplicationTypeMatcher.on(ViatraQueryEngine.on(new EMFScope(sns.EMFRootForSnapshot)))
-        val sampleMatch = matcher.oneArbitraryMatch
-        assertNotNull(sampleMatch)
-
+        val sampleMatchOpt = matcher.oneArbitraryMatch
+        assertTrue(sampleMatchOpt.present)
+        
+        val sampleMatch = sampleMatchOpt.get
         val sampleMatchAsArray = sampleMatch.toArray
-        assertNotNull(sampleMatchAsArray)
         assertEquals(sampleMatchAsArray.size, sampleMatch.parameterNames.size)
         for (int i : 0 .. sampleMatchAsArray.size - 1) {
             assertEquals(sampleMatchAsArray.get(i), sampleMatch.get(i))
@@ -187,8 +196,10 @@ class APICpsTest {
         val sns = snapshot
 
         val matcher = TransitionsOfApplicationTypeMatcher.on(ViatraQueryEngine.on(new EMFScope(sns.EMFRootForSnapshot)))
-        val sampleMatch = matcher.oneArbitraryMatch
-        assertNotNull(sampleMatch)
+        val sampleMatchOpt = matcher.oneArbitraryMatch
+        assertTrue(sampleMatchOpt.present)
+        
+        val sampleMatch = sampleMatchOpt.get
 
         val match = matcher.newMatch(sampleMatch.t, sampleMatch.AT)
         assertNotNull(match)
@@ -219,8 +230,10 @@ class APICpsTest {
         assertNull(match.AT)
         assertTrue(match.mutable)
 
-        val sampleMatch = matcher.oneArbitraryMatch
-        assertNotNull(sampleMatch)
+        val sampleMatchOpt = matcher.oneArbitraryMatch
+        assertTrue(sampleMatchOpt.present)
+        
+        val sampleMatch = sampleMatchOpt.get
         for (int i : 0 .. match.parameterNames.size - 1) {
             match.set(i, sampleMatch.get(i));
             assertEquals(match.get(i), sampleMatch.get(i))

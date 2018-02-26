@@ -82,7 +82,8 @@ public class TraceabilityUtil {
      */
     public static void deleteTraceAndTarget(ViatraQueryEngine engine, EObject toDelete) {
     
-        Trace trace = engine.getMatcher(Trace2target.instance()).getOneArbitraryMatch().getTrace();
+        //Optional#get is correct here as long as trace and notation models are only modified by Viewers transformation
+        Trace trace = engine.getMatcher(Trace2target.instance()).getOneArbitraryMatch().get().getTrace();
         EcoreUtil.delete(trace);
         
         // Push up the contained objects and delete the targets

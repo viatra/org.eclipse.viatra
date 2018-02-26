@@ -36,6 +36,9 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig
+import java.util.stream.Collectors
+import java.util.Optional
+import java.util.stream.Stream
 
 /**
  * {@link ViatraQueryMatcher} implementation inferrer.
@@ -159,10 +162,19 @@ class PatternMatcherClassInferrer {
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                 }
                 body = '''
-                    return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
+                    return rawStreamAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}).collect(«Collectors».toSet());
                 '''
             ]
-            type.members += pattern.toMethod("getOneArbitraryMatch", typeRef(matchClass)) [
+            type.members += pattern.toMethod("streamAllMatches", typeRef(Stream, typeRef(matchClass))) [
+                documentation = pattern.javadocGetAllMatchesMethod.toString
+                for (parameter : pattern.parameters) {
+                    parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
+                }
+                body = '''
+                    return rawStreamAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
+                '''
+            ]
+            type.members += pattern.toMethod("getOneArbitraryMatch", typeRef(Optional, typeRef(matchClass))) [
                 documentation = pattern.javadocGetOneArbitraryMatchMethod.toString
                 for (parameter : pattern.parameters) {
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
@@ -226,28 +238,50 @@ class PatternMatcherClassInferrer {
             for (variable : pattern.parameters) {
                 val typeOfVariable = variable.calculateType
                 type.members +=
-                    variable.toMethod("rawAccumulateAllValuesOf" + variable.name, typeRef(Set, typeOfVariable)) [
+                    variable.toMethod("rawStreamAllValuesOf" + variable.name, typeRef(Stream, typeOfVariable)) [
                         documentation = variable.javadocGetAllValuesOfMethod.toString
                         parameters += variable.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
                         visibility = JvmVisibility::PROTECTED
                         body = '''
-                            «Set»<«typeOfVariable»> results = new «HashSet»<«typeOfVariable»>();
-                            rawAccumulateAllValues(«variable.positionConstant», parameters, results);
-                            return results;
+                            return rawStreamAllValues(«variable.positionConstant», parameters).map(«typeOfVariable».class::cast);
                         '''
                     ]
                 type.members += pattern.toMethod("getAllValuesOf" + variable.name, typeRef(Set, typeOfVariable)) [
                     documentation = variable.javadocGetAllValuesOfMethod.toString
                     body = '''
-                        return rawAccumulateAllValuesOf«variable.name»(emptyArray());
+                        return rawStreamAllValuesOf«variable.name»(emptyArray()).collect(«Collectors».toSet());
+                    '''
+                ]
+                type.members += pattern.toMethod("streamAllValuesOf" + variable.name, typeRef(Stream, typeOfVariable)) [
+                    documentation = variable.javadocGetAllValuesOfMethod.toString
+                    body = '''
+                        return rawStreamAllValuesOf«variable.name»(emptyArray());
                     '''
                 ]
                 if (pattern.parameters.size > 1) {
+                    type.members += variable.toMethod("streamAllValuesOf" + variable.name, typeRef(Stream, typeOfVariable)) [
+                        documentation = variable.javadocGetAllValuesOfMethod.toString
+                        parameters += pattern.toParameter("partialMatch", typeRef(matchClass))
+                        body = '''
+                            return rawStreamAllValuesOf«variable.name»(partialMatch.toArray());
+                        '''
+                    ]
+                    type.members += variable.toMethod("streamAllValuesOf" + variable.name, typeRef(Stream, typeOfVariable)) [
+                        documentation = variable.javadocGetAllValuesOfMethod.toString
+                        for (parameter : pattern.parameters) {
+                            if (parameter != variable) {
+                                parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
+                            }
+                        }
+                        body = '''
+                            return rawStreamAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«if (p.parameterName == variable.parameterName) "null" else p.parameterName»«ENDFOR»});
+                        '''
+                    ]
                     type.members += variable.toMethod("getAllValuesOf" + variable.name, typeRef(Set, typeOfVariable)) [
                         documentation = variable.javadocGetAllValuesOfMethod.toString
                         parameters += pattern.toParameter("partialMatch", typeRef(matchClass))
                         body = '''
-                            return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());
+                            return rawStreamAllValuesOf«variable.name»(partialMatch.toArray()).collect(«Collectors».toSet());
                         '''
                     ]
                     type.members += variable.toMethod("getAllValuesOf" + variable.name, typeRef(Set, typeOfVariable)) [
@@ -258,10 +292,7 @@ class PatternMatcherClassInferrer {
                             }
                         }
                         body = '''
-                            return rawAccumulateAllValuesOf«variable.name»(new Object[]{
-                            «FOR p : pattern.parameters SEPARATOR ', '»
-                                «if (p.parameterName == variable.parameterName) "null" else p.parameterName»
-                                «ENDFOR»});
+                            return rawStreamAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«if (p.parameterName == variable.parameterName) "null" else p.parameterName»«ENDFOR»}).collect(«Collectors».toSet());
                         '''
                     ]
                 }

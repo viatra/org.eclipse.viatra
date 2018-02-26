@@ -91,6 +91,7 @@ The affected methods are the following:
  * PQueryHeader#getFirstAnnotationByName
  * CorePatternLanguageHelper#getFirstAnnotationByName
  * CorePatternLanguageHelper#getParameterByName
+ * ViatraQueryMatcher#getOneArbitraryMatch
 
 If the old behavior of returning `null` values is necessary the `Optional.orElse` call can be used, e.g. `query.getFirstAnnotationByName("Constraint").orElse(null);`
 
