@@ -269,7 +269,7 @@ class PatternQuerySpecificationClassInferrer {
                 '''setEvaluationHints(new «QueryEvaluationHint»(null, new «ReteBackendFactory»()));'''
             }
             case SEARCH: {
-                '''setEvaluationHints(new «QueryEvaluationHint»(null, «LocalSearchBackendFactory».INSTANCE»));'''
+                '''setEvaluationHints(new «QueryEvaluationHint»(null, «LocalSearchBackendFactory».INSTANCE));'''
             }
             case UNSPECIFIED: {
                '''''' 

@@ -133,8 +133,8 @@ public abstract class ProjectGenerationHelper {
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
-        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore",
-                ViatraQueryRuntimePlugin.PLUGIN_ID, "org.eclipse.xtext.xbase.lib");
+        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore", ViatraQueryRuntimePlugin.PLUGIN_ID,
+                "org.eclipse.viatra.query.runtime.localsearch", "org.eclipse.xtext.xbase.lib");
         List<String> importPackages = Lists.newArrayList("org.apache.log4j");
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
