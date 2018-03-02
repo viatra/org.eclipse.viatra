@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ExecutionType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -90,4 +91,18 @@ public class ClasspathValidator extends AbstractDeclarativeValidator {
         }
     }
 
+    @Check
+    public void checkPackageImportGeneratedCode(PackageImport packageImport) {
+        if (!classpathValidationEnabled) {
+            return;
+        }
+        if (packageImport.getEPackage() != null && packageImport.getEPackage().getNsURI() != null && !metamodelProvider
+                .isGeneratedCodeAvailable(packageImport.getEPackage(), packageImport.eResource().getResourceSet())) {
+            warning(String.format(
+                    "The generated code of the Ecore model %s cannot be found. Check the org.eclipse.emf.ecore.generated_package extension in the model project or consider setting up a generator model for the generated code to work.",
+                    packageImport.getEPackage().getNsURI()),
+                    PatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
+                    IssueCodes.IMPORT_WITH_GENERATEDCODE);
+        }
+    }
 }

@@ -237,18 +237,6 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     }
 
     @Check
-    public void checkPackageImportGeneratedCode(PackageImport packageImport) {
-        if (packageImport.getEPackage() != null && packageImport.getEPackage().getNsURI() != null && !metamodelProvider
-                .isGeneratedCodeAvailable(packageImport.getEPackage(), packageImport.eResource().getResourceSet())) {
-            warning(String.format(
-                    "The generated code of the Ecore model %s cannot be found. Check the org.eclipse.emf.ecore.generated_package extension in the model project or consider setting up a generator model for the generated code to work.",
-                    packageImport.getEPackage().getNsURI()),
-                    PatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
-                    IssueCodes.IMPORT_WITH_GENERATEDCODE);
-        }
-    }
-
-    @Check
     public void checkParametersNamed(Pattern pattern) {
         for (Variable var : pattern.getParameters()) {
             if (var.getName() != null && var.getName().startsWith("_")) {
