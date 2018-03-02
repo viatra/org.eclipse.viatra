@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.annotations;
 
+import java.util.Optional;
+
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
@@ -50,8 +52,8 @@ public interface IPatternAnnotationValidator {
     /**
      * Provides an additional validator implementation.
      * 
-     * @return the validator object if specified or null otherwise.
-     * @since 0.7.0
+     * @return the validator object
+     * @since 2.0.0
      */
-    IPatternAnnotationAdditionalValidator getAdditionalValidator();
+    Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator();
 }

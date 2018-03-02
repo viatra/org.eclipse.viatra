@@ -18,6 +18,8 @@ import java.util.Optional;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
@@ -43,18 +45,56 @@ import com.google.inject.Inject;
  * 
  * @author Abel Hegedus
  */
-public class ConstraintAnnotationValidator implements IPatternAnnotationAdditionalValidator {
+public class ConstraintAnnotationValidator extends PatternAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.livevalidation.";
     public static final String SEVERITY_ISSUE_CODE = VALIDATOR_BASE_CODE + "severity";
     public static final String INVALID_SYMMETRIC_PARAMETERS = VALIDATOR_BASE_CODE + "symmetric";
     public static final String INVALID_KEY_PARAMETERS = VALIDATOR_BASE_CODE + "key";
     
+    private static final PatternAnnotationParameter KEY_PARAMETER = new PatternAnnotationParameter("key", 
+            PatternAnnotationParameter.LIST,
+            "The keys of a constraint represents the pattern parameter objects the constraint violation needs to be attached to. Keys are defined as a list of parameter names (e.g. keys = {param1, param2}",
+            /*multiple*/ false,
+            /*mandatory*/ true);
+    private static final PatternAnnotationParameter MESSAGE_PARAMETER = new PatternAnnotationParameter("message",
+            PatternAnnotationParameter.STRING,
+            "The message to display when the constraint violation is found. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.",
+            /*multiple*/ false, 
+            /*mandatory*/ true);
+    private static final PatternAnnotationParameter SEVERITY_PARAMETER = new PatternAnnotationParameter("severity", 
+            PatternAnnotationParameter.STRING,
+            "Possible values: &quot;error&quot;, &quot;warning&quot; and &quot;info&quot;.",
+            /*multiple*/ false,
+            /*mandatory*/ true);
+    private static final PatternAnnotationParameter EDITOR_PARAMETER = new PatternAnnotationParameter("targetEditorId",
+            PatternAnnotationParameter.STRING,
+            "An Eclipse editor ID where the validation framework should register itself to the context menu. Use &quot;*&quot; as a wildcard if the constraint should be used always when validation is started.",
+            /*multiple*/ true,
+            /*mandatory*/ false);
+    private static final PatternAnnotationParameter SYMMETRIC_PARAMETER = new PatternAnnotationParameter("symmetric", 
+            PatternAnnotationParameter.LIST,
+            "Provide parameter a list, where permutations of the same values register as one match violation. Symmetries are defined as a list of parameter names (e.g. symmetric = {param1, param2}",
+            /*multiple*/ true, 
+            /*mandatory*/ false);
+    
     @Inject
     private AnnotationExpressionValidator expressionValidator;
 
     @Inject
     private ITypeInferrer typeInferrer;
+    
+    
+    public ConstraintAnnotationValidator() {
+        super("Constraint",
+                "This annotation is used to mark a pattern for use in the VIATRA Query validation framework.",
+                KEY_PARAMETER, MESSAGE_PARAMETER, SEVERITY_PARAMETER, EDITOR_PARAMETER, SYMMETRIC_PARAMETER);
+    }
+    
+    @Override
+    public Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator() {
+        return Optional.of(this);
+    }
     
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
@@ -67,7 +107,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
 
     private void validateSymmetry(Annotation annotation, IIssueCallback validator, Pattern pattern, List<Variable> keyList) {
         Collection<ValueReference> symmetricLists = PatternLanguageHelper.getAnnotationParameters(annotation,
-                "symmetric");
+                SYMMETRIC_PARAMETER.getName());
         for (ValueReference symmetry : symmetricLists) {
             List<Variable> symmetryList = Lists.newArrayList();
             if (symmetry instanceof ListValue) {
@@ -97,7 +137,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
 
     private List<Variable> validateKeys(Annotation annotation, IIssueCallback validator, final Pattern pattern) {
         List<Variable> keyList = Lists.newArrayList();
-        ValueReference keyRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "key");
+        ValueReference keyRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, KEY_PARAMETER.getName());
         if (keyRef instanceof ListValue) {
             keyList = computeVariableListFromListValue(validator, pattern, keyRef, INVALID_KEY_PARAMETERS);
         }
@@ -153,7 +193,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     }
 
     private void validateSeverity(Annotation annotation, IIssueCallback validator) {
-        ValueReference severityRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "severity");
+        ValueReference severityRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, SEVERITY_PARAMETER.getName());
 
         if (severityRef instanceof StringValue) {
             String value = ((StringValue) severityRef).getValue();
@@ -165,7 +205,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     }
 
     private void validateMessage(Annotation annotation, IIssueCallback validator, Pattern pattern) {
-        ValueReference messageRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "message");
+        ValueReference messageRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, MESSAGE_PARAMETER.getName());
         if (messageRef instanceof StringValue) {
             String value = ((StringValue) messageRef).getValue();
             expressionValidator.validateStringExpression(value, pattern, messageRef, validator);

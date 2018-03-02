@@ -58,6 +58,13 @@
                             <packageClass>org.eclipse.uml2.types.TypesPackage</packageClass>
                         </metamodel>
                     </metamodels>
+                    <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.viatra</groupId>
+                        <artifactId>org.eclipse.viatra.addons.querybasedfeatures.runtime.validation</artifactId>
+                        <version>${viatra.incubation.version}</version>
+                    </dependency>
+                </dependencies>
                 </configuration>
             </plugin>
         </plugins>

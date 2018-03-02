@@ -30,16 +30,12 @@ public class PatternAnnotationProvider {
 
     private static final String UNKNOWN_ANNOTATION_MESSAGE = "Unknown annotation %s";
     private static final String UNKNOWN_ANNOTATION_PARAMETER = "Unknown parameter %s";
-    @Inject(optional = true)
+    @Inject
     private IAnnotationValidatorLoader loader;
     private Map<String, IPatternAnnotationValidator> annotationValidators;
 
     protected void initializeValidators() {
-        if (loader != null) {
-            annotationValidators = Maps.newHashMap(loader.getKnownValidators());
-        } else {
-            annotationValidators = Maps.newHashMap();
-        }
+        annotationValidators = Maps.newHashMap(loader.getKnownValidators());
     }
 
     /**

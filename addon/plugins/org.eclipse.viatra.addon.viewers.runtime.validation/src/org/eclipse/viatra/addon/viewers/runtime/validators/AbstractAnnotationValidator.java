@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.validators;
 
+import java.util.Optional;
+
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
@@ -29,7 +33,7 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  *
  */
-public abstract class AbstractAnnotationValidator implements IPatternAnnotationAdditionalValidator {
+public abstract class AbstractAnnotationValidator extends PatternAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
     protected static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.viewers.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
@@ -37,11 +41,15 @@ public abstract class AbstractAnnotationValidator implements IPatternAnnotationA
     @Inject
     private AnnotationExpressionValidator expressionValidator;
 
-    public AbstractAnnotationValidator() {
-        super();
+    public AbstractAnnotationValidator(String name, String description,
+            PatternAnnotationParameter... parameters) {
+        super(name, description, parameters);
     }
 
-    
+    @Override
+    public Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator() {
+        return Optional.of(this);
+    }
 
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {

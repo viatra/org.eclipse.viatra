@@ -1,0 +1,3 @@
+org.eclipse.viatra.query.patternlanguage.emf.annotations.impl.FunctionalDependencyAnnotationValidator
+org.eclipse.viatra.query.patternlanguage.emf.annotations.impl.LabelAnnotationValidator
+org.eclipse.viatra.query.patternlanguage.emf.annotations.impl.QueryExplorerAnnotationValidator

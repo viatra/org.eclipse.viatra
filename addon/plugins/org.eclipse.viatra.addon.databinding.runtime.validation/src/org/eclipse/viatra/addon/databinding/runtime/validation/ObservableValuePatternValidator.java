@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.databinding.runtime.validation;
 
+import java.util.Optional;
+
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
@@ -30,14 +34,41 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ObservableValuePatternValidator implements IPatternAnnotationAdditionalValidator {
+public class ObservableValuePatternValidator extends PatternAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.addon.databinding.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String EXPRESSION_MISMATCH_ISSUE_CODE = VALIDATOR_BASE_CODE + "expressionmismatch";
 
+    private static final PatternAnnotationParameter NAME_PARAMETER = new PatternAnnotationParameter("name",
+            PatternAnnotationParameter.STRING,
+            "The name of the observable value.", 
+            /* multiple */false,
+            /* mandatory */false);
+    private static final PatternAnnotationParameter EXPRESSION_PARAMETER = new PatternAnnotationParameter("expression",
+            PatternAnnotationParameter.STRING,
+            "This expression defines the attribute of a pattern parameter for which the IObservableValue will be created.  Only one of the expression and labelExpression properties must be set.", 
+            /*multiple*/ false, 
+            /*mandatory*/ false);
+    private static final PatternAnnotationParameter LABEL_EXPRESSION_PARAMETER = new PatternAnnotationParameter("labelExpression",
+            PatternAnnotationParameter.STRING,
+            "A label expression definition that can contain references to match parameters inside $ symbols. Only one of the expression and labelExpression properties must be set.",
+            /*multiple*/ false,
+            /*mandatory*/ false);
+    
     @Inject
     private AnnotationExpressionValidator expressionValidator;
+
+    public ObservableValuePatternValidator() {
+        super("ObservableValue",
+                "Defines observable values for the pattern's parameters; the code generator will create accessors for such values to use in databinding contexts.",
+                NAME_PARAMETER, EXPRESSION_PARAMETER, LABEL_EXPRESSION_PARAMETER);
+    }
+    
+    @Override
+    public Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator() {
+        return Optional.of(this);
+    }
 
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {

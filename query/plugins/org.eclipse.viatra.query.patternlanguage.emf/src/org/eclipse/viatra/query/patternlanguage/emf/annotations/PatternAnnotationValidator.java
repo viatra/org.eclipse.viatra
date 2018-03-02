@@ -8,12 +8,11 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.patternlanguage.emf.annotations.impl;
+package org.eclipse.viatra.query.patternlanguage.emf.annotations;
 
-import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
-import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
@@ -27,11 +26,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
- * A type-safe wrapper created from a pattern annotation extension point together with validation-related methods. Such
- * validators are instantiated in {@link PatternAnnotationProvider}.
+ * A description of VQL language annotations. Such validators are loaded in {@link PatternAnnotationProvider}.
  * 
  * @author Zoltan Ujhelyi
- * @noinstantiate This class is not intended to be instantiated by clients
+ * @since 2.0
  */
 public class PatternAnnotationValidator implements IPatternAnnotationValidator {
 
@@ -39,7 +37,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
     private final String name;
     private final String description;
     private final boolean deprecated;
-    private final IPatternAnnotationAdditionalValidator validator;
+    private final Optional<IPatternAnnotationAdditionalValidator> validator;
 
     private static final ImmutableMap<String, Class<? extends ValueReference>> TYPEMAPPING = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
             // TODO this validator is less specific; needs some enhancements
@@ -51,9 +49,38 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
             .put(PatternAnnotationParameter.LIST, ListValue.class)
             .put(PatternAnnotationParameter.VARIABLEREFERENCE, VariableValue.class).build();
 
+    /**
+     * @since 2.0
+     */
+    public PatternAnnotationValidator(String name, String description,
+            PatternAnnotationParameter... parameters) {
+        this(name, description, false, Arrays.asList(parameters), Optional.empty());
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public PatternAnnotationValidator(String name, String description,
+            IPatternAnnotationAdditionalValidator validator, PatternAnnotationParameter... parameters) {
+        this(name, description, false, Arrays.asList(parameters), Optional.ofNullable(validator));
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public PatternAnnotationValidator(String name, String description, boolean deprecated,
+            PatternAnnotationParameter... parameters) {
+        this(name, description, deprecated, Arrays.asList(parameters), Optional.empty());
+    }
+    
     public PatternAnnotationValidator(String name, String description, boolean deprecated,
             Iterable<PatternAnnotationParameter> parameters,
             IPatternAnnotationAdditionalValidator validator) {
+        this(name, description, deprecated, parameters, Optional.ofNullable(validator));
+    }
+    public PatternAnnotationValidator(String name, String description, boolean deprecated,
+            Iterable<PatternAnnotationParameter> parameters,
+            Optional<IPatternAnnotationAdditionalValidator> validator) {
         super();
         this.name = name;
         this.description = description;
@@ -139,7 +166,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
     }
 
     @Override
-    public IPatternAnnotationAdditionalValidator getAdditionalValidator() {
+    public Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator() {
         return validator;
     }
 

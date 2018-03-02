@@ -11,6 +11,8 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime.validation;
 
 import java.util.Collection;
+import java.util.Optional;
+
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -23,6 +25,8 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
@@ -42,7 +46,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
  * @author Abel Hegedus
  * 
  */
-public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAdditionalValidator {
+public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.addon.querybasedfeatures.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
@@ -50,8 +54,40 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
     public static final String PATTERN_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_pattern";
     public static final String ANNOTATION_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_annotation";
 
+    private static final PatternAnnotationParameter FEATURE_PARAMETER = new PatternAnnotationParameter("feature", 
+            PatternAnnotationParameter.STRING,
+            "The name of the EStructuralFeature that the query will serve (default: pattern name).",
+            /*multiple*/ false,
+            /*mandatory*/ false);
+    private static final PatternAnnotationParameter SOURCE_PARAMETER = new PatternAnnotationParameter("source",
+            PatternAnnotationParameter.VARIABLEREFERENCE,
+            "The name of the parameter that is the source of the derived feature (default: type of first parameter).",
+            /*multiple*/ false,
+            /*mandatory*/ false);
+    private static final PatternAnnotationParameter TARGET_PARAMETER = new PatternAnnotationParameter("target", 
+            PatternAnnotationParameter.VARIABLEREFERENCE,
+            "The name of the parameter that is the target of the derived feature (default: type of second parameter).",
+            /*multiple*/ false,
+            /*mandatory*/ false);
+    private static final PatternAnnotationParameter KIND_PARAMETER = new PatternAnnotationParameter("kind",
+            PatternAnnotationParameter.STRING,
+            "Possible values: single, many, sum, iteration (default: feature.isMany?many:single)",
+            /*multiple*/false,
+            /*mandatory*/false);
+    
     @Inject
     private ITypeInferrer typeInferrer;
+
+    public QueryBasedFeaturePatternValidator() {
+        super("QueryBasedFeature",
+                "This annotation is used to mark a pattern as a query definition for a query-based feature.",
+                FEATURE_PARAMETER, SOURCE_PARAMETER, TARGET_PARAMETER, KIND_PARAMETER);
+    }
+    
+    @Override
+    public Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator() {
+        return Optional.of(this);
+    }
 
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {

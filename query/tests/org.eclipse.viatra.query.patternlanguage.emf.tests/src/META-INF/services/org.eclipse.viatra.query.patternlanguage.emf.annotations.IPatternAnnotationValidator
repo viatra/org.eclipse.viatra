@@ -1,0 +1,3 @@
+org.eclipse.viatra.query.patternlanguage.emf.tests.annotations.OptionalAnnotationValidator
+org.eclipse.viatra.query.patternlanguage.emf.tests.annotations.Param1AnnotationValidator
+org.eclipse.viatra.query.patternlanguage.emf.tests.annotations.Param2AnnotationValidator

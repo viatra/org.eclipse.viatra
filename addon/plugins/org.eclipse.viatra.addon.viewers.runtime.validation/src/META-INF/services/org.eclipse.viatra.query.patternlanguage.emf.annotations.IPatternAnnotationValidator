@@ -1,0 +1,4 @@
+org.eclipse.viatra.addon.viewers.runtime.validators.ItemValidator
+org.eclipse.viatra.addon.viewers.runtime.validators.ContainsItemValidator
+org.eclipse.viatra.addon.viewers.runtime.validators.EdgeValidator
+org.eclipse.viatra.addon.viewers.runtime.validators.FormatValidator

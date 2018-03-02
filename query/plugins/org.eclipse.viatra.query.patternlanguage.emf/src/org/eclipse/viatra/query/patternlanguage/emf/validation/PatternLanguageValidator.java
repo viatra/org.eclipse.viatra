@@ -416,6 +416,10 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     public void checkAnnotation(Annotation annotation) {
         if (annotationProvider.hasValidator(annotation.getName())) {
             IPatternAnnotationValidator validator = annotationProvider.getValidator(annotation.getName());
+            if (validator.isDeprecated()) {
+                warning(String.format("Annotation %s is deprecated.", annotation.getName()), annotation,
+                        PatternLanguagePackage.Literals.ANNOTATION__NAME, IssueCodes.DEPRECATION);
+            }
             // Check for unknown annotation attributes
             for (AnnotationParameter unknownParameter : validator.getUnknownAttributes(annotation)) {
                 error(UNKNOWN_ANNOTATION_ATTRIBUTE + unknownParameter.getName(), unknownParameter,
@@ -430,6 +434,10 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             }
             // Check for annotation parameter types
             for (AnnotationParameter parameter : annotation.getParameters()) {
+                if (validator.isDeprecated(parameter.getName())) {
+                    warning(String.format("Annotation parameter %s is deprecated.", parameter.getName()), parameter,
+                            PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, IssueCodes.DEPRECATION);
+                }
                 Class<? extends ValueReference> expectedParameterType = validator.getExpectedParameterType(parameter);
                 if (expectedParameterType != null && parameter.getValue() != null
                         && !expectedParameterType.isAssignableFrom(parameter.getValue().getClass())) {
@@ -455,11 +463,11 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                         }
                     }
                 }
+                
             }
             // Execute extra validation
-            if (validator.getAdditionalValidator() != null) {
-                validator.getAdditionalValidator().executeAdditionalValidation(annotation, this);
-            }
+            validator.getAdditionalValidator()
+                    .ifPresent(v -> v.executeAdditionalValidation(annotation, this));
         } else {
             warning("Unknown annotation " + annotation.getName(), PatternLanguagePackage.Literals.ANNOTATION__NAME,
                     IssueCodes.UNKNOWN_ANNOTATION);

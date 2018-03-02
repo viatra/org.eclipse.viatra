@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
@@ -38,7 +40,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
  * @author Abel Hegedus
  * 
  */
-public class SurrogatePatternValidator implements IPatternAnnotationAdditionalValidator {
+public class SurrogatePatternValidator extends PatternAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
     private static final String FEATURE_PARAMETER_NAME = "feature";
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.patternlanguage.surrogate.";
@@ -52,6 +54,21 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
     @Inject
     private EMFTypeSystem typeSystem;
 
+   private static final PatternAnnotationParameter FEATURE_PARAMETER = new PatternAnnotationParameter(FEATURE_PARAMETER_NAME, 
+           PatternAnnotationParameter.STRING,
+           "The name of the EStructuralFeature that the query will serve (default: pattern name).",
+           /*multiple*/ false,
+           /*mandatory*/ false);
+               
+    public SurrogatePatternValidator() {
+        super("Surrogate", "This annotation is used to mark a pattern as a surrogate query definition for a feature.", FEATURE_PARAMETER);
+    }
+    
+    @Override
+    public Optional<IPatternAnnotationAdditionalValidator> getAdditionalValidator() {
+        return Optional.of(this);
+    }
+    
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         boolean foundErrors = false;

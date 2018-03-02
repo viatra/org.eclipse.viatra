@@ -139,8 +139,14 @@ public final class IssueCodes {
      */
     public static final String TYPE_NOT_ON_CLASSPATH = ISSUE_CODE_PREFIX + "type_not_on_classpath";
     
+    /**
+     * @since 2.0
+     */
+    public static final String DEPRECATION = ISSUE_CODE_PREFIX + "deprecated";
+    
     public static final String OTHER_ISSUE = ISSUE_CODE_PREFIX + "other_issue";
 
+    
     /**
      * This prefix is used to distinguish between Java and EMF parameter type proposals
      * @since 1.4

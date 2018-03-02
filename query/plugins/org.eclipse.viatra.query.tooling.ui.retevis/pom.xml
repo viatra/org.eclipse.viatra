@@ -56,6 +56,14 @@
                         </metamodel>
                     </metamodels>
                 </configuration>
+                <!-- This does not work as core projects do not install this incubation module 
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.viatra</groupId>
+                        <artifactId>org.eclipse.viatra.addons.viewers.runtime.validation</artifactId>
+                        <version>${viatra.incubation.version}</version>
+                    </dependency>
+                </dependencies>-->
             </plugin>
         </plugins>
     </build>

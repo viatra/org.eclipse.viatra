@@ -12,7 +12,9 @@ package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.ServiceLoaderBasedAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.formatting.EMFPatternLanguageFormatter;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
@@ -218,5 +220,12 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         binder.bind(Boolean.class)
         .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY))
         .toInstance(true);
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
+        return ServiceLoaderBasedAnnotationValidatorLoader.class;
     }
 }

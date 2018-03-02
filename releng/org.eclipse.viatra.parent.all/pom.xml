@@ -46,13 +46,8 @@
 		<module>../../transformation/features/org.eclipse.viatra.transformation.evm.transactions.feature</module>
 
 		<!-- Addons -->
-		<module>../../addon/plugins/org.eclipse.viatra.addon.databinding.runtime</module>
-		<module>../../addon/plugins/org.eclipse.viatra.addon.databinding.runtime.validation</module>
-		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime.validation</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.tooling</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.core</module>
-		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime</module>
-		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime.validation</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime.ui</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.tooling</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.querybasedfeatures.runtime.feature</module>

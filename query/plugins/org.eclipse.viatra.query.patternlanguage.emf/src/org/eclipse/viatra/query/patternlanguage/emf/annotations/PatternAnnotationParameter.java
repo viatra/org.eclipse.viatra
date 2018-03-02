@@ -28,6 +28,10 @@ public class PatternAnnotationParameter {
     private boolean deprecated;
 
     public PatternAnnotationParameter(String name, String type, String description, boolean multiple,
+            boolean mandatory) {
+        this(name, type, description, multiple, mandatory, false);
+    }
+    public PatternAnnotationParameter(String name, String type, String description, boolean multiple,
             boolean mandatory, boolean deprecated) {
         super();
         this.name = name;

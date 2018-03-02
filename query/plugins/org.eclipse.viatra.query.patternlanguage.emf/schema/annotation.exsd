@@ -49,108 +49,14 @@
 
    <element name="annotation">
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="annotationparameter"/>
-         </sequence>
-         <attribute name="name" type="string" use="required">
+         <attribute name="provider" type="string" use="required">
             <annotation>
                <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="language" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="deprecated" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="additionalValidator" type="string">
-            <annotation>
-               <documentation>
-                  
+                  An implementation of pure element provider
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationValidator"/>
                </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="annotationparameter">
-      <complexType>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="string">
-                  </enumeration>
-                  <enumeration value="int">
-                  </enumeration>
-                  <enumeration value="double">
-                  </enumeration>
-                  <enumeration value="boolean">
-                  </enumeration>
-                  <enumeration value="list">
-                  </enumeration>
-                  <enumeration value="variablereference">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="multiple" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  If the attribute is set true, the annotation is allowed to contain multiple parameters with the same name, otherwise the parameter name must not be set multiple times. It is the annotation processors responsibility to handle multiple types. If it is not set, the parameter name is considered unique.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="mandatory" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="deprecated" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

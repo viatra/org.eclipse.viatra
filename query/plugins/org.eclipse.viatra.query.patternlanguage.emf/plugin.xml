@@ -48,22 +48,10 @@
   <extension
         point="org.eclipse.viatra.query.patternlanguage.emf.annotation">
      <annotation
-           description="This annotation is used to record domain-specific knowledge about a functional dependency among matches of this pattern. For a given value combination of the &apos;forEach&apos; parameters, at most one value of each &apos;unique&apos; parameter may occur in the match set."
-           name="FunctionalDependency">
-        <annotationparameter
-              description="The name of a query parameter on the left-hand side of the dependency."
-              mandatory="false"
-              multiple="true"
-              name="forEach"
-              type="variablereference">
-        </annotationparameter>
-        <annotationparameter
-              description="The name of a query parameter on the right-hand side of the dependency."
-              mandatory="false"
-              multiple="true"
-              name="unique"
-              type="variablereference">
-        </annotationparameter>
-     </annotation>
+           provider="org.eclipse.viatra.query.patternlanguage.emf.annotations.impl.FunctionalDependencyAnnotationValidator" />
+     <annotation
+           provider="org.eclipse.viatra.query.patternlanguage.emf.annotations.impl.LabelAnnotationValidator" />
+     <annotation
+           provider="org.eclipse.viatra.query.patternlanguage.emf.annotations.impl.QueryExplorerAnnotationValidator" />
   </extension>
 </plugin>

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.addon.viewers.runtime.notation.HierarchyPolicy;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
@@ -35,12 +36,32 @@ public class ItemValidator extends AbstractAnnotationValidator {
 
     public static final String HIERARCHY_LITERAL_ISSUE = VALIDATOR_BASE_CODE + "hierarchyliteral";
 
+    private static final PatternAnnotationParameter ITEM_PARAMETER = new PatternAnnotationParameter("item", 
+            PatternAnnotationParameter.VARIABLEREFERENCE, 
+            "The pattern parameter the Item will represent in the viewer.",
+            /*multiple*/ false,
+            /*mandatory*/ true);
+    private static final PatternAnnotationParameter LABEL_PARAMETER = new PatternAnnotationParameter("label", 
+            PatternAnnotationParameter.STRING,
+            "The label to describe the item. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.",
+            /*multiple*/ false,
+            /*mandatory*/ false);
+    private static final PatternAnnotationParameter HIERARCHY_PARAMETER = new PatternAnnotationParameter("hierarchy", 
+            PatternAnnotationParameter.STRING,
+            "Describes whether an item should display only as 'root' (top-level) element, only as 'child' (not root but as a child) or only  as 'port' (hierarchic graph viewers) or 'always'.",
+            /*multiple*/ false,
+            /*mandatory*/ false);
+    
+    public ItemValidator() {
+        super("Item", "An element to display in a JFace viewer", ITEM_PARAMETER, LABEL_PARAMETER, HIERARCHY_PARAMETER);
+    }
+    
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         // Label validation is handled in parent class
         super.executeAdditionalValidation(annotation, validator);
         
-        ValueReference hierarchyRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "hierarchy");
+        ValueReference hierarchyRef = PatternLanguageHelper.getFirstAnnotationParameter(annotation, HIERARCHY_PARAMETER.getName());
         if (hierarchyRef instanceof StringValue) {
             String value = ((StringValue) hierarchyRef).getValue();
             

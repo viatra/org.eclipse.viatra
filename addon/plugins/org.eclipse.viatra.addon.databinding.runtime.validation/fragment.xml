@@ -4,30 +4,7 @@
       <extension
          point="org.eclipse.viatra.query.patternlanguage.emf.annotation">
       <annotation
-            additionalValidator="org.eclipse.viatra.addon.databinding.runtime.validation.ObservableValuePatternValidator"
-            description="Defines observable values for the pattern&apos;s parameters; the code generator will create accessors for such values to use in databinding contexts."
-            name="ObservableValue">
-         <annotationparameter
-               description="The name of the observable value."
-               mandatory="false"
-               multiple="false"
-               name="name"
-               type="string">
-         </annotationparameter>
-         <annotationparameter
-               description="This expression defines the attribute of a pattern parameter for which the IObservableValue will be created.  Only one of the expression and labelExpression properties must be set."
-               mandatory="false"
-               multiple="false"
-               name="expression"
-               type="string">
-         </annotationparameter>
-         <annotationparameter
-               description="A label expression definition that can contain references to match parameters inside $ symbols. Only one of the expression and labelExpression properties must be set."
-               mandatory="false"
-               multiple="false"
-               name="labelExpression"
-               type="string">
-         </annotationparameter>
+            provider="org.eclipse.viatra.addon.databinding.runtime.validation.ObservableValuePatternValidator">
       </annotation>
    </extension>
 </fragment>

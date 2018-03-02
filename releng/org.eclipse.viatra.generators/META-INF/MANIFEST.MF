@@ -21,6 +21,10 @@ Require-Bundle: org.eclipse.emf.mwe2.launch,
  org.eclipse.viatra.examples.cps.model;resolution:=optional,
  org.eclipse.viatra.query.runtime.cps.tests;resolution:=optional,
  org.eclipse.viatra.query.rcptt.queries;resolution:=optional
-Import-Package: org.apache.log4j
+Import-Package: org.apache.log4j,
+ org.eclipse.viatra.addon.databinding.runtime.validation,
+ org.eclipse.viatra.addon.querybasedfeatures.runtime.validation,
+ org.eclipse.viatra.addon.validation.runtime.annotation,
+ org.eclipse.viatra.addon.viewers.runtime.validators
 Bundle-Vendor: Eclipse VIATRA Project
 Automatic-Module-Name: org.eclipse.viatra.generators

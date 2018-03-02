@@ -1,0 +1,2 @@
+org.eclipse.viatra.addon.querybasedfeatures.runtime.validation.QueryBasedFeaturePatternValidator
+org.eclipse.viatra.addon.querybasedfeatures.runtime.validation.SurrogatePatternValidator

@@ -25,6 +25,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry()
     AdapterFactoryLabelProvider adapterFactoryLabelProvider
     static val String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
+    static val String LABEL_ANNOTATION = "Label";
     
     new() {
         val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory()
@@ -95,16 +96,16 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     }
     
     def String getMessage(IPatternMatch match) {
-        // Check format annotation from the Query Explorer annotation
-        match.specification.getFirstAnnotationByName(QUERY_EXPLORER_ANNOTATION)
-            .flatMap[getFirstValue("message", String)].orElse(// No formatting annotation found
-                if (match.parameterNames().isEmpty) {
-                    "(Match)"
-                } else {
-                    '''«FOR param : match.parameterNames SEPARATOR ", "»«param»=$«param»$«ENDFOR»'''
-                }
+        // Check format annotation from the Label and Query Explorer annotations
+        match.specification.getFirstAnnotationByName(LABEL_ANNOTATION).flatMap[getFirstValue("message", String)]
+            .orElse(match.specification.getFirstAnnotationByName(QUERY_EXPLORER_ANNOTATION)
+                .flatMap[getFirstValue("message", String)].orElse(// No formatting annotation found
+                    if (match.parameterNames().isEmpty) {
+                        "(Match)"
+                    } else {
+                        '''«FOR param : match.parameterNames SEPARATOR ", "»«param»=$«param»$«ENDFOR»'''
+                    }
+                )            
             )
-
-        
     }
 }

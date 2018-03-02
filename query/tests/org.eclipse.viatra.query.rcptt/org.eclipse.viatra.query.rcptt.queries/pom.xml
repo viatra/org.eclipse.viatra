@@ -46,6 +46,13 @@
                             <packageClass>org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage</packageClass>
                         </metamodel>
                     </metamodels>
+                    <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.viatra</groupId>
+                        <artifactId>org.eclipse.viatra.addons.validation.runtime.validation</artifactId>
+                        <version>${viatra.incubation.version}</version>
+                    </dependency>
+                </dependencies>
                 </configuration>
             </plugin>
             <plugin>
