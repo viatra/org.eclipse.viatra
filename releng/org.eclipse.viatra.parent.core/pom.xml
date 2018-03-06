@@ -24,6 +24,7 @@
         <module>../../addon/plugins/org.eclipse.viatra.addon.databinding.runtime.validation</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime.validation</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.validation.core</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime</module>
         <module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime.validation</module>
         <module>../../releng/org.eclipse.viatra.target.core</module>
