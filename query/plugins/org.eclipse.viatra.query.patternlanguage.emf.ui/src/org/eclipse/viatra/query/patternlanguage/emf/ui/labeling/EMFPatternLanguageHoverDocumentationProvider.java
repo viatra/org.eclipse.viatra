@@ -102,7 +102,7 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
             sb.append("</ul>");
             return sb.toString();
         }
-        return computeDocumentation(object);
+        return super.computeDocumentation(object);
     }
     
     private String calculateVariableHover(Variable variable) {
