@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -24,7 +25,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 /**
  * Iterates over all sources of {@link EStructuralFeature}
  */
-public class ExtendToEStructuralFeatureTarget extends ExtendOperation {
+public class ExtendToEStructuralFeatureTarget extends SingleValueExtendOperation<Object> {
 
     private int sourcePosition;
     private EStructuralFeature feature;
@@ -37,27 +38,26 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
         try {
             final EObject value = (EObject) frame.getValue(sourcePosition);
             if(! feature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
                 // TODO planner should ensure the proper supertype relation
-                it = Collections.emptyIterator();
-                return;
+                return Collections.emptyIterator();
             }
             final Object featureValue = value.eGet(feature);
             if (feature.isMany()) {
                 if (featureValue != null) {
                     final Collection<Object> objectCollection = (Collection<Object>) featureValue;
-                    it = objectCollection.iterator();
+                    return objectCollection.iterator();
                 } else {
-                    it = Collections.emptyIterator();
+                    return Collections.emptyIterator();
                 }
             } else {
                 if (featureValue != null) {
-                    it = Collections.singletonList(featureValue).iterator();
+                    return Collections.singletonList(featureValue).iterator();
                 } else {
-                    it = Collections.emptyIterator();
+                    return Collections.emptyIterator();
                 }
             }
         } catch (ClassCastException e) {

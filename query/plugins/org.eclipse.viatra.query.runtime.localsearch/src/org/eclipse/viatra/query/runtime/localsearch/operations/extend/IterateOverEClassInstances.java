@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
@@ -30,7 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverEClassInstances extends ExtendOperation implements IIteratingSearchOperation{
+public class IterateOverEClassInstances extends SingleValueExtendOperation<Object> implements IIteratingSearchOperation{
 
     private final EClass clazz;
     private final EClassTransitiveInstancesKey type;
@@ -47,8 +48,8 @@ public class IterateOverEClassInstances extends ExtendOperation implements IIter
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
+    public Iterator<? extends Object> getIterator(MatchingFrame frame, ISearchContext context) {
+        return context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
     }
     
     @Override

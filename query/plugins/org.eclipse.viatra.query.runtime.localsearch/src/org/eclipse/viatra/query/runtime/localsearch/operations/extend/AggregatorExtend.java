@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,7 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * @author Balázs Grill
  * @since 1.4
  */
-public class AggregatorExtend extends ExtendOperation implements IPatternMatcherOperation{
+public class AggregatorExtend extends SingleValueExtendOperation<Object> implements IPatternMatcherOperation{
 
     private final AggregatorConstraint aggregator;
     private final CallInformation information; 
@@ -49,11 +50,11 @@ public class AggregatorExtend extends ExtendOperation implements IPatternMatcher
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
         matcher = context.getMatcher(information.getReference());
         Object aggregate = aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn());
-        it = aggregate == null ? Collections.emptyIterator() : Collections.singletonList(aggregate).iterator();
+        return aggregate == null ? Collections.emptyIterator() : Collections.singletonList(aggregate).iterator();
         
     }
 

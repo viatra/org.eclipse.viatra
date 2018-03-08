@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -28,11 +27,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * @since 1.4
  *
  */
-public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatcherOperation {
+public class ExtendPositivePatternCall extends ExtendOperation<Tuple> implements IPatternMatcherOperation {
 
     private final CallInformation information; 
     private final VolatileModifiableMaskedTuple maskedTuple;
-    private Iterator<? extends Tuple> matches = null;
     
     /**
      * @since 1.7
@@ -43,26 +41,17 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    protected Iterator<? extends Tuple> getIterator(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
         IQueryResultProvider matcher = context.getMatcher(information.getReference());
-        matches = matcher.getAllMatches(information.getParameterMask(), maskedTuple).iterator();
+        return matcher.getAllMatches(information.getParameterMask(), maskedTuple).iterator();
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) {
-        if (matches.hasNext()){
-            Tuple tuple = matches.next();
-            while(!fillInResult(frame, tuple) && matches.hasNext()){
-                tuple = matches.next();
-            }
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    private boolean fillInResult(MatchingFrame frame, Tuple result) {
+    protected boolean fillInValue(Tuple result, MatchingFrame frame, ISearchContext context) {
         TupleMask mask = information.getFullFrameMask();
         // The first loop clears out the elements from a possible previous iteration 
         for(int i : information.getFreeParameterIndices()) {
@@ -80,13 +69,14 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
         }
         return true;
     }
-    
+
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
+    protected void cleanup(MatchingFrame frame, ISearchContext context) {
         TupleMask mask = information.getFullFrameMask();
         for(int i : information.getFreeParameterIndices()){
             mask.set(frame, i, null);
         }
+        
     }
     
     @Override

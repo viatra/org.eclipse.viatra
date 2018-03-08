@@ -11,8 +11,10 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
@@ -27,7 +29,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
  * 
  * @author Zoltan Ujhelyi
  */
-public class IterateOverEClassInstances extends AbstractIteratingExtendOperation implements IIteratingSearchOperation{
+public class IterateOverEClassInstances extends AbstractIteratingExtendOperation<Notifier> implements IIteratingSearchOperation{
 
     private EClass clazz;
 
@@ -41,9 +43,9 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
     }
     
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<? extends Notifier> getIterator(MatchingFrame frame, ISearchContext context) {
         final Class<?> ic = clazz.getInstanceClass();
-        it = getModelContents().filter(ic::isInstance).iterator();
+        return getModelContents().filter(ic::isInstance).iterator();
     }
     
     @Override

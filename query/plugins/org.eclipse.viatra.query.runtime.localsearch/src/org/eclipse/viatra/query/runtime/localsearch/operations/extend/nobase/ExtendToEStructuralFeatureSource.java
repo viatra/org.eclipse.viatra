@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -22,14 +23,14 @@ import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.SingleValueExtendOperation;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper VIATRA Base indexer}.
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */
-public class ExtendToEStructuralFeatureSource extends ExtendOperation {
+public class ExtendToEStructuralFeatureSource extends SingleValueExtendOperation<Object> {
 
     private int targetPosition;
     private EStructuralFeature feature;
@@ -46,7 +47,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
         if(!(feature instanceof EReference)){
             throw new LocalSearchException("Without base index, inverse navigation only possible along "
                     + "EReferences with defined EOpposite.");
@@ -59,22 +60,21 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation {
             final EObject value = (EObject) frame.getValue(targetPosition);
             if(! oppositeFeature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
                 // TODO planner should ensure the proper supertype relation
-                it = Collections.emptyIterator();
-                return;
+                return Collections.emptyIterator();
             }
             final Object featureValue = value.eGet(oppositeFeature);
             if (oppositeFeature.isMany()) {
                 if (featureValue != null) {
                     final Collection<Object> objectCollection = (Collection<Object>) featureValue;
-                    it = objectCollection.iterator();
+                    return objectCollection.iterator();
                 } else {
-                    it = Collections.emptyIterator();
+                    return Collections.emptyIterator();
                 }
             } else {
                 if (featureValue != null) {
-                    it = Collections.singleton(featureValue).iterator();
+                    return Collections.singleton(featureValue).iterator();
                 } else {
-                    it = Collections.emptyIterator();
+                    return Collections.emptyIterator();
                 }
             }
         } catch (ClassCastException e) {

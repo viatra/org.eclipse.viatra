@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ExpressionEval extends ExtendOperation {
+public class ExpressionEval extends SingleValueExtendOperation<Object> {
 
     IExpressionEvaluator evaluator;
     Map<String, Integer> nameMap;
@@ -40,18 +41,18 @@ public class ExpressionEval extends ExtendOperation {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
         try {
             Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
             if (result != null){
-                it = Collections.singletonList(result).iterator();
+                return Collections.singletonList(result).iterator();
             } else {
-                it = Collections.emptyIterator();
+                return Collections.emptyIterator();
             }
         } catch (Exception e) {
             Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
             logger.warn("Error while evaluating expression", e);
-            it = Collections.emptyIterator();
+            return Collections.emptyIterator();
         }
     }
     

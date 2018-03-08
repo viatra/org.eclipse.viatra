@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -24,7 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverChildren extends ExtendOperation {
+public class IterateOverChildren extends SingleValueExtendOperation<EObject> {
 
 
     private int sourcePosition;
@@ -43,13 +44,13 @@ public class IterateOverChildren extends ExtendOperation {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
         EObject source = (EObject) frame.get(sourcePosition);
         if(transitive) {
-            it = source.eAllContents();
+            return source.eAllContents();
         } else {
-            it = source.eContents().iterator();
+            return source.eContents().iterator();
         }
     }
     

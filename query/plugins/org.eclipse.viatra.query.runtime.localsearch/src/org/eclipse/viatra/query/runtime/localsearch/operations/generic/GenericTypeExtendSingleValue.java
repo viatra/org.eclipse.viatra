@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.SingleValueExtendOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
@@ -31,14 +31,12 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @since 1.7
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratingSearchOperation {
+public class GenericTypeExtendSingleValue extends SingleValueExtendOperation<Object> implements IIteratingSearchOperation {
 
     private final IInputKey type;
     private final List<Integer> positionList;
-    private Iterator<? extends Object> it;
     private final VolatileMaskedTuple maskedTuple;
     private TupleMask indexerMask;
-    private final int unboundVariableIndex;
 
     /**
      * 
@@ -48,6 +46,8 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
      *            the parameter positions that represent the variables of the input key
      */
     public GenericTypeExtendSingleValue(IInputKey type, int[] positions, TupleMask callMask, TupleMask indexerMask, int unboundVariableIndex) {
+        super(unboundVariableIndex);
+        
         Preconditions.checkArgument(positions.length == type.getArity(),
                 "The type %s requires %d parameters, but %d positions are provided", type.getPrettyPrintableName(),
                 type.getArity(), positions.length);
@@ -58,7 +58,6 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
         this.positionList = Collections.unmodifiableList(modifiablePositionList);
         this.type = type;
 
-        this.unboundVariableIndex = unboundVariableIndex;
         this.maskedTuple = new VolatileMaskedTuple(callMask);
         this.indexerMask = indexerMask;
     }
@@ -69,26 +68,9 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
-        frame.setValue(unboundVariableIndex, null);
-    }
-
-    @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    protected Iterator<? extends Object> getIterator(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
-        it = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple).iterator();
-
-    }
-
-    @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) {
-        if (it.hasNext()) {
-            final Object next = it.next();
-            frame.setValue(unboundVariableIndex, next);
-            return true;
-        } else {
-            return false;
-        }
+        return context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple).iterator();
     }
 
     @Override
@@ -100,7 +82,7 @@ public class GenericTypeExtendSingleValue implements ISearchOperation, IIteratin
     public String toString() {
         return "extend    " + type.getPrettyPrintableName() + "("
                 + positionList.stream().map(
-                        input -> String.format("%s%d", Objects.equals(input, unboundVariableIndex) ? "-" : "+", input))
+                        input -> String.format("%s%d", Objects.equals(input, position) ? "-" : "+", input))
                         .collect(Collectors.joining(", "))
                 + ")";
     }

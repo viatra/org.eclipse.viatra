@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -25,7 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * 
  * @author Zoltan Ujhelyi
  */
-public class CountOperation extends ExtendOperation implements IPatternMatcherOperation{
+public class CountOperation extends SingleValueExtendOperation<Integer> implements IPatternMatcherOperation{
 
     private final CallInformation information; 
     private final VolatileModifiableMaskedTuple maskedTuple;
@@ -42,10 +43,10 @@ public class CountOperation extends ExtendOperation implements IPatternMatcherOp
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<Integer> getIterator(MatchingFrame frame, ISearchContext context) {
         matcher = context.getMatcher(information.getReference());
         maskedTuple.updateTuple(frame);
-        it = Collections.singletonList(matcher.countMatches(information.getParameterMask(), maskedTuple)).iterator();
+        return Collections.singletonList(matcher.countMatches(information.getParameterMask(), maskedTuple)).iterator();
         
     }
     

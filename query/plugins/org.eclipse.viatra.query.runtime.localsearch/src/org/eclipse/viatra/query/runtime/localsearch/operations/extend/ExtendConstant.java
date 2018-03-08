@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -24,7 +25,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
  * @author Marton Bur
  *
  */
-public class ExtendConstant extends ExtendOperation {
+public class ExtendConstant extends SingleValueExtendOperation<Object> {
 
     private Object value;
 
@@ -34,8 +35,8 @@ public class ExtendConstant extends ExtendOperation {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = Collections.singletonList(value).iterator();
+    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+        return Collections.singletonList(value).iterator();
     }
 
     @Override

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -31,7 +32,7 @@ import com.google.common.collect.Iterables;
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */
-public class ExtendToEStructuralFeatureSource extends ExtendOperation implements IIteratingSearchOperation{
+public class ExtendToEStructuralFeatureSource extends SingleValueExtendOperation<EObject> implements IIteratingSearchOperation{
 
     private int targetPosition;
     private EStructuralFeature feature;
@@ -55,10 +56,10 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation implements
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
         maskedTuple.updateTuple(frame);
         Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple);
-        it = Iterables.filter(values, EObject.class).iterator();
+        return Iterables.filter(values, EObject.class).iterator();
     }
     
     @Override

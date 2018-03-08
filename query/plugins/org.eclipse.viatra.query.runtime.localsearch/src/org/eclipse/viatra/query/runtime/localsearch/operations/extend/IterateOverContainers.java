@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverContainers extends ExtendOperation {
+public class IterateOverContainers extends SingleValueExtendOperation<EObject> {
 
 
     /**
@@ -77,16 +77,16 @@ public class IterateOverContainers extends ExtendOperation {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
         Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
         EObject source = (EObject) frame.get(sourcePosition);
         EObject container = source.eContainer();
         if (container == null) {
-            it = Collections.emptyIterator();
+            return Collections.emptyIterator();
         } else if (transitive) {
-            it = new ParentIterator(source);
+            return new ParentIterator(source);
         } else { 
-            it = Collections.singleton(container).iterator();
+            return Collections.singleton(container).iterator();
         }
     }
 

@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -32,7 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * @since 1.7
  * 
  */
-public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation implements IPatternMatcherOperation {
+public abstract class ExtendBinaryTransitiveClosure extends SingleValueExtendOperation<Object> implements IPatternMatcherOperation {
 
     /**
      * Calculates the transitive closure of a pattern match in a forward direction (first parameter bound, second
@@ -100,7 +101,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation impl
     protected abstract Object getTarget(Tuple frame);
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
         // Note: second parameter is NOT bound during execution, but the first is
         IQueryResultProvider matcher = context.getMatcher(information.getReference());
 
@@ -122,7 +123,7 @@ public abstract class ExtendBinaryTransitiveClosure extends ExtendOperation impl
             });
         }
 
-        it = targetsFound.iterator();
+        return targetsFound.iterator();
     }
 
     @Override

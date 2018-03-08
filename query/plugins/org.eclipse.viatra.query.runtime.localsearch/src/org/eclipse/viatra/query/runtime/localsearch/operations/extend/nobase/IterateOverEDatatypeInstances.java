@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -37,7 +38,7 @@ import com.google.common.collect.Table;
  * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
-public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation implements IIteratingSearchOperation {
+public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> implements IIteratingSearchOperation {
 
     private EDataType dataType;
     
@@ -63,8 +64,8 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
     }
     
     @Override
-    public void onInitialize(MatchingFrame frame, final ISearchContext context) {
-        it = getModelContents().filter(EObject.class::isInstance).map(EObject.class::cast)
+    public Iterator<? extends Object> getIterator(MatchingFrame frame, final ISearchContext context) {
+        return getModelContents().filter(EObject.class::isInstance).map(EObject.class::cast)
                 .map(input -> doGetEAttributes(input.eClass(), context)
                 .map(attribute -> {
                     if (attribute.isMany()) {
