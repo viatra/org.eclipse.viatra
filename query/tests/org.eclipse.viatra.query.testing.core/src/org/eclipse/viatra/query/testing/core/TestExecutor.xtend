@@ -242,8 +242,8 @@ class TestExecutor {
         val appers = logger.allAppenders
         while (appers.hasMoreElements) {
             val apper = appers.nextElement
-            if(apper instanceof TestingLogAppender){
-                return (apper as TestingLogAppender).getOutput.toString
+            if(apper instanceof TestingSeverityAggregatorLogAppender){
+                return apper.getOutput
             }
         }
         return "Logger output not recorded"

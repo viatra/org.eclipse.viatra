@@ -644,29 +644,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         return result;
     }
 
-    /**
-     * NOTE: This method returns the inverted map of the internal storage of observers and
-     *  the inversion can be expensive when a large number of observers are registered for 
-     *  many different EObjects.
-     * 
-     * @return the lightweightObservers to EObject Map
-     * @deprecated Use {@link #getEObjectsObservedByLightweightObservers()} and
-     *             {@link #getLightweightEObjectObservers(EObject)} instead.
-     */
-    @Deprecated
-    public Map<LightweightEObjectObserver, Collection<EObject>> getLightweightObservers() {
-        Map<LightweightEObjectObserver, Collection<EObject>> invertedMap = CollectionsFactory.createMap();
-        for (Entry<EObject, Set<LightweightEObjectObserver>> entry : lightweightObservers.entrySet()) {
-            EObject key = entry.getKey();
-            Set<LightweightEObjectObserver> value = entry.getValue();
-            for (LightweightEObjectObserver observer : value) {
-                Collection<EObject> observedObjects = invertedMap.computeIfAbsent(observer, CollectionsFactory::emptySet);
-                observedObjects.add(key);
-            }
-        }
-        return invertedMap;
-    }
-
     public void notifyBaseIndexChangeListeners() {
         notifyBaseIndexChangeListeners(instanceStore.isDirty);
         if (instanceStore.isDirty) {

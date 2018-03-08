@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -20,8 +19,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 public class MatcherReference {
     final PQuery query;
     final Set<PParameter> adornment;
-    // XXX In case of older (pre-1.4) VIATRA versions, PParameters were not stable, see bug 498348
-    final Set<String> boundParameterNames;
     
     /**
      * Hints that can override the callee's own hints. This field is intentionally left out from hashCode and equals
@@ -35,7 +32,6 @@ public class MatcherReference {
         super();
         this.query = query;
         this.adornment = adornment;
-        this.boundParameterNames = adornment.stream().map(PParameter::getName).collect(Collectors.toSet()); 
         this.hints = hints;
     }
     
@@ -54,7 +50,7 @@ public class MatcherReference {
         final int prime = 31;
         int result = 1;
         
-        result = prime * result + ((boundParameterNames == null) ? 0 : boundParameterNames.hashCode());
+        result = prime * result + ((adornment == null) ? 0 : adornment.hashCode());
         result = prime * result + ((query == null) ? 0 : query.hashCode());
         return result;
     }
@@ -67,10 +63,10 @@ public class MatcherReference {
         if (getClass() != obj.getClass())
             return false;
         MatcherReference other = (MatcherReference) obj;
-        if (boundParameterNames == null) {
-            if (other.boundParameterNames != null)
+        if (adornment == null) {
+            if (other.adornment != null)
                 return false;
-        } else if (!boundParameterNames.equals(other.boundParameterNames))
+        } else if (!adornment.equals(other.adornment))
             return false;
         if (query == null) {
             if (other.query != null)

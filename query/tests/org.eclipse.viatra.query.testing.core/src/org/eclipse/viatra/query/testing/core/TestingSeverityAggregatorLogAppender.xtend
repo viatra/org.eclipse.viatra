@@ -19,6 +19,7 @@ import org.apache.log4j.spi.LoggingEvent
 class TestingSeverityAggregatorLogAppender extends AppenderSkeleton {
     
     var severity=Level.INFO
+    val Level minReportSeverity = Level.ERROR
     var LoggingEvent event;
     
     override void close() {
@@ -41,6 +42,13 @@ class TestingSeverityAggregatorLogAppender extends AppenderSkeleton {
     
     def getEvent(){
         event
+    }
+    
+    /**
+     * @since 2.0
+     */
+    def String getOutput() {
+        return if (event.getLevel.isGreaterOrEqual(minReportSeverity))  "" else layout.format(event);
     }
     
     def getSeverity(){
