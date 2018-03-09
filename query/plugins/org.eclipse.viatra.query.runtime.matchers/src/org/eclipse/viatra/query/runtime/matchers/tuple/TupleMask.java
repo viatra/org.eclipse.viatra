@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -242,6 +243,19 @@ public class TupleMask {
         int i = 0;
         for (Integer a : list)
             indicesSorted[i++] = a;
+    }
+    
+    /**
+     * Returns the first index of the source that is not selected by the mask, or empty if all indices are selected.
+     * <p> PRE: mask indices are all different
+     * @since 2.0
+     */
+    public OptionalInt getFirstOmittedIndex() {
+        if (indicesSorted == null) sort();
+        int column = 0; 
+        while (column < getSize() && indicesSorted[column] == column) column++;
+        if (column < getSize()) return OptionalInt.of(column);
+        else return OptionalInt.empty();
     }
 
     /**
