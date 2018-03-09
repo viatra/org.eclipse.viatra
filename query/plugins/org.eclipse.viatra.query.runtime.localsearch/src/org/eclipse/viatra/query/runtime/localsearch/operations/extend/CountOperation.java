@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
@@ -26,30 +27,46 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * 
  * @author Zoltan Ujhelyi
  */
-public class CountOperation extends SingleValueExtendOperation<Integer> implements IPatternMatcherOperation{
+public class CountOperation implements ISearchOperation, IPatternMatcherOperation{
 
-    private final CallInformation information; 
-    private final VolatileModifiableMaskedTuple maskedTuple;
-    private IQueryResultProvider matcher;
-
+    private class Executor extends SingleValueExtendOperationExecutor<Integer>  {
+        private final VolatileModifiableMaskedTuple maskedTuple;
+        private IQueryResultProvider matcher;
+        
+        public Executor(int position) {
+            super(position);
+            maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
+        }
+        
+        @Override
+        public Iterator<Integer> getIterator(MatchingFrame frame, ISearchContext context) {
+            matcher = context.getMatcher(information.getReference());
+            maskedTuple.updateTuple(frame);
+            return Collections.singletonList(matcher.countMatches(information.getParameterMask(), maskedTuple)).iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return CountOperation.this;
+        }
+    }
+    
+    private final CallInformation information;
+    private final int position; 
     
     /**
      * @since 1.7
      */
     public CountOperation(CallInformation information, int position) {
-        super(position);
         this.information = information;
-        maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
+        this.position = position;
     }
 
     @Override
-    public Iterator<Integer> getIterator(MatchingFrame frame, ISearchContext context) {
-        matcher = context.getMatcher(information.getReference());
-        maskedTuple.updateTuple(frame);
-        return Collections.singletonList(matcher.countMatches(information.getParameterMask(), maskedTuple)).iterator();
-        
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
     }
-    
+
     @Override
     public List<Integer> getVariablePositions() {
         return information.getVariablePositions();

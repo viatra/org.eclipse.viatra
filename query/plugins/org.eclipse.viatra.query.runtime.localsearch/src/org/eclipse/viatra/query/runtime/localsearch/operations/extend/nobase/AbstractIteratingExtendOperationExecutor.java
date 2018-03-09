@@ -21,19 +21,20 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.SingleValueExtendOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.SingleValueExtendOperationExecutor;
 
 /**
  * This abstract class provides a utility method for extenders to iterate over the given scope.
  * 
  * @author Grill Balázs
+ * @noextend This class is not intended to be subclassed by clients.
  *
  */
-public abstract class AbstractIteratingExtendOperation<T> extends SingleValueExtendOperation<T> {
+abstract class AbstractIteratingExtendOperationExecutor<T> extends SingleValueExtendOperationExecutor<T> {
 
     private final EMFScope scope;
     
-    public AbstractIteratingExtendOperation(int position, EMFScope scope) {
+    public AbstractIteratingExtendOperationExecutor(int position, EMFScope scope) {
         super(position);
         this.scope = scope;
     }

@@ -20,7 +20,8 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * This operation simply checks if a model element is part of the Query Scope
@@ -28,7 +29,36 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperat
  * @author Marton Bur
  *
  */
-public class ScopeCheck extends CheckOperation {
+public class ScopeCheck implements ISearchOperation {
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %d unbound", position));
+            Object value = frame.getValue(position);
+            if(value instanceof EObject){
+                EObject eObject = (EObject) value;
+                IBaseIndexObjectFilter filterConfiguration = scope.getOptions().getObjectFilterConfiguration();
+                boolean filtered = false;
+                if(filterConfiguration != null){
+                    filtered = filterConfiguration.isFiltered(eObject);
+                }
+                if(filtered){
+                    return false;
+                } else {
+                    return EcoreUtil.isAncestor(scope.getScopeRoots(), eObject);
+                }
+            } else {
+                return true;            
+            }
+        }
+
+        @Override
+        public ISearchOperation getOperation() {
+            return ScopeCheck.this;
+        }
+        
+    }
 
     private int position;
     private EMFScope scope;
@@ -40,24 +70,8 @@ public class ScopeCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %d unbound", position));
-        Object value = frame.getValue(position);
-        if(value instanceof EObject){
-            EObject eObject = (EObject) value;
-            IBaseIndexObjectFilter filterConfiguration = scope.getOptions().getObjectFilterConfiguration();
-            boolean filtered = false;
-            if(filterConfiguration != null){
-                filtered = filterConfiguration.isFiltered(eObject);
-            }
-            if(filtered){
-                return false;
-            } else {
-                return EcoreUtil.isAncestor(scope.getScopeRoots(), eObject);
-            }
-        } else {
-            return true;            
-        }
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

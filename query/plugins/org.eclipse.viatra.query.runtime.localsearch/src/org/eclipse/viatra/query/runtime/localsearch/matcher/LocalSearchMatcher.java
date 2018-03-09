@@ -12,9 +12,6 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,10 +19,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
@@ -43,6 +42,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     private final List<SearchPlanExecutor> plan;
     private final IPlanDescriptor planDescriptor;
     private final List<ILocalSearchAdapter> adapters;
+    private final ISearchContext searchContext;
 
     /**
      * @since 2.0
@@ -197,30 +197,13 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     }
 
     /**
-     * @since 1.7
+     * @since 2.0
      */
-    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor plan) {
-        this(planDescriptor, Collections.singletonList(plan));
-    }
-    
-    /**
-     * @since 1.7
-     */
-    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor[] plan) {
-        this(planDescriptor, new ArrayList<>(Arrays.asList(plan)));
-    }
-    
-    /**
-     * @since 1.7
-     */
-    public LocalSearchMatcher(IPlanDescriptor planDescriptor, Collection<SearchPlanExecutor> plan) {
-        this(planDescriptor, new ArrayList<>(plan));
-    }
-    
-    private LocalSearchMatcher(IPlanDescriptor planDescriptor, List<SearchPlanExecutor> plan) {
+    public LocalSearchMatcher(ISearchContext searchContext, IPlanDescriptor planDescriptor, List<SearchPlan> plan) {
         Preconditions.checkArgument(planDescriptor != null, "Cannot initialize matcher with null query.");
         this.planDescriptor = planDescriptor;
-        this.plan = plan;
+        this.searchContext = searchContext;
+        this.plan = plan.stream().map(p -> new SearchPlanExecutor(p, searchContext)).collect(Collectors.toList());
         this.adapters = new LinkedList<>();
     }
     
@@ -263,7 +246,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     public boolean hasMatch(Object[] parameterValues) {
         //TODO can be removed after streamMatches is lazy
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(
+                plan.iterator(), parameterValues);
         boolean hasMatch = it.hasNext();
         matchingFinished();
         return hasMatch;
@@ -275,7 +259,9 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     public boolean hasMatch(TupleMask parameterSeedMask, ITuple parameterValues) {
         //TODO can be removed after streamMatches is lazy
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(
+                plan.iterator(), parameterSeedMask,
+                parameterValues);
         boolean hasMatch = it.hasNext();
         matchingFinished();
         return hasMatch;
@@ -292,7 +278,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     public int countMatches(Object[] parameterValues) {
         //TODO can be removed after streamMatches is lazy
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(
+                plan.iterator(), parameterValues);
         
         Set<Tuple> results = new HashSet<>();
         while (it.hasNext()) {
@@ -311,7 +298,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     public int countMatches(TupleMask parameterSeedMask, ITuple parameterValues) {
         //TODO can be removed after streamMatches is lazy
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(
+                plan.iterator(), parameterSeedMask, parameterValues);
         
         Set<Tuple> results = new HashSet<>();
         while (it.hasNext()) {
@@ -340,7 +328,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
      */
     public Tuple getOneArbitraryMatch(TupleMask parameterSeedMask, ITuple parameterValues) {
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(
+                plan.iterator(), parameterSeedMask, parameterValues);
         Tuple returnValue = null;
         if (it.hasNext()) {
             returnValue = it.next();
@@ -398,7 +387,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
      */
     public Stream<Tuple> streamMatches(TupleMask parameterSeedMask, final ITuple parameterValues) {
         matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(plan.iterator(), parameterSeedMask, parameterValues);
+        PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(
+                plan.iterator(), parameterSeedMask, parameterValues);
         //TODO not collecting the results here causes plan executions to overlap with each other, causing very strange issues
         //most likely a manifestation of bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=528377
 //        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,

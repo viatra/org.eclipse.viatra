@@ -21,58 +21,79 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature}
  */
-public class ExtendToEStructuralFeatureTarget extends SingleValueExtendOperation<Object> {
+public class ExtendToEStructuralFeatureTarget implements ISearchOperation {
 
-    private int sourcePosition;
-    private EStructuralFeature feature;
+    private class Executor extends SingleValueExtendOperationExecutor<Object>  {
+        
+        public Executor(int position) {
+            super(position);
+        }
 
-    public ExtendToEStructuralFeatureTarget(int sourcePosition, int targetPosition, EStructuralFeature feature) {
-        super(targetPosition);
-        this.sourcePosition = sourcePosition;
-        this.feature = feature;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
-        try {
-            final EObject value = (EObject) frame.getValue(sourcePosition);
-            if(! feature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
-                // TODO planner should ensure the proper supertype relation
-                return Collections.emptyIterator();
-            }
-            final Object featureValue = value.eGet(feature);
-            if (feature.isMany()) {
-                if (featureValue != null) {
-                    final Collection<Object> objectCollection = (Collection<Object>) featureValue;
-                    return objectCollection.iterator();
-                } else {
+        @SuppressWarnings("unchecked")
+        @Override
+        public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+            try {
+                final EObject value = (EObject) frame.getValue(sourcePosition);
+                if(! feature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
+                    // TODO planner should ensure the proper supertype relation
                     return Collections.emptyIterator();
                 }
-            } else {
-                if (featureValue != null) {
-                    return Collections.singletonList(featureValue).iterator();
+                final Object featureValue = value.eGet(feature);
+                if (feature.isMany()) {
+                    if (featureValue != null) {
+                        final Collection<Object> objectCollection = (Collection<Object>) featureValue;
+                        return objectCollection.iterator();
+                    } else {
+                        return Collections.emptyIterator();
+                    }
                 } else {
-                    return Collections.emptyIterator();
+                    if (featureValue != null) {
+                        return Collections.singletonList(featureValue).iterator();
+                    } else {
+                        return Collections.emptyIterator();
+                    }
                 }
+            } catch (ClassCastException e) {
+                throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition), e);
             }
-        } catch (ClassCastException e) {
-            throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition), e);
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExtendToEStructuralFeatureTarget.this;
         }
     }
     
+    private final int sourcePosition;
+    private final int targetPosition;
+    private final EStructuralFeature feature;
+
+    public ExtendToEStructuralFeatureTarget(int sourcePosition, int targetPosition, EStructuralFeature feature) {
+        this.sourcePosition = sourcePosition;
+        this.targetPosition = targetPosition;
+        this.feature = feature;
+    }
+
+    
     @Override
     public String toString() {
-        return "extend    "+feature.getEContainingClass().getName()+"."+feature.getName()+"(+"+sourcePosition+", -"+position+")";
+        return "extend    "+feature.getEContainingClass().getName()+"."+feature.getName()+"(+"+sourcePosition+", -"+ targetPosition +")";
     }
 
     @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(targetPosition);
+    }
+
+
+    @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(sourcePosition, position);
+        return Arrays.asList(sourcePosition, targetPosition);
     }
     
 }

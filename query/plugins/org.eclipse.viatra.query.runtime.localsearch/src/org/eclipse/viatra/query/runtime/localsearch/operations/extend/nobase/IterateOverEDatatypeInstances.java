@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.collect.HashBasedTable;
@@ -38,13 +39,45 @@ import com.google.common.collect.Table;
  * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
-public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> implements IIteratingSearchOperation {
+public class IterateOverEDatatypeInstances implements IIteratingSearchOperation {
 
-    private EDataType dataType;
+    private class Executor extends AbstractIteratingExtendOperationExecutor<Object> {
+        
+        public Executor(int position, EMFScope scope) {
+            super(position, scope);
+        }
+
+        @Override
+        public Iterator<? extends Object> getIterator(MatchingFrame frame, final ISearchContext context) {
+            return getModelContents().filter(EObject.class::isInstance).map(EObject.class::cast)
+                    .map(input -> doGetEAttributes(input.eClass(), context)
+                            .map(attribute -> {
+                                if (attribute.isMany()) {
+                                    return ((List<?>) input.eGet(attribute)).stream();
+                                } else {
+                                    Object o = input.eGet(attribute);
+                                    return o == null ? Stream.empty() : Stream.of(o);
+                                }
+                            }))
+                    .flatMap(i -> i)
+                    .<Object>flatMap(i -> i)
+                    .iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverEDatatypeInstances.this;
+        }
+    }
+    
+    private final EDataType dataType;
+    private final int position;
+    private final EMFScope scope;
     
     public IterateOverEDatatypeInstances(int position, EDataType dataType, EMFScope scope) {
-        super(position, scope);
+        this.position = position;
         this.dataType = dataType;
+        this.scope = scope;
     }
     
     protected Stream<EAttribute> doGetEAttributes(EClass eclass, ISearchContext context){
@@ -64,23 +97,10 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
     }
     
     @Override
-    public Iterator<? extends Object> getIterator(MatchingFrame frame, final ISearchContext context) {
-        return getModelContents().filter(EObject.class::isInstance).map(EObject.class::cast)
-                .map(input -> doGetEAttributes(input.eClass(), context)
-                .map(attribute -> {
-                    if (attribute.isMany()) {
-                        return ((List<?>) input.eGet(attribute)).stream();
-                    } else {
-                        Object o = input.eGet(attribute);
-                        return o == null ? Stream.empty() : Stream.of(o);
-                    }
-                }))
-                .flatMap(i -> i)
-                .<Object>flatMap(i -> i)
-                .iterator();
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position, scope);
     }
-    
-    
+
     @Override
     public String toString() {
         return "extend    "+dataType.getName()+"(-"+position+") iterating";

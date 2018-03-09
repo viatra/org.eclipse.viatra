@@ -15,28 +15,63 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
- * Iterates all available {@link EStructuralFeature} elements using an {@link NavigationHelper VIATRA Base
+ * Iterates all available {@link EStructuralFeature} elements using an {@link IQueryRuntimeContext VIATRA Base
  * indexer}. It is assumed that the base indexer has been registered for the selected reference type.
  * 
  */
 public class IterateOverEStructuralFeatureInstances implements IIteratingSearchOperation{
 
+    private class Executor implements ISearchOperationExecutor {
+        private Iterator<Tuple> it;
+
+        @Override
+        public void onBacktrack(MatchingFrame frame, ISearchContext context) {
+            frame.setValue(sourcePosition, null);
+            frame.setValue(targetPosition, null);
+            it = null;
+        }
+
+        @Override
+        public void onInitialize(MatchingFrame frame, ISearchContext context) {
+            Iterable<Tuple> tuples = context.getRuntimeContext().enumerateTuples(type, indexerMask, Tuples.staticArityFlatTupleOf());
+
+            it = tuples.iterator();
+        }
+
+        @Override
+        public boolean execute(MatchingFrame frame, ISearchContext context) {
+            if (it.hasNext()) {
+                final Tuple next = it.next();
+                frame.setValue(sourcePosition, next.get(0));
+                frame.setValue(targetPosition, next.get(1));
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverEStructuralFeatureInstances.this;
+        }
+    }
+    
     private final EStructuralFeature feature;
     private final int sourcePosition;
     private final int targetPosition;
     private final EStructuralFeatureInstancesKey type;
-    private Iterator<Tuple> it;
     private static final TupleMask indexerMask = TupleMask.empty(2);
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {
@@ -51,29 +86,8 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
-        frame.setValue(sourcePosition, null);
-        frame.setValue(targetPosition, null);
-        it = null;
-    }
-
-    @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        Iterable<Tuple> tuples = context.getRuntimeContext().enumerateTuples(type, indexerMask, Tuples.staticArityFlatTupleOf());
-
-        it = tuples.iterator();
-    }
-
-    @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) {
-        if (it.hasNext()) {
-            final Tuple next = it.next();
-            frame.setValue(sourcePosition, next.get(0));
-            frame.setValue(targetPosition, next.get(1));
-            return true;
-        } else {
-            return false;
-        }
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

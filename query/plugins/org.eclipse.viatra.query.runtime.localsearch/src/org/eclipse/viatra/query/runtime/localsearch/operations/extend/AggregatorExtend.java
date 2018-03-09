@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
@@ -31,41 +32,59 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * @author Balázs Grill
  * @since 1.4
  */
-public class AggregatorExtend extends SingleValueExtendOperation<Object> implements IPatternMatcherOperation{
+public class AggregatorExtend  implements ISearchOperation, IPatternMatcherOperation{
 
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
+
+        private final VolatileModifiableMaskedTuple maskedTuple;
+        private IQueryResultProvider matcher;
+        
+        public Executor(int position) {
+            super(position);
+            this.maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
+        }
+        
+        @Override
+        public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+            maskedTuple.updateTuple(frame);
+            matcher = context.getMatcher(information.getReference());
+            Object aggregate = aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn());
+            return aggregate == null ? Collections.emptyIterator() : Collections.singletonList(aggregate).iterator();
+            
+        }
+        
+        @SuppressWarnings("unchecked")
+        private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(
+                IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn) {
+            final Stream<Domain> valueStream = matcher.getAllMatches(information.getParameterMask(), maskedTuple)
+                    .map(match -> (Domain) match.get(aggregatedColumn));
+            return operator.aggregateStream(valueStream);
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return AggregatorExtend.this;
+        }
+    }
+    
     private final AggregatorConstraint aggregator;
     private final CallInformation information; 
-    private final VolatileModifiableMaskedTuple maskedTuple;
-    private IQueryResultProvider matcher;
-    
+    private final int position;
     
     /**
      * @since 1.7
      */
     public AggregatorExtend(CallInformation information, AggregatorConstraint aggregator, int position) {
-        super(position);
         this.aggregator = aggregator;
         this.information = information;
-        this.maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
-    }
-
-    @Override
-    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
-        maskedTuple.updateTuple(frame);
-        matcher = context.getMatcher(information.getReference());
-        Object aggregate = aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn());
-        return aggregate == null ? Collections.emptyIterator() : Collections.singletonList(aggregate).iterator();
-        
-    }
-
-    @SuppressWarnings("unchecked")
-    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(
-            IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn) {
-        final Stream<Domain> valueStream = matcher.getAllMatches(information.getParameterMask(), maskedTuple)
-                        .map(match -> (Domain) match.get(aggregatedColumn));
-        return operator.aggregateStream(valueStream);
+        this.position = position;
     }
     
+    @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
+    }
+
     @Override
     public List<Integer> getVariablePositions() {
         return Arrays.asList(position);

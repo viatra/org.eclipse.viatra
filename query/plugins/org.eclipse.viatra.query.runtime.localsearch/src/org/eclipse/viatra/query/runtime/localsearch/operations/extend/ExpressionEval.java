@@ -19,6 +19,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
@@ -29,31 +30,44 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ExpressionEval extends SingleValueExtendOperation<Object> {
+public class ExpressionEval implements ISearchOperation {
 
-    IExpressionEvaluator evaluator;
-    Map<String, Integer> nameMap;
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
 
-    public ExpressionEval(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, int position) {
-        super(position);
-        this.evaluator = evaluator;
-        this.nameMap = nameMap;
-    }
-
-    @Override
-    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
-        try {
-            Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
-            if (result != null){
-                return Collections.singletonList(result).iterator();
-            } else {
+        public Executor(int position) {
+            super(position);
+        }
+        
+        @Override
+        public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+            try {
+                Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
+                if (result != null){
+                    return Collections.singletonList(result).iterator();
+                } else {
+                    return Collections.emptyIterator();
+                }
+            } catch (Exception e) {
+                Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
+                logger.warn("Error while evaluating expression", e);
                 return Collections.emptyIterator();
             }
-        } catch (Exception e) {
-            Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
-            logger.warn("Error while evaluating expression", e);
-            return Collections.emptyIterator();
         }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExpressionEval.this;
+        }
+    }
+    
+    private final IExpressionEvaluator evaluator;
+    private final Map<String, Integer> nameMap;
+    private final int position;
+
+    public ExpressionEval(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, int position) {
+        this.evaluator = evaluator;
+        this.nameMap = nameMap;
+        this.position = position;
     }
     
     @Override
@@ -61,7 +75,11 @@ public class ExpressionEval extends SingleValueExtendOperation<Object> {
         return "extend    -"+position+" = expression "+evaluator.getShortDescription();
     }
     
-    
+    @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
+    }
+
     @Override
     public List<Integer> getVariablePositions() {
         // XXX not sure if this is the correct implementation to get the affected variable indicies

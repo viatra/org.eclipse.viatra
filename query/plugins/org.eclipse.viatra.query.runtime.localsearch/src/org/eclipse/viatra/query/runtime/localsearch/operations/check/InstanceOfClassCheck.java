@@ -18,13 +18,32 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * @author Zoltan Ujhelyi
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class InstanceOfClassCheck extends CheckOperation {
+public class InstanceOfClassCheck implements ISearchOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
+            if (frame.getValue(position) instanceof EObject) {
+                return clazz.isSuperTypeOf(((EObject) frame.getValue(position)).eClass());
+            }
+            return false;
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return InstanceOfClassCheck.this;
+        }
+    }
+    
     private int position;
     private EClass clazz;
 
@@ -35,12 +54,8 @@ public class InstanceOfClassCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
-        if (frame.getValue(position) instanceof EObject) {
-            return clazz.isSuperTypeOf(((EObject) frame.getValue(position)).eClass());
-        }
-        return false;
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

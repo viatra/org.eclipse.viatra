@@ -16,7 +16,6 @@
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -27,6 +26,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptabl
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation.ISearchOperationExecutor;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
@@ -36,21 +36,19 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * A search plan executor is used to execute {@link SearchPlan} instances.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class SearchPlanExecutor implements ILocalSearchAdaptable{
+public class SearchPlanExecutor implements ILocalSearchAdaptable {
 
     private int currentOperation;
-    SearchPlan plan;
-    private List<ISearchOperation> operations;
+    private final List<ISearchOperationExecutor> operations;
+    private final SearchPlan plan;
     private final ISearchContext context;
     private final List<ILocalSearchAdapter> adapters = new CopyOnWriteArrayList<>();
-    private final Map<Integer,PVariable> variableMapping;
-    private final TupleMask parameterMask;
 
     /**
      * @since 2.0
      */
     public Map<Integer, PVariable> getVariableMapping() {
-        return variableMapping;
+        return plan.getVariableMapping();
     }
 
     public int getCurrentOperation() {
@@ -65,7 +63,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
      * @since 1.7
      */
     public TupleMask getParameterMask() {
-        return parameterMask;
+        return plan.getParameterMask();
     }
 
     @Override
@@ -88,23 +86,21 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     }
 
     /**
-     * @since 1.7
+     * @since 2.0
      */
-    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping, TupleMask parameterMask) {
+    public SearchPlanExecutor(SearchPlan plan, ISearchContext context) {
         Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
-        this.variableMapping = variableMapping.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
-        operations = plan.getOperations();
+        operations = plan.getOperations().stream().map(ISearchOperation::createExecutor).collect(Collectors.toList());
         this.currentOperation = -1;
-        this.parameterMask = parameterMask;
     }
    
 
     private void init(MatchingFrame frame) {
         if (currentOperation == -1) {
             currentOperation++;
-            ISearchOperation operation = operations.get(currentOperation);
+            ISearchOperationExecutor operation = operations.get(currentOperation);
             if (!adapters.isEmpty()){
                 for (ILocalSearchAdapter adapter : adapters) {
                     adapter.executorInitializing(this,frame);
@@ -140,12 +136,12 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
                 currentOperation++;
                 operationSelected(frame);
                 if (currentOperation <= upperBound) {
-                    ISearchOperation operation = operations.get(currentOperation);
+                    ISearchOperationExecutor operation = operations.get(currentOperation);
                     operation.onInitialize(frame, context);
                 }
             } else {
                 operationExecuted(frame);
-                ISearchOperation operation = operations.get(currentOperation);
+                ISearchOperationExecutor operation = operations.get(currentOperation);
                 operation.onBacktrack(frame, context);
                 currentOperation--;
                 operationSelected(frame);

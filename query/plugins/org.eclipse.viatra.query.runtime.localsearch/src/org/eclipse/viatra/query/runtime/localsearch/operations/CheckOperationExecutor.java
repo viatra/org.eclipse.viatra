@@ -8,18 +8,19 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.operations.check;
+package org.eclipse.viatra.query.runtime.localsearch.operations;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation.ISearchOperationExecutor;
 
 /**
  * Abstract base class for search operations that check only the already set variables.
  * 
  * @noextend This class is not intended to be subclassed by clients.
+ * @since 2.0
  */
-public abstract class CheckOperation implements ISearchOperation {
+public abstract class CheckOperationExecutor implements ISearchOperationExecutor {
 
     /**
      * The executed field ensures that the second call of the check always returns false, resulting in a quick

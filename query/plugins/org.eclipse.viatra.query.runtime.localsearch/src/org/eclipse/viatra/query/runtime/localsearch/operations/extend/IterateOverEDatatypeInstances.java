@@ -15,29 +15,48 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 
 /**
- * Iterates over all {@link EDataType} instances using an {@link NavigationHelper VIATRA Base indexer}. It is
+ * Iterates over all {@link EDataType} instances using an {@link IQueryRuntimeContext VIATRA Base indexer}. It is
  * assumed that the indexer is initialized for the selected {@link EDataType}.
  * 
  */
-public class IterateOverEDatatypeInstances extends SingleValueExtendOperation<Object> implements IIteratingSearchOperation{
+public class IterateOverEDatatypeInstances implements IIteratingSearchOperation {
 
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
+        
+        public Executor(int position) {
+            super(position);
+        }
+
+        @Override
+        public Iterator<? extends Object> getIterator(MatchingFrame frame, ISearchContext context) {
+            return context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverEDatatypeInstances.this;
+        }
+    }
+    
     private final EDataType dataType;
     private final EDataTypeInSlotsKey type;
     private static final TupleMask indexerMask = TupleMask.empty(1);
+    private final int position;
 
     public IterateOverEDatatypeInstances(int position, EDataType dataType) {
-        super(position);
+        this.position = position;
         this.dataType = dataType;
         type = new EDataTypeInSlotsKey(dataType);
     }
@@ -45,13 +64,12 @@ public class IterateOverEDatatypeInstances extends SingleValueExtendOperation<Ob
     public EDataType getDataType() {
         return dataType;
     }
-
+    
     @Override
-    public Iterator<? extends Object> getIterator(MatchingFrame frame, ISearchContext context) {
-        return context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
     }
-    
-    
+
     @Override
     public String toString() {
         return "extend    "+dataType.getName()+"(-"+position+") indexed";

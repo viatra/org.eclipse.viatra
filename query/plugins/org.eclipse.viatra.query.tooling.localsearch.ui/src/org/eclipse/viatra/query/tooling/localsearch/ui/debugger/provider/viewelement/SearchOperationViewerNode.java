@@ -13,11 +13,11 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewel
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.localsearch.operations.ExtendOperationExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
@@ -52,7 +52,7 @@ public class SearchOperationViewerNode {
     public SearchOperationViewerNode(ISearchOperation searchOperation, SearchPlanExecutor planExecutor) {
         this.searchOperation = searchOperation;
         this.planExecutor = planExecutor;
-        if (searchOperation instanceof ExtendOperation) {
+        if (searchOperation instanceof ExtendOperationExecutor) {
             operationKind = OperationKind.EXTEND;
         } else if (searchOperation instanceof NACOperation) {
             operationKind = OperationKind.NAC;

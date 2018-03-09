@@ -16,60 +16,83 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
 
 import com.google.common.collect.Iterables;
 
 /**
- * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper VIATRA Base indexer}.
+ * Iterates over all sources of {@link EStructuralFeature} using an {@link IQueryRuntimeContext VIATRA Base indexer}.
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */
-public class ExtendToEStructuralFeatureSource extends SingleValueExtendOperation<EObject> implements IIteratingSearchOperation{
+public class ExtendToEStructuralFeatureSource implements IIteratingSearchOperation {
 
-    private int targetPosition;
-    private EStructuralFeature feature;
+    private class Executor extends SingleValueExtendOperationExecutor<EObject> {
+        
+        private VolatileMaskedTuple maskedTuple;
+        
+        public Executor(int position) {
+            super(position);
+            this.maskedTuple = new VolatileMaskedTuple(mask);
+        }
+
+        
+        @Override
+        public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
+            maskedTuple.updateTuple(frame);
+            Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple);
+            return Iterables.filter(values, EObject.class).iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExtendToEStructuralFeatureSource.this;
+        }
+    }
+    
+    private final int sourcePosition;
+    private final int targetPosition;
+    private final EStructuralFeature feature;
     private final IInputKey type;
-    private VolatileMaskedTuple maskedTuple;
     private static final TupleMask indexerMask = TupleMask.fromSelectedIndices(2, new int[] {1});
+    private final TupleMask mask;
     
     /**
      * @since 1.7
      */
     public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature, TupleMask mask) {
-        super(sourcePosition);
+        this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
         this.feature = feature;
+        this.mask = mask;
         this.type = new EStructuralFeatureInstancesKey(feature);
-        this.maskedTuple = new VolatileMaskedTuple(mask);
     }
 
     public EStructuralFeature getFeature() {
         return feature;
     }
-
-    @Override
-    public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
-        maskedTuple.updateTuple(frame);
-        Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple);
-        return Iterables.filter(values, EObject.class).iterator();
-    }
     
     @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(sourcePosition);
+    }
+
+    @Override
     public String toString() {
-        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+position+", +"+targetPosition+") indexed";
+        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+sourcePosition+", +"+targetPosition+") indexed";
     }
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(position, targetPosition);
+        return Arrays.asList(sourcePosition, targetPosition);
     }
     
     /**

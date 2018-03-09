@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * This operation handles constants in search plans by binding a variable to a constant value. Such operations should be
@@ -25,18 +26,36 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
  * @author Marton Bur
  *
  */
-public class ExtendConstant extends SingleValueExtendOperation<Object> {
+public class ExtendConstant implements ISearchOperation {
 
-    private Object value;
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
+
+        public Executor(int position) {
+            super(position);
+        }
+
+        @Override
+        public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+            return Collections.singletonList(value).iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExtendConstant.this;
+        }
+    }
+    
+    private final Object value;
+    private final int position;
 
     public ExtendConstant(int position, Object value) {
-        super(position);
+        this.position = position;
         this.value = value;
     }
 
     @Override
-    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
-        return Collections.singletonList(value).iterator();
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
     }
 
     @Override

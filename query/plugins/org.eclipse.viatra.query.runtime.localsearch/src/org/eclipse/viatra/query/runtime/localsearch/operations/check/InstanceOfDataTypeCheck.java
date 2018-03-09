@@ -17,13 +17,29 @@ import java.util.Objects;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * @author Zoltan Ujhelyi
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class InstanceOfDataTypeCheck extends CheckOperation {
+public class InstanceOfDataTypeCheck implements ISearchOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
+            return dataType.isInstance(frame.getValue(position));
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return InstanceOfDataTypeCheck.this;
+        }
+    }
+    
     private int position;
     private EDataType dataType;
 
@@ -34,9 +50,8 @@ public class InstanceOfDataTypeCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
-        return dataType.isInstance(frame.getValue(position));
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

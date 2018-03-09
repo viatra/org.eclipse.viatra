@@ -15,30 +15,49 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
- * Iterates all available {@link EClass} instances using an {@link NavigationHelper VIATRA Base indexer}. It is
+ * Iterates all available {@link EClass} instances using an {@link IQueryRuntimeContext VIATRA Base indexer}. It is
  * assumed that the base indexer has been registered for the selected type.
  * 
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverEClassInstances extends SingleValueExtendOperation<Object> implements IIteratingSearchOperation{
+public class IterateOverEClassInstances implements IIteratingSearchOperation {
+    
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
+        
+        public Executor(int position) {
+            super(position);
+        }
+
+        @Override
+        public Iterator<? extends Object> getIterator(MatchingFrame frame, ISearchContext context) {
+            return context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverEClassInstances.this;
+        }
+    }
 
     private final EClass clazz;
     private final EClassTransitiveInstancesKey type;
     private static final TupleMask indexerMask = TupleMask.empty(1);
+    private final int position;
 
     public IterateOverEClassInstances(int position, EClass clazz) {
-        super(position);
+        this.position = position;
         this.clazz = clazz;
         type = new EClassTransitiveInstancesKey(clazz);
     }
@@ -47,11 +66,12 @@ public class IterateOverEClassInstances extends SingleValueExtendOperation<Objec
         return clazz;
     }
 
-    @Override
-    public Iterator<? extends Object> getIterator(MatchingFrame frame, ISearchContext context) {
-        return context.getRuntimeContext().enumerateValues(type, indexerMask, Tuples.staticArityFlatTupleOf()).iterator();
-    }
     
+    @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
+    }
+
     @Override
     public String toString() {
         return "extend    "+clazz.getName()+"(-"+ position+") indexed";

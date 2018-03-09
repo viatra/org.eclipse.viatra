@@ -49,7 +49,7 @@ public class PlanDescriptor implements IPlanDescriptor {
     }
 
     @Override
-    public Iterable<SearchPlanForBody> getPlan() {
+    public Collection<SearchPlanForBody> getPlan() {
         return plan;
     }
 

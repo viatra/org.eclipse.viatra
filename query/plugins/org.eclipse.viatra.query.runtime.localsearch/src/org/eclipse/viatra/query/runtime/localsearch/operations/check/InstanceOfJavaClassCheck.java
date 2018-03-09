@@ -16,14 +16,30 @@ import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * @author Zoltan Ujhelyi
  * @since 1.4
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class InstanceOfJavaClassCheck extends CheckOperation {
+public class InstanceOfJavaClassCheck implements ISearchOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
+            return clazz.isInstance(frame.getValue(position));
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return InstanceOfJavaClassCheck.this;
+        }
+    }
+    
     private int position;
     private Class<?> clazz;
 
@@ -34,9 +50,8 @@ public class InstanceOfJavaClassCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Objects.requireNonNull(frame.getValue(position), () -> String.format("Invalid plan, variable %s unbound", position));
-        return clazz.isInstance(frame.getValue(position));
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

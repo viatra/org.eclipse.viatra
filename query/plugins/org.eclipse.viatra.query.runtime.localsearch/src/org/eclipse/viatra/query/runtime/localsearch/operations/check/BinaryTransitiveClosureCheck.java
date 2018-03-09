@@ -19,7 +19,9 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -33,8 +35,46 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * @noinstantiate This class is not intended to be instantiated by clients.
  * 
  */
-public class BinaryTransitiveClosureCheck extends CheckOperation implements IPatternMatcherOperation {
+public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternMatcherOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        public void onInitialize(MatchingFrame frame, ISearchContext context) {
+            super.onInitialize(frame, context);
+            matcher = context.getMatcher(information.getReference());
+            // Note: second parameter is NOT bound during execution, but the first is
+        }
+
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            Object targetValue = frame.get(targetPosition);
+            Queue<Object> sourcesToEvaluate = new LinkedList<>();
+            sourcesToEvaluate.add(frame.get(sourcePosition));
+            Set<Object> sourceEvaluated = new HashSet<>();
+            final Object[] mappedFrame = new Object[] {null, null};
+            while (!sourcesToEvaluate.isEmpty()) {
+                Object currentValue = sourcesToEvaluate.poll();
+                sourceEvaluated.add(currentValue);
+                mappedFrame[0] = currentValue;
+                for (Tuple match : (Iterable<Tuple>) () -> matcher.getAllMatches(mappedFrame).iterator()) {
+                    Object foundTarget = match.get(1);
+                    if (targetValue.equals(foundTarget)) {
+                        return true;
+                    } else if (!sourceEvaluated.contains(foundTarget)) {
+                        sourcesToEvaluate.add(foundTarget);
+                    }
+                }
+            }
+            return false;
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return BinaryTransitiveClosureCheck.this;
+        }
+    }
+    
     private final CallInformation information; 
     private IQueryResultProvider matcher;
     private final int sourcePosition;
@@ -51,37 +91,12 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IPat
         this.targetPosition = targetPosition;
         this.information = information;
     }
-
-    @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        super.onInitialize(frame, context);
-        matcher = context.getMatcher(information.getReference());
-        // Note: second parameter is NOT bound during execution, but the first is
-    }
-
-    @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        Object targetValue = frame.get(targetPosition);
-        Queue<Object> sourcesToEvaluate = new LinkedList<>();
-        sourcesToEvaluate.add(frame.get(sourcePosition));
-        Set<Object> sourceEvaluated = new HashSet<>();
-        final Object[] mappedFrame = new Object[] {null, null};
-        while (!sourcesToEvaluate.isEmpty()) {
-            Object currentValue = sourcesToEvaluate.poll();
-            sourceEvaluated.add(currentValue);
-            mappedFrame[0] = currentValue;
-            for (Tuple match : (Iterable<Tuple>) () -> matcher.getAllMatches(mappedFrame).iterator()) {
-                Object foundTarget = match.get(1);
-                if (targetValue.equals(foundTarget)) {
-                    return true;
-                } else if (!sourceEvaluated.contains(foundTarget)) {
-                    sourcesToEvaluate.add(foundTarget);
-                }
-            }
-        }
-        return false;
-    }
     
+    @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
+    }
+
     @Override
     public String toString() {
         String c = information.toString();

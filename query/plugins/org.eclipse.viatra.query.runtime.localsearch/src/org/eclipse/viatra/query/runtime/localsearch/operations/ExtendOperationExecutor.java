@@ -8,23 +8,23 @@
  * Contributors:
  *   Zoltan Ujhelyi, Akos Horvath - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
+package org.eclipse.viatra.query.runtime.localsearch.operations;
 
 import java.util.Iterator;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation.ISearchOperationExecutor;
 
 /**
  * An operation that can be used to enumerate all possible values for a single position based on a constraint
  * @author Zoltan Ujhelyi, Akos Horvath
- * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @since 2.0
  */
-public abstract class ExtendOperation<T> implements ISearchOperation {
+public abstract class ExtendOperationExecutor<T> implements ISearchOperationExecutor {
 
     private Iterator<? extends T> it;
-    
 
     /**
      * Returns an iterator with the possible options from the current state

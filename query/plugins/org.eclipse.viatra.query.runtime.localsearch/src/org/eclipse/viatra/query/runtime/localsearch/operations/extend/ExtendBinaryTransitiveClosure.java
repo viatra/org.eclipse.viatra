@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -33,8 +34,46 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * @since 1.7
  * 
  */
-public abstract class ExtendBinaryTransitiveClosure extends SingleValueExtendOperation<Object> implements IPatternMatcherOperation {
+public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation, IPatternMatcherOperation {
 
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
+
+        public Executor(int position) {
+            super(position);
+        }
+        
+        @Override
+        public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+            // Note: second parameter is NOT bound during execution, but the first is
+            IQueryResultProvider matcher = context.getMatcher(information.getReference());
+
+            Queue<Object> seedsToEvaluate = new LinkedList<>();
+            seedsToEvaluate.add(frame.get(seedPosition));
+            Set<Object> seedsEvaluated = new HashSet<>();
+            Set<Object> targetsFound = new HashSet<>();
+
+            while(!seedsToEvaluate.isEmpty()) {
+                Object currentValue = seedsToEvaluate.poll();
+                seedsEvaluated.add(currentValue);
+                final Object[] mappedFrame = calculateCallFrame(currentValue);
+                matcher.getAllMatches(mappedFrame).forEach(match -> {
+                    Object foundTarget = getTarget(match);
+                    targetsFound.add(foundTarget);
+                    if (!seedsEvaluated.contains(foundTarget)) {
+                        seedsToEvaluate.add(foundTarget);
+                    }
+                });
+            }
+
+            return targetsFound.iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExtendBinaryTransitiveClosure.this;
+        }
+    }
+    
     /**
      * Calculates the transitive closure of a pattern match in a forward direction (first parameter bound, second
      * unbound)
@@ -85,15 +124,16 @@ public abstract class ExtendBinaryTransitiveClosure extends SingleValueExtendOpe
     }
 
     private final int seedPosition;
+    private final int targetPosition;
     private final CallInformation information;
 
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
      */
     protected ExtendBinaryTransitiveClosure(CallInformation information, int seedPosition, int targetPosition) {
-        super(targetPosition);
         this.information = information;
         this.seedPosition = seedPosition;
+        this.targetPosition = targetPosition;
     }
 
     protected abstract Object[] calculateCallFrame(Object seed);
@@ -101,29 +141,8 @@ public abstract class ExtendBinaryTransitiveClosure extends SingleValueExtendOpe
     protected abstract Object getTarget(Tuple frame);
 
     @Override
-    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
-        // Note: second parameter is NOT bound during execution, but the first is
-        IQueryResultProvider matcher = context.getMatcher(information.getReference());
-
-        Queue<Object> seedsToEvaluate = new LinkedList<>();
-        seedsToEvaluate.add(frame.get(seedPosition));
-        Set<Object> seedsEvaluated = new HashSet<>();
-        Set<Object> targetsFound = new HashSet<>();
-
-        while(!seedsToEvaluate.isEmpty()) {
-            Object currentValue = seedsToEvaluate.poll();
-            seedsEvaluated.add(currentValue);
-            final Object[] mappedFrame = calculateCallFrame(currentValue);
-            matcher.getAllMatches(mappedFrame).forEach(match -> {
-                Object foundTarget = getTarget(match);
-                targetsFound.add(foundTarget);
-                if (!seedsEvaluated.contains(foundTarget)) {
-                    seedsToEvaluate.add(foundTarget);
-                }
-            });
-        }
-
-        return targetsFound.iterator();
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(targetPosition);
     }
 
     @Override
@@ -135,7 +154,7 @@ public abstract class ExtendBinaryTransitiveClosure extends SingleValueExtendOpe
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(seedPosition, position);
+        return Arrays.asList(seedPosition, targetPosition);
     }
 
 }

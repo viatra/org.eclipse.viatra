@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 /**
  * This operation handles constants in search plans by checking if a variable is bound to a certain constant value. Such
@@ -23,8 +25,21 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
  * @author Marton Bur
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class CheckConstant extends CheckOperation {
+public class CheckConstant implements ISearchOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            return frame.get(position).equals(value);
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return CheckConstant.this;
+        }
+    }
+    
     private int position;
     private Object value;
 
@@ -34,8 +49,8 @@ public class CheckConstant extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        return frame.get(position).equals(value);
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

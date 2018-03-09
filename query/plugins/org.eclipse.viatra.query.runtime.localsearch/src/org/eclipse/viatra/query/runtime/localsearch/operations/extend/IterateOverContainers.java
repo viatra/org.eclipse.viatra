@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
@@ -27,7 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverContainers extends SingleValueExtendOperation<EObject> {
+public class IterateOverContainers implements ISearchOperation {
 
 
     /**
@@ -61,8 +62,35 @@ public class IterateOverContainers extends SingleValueExtendOperation<EObject> {
         }
     }
 
-    private int sourcePosition;
-    private boolean transitive;
+    private class Executor extends SingleValueExtendOperationExecutor<EObject> {
+        
+        public Executor(int position) {
+            super(position);
+        }
+
+        @Override
+        public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
+            Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
+            EObject source = (EObject) frame.get(sourcePosition);
+            EObject container = source.eContainer();
+            if (container == null) {
+                return Collections.emptyIterator();
+            } else if (transitive) {
+                return new ParentIterator(source);
+            } else { 
+                return Collections.singleton(container).iterator();
+            }
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverContainers.this;
+        }
+    }
+    
+    private final int sourcePosition;
+    private final int containerPosition;
+    private final boolean transitive;
 
     /**
      * 
@@ -71,33 +99,26 @@ public class IterateOverContainers extends SingleValueExtendOperation<EObject> {
      * @param transitive if false, only the direct container is returned; otherwise all containers
      */
     public IterateOverContainers(int containerPosition, int sourcePosition, boolean transitive) {
-        super(containerPosition);
+        this.containerPosition = containerPosition;
         this.sourcePosition = sourcePosition;
         this.transitive = transitive;
     }
 
+
     @Override
-    public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
-        Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
-        EObject source = (EObject) frame.get(sourcePosition);
-        EObject container = source.eContainer();
-        if (container == null) {
-            return Collections.emptyIterator();
-        } else if (transitive) {
-            return new ParentIterator(source);
-        } else { 
-            return Collections.singleton(container).iterator();
-        }
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(containerPosition);
     }
+
 
     @Override
     public String toString() {
-        return "extend    containment -"+sourcePosition+" <>--> +"+position+(transitive ? " transitively" : " directly");
+        return "extend    containment -"+sourcePosition+" <>--> +"+containerPosition+(transitive ? " transitively" : " directly");
     }
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(position, sourcePosition);
+        return Arrays.asList(containerPosition, sourcePosition);
     }
     
 }

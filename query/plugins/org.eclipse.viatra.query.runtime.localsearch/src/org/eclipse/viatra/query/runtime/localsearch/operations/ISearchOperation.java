@@ -17,37 +17,60 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 
 /**
+ * Represents a search operation executable by the LS engine. It is expected that an operation can be shared among
+ * multiple LS matchers, but the created executors are not.
+ * 
  * @author Zoltan Ujhelyi
  * 
  */
 public interface ISearchOperation {
 
     /**
-     * During the execution of the corresponding plan, the onInitialize callback is evaluated before the execution of
-     * the operation may begin. Operations may use this method to initialize its internal data structures.
+     * Initializes a new operation executor for the given operation. Repeated calls must return different executor
+     * instances.
      * 
-     * @throws ViatraQueryRuntimeException
+     * @since 2.0
      */
-    void onInitialize(MatchingFrame frame, ISearchContext context);
-
-    /**
-     * After the execution of the operation failed and {@link #execute(MatchingFrame, ISearchContext)} returns false, the onBacktrack
-     * callback is evaluated. Operations may use this method to clean up any temporary structures, and make the
-     * operation ready for a new execution.
-     * 
-     * @throws ViatraQueryRuntimeException
-     */
-    void onBacktrack(MatchingFrame frame, ISearchContext context);
-
-    /**
-     * 
-     * @param frame
-     * @param context
-     * @return true if successful, or false if backtracking needed
-     * @throws ViatraQueryRuntimeException
-     */
-    boolean execute(MatchingFrame frame, ISearchContext context);
+    public ISearchOperationExecutor createExecutor();
     
+    /**
+     * 
+     * @since 2.0
+     *
+     */
+    public interface ISearchOperationExecutor {
+        
+        /**
+         * Returns the stateless operation this executor was initialized from
+         */
+        ISearchOperation getOperation();
+        
+        /**
+         * During the execution of the corresponding plan, the onInitialize callback is evaluated before the execution of
+         * the operation may begin. Operations may use this method to initialize its internal data structures.
+         * 
+         * @throws ViatraQueryRuntimeException
+         */
+        void onInitialize(MatchingFrame frame, ISearchContext context);
+    
+        /**
+         * After the execution of the operation failed and {@link #execute(MatchingFrame, ISearchContext)} returns false, the onBacktrack
+         * callback is evaluated. Operations may use this method to clean up any temporary structures, and make the
+         * operation ready for a new execution.
+         * 
+         * @throws ViatraQueryRuntimeException
+         */
+        void onBacktrack(MatchingFrame frame, ISearchContext context);
+    
+        /**
+         * 
+         * @param frame
+         * @param context
+         * @return true if successful, or false if backtracking needed
+         * @throws ViatraQueryRuntimeException
+         */
+        boolean execute(MatchingFrame frame, ISearchContext context);
+    }
     /**
      * 
      * @return the ordered list of the variable numbers that are affected by the search operation

@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 /**
@@ -29,13 +30,34 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
  * 
  * @author Zoltan Ujhelyi
  */
-public class IterateOverEClassInstances extends AbstractIteratingExtendOperation<Notifier> implements IIteratingSearchOperation{
+public class IterateOverEClassInstances implements IIteratingSearchOperation {
+    
+    private class Executor extends AbstractIteratingExtendOperationExecutor<Notifier> {
+        
+        public Executor(int position, EMFScope scope) {
+            super(position, scope);
+        }
 
-    private EClass clazz;
+        @Override
+        public Iterator<? extends Notifier> getIterator(MatchingFrame frame, ISearchContext context) {
+            final Class<?> ic = clazz.getInstanceClass();
+            return getModelContents().filter(ic::isInstance).iterator();
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverEClassInstances.this;
+        }
+    }
+
+    private final int position;
+    private final EClass clazz;
+    private final EMFScope scope;
 
     public IterateOverEClassInstances(int position, EClass clazz, EMFScope scope) {
-        super(position, scope);
+        this.position = position;
         this.clazz = clazz;
+        this.scope = scope;
     }
 
     public EClass getClazz() {
@@ -43,11 +65,10 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
     }
     
     @Override
-    public Iterator<? extends Notifier> getIterator(MatchingFrame frame, ISearchContext context) {
-        final Class<?> ic = clazz.getInstanceClass();
-        return getModelContents().filter(ic::isInstance).iterator();
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position, scope);
     }
-    
+
     @Override
     public String toString() {
         return "extend    "+clazz.getName()+"(-"+ position+") iterating";

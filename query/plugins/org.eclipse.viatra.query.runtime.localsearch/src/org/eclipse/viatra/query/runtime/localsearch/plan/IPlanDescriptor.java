@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.plan;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
@@ -32,9 +33,10 @@ public interface IPlanDescriptor {
     public PQuery getQuery();
     
     /**
-     * The iterator of executable search plans for each body in the query
+     * The executable search plans for each body in the query
+     * @since 2.0
      */
-    public Iterable<SearchPlanForBody> getPlan();
+    public Collection<SearchPlanForBody> getPlan();
     
     /**
      * The set of parameters this plan assumes to be bound

@@ -20,8 +20,9 @@ import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ExtendOperationExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
@@ -33,14 +34,59 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @since 1.7
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class GenericTypeExtend extends ExtendOperation<Tuple> implements IIteratingSearchOperation {
+public class GenericTypeExtend implements IIteratingSearchOperation {
 
+    private class Executor extends ExtendOperationExecutor<Tuple> {
+        private final VolatileMaskedTuple maskedTuple;
+        
+        public Executor() {
+            this.maskedTuple = new VolatileMaskedTuple(callMask);
+        }
+        
+        @Override
+        protected Iterator<? extends Tuple> getIterator(MatchingFrame frame, ISearchContext context) {
+            maskedTuple.updateTuple(frame);
+            return context.getRuntimeContext().enumerateTuples(type, indexerMask, maskedTuple).iterator();
+        }
+
+        @Override
+        protected boolean fillInValue(Tuple newTuple, MatchingFrame frame, ISearchContext context) {
+            for (Integer position : unboundVariableIndices) {
+                frame.setValue(position, null);
+            }
+            for (int i = 0; i < positions.length; i++) {
+                Object newValue = newTuple.get(i);
+                Object oldValue = frame.getValue(positions[i]);
+                if (oldValue != null && !Objects.equals(oldValue, newValue)) {
+                    // If positions tuple maps more than one values for the same element (e.g. loop), it means that
+                    // these arguments are to unified by the caller. In this case if the callee assigns different values
+                    // the frame shall be considered a failed match
+                    return false;
+                }
+                frame.setValue(positions[i], newValue);
+            }
+            return true;
+        }
+
+        @Override
+        protected void cleanup(MatchingFrame frame, ISearchContext context) {
+            for (Integer position : unboundVariableIndices) {
+                frame.setValue(position, null);
+            }
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return GenericTypeExtend.this;
+        }
+    }
+    
     private final IInputKey type;
     private final int[] positions;
     private final List<Integer> positionList;
     private final Set<Integer> unboundVariableIndices;
-    private final VolatileMaskedTuple maskedTuple;
-    private TupleMask indexerMask;
+    private final TupleMask indexerMask;
+    private final TupleMask callMask;
 
     /**
      * 
@@ -64,13 +110,18 @@ public class GenericTypeExtend extends ExtendOperation<Tuple> implements IIterat
         this.type = type;
 
         this.unboundVariableIndices = unboundVariableIndices;
-        this.maskedTuple = new VolatileMaskedTuple(callMask);
         this.indexerMask = indexerMask;
+        this.callMask = callMask;
     }
 
     @Override
     public IInputKey getIteratedInputKey() {
         return type;
+    }
+
+    @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override
@@ -87,35 +138,4 @@ public class GenericTypeExtend extends ExtendOperation<Tuple> implements IIterat
                 + ")";
     }
 
-    @Override
-    protected Iterator<? extends Tuple> getIterator(MatchingFrame frame, ISearchContext context) {
-        maskedTuple.updateTuple(frame);
-        return context.getRuntimeContext().enumerateTuples(type, indexerMask, maskedTuple).iterator();
-    }
-
-    @Override
-    protected boolean fillInValue(Tuple newTuple, MatchingFrame frame, ISearchContext context) {
-        for (Integer position : unboundVariableIndices) {
-            frame.setValue(position, null);
-        }
-        for (int i = 0; i < positions.length; i++) {
-            Object newValue = newTuple.get(i);
-            Object oldValue = frame.getValue(positions[i]);
-            if (oldValue != null && !Objects.equals(oldValue, newValue)) {
-                // If positions tuple maps more than one values for the same element (e.g. loop), it means that
-                // these arguments are to unified by the caller. In this case if the callee assigns different values
-                // the frame shall be considered a failed match
-                return false;
-            }
-            frame.setValue(positions[i], newValue);
-        }
-        return true;
-    }
-
-    @Override
-    protected void cleanup(MatchingFrame frame, ISearchContext context) {
-        for (Integer position : unboundVariableIndices) {
-            frame.setValue(position, null);
-        }
-    }
 }

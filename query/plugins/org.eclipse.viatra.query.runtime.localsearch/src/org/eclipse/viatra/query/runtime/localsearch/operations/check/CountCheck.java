@@ -15,7 +15,9 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedTuple;
@@ -26,12 +28,38 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * @author Zoltan Ujhelyi
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class CountCheck extends CheckOperation implements IPatternMatcherOperation {
+public class CountCheck implements ISearchOperation, IPatternMatcherOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        private final VolatileModifiableMaskedTuple maskedTuple;
+        private IQueryResultProvider matcher;
+        
+        public Executor() {
+            maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
+        }
+        
+        @Override
+        public void onInitialize(MatchingFrame frame, ISearchContext context) {
+            super.onInitialize(frame, context);
+            maskedTuple.updateTuple(frame);
+            matcher = context.getMatcher(information.getReference());
+        }
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            int count = matcher.countMatches(information.getParameterMask(), maskedTuple);
+            return ((Integer)frame.getValue(position)) == count;
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return CountCheck.this;
+        }
+    }
+    
     private final int position;
     private final CallInformation information;
-    private final VolatileModifiableMaskedTuple maskedTuple;
-    private IQueryResultProvider matcher;
     
     /**
      * @since 1.7
@@ -40,20 +68,12 @@ public class CountCheck extends CheckOperation implements IPatternMatcherOperati
         super();
         this.information = information;
         this.position = position;
-        maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
     }
 
-    @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        super.onInitialize(frame, context);
-        maskedTuple.updateTuple(frame);
-        matcher = context.getMatcher(information.getReference());
-    }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        int count = matcher.countMatches(information.getParameterMask(), maskedTuple);
-        return ((Integer)frame.getValue(position)) == count;
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override

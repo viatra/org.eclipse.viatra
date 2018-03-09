@@ -12,17 +12,19 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ExtendOperationExecutor;
 
 /**
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public abstract class SingleValueExtendOperation<T> extends ExtendOperation<T> {
+public abstract class SingleValueExtendOperationExecutor<T> extends ExtendOperationExecutor<T> {
     protected int position;
     
     /**
      * @param position the frame position all values are to be added
      */
-    public SingleValueExtendOperation(int position) {
+    public SingleValueExtendOperationExecutor(int position) {
         super();
         this.position = position;
     }

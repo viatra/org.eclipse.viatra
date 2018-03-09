@@ -23,20 +23,71 @@ import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.SingleValueExtendOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.SingleValueExtendOperationExecutor;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper VIATRA Base indexer}.
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */
-public class ExtendToEStructuralFeatureSource extends SingleValueExtendOperation<Object> {
+public class ExtendToEStructuralFeatureSource implements ISearchOperation {
+    
+    private class Executor extends SingleValueExtendOperationExecutor<Object> {
+        
+        private Executor() {
+            super(sourcePosition);
+        }
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
+            if(!(feature instanceof EReference)){
+                throw new LocalSearchException("Without base index, inverse navigation only possible along "
+                        + "EReferences with defined EOpposite.");
+            }
+            EReference oppositeFeature = ((EReference)feature).getEOpposite();
+            if(oppositeFeature == null){
+                throw new LocalSearchException("Feature has no EOpposite, so cannot do inverse navigation " + feature.toString());            
+            }
+            try {
+                final EObject value = (EObject) frame.getValue(targetPosition);
+                if(! oppositeFeature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
+                    // TODO planner should ensure the proper supertype relation
+                    return Collections.emptyIterator();
+                }
+                final Object featureValue = value.eGet(oppositeFeature);
+                if (oppositeFeature.isMany()) {
+                    if (featureValue != null) {
+                        final Collection<Object> objectCollection = (Collection<Object>) featureValue;
+                        return objectCollection.iterator();
+                    } else {
+                        return Collections.emptyIterator();
+                    }
+                } else {
+                    if (featureValue != null) {
+                        return Collections.singleton(featureValue).iterator();
+                    } else {
+                        return Collections.emptyIterator();
+                    }
+                }
+            } catch (ClassCastException e) {
+                throw new LocalSearchException("Invalid feature target in parameter" + Integer.toString(targetPosition), e);
+            }
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExtendToEStructuralFeatureSource.this;
+        }
+    }
 
     private int targetPosition;
     private EStructuralFeature feature;
+    private int sourcePosition;
 
     public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature) {
-        super(sourcePosition);
+        this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
         this.feature = feature;
     }
@@ -44,52 +95,20 @@ public class ExtendToEStructuralFeatureSource extends SingleValueExtendOperation
     public EStructuralFeature getFeature() {
         return feature;
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
-        if(!(feature instanceof EReference)){
-            throw new LocalSearchException("Without base index, inverse navigation only possible along "
-                    + "EReferences with defined EOpposite.");
-        }
-        EReference oppositeFeature = ((EReference)feature).getEOpposite();
-        if(oppositeFeature == null){
-            throw new LocalSearchException("Feature has no EOpposite, so cannot do inverse navigation " + feature.toString());            
-        }
-        try {
-            final EObject value = (EObject) frame.getValue(targetPosition);
-            if(! oppositeFeature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
-                // TODO planner should ensure the proper supertype relation
-                return Collections.emptyIterator();
-            }
-            final Object featureValue = value.eGet(oppositeFeature);
-            if (oppositeFeature.isMany()) {
-                if (featureValue != null) {
-                    final Collection<Object> objectCollection = (Collection<Object>) featureValue;
-                    return objectCollection.iterator();
-                } else {
-                    return Collections.emptyIterator();
-                }
-            } else {
-                if (featureValue != null) {
-                    return Collections.singleton(featureValue).iterator();
-                } else {
-                    return Collections.emptyIterator();
-                }
-            }
-        } catch (ClassCastException e) {
-            throw new LocalSearchException("Invalid feature target in parameter" + Integer.toString(targetPosition), e);
-        }
-    }
     
     @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
+    }
+
+    @Override
     public String toString() {
-        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+position+", +"+targetPosition+") iterating";
+        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+sourcePosition+", +"+targetPosition+") iterating";
     }
 
     @Override
     public List<Integer> getVariablePositions() {
-        return Arrays.asList(position, targetPosition);
+        return Arrays.asList(sourcePosition, targetPosition);
     }
     
 }

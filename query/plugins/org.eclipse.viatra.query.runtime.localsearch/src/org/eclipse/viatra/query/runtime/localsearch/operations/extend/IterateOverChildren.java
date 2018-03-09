@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
@@ -25,11 +26,34 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class IterateOverChildren extends SingleValueExtendOperation<EObject> {
+public class IterateOverChildren implements ISearchOperation {
 
+    private class Executor extends SingleValueExtendOperationExecutor<EObject> {
+        
+        public Executor(int position) {
+            super(position);
+        }
 
+        @Override
+        public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
+            Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
+            EObject source = (EObject) frame.get(sourcePosition);
+            if(transitive) {
+                return source.eAllContents();
+            } else {
+                return source.eContents().iterator();
+            }
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return IterateOverChildren.this;
+        }
+    }
+
+    private final int position;
     private int sourcePosition;
-    private boolean transitive;
+    private final boolean transitive;
 
     /**
      * 
@@ -38,27 +62,23 @@ public class IterateOverChildren extends SingleValueExtendOperation<EObject> {
      * @param transitive if true, child elements are iterated over transitively
      */
     public IterateOverChildren(int position, int sourcePosition, boolean transitive) {
-        super(position);
+        this.position = position;
         this.sourcePosition = sourcePosition;
         this.transitive = transitive;
     }
 
-    @Override
-    public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
-        Preconditions.checkState(frame.get(sourcePosition) instanceof EObject, "Only children of EObject elements are supported.");
-        EObject source = (EObject) frame.get(sourcePosition);
-        if(transitive) {
-            return source.eAllContents();
-        } else {
-            return source.eContents().iterator();
-        }
-    }
     
     @Override
     public String toString() {
         return "extend    containment +"+sourcePosition+" <>--> -"+position+(transitive ? " transitively" : " directly");
     }
     
+    @Override
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor(position);
+    }
+
+
     @Override
     public List<Integer> getVariablePositions() {
         return Arrays.asList(position, sourcePosition);

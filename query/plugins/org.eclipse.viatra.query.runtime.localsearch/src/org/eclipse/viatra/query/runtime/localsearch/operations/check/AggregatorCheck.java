@@ -17,7 +17,9 @@ import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
@@ -31,14 +33,51 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileModifiableMaskedT
  * @since 1.4
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class AggregatorCheck extends CheckOperation implements IPatternMatcherOperation {
+public class AggregatorCheck implements ISearchOperation, IPatternMatcherOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        private final VolatileModifiableMaskedTuple maskedTuple;
+        private IQueryResultProvider matcher;
+        
+        public Executor() {
+            super();
+            this.maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
+        }
+        
+        @Override
+        public void onInitialize(MatchingFrame frame, ISearchContext context) {
+            super.onInitialize(frame, context);
+            maskedTuple.updateTuple(frame);
+            matcher = context.getMatcher(information.getReference());
+        }
+
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            IMultisetAggregationOperator<?, ?, ?> operator = aggregator.getAggregator().getOperator();
+            Object result = aggregate(operator, aggregator.getAggregatedColumn(), frame);
+            return result == null ? false : Objects.equals(frame.getValue(position), result);
+        }
+
+        @SuppressWarnings("unchecked")
+        private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(
+                IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn,
+                MatchingFrame initialFrame) {
+            maskedTuple.updateTuple(initialFrame);
+            final Stream<Domain> valueStream = matcher.getAllMatches(information.getParameterMask(), maskedTuple)
+                    .map(match -> (Domain) match.get(aggregatedColumn));
+            return operator.aggregateStream(valueStream);
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return AggregatorCheck.this;
+        }
+    }
+    
     private final int position;
     private final AggregatorConstraint aggregator;
     private final CallInformation information;
-    
-    private final VolatileModifiableMaskedTuple maskedTuple;
-    private IQueryResultProvider matcher;
     
     /**
      * @since 1.7
@@ -48,33 +87,13 @@ public class AggregatorCheck extends CheckOperation implements IPatternMatcherOp
         this.information = information;
         this.position = position;
         this.aggregator = aggregator;
-        this.maskedTuple = new VolatileModifiableMaskedTuple(information.getThinFrameMask());
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        super.onInitialize(frame, context);
-        maskedTuple.updateTuple(frame);
-        matcher = context.getMatcher(information.getReference());
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
-    @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        IMultisetAggregationOperator<?, ?, ?> operator = aggregator.getAggregator().getOperator();
-        Object result = aggregate(operator, aggregator.getAggregatedColumn(), frame);
-        return result == null ? false : Objects.equals(frame.getValue(position), result);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <Domain, Accumulator, AggregateResult> AggregateResult aggregate(
-            IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, int aggregatedColumn,
-            MatchingFrame initialFrame) {
-        maskedTuple.updateTuple(initialFrame);
-        final Stream<Domain> valueStream = matcher.getAllMatches(information.getParameterMask(), maskedTuple)
-                .map(match -> (Domain) match.get(aggregatedColumn));
-        return operator.aggregateStream(valueStream);
-    }
-    
     @Override
     public List<Integer> getVariablePositions() {
         return Collections.singletonList(position);
@@ -84,6 +103,5 @@ public class AggregatorCheck extends CheckOperation implements IPatternMatcherOp
     public String toString() {
         return "check     "+position+" = " + aggregator.getAggregator().getOperator().getName() + " find " + information.toString();
     }
-
     
 }

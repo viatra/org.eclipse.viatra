@@ -11,11 +11,11 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -32,7 +32,6 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
-import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -99,15 +98,11 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     }
 
     private LocalSearchMatcher createMatcher(IPlanDescriptor plan, final ISearchContext searchContext) {
-        Collection<SearchPlanExecutor> executors = StreamSupport.stream(plan.getPlan().spliterator(), false)
-                .map(input -> {
-                    final SearchPlan plan1 = new SearchPlan();
-                    plan1.addOperations(input.getCompiledOperations());
-
-                    return new SearchPlanExecutor(plan1, searchContext, input.getVariableKeys(),
-                            input.calculateParameterMask());
-                }).collect(Collectors.toList());
-        return new LocalSearchMatcher(plan, executors);
+        List<SearchPlan> executors = plan.getPlan().stream()
+                .map(input -> new SearchPlan(input.getBody(), input.getCompiledOperations(), input.calculateParameterMask(),
+                        input.getVariableKeys()))
+                .collect(Collectors.toList());
+        return new LocalSearchMatcher(searchContext, plan, executors);
     }
 
     private IPlanDescriptor getOrCreatePlan(MatcherReference key, IQueryBackendContext backendContext, IOperationCompiler compiler, LocalSearchHints configuration, IPlanProvider planProvider) {

@@ -17,6 +17,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
@@ -25,8 +27,28 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * @author Zoltan Ujhelyi
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ExpressionCheck extends CheckOperation {
+public class ExpressionCheck implements ISearchOperation {
 
+    private class Executor extends CheckOperationExecutor {
+        
+        @Override
+        protected boolean check(MatchingFrame frame, ISearchContext context) {
+            try {
+                boolean result = (Boolean) evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
+                return result;
+            } catch (Exception e) {
+                Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
+                logger.warn("Error while evaluating expression", e);
+                return false;
+            }
+        }
+        
+        @Override
+        public ISearchOperation getOperation() {
+            return ExpressionCheck.this;
+        }
+    }
+    
     IExpressionEvaluator evaluator;
     Map<String, Integer> nameMap;
 
@@ -37,15 +59,8 @@ public class ExpressionCheck extends CheckOperation {
     }
 
     @Override
-    protected boolean check(MatchingFrame frame, ISearchContext context) {
-        try {
-            boolean result = (Boolean) evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
-            return result;
-        } catch (Exception e) {
-            Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
-            logger.warn("Error while evaluating expression", e);
-            return false;
-        }
+    public ISearchOperationExecutor createExecutor() {
+        return new Executor();
     }
 
     @Override
