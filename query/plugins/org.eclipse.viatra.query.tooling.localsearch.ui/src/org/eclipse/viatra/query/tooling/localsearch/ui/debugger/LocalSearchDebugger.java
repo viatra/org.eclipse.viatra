@@ -12,28 +12,43 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
-import org.apache.log4j.Level;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptable;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchPlanViewModel;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationNode;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.ViewModelFactory;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.DebuggerPlanModel;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.IPlanNode;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.OperationStatus;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.PatternBodyNode;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester;
 
 /**
  * An adapter implementation for local search matchers to support debugging
@@ -44,31 +59,56 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.B
 public class LocalSearchDebugger implements ILocalSearchAdapter {
 
     public static volatile Object notifier = new Object();
-    private LocalSearchDebugView localSearchDebugView;
+    private final LocalSearchDebugView localSearchDebugView;
     private Deque<LocalSearchMatcher> runningMatchers;
-    private Deque<SearchPlanExecutor> runningExecutors;
-    private List<ILocalSearchAdaptable> adaptedElements = new ArrayList<>();
-    private boolean startHandlerCalled = false;
     private boolean isDisposed = false;
     private boolean hasFinished = false;
+    private Deque<IPlanNode> currentOperation;
 
-    private boolean halted = true;
-    private SearchPlanViewModel viewModel;
+    private boolean suspended = true;
 
+    private final AdvancedViatraQueryEngine queryEngine;
+    private final IQuerySpecification<?> rootSpecification;
+    private final Object[] adornment;
+    private final ViewModelFactory factory = new ViewModelFactory(this);
     
-    public LocalSearchDebugView getLocalSearchDebugView() throws PartInitException {
-        if (localSearchDebugView == null) {
-            localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+    private final IPlanNode viewModel;
+    
+    
+    public LocalSearchDebugger(LocalSearchDebugView localSearchDebugView, AdvancedViatraQueryEngine queryEngine, IQuerySpecification<?> rootSpecification, Object[] adornment) {
+        this.localSearchDebugView = localSearchDebugView;
+        this.queryEngine = queryEngine;
+        this.rootSpecification = rootSpecification;
+        this.adornment = adornment;
+        this.viewModel = getSearchPlan().map(factory::createViewModel).orElse(null);
+        
+        this.runningMatchers = new ArrayDeque<>();
+        this.currentOperation = new ArrayDeque<>();
+    }
+    
+    public AdvancedViatraQueryEngine getQueryEngine() {
+        return queryEngine;
+    }
+
+    public Optional<IPlanDescriptor> getSearchPlan() {
+        Set<PParameter> boundParameters = new HashSet<>(); 
+        for (int i = 0; i < adornment.length; i++) {
+            if (adornment[i] != null) boundParameters.add(rootSpecification.getParameters().get(i));
         }
-        return localSearchDebugView;
+        return getSearchPlan(rootSpecification.getInternalQueryRepresentation(), boundParameters);
     }
 
-    public boolean isStartHandlerCalled() {
-        return startHandlerCalled;
+    public IPlanNode getViewModel() {
+        return viewModel;
     }
-
-    public void setStartHandlerCalled(boolean startHandlerCalled) {
-        this.startHandlerCalled = startHandlerCalled;
+    
+    public Optional<IPlanDescriptor> getSearchPlan(PQuery specification, Set<PParameter> boundParameters) {
+        final IQueryBackend lsBackend = queryEngine.getQueryBackend(LocalSearchEMFBackendFactory.INSTANCE);
+        if (lsBackend instanceof LocalSearchBackend) {
+            LocalSearchBackend localSearchBackend = (LocalSearchBackend) lsBackend;
+            return Optional.ofNullable(localSearchBackend.getSearchPlan(specification, boundParameters));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -77,45 +117,74 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
             return;
         }
         
-        // If a new debug session is starting, obtain the view
-        if (startHandlerCalled) {
-            startHandlerCalled = false;
-            // Syncexec is assumed to be needed because of the showView call
-            PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
-                try {
-                    getLocalSearchDebugView();
-                    BreakPointListener breakPointListener = new BreakPointListener(LocalSearchDebugger.this);
-                    TreeViewer operationListViewer = localSearchDebugView.getOperationListViewer();
-                    operationListViewer.addDoubleClickListener(breakPointListener);
-                    localSearchDebugView.setDebugger(LocalSearchDebugger.this);
+        IEvaluationService service = localSearchDebugView.getSite().getService(IEvaluationService.class);
+        service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
 
-                    // TODO make sure that the initialization is done for every part so that restart is possible
-
-                    runningMatchers = new ArrayDeque<>();
-                    runningExecutors = new ArrayDeque<>();
-
-                    TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(lsMatcher.getQuerySpecification());
-                    @SuppressWarnings("unchecked")
-                    List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
-                    storedFrames.clear();
-                    
-                    localSearchDebugView.refreshView();
-                } catch (PartInitException e) {
-                    ViatraQueryLoggingUtil.getDefaultLogger().log(
-                            Level.ERROR,
-                            "A part init exception occured while executing pattern matcher started handler"
-                                    + e.getMessage(), e);
-                }
-            });
-        }
+        // TODO make sure that the initialization is done for every part so that restart is possible
+        TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(lsMatcher.getQuerySpecification());
+        @SuppressWarnings("unchecked")
+        List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
+        storedFrames.clear();
+        
+        localSearchDebugView.refreshView();
         
         runningMatchers.push(lsMatcher);
     }
 
     private boolean shouldSelectOtherTab = false; 
     
+    private void setCurrentOperation(PBody body) {
+        IPlanNode childNode = null;
+        List<IPlanNode> nodesToUpdate = new ArrayList<IPlanNode>();
+        if (currentOperation.isEmpty()) {
+            // Root pattern
+            childNode = viewModel.getChildByKey(body);
+        } else {
+            // Called pattern
+            final IPlanNode current = currentOperation.peek();
+            if (current instanceof SearchOperationNode && current.isMatcherCall()) {
+                childNode = current.getChildByKey(body);
+            } else if (current instanceof PatternBodyNode && Objects.equals(((PatternBodyNode) current).getRelatedBody().getPattern(), body.getPattern())) {
+                current.setOperationStatus(OperationStatus.EXECUTED);
+                currentOperation.pop();
+                childNode = currentOperation.peek().getChildByKey(body);
+                nodesToUpdate.add(current);
+            }
+        }
+        currentOperation.push(Objects.requireNonNull(childNode, "Child node not found"));
+        nodesToUpdate.add(childNode);
+        childNode.setOperationStatus(OperationStatus.CURRENT);
+        updateNodes(nodesToUpdate);
+    }
+    
+    private void setCurrentOperation(SearchPlan plan, ISearchOperation operation, boolean isBacktrack) {
+        IPlanNode node = currentOperation.peek();
+        if (node instanceof SearchOperationNode) {
+            if (Objects.equals(((PatternBodyNode)node.getParent()).getRelatedBody(), plan.getSourceBody())) {
+                currentOperation.pop(); // Remove previous operation
+                final IPlanNode childNode = currentOperation.peek().getChildByKey(operation);
+                currentOperation.push(childNode);
+                updateNodes(Collections.singletonList(childNode));
+            } else {
+                //TODO body switch!!!
+            }
+        } else if (node instanceof PatternBodyNode){
+            if (Objects.equals(((PatternBodyNode)node).getRelatedBody(), plan.getSourceBody())) {
+                // The new operation is still in the current body
+                final IPlanNode childNode = node.getChildByKey(operation);
+                currentOperation.push(childNode);
+                updateNodes(Collections.singletonList(childNode));
+            }
+        }
+    }
+    
+    private void updateNodes(Collection<IPlanNode> nodes) {
+        final TreeViewer viewer = localSearchDebugView.getOperationListViewer();
+        PlatformUI.getWorkbench().getDisplay().syncExec(() -> nodes.forEach(viewer::refresh));
+    }
+    
     @Override
-    public void patternMatchingFinished(LocalSearchMatcher matcher) {
+    public void noMoreMatchesAvailable(LocalSearchMatcher matcher) {
         if (isDisposed) {
             return;
         }
@@ -123,7 +192,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         if (runningMatchers.isEmpty()) {
             // After all the matching process finished set to halted in order to
             // be able to start a new debug session
-            halted = true;
+            suspended = true;
             hasFinished = true;
             PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
                 localSearchDebugView.getMatchesTabFolder().setSelection(0);
@@ -141,26 +210,20 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
 
     @Override
-    public void planChanged(SearchPlanExecutor oldPlanExecutor, final SearchPlanExecutor newPlanExecutor) {
+    public void planChanged(Optional<SearchPlan> oldPlanOptional, Optional<SearchPlan> newPlanOptional) {
         if (isDisposed) {
             return;
         }
-        if (oldPlanExecutor != null) {
-            runningExecutors.pop();
-        }
-        if (newPlanExecutor != null) {
-            runningExecutors.push(newPlanExecutor);
-        }
 
-
+        SearchPlan newPlan = newPlanOptional.orElse(null);
 //		final List<SearchOperationViewerNode> viewNodes = createOperationsListFromExecutor(newPlanExecutor);
-        if (runningMatchers.size() == 1 && newPlanExecutor != null) {
-            this.viewModel = new SearchPlanViewModel(createOperationsListFromExecutor(newPlanExecutor));
-            this.viewModel.setDebugger(this);
+        //if (runningMatchers.size() == 1 && newPlan != null) {
             // Set the input when the top level matcher goes to the next plan
-            PlatformUI.getWorkbench().getDisplay().syncExec(() -> localSearchDebugView.getOperationListViewer().setInput(viewModel));
-        } else if(newPlanExecutor != null) {
-            viewModel.insertForCurrent(createOperationsListFromExecutor(newPlanExecutor));
+        //    PlatformUI.getWorkbench().getDisplay().syncExec(() -> localSearchDebugView.getOperationListViewer().setInput(viewModel));
+        //} else 
+        if(newPlan != null) {
+            //viewModel.insertForCurrent(createOperationsListFromPlan(newPlan));
+            setCurrentOperation(newPlan.getSourceBody());
         }
 
         // Manage tabs for matching frames
@@ -174,7 +237,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         }
         // TODO optimize: should not refresh on every plan change only when halted
         PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
-            Map<Integer, PVariable> variableMapping = newPlanExecutor.getVariableMapping();
+            Map<Integer, PVariable> variableMapping = newPlan.getVariableMapping();
             List<String> columnNames = new ArrayList<>();
             for (int i = 0; i < variableMapping.size(); i++) {
                 columnNames.add(variableMapping.get(i).getName());
@@ -185,7 +248,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 
     @Override
-    public void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame) {
+    public void executorInitializing(SearchPlan searchPlan, MatchingFrame frame) {
         if (isDisposed) {
             return;
         }
@@ -199,22 +262,22 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
 
     @Override
-    public void operationSelected(final SearchPlanExecutor planExecutor, final MatchingFrame frame) {
+    public void operationSelected(SearchPlan plan, ISearchOperation operation, MatchingFrame frame, boolean isBacktrack) {
         if (isDisposed) {
             return;
         }
-        viewModel.stepInto();
+        //viewModel.stepInto(plan, operation);
+        setCurrentOperation(plan, operation, isBacktrack);
 
         checkForBreakPoint();
     }
 
     @Override
-    public void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame) {
+    public void operationExecuted(SearchPlan plan, ISearchOperation operation, MatchingFrame frame, boolean isSuccessful) {
         if (isDisposed) {
             return;
         }
-//		viewModel.stepBack();
-        if (halted) {
+        if (suspended) {
             localSearchDebugView.refreshView();
             if(shouldSelectOtherTab){
                 shouldSelectOtherTab = false;
@@ -224,7 +287,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
 
     @Override
-    public void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame) {
+    public void matchFound(SearchPlan planExecutor, MatchingFrame frame) {
         if (isDisposed) {
             return;
         }
@@ -235,38 +298,29 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         storedFrames.add(storedFrames.size() - 1, frameToStore);
     }
 
-    public void setHalted(boolean halted) {
-        this.halted = halted;
+    public void continueMatching() {
+        this.suspended = false;
+    }
+    
+    public void suspendMatching() {
+        this.suspended = true;
     }
     
     public boolean isPatternMatchingRunning() {
         return !hasFinished;
     }
     
-    private List<SearchOperationViewerNode> createOperationsListFromExecutor(SearchPlanExecutor planExecutor) {
-        List<SearchOperationViewerNode> nodes = new ArrayList<>();
-        
-        List<ISearchOperation> plan = planExecutor.getSearchPlan().getOperations();
-        for (ISearchOperation operation : plan) {
-            nodes.add(new SearchOperationViewerNode(operation, planExecutor));
-        }
-        // Final "match found" indicator operation
-        nodes.add(new SearchOperationViewerNode(planExecutor));
-        
-        return nodes;
-    }
-    
 
     private void checkForBreakPoint() {
-        if (localSearchDebugView != null && halted) {
+        if (localSearchDebugView != null && suspended) {
             PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
                 if(shouldSelectOtherTab){
                     shouldSelectOtherTab = false;
                     localSearchDebugView.getMatchesTabFolder().setSelection(runningMatchers.size()-1);
                 }
-                SearchOperationViewerNode lastSelected = viewModel.getLastSelected();
+                //SearchOperationViewerNode lastSelected = viewModel.getLastSelected();
                 localSearchDebugView.getOperationListViewer().collapseAll();
-                localSearchDebugView.getOperationListViewer().expandToLevel(lastSelected, 0);
+                //localSearchDebugView.getOperationListViewer().expandToLevel(lastSelected, 0);
             });
             localSearchDebugView.refreshView();
             synchronized (notifier) {
@@ -279,27 +333,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
             }
         }
     }
-
-    @Override
-    public void adapterRegistered(ILocalSearchAdaptable adaptable) {
-        if (isDisposed) {
-            return;
-        }
-        adaptedElements.add(adaptable);
-    }
-
-    @Override
-    public void adapterUnregistered(ILocalSearchAdaptable adaptable) {
-        if (isDisposed) {
-            return;
-        }
-        adaptedElements.remove(adaptable);
-    }
     
     public void dispose() {
         isDisposed = true;
-        for (ILocalSearchAdaptable adaptable : adaptedElements) {
-            adaptable.removeAdapter(this);
-        }
     }
 }

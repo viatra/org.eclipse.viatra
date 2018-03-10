@@ -13,7 +13,10 @@
 package org.eclipse.viatra.query.runtime.localsearch;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.matchers.tuple.IModifiableTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileTuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
@@ -84,11 +87,20 @@ public class MatchingFrame extends VolatileTuple implements IModifiableTuple {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < frame.length; i++) {
-            builder.append("frame[" + i + "]\t" + (frame[i] == null ? "null" : frame[i]).toString() + "\n");
+        return Arrays.stream(frame).map(this::stringRepresentation).collect(Collectors.joining(", ", "[", "]"));
+    }
+    
+    private String stringRepresentation(Object obj) {
+        if (obj == null) {
+            return "_";
+        } else if (obj instanceof EObject) {
+            EObject eObject = (EObject) obj;
+            final EStructuralFeature feature = eObject.eClass().getEStructuralFeature("identifier");
+            if (feature != null) {
+                return String.format("%s : %s", eObject.eGet(feature), eObject.eClass().getName());
+            }
         }
-        return builder.toString();
+        return obj.toString();
     }
     
     @Override

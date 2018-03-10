@@ -180,4 +180,8 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
         return Arrays.asList(seedPosition, targetPosition);
     }
 
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

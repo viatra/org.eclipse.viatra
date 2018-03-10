@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -27,12 +27,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ExtendOperationExecutor;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchToolingActivator;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.IPlanNode;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.MatchFoundNode;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.OperationKind;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.PatternBodyNode;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationNode;
 
 /**
  * Label provider class for the search plan tree viewer
@@ -42,35 +47,35 @@ import com.google.common.collect.Maps;
  */
 public class OperationListLabelProvider extends StyledCellLabelProvider {
 
-    private List<SearchPlanExecutor> planExecutors = Lists.newArrayList();
-    
     // TODO proper resource management
     private LocalResourceManager localResourceManager;
     
     private ImageRegistry imageRegistry = LocalSearchToolingActivator.getDefault().getImageRegistry();
 
-    private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = Maps.newHashMap();
+    private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = new HashMap<>();
 
     @Override
     public void update(final ViewerCell cell) {
 
         localResourceManager = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
 
-        final SearchOperationViewerNode node = (SearchOperationViewerNode) cell.getElement();
-
         StyledString text = new StyledString();
-
+        final IPlanNode node = (IPlanNode) cell.getElement();
+        text.setStyle(0, text.length(), new Styler() {
+            public void applyStyles(TextStyle textStyle) {
+                textStyle.font = localResourceManager.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD));
+                doColoring(node, textStyle);
+            }
+        });
         text.append(node.getLabelText());
-
+        if (node instanceof PatternBodyNode) {
+            text.append("Pattern Body");
+        } else if (node instanceof SearchOperationNode) {
+            cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_APPLIED_OPERATION));
+        }
+        
         switch (node.getOperationStatus()) {
         case EXECUTED:
-            cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_APPLIED_OPERATION));
-            text.setStyle(0, text.length(), new Styler() {
-                public void applyStyles(TextStyle textStyle) {
-                    textStyle.font = localResourceManager.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD));
-                    doColoring(node, textStyle);
-                }
-            });
             break;
         case CURRENT:
             cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_CURRENT_OPERATION));
@@ -103,8 +108,33 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
         super.update(cell);
     }
 
-    private void doColoring(SearchOperationViewerNode node, TextStyle textStyle) {
-        switch (node.getOperationKind()) {
+    private OperationKind calculateOperationKind(ISearchOperation searchOperation) {
+        if (searchOperation instanceof ExtendOperationExecutor) {
+            return OperationKind.EXTEND;
+        } else if (searchOperation instanceof NACOperation) {
+            return OperationKind.NAC;
+        } else if (searchOperation instanceof CountOperation) {
+            return OperationKind.COUNT;
+        } else {
+            // This case there is a check operation
+            return OperationKind.CHECK;
+        }
+    }
+    
+    private void doColoring(IPlanNode node, TextStyle textStyle) {
+        if (node instanceof SearchOperationNode) {
+            doColoring(((SearchOperationNode) node).getSearchOperation(), textStyle);
+        } else if (node instanceof MatchFoundNode) {
+            textStyle.foreground = localResourceManager.createColor(new RGB(0, 0, 255));
+        }
+        if (node.isBreakpointSet()) {
+            textStyle.borderStyle = SWT.BORDER_SOLID;
+            textStyle.borderColor = localResourceManager.createColor(new RGB(200, 0, 0));
+        }
+    }
+    
+    private void doColoring(ISearchOperation searchOperation, TextStyle textStyle) {
+        switch (calculateOperationKind(searchOperation)) {
         case EXTEND:
             textStyle.foreground = localResourceManager.createColor(new RGB(0, 200, 0));
             break;
@@ -117,21 +147,8 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
         case CHECK:
             textStyle.foreground = localResourceManager.createColor(new RGB(100, 100, 100));
             break;
-        case MATCH:
-            textStyle.foreground = localResourceManager.createColor(new RGB(0, 0, 255));
-            break;
-        default:
-            throw new UnsupportedOperationException("Unknown operation kind: " + node.getOperationKind());
         }
-        
-        if(node.isBreakpoint()){
-            textStyle.borderStyle = SWT.BORDER_SOLID;
-            textStyle.borderColor = localResourceManager.createColor(new RGB(200, 0, 0));
-        }
-    }
-
-    public List<SearchPlanExecutor> getPlanExecutorList() {
-        return this.planExecutors;
+       
     }
 
     @Override
@@ -148,7 +165,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
     }
     public Object getDummyMatchOperation(SearchPlanExecutor planExecutor) {
         for (Entry<Object, SearchPlanExecutor> key : dummyMatchOperationMappings.entrySet()) {
-            if(Objects.equals(key.getValue(), planExecutor)){
+            if (Objects.equals(key.getValue(), planExecutor)){
                 return key.getKey();
             }
         }

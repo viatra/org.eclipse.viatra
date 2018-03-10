@@ -130,4 +130,8 @@ public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternM
         return Arrays.asList(sourcePosition, targetPosition);
     }
 
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

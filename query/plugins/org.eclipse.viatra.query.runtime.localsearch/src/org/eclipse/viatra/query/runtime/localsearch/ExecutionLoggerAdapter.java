@@ -1,0 +1,87 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2018, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.localsearch;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase.ScopeCheck;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+
+/**
+ * @since 2.0
+ */
+public final class ExecutionLoggerAdapter implements ILocalSearchAdapter {
+    
+    volatile String indentation = "";
+    private final Consumer<String> outputConsumer;
+    
+    public ExecutionLoggerAdapter(Consumer<String> outputConsumer) {
+        this.outputConsumer = outputConsumer;
+    }
+    
+    private void logMessage(String message) {
+        outputConsumer.accept(message);
+    }
+    
+    private void logMessage(String message, Object...args) {
+        outputConsumer.accept(String.format(message, args));
+    }
+    
+    @Override
+    public void patternMatchingStarted(LocalSearchMatcher lsMatcher) {
+        logMessage(indentation + "[ START] " + lsMatcher.getQuerySpecification().getFullyQualifiedName());
+    }
+
+    @Override
+    public void noMoreMatchesAvailable(LocalSearchMatcher lsMatcher) {
+        logMessage(indentation + "[FINISH] " + lsMatcher.getQuerySpecification().getFullyQualifiedName());
+    }
+
+    @Override
+    public void planChanged(Optional<SearchPlan> oldPlan, Optional<SearchPlan> newPlan) {
+        logMessage(indentation + "[  PLAN] " + newPlan.map(p -> p.getSourceBody().getPattern().getFullyQualifiedName()).orElse(""));
+        logMessage(indentation + newPlan.map(SearchPlan::toString).map(s -> s.replace("\n", "\n" + indentation)).orElse(""));
+    }
+
+    @Override
+    public void operationSelected(SearchPlan plan, ISearchOperation operation, MatchingFrame frame, boolean isBacktrack) {
+        String category = isBacktrack ? "[  BACK] "  : "[SELECT] "; 
+       logMessage(indentation + category + operation.toString());
+        if (operation instanceof IPatternMatcherOperation) {
+            indentation = indentation + "\t";
+        }
+    }
+
+    @Override
+    public void operationExecuted(SearchPlan plan, ISearchOperation operation, MatchingFrame frame,
+            boolean isSuccessful) {
+        if (operation instanceof ScopeCheck) return;
+        if (operation instanceof IPatternMatcherOperation && indentation.length() > 0) {
+            indentation = indentation.substring(1);
+        }
+        logMessage(indentation + "[    %s] %s %s", isSuccessful ? "OK" : "NO", operation.toString(), frame.toString());
+    }
+
+    @Override
+    public void matchFound(SearchPlan plan, MatchingFrame frame) {
+        logMessage(indentation + "[ MATCH] " + plan.getSourceBody().getPattern().getFullyQualifiedName() + " " + frame.toString());
+    }
+    
+    @Override
+    public void duplicateMatchFound(MatchingFrame frame) {
+        logMessage(indentation + "[ DUPL.] " + frame.toString());
+    }
+}

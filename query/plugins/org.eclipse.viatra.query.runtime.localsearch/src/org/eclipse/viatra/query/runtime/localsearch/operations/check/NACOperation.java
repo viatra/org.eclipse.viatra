@@ -84,5 +84,8 @@ public class NACOperation implements ISearchOperation, IPatternMatcherOperation 
         return information.getVariablePositions();
     }
 
-
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

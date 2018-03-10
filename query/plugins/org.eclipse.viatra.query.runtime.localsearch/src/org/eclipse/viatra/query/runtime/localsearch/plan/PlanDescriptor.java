@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;

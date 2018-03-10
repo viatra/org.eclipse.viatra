@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationNode;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 
 public class CreateBreakPointHandler extends AbstractHandler {
@@ -42,11 +42,9 @@ public class CreateBreakPointHandler extends AbstractHandler {
             return;
         }
         
-        SearchOperationViewerNode selectedNode = (SearchOperationViewerNode) thisSelection.getFirstElement();
-        selectedNode.setBreakpoint(!selectedNode.isBreakpoint());
-            
-        localSearchDebugView.refreshView();
-        localSearchDebugView.getOperationListViewer().setSelection(null);
+        SearchOperationNode selectedNode = (SearchOperationNode) thisSelection.getFirstElement();
+        selectedNode.toggleBreakpoint(!selectedNode.isBreakpointSet());
+        localSearchDebugView.getOperationListViewer().refresh(selectedNode);
     }
     
 }

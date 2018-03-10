@@ -103,7 +103,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable {
             ISearchOperationExecutor operation = operations.get(currentOperation);
             if (!adapters.isEmpty()){
                 for (ILocalSearchAdapter adapter : adapters) {
-                    adapter.executorInitializing(this,frame);
+                    adapter.executorInitializing(plan, frame);
                 }
             }
             operation.onInitialize(frame, context);
@@ -129,28 +129,28 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable {
     public boolean execute(MatchingFrame frame) {
         int upperBound = operations.size() - 1;
         init(frame);
-        operationSelected(frame);
+        operationSelected(frame, currentOperation, false);
         while (currentOperation >= 0 && currentOperation <= upperBound) {
             if (operations.get(currentOperation).execute(frame, context)) {
-                operationExecuted(frame);
+                operationExecuted(frame, currentOperation, true);
                 currentOperation++;
-                operationSelected(frame);
+                operationSelected(frame, currentOperation, false);
                 if (currentOperation <= upperBound) {
                     ISearchOperationExecutor operation = operations.get(currentOperation);
                     operation.onInitialize(frame, context);
                 }
             } else {
-                operationExecuted(frame);
+                operationExecuted(frame, currentOperation, false);
                 ISearchOperationExecutor operation = operations.get(currentOperation);
                 operation.onBacktrack(frame, context);
                 currentOperation--;
-                operationSelected(frame);
+                operationSelected(frame, currentOperation, true);
             }
         }
         boolean matchFound = currentOperation > upperBound;
         if (matchFound && !adapters.isEmpty()) {
             for (ILocalSearchAdapter adapter : adapters) {
-                adapter.matchFound(this, frame);
+                adapter.matchFound(plan, frame);
             }
         }
         return matchFound;
@@ -166,18 +166,18 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable {
         }
     }
     
-    private void operationExecuted(MatchingFrame frame) {
+    private void operationExecuted(MatchingFrame frame, int operationIndex, boolean isSuccessful) {
         if (!adapters.isEmpty()){
             for (ILocalSearchAdapter adapter : adapters) {
-                adapter.operationExecuted(this, frame);
+                adapter.operationExecuted(plan, operations.get(operationIndex).getOperation(), frame, isSuccessful);
             }
         }
     }
     
-    private void operationSelected(MatchingFrame frame) {
-        if (!adapters.isEmpty()){
+    private void operationSelected(MatchingFrame frame, int operationIndex, boolean isBacktrack) {
+        if (!adapters.isEmpty() && operationIndex >= 0 && operationIndex < operations.size()){
             for (ILocalSearchAdapter adapter : adapters) {
-                adapter.operationSelected(this, frame);
+                adapter.operationSelected(plan, operations.get(operationIndex).getOperation(), frame, isBacktrack);
             }
         }
     }

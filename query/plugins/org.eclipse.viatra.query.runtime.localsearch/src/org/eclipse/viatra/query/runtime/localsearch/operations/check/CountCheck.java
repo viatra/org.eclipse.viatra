@@ -87,4 +87,8 @@ public class CountCheck implements ISearchOperation, IPatternMatcherOperation {
         return "check     "+variableMapping.apply(position)+" = count find "+ information.toString(variableMapping);
     }
     
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

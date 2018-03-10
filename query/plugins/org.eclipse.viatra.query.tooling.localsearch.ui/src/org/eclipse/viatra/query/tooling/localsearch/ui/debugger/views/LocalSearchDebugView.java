@@ -15,18 +15,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.gef.layout.ILayoutAlgorithm;
 import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -37,6 +42,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
@@ -44,26 +52,29 @@ import org.eclipse.viatra.integration.zest.viewer.ZestContentViewer;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.internal.LocalSearchDebuggerRunner;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.FrameViewerContentProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester;
 
+import com.google.common.collect.Maps;
+
 /**
  * 
  * @author Marton Bur
  *
  */
-public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkbenchPart*/ {
+public class LocalSearchDebugView extends ViewPart {
 
 
     public static final String ID = "org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView";
@@ -81,6 +92,8 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
     private LocalSearchDebugger debugger;
     private Thread planExecutorThread = null;
+
+    private LocalSearchBackend localSearchBackend;
 
     /**
      * @throws ViatraQueryRuntimeException
@@ -102,37 +115,27 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchEMFBackendFactory.INSTANCE);
         final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
                 .getResultProvider(specification.getInternalQueryRepresentation());
-        final LocalSearchBackend localSearchBackend = (LocalSearchBackend) lsBackend;
-        debugger = new LocalSearchDebugger() {
-            @Override
-            public void dispose() {
-                localSearchBackend.removeAdapter(this);
-                super.dispose();
-            }
-        };
+        localSearchBackend = (LocalSearchBackend) lsBackend;
+        debugger = new LocalSearchDebugger(this, engine, specification, adornment);
         localSearchBackend.addAdapter(debugger);
-
+        
+        operationListViewer.setInput(debugger.getViewModel());
+        operationListViewer.refresh();
+        
         // Create and start the matcher thread
-        Runnable planExecutorRunnable = new LocalSearchDebuggerRunner(debugger, adornment, lsResultProvider);
+        Runnable planExecutorRunnable = () -> lsResultProvider.getAllMatches(adornment).collect(Collectors.toSet());
 
-        if (planExecutorThread == null || !planExecutorThread.isAlive()) {
-            // Start the matching process if not started or in progress yet
-            planExecutorThread = new Thread(planExecutorRunnable);
-            planExecutorThread.start();
-        } else if (planExecutorThread.isAlive()) {
+        // Interrupt old executions
+        if (planExecutorThread != null && planExecutorThread.isAlive()) {
             planExecutorThread.interrupt();
-            planExecutorThread = new Thread(planExecutorRunnable);
-            planExecutorThread.start();
         }
+        planExecutorThread = new Thread(planExecutorRunnable);
+        planExecutorThread.start();
+        
         IEvaluationService service = getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
     }
-    
-    public void setDebugger(LocalSearchDebugger localSearchDebugger) {
-        this.debugger = localSearchDebugger;
-        IEvaluationService service = getSite().getService(IEvaluationService.class);
-        service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
-    }
+//    
     public LocalSearchDebugger getDebugger() {
         return this.debugger;
     }
@@ -212,8 +215,26 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
         this.operationListViewer.setContentProvider(operationListContentProvider);
         this.operationListViewer.setLabelProvider(new OperationListLabelProvider());
-        // TODO why is this needed?
-        this.operationListViewer.setInput(null);
+        
+        this.operationListViewer.addDoubleClickListener(event -> {
+            IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
+
+            try {
+                final IWorkbenchPartSite site = getSite();
+                Map<String, Object> eventContextParameters = Maps.newHashMap();
+                eventContextParameters.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, site.getWorkbenchWindow());
+                eventContextParameters.put(ISources.ACTIVE_PART_NAME, this);
+                eventContextParameters.put(ISources.ACTIVE_PART_ID_NAME, LocalSearchDebugView.ID);
+                eventContextParameters.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, thisSelection);
+                ICommandService commandService = site.getService(ICommandService.class);
+                commandService.getCommand("org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.placebreakpoint").executeWithChecks(
+                        new ExecutionEvent(null, eventContextParameters, null, null));
+            }
+            catch (NotHandledException | ExecutionException | NotDefinedException | NotEnabledException e) {
+                ViatraQueryLoggingUtil.getLogger(getClass()).error("Error setting up breakpoint", e);
+            }
+
+        });
 
     }
 
@@ -248,14 +269,6 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
     public TreeViewer getOperationListViewer() {
         return operationListViewer;
-    }
-
-    public void setOperationListViewer(TreeViewer operationListViewer) {
-        this.operationListViewer = operationListViewer;
-    }
-    
-    public OperationListContentProvider getOperationListContentProvider() {
-        return operationListContentProvider;
     }
 
     public ZestContentViewer getGraphViewer() {
@@ -308,36 +321,10 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         
     }
 
-    
-    private static class MatchTableContentProvider implements IStructuredContentProvider {
-
-        @Override
-        public void dispose() {
-            // nop
-        }
-
-        @Override
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-            // nop
-        }
-
-        @Override
-        public Object[] getElements(Object inputElement) {
-            if (inputElement instanceof Object[]) {
-                return (Object[]) inputElement;
-            }
-            if (inputElement instanceof Collection) {
-                return ((Collection<?>) inputElement).toArray();
-            }
-            return new Object[0];
-        }
-
-    }
-
     private TableViewer createTableViewer(Composite parent) {
         TableViewer matchesViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
         
-        matchesViewer.setContentProvider(new MatchTableContentProvider());
+        matchesViewer.setContentProvider(ArrayContentProvider.getInstance());
 
         GridData gridData = new GridData();
         gridData.verticalAlignment = GridData.FILL;
@@ -362,6 +349,7 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
     private void disposeExistingDebugger() {
         if (debugger != null) {
+            localSearchBackend.removeAdapter(debugger);
             debugger.dispose();
             debugger = null;
         }

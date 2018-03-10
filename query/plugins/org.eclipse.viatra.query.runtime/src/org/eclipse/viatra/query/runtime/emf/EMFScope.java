@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -161,7 +162,22 @@ public class EMFScope extends QueryScope {
 
     @Override
     public String toString() {
-        return String.format("EMFScope(%s):%s", options, scopeRoots);
+        return String.format("EMFScope(%s):%s", options, scopeRoots.stream().map(this::scopeRootString).collect(Collectors.joining(",")));
+    }
+    
+    private String scopeRootString(Notifier notifier) {
+        if (notifier instanceof Resource) {
+            Resource resource = (Resource) notifier;
+            return String.format("%s(%s)", resource.getClass(), resource.getURI());
+        } else if (notifier instanceof ResourceSet) {
+            ResourceSet resourceSet = (ResourceSet) notifier;
+            return resourceSet.getResources().stream()
+                    .map(Resource::getURI)
+                    .map(URI::toString)
+                    .collect(Collectors.joining(", ", resourceSet.getClass() + "(", ")"));
+        } else {
+            return notifier.toString();
+        }
     }
 
     @Override

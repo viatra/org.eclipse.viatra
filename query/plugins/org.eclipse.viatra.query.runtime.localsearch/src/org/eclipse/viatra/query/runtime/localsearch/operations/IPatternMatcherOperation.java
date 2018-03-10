@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations;
 
+import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
+
 /**
  * Marker interface for pattern matcher call operations, such as positive and negative pattern calls or match aggregators.
  * 
@@ -18,4 +20,9 @@ package org.eclipse.viatra.query.runtime.localsearch.operations;
  */
 public interface IPatternMatcherOperation {
 
+    /**
+     * Returns the precomputed call information associated with the current operation
+     * @since 2.0
+     */
+    CallInformation getCallInformation();
 }

@@ -101,4 +101,8 @@ public class AggregatorExtend  implements ISearchOperation, IPatternMatcherOpera
         return "extend    -"+variableMapping.apply(position)+" = " + aggregator.getAggregator().getOperator().getName()+" find " + information.toString(variableMapping);
     }
     
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

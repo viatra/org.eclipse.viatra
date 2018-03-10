@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.planner.util;
+package org.eclipse.viatra.query.runtime.localsearch.plan;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 /**
  * This class is responsible for storing the results of the planner and operation compiler for a selected body.
+ * @since 2.0
  */
 public class SearchPlanForBody {
 

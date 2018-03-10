@@ -31,8 +31,8 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
-import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
@@ -62,7 +62,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
  *
  */
 public abstract class AbstractLocalSearchResultProvider implements IQueryResultProvider {
-
+    
     protected final LocalSearchBackend backend;
     protected final IQueryBackendContext backendContext;
     protected final IQueryRuntimeContext runtimeContext;
@@ -394,5 +394,16 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
      */
     public void forgetAllPlans() {
         planCache.clear();
+    }
+    
+    /**
+     * Returns a search plan for a given adornment if exists
+     * 
+     * @return a search plan for the pattern with the given adornment, or null if none exists
+     * @since 2.0
+     * @noreference This method is not intended to be referenced by clients; it should only used by {@link LocalSearchBackend}.
+     */
+    public IPlanDescriptor getSearchPlan(Set<PParameter> adornment) {
+        return planCache.get(new MatcherReference(query, adornment));
     }
 }

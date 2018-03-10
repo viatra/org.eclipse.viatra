@@ -14,8 +14,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchPlanViewModel;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.IPlanNode;
 
 /**
  * Content provider class for the search plan tree viewer
@@ -24,7 +23,7 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewele
  *
  */
 public class OperationListContentProvider implements ITreeContentProvider {
-
+    
     @Override
     public void dispose() {
     }
@@ -34,41 +33,36 @@ public class OperationListContentProvider implements ITreeContentProvider {
      */
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput /*new search plan*/) {
-        
     }
 
     @Override
     public Object[] getElements(Object inputElement/*root*/) {
-        if (inputElement != null) {
-            SearchPlanViewModel model = (SearchPlanViewModel)inputElement;
-            List<SearchOperationViewerNode> elements = model.getTopLevelElements();
-            return elements.toArray(new Object[elements.size()]);
+        return getChildren(inputElement);
+    }
+
+    @Override
+    public Object[] getChildren(Object parentElement) {
+        if (parentElement instanceof IPlanNode) {
+            final List<IPlanNode> children = ((IPlanNode) parentElement).getChildren();
+            if (children.size() == 1 && children.get(0).skipPresentation()) {
+                return getChildren(((IPlanNode) parentElement).getChildren().get(0));
+            } else {
+                return children.toArray(new IPlanNode[children.size()]);
+            }
         }
         return new Object[0];
     }
 
     @Override
-    public Object[] getChildren(Object parentElement) {
-        if(parentElement instanceof SearchOperationViewerNode){
-            return ((SearchOperationViewerNode) parentElement).getChildren().toArray();
-        }
-        return null;
+    public boolean hasChildren(Object element) {
+        return element instanceof IPlanNode && ((IPlanNode) element).getChildren().size() > 0;
     }
-
+    
     @Override
     public Object getParent(Object element) {
-        if(element instanceof SearchOperationViewerNode){
-            return ((SearchOperationViewerNode) element).getParent();
+        if (element instanceof IPlanNode) {
+            return ((IPlanNode) element).getParent();
         }
         return null;
     }
-
-    @Override
-    public boolean hasChildren(Object element) {
-        if(element instanceof SearchOperationViewerNode){
-            return !((SearchOperationViewerNode) element).getChildren().isEmpty();
-        }
-        return false;
-    }
-
 }

@@ -83,4 +83,8 @@ public class CountOperation implements ISearchOperation, IPatternMatcherOperatio
         return "extend    -"+variableMapping.apply(position)+" = count find " + information.toString(variableMapping);
     }
     
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

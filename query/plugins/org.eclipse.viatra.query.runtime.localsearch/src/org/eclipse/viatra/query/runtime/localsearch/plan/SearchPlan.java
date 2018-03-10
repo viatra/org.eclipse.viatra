@@ -84,5 +84,18 @@ public class SearchPlan {
     public PBody getSourceBody() {
         return body;
     }
-
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+            
+        sb.append("{\n");
+        for(ISearchOperation operation : this.getOperations()){
+            sb.append("\t");
+            sb.append(operation);
+            sb.append("\n");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

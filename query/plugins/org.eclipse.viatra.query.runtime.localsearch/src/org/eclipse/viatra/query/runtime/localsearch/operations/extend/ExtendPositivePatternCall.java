@@ -113,4 +113,8 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
         return "extend find " + information.toString(variableMapping);
     }
     
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

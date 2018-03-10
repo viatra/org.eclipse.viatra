@@ -109,5 +109,10 @@ public class AggregatorCheck implements ISearchOperation, IPatternMatcherOperati
     public String toString(Function<Integer, String> variableMapping) {
         return "check     "+variableMapping.apply(position)+" = " + aggregator.getAggregator().getOperator().getName() + " find " + information.toString(variableMapping);
     }
+
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
     
 }

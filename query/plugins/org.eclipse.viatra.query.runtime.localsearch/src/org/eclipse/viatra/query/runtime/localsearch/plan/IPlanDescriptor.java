@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.plan;
 import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;

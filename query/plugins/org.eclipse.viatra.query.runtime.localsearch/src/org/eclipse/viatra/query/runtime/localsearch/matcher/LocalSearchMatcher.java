@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -75,9 +76,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         }
 
         protected boolean selectNextPlan() {
-            if(currentPlan == null) {
-                matchingStarted();
-            } else {
+            if(currentPlan != null) {
                 currentPlan.removeAdapters(adapters);
             }
             boolean validPlanSelected = false;
@@ -94,7 +93,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
             
             if (validPlanSelected) {
                 for (ILocalSearchAdapter adapter : adapters) {
-                    adapter.planChanged(currentPlan, nextPlan);
+                    adapter.planChanged(Optional.ofNullable(currentPlan).map(SearchPlanExecutor::getSearchPlan),
+                            Optional.ofNullable(nextPlan).map(SearchPlanExecutor::getSearchPlan));
                 }
                 currentPlan = nextPlan;
                 return true;
@@ -109,6 +109,9 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         private boolean findNextNewMatchInCurrentPlan() {
             boolean foundMatch = currentPlan.execute(frame);
             while (foundMatch && matchSet.contains(parametersOfFrameView)) {
+                for (ILocalSearchAdapter adapter : adapters) {
+                    adapter.duplicateMatchFound(frame);
+                }
                 foundMatch = currentPlan.execute(frame);
             }
             return foundMatch;
@@ -128,7 +131,9 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
                 foundMatch = selectNextPlan() && findNextNewMatchInCurrentPlan();
             }
             if (!foundMatch) {
-                matchingFinished();
+                for (ILocalSearchAdapter adapter : adapters) {
+                    adapter.noMoreMatchesAvailable(LocalSearchMatcher.this);
+                }
             }
             isNextMatchCalculated = foundMatch;
             return foundMatch;
@@ -260,12 +265,6 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         }
     }
 
-    private void matchingFinished() {
-        for (ILocalSearchAdapter adapter : adapters) {
-            adapter.patternMatchingFinished(this);
-        }		
-    }
-    
     /**
      * @since 2.0
      */

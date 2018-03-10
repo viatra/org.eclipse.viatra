@@ -91,4 +91,8 @@ public class CheckPositivePatternCall implements ISearchOperation, IPatternMatch
         return "check     find "+information.toString(variableMapping);
     }
 
+    @Override
+    public CallInformation getCallInformation() {
+        return information;
+    }
 }

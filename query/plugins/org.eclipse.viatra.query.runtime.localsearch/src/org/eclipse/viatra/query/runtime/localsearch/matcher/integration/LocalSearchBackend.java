@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
+import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -32,6 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
@@ -52,6 +54,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     private final PurgableCache generalCache;
     
     private final Multimap<PQuery, AbstractLocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
+    
     
     /**
      * @since 1.5
@@ -110,9 +113,12 @@ public abstract class LocalSearchBackend implements IQueryBackend {
         return false;
     }
 
+    /**
+     * @since 2.0
+     */
     @Override
-    public IQueryResultProvider peekExistingResultProvider(PQuery query) {
-        return null;
+    public AbstractLocalSearchResultProvider peekExistingResultProvider(PQuery query) {
+        return resultProviderCache.get(query).stream().findAny().orElse(null);
     }
 
     /**
@@ -223,4 +229,14 @@ public abstract class LocalSearchBackend implements IQueryBackend {
         }
     }
     
+    /**
+     * Returns a search plan for a given query and adornment if such plan is already calculated.
+     * 
+     * @return a previously calculated search plan for the given query and adornment, or null if no such plan exists
+     * @since 2.0
+     */
+    public IPlanDescriptor getSearchPlan(PQuery query, Set<PParameter> adornment) {
+        final AbstractLocalSearchResultProvider resultProvider = peekExistingResultProvider(query);
+        return (resultProvider == null) ? null : resultProvider.getSearchPlan(adornment);
+    }
 }
