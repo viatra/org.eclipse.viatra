@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -95,7 +96,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
             
             if (validPlanSelected) {
                 for (ILocalSearchAdapter adapter : adapters) {
-                    adapter.planChanged(currentPlan, nextPlan);
+                    adapter.planChanged(Optional.ofNullable(currentPlan).map(SearchPlanExecutor::getSearchPlan),
+                            Optional.ofNullable(nextPlan).map(SearchPlanExecutor::getSearchPlan));
                 }
                 currentPlan = nextPlan;
                 return true;
@@ -377,7 +379,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     private void matchingFinished() {
         for (ILocalSearchAdapter adapter : adapters) {
-            adapter.patternMatchingFinished(this);
+            adapter.noMoreMatchesAvailable(this);
         }		
     }
     
