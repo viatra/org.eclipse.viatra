@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
@@ -62,18 +65,20 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         
         protected SearchPlanExecutor currentPlan;
         protected MatchingFrame frame;
-        //protected final Set<ITuple> matchSet; TODO not necessary until getAllmatches eagerly collect results
+        protected final Set<ITuple> matchSet;
         protected VolatileModifiableMaskedTuple parametersOfFrameView; 
         private boolean isNextMatchCalculated;
         
         public PlanExecutionIterator(final Iterator<SearchPlanExecutor> planIterator) {
             this.planIterator = planIterator;
             isNextMatchCalculated = false;
-            //matchSet = new HashSet<>();
+            matchSet = new HashSet<>();
         }
 
         protected boolean selectNextPlan() {
-            if(currentPlan !=null) {
+            if(currentPlan == null) {
+                matchingStarted();
+            } else {
                 currentPlan.removeAdapters(adapters);
             }
             boolean validPlanSelected = false;
@@ -102,6 +107,14 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
 
         protected abstract boolean initializeMatchingFrame(SearchPlanExecutor nextPlan);
 
+        private boolean findNextNewMatchInCurrentPlan() {
+            boolean foundMatch = currentPlan.execute(frame);
+            while (foundMatch && matchSet.contains(parametersOfFrameView)) {
+                foundMatch = currentPlan.execute(frame);
+            }
+            return foundMatch;
+        }
+        
         @Override
         public boolean hasNext() {
             if (isNextMatchCalculated) {
@@ -110,9 +123,13 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
             if (currentPlan == null) {
                 return false;
             }
-            boolean foundMatch = currentPlan.execute(frame);
-            while ((!foundMatch) && planIterator.hasNext() /*&& !matchSet.contains(parametersOfFrameView)*/) {
-                foundMatch = selectNextPlan() && currentPlan.execute(frame);
+            boolean foundMatch = findNextNewMatchInCurrentPlan();
+            
+            while (!foundMatch && planIterator.hasNext()) {
+                foundMatch = selectNextPlan() && findNextNewMatchInCurrentPlan();
+            }
+            if (!foundMatch) {
+                matchingFinished();
             }
             isNextMatchCalculated = foundMatch;
             return foundMatch;
@@ -125,7 +142,7 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
             }
             isNextMatchCalculated = false;
             final Tuple match = parametersOfFrameView.toImmutable();
-            //matchSet.add(match);
+            matchSet.add(match);
             return match;
         }
     }
@@ -370,16 +387,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     public Stream<Tuple> streamMatches(final Object[] parameterValues) {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithArrayParameters(plan.iterator(), parameterValues);
-        //TODO not collecting the results here causes plan executions to overlap with each other, causing very strange issues
-        //most likely a manifestation of bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=528377
-//        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,
-//                Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.DISTINCT), false);
-        Set<Tuple> results = new HashSet<>();
-        while(it.hasNext()) {
-            results.add(it.next());
-        }
-        matchingFinished();
-        return results.stream();
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,
+                Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.DISTINCT), false);
     }
     
     /**
@@ -389,16 +398,8 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
         matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIteratorWithTupleParameters(
                 plan.iterator(), parameterSeedMask, parameterValues);
-        //TODO not collecting the results here causes plan executions to overlap with each other, causing very strange issues
-        //most likely a manifestation of bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=528377
-//        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,
-//                Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.DISTINCT), false);
-        Set<Tuple> results = new HashSet<>();
-        while(it.hasNext()) {
-            results.add(it.next());
-        }
-        matchingFinished();
-        return results.stream();
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,
+                Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.DISTINCT), false);
     }
     
     /**
