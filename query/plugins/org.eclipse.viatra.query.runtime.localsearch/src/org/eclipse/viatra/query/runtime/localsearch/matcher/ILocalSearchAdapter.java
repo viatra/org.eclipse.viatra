@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
-import java.util.Optional;
-
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 
 
 /**
@@ -27,75 +24,64 @@ public interface ILocalSearchAdapter {
      * 
      * @since 1.2
      */
-    default void adapterRegistered(ILocalSearchAdaptable adaptable) {};
+    void adapterRegistered(ILocalSearchAdaptable adaptable);
     /**
      * 
      * @since 1.2
      */
-    default void adapterUnregistered(ILocalSearchAdaptable adaptable) {};
+    void adapterUnregistered(ILocalSearchAdaptable adaptable);
     
     /**
      * Callback method to indicate the start of a matching process
      *
      * @param lsMatcher the local search matcher that starts the matching
      */
-    default void patternMatchingStarted(LocalSearchMatcher lsMatcher) {};
+    void patternMatchingStarted(LocalSearchMatcher lsMatcher);
 
     /**
-     * Callback method to indicate the end of a matching process. 
-     * </p>
-     * <strong>WARNING</strong>: It is not guaranteed that this method will be called;
-     * it is possible that a match process will end after a match is found and no other matches are accessed.
+     * Callback method to indicate the end of a matching process
      * 
-     * @param lsMatcher
-     *            the local search matcher that finished
-     * @since 2.0
+     * @param lsMatcher the local search matcher that finished
      */
-    default void noMoreMatchesAvailable(LocalSearchMatcher lsMatcher) {};
+    void patternMatchingFinished(LocalSearchMatcher lsMatcher);
 
     /**
      * Callback method to indicate switching to a new plan during the execution of a pattern matching
      * 
-     * @param oldPlan the plan that is finished. Value is null when the first plan is starting.
-     * @param newPlan the plan that will begin execution
-     * @since 2.0
+     * @param oldPlanExecutor the plan that is finished. Value is null when the first plan is starting.
+     * @param newPlanExecutor the plan that will begin execution
      */
-    default void planChanged(Optional<SearchPlan> oldPlan, Optional<SearchPlan> newPlan) {};
+    void planChanged(SearchPlanExecutor oldPlanExecutor, SearchPlanExecutor newPlanExecutor);
     
     /**
      * Callback method to indicate the selection of an operation to execute
      * 
-     * @param plan the current plan executor
+     * @param planExecutor the current plan executor
      * @param frame the current matching frame
-     * @since 2.0
      */
-    default void operationSelected(SearchPlan plan, ISearchOperation operation, MatchingFrame frame) {};
+    void operationSelected(SearchPlanExecutor planExecutor, MatchingFrame frame);
 
     /**
      * Callback method to indicate that an operation is executed
      * 
-     * @param plan the current plan
+     * @param planExecutor the current plan executor
      * @param frame the current matching frame
-     * @param isSuccessful if true, the operation executed successfully, or false if the execution failed and backtracking will happen
-     * @since 2.0
      */
-    default void operationExecuted(SearchPlan plan, ISearchOperation operation, MatchingFrame frame, boolean isSuccessful) {};
+    void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame);
 
     /**
      * Callback that is used to indicate that a match has been found
      * 
-     * @param plan the search plan executor that found the match
+     * @param planExecutor the search plan executor that found the match
      * @param frame the frame that holds the substitutions of the variables that match
-     * @since 2.0
      */
-    default void matchFound(SearchPlan plan, MatchingFrame frame) {};
+    void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame);
 
     /**
-     * Callback method to indicate that a search plan is initialized in an executor with the given frame and starting operation
+     * Callback method to indicate that a search plan executor is initialized with the given frame and starting operation
      * 
-     * @param searchPlan
+     * @param searchPlanExecutor
      * @param frame
-     * @since 2.0
      */
-    default void executorInitializing(SearchPlan searchPlan, MatchingFrame frame) {};
+    void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame);
 }

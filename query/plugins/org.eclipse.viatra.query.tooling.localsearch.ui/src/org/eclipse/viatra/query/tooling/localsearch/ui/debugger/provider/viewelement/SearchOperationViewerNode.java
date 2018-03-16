@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOp
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
-import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
 import com.google.common.collect.ImmutableList;
@@ -39,19 +39,19 @@ public class SearchOperationViewerNode {
     private SearchOperationViewerNode parent;
     private String labelText;
     private ISearchOperation searchOperation;
-    private SearchPlan plan;
+    private SearchPlanExecutor planExecutor;
     private boolean matcherBased;
 
-    public SearchOperationViewerNode(SearchPlan planExecutor) {
+    public SearchOperationViewerNode(SearchPlanExecutor planExecutor) {
         // Dummy operation for representing "match found"
-        this.plan = planExecutor;
+        this.planExecutor = planExecutor;
         operationKind = OperationKind.MATCH;
         setup();
     }
 
-    public SearchOperationViewerNode(ISearchOperation searchOperation, SearchPlan plan) {
+    public SearchOperationViewerNode(ISearchOperation searchOperation, SearchPlanExecutor planExecutor) {
         this.searchOperation = searchOperation;
-        this.plan = plan;
+        this.planExecutor = planExecutor;
         if (searchOperation instanceof ExtendOperationExecutor) {
             operationKind = OperationKind.EXTEND;
         } else if (searchOperation instanceof NACOperation) {
@@ -77,7 +77,7 @@ public class SearchOperationViewerNode {
                 sb.append(searchOperation.toString());
 
                 sb.append("(");
-                Map<Integer, PVariable> variableMapping = plan.getVariableMapping();
+                Map<Integer, PVariable> variableMapping = planExecutor.getVariableMapping();
                 List<Integer> variablePositions = searchOperation.getVariablePositions();
                 for (int i = 0; i < variablePositions.size(); i++) {
                     PVariable pVariable = variableMapping.get(variablePositions.get(i));
@@ -161,8 +161,8 @@ public class SearchOperationViewerNode {
         return searchOperation;
     }
 
-    public SearchPlan getPlanExecutor() {
-        return plan;
+    public SearchPlanExecutor getPlanExecutor() {
+        return planExecutor;
     }
 
     public boolean isMatcherBased() {

@@ -12,8 +12,7 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewel
 
 import java.util.List;
 
-import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 
 /**
@@ -58,22 +57,23 @@ public class SearchPlanViewModel {
     }
 
 
-    public void stepInto(SearchPlan plan, ISearchOperation operation){
+    public void stepInto(){
         // Step the execution exactly one step forward
-        doStepInto(topLevelElements, plan, operation);
+        doStepInto(topLevelElements);
     }
 
-    private void doStepInto(List<SearchOperationViewerNode> sameLevelElements, SearchPlan plan, ISearchOperation operation) {
+    private void doStepInto(List<SearchOperationViewerNode> sameLevelElements) {
         if (sameLevelElements.isEmpty()) {
             return;
         }
-        int currentOperationIndex = plan.getOperationIndex(operation);
+        SearchPlanExecutor planExecutor = sameLevelElements.get(0).getPlanExecutor();
+        int currentOperation = planExecutor.getCurrentOperation();
         
         for (int i = 0; i < sameLevelElements.size(); i++) {
             SearchOperationViewerNode currentNode = sameLevelElements.get(i);
-            if(i < currentOperationIndex){
+            if(i < currentOperation){
                 currentNode.setOperationStatus(OperationStatus.EXECUTED);
-            } else if (i == currentOperationIndex){
+            } else if (i == currentOperation){
                 if(becameCurrent(currentNode)){
                     // This is selected for execution now, so that check for breakpoint
                     if(currentNode.isBreakpoint()){
@@ -82,7 +82,7 @@ public class SearchPlanViewModel {
                     currentNode.setOperationStatus(OperationStatus.CURRENT);
                     lastSelected = currentNode;
                 }
-                doStepInto(currentNode.getChildren(), plan, operation);
+                doStepInto(currentNode.getChildren());
             } else /*if (i > currentOperation)*/ {
                 currentNode.setOperationStatus(OperationStatus.QUEUED);				
             }
@@ -94,5 +94,47 @@ public class SearchPlanViewModel {
         boolean fromExecuted = currentNode.getOperationStatus().equals(OperationStatus.EXECUTED);
         return fromQueued || fromExecuted;
     }
+    
+    public void stepBack(){
+        // Step the execution exactly one step backward
+        doStepBack(topLevelElements);
+    }
+
+    private void doStepBack(List<SearchOperationViewerNode> sameLevelElements) {
+        if (sameLevelElements.isEmpty()) {
+            return;
+        }
+        SearchOperationViewerNode firstNode = sameLevelElements.get(0);
+        SearchPlanExecutor planExecutor = firstNode.getPlanExecutor();
+        int currentOperation = planExecutor.getCurrentOperation();
+
+        for (int i = 0; i < sameLevelElements.size(); i++) {
+            SearchOperationViewerNode currentNode = sameLevelElements.get(i);
+            if(i < currentOperation){
+                currentNode.setOperationStatus(OperationStatus.EXECUTED);
+            } else if (i == currentOperation){
+                doStepBack(currentNode.getChildren());
+                if(currentNode.getOperationStatus().equals(OperationStatus.EXECUTED)){
+                    // This is selected for execution now (stepped backward in the plan), so that check for breakpoint
+                    if(currentNode.isBreakpoint()){
+                        debugger.setHalted(true);
+                    }
+                }
+                currentNode.setOperationStatus(OperationStatus.CURRENT);
+                lastSelected = currentNode;
+            } else /*if (i > currentOperation)*/ {
+                currentNode.setOperationStatus(OperationStatus.QUEUED);				
+            }
+        }
+    }
+    
+    public void stepOver() {
+        // TODO
+        throw new UnsupportedOperationException("This feature is a TODO");
+    }
+
+
+
+
     
 }

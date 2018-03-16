@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.log4j.Level;
 import org.eclipse.jface.viewers.TableViewer;
@@ -27,7 +26,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptabl
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
@@ -47,7 +46,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     public static volatile Object notifier = new Object();
     private LocalSearchDebugView localSearchDebugView;
     private Deque<LocalSearchMatcher> runningMatchers;
-    private Deque<SearchPlan> runningExecutors;
+    private Deque<SearchPlanExecutor> runningExecutors;
     private List<ILocalSearchAdaptable> adaptedElements = new ArrayList<>();
     private boolean startHandlerCalled = false;
     private boolean isDisposed = false;
@@ -116,7 +115,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     private boolean shouldSelectOtherTab = false; 
     
     @Override
-    public void noMoreMatchesAvailable(LocalSearchMatcher matcher) {
+    public void patternMatchingFinished(LocalSearchMatcher matcher) {
         if (isDisposed) {
             return;
         }
@@ -142,22 +141,26 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
 
     @Override
-    public void planChanged(Optional<SearchPlan> oldPlanOptional, Optional<SearchPlan> newPlanOptional) {
+    public void planChanged(SearchPlanExecutor oldPlanExecutor, final SearchPlanExecutor newPlanExecutor) {
         if (isDisposed) {
             return;
         }
-        oldPlanOptional.ifPresent(plan -> runningExecutors.pop());
-        newPlanOptional.ifPresent(plan -> runningExecutors.push(plan));
+        if (oldPlanExecutor != null) {
+            runningExecutors.pop();
+        }
+        if (newPlanExecutor != null) {
+            runningExecutors.push(newPlanExecutor);
+        }
 
-        SearchPlan newPlan = newPlanOptional.orElse(null);
+
 //		final List<SearchOperationViewerNode> viewNodes = createOperationsListFromExecutor(newPlanExecutor);
-        if (runningMatchers.size() == 1 && newPlan != null) {
-            this.viewModel = new SearchPlanViewModel(createOperationsListFromExecutor(newPlan));
+        if (runningMatchers.size() == 1 && newPlanExecutor != null) {
+            this.viewModel = new SearchPlanViewModel(createOperationsListFromExecutor(newPlanExecutor));
             this.viewModel.setDebugger(this);
             // Set the input when the top level matcher goes to the next plan
             PlatformUI.getWorkbench().getDisplay().syncExec(() -> localSearchDebugView.getOperationListViewer().setInput(viewModel));
-        } else if(newPlan != null) {
-            viewModel.insertForCurrent(createOperationsListFromExecutor(newPlan));
+        } else if(newPlanExecutor != null) {
+            viewModel.insertForCurrent(createOperationsListFromExecutor(newPlanExecutor));
         }
 
         // Manage tabs for matching frames
@@ -171,7 +174,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         }
         // TODO optimize: should not refresh on every plan change only when halted
         PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
-            Map<Integer, PVariable> variableMapping = newPlan.getVariableMapping();
+            Map<Integer, PVariable> variableMapping = newPlanExecutor.getVariableMapping();
             List<String> columnNames = new ArrayList<>();
             for (int i = 0; i < variableMapping.size(); i++) {
                 columnNames.add(variableMapping.get(i).getName());
@@ -182,7 +185,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 
     @Override
-    public void executorInitializing(SearchPlan searchPlan, MatchingFrame frame) {
+    public void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame) {
         if (isDisposed) {
             return;
         }
@@ -196,20 +199,21 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
 
     @Override
-    public void operationSelected(SearchPlan plan, ISearchOperation operation, MatchingFrame frame) {
+    public void operationSelected(final SearchPlanExecutor planExecutor, final MatchingFrame frame) {
         if (isDisposed) {
             return;
         }
-        viewModel.stepInto(plan, operation);
+        viewModel.stepInto();
 
         checkForBreakPoint();
     }
 
     @Override
-    public void operationExecuted(SearchPlan plan, ISearchOperation operation, MatchingFrame frame, boolean isSuccessful) {
+    public void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame) {
         if (isDisposed) {
             return;
         }
+//		viewModel.stepBack();
         if (halted) {
             localSearchDebugView.refreshView();
             if(shouldSelectOtherTab){
@@ -220,7 +224,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
     }
 
     @Override
-    public void matchFound(SearchPlan planExecutor, MatchingFrame frame) {
+    public void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame) {
         if (isDisposed) {
             return;
         }
@@ -239,14 +243,15 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         return !hasFinished;
     }
     
-    private List<SearchOperationViewerNode> createOperationsListFromExecutor(SearchPlan plan) {
+    private List<SearchOperationViewerNode> createOperationsListFromExecutor(SearchPlanExecutor planExecutor) {
         List<SearchOperationViewerNode> nodes = new ArrayList<>();
         
-        for (ISearchOperation operation : plan.getOperations()) {
-            nodes.add(new SearchOperationViewerNode(operation, plan));
+        List<ISearchOperation> plan = planExecutor.getSearchPlan().getOperations();
+        for (ISearchOperation operation : plan) {
+            nodes.add(new SearchOperationViewerNode(operation, planExecutor));
         }
         // Final "match found" indicator operation
-        nodes.add(new SearchOperationViewerNode(plan));
+        nodes.add(new SearchOperationViewerNode(planExecutor));
         
         return nodes;
     }
