@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotatio
 
 public class Param1AnnotationValidator extends PatternAnnotationValidator {
     
-    private final static PatternAnnotationParameter P1_PARAM = new PatternAnnotationParameter("p1",
+    private static final PatternAnnotationParameter P1_PARAM = new PatternAnnotationParameter("p1",
             PatternAnnotationParameter.STRING,
             null,
             /*multiple*/ false,

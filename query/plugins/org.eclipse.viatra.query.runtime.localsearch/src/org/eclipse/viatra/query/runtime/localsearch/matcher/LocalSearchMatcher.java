@@ -46,7 +46,6 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     private final List<SearchPlanExecutor> plan;
     private final IPlanDescriptor planDescriptor;
     private final List<ILocalSearchAdapter> adapters;
-    private final ISearchContext searchContext;
 
     /**
      * @since 2.0
@@ -221,7 +220,6 @@ public final class LocalSearchMatcher implements ILocalSearchAdaptable {
     public LocalSearchMatcher(ISearchContext searchContext, IPlanDescriptor planDescriptor, List<SearchPlan> plan) {
         Preconditions.checkArgument(planDescriptor != null, "Cannot initialize matcher with null query.");
         this.planDescriptor = planDescriptor;
-        this.searchContext = searchContext;
         this.plan = plan.stream().map(p -> new SearchPlanExecutor(p, searchContext)).collect(Collectors.toList());
         this.adapters = new LinkedList<>();
     }

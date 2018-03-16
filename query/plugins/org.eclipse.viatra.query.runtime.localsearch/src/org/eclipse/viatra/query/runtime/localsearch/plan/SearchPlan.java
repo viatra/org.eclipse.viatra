@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -42,7 +43,7 @@ public class SearchPlan {
         this.operations = Collections.unmodifiableList(new ArrayList<>(operations));
         this.parameterMask = parameterMask;
         this.variableMapping = Collections.unmodifiableMap(variableMapping.entrySet().stream()
-                .collect(Collectors.toMap(entry -> entry.getValue(), entry -> entry.getKey())));
+                .collect(Collectors.toMap(Entry::getValue, Entry::getKey)));
     }
 
 

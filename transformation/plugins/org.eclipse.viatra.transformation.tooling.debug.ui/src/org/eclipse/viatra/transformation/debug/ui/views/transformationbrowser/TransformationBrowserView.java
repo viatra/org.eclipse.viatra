@@ -63,9 +63,9 @@ public class TransformationBrowserView extends ViewPart
             }
         });
         
-        ISelectionListener listener = (part, selection) -> {
-            if (!selection.isEmpty() && selection instanceof StructuredSelection) {
-                Object firstElement = ((StructuredSelection) selection).getFirstElement();
+        ISelectionListener listener = (part, currentSelection) -> {
+            if (!currentSelection.isEmpty() && currentSelection instanceof StructuredSelection) {
+                Object firstElement = ((StructuredSelection) currentSelection).getFirstElement();
                 try {
                     if (firstElement instanceof TransformationThread) {
                         currentThread = (TransformationThread) firstElement;

@@ -111,32 +111,28 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         super.createProposals(context, acceptor);
     }
 
+    private ICompletionProposal configureProposal(ICompletionProposal original) {
+        if (original instanceof ConfigurableCompletionProposal) {
+            ConfigurableCompletionProposal prop = (ConfigurableCompletionProposal) original;
+            Object info = prop.getAdditionalProposalInfo(new NullProgressMonitor());
+            if (info instanceof XbaseInformationControlInput) {
+                XbaseInformationControlInput input = (XbaseInformationControlInput) info;
+                if (input.getElement() instanceof Pattern) {
+                    final Pattern pattern = (Pattern) input.getElement();
+                    prop.setTextApplier(new PatternImporter(pattern));
+                }
+            }
+            
+        }
+        return original;
+    }
+    
     @Override
     protected Function<IEObjectDescription, ICompletionProposal> getProposalFactory(String ruleName,
             ContentAssistContext contentAssistContext) {
-        
         Function<IEObjectDescription, ICompletionProposal> factory = super.getProposalFactory(ruleName, contentAssistContext);
         if (contentAssistContext.getCurrentNode().getSemanticElement() instanceof PatternCall && ga.getQualifiedNameRule().getName().equals(ruleName)) {
-            factory = Functions.compose(new Function<ICompletionProposal, ICompletionProposal>(){
-
-                @Override
-                public ICompletionProposal apply(ICompletionProposal original) {
-                    if (original instanceof ConfigurableCompletionProposal) {
-                        ConfigurableCompletionProposal prop = (ConfigurableCompletionProposal) original;
-                        Object info = prop.getAdditionalProposalInfo(new NullProgressMonitor());
-                        if (info instanceof XbaseInformationControlInput) {
-                            XbaseInformationControlInput input = (XbaseInformationControlInput) info;
-                            if (input.getElement() instanceof Pattern) {
-                                final Pattern pattern = (Pattern) input.getElement();
-                                prop.setTextApplier(new PatternImporter(pattern));
-                            }
-                        }
-                        
-                    }
-                    return original;
-                }
-                
-            }, factory);
+            factory = Functions.compose(this::configureProposal, factory);
         }
         
         return factory;
