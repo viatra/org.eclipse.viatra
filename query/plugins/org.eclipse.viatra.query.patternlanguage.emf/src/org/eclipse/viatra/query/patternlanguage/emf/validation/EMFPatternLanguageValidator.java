@@ -774,7 +774,9 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
      */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPatternCalls(PatternCall patternCall) {
-        if (patternCall.getParameters().size() != patternCall.getPatternRef().getParameters().size()) {
+        if (patternCall.getPatternRef() == null ||
+                patternCall.getPatternRef().eIsProxy() ||
+                patternCall.getParameters().size() != patternCall.getPatternRef().getParameters().size()) {
             // This kind of error is detected in another place, however it throws an exception during literal checks
             return;
         }
