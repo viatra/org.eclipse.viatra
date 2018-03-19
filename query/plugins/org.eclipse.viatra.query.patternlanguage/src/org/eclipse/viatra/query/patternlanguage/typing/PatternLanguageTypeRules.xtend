@@ -141,8 +141,12 @@ class PatternLanguageTypeRules {
    }
    
    def dispatch void inferTypes(AggregatedValue reference, TypeInformation information) {
-        if (reference === null || reference.aggregator === null) {
+        if (reference?.aggregator === null) {
             //Unresolved aggregator type, not a type error
+            return
+        }
+        if (reference.call?.patternRef === null) {
+            //Unresolved called pattern, not a type error
             return
         }
            val values = AggregatorUtil.getAllAggregatorVariables(reference)
