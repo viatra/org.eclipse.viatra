@@ -347,13 +347,15 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     @Override
     public int countMatches(Object[] parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameters);
-        return matcher.streamMatches(parameters).mapToInt(t -> 1).sum();
+        // Count returns long; casting to int - in case of integer overflow casting will throw the exception
+        return (int) matcher.streamMatches(parameters).count();
     }
     
     @Override
     public int countMatches(TupleMask parameterSeedMask, ITuple parameters) {
         final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
-        return matcher.streamMatches(parameterSeedMask, parameters).mapToInt(t -> 1).sum();
+        // Count returns long; casting to int - in case of integer overflow casting will throw the exception
+        return (int) matcher.streamMatches(parameterSeedMask, parameters).count();
     }
 
     @Override
