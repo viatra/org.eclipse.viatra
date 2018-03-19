@@ -647,15 +647,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                 Set<PatternCall> targets = new TreeSet<>(patternCallComparator);
                 graph.put(source, targets);
 
-                TreeIterator<EObject> headIterator = source.getPatternRef().eAllContents();
-                while (headIterator.hasNext()) {
-                    EObject headContent = headIterator.next();
-                    if (headContent instanceof PatternCall) {
-                        PatternCall target = (PatternCall) headContent;
-                        targets.add(target);
+                Pattern calledPattern = source.getPatternRef();
+                if (calledPattern != null && !calledPattern.eIsProxy()) {
+                    TreeIterator<EObject> headIterator = calledPattern.eAllContents();
+                    while (headIterator.hasNext()) {
+                        EObject headContent = headIterator.next();
+                        if (headContent instanceof PatternCall) {
+                            PatternCall target = (PatternCall) headContent;
+                            targets.add(target);
+                        }
                     }
+                    knownCalls.addAll(targets);
                 }
-                knownCalls.addAll(targets);
             }
 
             return graph;
