@@ -267,8 +267,13 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
      */
     @Check
     public void checkAggregatorCallTypes(AggregatedValue expression) {
+        Pattern calledPattern = expression.getCall().getPatternRef();
+        if (calledPattern == null || calledPattern.eIsProxy()) {
+            // If the called pattern is not available, type checking can be ignored
+            return;
+        }
         List<ValueReference> callVariables = expression.getCall().getParameters();
-        List<Variable> patternParameters = expression.getCall().getPatternRef().getParameters();
+        List<Variable> patternParameters = calledPattern.getParameters();
         //maxIndex is used to avoid overindexing in case of incorrect number of parameters
         int maxIndex = Math.min(callVariables.size(), patternParameters.size());
         produceParameterTypeWarnings(callVariables, patternParameters, maxIndex);
