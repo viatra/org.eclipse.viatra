@@ -111,15 +111,14 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
                 && !PatternLanguageHelper.isUnnamedSingleUseVariable(var)) {
             warning(String.format(
                     "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
-                    var.getName()), var.getReferences().get(0), PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
+                    var.getName()), PatternLanguageHelper.getReferences(var).findAny().get(), PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                     IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
         } else if (individualCounter.getReferenceCount() > 1 && PatternLanguageHelper.isNamedSingleUse(var)) {
-            for (VariableReference ref : var.getReferences()) {
-                error(String.format("Named single-use variable %s used multiple times.", var.getName()), ref,
-                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
-                        IssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE);
-
-            }
+            PatternLanguageHelper.getReferences(var)
+                    .forEach(ref -> error(
+                            String.format("Named single-use variable %s used multiple times.", var.getName()), ref,
+                            PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
+                            IssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE));
         } else if (unifiedCounter.getReferenceCount(ReferenceType.POSITIVE) == 0) {
             if (unifiedCounter.getReferenceCount(ReferenceType.NEGATIVE) == 0) {
                 error(String.format(
@@ -131,13 +130,13 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
                     && !PatternLanguageHelper.isUnnamedSingleUseVariable(var)) {
                 warning(String.format(
                         "Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
-                        var.getName()), var.getReferences().get(0),
+                        var.getName()), PatternLanguageHelper.getReferences(var).findAny().get(),
                         PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
             } else if (unifiedCounter.getReferenceCount() > 1) {
                 error(String.format(
                         "Local variable '%s' has no enumerable reference, thus its value cannot be determined.",
-                        var.getName()), var.getReferences().get(0),
+                        var.getName()), PatternLanguageHelper.getReferences(var).findAny().get(),
                         PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);
             }

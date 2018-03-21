@@ -81,8 +81,6 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
-        eType="#//VariableReference" transient="true" eOpposite="#//VariableReference/variable"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ParameterDirection">
     <eLiterals name="inout" literal="inout"/>
@@ -97,7 +95,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//Variable"
-        transient="true" eOpposite="#//Variable/references"/>
+        transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Type">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="typename" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"

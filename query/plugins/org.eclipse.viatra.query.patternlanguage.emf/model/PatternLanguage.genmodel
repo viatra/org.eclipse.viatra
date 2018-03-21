@@ -80,7 +80,6 @@
     <genClasses ecoreClass="PatternLanguage.ecore#//Variable">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Variable/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Variable/type"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Variable/references"/>
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//VariableReference">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//VariableReference/aggregator"/>

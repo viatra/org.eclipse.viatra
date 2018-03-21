@@ -787,12 +787,12 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                 // Local variables do not have source location
                 if (isAggregate) {
                     error(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_AGGREGATE, var1.getSimpleName(),
-                            otherVar.getSimpleName()), var1.getReferences().get(0),
+                            otherVar.getSimpleName()), PatternLanguageHelper.getReferences(var1).findAny().get(),
                             PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
                             IssueCodes.DUBIUS_VARIABLE_NAME);
                 } else {
                     warning(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_SINGLEUSE, var1.getSimpleName(),
-                            otherVar.getSimpleName()), var1.getReferences().get(0),
+                            otherVar.getSimpleName()), PatternLanguageHelper.getReferences(var1).findAny().get(),
                             PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
                             IssueCodes.DUBIUS_VARIABLE_NAME);
                 }

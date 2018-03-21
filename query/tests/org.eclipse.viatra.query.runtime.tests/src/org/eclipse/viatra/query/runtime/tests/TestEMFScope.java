@@ -124,7 +124,6 @@ public class TestEMFScope {
         VariableReference variableReference = PatternLanguageFactory.eINSTANCE.createVariableReference();
         variableReference.setVar(variableName);
         variableReference.setVariable(parameterRef);
-        parameterRef.getReferences().add(variableReference);
         patternBody.getVariables().add(parameterRef);
     
         ClassType classType = PatternLanguageFactory.eINSTANCE.createClassType();
@@ -155,7 +154,6 @@ public class TestEMFScope {
         VariableReference variableReference = PatternLanguageFactory.eINSTANCE.createVariableReference();
         variableReference.setVar(variableName);
         variableReference.setVariable(parameterRef);
-        parameterRef.getReferences().add(variableReference);
         patternBody.getVariables().add(parameterRef);
         VariableValue variableValue = PatternLanguageFactory.eINSTANCE.createVariableValue();
         variableValue.setValue(variableReference);

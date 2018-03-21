@@ -118,7 +118,6 @@ public class EverythingDynamicTest {
         VariableReference variableReference = PatternLanguageFactory.eINSTANCE.createVariableReference();
         variableReference.setVar("X");
         variableReference.setVariable(parameterRef);
-        parameterRef.getReferences().add(variableReference);
         patternBody.getVariables().add(parameterRef);
 
         ClassType classType = PatternLanguageFactory.eINSTANCE.createClassType();

@@ -54,6 +54,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider
 import java.util.Optional
 import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 /** 
  * @author Zoltan Ujhelyi
@@ -281,10 +282,13 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         if (typeReference === null) {
             var errorContext = context;
             var contextName = context.toString();
-            if (context instanceof Variable && (context as Variable).eContainer() instanceof PatternBody &&
-                (context as Variable).getReferences().size() > 0) {
-                contextName = (context as Variable).getName();
-                errorContext = (context as Variable).getReferences().get(0);
+            if (context instanceof Variable && (context as Variable).eContainer() instanceof PatternBody) {
+                val variable = context as Variable
+                val reference = PatternLanguageHelper.getReferences(variable).findAny
+                if (reference.isPresent) {
+                    contextName = variable.getName();
+                    errorContext = reference.get;
+                }
             }
             errorFeedback.reportError(errorContext,
                 String.format(

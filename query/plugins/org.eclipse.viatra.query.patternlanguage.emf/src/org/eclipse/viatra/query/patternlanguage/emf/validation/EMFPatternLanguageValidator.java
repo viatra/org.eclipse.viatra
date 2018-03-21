@@ -338,7 +338,8 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                 }
                 sb.append("' -- ");
             }
-            error(sb.toString(), variable.getReferences().get(0), null,
+            // findAny().get() is OK, as at least one reference must exist here
+            error(sb.toString(), PatternLanguageHelper.getReferences(variable).findAny().get(), null,
                     IssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
         }
         final IInputKey declaredType = typeInferrer.getDeclaredType(variable);
@@ -353,7 +354,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                             IssueCodes.VARIABLE_TYPE_INVALID_ERROR);
                 } else {
                     error("Inconsistent variable type definitions: " + typeNameSet + ", type cannot be selected.",
-                            variable.getReferences().get(0), null, IssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                            PatternLanguageHelper.getReferences(variable).findAny().get(), null, IssueCodes.VARIABLE_TYPE_INVALID_ERROR);
                 }
             }
         } else {
@@ -367,7 +368,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             if (!inconsistentTypes.isEmpty()) {
                 error("Variable types [" + Joiner.on(", ").join(inconsistentTypes)
                         + "] do not conform to declared type " + typeSystem.typeString(declaredType),
-                        variable.getReferences().get(0), null, IssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                        PatternLanguageHelper.getReferences(variable).findAny().get(), null, IssueCodes.VARIABLE_TYPE_INVALID_ERROR);
             }
 
         }

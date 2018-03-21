@@ -23,10 +23,13 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -46,6 +49,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
@@ -672,7 +676,27 @@ public final class PatternLanguageHelper {
      * @since 1.4
      */
     public static boolean hasAggregateReference(Variable var) {
-        return var.getReferences().stream().anyMatch(input -> input != null && isAggregateReference(input));
+        return getReferences(var).anyMatch(input -> input != null && isAggregateReference(input));
+    }
+    
+    /**
+     * Returns a stream of all references from a given variable
+     * @since 2.0
+     */
+    public static Stream<VariableReference> getReferences(Variable var) {
+        Collection<PatternBody> bodies = null;
+        if (var instanceof Parameter) {
+            // Parameters are defined in patterns
+            bodies = ((Pattern) var.eContainer()).getBodies();
+        } else {
+            // Local variables are defined in pattern bodies
+            bodies = Collections.singleton((PatternBody)var.eContainer());
+        }
+        return bodies.stream().flatMap(b -> 
+                StreamSupport.stream(Spliterators.spliteratorUnknownSize(b.eAllContents(), Spliterator.DISTINCT | Spliterator.SORTED), false)
+                .filter(VariableReference.class::isInstance)
+                .map(VariableReference.class::cast)
+                .filter(ref -> Objects.equals(var, ref.getVariable())));
     }
     
     /**
