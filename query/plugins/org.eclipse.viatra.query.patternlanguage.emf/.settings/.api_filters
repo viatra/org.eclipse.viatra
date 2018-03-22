@@ -189,27 +189,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PathExpressionElement.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionElement">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionElement"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PathExpressionHead.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PathExpressionTail.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Pattern.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern">
         <filter comment="EMF generated code" id="1110441988">
             <message_arguments>
@@ -504,27 +483,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PathExpressionElementImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionElementImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionElementImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PathExpressionHeadImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionHeadImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionHeadImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PathExpressionTailImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionTailImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionTailImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternBodyImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternBodyImpl">
         <filter comment="EMF generated code" id="1110441988">
             <message_arguments>
@@ -809,16 +767,6 @@
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="sequence_PathExpressionHead(ISerializationContext, PathExpressionHead)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="sequence_PathExpressionTail(ISerializationContext, PathExpressionTail)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
                 <message_argument value="sequence_Pattern(ISerializationContext, Pattern)"/>
             </message_arguments>
         </filter>
@@ -999,16 +947,6 @@
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="getPathExpressionConstraintAccess()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="getPathExpressionHeadAccess()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="getPathExpressionTailAccess()"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -1213,20 +1151,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$PathExpressionHeadElements">
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="PathExpressionHeadElements"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$PathExpressionTailElements">
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="PathExpressionTailElements"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$PatternBodyElements">
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
@@ -1322,13 +1246,6 @@
         <filter comment="Xtext generated code, cannot touch" id="1110441988">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.validation.AbstractEMFPatternLanguageValidator"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/types/EMFPatternLanguageTypeRules.java" type="org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternLanguageTypeRules">
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="inferTypes(EObject, TypeInformation)"/>
             </message_arguments>
         </filter>
     </resource>

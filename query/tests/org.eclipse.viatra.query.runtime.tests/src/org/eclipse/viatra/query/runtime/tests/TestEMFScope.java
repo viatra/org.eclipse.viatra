@@ -172,12 +172,10 @@ public class TestEMFScope {
         referenceType.setRefname(RecipesPackage.Literals.RETE_RECIPE__RECIPE_NODES);
         PathExpressionConstraint pathExpressionConstraint = PatternLanguageFactory.eINSTANCE.createPathExpressionConstraint();
         patternBody.getConstraints().add(pathExpressionConstraint);
-        pathExpressionConstraint.setHead(PatternLanguageFactory.eINSTANCE.createPathExpressionHead());
-        pathExpressionConstraint.getHead().setSrc(localVariableReference);
-        pathExpressionConstraint.getHead().setDst(variableValue);
-        pathExpressionConstraint.getHead().setType(classType);
-        pathExpressionConstraint.getHead().setTail(PatternLanguageFactory.eINSTANCE.createPathExpressionTail());
-        pathExpressionConstraint.getHead().getTail().setType(referenceType);
+        pathExpressionConstraint.setSrc(localVariableReference);
+        pathExpressionConstraint.setDst(variableValue);
+        pathExpressionConstraint.setSourceType(classType);
+        pathExpressionConstraint.getEdgeTypes().add(referenceType);
         return pattern;
     }
 

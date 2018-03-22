@@ -26,22 +26,17 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
-import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -106,13 +101,23 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                     return scope_Variable(containingAnnotationParameter);
                 }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ESTRUCTURAL_FEATURE, refType)) {
-                PathExpressionTail tail = EcoreUtil2.getContainerOfType(ctx, PathExpressionTail.class);
-                if (tail != null) {
-                    return scope_EStructuralFeature(tail);
-                } else {
-                    PathExpressionHead head = EcoreUtil2.getContainerOfType(ctx, PathExpressionHead.class);
-                    return scope_EStructuralFeature(head);
-                }
+                PathExpressionConstraint constraint = EcoreUtil2.getContainerOfType(ctx, PathExpressionConstraint.class);
+                
+                final int referenceIndex = constraint.getEdgeTypes().indexOf(ctx);
+                /*
+                 * Limiting access by referenceIndex serves two purposes: (1) it avoids cyclic linking by defining a
+                 * clear dependency between the various elements (see reference.getRefName() and
+                 * constraint.getSourceType() calls), and (2) ignores possibly previously resolved future elements that
+                 * can happen when content assist is reqested in the middle of the chain
+                 */
+                EClassifier partialType = constraint.getEdgeTypes().stream()
+                    .limit(referenceIndex >= 0 ? referenceIndex : 0)
+                    .filter(reference -> reference != null)
+                    .map(ReferenceType::getRefname) // resolution
+                    .map(EStructuralFeature::getEType)
+                    .reduce((a, b) -> b) //find the last element fulfilling the condition
+                    .orElse(constraint.getSourceType().getClassname());
+                return calculateReferences(partialType);
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM_LITERAL, refType)) {
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
                 if (containingValue != null) {
@@ -195,15 +200,6 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
         return Scopes.scopeFor(ePackage.getEClassifiers(), outer);
     }
 
-    private IScope scope_EStructuralFeature(PathExpressionHead ctx) {
-        // This is needed for content assist - in that case the ExpressionTail does not exists
-        return expressionParentScopeProvider.doSwitch(ctx);
-    }
-
-    private IScope scope_EStructuralFeature(PathExpressionTail ctx) {
-        return expressionParentScopeProvider.doSwitch(ctx.eContainer());
-    }
-
     private IScope scope_EEnum(EnumValue ctx) {
         PatternModel model = (PatternModel) getRootContainer(ctx);
         final Collection<EEnum> enums = Lists.newArrayList();
@@ -216,15 +212,13 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
     }
 
     private IScope scope_EEnumLiteral(EnumValue ctx) {
-        EEnum type;
-        try {
-            type = ctx.getEnumeration();
-            type = (type != null) ? type : EMFPatternLanguageScopeHelper
-                    .calculateEnumerationType((PathExpressionHead) ctx.eContainer());
-        } catch (ResolutionException e) {
-            return IScope.NULLSCOPE;
-        }
-        return calculateEnumLiteralScope(type);
+        return (ctx.getEnumeration() != null) 
+                    ? calculateEnumLiteralScope(ctx.getEnumeration()) 
+                    : PatternLanguageHelper.getPathExpressionEMFTailType(((PathExpressionConstraint) ctx.eContainer()))
+                            .filter(EEnum.class::isInstance)
+                            .map(EEnum.class::cast)
+                            .map(this::calculateEnumLiteralScope)
+                            .orElse(IScope.NULLSCOPE);
     }
 
     private IScope calculateEnumLiteralScope(EEnum enumeration) {
@@ -233,37 +227,14 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                 literal -> qualifiedNameConverter.toQualifiedName(literal.getLiteral()), IScope.NULLSCOPE);
     }
 
-    private final ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();
-
-    static class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
-
-        @Override
-        public IScope casePathExpressionHead(PathExpressionHead object) {
-            return calculateReferences(object.getType());
+    private IScope calculateReferences(EClassifier referredType) {
+        List<EStructuralFeature> targetReferences = Collections.emptyList();
+        if (referredType instanceof EClass) {
+            targetReferences = ((EClass) referredType).getEAllStructuralFeatures();
         }
-
-        @Override
-        public IScope casePathExpressionTail(PathExpressionTail object) {
-            return calculateReferences(object.getType());
+        if (targetReferences.isEmpty()) {
+            return IScope.NULLSCOPE;
         }
-
-        private IScope calculateReferences(Type type) {
-            List<EStructuralFeature> targetReferences = Collections.emptyList();
-            if (type instanceof ReferenceType) {
-                EClassifier referredType = ((ReferenceType) type).getRefname().getEType();
-                if (referredType instanceof EClass) {
-                    targetReferences = ((EClass) referredType).getEAllStructuralFeatures();
-                }
-            } else if (type instanceof ClassType) {
-                EClassifier classifier = ((ClassType) type).getClassname();
-                if (classifier instanceof EClass) {
-                    targetReferences = (((EClass) classifier).getEAllStructuralFeatures());
-                }
-            }
-            if (targetReferences.isEmpty()) {
-                return IScope.NULLSCOPE;
-            }
-            return Scopes.scopeFor(targetReferences);
-        }
+        return Scopes.scopeFor(targetReferences);
     }
 }

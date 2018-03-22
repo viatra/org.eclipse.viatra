@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.scoping;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EEnum;
@@ -20,12 +21,11 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
-import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.linking.impl.DefaultLinkingService;
@@ -54,40 +54,33 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
         }
         return super.getLinkedObjects(context, ref, node);
     }
-
+    
     private List<EObject> getEnumLiteral(EnumValue value, INode node) {
-        try {
-            EEnum type = null;
-            if (value.getEnumeration() != null) {
-                type = value.getEnumeration();
-            } else if (value.eContainer() instanceof PathExpressionHead) {
-                type = EMFPatternLanguageScopeHelper.calculateEnumerationType(getExpressionHead(value.eContainer()));
-            } else {
+        EEnum type = null;
+        if (value.getEnumeration() != null) {
+            type = value.getEnumeration();
+        } else if (value.eContainer() instanceof PathExpressionConstraint) {
+            Optional<EEnum> optType = PatternLanguageHelper
+                    .getPathExpressionEMFTailType((PathExpressionConstraint) value.eContainer())
+                    .filter(EEnum.class::isInstance)
+                    .map(EEnum.class::cast);
+            if (!optType.isPresent()) {
                 return Collections.emptyList();
             }
-            String typename = ((ILeafNode) node).getText();
-            typename = (typename.startsWith("^")) ? typename.substring(1) : typename;
-            EEnumLiteral literal = type.getEEnumLiteralByLiteral(typename);
-            if (literal == null) {
-                literal = type.getEEnumLiteral(typename);
-            }
-            if (literal != null) {
-                return Collections.<EObject> singletonList(literal);
-            } else {
-                return Collections.emptyList();
-            }
-        } catch (ResolutionException e) {
+            type = optType.get();
+        } else {
             return Collections.emptyList();
         }
-    }
-
-    private PathExpressionHead getExpressionHead(EObject obj) {
-        if (obj instanceof PathExpressionHead) {
-            return (PathExpressionHead) obj;
-        } else if (obj.eContainer() != null) {
-            return getExpressionHead(obj.eContainer());
+        String typename = ((ILeafNode) node).getText();
+        typename = (typename.startsWith("^")) ? typename.substring(1) : typename;
+        EEnumLiteral literal = type.getEEnumLiteralByLiteral(typename);
+        if (literal == null) {
+            literal = type.getEEnumLiteral(typename);
+        }
+        if (literal != null) {
+            return Collections.<EObject> singletonList(literal);
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 

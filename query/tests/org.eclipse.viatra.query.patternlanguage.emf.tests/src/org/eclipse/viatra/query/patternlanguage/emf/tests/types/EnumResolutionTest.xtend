@@ -23,10 +23,11 @@ import static org.junit.Assert.*
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -50,10 +51,9 @@ class EnumResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(1) as PathExpressionConstraint
-        val tail = constraint.head.tail
-        val type = tail.type as ReferenceType
+        val type = PatternLanguageHelper.getPathExpressionTailType(constraint).get as ReferenceType
         assertEquals(type.refname.EType, GenModelPackage$Literals::GEN_RUNTIME_VERSION)
-        val value = constraint.head.dst as EnumValue
+        val value = constraint.dst as EnumValue
         assertEquals(value.literal, GenModelPackage$Literals::GEN_RUNTIME_VERSION.getEEnumLiteral("EMF23"))		
     }
     
@@ -64,17 +64,15 @@ class EnumResolutionTest {
             import "http://www.eclipse.org/emf/2002/GenModel"
 
             pattern resolutionTest(Model) = {
-                GenModel(Model);
                 GenModel.runtimeVersion(Model, GenRuntimeVersion::EMF23);
             }
         ')
         model.assertNoErrors
         val pattern = model.patterns.get(0)
-        val constraint = pattern.bodies.get(0).constraints.get(1) as PathExpressionConstraint
-        val tail = constraint.head.tail
-        val type = tail.type as ReferenceType
-        assertEquals(type.refname.EType, GenModelPackage$Literals::GEN_RUNTIME_VERSION)
-        val value = constraint.head.dst as EnumValue
+        val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
+        val type = PatternLanguageHelper.getPathExpressionEMFTailType(constraint).get
+        assertEquals(type, GenModelPackage$Literals::GEN_RUNTIME_VERSION)
+        val value = constraint.dst as EnumValue
         assertEquals(value.literal, GenModelPackage$Literals::GEN_RUNTIME_VERSION.getEEnumLiteral("EMF23"))		
     }
     

@@ -9,7 +9,6 @@
  */
 package org.eclipse.viatra.query.patternlanguage.emf.types
 
-import com.google.common.base.Function
 import com.google.common.base.Strings
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables
@@ -65,19 +64,34 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     /**
      * This function can be used to extract EClassifier instances from IInputKey instances.
      * If the IInputKey instance does not represent an EClassifier, null is returned 
-     * @since 1.3
+     * @since 2.0
      */
-    public static final Function<IInputKey, EClassifier> EXTRACT_CLASSIFIER = [ key |
+    public static def EClassifier extractClassifierFromInputKey(IInputKey key) {
         switch (key) {
             EClassTransitiveInstancesKey:
                 key.emfKey
             EDataTypeInSlotsKey:
-                key.
-                    emfKey
+                key.emfKey
             default:
                 null
         }
-    ]
+    }
+    
+    /**
+     * This function can be used to extract EClassifier instances from Type declaration.
+     * If the IInputKey instance does not represent an EClassifier, null is returned 
+     * @since 2.0
+     */
+    public static def EClassifier extractClassifierFromType(Type typeDeclaration) {
+        switch (typeDeclaration) {
+            ClassType:
+                typeDeclaration.classname
+            ReferenceType:
+                typeDeclaration.refname?.EType
+            default:
+                null
+        }
+    }
 
     @Inject IMetamodelProvider metamodelProvider
     @Inject IErrorFeedback errorFeedback

@@ -118,25 +118,22 @@ class PatternLanguageTypeRules {
     }
    
    def dispatch void inferTypes(PathExpressionConstraint constraint, TypeInformation information) {
-       val sourceType = if (!typeSystem.isValidType(constraint.head.type)) {
+       val sourceType = if (!typeSystem.isValidType(constraint.sourceType)) {
            BottomTypeKey.INSTANCE
        } else {
-           typeSystem.extractTypeDescriptor(constraint.head.type)           
-       }
-       var tail = constraint.head.tail
-       while (tail.tail !== null) {
-           tail = tail.tail
+           typeSystem.extractTypeDescriptor(constraint.sourceType)           
        }
        
-       val targetType = if (!typeSystem.isValidType(tail.type)) {
+       var tailType = constraint.edgeTypes.last
+       val targetType = if (!typeSystem.isValidType(tailType)) {
            BottomTypeKey.INSTANCE
        } else {
-           typeSystem.extractTypeDescriptor(tail.type)
+           typeSystem.extractTypeDescriptor(tailType)
        }
         
        if (sourceType !== null && targetType !== null) {
-           information.provideType(new TypeJudgement(constraint.head.src, sourceType))
-           information.provideType(new TypeJudgement(constraint.head.dst, targetType))
+           information.provideType(new TypeJudgement(constraint.src, sourceType))
+           information.provideType(new TypeJudgement(constraint.dst, targetType))
        }
    }
    

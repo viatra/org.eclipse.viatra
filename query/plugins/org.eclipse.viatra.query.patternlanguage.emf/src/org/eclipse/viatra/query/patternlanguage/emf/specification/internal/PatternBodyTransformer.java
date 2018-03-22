@@ -36,8 +36,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
@@ -161,19 +159,17 @@ public class PatternBodyTransformer {
     }
 
     private void gatherPathExpression(PathExpressionConstraint pathExpression, PatternModelAcceptor<?> acceptor) {
-        PathExpressionHead head = pathExpression.getHead();
-        VariableReference src = head.getSrc();
-        ValueReference dst = head.getDst();
+        VariableReference src = pathExpression.getSrc();
+        ValueReference dst = pathExpression.getDst();
         if (src == null || dst == null) {
             return;
         }
 
         String currentSrcName = getVariableName(src, acceptor);
         String finalDstName = getVariableName(dst, acceptor);
-        PathExpressionTail currentTail = head.getTail();
 
         // type constraint on source
-        Type headType = head.getType();
+        Type headType = pathExpression.getSourceType();
         if (headType instanceof ClassType) {
             EClassifier headClassname = ((ClassType) headType).getClassname();
             acceptor.acceptTypeConstraint(ImmutableList.of(currentSrcName), typeSystem.classifierToInputKey(headClassname));
@@ -184,10 +180,7 @@ public class PatternBodyTransformer {
         }
 
         // process each segment
-        while (currentTail != null) {
-            Type currentPathSegmentType = currentTail.getType();
-            currentTail = currentTail.getTail();
-
+        for(Type currentPathSegmentType : pathExpression.getEdgeTypes()) {
             String intermediateName = acceptor.createVirtualVariable();
             gatherPathSegment(currentPathSegmentType, currentSrcName, intermediateName, acceptor);
 

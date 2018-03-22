@@ -68,7 +68,7 @@ class VariableResolutionTest {
         val pattern = model.patterns.get(0)
         val parameter = pattern.parameters.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
-        assertEquals(parameter.name, constraint.head.src.variable.name)
+        assertEquals(parameter.name, constraint.src.variable.name)
     }
     @Test
     def anonymVariablesResolution() {

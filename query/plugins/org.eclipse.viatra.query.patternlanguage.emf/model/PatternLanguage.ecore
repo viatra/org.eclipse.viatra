@@ -120,11 +120,6 @@
     <eLiterals name="equality" literal="=="/>
     <eLiterals name="inequality" value="1" literal="!="/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PathExpressionElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tail" eType="#//PathExpressionTail"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ValueReference" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="LiteralValueReference" eSuperTypes="#//ValueReference"/>
   <eClassifiers xsi:type="ecore:EClass" name="ComputationValue" eSuperTypes="#//ValueReference"/>
@@ -163,16 +158,31 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathExpressionConstraint" eSuperTypes="#//Constraint">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="head" eType="#//PathExpressionHead"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PathExpressionHead" eSuperTypes="#//PathExpressionElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edgeTypes" upperBound="-1"
+        eType="#//ReferenceType" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="@since 2.0"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sourceType" eType="#//ClassType"
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="@since 2.0"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="src" eType="#//VariableReference"
-        containment="true"/>
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="@since 2.0"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="dst" eType="#//ValueReference"
-        containment="true"/>
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="@since 2.0"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PathExpressionTail" eSuperTypes="#//PathExpressionElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringValue" eSuperTypes="#//LiteralValueReference">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

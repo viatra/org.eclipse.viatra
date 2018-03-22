@@ -75,8 +75,7 @@ VariableReference:
     aggregator?='#'? var=ID |
     aggregator?='#';
   
-Type returns EntityType:
-    {ClassType}
+Type returns ClassType:
     (metamodel=[PackageImport] '::' )? classname=[ecore::EClassifier]
 ;
 
@@ -122,13 +121,8 @@ CheckConstraint:
     'check' '(' expression=XExpression ')';
 
 PathExpressionConstraint:
-    head=PathExpressionHead;
-
-PathExpressionHead:
-    type=Type '.' tail=PathExpressionTail '(' src=VariableReference ',' dst=ValueReference ')';
-
-PathExpressionTail:
-    type=RefType ('.' tail=PathExpressionTail)?;
+    sourceType=Type ('.' edgeTypes += RefType)+ '(' src=VariableReference ',' dst=ValueReference ')'
+;
 
 ValueReference:
     LiteralValueReference | VariableValue | ComputationValue;

@@ -12,11 +12,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.ui.labeling;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
@@ -33,8 +32,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
@@ -119,9 +116,10 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     }
 
     String text(PathExpressionConstraint constraint) {
-        String typename = ((ClassType) constraint.getHead().getType()).getClassname().getName();
-        String varName = (constraint.getHead().getSrc() != null) ? constraint.getHead().getSrc().getVar() : "«type»";
-        return String.format("%s (%s)", typename, varName);
+        String typename = ((ClassType) constraint.getSourceType()).getClassname().getName();
+        String fullTypeName = constraint.getEdgeTypes().stream().map(ReferenceType::getTypename).collect(Collectors.joining(".", typename + ".", ""));
+        String varName = (constraint.getSrc() != null) ? constraint.getSrc().getVar() : "«type»";
+        return String.format("%s (%s, %s)", fullTypeName, varName, getValueText(constraint.getDst()));
     }
 
     String text(CheckConstraint constraint) {
@@ -136,17 +134,6 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
         String aggregator = getAggregatorText(aggregate);
         String call = text(aggregate.getCall());
         return String.format(/* "aggregate %s %s" */"%s %s", aggregator, call);
-    }
-
-    String text(PathExpressionTail tail) {
-        EStructuralFeature refname = ((ReferenceType) tail.getType()).getRefname();
-        String type = (refname != null) ? refname.getName() : "«type»";
-        String varName = "";
-        if (tail.getTail() == null) {
-            PathExpressionHead head = EMFPatternLanguageScopeHelper.getExpressionHead(tail);
-            varName = String.format("(%s)", getValueText(head.getDst()));
-        }
-        return String.format("%s %s", type, varName);
     }
 
     // String text(ComputationValue computation) {

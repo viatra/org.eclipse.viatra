@@ -17,8 +17,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -38,8 +36,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
-import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
@@ -49,7 +45,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
-import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
@@ -62,13 +57,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.LiteralValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionTail;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
@@ -100,7 +92,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.inject.Inject;
@@ -152,22 +143,9 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             return importDecl != null && nsUri.equals(importDecl.getEPackage().getNsURI());
         }
     }
-
-    private static Type getTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
-        if (pathExpressionTail == null) {
-            return null;
-        }
-        if (pathExpressionTail.getTail() != null) {
-            return getTypeFromPathExpressionTail(pathExpressionTail.getTail());
-        }
-        return pathExpressionTail.getType();
-    }
     
     private static final String UNUSED_PRIVATE_PATTERN_MESSAGE = "The pattern '%s' is never used locally.";
     
-    @Inject
-    private IMetamodelProvider metamodelProvider;
-
     @Inject
     private ITypeInferrer typeInferrer;
 
@@ -248,22 +226,24 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
 
     @Check
     public void checkEnumValues(EnumValue value) {
-        if (value.eContainer() instanceof PathExpressionHead) {
+        if (value.eContainer() instanceof PathExpressionConstraint) {
             // If container is PathExpression check for enum type assignability
             EEnum enumType = value.getEnumeration();
             if (enumType == null && value.getLiteral() != null) {
                 enumType = value.getLiteral().getEEnum();
             }
-            PathExpressionHead expression = (PathExpressionHead) value.eContainer();
-            try {
-                EEnum expectedType = EMFPatternLanguageScopeHelper.calculateEnumerationType(expression);
+            PathExpressionConstraint expression = (PathExpressionConstraint) value.eContainer();
+            Optional<EEnum> expectedTypeOpt = PatternLanguageHelper.getPathExpressionEMFTailType(expression)
+                    .filter(EEnum.class::isInstance)
+                    .map(EEnum.class::cast);
+            if (expectedTypeOpt.isPresent()) {
+                EEnum expectedType = expectedTypeOpt.get();
                 if (enumType != null && !expectedType.equals(enumType)) {
                     error(String.format("Inconsistent enumeration types: found %s but expected %s", enumType.getName(),
                             expectedType.getName()), value, PatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION,
                             IssueCodes.INVALID_ENUM_LITERAL);
                 }
-            } catch (ResolutionException e) {
-                // EClassifier type = EMFPatternLanguageScopeHelper.calculateExpressionType(expression);
+            } else {
                 String name = (enumType == null) ? "<UNKNOWN>" : enumType.getName();
                 error(String.format("Invalid enumeration constant %s", name), value,
                         PatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION, IssueCodes.INVALID_ENUM_LITERAL);
@@ -555,11 +535,10 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             } else if (constraint instanceof PathExpressionConstraint) {
                 // Normal attribute-reference constraint
                 PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
-                PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-                ValueReference valueReference = pathExpressionHead.getDst();
+                ValueReference valueReference = pathExpressionConstraint.getDst();
                 Variable pathExpressionHeadSourceVariable = null;
-                if (pathExpressionHead.getSrc() != null) {
-                    pathExpressionHeadSourceVariable = pathExpressionHead.getSrc().getVariable();
+                if (pathExpressionConstraint.getSrc() != null) {
+                    pathExpressionHeadSourceVariable = pathExpressionConstraint.getSrc().getVariable();
                 }
                 if (!isValueReferenceComputed(valueReference)) {
                     positiveVariables.addAll(PatternLanguageHelper.getVariablesFromValueReference(valueReference));
@@ -615,13 +594,12 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                 } else if (constraint instanceof PathExpressionConstraint) {
                     // Normal attribute-reference constraint, with aggregates in it
                     PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
-                    PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
                     Variable pathExpressionHeadSourceVariable = null;
-                    if (pathExpressionHead.getSrc() != null) {
-                        pathExpressionHeadSourceVariable = pathExpressionHead.getSrc().getVariable();
+                    if (pathExpressionConstraint.getSrc() != null) {
+                        pathExpressionHeadSourceVariable = pathExpressionConstraint.getSrc().getVariable();
                     }
                     positiveVariables.add(pathExpressionHeadSourceVariable);
-                    ValueReference valueReference = pathExpressionHead.getDst();
+                    ValueReference valueReference = pathExpressionConstraint.getDst();
                     addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables,
                             positiveVariables, valueReference);
                 }
@@ -752,12 +730,12 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     public void checkForWrongLiteralAndComputationValuesInPathExpressionConstraints(
             PathExpressionConstraint pathExpressionConstraint) {
         // Normal attribute-reference constraint
-        PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-        ValueReference valueReference = pathExpressionHead.getDst();
+        ValueReference valueReference = pathExpressionConstraint.getDst();
         if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
             IInputKey actualType = typeInferrer.getType(valueReference);
-            IInputKey expectedType = typeSystem
-                    .extractTypeDescriptor(getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
+            IInputKey expectedType = PatternLanguageHelper.getPathExpressionTailType(pathExpressionConstraint)
+                    .map(typeSystem::extractTypeDescriptor)
+                    .orElse(BottomTypeKey.INSTANCE);
             if (!typeSystem.isConformant(expectedType, actualType)) {
                 String name = expectedType == null ? "<unknown>" : typeSystem.typeString(expectedType);
                 error("The type inferred from the path expression (" + name
@@ -848,11 +826,9 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     @Check
     public void checkForNotWellbehavingDerivedFeatureInPathExpressions(
             PathExpressionConstraint pathExpressionConstraint) {
-        PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-        Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = getAllFeaturesFromPathExpressionTail(
-                pathExpressionHead.getTail());
-        for (Entry<PathExpressionTail, EStructuralFeature> tail : tailFeatureMap.entrySet()) {
-            EStructuralFeature feature = tail.getValue();
+        final List<ReferenceType> edgeTypes = pathExpressionConstraint.getEdgeTypes();
+        for (int i = 0; i < edgeTypes.size(); i++) {
+            EStructuralFeature feature = edgeTypes.get(i).getRefname();
             EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
             if (!comprehension.representable(feature)) {
                 final EStructuralFeatureInstancesKey featureInputKey = new EStructuralFeatureInstancesKey(feature);
@@ -863,14 +839,20 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     info("The derived/volatile feature " + feature.getName() + " of class "
                             + feature.getEContainingClass().getName()
                             + " used in the path expression has a surrogate query " + surrogateQueryFQN
-                            + " which will be used by VIATRA Query.", tail.getKey().getType(), null,
+                            + " which will be used by VIATRA Query.",
+                            pathExpressionConstraint,
+                            PatternLanguagePackage.Literals.PATH_EXPRESSION_CONSTRAINT__EDGE_TYPES,
+                            i,
                             IssueCodes.SURROGATE_QUERY_EXISTS);
                 } else {
                     warning("The derived/volatile feature " + feature.getName() + " of class "
                             + feature.getEContainingClass().getName()
                             + " used in the path expression is not representable in VIATRA Query."
                             + " For details, consult the documentation on well-behaving features.",
-                            tail.getKey().getType(), null, IssueCodes.FEATURE_NOT_REPRESENTABLE);
+                            pathExpressionConstraint,
+                            PatternLanguagePackage.Literals.PATH_EXPRESSION_CONSTRAINT__EDGE_TYPES,
+                            i,
+                            IssueCodes.FEATURE_NOT_REPRESENTABLE);
                 }
             }
         }
@@ -883,28 +865,6 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             if (inferredSpecification != null && !inferredSpecification.eIsProxy() && !SourceVersion.isName(inferredSpecification.getQualifiedName())) {
                 error(String.format("The pattern name %s is not a valid Java classname", pattern.getName()), PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.OTHER_ISSUE);
             }
-        }
-    }
-    
-    public Map<PathExpressionTail, EStructuralFeature> getAllFeaturesFromPathExpressionTail(
-            PathExpressionTail pathExpressionTail) {
-        Map<PathExpressionTail, EStructuralFeature> types = Maps.newHashMap();
-        getAllFeaturesFromPathExpressionTail(pathExpressionTail, types);
-        return types;
-    }
-
-    private void getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail,
-            Map<PathExpressionTail, EStructuralFeature> types) {
-        if (pathExpressionTail != null) {
-            Type type = pathExpressionTail.getType();
-            if (type instanceof ReferenceType) {
-                ReferenceType referenceType = (ReferenceType) type;
-                EStructuralFeature refname = referenceType.getRefname();
-                if (refname != null) {
-                    types.put(pathExpressionTail, refname);
-                }
-            }
-            getAllFeaturesFromPathExpressionTail(pathExpressionTail.getTail(), types);
         }
     }
 

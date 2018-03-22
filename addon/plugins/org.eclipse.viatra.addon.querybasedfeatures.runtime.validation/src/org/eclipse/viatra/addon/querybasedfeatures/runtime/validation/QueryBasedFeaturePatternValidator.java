@@ -206,7 +206,7 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
         }
         IInputKey targetType = typeInferrer.getType(target);
         
-        EClassifier targetClassifier = EMFTypeSystem.EXTRACT_CLASSIFIER.apply(targetType); 
+        EClassifier targetClassifier = EMFTypeSystem.extractClassifierFromInputKey(targetType); 
         if (targetType == null) {
             validator.warning("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);

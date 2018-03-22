@@ -24,18 +24,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
-import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionElement;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
@@ -153,15 +150,14 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     public void complete_ValueReference(EObject model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         super.complete_ValueReference(model, ruleCall, context, acceptor);
-        if (model instanceof PathExpressionHead) {
-            PathExpressionHead head = (PathExpressionHead) model;
-            try {
-                // XXX The following code re-specifies scoping instead of reusing the scope provider
-                EClassifier typeClassifier = EMFPatternLanguageScopeHelper.calculateExpressionType(head);
-                if (typeClassifier instanceof EEnum) {
+        if (model instanceof PathExpressionConstraint) {
+            PathExpressionConstraint head = (PathExpressionConstraint) model;
+            // XXX The following code re-specifies scoping instead of reusing the scope provider
+            PatternLanguageHelper.getPathExpressionEMFTailType(head)
+                .filter(EEnum.class::isInstance)
+                .map(EEnum.class::cast)
+                .ifPresent(type -> {
                     // In case of EEnums add Enum Literal constants
-                    EEnum type = (EEnum) typeClassifier;
-
                     ContentAssistContext.Builder myContextBuilder = context.copy();
                     myContextBuilder.setMatcher(new EnumPrefixMatcher(type.getName()));
 
@@ -170,19 +166,16 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
                                 type.getName() + "::" + literal.getName(), null, myContextBuilder.toContext());
                         acceptor.accept(completionProposal);
                     }
-                }
-                // XXX The following code re-specifies scoping instead of reusing the scope provider
-                // Always refer to existing variables
-                PatternBody body = (PatternBody) head.eContainer()/* PathExpression */.eContainer()/* PatternBody */;
-                for (Variable var : body.getVariables()) {
-                    acceptor.accept(createCompletionProposal(var.getName(), context));
-                }
-                Pattern pattern = (Pattern) body.eContainer();
-                for (Variable var : pattern.getParameters()) {
-                    acceptor.accept(createCompletionProposal(var.getName(), context));
-                }
-            } catch (ResolutionException e) {
-                // If resolution fails, simply don't return anything
+                });
+            // XXX The following code re-specifies scoping instead of reusing the scope provider
+            // Always refer to existing variables
+            PatternBody body = (PatternBody) head.eContainer()/* PatternBody */;
+            for (Variable var : body.getVariables()) {
+                acceptor.accept(createCompletionProposal(var.getName(), context));
+            }
+            Pattern pattern = (Pattern) body.eContainer();
+            for (Variable var : pattern.getParameters()) {
+                acceptor.accept(createCompletionProposal(var.getName(), context));
             }
         }
     }
@@ -273,9 +266,9 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     /**
      * @since 2.0
      */
-    public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
+    public void complete_RefType(PathExpressionConstraint model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
-        IScope scope = scopeProvider.getScope(model.getTail(),
+        IScope scope = scopeProvider.getScope(model,
                 PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
         crossReferenceProposalCreator.lookupCrossReference(scope, model,
                 PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME, acceptor,

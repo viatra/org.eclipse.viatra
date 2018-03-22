@@ -33,8 +33,10 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
@@ -52,12 +54,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionHead;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
@@ -522,8 +524,7 @@ public final class PatternLanguageHelper {
             } else if (constraint instanceof PathExpressionConstraint) {
                 // Just from aggregated elements
                 PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
-                PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-                ValueReference valueReference = pathExpressionHead.getDst();
+                ValueReference valueReference = pathExpressionConstraint.getDst();
                 resultList.addAll(getUnnamedVariablesFromValueReference(valueReference, true));
             }
         }
@@ -760,5 +761,17 @@ public final class PatternLanguageHelper {
      */
     public static Iterable<EPackage> getEPackageImportsIterable(PatternModel model) {
         return Iterables.transform(getPackageImportsIterable(model), PackageImport::getEPackage);
+    }
+    
+    public static Optional<ReferenceType> getPathExpressionTailType(PathExpressionConstraint expression) {
+        return Optional.ofNullable(expression.getEdgeTypes())
+                .map(types -> types.get(types.size() - 1));
+    }
+               
+    public static Optional<EClassifier> getPathExpressionEMFTailType(PathExpressionConstraint expression) {
+        return getPathExpressionTailType(expression)
+                .map(ReferenceType::getRefname)
+                .map(EStructuralFeature::getEType);
+        
     }
 }

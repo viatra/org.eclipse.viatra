@@ -23,8 +23,9 @@ import org.eclipse.xtext.diagnostics.Diagnostic
 import org.junit.Test
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -48,9 +49,8 @@ class EReferenceResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
-        val tail = constraint.head.tail
-        val type = tail.type as ReferenceType
-        assertEquals(type.refname.EType, PatternLanguagePackage$Literals::PATTERN_BODY)		
+        val type = PatternLanguageHelper.getPathExpressionEMFTailType(constraint).get
+        assertEquals(type, PatternLanguagePackage$Literals::PATTERN_BODY)		
     }
     
     @Test
@@ -66,11 +66,28 @@ class EReferenceResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
-        val interim = constraint.head.tail
-        val interimType = interim.type as ReferenceType
+        val interimType = constraint.edgeTypes.get(0)
         assertEquals(interimType.refname.EType, PatternLanguagePackage$Literals::PATTERN_BODY)		
-        val tail = interim.tail
-        val type = tail.type as ReferenceType
+        val type = constraint.edgeTypes.get(1)
+        assertEquals(type.refname.EType, PatternLanguagePackage$Literals::CONSTRAINT)		
+    }
+    
+    @Test
+    def referenceResolutionChain4() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+
+            pattern resolutionTest(m : PatternModel, c : Constraint) = {
+                PatternModel.patterns.bodies.constraints(m, c);
+            }
+        ''')
+        model.assertNoErrors
+        val pattern = model.patterns.get(0)
+        val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
+        val interimType = constraint.edgeTypes.get(1)
+        assertEquals(interimType.refname.EType, PatternLanguagePackage$Literals::PATTERN_BODY)		
+        val type = constraint.edgeTypes.get(2)
         assertEquals(type.refname.EType, PatternLanguagePackage$Literals::CONSTRAINT)		
     }
     
@@ -87,7 +104,7 @@ class EReferenceResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
-        val type = constraint.head.tail.type as ReferenceType
+        val type = PatternLanguageHelper.getPathExpressionTailType(constraint).get as ReferenceType
         assertEquals(type.refname, PatternLanguagePackage$Literals::ECLASSIFIER_CONSTRAINT__VAR)
     }
     
