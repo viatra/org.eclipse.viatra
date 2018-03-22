@@ -40,6 +40,7 @@ import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver
 import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue
+import java.util.HashSet
 
 /**
  * @author Zoltan Ujhelyi
@@ -178,6 +179,9 @@ class PatternLanguageTypeRules {
                 return
             } 
 
+            val returnTypeSet = new HashSet(returnTypes)
+            val boolean returnTypeUnique = returnTypeSet.size == returnTypes.size
+
             val index = AggregatorUtil.getAggregateVariableIndex(reference)
             for (var i=0; i < returnTypes.size; i++) {
                 information.provideType(new ConditionalJudgement(
@@ -186,12 +190,15 @@ class PatternLanguageTypeRules {
                     reference.call.parameters.get(index), 
                     new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier)
                 ))
-                information.provideType(new ConditionalJudgement(
-                    reference.call.parameters.get(index), 
-                    new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier),
-                    reference, 
-                    new JavaTransitiveInstancesKey(returnTypes.get(i).identifier)
-                ))
+                // If return types are not unique for each source type, do not provide backward conditions
+                if (returnTypeUnique) {
+                    information.provideType(new ConditionalJudgement(
+                        reference.call.parameters.get(index), 
+                        new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier),
+                        reference, 
+                        new JavaTransitiveInstancesKey(returnTypes.get(i).identifier)
+                    ))
+                }
             }
             
             // Aggregate variable needs to be connected to called pattern;

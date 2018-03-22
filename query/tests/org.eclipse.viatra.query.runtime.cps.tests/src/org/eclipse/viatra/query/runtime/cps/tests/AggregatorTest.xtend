@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MinCPUQuerySpecif
 import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 import org.junit.Test
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.SumCPUQuerySpecification
-import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AvgCPUQuerySpecification
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.HasOddApplicationsQuerySpecification
 import org.junit.runners.Parameterized.Parameters
 import java.util.Collection
@@ -88,14 +87,6 @@ class AggregatorTest {
     @Test
     def void testHasOddApplications() {
         ViatraQueryTest.test(HasOddApplicationsQuerySpecification::instance)
-                        .on(scope)
-                        .withAll
-                        .assertEquals 
-    }
-    
-    @Test
-    def void testAvgCPU() {
-        ViatraQueryTest.test(AvgCPUQuerySpecification::instance)
                         .on(scope)
                         .withAll
                         .assertEquals 

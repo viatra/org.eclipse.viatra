@@ -252,10 +252,46 @@ class AggregationTest extends AbstractValidatorTest {
             (typeInferrer.getType(variable_C) as JavaTransitiveInstancesKey).instanceClass
         )
         
-        val variable_A = body.variables.findFirst[name == "C"]
+        val variable_A = body.variables.findFirst[name == "A"]
         Assert.assertEquals(
             "Variable A is expected to have a type of Integer", 
             Integer,
+            (typeInferrer.getType(variable_A) as JavaTransitiveInstancesKey).instanceClass
+        )
+        
+        parsed.assertNoErrors
+    }
+    
+    @Test
+    def void testAvgAggregator() {
+        var parsed = parseHelper.parse(
+            '''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+                    
+            pattern positiveAverage(c : Circle, r : Red) {
+                Circle.red(c, r);
+
+                A == avg find extractValue(r, #v);
+                check(A as Double > 0);
+            }		
+            
+            // helper patterns
+            pattern extractValue(r : Red, value : EInt) {
+                Red.redness(r, value);
+            }
+            '''
+        )
+        
+        val body = parsed.patterns.get(0).bodies.get(0)
+        
+        val variable_A = body.variables.findFirst[name == "A"]
+        Assert.assertEquals(
+            "Variable A is expected to have a type of Double", 
+            Double,
             (typeInferrer.getType(variable_A) as JavaTransitiveInstancesKey).instanceClass
         )
         

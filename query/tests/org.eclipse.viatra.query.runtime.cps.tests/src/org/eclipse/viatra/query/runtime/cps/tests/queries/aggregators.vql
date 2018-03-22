@@ -3,42 +3,51 @@ package org.eclipse.viatra.query.runtime.cps.tests.queries
 import "http://www.eclipse.org/emf/2002/Ecore"
 import "http://org.eclipse.viatra/model/cps"
  
-pattern sumPriority(s) {
+pattern sumPriority(s : java Integer) {
 	s == sum find hostPriority(_h, _aT, #c);
 }
 
-pattern minPriority(m) {
+pattern minPriority(m : java Integer) {
 	m == min find hostPriority(_h, _aT, #c);
 }
 
-pattern maxPriority(m) {
+pattern maxPriority(m : java Integer) {
 	m == max find hostPriority(_h, _aT, #c);
 }
 
-pattern avgCPU(n) {
+pattern avgCPU(n : java Integer) {
 	find sumCPU(s);
 	find countHost(c);
 	n == eval(if (c == 0) null else (s / c));
 }
 
-pattern sumCPU(n) {
+
+pattern avgCPU2(n : java Double) {
+    n == avg find availableCPU(_, #c);
+}
+
+pattern avgRamRequirement(n : java Double) {
+	n == avg find ramRequirement(_, #r);
+} 
+
+pattern sumCPU(n : java Integer) {
 	n == sum find availableCPU(_, #c);
 }
 
-pattern countHost(n) {
+pattern countHost(n : java Integer) {
 	n == count find hostInstance(_);
 }
 
-pattern minCPU(n) {
+pattern minCPU(n : java Integer) {
 	n == min find availableCPU(_, #c);
 }
 
-pattern hostInstanceWithMinCPU1(host : HostInstance, value) {
+pattern hostInstanceWithMinCPU1(host : HostInstance, value : java Integer) {
 	value == min find availableCPU(_, #c);
 	find availableCPU(host, value);
 }
 
-pattern hostInstanceWithMinCPU2(host : HostInstance, value) {
+pattern hostInstanceWithMinCPU2(host : HostInstance, value : java Integer) {
 	find minCPU(value);	
 	find availableCPU(host, value);
 }
@@ -51,23 +60,27 @@ pattern hasOddApplications(hostInst: HostInstance, appInst : ApplicationInstance
 
 
 // HELPER PATTERNS
-pattern availableCPU(host : HostInstance, value : EInt) {
+pattern availableCPU(host : HostInstance, value : java Integer) {
 	HostInstance.availableCpu(host, value);
 }
 
-pattern hostPriority(host, appType, priority) {
+pattern hostPriority(host : HostInstance, appType : ApplicationType, priority : java Integer) {
 	HostInstance.applications(host, app);
 	ApplicationInstance.type(app, appType);
 	ApplicationInstance.priority(app, priority);
 }
 
-pattern hostInstance(host) {
+pattern hostInstance(host : HostInstance) {
 	HostInstance(host);
 }
 
-pattern manyParams(hostInst: HostInstance, a, b, appInst : ApplicationInstance, c) = {
+pattern manyParams(hostInst: HostInstance, a : java Integer, b : java Integer, appInst : ApplicationInstance, c : java Integer) = {
 	a == 1;
 	b == 2;
 	c == 3;
 	HostInstance.applications(hostInst, appInst);
+}
+
+private pattern ramRequirement(req : ResourceRequirement, ram : java Integer) {
+	ResourceRequirement.requiredRam(req, ram);
 }

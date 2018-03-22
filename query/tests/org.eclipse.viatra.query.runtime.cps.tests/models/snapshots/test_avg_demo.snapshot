@@ -2,15 +2,18 @@
 <vqSnapshot:QuerySnapshot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vqSnapshot="http://www.eclipse.org/viatra/query/snapshot" inputSpecification="ResourceSet">
   <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPU">
     <matches>
-      <substitutions xsi:type="vqSnapshot:IntSubstitution" parameterName="n" value="10"/>
+      <substitutions xsi:type="vqSnapshot:IntSubstitution" parameterName="n" value="12"/>
     </matches>
     <filter/>
   </matchSetRecords>
   <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPU2">
     <matches>
-      <substitutions xsi:type="vqSnapshot:DoubleSubstitution" parameterName="n" value="10"/>
+      <substitutions xsi:type="vqSnapshot:DoubleSubstitution" parameterName="n" value="12.0"/>
     </matches>
     <filter/>
   </matchSetRecords>
-  <modelRoots href="../instances/demo.cyberphysicalsystem#testModel6504822858552"/>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.avgRamRequirement">
+    <filter/>
+  </matchSetRecords>
+  <modelRoots href="../instances/avgdemo.cyberphysicalsystem#testModel6504822858552"/>
 </vqSnapshot:QuerySnapshot>
