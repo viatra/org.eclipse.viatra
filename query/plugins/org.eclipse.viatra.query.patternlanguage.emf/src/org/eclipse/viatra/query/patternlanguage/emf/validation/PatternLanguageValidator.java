@@ -778,7 +778,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         for (Variable var1 : body.getVariables()) {
             Variable otherVar = null;
             for (Variable var2 : body.getVariables()) {
-                if (PatternLanguageHelper.isNamedSingleUse(var1) && var1.getSimpleName().substring(1).equals(var2.getName())) {
+                if (PatternLanguageHelper.isNamedSingleUse(var1) && var1.getName().substring(1).equals(var2.getName())) {
                     otherVar = var2;
                 }
             }
@@ -786,13 +786,13 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                 boolean isAggregate = PatternLanguageHelper.hasAggregateReference(var1);
                 // Local variables do not have source location
                 if (isAggregate) {
-                    error(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_AGGREGATE, var1.getSimpleName(),
-                            otherVar.getSimpleName()), PatternLanguageHelper.getReferences(var1).findAny().get(),
+                    error(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_AGGREGATE, var1.getName(),
+                            otherVar.getName()), PatternLanguageHelper.getReferences(var1).findAny().get(),
                             PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
                             IssueCodes.DUBIUS_VARIABLE_NAME);
                 } else {
-                    warning(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_SINGLEUSE, var1.getSimpleName(),
-                            otherVar.getSimpleName()), PatternLanguageHelper.getReferences(var1).findAny().get(),
+                    warning(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_SINGLEUSE, var1.getName(),
+                            otherVar.getName()), PatternLanguageHelper.getReferences(var1).findAny().get(),
                             PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
                             IssueCodes.DUBIUS_VARIABLE_NAME);
                 }
