@@ -203,9 +203,12 @@ class PatternLanguageTypeRules {
             
             // Aggregate variable needs to be connected to called pattern;
             // Other variables are not connected, similar to negative pattern calls
-            information.provideType(
-                new ParameterTypeJudgement(reference.call.parameters.get(index), reference.call.patternRef.parameters.get(index))
-            )
+            if (index < reference.call.parameters.size && index < reference.call.patternRef.parameters.size) {
+                // Only provide type judgement if appropriate number of parameters exists
+                information.provideType(
+                    new ParameterTypeJudgement(reference.call.parameters.get(index), reference.call.patternRef.parameters.get(index))
+                )
+            }
            }
    }
    
