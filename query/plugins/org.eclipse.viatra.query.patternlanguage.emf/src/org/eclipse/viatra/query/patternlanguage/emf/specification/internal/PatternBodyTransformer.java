@@ -22,11 +22,13 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
@@ -73,7 +75,8 @@ public class PatternBodyTransformer {
 
     private final Pattern pattern;
     private final String patternFQN;
-    private EMFTypeSystem typeSystem;
+    private final EMFTypeSystem typeSystem;
+    private final EMFTypeInferrer typeInferrer;
 
     public PatternBodyTransformer(Pattern pattern) {
         super();
@@ -82,6 +85,7 @@ public class PatternBodyTransformer {
         
         Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
         typeSystem = injector.getInstance(EMFTypeSystem.class);
+        typeInferrer = injector.getInstance(EMFTypeInferrer.class);
     }
 
     /**
@@ -239,25 +243,41 @@ public class PatternBodyTransformer {
         PatternCall call = constraint.getCall();
         Pattern patternRef = call.getPatternRef();
         List<String> variableNames = getVariableNames(call.getParameters(), acceptor);
-        if (!call.isTransitive()) {
-            if (constraint.isNegative())
-                acceptor.acceptNegativePatternCall(variableNames, patternRef);
-            else
-                acceptor.acceptPositivePatternCall(variableNames, patternRef);
-        } else {
-            if (call.getParameters().size() != 2)
+        if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE) {
+            verifyTransitiveCall(constraint, call, patternRef);
+            final IInputKey universeType = typeInferrer.getType(call.getParameters().get(0));
+            if (!universeType.isEnumerable()) {
                 throw new SpecificationBuilderException(
-                        "Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.",
-                        new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
-                        "Transitive closure only supported for binary patterns.", pattern);
-            else if (constraint.isNegative())
-                throw new SpecificationBuilderException("Unsupported negated transitive closure of {1} in pattern {2}",
-                        new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
-                        "Unsupported negated transitive closure", pattern);
-            else
-                acceptor.acceptBinaryTransitiveClosure(variableNames, patternRef);
+                        "Reflexive transitive closure of {1} in pattern {2} is unsupported because parameter type {3} is not enumerable.",
+                        new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN, universeType.getPrettyPrintableName() },
+                        "Reflexive transitive closure only supported for patterns with enumerable parameters.", pattern);
+            }
+            acceptor.acceptBinaryReflexiveTransitiveClosure(variableNames, patternRef, universeType);
+        } else if (call.getTransitive() == ClosureType.TRANSITIVE) {
+            verifyTransitiveCall(constraint, call, patternRef);
+            acceptor.acceptBinaryTransitiveClosure(variableNames, patternRef);
+        } else {
+            if (constraint.isNegative()) {
+                acceptor.acceptNegativePatternCall(variableNames, patternRef);
+            } else {
+                acceptor.acceptPositivePatternCall(variableNames, patternRef);
+            }
         }
     }
+
+    private void verifyTransitiveCall(PatternCompositionConstraint constraint, PatternCall call, Pattern patternRef) {
+        if (call.getParameters().size() != 2) {
+            throw new SpecificationBuilderException(
+                    "Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.",
+                    new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                    "Transitive closure only supported for binary patterns.", pattern);
+        } else if (constraint.isNegative()) {
+            throw new SpecificationBuilderException("Unsupported negated transitive closure of {1} in pattern {2}",
+                    new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                    "Unsupported negated transitive closure", pattern);
+        }
+    }
+    
 
     private void gatherClassifierConstraint(EClassifierConstraint constraint, PatternModelAcceptor<?> acceptor) {
         String variableName = getVariableName(constraint.getVar(), acceptor);

@@ -10,3 +10,13 @@ private pattern stateTransition(source : State, target : State) {
 pattern statesTC(s1 : State, s2 : State) {
 	find stateTransition+(s1, s2);
 }
+
+pattern statesRTC1(s1 : State, s2 : State) {
+	find stateTransition+(s1, s2);
+} or {
+	s1 == s2;
+}
+
+pattern statesRTC2(s1 : State, s2 : State) {
+	find stateTransition*(s1, s2);
+}

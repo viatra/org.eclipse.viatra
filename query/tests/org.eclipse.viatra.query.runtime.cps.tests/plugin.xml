@@ -135,6 +135,8 @@
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesTC"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesRTC1"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesRTC2"/>
     </group>
   </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.TrickyJoin" point="org.eclipse.viatra.query.runtime.queryspecification">

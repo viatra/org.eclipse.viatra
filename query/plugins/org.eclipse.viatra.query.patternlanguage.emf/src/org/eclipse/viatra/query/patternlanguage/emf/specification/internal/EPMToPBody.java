@@ -36,6 +36,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -153,6 +154,13 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
         PQuery calledPQuery = findCalledPQuery(calledPattern);
         new BinaryTransitiveClosure(pBody, pVariableTuple, calledPQuery);
+    }
+    
+    @Override
+    public void acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern, IInputKey universeType) {
+        Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
+        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        new BinaryReflexiveTransitiveClosure(pBody, pVariableTuple, calledPQuery, universeType);
     }
 
     @Override

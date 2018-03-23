@@ -48,9 +48,13 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
             IQueryResultProvider matcher = context.getMatcher(information.getReference());
 
             Queue<Object> seedsToEvaluate = new LinkedList<>();
-            seedsToEvaluate.add(frame.get(seedPosition));
+            final Object seedValue = frame.get(seedPosition);
+            seedsToEvaluate.add(seedValue);
             Set<Object> seedsEvaluated = new HashSet<>();
             Set<Object> targetsFound = new HashSet<>();
+            if (reflexive) {
+                targetsFound.add(seedValue);
+            }
 
             while(!seedsToEvaluate.isEmpty()) {
                 Object currentValue = seedsToEvaluate.poll();
@@ -76,7 +80,9 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
     
     /**
      * Calculates the transitive closure of a pattern match in a forward direction (first parameter bound, second
-     * unbound)
+     * unbound).
+     * </p>
+     * <strong>Note</strong>: In case the call is reflexive, it is expected that the bound parameter already matches the universe type of the call. 
      * 
      * @since 1.7
      */
@@ -84,8 +90,11 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
 
         private Object[] seedFrame = new Object[2];
         
-        public Forward(CallInformation information, int sourcePosition, int targetPosition) {
-            super(information, sourcePosition, targetPosition);
+        /**
+         * @since 2.0
+         */
+        public Forward(CallInformation information, int sourcePosition, int targetPosition, boolean reflexive) {
+            super(information, sourcePosition, targetPosition, reflexive);
         }
 
         protected Object[] calculateCallFrame(Object seed) {
@@ -102,14 +111,19 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
     /**
      * Calculates the transitive closure of a pattern match in a backward direction (first parameter unbound, second
      * bound)
+     * </p>
+     * <strong>Note</strong>: In case the call is reflexive, it is expected that the bound parameter already matches the universe type of the call.
      * 
-     * @since 1.7
+     * @since 2.0
      */
     public static class Backward extends ExtendBinaryTransitiveClosure {
         private Object[] seedFrame = new Object[2];
 
-        public Backward(CallInformation information, int sourcePosition, int targetPosition) {
-            super(information, targetPosition, sourcePosition);
+        /**
+         * @since 2.0
+         */
+        public Backward(CallInformation information, int sourcePosition, int targetPosition, boolean reflexive) {
+            super(information, targetPosition, sourcePosition, reflexive);
         }
 
         protected Object[] calculateCallFrame(Object seed) {
@@ -126,14 +140,17 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
     private final int seedPosition;
     private final int targetPosition;
     private final CallInformation information;
+    private final boolean reflexive;
 
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
+     * @since 2.0
      */
-    protected ExtendBinaryTransitiveClosure(CallInformation information, int seedPosition, int targetPosition) {
+    protected ExtendBinaryTransitiveClosure(CallInformation information, int seedPosition, int targetPosition, boolean reflexive) {
         this.information = information;
         this.seedPosition = seedPosition;
         this.targetPosition = targetPosition;
+        this.reflexive = reflexive;
     }
 
     protected abstract Object[] calculateCallFrame(Object seed);

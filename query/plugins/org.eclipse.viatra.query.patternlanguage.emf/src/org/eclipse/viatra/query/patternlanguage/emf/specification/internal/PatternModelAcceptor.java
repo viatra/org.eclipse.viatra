@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Expressio
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -104,6 +105,12 @@ public interface PatternModelAcceptor<Result> {
      * Accepts a {@link BinaryTransitiveClosure}.
      */
     void acceptBinaryTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern);
+    
+    /**
+     * Initializes a {@link BinaryReflexiveTransitiveClosure} instance.
+     * @since 2.0
+     */
+    void acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern, IInputKey universeType);
 
     /**
      * Accepts an {@link Equality}.

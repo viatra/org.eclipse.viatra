@@ -64,6 +64,12 @@ public class GenericOperationCompiler extends AbstractOperationCompiler {
     }
     
     @Override
+    protected void createUnaryTypeCheck(IInputKey inputKey, int position) {
+        int[] positions = new int[] {position};
+        operations.add(new GenericTypeCheck(inputKey, positions, TupleMask.fromSelectedIndices(1, positions)));
+    }
+
+    @Override
     protected void createExtend(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         IInputKey inputKey = typeConstraint.getSupplierKey();
         Tuple tuple = typeConstraint.getVariablesTuple();

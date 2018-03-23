@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -229,6 +230,13 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     }
     
     /**
+     * @since 2.0
+     */
+    protected double _calculateCost(final BinaryReflexiveTransitiveClosure closure, final IConstraintEvaluationContext input) {
+        return _calculateCost((PConstraint)closure, input);
+    }
+    
+    /**
      * Default cost calculation strategy
      */
     protected double _calculateCost(final PConstraint constraint, final IConstraintEvaluationContext input) {
@@ -266,6 +274,8 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             return _calculateCost((PatternMatchCounter) constraint, input);
         } else if (constraint instanceof BinaryTransitiveClosure) {
             return _calculateCost((BinaryTransitiveClosure) constraint, input);
+        } else if (constraint instanceof BinaryReflexiveTransitiveClosure) {
+            return _calculateCost((BinaryReflexiveTransitiveClosure) constraint, input);
         } else {
             // Default cost calculation
             return _calculateCost(constraint, input);

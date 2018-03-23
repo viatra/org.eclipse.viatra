@@ -65,12 +65,11 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
     protected void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         final IInputKey inputKey = typeConstraint.getInputKey();
         if (inputKey instanceof JavaTransitiveInstancesKey) {
-            operations.add(new InstanceOfJavaClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((JavaTransitiveInstancesKey) inputKey).getInstanceClass()));
+            doCreateInstanceofJavaTypeCheck((JavaTransitiveInstancesKey) inputKey, variableMapping.get(typeConstraint.getVariablesTuple().get(0)));
         } else if (inputKey instanceof EDataTypeInSlotsKey) { // TODO probably only occurs as TypeConstraint
-            operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
-                    ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
+            doCreateInstanceofDatatypeCheck((EDataTypeInSlotsKey) inputKey, variableMapping.get(typeConstraint.getVariablesTuple().get(0)));
         } else if (inputKey instanceof EClassUnscopedTransitiveInstancesKey) {
-            operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassUnscopedTransitiveInstancesKey) inputKey).getEmfKey()));
+            doCreateInstanceofUnscopedClassCheck((EClassUnscopedTransitiveInstancesKey) inputKey, variableMapping.get(typeConstraint.getVariablesTuple().get(0)));
         } else {
             String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
             throw new QueryProcessingException(msg, null, msg, null);
@@ -81,20 +80,50 @@ public class EMFOperationCompiler extends AbstractOperationCompiler {
     protected void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
         final IInputKey inputKey = typeConstraint.getSupplierKey();
         if (inputKey instanceof EClassTransitiveInstancesKey) {
-            operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
-            operations.add(new ScopeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), runtimeContext.getEmfScope()));
+            doCreateInstanceofClassCheck((EClassTransitiveInstancesKey)inputKey, variableMapping.get(typeConstraint.getVariablesTuple().get(0)));
         } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
             int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
             int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
             operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition,
                     ((EStructuralFeatureInstancesKey) inputKey).getEmfKey()));
         } else if (inputKey instanceof EDataTypeInSlotsKey) {
-            operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
-                    ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
+            doCreateInstanceofDatatypeCheck((EDataTypeInSlotsKey) inputKey, variableMapping.get(typeConstraint.getVariablesTuple().get(0)));
         } else {
             String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
             throw new QueryProcessingException(msg, null, msg, null);
         }
+    }
+
+    @Override
+    protected void createUnaryTypeCheck(IInputKey inputKey, int position) {
+        if (inputKey instanceof EClassTransitiveInstancesKey) {
+            doCreateInstanceofClassCheck((EClassTransitiveInstancesKey)inputKey, position);
+        } else if (inputKey instanceof EClassUnscopedTransitiveInstancesKey) {
+            doCreateInstanceofUnscopedClassCheck((EClassUnscopedTransitiveInstancesKey)inputKey, position);
+        } else if (inputKey instanceof EDataTypeInSlotsKey) {
+            doCreateInstanceofDatatypeCheck((EDataTypeInSlotsKey) inputKey, position);
+        } else if (inputKey instanceof JavaTransitiveInstancesKey) {
+            doCreateInstanceofJavaTypeCheck((JavaTransitiveInstancesKey) inputKey, position);
+        } else {
+            String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
+            throw new QueryProcessingException(msg, null, msg, null);
+        }
+    }
+
+    private void doCreateInstanceofClassCheck(EClassTransitiveInstancesKey inputKey, int position) {
+        operations.add(new InstanceOfClassCheck(position, inputKey.getEmfKey()));
+        operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
+    }
+    
+    private void doCreateInstanceofUnscopedClassCheck(EClassUnscopedTransitiveInstancesKey inputKey, int position) {
+        operations.add(new InstanceOfClassCheck(position, inputKey.getEmfKey()));
+    }
+    
+    private void doCreateInstanceofDatatypeCheck(EDataTypeInSlotsKey inputKey, int position) {
+        operations.add(new InstanceOfDataTypeCheck(position, inputKey.getEmfKey()));
+    }
+    private void doCreateInstanceofJavaTypeCheck(JavaTransitiveInstancesKey inputKey, int position) {
+        operations.add(new InstanceOfJavaClassCheck(position, inputKey.getInstanceClass()));
     }
 
     @Override

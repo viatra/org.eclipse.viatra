@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
@@ -109,8 +110,19 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
         return String.format("%s%s", modifiers, text(constraint.getCall()));
     }
 
+    private String getTransitiveOperation(ClosureType type) {
+        switch (type) {
+        case REFLEXIVE_TRANSITIVE:
+            return "*";
+        case TRANSITIVE:
+            return "+";
+        default:
+            return "";
+        }
+    }
+    
     String text(PatternCall call) {
-        String transitiveOp = call.isTransitive() ? "+" : "";
+        String transitiveOp = getTransitiveOperation(call.getTransitive());
         final String name = call.getPatternRef() == null ? "<null>" : call.getPatternRef().getName();
         return String.format("find %s/%d%s", name, call.getParameters().size(), transitiveOp);
     }

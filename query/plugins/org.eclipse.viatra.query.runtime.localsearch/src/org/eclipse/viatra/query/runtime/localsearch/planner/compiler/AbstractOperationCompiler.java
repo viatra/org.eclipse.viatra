@@ -39,6 +39,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPosi
 import org.eclipse.viatra.query.runtime.localsearch.operations.util.CallInformation;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.CompilerHelper;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -55,6 +56,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -82,6 +84,12 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
      */
     protected abstract void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping);
 
+    /**
+     * @since 2.0
+     * @throws ViatraQueryRuntimeException
+     */
+    protected abstract void createUnaryTypeCheck(IInputKey type, int position);
+    
     protected List<ISearchOperation> operations;
     protected Set<MatcherReference> dependencies = new HashSet<>();
     protected Map<PConstraint, Set<Integer>> variableBindings;
@@ -169,6 +177,8 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     
         if (pConstraint instanceof BinaryTransitiveClosure) {
             createCheck((BinaryTransitiveClosure) pConstraint, variableMapping);
+        } else if (pConstraint instanceof BinaryReflexiveTransitiveClosure) {
+            createCheck((BinaryReflexiveTransitiveClosure)pConstraint, variableMapping);
         } else if (pConstraint instanceof ConstantValue) {
             createCheck((ConstantValue) pConstraint, variableMapping);
         } else if (pConstraint instanceof TypeConstraint) {
@@ -205,6 +215,8 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
             createExtend((TypeConstraint) pConstraint, variableMapping);
         } else if (pConstraint instanceof BinaryTransitiveClosure) {
             createExtend((BinaryTransitiveClosure)pConstraint, variableMapping);
+        } else if (pConstraint instanceof BinaryReflexiveTransitiveClosure) {
+            createExtend((BinaryReflexiveTransitiveClosure)pConstraint, variableMapping);
         } else {
             String msg = "Unsupported Extend constraint: "+pConstraint.toString();
             throw new QueryProcessingException(msg, null, msg, null);
@@ -277,7 +289,21 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         
         //The second parameter is NOT bound during execution!
         CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));
-        operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition));
+        operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition, false));
+        dependencies.add(information.getReference());
+    }
+    
+    /**
+     * @since 2.0
+     */
+    protected void createCheck(BinaryReflexiveTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
+        int sourcePosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(0));
+        int targetPosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(1));
+        
+        //The second parameter is NOT bound during execution!
+        CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));
+        createUnaryTypeCheck(binaryTransitiveClosure.getUniverseType(), sourcePosition);
+        operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition, true));
         dependencies.add(information.getReference());
     }
 
@@ -331,13 +357,39 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, variableBindings.get(binaryTransitiveClosure));
         
         if (sourceBound && !targetBound) {
-            operations.add(new ExtendBinaryTransitiveClosure.Forward(information, sourcePosition, targetPosition));
+            operations.add(new ExtendBinaryTransitiveClosure.Forward(information, sourcePosition, targetPosition, false));
             dependencies.add(information.getReference());            
         } else if (!sourceBound && targetBound) {
-            operations.add(new ExtendBinaryTransitiveClosure.Backward(information, sourcePosition, targetPosition));
+            operations.add(new ExtendBinaryTransitiveClosure.Backward(information, sourcePosition, targetPosition, false));
             dependencies.add(information.getReference());                        
         } else {
             String msg = "Binary transitive closure not supported with two unbound parameters";
+            throw new QueryProcessingException(msg, null, msg, binaryTransitiveClosure.getPSystem().getPattern());
+        }
+    }
+    
+    /**
+     * @since 2.0
+     */
+    protected void createExtend(BinaryReflexiveTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
+        int sourcePosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(0));
+        int targetPosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(1));
+        
+        boolean sourceBound = variableBindings.get(binaryTransitiveClosure).contains(sourcePosition);
+        boolean targetBound = variableBindings.get(binaryTransitiveClosure).contains(targetPosition);
+        
+        CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, variableBindings.get(binaryTransitiveClosure));
+        
+        if (sourceBound && !targetBound) {
+            createUnaryTypeCheck(binaryTransitiveClosure.getUniverseType(), sourcePosition);
+            operations.add(new ExtendBinaryTransitiveClosure.Forward(information, sourcePosition, targetPosition, true));
+            dependencies.add(information.getReference());            
+        } else if (!sourceBound && targetBound) {
+            createUnaryTypeCheck(binaryTransitiveClosure.getUniverseType(), targetPosition);
+            operations.add(new ExtendBinaryTransitiveClosure.Backward(information, sourcePosition, targetPosition, true));
+            dependencies.add(information.getReference());                        
+        } else {
+            String msg = "Binary reflective transitive closure not supported with two unbound parameters";
             throw new QueryProcessingException(msg, null, msg, binaryTransitiveClosure.getPSystem().getPattern());
         }
     }

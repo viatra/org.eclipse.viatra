@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -55,6 +56,13 @@ public final class CallInformation {
     }
     
     public static CallInformation create(BinaryTransitiveClosure constraint, Map<PVariable, Integer> variableMapping, Set<Integer> bindings) {
+        return new CallInformation(constraint.getVariablesTuple(), constraint.getReferredQuery(), bindings, variableMapping);
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public static CallInformation create(BinaryReflexiveTransitiveClosure constraint, Map<PVariable, Integer> variableMapping, Set<Integer> bindings) {
         return new CallInformation(constraint.getVariablesTuple(), constraint.getReferredQuery(), bindings, variableMapping);
     }
     

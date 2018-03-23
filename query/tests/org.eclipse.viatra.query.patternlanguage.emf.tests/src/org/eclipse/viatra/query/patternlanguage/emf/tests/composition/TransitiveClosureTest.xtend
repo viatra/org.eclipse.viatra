@@ -65,6 +65,25 @@ class TransitiveClosureTest extends AbstractValidatorTest {
     }
 
     @Test
+    def void validReflexiveClosure() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+
+            pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
+                Pattern.bodies.constraints(p1,c);
+                PatternCompositionConstraint.call.patternRef(c,p2);
+            }
+
+            pattern transitive(p : Pattern) = {
+                find patternDependency*(p,p2);  // p2 should be a single variable, e.g. _p2
+                Pattern(p2);                    // Then this line can be deleted.
+            }'
+        )
+        tester.validate(model).assertOK;
+    }
+
+    @Test
     def void wrongArityClosure() {
         val model = parseHelper.parse(
             '''
@@ -78,8 +97,30 @@ class TransitiveClosureTest extends AbstractValidatorTest {
             
             pattern transitive(p : Pattern) = {
                 find patternDependency+(p,p2,c);	// p2 and c should be single variables, e.g. _p2, _s
-                Pattern(p2);						// Then these lines...
-                Constraint(c);						// ...can be deleted.
+                Pattern(p2);						    // Then these lines...
+                Constraint(c);						// ...could be deleted.
+            }'''
+        )
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY),
+            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE));
+    }
+    
+    @Test
+    def void wrongArityReflexiveClosure() {
+        val model = parseHelper.parse(
+            '''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern patternDependency(p1 : Pattern, p2 : Pattern, c) = {
+                Pattern.bodies.constraints(p1,c);
+                PatternCompositionConstraint.call.patternRef(c,p2);
+            }
+            
+            pattern transitive(p : Pattern) = {
+                find patternDependency*(p,p2,c);	// p2 and c should be single variables, e.g. _p2, _s
+                Pattern(p2);						    // Then these lines...
+                Constraint(c);						// ...could be deleted.
             }'''
         )
         tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY),
@@ -87,7 +128,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
     }
 
     @Test
-    def void wrongTypedClosure() {
+    def void misTypedClosure() {
         val model = parseHelper.parse(
             '''
                 package org.eclipse.viatra.query.patternlanguage.emf.tests
@@ -99,6 +140,51 @@ class TransitiveClosureTest extends AbstractValidatorTest {
                 
                 pattern transitive(p : Pattern, b : PatternBody) {
                     find bodyOfPattern+(p, b);
+                }
+            '''
+        )
+        tester.validate(model).assertError(IssueCodes::TRANSITIVE_PATTERNCALL_TYPE)
+    }
+
+    @Test
+    def void misTypedReflexiveClosure() {
+        val model = parseHelper.parse(
+            '''
+                package org.eclipse.viatra.query.patternlanguage.emf.tests
+                import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+                
+                pattern bodyOfPattern(p : Pattern, b : PatternBody) {
+                    Pattern.bodies(p, b);
+                }
+                
+                pattern transitive(p : Pattern, b : PatternBody) {
+                    find bodyOfPattern*(p, b);
+                }
+            '''
+        )
+        tester.validate(model).assertError(IssueCodes::TRANSITIVE_PATTERNCALL_TYPE)
+    }
+
+    @Test
+    def void misTypedReflexiveClosure2() {
+        val model = parseHelper.parse(
+            '''
+                package org.eclipse.viatra.query.patternlanguage.emf.tests
+                import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+                
+                pattern patternDependency(p1 : Pattern, p2 : Pattern, c : PatternCompositionConstraint) {
+                    Pattern.bodies.constraints(p1,c);
+                    PatternCompositionConstraint.call.patternRef(c,p2);
+                }
+                
+                pattern nameDependency(n1 : java String, n2 : java String) {
+                    find patternDependency(p1, p2, _);
+                    Pattern.name(p1, n1);
+                    Pattern.name(p2, n2);
+                }
+                
+                pattern transitive(n1 : java String, n2 : java String) {
+                    find nameDependency*(n1, n2);
                 }
             '''
         )
@@ -123,6 +209,25 @@ class TransitiveClosureTest extends AbstractValidatorTest {
         )
         tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE));
     }
+    
+    @Test
+    def void negatedReflexiveClosure() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+
+            pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
+                Pattern.bodies.constraints(p1,c);
+                PatternCompositionConstraint.call.patternRef(c,p2);
+            }
+
+            pattern transitive(p : Pattern) = {
+                Pattern(p);
+                neg find patternDependency*(p,_p2);
+            }'
+        )
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE));
+    }
 
     @Test
     def void aggregatedClosure() {
@@ -138,6 +243,27 @@ class TransitiveClosureTest extends AbstractValidatorTest {
             pattern transitive(p : Pattern) = {
                 Pattern(p);
                 3 == count find patternDependency+(p,p2);	// p2 should be a single variable, e.g. _p2
+                Pattern(p2);								// Then this line can be deleted.
+            }'
+        )
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE),
+            getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING));
+    }
+    
+    @Test
+    def void aggregatedReflexiveClosure() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+
+            pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
+                Pattern.bodies.constraints(p1,c);
+                PatternCompositionConstraint.call.patternRef(c,p2);
+            }
+
+            pattern transitive(p : Pattern) = {
+                Pattern(p);
+                3 == count find patternDependency*(p,p2);	// p2 should be a single variable, e.g. _p2
                 Pattern(p2);								// Then this line can be deleted.
             }'
         )

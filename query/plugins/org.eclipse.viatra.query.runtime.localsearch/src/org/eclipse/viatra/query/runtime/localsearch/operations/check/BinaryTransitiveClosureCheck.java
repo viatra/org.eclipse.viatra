@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -48,6 +49,10 @@ public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternM
 
         @Override
         protected boolean check(MatchingFrame frame, ISearchContext context) {
+            if (checkReflexive(frame)) {
+                return true;
+            }
+            
             Object targetValue = frame.get(targetPosition);
             Queue<Object> sourcesToEvaluate = new LinkedList<>();
             sourcesToEvaluate.add(frame.get(sourcePosition));
@@ -69,6 +74,10 @@ public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternM
             return false;
         }
         
+        protected boolean checkReflexive(MatchingFrame frame) {
+            return reflexive && Objects.equals(frame.get(sourcePosition), frame.get(targetPosition));
+        }
+        
         @Override
         public ISearchOperation getOperation() {
             return BinaryTransitiveClosureCheck.this;
@@ -79,17 +88,22 @@ public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternM
     private IQueryResultProvider matcher;
     private final int sourcePosition;
     private final int targetPosition;
+    private final boolean reflexive;
     
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
+     * </p>
+     * <strong>NOTE</strong>: the reflexive check call does not include the parameter type checks; appropriate type checks should be
+     * added as necessary by the operation compiler.
      * 
-     * @since 1.7
+     * @since 2.0
      */
-    public BinaryTransitiveClosureCheck(CallInformation information, int sourcePosition, int targetPosition) {
+    public BinaryTransitiveClosureCheck(CallInformation information, int sourcePosition, int targetPosition, boolean reflexive) {
         super();
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
         this.information = information;
+        this.reflexive = reflexive;
     }
     
     @Override

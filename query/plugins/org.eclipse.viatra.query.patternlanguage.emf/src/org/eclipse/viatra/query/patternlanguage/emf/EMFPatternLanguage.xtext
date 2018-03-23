@@ -108,7 +108,7 @@ PatternCompositionConstraint:
     //'count' 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
 //parameters+=ValueReference)*)? ')';
 PatternCall:
-    'find' patternRef=[Pattern|QualifiedName] transitive?='+'? '(' (parameters+=ValueReference (','
+    'find' patternRef=[Pattern|QualifiedName] (transitive=ClosureType)? '(' (parameters+=ValueReference (','
     parameters+=ValueReference)*)? ')';
 
 CompareConstraint:
@@ -167,3 +167,7 @@ EClassifierConstraint:
 
 EnumValue:
     (enumeration=[ecore::EEnum])? '::' literal=[ecore::EEnumLiteral];
+
+enum ClosureType returns ClosureType:
+    reflexive_transitive = '*' | transitive = '+'
+;

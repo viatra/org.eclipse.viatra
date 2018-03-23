@@ -52,6 +52,7 @@ import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
 import org.eclipse.xtext.xbase.XNumberLiteral
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -221,6 +222,19 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(Tuples)
                 target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
                 referPQuery(calledPattern, pattern, target)
+                target.append(''');
+                ''')
+            }
+            
+            override acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern, IInputKey universeType) {
+                target.append('''new ''')
+                target.append(BinaryReflexiveTransitiveClosure)
+                target.append('''(body, ''')
+                target.append(Tuples)
+                target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
+                referPQuery(calledPattern, pattern, target)
+                target.append(''', ''')
+                target.appendInputKey(universeType, false)
                 target.append(''');
                 ''')
             }

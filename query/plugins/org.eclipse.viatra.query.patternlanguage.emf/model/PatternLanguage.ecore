@@ -198,7 +198,7 @@
       </eAnnotations>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="patternRef" eType="#//Pattern"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitive" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitive" eType="#//ClosureType"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//ValueReference" containment="true"/>
   </eClassifiers>
@@ -398,5 +398,13 @@
         <details key="documentation" value="&lt;p>This feature contains the aggregate parameter type inferred for this aggregator."/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ClosureType">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Specifies closure type, such as reflexive-transitive or transitive. The default value is the original relation.&#xA;&#xA;@since 2.0"/>
+    </eAnnotations>
+    <eLiterals name="original" literal="ORIGINAL"/>
+    <eLiterals name="reflexive_transitive" value="1" literal="REFLEXIVE_TRANSITIVE"/>
+    <eLiterals name="transitive" value="2" literal="TRANSITIVE"/>
   </eClassifiers>
 </ecore:EPackage>

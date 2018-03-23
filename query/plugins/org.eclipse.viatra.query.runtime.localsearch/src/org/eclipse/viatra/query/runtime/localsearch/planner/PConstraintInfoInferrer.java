@@ -38,7 +38,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Expressio
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.AbstractTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -107,8 +107,8 @@ class PConstraintInfoInferrer {
             createConstraintInfoAggregatorConstraint(resultList, pConstraint, ((PatternMatchCounter) pConstraint).getResultVariable());   
         } else if (pConstraint instanceof PositivePatternCall){
             createConstraintInfoPositivePatternCall(resultList, (PositivePatternCall) pConstraint);
-        } else if (pConstraint instanceof BinaryTransitiveClosure) {
-            createConstraintInfoBinaryTransitiveClosure(resultList, (BinaryTransitiveClosure) pConstraint);
+        } else if (pConstraint instanceof AbstractTransitiveClosure) {
+            createConstraintInfoBinaryTransitiveClosure(resultList, (AbstractTransitiveClosure) pConstraint);
         } else{
             createConstraintInfoGeneric(resultList, pConstraint);
         }
@@ -156,7 +156,7 @@ class PConstraintInfoInferrer {
     }
     
     private void createConstraintInfoBinaryTransitiveClosure(List<PConstraintInfo> resultList, 
-            BinaryTransitiveClosure closure) {
+            AbstractTransitiveClosure closure) {
         // A pattern call can have any of its variables unbound
         
         List<PParameter> parameters = closure.getReferredQuery().getParameters();

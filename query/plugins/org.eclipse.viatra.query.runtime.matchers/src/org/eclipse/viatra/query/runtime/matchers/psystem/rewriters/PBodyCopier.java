@@ -31,6 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativeP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -145,6 +146,8 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
             copyNegativePatternCallConstraint((NegativePatternCall) constraint);
         } else if (constraint instanceof BinaryTransitiveClosure) {
             copyBinaryTransitiveClosureConstraint((BinaryTransitiveClosure) constraint);
+        } else if (constraint instanceof BinaryReflexiveTransitiveClosure) {
+            copyBinaryReflexiveTransitiveClosureConstraint((BinaryReflexiveTransitiveClosure) constraint);
         } else if (constraint instanceof PatternMatchCounter) {
             copyPatternMatchCounterConstraint((PatternMatchCounter) constraint);
         } else if (constraint instanceof AggregatorConstraint) {
@@ -213,6 +216,16 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         PVariable[] mappedVariables = extractMappedVariables(binaryTransitiveClosure);
         Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
         addTrace(binaryTransitiveClosure, new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery()));
+    }
+    
+    /**
+     * @since 2.0
+     */
+    protected void copyBinaryReflexiveTransitiveClosureConstraint(BinaryReflexiveTransitiveClosure binaryReflexiveTransitiveClosure) {
+        PVariable[] mappedVariables = extractMappedVariables(binaryReflexiveTransitiveClosure);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
+        addTrace(binaryReflexiveTransitiveClosure, new BinaryReflexiveTransitiveClosure(body, variablesTuple,
+                binaryReflexiveTransitiveClosure.getReferredQuery(), binaryReflexiveTransitiveClosure.getUniverseType()));
     }
 
     protected void copyPatternMatchCounterConstraint(PatternMatchCounter patternMatchCounter) {

@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EntityType;
@@ -170,8 +171,10 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
         String modifiers = "";
         if (object.isNegative()) {
             modifiers = "negative";
-        } else if (object.getCall().isTransitive()) {
+        } else if (object.getCall().getTransitive() == ClosureType.TRANSITIVE) {
             modifiers = "transitive";
+        } else if (object.getCall().getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE) {
+            modifiers = "reflexive transitive";
         }
         return String.format("Pattern composition %s %s(%s)",
                 modifiers,

@@ -54,6 +54,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -758,6 +759,8 @@ public class ReteRecipeCompiler {
     private PlanningTrace doEnumerateDispatch(SubPlan plan, EnumerablePConstraint constraint) {
         if (constraint instanceof BinaryTransitiveClosure) {
             return compileEnumerable(plan, (BinaryTransitiveClosure) constraint);
+        } else if (constraint instanceof BinaryReflexiveTransitiveClosure) {
+            return compileEnumerable(plan, (BinaryReflexiveTransitiveClosure) constraint);
         } else if (constraint instanceof ConstantValue) {
             return compileEnumerable(plan, (ConstantValue) constraint);
             // } else if (constraint instanceof Containment) {
@@ -774,6 +777,40 @@ public class ReteRecipeCompiler {
         throw new UnsupportedOperationException("Unknown enumerable constraint " + constraint);
     }
 
+    private PlanningTrace compileEnumerable(SubPlan plan, BinaryReflexiveTransitiveClosure constraint) {
+        // TODO the implementation would perform better if an inequality check would be used after tcRecipe and
+        // uniqueness enforcer be replaced by a transparent node with multiple parents, but such a node is not available
+        // in recipe metamodel in VIATRA 2.0
+        
+        // Find called query
+        final PQuery referredQuery = constraint.getSupplierKey();
+        final PlanningTrace callTrace = referQuery(referredQuery, plan, constraint.getVariablesTuple());
+
+        // Calculate irreflexive transitive closure
+        final TransitiveClosureRecipe tcRecipe = FACTORY.createTransitiveClosureRecipe();
+        tcRecipe.setParent(callTrace.getRecipe());
+        final PlanningTrace tcTrace = new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), tcRecipe, callTrace);
+                
+        // Enumerate universe type
+        final IInputKey inputKey = constraint.getUniverseType();
+        final InputRecipe universeTypeRecipe = RecipesHelper.inputRecipe(inputKey, inputKey.getStringID(), inputKey.getArity());
+        final PlanningTrace universeTypeTrace = new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(
+                Tuples.staticArityFlatTupleOf(constraint.getVariablesTuple().get(0))), universeTypeRecipe);
+        
+        // Calculate reflexive access by duplicating universe type column
+        final TrimmerRecipe reflexiveRecipe = FACTORY.createTrimmerRecipe();
+        reflexiveRecipe.setMask(RecipesHelper.mask(1, 0, 0));
+        reflexiveRecipe.setParent(universeTypeRecipe);
+        final PlanningTrace reflexiveTrace = new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), reflexiveRecipe, universeTypeTrace);
+
+        // Finally, reduce duplicates after a join
+        final UniquenessEnforcerRecipe brtcRecipe = FACTORY.createUniquenessEnforcerRecipe();
+        brtcRecipe.getParents().add(tcRecipe);
+        brtcRecipe.getParents().add(reflexiveRecipe);
+        
+        return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), brtcRecipe, reflexiveTrace, tcTrace);
+    }
+    
     private PlanningTrace compileEnumerable(SubPlan plan, BinaryTransitiveClosure constraint) {
         final PQuery referredQuery = constraint.getSupplierKey();
         final PlanningTrace callTrace = referQuery(referredQuery, plan, constraint.getVariablesTuple());

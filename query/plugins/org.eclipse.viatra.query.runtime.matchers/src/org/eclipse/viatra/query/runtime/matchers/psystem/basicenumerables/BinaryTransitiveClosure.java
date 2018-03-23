@@ -11,14 +11,7 @@
 
 package org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables;
 
-import java.util.Set;
-
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
-import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeInfoProviderConstraint;
-import org.eclipse.viatra.query.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -28,7 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  * @author Gabor Bergmann
  * 
  */
-public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference, ITypeInfoProviderConstraint {
+public class BinaryTransitiveClosure extends AbstractTransitiveClosure {
 
     public BinaryTransitiveClosure(PBody pBody, Tuple variablesTuple,
             PQuery pattern) {
@@ -38,18 +31,5 @@ public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> 
     @Override
     protected String keyToString() {
         return supplierKey.getFullyQualifiedName() + "+";
-    }
-    
-    @Override
-    public PQuery getReferredQuery() {
-        return supplierKey;
-    }
-    
-    /**
-     * @since 1.3
-     */
-    @Override
-    public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
-        return PositivePatternCall.getTypesImpliedByCall(supplierKey, variablesTuple);
     }
 }
