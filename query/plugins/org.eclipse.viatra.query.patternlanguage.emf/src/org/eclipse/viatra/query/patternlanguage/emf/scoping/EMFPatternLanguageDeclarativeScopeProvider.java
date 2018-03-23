@@ -15,6 +15,7 @@ import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -112,7 +113,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                  */
                 EClassifier partialType = constraint.getEdgeTypes().stream()
                     .limit(referenceIndex >= 0 ? referenceIndex : 0)
-                    .filter(reference -> reference != null)
+                    .filter(Objects::nonNull)
                     .map(ReferenceType::getRefname) // resolution
                     .map(EStructuralFeature::getEType)
                     .reduce((a, b) -> b) //find the last element fulfilling the condition

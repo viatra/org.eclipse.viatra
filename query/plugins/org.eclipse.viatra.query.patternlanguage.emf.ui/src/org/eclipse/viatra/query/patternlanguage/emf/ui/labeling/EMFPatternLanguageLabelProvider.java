@@ -116,7 +116,7 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     }
 
     String text(PathExpressionConstraint constraint) {
-        String typename = ((ClassType) constraint.getSourceType()).getClassname().getName();
+        String typename = constraint.getSourceType().getClassname().getName();
         String fullTypeName = constraint.getEdgeTypes().stream().map(ReferenceType::getTypename).collect(Collectors.joining(".", typename + ".", ""));
         String varName = (constraint.getSrc() != null) ? constraint.getSrc().getVar() : "«type»";
         return String.format("%s (%s, %s)", fullTypeName, varName, getValueText(constraint.getDst()));
