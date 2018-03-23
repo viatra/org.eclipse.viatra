@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
@@ -146,9 +146,9 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
 
     for (ap : annotation.parameters) {
       if (ap.name.matches("source")) {
-        sourceTmp = (ap.value as VariableValue).value.getVar
+        sourceTmp = (ap.value as VariableReference).getVar
       } else if (ap.name.matches("target")) {
-        targetTmp = (ap.value as VariableValue).value.getVar
+        targetTmp = (ap.value as VariableReference).getVar
       } else if (ap.name.matches("feature")) {
         featureTmp = (ap.value as StringValue).value
       } else if (ap.name.matches("kind")) {

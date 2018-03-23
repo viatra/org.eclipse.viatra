@@ -32,7 +32,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -75,13 +74,13 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
                 }
                 for (Annotation annotation : pattern.getAnnotations()) {
                     for (AnnotationParameter parameter : annotation.getParameters()) {
-                        if ((parameter.getValue()) instanceof VariableValue) {
-                            final VariableReference reference = ((VariableValue) parameter.getValue()).getValue();
+                        if ((parameter.getValue()) instanceof VariableReference) {
+                            final VariableReference reference = (VariableReference) parameter.getValue();
                             setDeclaredParameter(pattern, reference);
                         } else if ((parameter.getValue()) instanceof ListValue) {
                             ListValue listValue = (ListValue) (parameter.getValue());
-                            for (VariableValue value : Iterables.filter(listValue.getValues(), VariableValue.class)) {
-                                setDeclaredParameter(pattern, value.getValue());
+                            for (VariableReference reference : Iterables.filter(listValue.getValues(), VariableReference.class)) {
+                                setDeclaredParameter(pattern, reference);
                             }
                         }
                     }
@@ -176,7 +175,7 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
             if (obj instanceof AggregatedValue) {
                 AggregatedValue aggregatedValue = (AggregatedValue) obj;
                 if (AggregatorUtil.mustHaveAggregatorVariables(aggregatedValue)) {
-                    VariableValue aggregateParameter = AggregatorUtil.getAggregatorVariable(aggregatedValue);
+                    VariableReference aggregateParameter = AggregatorUtil.getAggregatorVariable(aggregatedValue);
                     if (aggregateParameter == null) {
                         aggregatedValue.setAggregateType(typeReferences.findDeclaredType(Void.class, aggregatedValue));
                     } else {

@@ -33,7 +33,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
@@ -155,8 +154,6 @@ public class TestEMFScope {
         variableReference.setVar(variableName);
         variableReference.setVariable(parameterRef);
         patternBody.getVariables().add(parameterRef);
-        VariableValue variableValue = PatternLanguageFactory.eINSTANCE.createVariableValue();
-        variableValue.setValue(variableReference);
        
         LocalVariable localVariable = PatternLanguageFactory.eINSTANCE.createLocalVariable(); 
         String localVariableName = "container";
@@ -173,7 +170,7 @@ public class TestEMFScope {
         PathExpressionConstraint pathExpressionConstraint = PatternLanguageFactory.eINSTANCE.createPathExpressionConstraint();
         patternBody.getConstraints().add(pathExpressionConstraint);
         pathExpressionConstraint.setSrc(localVariableReference);
-        pathExpressionConstraint.setDst(variableValue);
+        pathExpressionConstraint.setDst(variableReference);
         pathExpressionConstraint.setSourceType(classType);
         pathExpressionConstraint.getEdgeTypes().add(referenceType);
         return pattern;

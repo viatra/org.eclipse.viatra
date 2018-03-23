@@ -12,12 +12,12 @@ package org.eclipse.viatra.query.patternlanguage.emf.util
 import com.google.common.collect.ImmutableList
 import java.util.List
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeAnnotationValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AggregatorType
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 
 /** 
  * @author Tamas Szabo, Zoltan Ujhelyi
@@ -58,7 +58,7 @@ class AggregatorUtil {
     static def int getAggregateVariableIndex(AggregatedValue value) {
         var index = 0
         for (param : value.getCall().getParameters()) {
-            if (param instanceof VariableValue && (param as VariableValue).value.isAggregator) {
+            if (param instanceof VariableReference && (param as VariableReference).isAggregator) {
                 return index
             }
             index++
@@ -66,22 +66,22 @@ class AggregatorUtil {
         return -1
     }
 
-    static val aggregator = [VariableValue v| v.value.isAggregator]
+    static val aggregator = [VariableReference v| v.isAggregator]
 
     /**
      * Returns the aggregate variable the aggregator should work with. Given in a well-formed AggregatedValue only a
      * single aggregate variable should be present, this should be unique. 
      */
-    static def VariableValue getAggregatorVariable(AggregatedValue value) {
-        value.getCall().getParameters().filter(VariableValue).findFirst(aggregator)
+    static def VariableReference getAggregatorVariable(AggregatedValue value) {
+        value.getCall().getParameters().filter(VariableReference).findFirst(aggregator)
     }
 
     /**
      * Returns all aggregate variables of the AggregatedValue. If the AggregatedValue has more aggregate variables,
      * it represents an error in the specification.
      */
-    static def List<VariableValue> getAllAggregatorVariables(AggregatedValue value) {
-        ImmutableList.copyOf(value.getCall().getParameters().filter(VariableValue).filter(aggregator))
+    static def List<VariableReference> getAllAggregatorVariables(AggregatedValue value) {
+        ImmutableList.copyOf(value.getCall().getParameters().filter(VariableReference).filter(aggregator))
     }
 
 }

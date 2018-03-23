@@ -30,7 +30,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 
 import com.google.common.collect.Iterables;
@@ -187,9 +186,7 @@ public class ConstraintAnnotationValidator extends PatternAnnotationValidator im
 
     private Iterable<VariableReference> transformVariableReferenceList(ValueReference listParameter) {
         EList<ValueReference> listValues = ((ListValue) listParameter).getValues();
-        Iterable<VariableValue> keyStringValues = Iterables.filter(listValues, VariableValue.class);
-        Iterable<VariableReference> keyParamList = Iterables.transform(keyStringValues, VariableValue::getValue);
-        return keyParamList;
+        return Iterables.filter(listValues, VariableReference.class);
     }
 
     private void validateSeverity(Annotation annotation, IIssueCallback validator) {

@@ -125,7 +125,7 @@ PathExpressionConstraint:
 ;
 
 ValueReference:
-    LiteralValueReference | VariableValue | ComputationValue;
+    LiteralValueReference | VariableReference | ComputationValue;
 
 AnnotationValueReference returns ValueReference:
     ValueReference | ListValue;
@@ -148,9 +148,6 @@ BoolValue returns BoolValue:
 @Override
 XBooleanLiteral returns xbase::XBooleanLiteral:
     {xbase::XBooleanLiteral} ('false' | 'FALSE' | isTrue?='true' | isTrue?="TRUE");
-
-VariableValue:
-    value=VariableReference;
 
 ListValue:
     '{' values+=ValueReference (',' values+=ValueReference)* '}';

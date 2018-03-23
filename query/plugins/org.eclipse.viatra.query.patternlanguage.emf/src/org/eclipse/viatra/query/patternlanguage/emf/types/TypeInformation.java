@@ -29,7 +29,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.EcoreUtil2;
@@ -76,8 +75,6 @@ public class TypeInformation {
     private Expression replaceVariableReferences(Expression expression) {
         if (expression instanceof VariableReference) {
             return ((VariableReference) expression).getVariable();
-        } else if (expression instanceof VariableValue) {
-            return ((VariableValue) expression).getValue().getVariable();
         } else {
             return expression;
         }

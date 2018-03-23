@@ -38,7 +38,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
@@ -145,8 +145,8 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     }
 
     String getValueText(ValueReference ref) {
-        if (ref instanceof VariableValue) {
-            return ((VariableValue) ref).getValue().getVar();
+        if (ref instanceof VariableReference) {
+            return ((VariableReference) ref).getVar();
         } else if (ref instanceof NumberValue) {
             XNumberLiteral literal = ((NumberValue) ref).getValue();
             return literals.toJavaLiteral(literal);

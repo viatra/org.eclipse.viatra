@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -47,7 +47,7 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
             .put(PatternAnnotationParameter.DOUBLE, NumberValue.class)
             .put(PatternAnnotationParameter.BOOLEAN, BoolValue.class)
             .put(PatternAnnotationParameter.LIST, ListValue.class)
-            .put(PatternAnnotationParameter.VARIABLEREFERENCE, VariableValue.class).build();
+            .put(PatternAnnotationParameter.VARIABLEREFERENCE, VariableReference.class).build();
 
     /**
      * @since 2.0

@@ -65,7 +65,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
@@ -467,8 +466,8 @@ public final class PatternLanguageHelper {
     public static Set<Variable> getVariablesFromValueReference(ValueReference valueReference) {
         Set<Variable> resultSet = new HashSet<>();
         if (valueReference != null) {
-            if (valueReference instanceof VariableValue) {
-                resultSet.add(((VariableValue) valueReference).getValue().getVariable());
+            if (valueReference instanceof VariableReference) {
+                resultSet.add(((VariableReference) valueReference).getVariable());
             } else if (valueReference instanceof AggregatedValue) {
                 AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
                 for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
@@ -535,8 +534,8 @@ public final class PatternLanguageHelper {
             boolean onlyFromAggregatedValues) {
         Set<Variable> resultSet = new HashSet<>();
         if (valueReference != null) {
-            if (valueReference instanceof VariableValue) {
-                Variable variable = ((VariableValue) valueReference).getValue().getVariable();
+            if (valueReference instanceof VariableReference) {
+                Variable variable = ((VariableReference) valueReference).getVariable();
                 if ((variable.getName().startsWith("_") || hasAggregateReference(variable)) && !onlyFromAggregatedValues) {
                     resultSet.add(variable);
                 }
@@ -632,8 +631,6 @@ public final class PatternLanguageHelper {
             value = ((StringValue)ref).getValue();
         } else if (ref instanceof VariableReference) {
             value = new ParameterReference(((VariableReference) ref).getVar());
-        } else if (ref instanceof VariableValue) {
-            value = new ParameterReference(((VariableValue)ref).getValue().getVar());
         } else if (ref instanceof ListValue) {
             value = ((ListValue) ref).getValues().stream().map(PatternLanguageHelper::getValue).collect(Collectors.toList());
         } else {

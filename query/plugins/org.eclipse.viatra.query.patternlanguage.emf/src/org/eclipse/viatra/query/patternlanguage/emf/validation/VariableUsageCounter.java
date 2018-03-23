@@ -37,7 +37,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
@@ -193,9 +192,8 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
                 if (constraint.getFeature() == CompareFeature.EQUALITY) {
                     ValueReference left = constraint.getLeftOperand();
                     ValueReference right = constraint.getRightOperand();
-                    if (left instanceof VariableValue && right instanceof VariableValue) {
-                        unions.union(((VariableValue) left).getValue().getVariable(),
-                                ((VariableValue) right).getValue().getVariable());
+                    if (left instanceof VariableReference && right instanceof VariableReference) {
+                        unions.union(((VariableReference) left).getVariable(), ((VariableReference) right).getVariable());
                     }
                 }
                 it.prune();
@@ -226,21 +224,19 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
         } else if (parent instanceof CompareConstraint) {
             CompareConstraint constraint = (CompareConstraint) parent;
             if (constraint.getFeature() == CompareFeature.EQUALITY) {
-                final boolean leftIsVariable = constraint.getLeftOperand() instanceof VariableValue;
-                final boolean rightIsVariable = constraint.getRightOperand() instanceof VariableValue;
+                final boolean leftIsVariable = constraint.getLeftOperand() instanceof VariableReference;
+                final boolean rightIsVariable = constraint.getRightOperand() instanceof VariableReference;
                 if (leftIsVariable && rightIsVariable) {
                     // A==A equivalence between unified variables...
                     // should be ignored in reference counting, except that it spoils quantification
                     return ReferenceType.READ_ONLY;
                 } else if (leftIsVariable && !rightIsVariable) {
-                    if (ref.equals(((VariableValue) constraint.getLeftOperand()).getValue())) { // this should always be
-                                                                                                // true
+                    if (ref.equals(constraint.getLeftOperand())) { // this should always be true
                         return ReferenceType.POSITIVE;
                     } else
                         reportStrangeVariableRef(ref, constraint);
                 } else if (rightIsVariable && !leftIsVariable) {
-                    if (ref.equals(((VariableValue) constraint.getRightOperand()).getValue())) { // this should always
-                                                                                                 // be true
+                    if (ref.equals(constraint.getRightOperand())) { // this should always be true
                         return ReferenceType.POSITIVE;
                     } else
                         reportStrangeVariableRef(ref, constraint);

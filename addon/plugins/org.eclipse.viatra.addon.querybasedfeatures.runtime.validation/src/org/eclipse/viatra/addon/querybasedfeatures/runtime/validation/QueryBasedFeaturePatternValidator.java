@@ -38,7 +38,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
@@ -111,11 +111,11 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
         ValueReference ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "source");
         if (ref == null) {
             source = pattern.getParameters().get(0);
-        } else if (ref instanceof VariableValue) {
-            source = PatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
+        } else if (ref instanceof VariableReference) {
+            source = PatternLanguageHelper.getParameterByName(pattern, ((VariableReference) ref).getVar()).orElse(null);
             if (pattern.getParameters().get(0).equals(source)) {
                 validator.warning("The 'source' parameter is not needed if it is the first pattern parameter.", ref,
-                        PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, ANNOTATION_ISSUE_CODE);
             }
         }
         IInputKey sourceType = null;
@@ -197,11 +197,11 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
         ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "target");
         if (ref == null) {
             target = pattern.getParameters().get(1);
-        } else if (ref instanceof VariableValue) {
-            target = PatternLanguageHelper.getParameterByName(pattern, ((VariableValue) ref).getValue().getVar()).orElse(null);
+        } else if (ref instanceof VariableReference) {
+            target = PatternLanguageHelper.getParameterByName(pattern, ((VariableReference) ref).getVar()).orElse(null);
             if (pattern.getParameters().get(1).equals(target)) {
                 validator.warning("The 'target' parameter is not needed if it is the second pattern parameter.", ref,
-                        PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, ANNOTATION_ISSUE_CODE);
             }
         }
         IInputKey targetType = typeInferrer.getType(target);

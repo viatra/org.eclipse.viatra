@@ -45,7 +45,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -217,11 +216,6 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
     @Override
     public String caseBoolValue(BoolValue object) {
         return "Boolean " + Optional.ofNullable(object.getValue()).map(l -> l.isIsTrue() ? "true" : "false").orElse(UNDEFINED);
-    }
-
-    @Override
-    public String caseVariableValue(VariableValue object) {
-        return "Variable value " + object.getValue().getVar();
     }
 
     @Override

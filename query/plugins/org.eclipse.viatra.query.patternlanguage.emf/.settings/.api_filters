@@ -308,13 +308,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/VariableValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/AggregatedValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AggregatedValueImpl">
         <filter comment="EMF generated code" id="1110441988">
             <message_arguments>
@@ -602,13 +595,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/VariableValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VariableValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VariableValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/util/PatternLanguageAdapterFactory.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageAdapterFactory">
         <filter comment="EMF generated code" id="1110441988">
             <message_arguments>
@@ -827,11 +813,6 @@
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="sequence_VariableValue(ISerializationContext, VariableValue)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
                 <message_argument value="sequence_XBooleanLiteral(ISerializationContext, XBooleanLiteral)"/>
             </message_arguments>
         </filter>
@@ -1002,11 +983,6 @@
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="getVariableReferenceAccess()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="getVariableValueAccess()"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -1218,13 +1194,6 @@
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="VariableReferenceElements"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$VariableValueElements">
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="VariableValueElements"/>
             </message_arguments>
         </filter>
     </resource>

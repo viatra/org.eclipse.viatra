@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
@@ -171,7 +171,7 @@ class ValidationGenerator implements IGenerationFragment {
         val ap = getFirstAnnotationParameter(annotation, elementName)
         return switch (ap) {
             StringValue: ap.value
-            VariableValue: ap.value.^var
+            VariableReference: ap.^var
             default: null
         }
     }
@@ -329,8 +329,8 @@ class ValidationGenerator implements IGenerationFragment {
     def String getNameOfParameterFromValueReference(ValueReference ref) {
         if (ref instanceof StringValue) {
             ref.value
-        } else if (ref instanceof VariableValue) {
-            ref.value.variable.name
+        } else if (ref instanceof VariableReference) {
+            ref.variable.name
         } else {
             ref.toString
         }

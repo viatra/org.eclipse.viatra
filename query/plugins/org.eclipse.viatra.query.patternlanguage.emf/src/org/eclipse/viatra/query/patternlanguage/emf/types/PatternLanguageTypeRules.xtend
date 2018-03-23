@@ -28,7 +28,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue
 import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
 import org.eclipse.viatra.query.patternlanguage.emf.types.judgements.ConditionalJudgement
 import org.eclipse.viatra.query.patternlanguage.emf.types.judgements.ParameterTypeJudgement
 import org.eclipse.viatra.query.patternlanguage.emf.types.judgements.TypeConformJudgement
@@ -41,6 +40,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue
 import java.util.HashSet
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 
 /**
  * @author Zoltan Ujhelyi
@@ -242,7 +242,7 @@ class PatternLanguageTypeRules {
        information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(String)))
    }
    
-   def dispatch void inferTypes(VariableValue reference, TypeInformation information) {
+   def dispatch void inferTypes(VariableReference reference, TypeInformation information) {
         // Variables are either parameters that are handled in inferTypes(Pattern, TypeInformation) or have no type declarations
    }
 }

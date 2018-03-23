@@ -47,7 +47,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
@@ -305,8 +304,8 @@ public class PatternBodyTransformer {
     }
 
     private String getVariableName(ValueReference reference, PatternModelAcceptor<?> acceptor) {
-        if (reference instanceof VariableValue) {
-            return getVariableName(((VariableValue) reference).getValue(), acceptor);
+        if (reference instanceof VariableReference) {
+            return getVariableName(((VariableReference) reference), acceptor);
         } else if (reference instanceof AggregatedValue) {
             return aggregate((AggregatedValue) reference, acceptor);
         } else if (reference instanceof FunctionEvaluationValue) {

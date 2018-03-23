@@ -55,7 +55,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelist;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -240,21 +239,21 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                         PatternLanguagePackage.Literals.AGGREGATED_VALUE__AGGREGATOR, IssueCodes.INVALID_AGGREGATOR);
                 return;
             }
-            List<VariableValue> values = AggregatorUtil.getAllAggregatorVariables(expression);
+            List<VariableReference> references = AggregatorUtil.getAllAggregatorVariables(expression);
             if (AggregatorUtil.mustHaveAggregatorVariables(expression)) {
-                if (values.isEmpty()) {
+                if (references.isEmpty()) {
                     error(String.format(MISSING_AGGREGATE_MESSAGE, aggregator.getSimpleName()), expression, PatternLanguagePackage.Literals.AGGREGATED_VALUE__CALL,
                             IssueCodes.INVALID_AGGREGATOR_PARAMETER);
                 }
-                if (values.size() > 1) {
-                    for (VariableValue value : values) {
-                        error(String.format(EXACTLY_ONE_AGGREGATE_MESSAGE, aggregator.getSimpleName()), value, null,
+                if (references.size() > 1) {
+                    for (VariableReference reference : references) {
+                        error(String.format(EXACTLY_ONE_AGGREGATE_MESSAGE, aggregator.getSimpleName()), reference, null,
                                 IssueCodes.INVALID_AGGREGATOR_PARAMETER);
                     }
                 }
             } else {
-                for (VariableValue value : values) {
-                    error(String.format(UNEXPECTED_AGGREGATE_MESSAGE, value.getValue().getVar(), aggregator.getSimpleName()), value, null,
+                for (VariableReference reference : references) {
+                    error(String.format(UNEXPECTED_AGGREGATE_MESSAGE, reference.getVar(), aggregator.getSimpleName()), reference, null,
                             IssueCodes.INVALID_AGGREGATOR_PARAMETER);
                 }
             }
@@ -450,21 +449,21 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                             getTypeName(expectedParameterType)), parameter,
                             PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
                             annotation.getParameters().indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
-                } else if (parameter.getValue() instanceof VariableValue) {
-                    VariableValue value = (VariableValue) parameter.getValue();
-                    if (value.getValue().getVariable() == null) {
-                        error(String.format("Unknown variable %s", value.getValue().getVar()), parameter,
+                } else if (parameter.getValue() instanceof VariableReference) {
+                    VariableReference reference = (VariableReference) parameter.getValue();
+                    if (reference.getVariable() == null) {
+                        error(String.format("Unknown variable %s", reference.getVar()), parameter,
                                 PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE,
                                 annotation.getParameters().indexOf(parameter),
                                 IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                     }
                 } else if (parameter.getValue() instanceof ListValue) {
                     ListValue listValue = (ListValue) (parameter.getValue());
-                    for (VariableValue value : Iterables.filter(listValue.getValues(), VariableValue.class)) {
-                        if (value.getValue().getVariable() == null) {
-                            error(String.format("Unknown variable %s", value.getValue().getVar()), listValue,
+                    for (VariableReference reference : Iterables.filter(listValue.getValues(), VariableReference.class)) {
+                        if (reference.getVariable() == null) {
+                            error(String.format("Unknown variable %s", reference.getVar()), listValue,
                                     PatternLanguagePackage.Literals.LIST_VALUE__VALUES,
-                                    listValue.getValues().indexOf(value), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                                    listValue.getValues().indexOf(reference), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                         }
                     }
                 }
@@ -489,8 +488,8 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
 
         boolean op1Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op1.eClass());
         boolean op2Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op2.eClass());
-        boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(op1.eClass());
-        boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(op2.eClass());
+        boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_REFERENCE.isSuperTypeOf(op1.eClass());
+        boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_REFERENCE.isSuperTypeOf(op2.eClass());
 
         // If both operands are constant literals, issue a warning
         if (op1Constant && op2Constant) {
@@ -503,9 +502,9 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         }
         // If both operands are the same, issues a warning
         if (op1Variable && op2Variable) {
-            VariableValue op1v = (VariableValue) op1;
-            VariableValue op2v = (VariableValue) op2;
-            if (op1v.getValue().getVar().equals(op2v.getValue().getVar())) {
+            VariableReference op1v = (VariableReference) op1;
+            VariableReference op2v = (VariableReference) op2;
+            if (op1v.getVar().equals(op2v.getVar())) {
                 warning("Comparing a variable with itself.",
                         PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
                         IssueCodes.SELF_COMPARE_CONSTRAINT);
@@ -520,24 +519,24 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         boolean op2Eval = PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE.isSuperTypeOf(op2.eClass());
         
         if (op1Eval && op2Variable) {
-            checkEvalInCompare(constraint, (VariableValue) op2, (FunctionEvaluationValue) op1);
+            checkEvalInCompare(constraint, (VariableReference) op2, (FunctionEvaluationValue) op1);
         } else if (op2Eval && op1Variable) {
-            checkEvalInCompare(constraint, (VariableValue) op1, (FunctionEvaluationValue) op2);
+            checkEvalInCompare(constraint, (VariableReference) op1, (FunctionEvaluationValue) op2);
         }
         
     }
 
-    private void checkEvalInCompare(CompareConstraint constraint, VariableValue variable, FunctionEvaluationValue eval) {
+    private void checkEvalInCompare(CompareConstraint constraint, VariableReference reference, FunctionEvaluationValue eval) {
         List<Variable> evalInputVariables = PatternLanguageHelper.getUsedVariables(eval.getExpression(), EcoreUtil2
                 .getContainerOfType(constraint, PatternBody.class).getVariables());
-        if (evalInputVariables.contains(variable.getValue().getVariable())) {
+        if (evalInputVariables.contains(reference.getVariable())) {
             if (constraint.getFeature() == CompareFeature.EQUALITY) {
-                error("Return value of an eval expression cannot be stored in one of its parameters.", variable, 
-                    PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE,
+                error("Return value of an eval expression cannot be stored in one of its parameters.", reference, 
+                    PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                     IssueCodes.EVAL_INCORRECT_RETURNVALUE);
             } else {
-                warning("Return value of an eval expression should not be compared with one of its parameters.", variable, 
-                        PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE,
+                warning("Return value of an eval expression should not be compared with one of its parameters.", reference, 
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.EVAL_INCORRECT_RETURNVALUE);
             }
         }
@@ -686,7 +685,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             return "String";
         } else if (ListValue.class.isAssignableFrom(typeClass)) {
             return "List";
-        } else if (VariableValue.class.isAssignableFrom(typeClass)) {
+        } else if (VariableReference.class.isAssignableFrom(typeClass)) {
             return "Variable";
         }
         return "UNDEFINED";
@@ -710,8 +709,8 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             }
             sb.append("}");
             return sb.toString();
-        } else if (ref instanceof VariableValue) {
-            return ((VariableValue) ref).getValue().getVar();
+        } else if (ref instanceof VariableReference) {
+            return ((VariableReference) ref).getVar();
         }
         return "UNDEFINED";
     }
@@ -853,7 +852,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     @Check(CheckType.NORMAL)
     public void checkNegativeCallParameters(PatternCompositionConstraint constraint) {
         Predicate<ValueReference> isSingleUseVariable = input -> 
-            input instanceof VariableValue ? ((VariableValue) input).getValue().getVar().startsWith("_") : false;
+            input instanceof VariableReference ? ((VariableReference) input).getVar().startsWith("_") : false;
         if (constraint.isNegative()) {
             List<ValueReference> callVariables = constraint.getCall().getParameters();
             List<Variable> patternParameters = constraint.getCall().getPatternRef().getParameters();

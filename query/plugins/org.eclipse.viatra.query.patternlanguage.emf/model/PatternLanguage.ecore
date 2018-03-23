@@ -153,7 +153,7 @@
     <eLiterals name="in" value="1" literal="in"/>
     <eLiterals name="out" value="2" literal="out"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//Expression">
+  <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//ValueReference">
     <eOperations name="toString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="return org.eclipse.viatra.query.patternlanguage.emf.util.ASTStringProvider.INSTANCE.doSwitch(this);"/>
@@ -363,15 +363,6 @@
       </eAnnotations>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/xtext/xbase/Xbase#//XBooleanLiteral"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="VariableValue" eSuperTypes="#//ValueReference">
-    <eOperations name="toString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="return org.eclipse.viatra.query.patternlanguage.emf.util.ASTStringProvider.INSTANCE.doSwitch(this);"/>
-      </eAnnotations>
-    </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//VariableReference"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ListValue" eSuperTypes="#//LiteralValueReference">

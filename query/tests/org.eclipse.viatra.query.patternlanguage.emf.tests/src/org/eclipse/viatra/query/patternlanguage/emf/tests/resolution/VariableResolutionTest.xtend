@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.resolution
 import com.google.inject.Inject
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.xtext.testing.InjectWith
@@ -27,6 +26,7 @@ import org.junit.runner.RunWith
 import static org.junit.Assert.*
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -87,8 +87,8 @@ class VariableResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(1)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PatternCompositionConstraint
-        assertNotSame((constraint.call.parameters.get(1) as VariableValue).value.variable.name,
-            (constraint.call.parameters.get(2) as VariableValue).value.variable.name
+        assertNotSame((constraint.call.parameters.get(1) as VariableReference).variable.name,
+            (constraint.call.parameters.get(2) as VariableReference).variable.name
         )
     }
     

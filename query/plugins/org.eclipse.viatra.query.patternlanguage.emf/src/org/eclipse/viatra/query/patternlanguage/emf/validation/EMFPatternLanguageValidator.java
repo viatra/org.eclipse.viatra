@@ -63,7 +63,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -616,16 +616,16 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     ValueReference leftValueReference = compareConstraint.getLeftOperand();
                     ValueReference rightValueReference = compareConstraint.getRightOperand();
                     if (isConstantExpression(patternBody, leftValueReference)
-                            && rightValueReference instanceof VariableValue) {
-                        VariableValue variableValue = (VariableValue) rightValueReference;
-                        Variable variableToRemove = variableValue.getValue().getVariable();
+                            && rightValueReference instanceof VariableReference) {
+                        VariableReference variableReference = (VariableReference) rightValueReference;
+                        Variable variableToRemove = variableReference.getVariable();
                         generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
                         justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables,
                                 variableToRemove);
-                    } else if (leftValueReference instanceof VariableValue
+                    } else if (leftValueReference instanceof VariableReference
                             && isConstantExpression(patternBody, rightValueReference)) {
-                        VariableValue variableValue = (VariableValue) leftValueReference;
-                        Variable variableToRemove = variableValue.getValue().getVariable();
+                        VariableReference variableReference = (VariableReference) leftValueReference;
+                        Variable variableToRemove = variableReference.getVariable();
                         generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
                         justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables,
                                 variableToRemove);
@@ -708,8 +708,8 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
         ValueReference rightValueReference = compareConstraint.getRightOperand();
         if ((leftValueReference instanceof LiteralValueReference || leftValueReference instanceof ComputationValue
                 || rightValueReference instanceof LiteralValueReference
-                || rightValueReference instanceof ComputationValue) && !(leftValueReference instanceof VariableValue)
-                && !(rightValueReference instanceof VariableValue)) {
+                || rightValueReference instanceof ComputationValue) && !(leftValueReference instanceof VariableReference)
+                && !(rightValueReference instanceof VariableReference)) {
             IInputKey leftClassifier = typeInferrer.getType(leftValueReference);
             IInputKey rightClassifier = typeInferrer.getType(rightValueReference);
             if (!typeSystem.isConformant(leftClassifier, rightClassifier)) {
