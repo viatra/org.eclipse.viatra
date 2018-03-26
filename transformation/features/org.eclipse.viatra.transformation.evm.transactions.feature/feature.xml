@@ -7,13 +7,17 @@
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
-   <license url="%licenseURL">
-      %license
-   </license>
-
    <description>
       EVM with EMF Transactions support.
    </description>
+
+   <copyright>
+      Copyright (c) 2010,2018 Budapest University of Technology and Economics, IncQuery Labs Ltd. and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
 
    <url>
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
