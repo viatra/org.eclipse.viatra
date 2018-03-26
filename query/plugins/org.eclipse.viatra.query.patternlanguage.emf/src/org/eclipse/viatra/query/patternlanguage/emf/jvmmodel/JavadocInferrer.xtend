@@ -109,6 +109,18 @@ class JavadocInferrer {
         «ENDFOR»
         @return matches represented as a «pattern.findMatchClass?.simpleName» object.
     '''
+    
+    def javadocStreamAllMatchesMethod(Pattern pattern) '''
+        Returns a stream of all matches of the pattern that conform to the given fixed values of some parameters.
+        </p>
+        <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
+        If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
+        In such cases, either rely on {@link #getAllMatches()} or collect the results of the stream in end-user code.
+        «FOR p : pattern.parameters»
+            @param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
+        «ENDFOR»
+        @return a stream of matches represented as a «pattern.findMatchClass?.simpleName» object.
+    '''
 
     def javadocGetOneArbitraryMatchMethod(Pattern pattern) '''
         Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
@@ -196,6 +208,16 @@ class JavadocInferrer {
     def javadocGetAllValuesOfMethod(Variable parameter) '''
         Retrieve the set of values that occur in matches for «parameter.name».
         @return the Set of all values or empty set if there are no matches
+    '''
+    
+    def javadocStreamAllValuesOfMethod(Variable parameter) '''
+        Retrieve the set of values that occur in matches for «parameter.name».
+        </p>
+        <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
+        If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
+        In such cases, either rely on {@link #getAllMatches()} or collect the results of the stream in end-user code.
+             
+        @return the Stream of all values or empty set if there are no matches
     '''
 
     def javadocQuerySpecificationMethod(Pattern pattern) '''

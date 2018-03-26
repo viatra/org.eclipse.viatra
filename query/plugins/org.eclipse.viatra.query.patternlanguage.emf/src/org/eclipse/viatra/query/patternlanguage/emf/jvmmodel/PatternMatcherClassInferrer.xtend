@@ -165,7 +165,7 @@ class PatternMatcherClassInferrer {
                 '''
             ]
             type.members += pattern.toMethod("streamAllMatches", typeRef(Stream, typeRef(matchClass))) [
-                documentation = pattern.javadocGetAllMatchesMethod.toString
+                documentation = pattern.javadocStreamAllMatchesMethod.toString
                 for (parameter : pattern.parameters) {
                     parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
                 }
@@ -259,14 +259,14 @@ class PatternMatcherClassInferrer {
                 ]
                 if (pattern.parameters.size > 1) {
                     type.members += variable.toMethod("streamAllValuesOf" + variable.name, typeRef(Stream, typeOfVariable)) [
-                        documentation = variable.javadocGetAllValuesOfMethod.toString
+                        documentation = variable.javadocStreamAllValuesOfMethod.toString
                         parameters += pattern.toParameter("partialMatch", typeRef(matchClass))
                         body = '''
                             return rawStreamAllValuesOf«variable.name»(partialMatch.toArray());
                         '''
                     ]
                     type.members += variable.toMethod("streamAllValuesOf" + variable.name, typeRef(Stream, typeOfVariable)) [
-                        documentation = variable.javadocGetAllValuesOfMethod.toString
+                        documentation = variable.javadocStreamAllValuesOfMethod.toString
                         for (parameter : pattern.parameters) {
                             if (parameter != variable) {
                                 parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)

@@ -29,6 +29,21 @@ image::releases/20_hover_eclass.png[Hover for EClass,429,207]
 image::releases/20_hover_ereference.png[Hover for EReferences,568,271]
 image::releases/20_hover_varref.png[Hover for Variable References,670,129]
 
+=== Updated pattern matcher API
+
+The pattern matcher API was updated to rely on Java 8 features such as Streams and Optionals. This allows functional-style processing of the pattern matches.
+
+[source,java]
+----
+String applicationIdentifiers = ApplicationTypesMatcher.on(engine)
+        .streamAllMatches()
+        .map(ApplicationTypesMatch::getAT)
+        // Calculate the identifier
+        .map(ApplicationType::getIdentifier)
+        //Provide a comma separated string of identifiers
+        .collect(Collectors.joining(", "));
+----
+
 == Migrating to VIATRA 2.0
 
 === Dependency updates
@@ -109,6 +124,10 @@ The affected methods are the following:
  * ViatraQueryMatcher#getOneArbitraryMatch
 
 If the old behavior of returning `null` values is necessary the `Optional.orElse` call can be used, e.g. `query.getFirstAnnotationByName("Constraint").orElse(null);`
+
+=== IMatchProcessor removal
+
+All usage of the IMatchProcessor interface was replaced with references to the link:https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html[Consumer] type. Generated match processors (if enabled), also implement the Consumer interface.
 
 === Exception handling consolidation
 Before VIATRA 2.0, the various APIs of the Query component threw a set of different *checked* exceptions: ViatraQueryException, ViatraBaseException and QueryProcessingException (and specialized versions of them). For version 2.0, these exceptions were updated in two ways:

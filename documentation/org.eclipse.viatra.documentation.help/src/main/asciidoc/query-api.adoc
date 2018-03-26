@@ -43,6 +43,8 @@ You can also use *Match* objects to specify fixed input parameters to a query (w
 
 The code example below shows the `ApplicationInstancesMatch` class generated for the *applicationInstances* pattern (with a single parameter AI). The generated class implements the interface `IPatternMatch` through the `BasePatternMatch` internal implementation class. 
 
+NOTE: Immutable matches returned by pattern matchers never include null as a parameter value. Mutable matches, e.g. ones created for filtering uses null to represent unset values; but such matches are never returned from the matcher.
+
 [[query-api-match]]
 [source,java]
 ----
@@ -82,6 +84,8 @@ The *Matcher* is the main entry point of the VIATRA Query API, with pattern-spec
 
 The example generated source code below demonstrates the *ApplicationInstancesMatcher* class generated for the *eClassNames* pattern from the running example. The matcher class implements the ViatraQueryMatcher generic interface, and its implementation code extends the `BaseGeneratedMatcher` internal class, inheriting several useful methods. In the listing below, we show some methods that are not actually part of generated code, but conform to the interface `ViatraQueryMatcher` and are accessible through inheritance from `BaseGeneratedMatcher`. 
 
+NOTE: The pattern matcher API of VIATRA never returns null, but handles null as input parameters. This means, there is no need to check for null when processing matches.
+
 [[query-api-matcher]]
 [source,java]
 ----
@@ -90,10 +94,12 @@ public class EClassNamesMatcher implements ViatraQueryMatcher<EClassNamesMatch> 
   public static ApplicationInstancesMatcher on(final ViatraQueryEngine engine);
 
   /** access to match set **/
-    public Collection<ApplicationInstancesMatch> getAllMatches(); // inherited
-    public Collection<ApplicationInstancesMatch> getAllMatches(final ApplicationInstance pAI);
-    public ApplicationInstancesMatch getOneArbitraryMatch(); // inherited
-    public ApplicationInstancesMatch getOneArbitraryMatch(final ApplicationInstance pAI);
+  public Collection<ApplicationInstancesMatch> getAllMatches(); // inherited
+  public Collection<ApplicationInstancesMatch> getAllMatches(final ApplicationInstance pAI);
+  public Stream<ApplicationInstancesMatch> streamAllMatches(); // inherited
+  public Stream<ApplicationInstancesMatch> streamAllMatches(final ApplicationInstance pAI);
+  public Optional<ApplicationInstancesMatch> getOneArbitraryMatch(); // inherited
+  public Optional<ApplicationInstancesMatch> getOneArbitraryMatch(final ApplicationInstance pAI);
   public boolean hasMatch(); // inherited
   public boolean hasMatch(final ApplicationInstance pAI);
   public int countMatches(); // inherited
@@ -103,10 +109,10 @@ public class EClassNamesMatcher implements ViatraQueryMatcher<EClassNamesMatch> 
   public Set<ApplicationInstance> getAllValuesOfAI() {}
 
   /** iterate over matches using a lambda **/
-  public void forEachMatch(IMatchProcessor<? super EClassNamesMatch> processor); // inherited
-  public void forEachMatch(final ApplicationInstance pAI, final IMatchProcessor<? super ApplicationInstancesMatch> processor);
-  public void forOneArbitraryMatch(IMatchProcessor<? super EClassNamesMatch> processor); // inherited
-  public boolean forOneArbitraryMatch(final ApplicationInstance pAI, final IMatchProcessor<? super ApplicationInstancesMatch> processor) {}
+  public void forEachMatch(Consumer<? super EClassNamesMatch> processor); // inherited
+  public void forEachMatch(final ApplicationInstance pAI, final Consumer<? super ApplicationInstancesMatch> processor);
+  public void forOneArbitraryMatch(Consumer<? super EClassNamesMatch> processor); // inherited
+  public boolean forOneArbitraryMatch(final ApplicationInstance pAI, final Consumer<? super ApplicationInstancesMatch> processor) {}
 
   /** Returns a new (partial) Match object for the matcher. 
    *  This can be used e.g. to call the matcher with a partial match. **/
@@ -117,13 +123,13 @@ public class EClassNamesMatcher implements ViatraQueryMatcher<EClassNamesMatch> 
 }
 ----
 
-=== Helper classes
+Starting with VIATRA 2.0 the matcher API also returns stream of matches. These streams can be used for processing the streams functionally, greatly extending the similar capabilities provided by the forEachMatch calls available since earlier version. Furthermore, relying on these streams might provide better performance: (1) the use of these streams does not necessitate the copying of the match set, and (2) the pattern matcher is allowed to postpone the match set calculation until the next match is necessary.
 
-`MatchProcessor`
+WARNING: The new Stream-based APIs cannot handle if the underlying model is changed during match processing. If a snapshot of the match set is required, either rely on the similar `getAllMatches()` call or collect the results of the stream in end-user code.
 
-The Matcher provides a function to iterate over the match set and invoke the process() method of the IMatchProcessor interface with every match. You can think of this as a "lambda" to ease typical query result processing tasks. To this end, an abstract processor class is generated, which you can override to implement the logic you would like to use. The abstract class unpacks the match variables so it can be used directly in the process() method. 
+=== Query Specification
 
-`QuerySpecification`: A pattern-specific specification that can instantiate a Matcher class in a type-safe way. You can get an instance of it via the Matcher class’s specification() method. The recommended way to instantiate a Matcher is with an `ViatraQueryEngine`. In both cases if the pattern is already registered (with the same root in the case of the Notifier method) then only a lightweight reference is created which points to the existing engine.
+A pattern-specific specification that can instantiate a Matcher class in a type-safe way. You can get an instance of it via the Matcher class’s specification() method. The recommended way to instantiate a Matcher is with an `ViatraQueryEngine`. In both cases if the pattern is already registered (with the same root in the case of the Notifier method) then only a lightweight reference is created which points to the existing engine.
 
 The code sample extends the BaseGeneratedQuerySpecification class.
 
