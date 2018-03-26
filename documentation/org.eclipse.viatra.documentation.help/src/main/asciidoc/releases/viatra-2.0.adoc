@@ -6,6 +6,21 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == New and Noteworthy
 
+=== New Language Features
+
+VIATRA 2.0 introduces a new aggregator for calculating the average of numbers in matches. As an example, the following pattern can be used to calculate the average number of CPU values over a set of instances.
+
+[source,vql]
+----
+pattern avgCPU(n : java Double) {
+    n == avg find availableCPU(_, #v);
+}
+
+private pattern availableCPU(host : HostInstance, value : java Integer) {
+	HostInstance.availableCpu(host, value);
+}
+----
+
 === Query Editing
 
 Hover help support was enhanced in VIATRA 2.0, specifically, a lot of elements now display hover that previously did not, including EClass and EReference types and variable references. Furthermore, calculating these hovers should be more efficient now, resulting in better performance in case of large number of patterns and/or complex metamodel hierarchies.
