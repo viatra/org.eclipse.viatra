@@ -48,6 +48,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.xbase.XNumberLiteral;
 
 /**
  * Helper class to provide String representation for pattern language AST elements
@@ -72,7 +73,7 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
 
     @Override
     public String casePackageImport(PackageImport object) {
-        return "Number " + Optional.ofNullable(object.getEPackage()).map(EPackage::getNsURI).orElse(UNDEFINED);
+        return "EPackage import " + Optional.ofNullable(object.getEPackage()).map(EPackage::getNsURI).orElse(UNDEFINED);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
 
     @Override
     public String caseAnnotationParameter(AnnotationParameter object) {
-        return "Number " 
+        return "Annotation parameter " 
                 + Optional.ofNullable(object.getName()).orElse(UNDEFINED)
                 + " = "
                 + Optional.ofNullable(object.getValue()).map(Object::toString).orElse(UNDEFINED);
@@ -210,7 +211,7 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
 
     @Override
     public String caseNumberValue(NumberValue object) {
-        return "Number " + Optional.ofNullable(object.getValue()).map(l -> l.getValue()).orElse(UNDEFINED);
+        return "Number " + Optional.ofNullable(object.getValue()).map(XNumberLiteral::getValue).orElse(UNDEFINED);
     }
 
     @Override
