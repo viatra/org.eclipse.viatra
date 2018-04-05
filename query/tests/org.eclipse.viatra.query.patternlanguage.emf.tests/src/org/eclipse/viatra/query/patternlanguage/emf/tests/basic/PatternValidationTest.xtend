@@ -120,4 +120,30 @@ class PatternValidationTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
+    
+    @Test
+    def missingFeatureValidation() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            pattern unusedPrivatePattern(p : Pattern) {
+                Pattern.(p, _);
+            }
+        ''')
+        // While the EReference Pattern. does not exist, but no validation error should be thrown
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def misspelledFeatureValidation() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            pattern unusedPrivatePattern(p : Pattern) {
+                Pattern.nam(p, _);
+            }
+        ''')
+        // While the EReference Pattern.nam does not exist, but no validation error should be thrown
+        tester.validate(model).assertOK
+    }
 }

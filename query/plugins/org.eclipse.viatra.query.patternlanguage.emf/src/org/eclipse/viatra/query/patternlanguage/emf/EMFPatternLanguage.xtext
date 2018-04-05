@@ -121,7 +121,7 @@ CheckConstraint:
     'check' '(' expression=XExpression ')';
 
 PathExpressionConstraint:
-    sourceType=Type ('.' edgeTypes += RefType)+ '(' src=VariableReference ',' dst=ValueReference ')'
+    sourceType=Type ('.' (edgeTypes += RefType)?)* '(' src=VariableReference ',' dst=ValueReference ')'
 ;
 
 ValueReference:

@@ -826,11 +826,11 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     @Check
     public void checkForNotWellbehavingDerivedFeatureInPathExpressions(
             PathExpressionConstraint pathExpressionConstraint) {
+        EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
         final List<ReferenceType> edgeTypes = pathExpressionConstraint.getEdgeTypes();
         for (int i = 0; i < edgeTypes.size(); i++) {
             EStructuralFeature feature = edgeTypes.get(i).getRefname();
-            EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
-            if (!comprehension.representable(feature)) {
+            if (feature != null && !feature.eIsProxy() && !comprehension.representable(feature)) {
                 final EStructuralFeatureInstancesKey featureInputKey = new EStructuralFeatureInstancesKey(feature);
                 if (SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(featureInputKey)) {
                     final PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(featureInputKey);
