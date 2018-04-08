@@ -1,11 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<templates>
-    <template autoinsert="true"
-        id="org.eclipse.viatra.query.patternlanguage.PatternLanguage.Pattern"
-        context="org.eclipse.viatra.query.patternlanguage.PatternLanguage.Pattern"
-        deleted="false" description="template for a Pattern"
-        enabled="true" name="Pattern"
-        >pattern ${name}(${paramName} : ${paramType}) {
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.Pattern" deleted="false" description="template for a Pattern" enabled="true" id="org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern" name="Pattern">pattern ${name}(${paramName} : ${paramType}) {
     ${cursor}
-}</template>
-</templates>
+}</template></templates>
