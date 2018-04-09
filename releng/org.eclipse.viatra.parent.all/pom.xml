@@ -36,7 +36,6 @@
 		<module>../../query/features/org.eclipse.viatra.query.language.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.testing.sdk.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.sdk.feature</module>
-		<module>../../query/features/org.eclipse.viatra.query.tooling.debug.feature</module>
 
 		<!-- Transformations -->
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.ui</module>

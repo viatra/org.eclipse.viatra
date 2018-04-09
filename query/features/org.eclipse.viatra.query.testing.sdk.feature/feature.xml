@@ -23,10 +23,6 @@
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
-   <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.0.0" match="equivalent"/>
-   </requires>
-
    <plugin
          id="org.eclipse.viatra.query.testing.snapshot"
          download-size="0"

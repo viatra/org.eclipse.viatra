@@ -55,6 +55,10 @@
          id="org.eclipse.viatra.query.ide.feature"
          version="2.0.0.qualifier"/>
 
+   <includes
+         id="org.eclipse.viatra.query.testing.sdk.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
