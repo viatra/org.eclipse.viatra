@@ -107,7 +107,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         checkArgument(type instanceof ClassType || type instanceof ReferenceType || type instanceof JavaType,
              NON_EMF_TYPE_ENCOUNTERED, type.getClass())
         if (type instanceof ClassType) {
-            val EClassifier classifier = (type as ClassType).getClassname()
+            val EClassifier classifier = type.getClassname()
             return classifierToInputKey(classifier)
         } else if (type instanceof ReferenceType) {
             return type.refname?.EType.classifierToInputKey
@@ -120,8 +120,8 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     def IInputKey classifierToInputKey(EClassifier classifier) {
         switch (classifier) {
-            EClass: new EClassTransitiveInstancesKey(classifier as EClass)
-            EDataType: new EDataTypeInSlotsKey(classifier as EDataType)
+            EClass: new EClassTransitiveInstancesKey(classifier)
+            EDataType: new EDataTypeInSlotsKey(classifier)
             default: BottomTypeKey.INSTANCE
         }
     }
@@ -143,7 +143,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     override IInputKey extractColumnDescriptor(RelationType type, int columnIndex) {
         checkArgument(type instanceof ReferenceType, NON_EMF_TYPE_ENCOUNTERED, type.getClass())
         if (type instanceof ReferenceType) {
-            val EStructuralFeature feature = (type as ReferenceType).getRefname()
+            val EStructuralFeature feature = type.getRefname()
             return extractColumnDescriptor(feature, columnIndex)
         }
         // Never executed
@@ -155,7 +155,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             return new EClassTransitiveInstancesKey(feature.getEContainingClass())
         } else {
             if (feature instanceof EReference) {
-                return new EClassTransitiveInstancesKey((feature as EReference).getEReferenceType())
+                return new EClassTransitiveInstancesKey(feature.getEReferenceType())
             } else {
                 return new EDataTypeInSlotsKey((feature as EAttribute).getEAttributeType())
             }
@@ -169,12 +169,10 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             return false;
         } else if (expectedType instanceof EClassTransitiveInstancesKey) {
             if (actualType instanceof EClassTransitiveInstancesKey)
-                return isConform((expectedType as EClassTransitiveInstancesKey).getEmfKey(),
-                    (actualType as EClassTransitiveInstancesKey).getEmfKey())
+                return isConform(expectedType.getEmfKey(), actualType.getEmfKey())
         } else if (expectedType instanceof EDataTypeInSlotsKey) {
             if (actualType instanceof EDataTypeInSlotsKey) {
-                return isConform((expectedType as EDataTypeInSlotsKey).getEmfKey(),
-                    (actualType as EDataTypeInSlotsKey).getEmfKey())
+                return isConform(expectedType.getEmfKey(), actualType.getEmfKey())
             } else if (actualType instanceof JavaTransitiveInstancesKey) {
                 val expectedJavaClass = expectedType.javaClass
                 val actualJavaClass = actualType.javaClass
@@ -230,7 +228,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     def private boolean isConform(EClassifier expectedClassifier, EClassifier actualClassifier) {
         if (actualClassifier instanceof EClass) {
-            return EcoreUtil2.getCompatibleTypesOf(actualClassifier as EClass).contains(expectedClassifier)
+            return EcoreUtil2.getCompatibleTypesOf(actualClassifier).contains(expectedClassifier)
         } else {
             // TODO make sure this is correct wrt bug 398911
             return expectedClassifier.equals(actualClassifier)
@@ -239,7 +237,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     override boolean isConformToRelationColumn(IInputKey relationType, int columnIndex, IInputKey columnType) {
         if (relationType instanceof EStructuralFeatureInstancesKey) {
-            val EStructuralFeature feature = (relationType as EStructuralFeatureInstancesKey).getEmfKey()
+            val EStructuralFeature feature = relationType.getEmfKey()
             return isConformant(extractColumnDescriptor(feature, columnIndex), columnType)
         } else {
             return false
@@ -268,11 +266,11 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     override JvmTypeReference toJvmTypeReference(IInputKey type, EObject context) {
         if (type instanceof EClassTransitiveInstancesKey) {
-            return getJvmType((type as EClassTransitiveInstancesKey).getEmfKey(), context)
+            return getJvmType(type.getEmfKey(), context)
         } else if (type instanceof EDataTypeInSlotsKey) {
-            return getJvmType((type as EDataTypeInSlotsKey).getEmfKey(), context)
+            return getJvmType(type.getEmfKey(), context)
         } else if (type instanceof JavaTransitiveInstancesKey) {
-            return typeReferences.getTypeForName((type as JavaTransitiveInstancesKey).getWrappedKey(), context)
+            return typeReferences.getTypeForName(type.getWrappedKey(), context)
         }
         return typeReferences.getTypeForName(Object, context)
     }
@@ -345,7 +343,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
                 val compatibleTypes = emfTypes.map [ key |
                     emfTypes.map [ current |
                         val type = EcoreUtil2.getCompatibleType(key, current, null)
-                        if(type instanceof EClass) (type as EClass) else current
+                        if(type instanceof EClass) type else current
                     ]
                 ].flatten
                 
