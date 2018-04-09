@@ -348,11 +348,19 @@ pattern locatedOnThoroughfare(house: House, location: Thoroughfare) {
 By default, `check()`/`eval()` constraints do not support calling arbitrary Java methods, since they are generally assumed to be impure. However, if you have a pure method and want to call it in these types of constraints, you have two options:
 
 * if it is implemented by you, annotate it with the `@Pure` annotation of Xbase (`org.eclipse.xtext.xbase.lib.Pure`)
-* if it comes from a third-party library, register it via the `org.eclipse.viatra.query.patternlanguage.purewhitelist` extension point. Using this extension, some standard library methods are marked as pure by default, including methods from `java.lang.Math` and `java.lang.String`.
+* if it comes from a third-party library, register it via the `org.eclipse.viatra.query.patternlanguage.purewhitelist` extension point and a . Using this extension, some standard library methods are marked as pure by default, including methods from `java.lang.Math` and `java.lang.String`.
+
+Starting with version 2.0, the registration method has changed to support the url:https://docs.oracle.com/javase/tutorial/ext/basics/spi.html[Java ServiceLoader] mechanism. This allows extending the standalone compiler, e.g. the maven plug-ins with support for these extensions. However, because of the limitations of the mechanism, both the extension and the serviceloader entries are required - the ServiceLoader is used in standalone environments, while the Eclipse IDE relies on the extensions. For example usages, see the following links:
+
+ * url:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/src/org/eclipse/viatra/query/patternlanguage/emf/validation/whitelist/extensions/MathWhitelistProvider.java[Extension library for the class java.lang.Math]
+ * url:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/src/META-INF/services/org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureElementProvider[ServiceLoader registration]
+ * url:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/plugin.xml[Extension registration for Eclipse plug-ins]
 
 === Custom Aggregators
 
-Starting with version 1.4, the Viatra Query ships with the following built-in aggregation operators: `count`, `sum`, `min`, `max`, together with a preliminary API for extending this set with your custom, user-defined aggregators. *Important note*: this API should be considered provisional, and will likely change in the future.
+Starting with version 1.4, the Viatra Query ships with the following built-in aggregation operators: `count`, `sum`, `min`, `max` and `avg` together with a preliminary API for extending this set with your custom, user-defined aggregators.
+
+NOTE: the custom aggregator implementations should be considered an experimental feature. In future releases the API required to define new aggregators might change without notice. However, the syntax and semantics of using the existing aggregators in the language should remain stable.
 
 The first step is to provide a class that implements the Java interface http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.runtime.matchers/src/org/eclipse/viatra/query/runtime/matchers/psystem/aggregations/IMultisetAggregationOperator.java[IMultisetAggregationOperator] by subclassing http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.runtime.matchers/src/org/eclipse/viatra/query/runtime/matchers/psystem/aggregations/AbstractMultisetAggregationOperator.java[AbstractMultisetAggregationOperator]. An instance of your class would represent a mathematical aggregation operator (independently of any context, such as patterns, variables, etc.) and provide incremental computation of the aggregate results from a changing multiset of values. Please read the Javadoc carefully to ensure that you meet all assumed contracts; you may also want to inspect the provided built-in implementors to gain a better understanding.
 

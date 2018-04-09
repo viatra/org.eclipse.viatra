@@ -5,7 +5,6 @@ import "http://www.eclipse.org/uml2/5.0.0/UML"
 // * Union
 
 @Surrogate(feature = "input")
-@QueryExplorer(checked = false)
 pattern actionInput(source: Action, target: InputPin)
 { AddStructuralFeatureValueAction.insertAt(source, target); } or 
 { AddVariableValueAction.insertAt(source, target); } or 
@@ -38,7 +37,6 @@ pattern actionInput(source: Action, target: InputPin)
 { WriteVariableAction.value(source, target); }
 
 @Surrogate(feature = "output")
-@QueryExplorer(checked = false)
 pattern actionOutput(source: Action, target: OutputPin)
 { AcceptCallAction.returnInformation(source, target); } or 
 { AcceptEventAction.result(source, target); } or 
@@ -63,40 +61,34 @@ pattern actionOutput(source: Action, target: OutputPin)
 { WriteStructuralFeatureAction.result(source, target); }
 
 @Surrogate(feature = "group")
-@QueryExplorer(checked = false)
 pattern activityGroup(source: Activity, target: ActivityGroup)
 { Activity.ownedGroup(source, target); } or 
 { Activity.partition(source, target); } or 
 { Activity.structuredNode(source, target); }
 
 @Surrogate(feature = "inActivity")
-@QueryExplorer(checked = false)
 pattern activityGroupInActivity(source: ActivityGroup, target: Activity){
     // opposite of Activity.group
     find activityGroup(target, source);
 }
 
 @Surrogate(feature = "node")
-@QueryExplorer(checked = false)
 pattern activityNode(source: Activity, target: ActivityNode)
 { Activity.ownedNode(source, target); } or 
 { Activity.structuredNode(source, target); }
 
 @Surrogate(feature = "activity")
-@QueryExplorer(checked = false)
 pattern activityNodeActivity(source: ActivityNode, target: Activity){
     // opposite of Activity.node
     find activityNode(target, source);
 }
 
 @Surrogate(feature = "inGroup")
-@QueryExplorer(checked = false)
 pattern activityEdgeInGroup(source: ActivityEdge, target: ActivityGroup)
 { ActivityEdge.inPartition(source, target); } or 
 { ActivityEdge.inStructuredNode(source, target); }
 
 @Surrogate(feature = "containedEdge")
-@QueryExplorer(checked = false)
 pattern activityGroupContainedEdge(source: ActivityGroup, target: ActivityEdge)
 {
     // opposite of ActivityGroup.containedEdge
@@ -104,14 +96,12 @@ pattern activityGroupContainedEdge(source: ActivityGroup, target: ActivityEdge)
 }
 
 @Surrogate(feature = "containedNode")
-@QueryExplorer(checked = false)
 pattern activityGroupContainedNode(source: ActivityGroup, target: ActivityNode)
 { ActivityPartition.node(source, target); } or 
 { InterruptibleActivityRegion.node(source, target); } or 
 { StructuredActivityNode.node(source, target); }
 
 @Surrogate(feature = "inGroup")
-@QueryExplorer(checked = false)
 pattern activityNodeInGroup(source: ActivityNode, target: ActivityGroup)
 {
     // opposite of ActivityGroup.containedNode
@@ -119,12 +109,10 @@ pattern activityNodeInGroup(source: ActivityNode, target: ActivityGroup)
 }
 
 @Surrogate(feature = "subgroup")
-@QueryExplorer(checked = false)
 pattern activityGroupSubgroup(source: ActivityGroup, target: ActivityGroup)
 { ActivityPartition.subpartition(source, target); }
 
 @Surrogate(feature = "superGroup")
-@QueryExplorer(checked = false)
 pattern activityGroupSuperGroup(source: ActivityGroup, target: ActivityGroup)
 { 
     // opposite of ActivityGroup.subGroup
@@ -132,7 +120,6 @@ pattern activityGroupSuperGroup(source: ActivityGroup, target: ActivityGroup)
 }
 
 @Surrogate(feature = "attribute")
-@QueryExplorer(checked = false)
 pattern classifierAttribute(source: Classifier, target: Property)
 { Artifact.ownedAttribute(source, target); } or 
 { DataType.ownedAttribute(source, target); } or 
@@ -141,7 +128,6 @@ pattern classifierAttribute(source: Classifier, target: Property)
 { StructuredClassifier.ownedAttribute(source, target); }
 
 @Surrogate(feature = "feature")
-@QueryExplorer(checked = false)
 pattern classifierFeature(source: Classifier, target: Feature)
 { Artifact.ownedOperation(source, target); } or 
 { Association.ownedEnd(source, target); } or 
@@ -154,7 +140,6 @@ pattern classifierFeature(source: Classifier, target: Feature)
 { StructuredClassifier.ownedConnector(source, target); }
 
 @Surrogate(feature = "featuringClassifier")
-@QueryExplorer(checked = false)
 pattern featureFeaturingClassifier(source: Feature, target: Classifier)
 {
     // opposite of Classifier.feature
@@ -162,7 +147,6 @@ pattern featureFeaturingClassifier(source: Feature, target: Classifier)
 }
 
 @Surrogate(feature = "source")
-@QueryExplorer(checked = false)
 pattern directedRelationshipSource(source: DirectedRelationship, target: Element)
 { Dependency.client(source, target); } or 
 { ElementImport.importingNamespace(source, target); } or 
@@ -177,7 +161,6 @@ pattern directedRelationshipSource(source: DirectedRelationship, target: Element
 { TemplateBinding.boundElement(source, target); }
 
 @Surrogate(feature = "target")
-@QueryExplorer(checked = false)
 pattern directedRelationshipTarget(source: DirectedRelationship, target: Element)
 { Dependency.supplier(source, target); } or 
 { ElementImport.importedElement(source, target); } or 
@@ -192,7 +175,6 @@ pattern directedRelationshipTarget(source: DirectedRelationship, target: Element
 { TemplateBinding.signature(source, target); }
 
 @Surrogate(feature = "ownedElement")
-@QueryExplorer(checked = false)
 pattern elementOwnedElement(source: Element, target: Element)
 { Abstraction.mapping(source, target); } or 
 { AcceptEventAction.trigger(source, target); } or 
@@ -282,7 +264,6 @@ pattern elementOwnedElement(source: Element, target: Element)
 { ValueSpecificationAction.value(source, target); }
 
 @Surrogate(feature = "owner")
-@QueryExplorer(checked = false)
 pattern elementOwner(source: Element, target: Element){
     // opposite of Element.ownedElement
     find elementOwnedElement(target, source);
@@ -293,7 +274,6 @@ private pattern propertyClass(property : Property, cls : Class) {
 }
 
 @Surrogate(feature = "member")
-@QueryExplorer(checked = false)
 pattern namespaceMember(source: Namespace, target: NamedElement)
 { Association.memberEnd(source, target); } or 
 { find classifierFeature(source, target); } or 
@@ -303,7 +283,6 @@ pattern namespaceMember(source: Namespace, target: NamedElement)
 { find structuredClassifierRole(source, target); }
 
 @Surrogate(feature = "ownedMember")
-@QueryExplorer(checked = false)
 pattern namespaceOwnedMember(source: Namespace, target: NamedElement)
 { Activity.variable(source, target); } or 
 { Artifact.nestedArtifact(source, target); } or 
@@ -352,7 +331,6 @@ pattern namespaceOwnedMember(source: Namespace, target: NamedElement)
 { UseCase.include(source, target); }
 
 @Surrogate(feature = "redefinedElement")
-@QueryExplorer(checked = false)
 pattern redefinableElementRedefinedElement(source: RedefinableElement, target: RedefinableElement)
 { ActivityEdge.redefinedEdge(source, target); } or 
 { ActivityNode.redefinedNode(source, target); } or 
@@ -366,7 +344,6 @@ pattern redefinableElementRedefinedElement(source: RedefinableElement, target: R
 { Transition.redefinedTransition(source, target); }
 
 @Surrogate(feature = "redefinitionContext")
-@QueryExplorer(checked = false)
 pattern redefinableElementRedefinitionContext(source: RedefinableElement, target: Classifier)
 { find behaviorContext(source, target); } or 
 { Operation.class(source, target); } or 
@@ -427,14 +404,12 @@ private pattern transitionRedefinitionContext (source: Transition, target: Class
 }
 
 @Surrogate(feature = "relatedElement")
-@QueryExplorer(checked = false)
 pattern relationshipRelatedElement(source: Relationship, target: Element)
 { find associationEndType(source, target); } or 
 { find directedRelationshipSource(source, target); } or 
 { find directedRelationshipTarget(source, target); }
 
 @Surrogate(feature = "role")
-@QueryExplorer(checked = false)
 pattern structuredClassifierRole(source: StructuredClassifier, target: ConnectableElement)
 { Collaboration.collaborationRole(source, target); } or 
 { StructuredClassifier.ownedAttribute(source, target); }
@@ -451,7 +426,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingBehavior
 @Surrogate(feature = "context")
-@QueryExplorer(checked = false)
 pattern actionContext(source: Action, target: Classifier) {
     find actionContainingBehavior(source, behavior);
     find behaviorContext(behavior, target);
@@ -464,7 +438,6 @@ pattern actionContext(source: Action, target: Classifier) {
 (memberEnd->collect(type)->asSet())
 */
 @Surrogate(feature = "endType")
-@QueryExplorer(checked = false)
 pattern associationEndType(
     self : Association,
     type : Type
@@ -497,7 +470,6 @@ endif
 */
 // Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Unrecognized variable: (nestingClass)
 @Surrogate(feature = "context")
-@QueryExplorer(checked = false)
 pattern behaviorContext(source: Behavior, target: BehavioredClassifier) {
     find internalBehaviorContext+(source, target);
     neg find internalBehaviorContext(target, _);
@@ -550,7 +522,6 @@ in     ris->union(realizingClassifierInterfaces) ->union(providedByPorts)->asSet
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: allRealizedInterfaces
 //@Surrogate(feature = "provided")
-//@QueryExplorer(checked = false)
 //pattern componentProvided(source: Component, target: Interface) {}
 
 /*
@@ -565,14 +536,12 @@ in      uis->union(realizingClassifierInterfaces)->union(usedByPorts)->asSet()
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: allUsedInterfaces
 //@Surrogate(feature = "required")
-//@QueryExplorer(checked = false)
 //pattern componentRequired(source: Component, target: Interface) {}
 
 /*
 (ConnectorEnd.allInstances()->select(role = self))
 */
 @Surrogate(feature = "end")
-@QueryExplorer(checked = false)
 pattern connectableElementEnd(
     self : ConnectableElement,
     temp1 : ConnectorEnd
@@ -601,7 +570,6 @@ endif)
 (deployment.deployedArtifact->select(oclIsKindOf(Artifact))->collect(oclAsType(Artifact).manifestation)->collect(utilizedElement)->asSet())
 */
 @Surrogate(feature = "deployedElement")
-@QueryExplorer(checked = false)
 pattern deploymentTargetDeployedElement(
     self : DeploymentTarget,
     packageableElement : PackageableElement
@@ -631,7 +599,6 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Cannot find operation (=(Integer)) for the type (Sequence(Integer))
 //@Surrogate(feature = "isRequired")
-//@QueryExplorer(checked = false)
 //pattern extensionIsRequired(source: Extension, target: Boolean) {}
 
 /*
@@ -639,7 +606,6 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: metaclassEnd
 //@Surrogate(feature = "metaclass")
-//@QueryExplorer(checked = false)
 //pattern extensionMetaclass(source: Extension, target: Class) {}
 
 /*
@@ -647,7 +613,6 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: lowerBound
 //@Surrogate(feature = "lower")
-//@QueryExplorer(checked = false)
 //pattern multiplicityElementLower(source: MultiplicityElement, target: Integer) {}
 
 /*
@@ -655,14 +620,12 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: upperBound
 //@Surrogate(feature = "upper")
-//@QueryExplorer(checked = false)
 //pattern multiplicityElementUpper(source: MultiplicityElement, target: UnlimitedNatural) {}
 
 /*
 (Dependency.allInstances()->select(d | d.client->includes(self)))
 */
 @Surrogate(feature = "clientDependency")
-@QueryExplorer(checked = false)
 pattern namedElementClientDependency(
     self : NamedElement,
     d : Dependency
@@ -682,7 +645,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //@Surrogate(feature = "result")
-//@QueryExplorer(checked = false)
 //pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {}
 
 /*
@@ -690,7 +652,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "isOrdered")
-//@QueryExplorer(checked = false)
 //pattern operationIsOrdered(source: Operation, target: Boolean) {}
 
 /*
@@ -698,7 +659,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "isUnique")
-//@QueryExplorer(checked = false)
 //pattern operationIsUnique(source: Operation, target: Boolean) {}
 
 /*
@@ -706,7 +666,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "lower")
-//@QueryExplorer(checked = false)
 //pattern operationLower(source: Operation, target: Integer) {}
 
 /*
@@ -714,7 +673,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "type")
-//@QueryExplorer(checked = false)
 //pattern operationType(source: Operation, target: Type) {}
 
 /*
@@ -722,7 +680,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "upper")
-//@QueryExplorer(checked = false)
 //pattern operationUpper(source: Operation, target: UnlimitedNatural) {}
 
 /*
@@ -730,7 +687,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: stringValue
 //@Surrogate(feature = "default")
-//@QueryExplorer(checked = false)
 //pattern parameterDefault(source: Parameter, target: String) {}
 
 /*
@@ -738,7 +694,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: basicRequired
 //@Surrogate(feature = "provided")
-//@QueryExplorer(checked = false)
 //pattern portProvided(source: Port, target: Interface) {}
 
 /*
@@ -746,7 +701,6 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: basicProvided
 //@Surrogate(feature = "required")
-//@QueryExplorer(checked = false)
 //pattern portRequired(source: Port, target: Interface) {}
 
 /*
@@ -759,14 +713,12 @@ endif)
 */
 // Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.association.memberEnd->any(e : Property | e.<>(self))
 //@Surrogate(feature = "opposite")
-//@QueryExplorer(checked = false)
 //pattern propertyOpposite(source: Property, target: Property) {}
 
 /*
 (trigger->collect(event)->select(oclIsKindOf(CallEvent))->collect(oclAsType(CallEvent).operation)->asSet())
 */
 @Surrogate(feature = "referred")
-@QueryExplorer(checked = false)
 pattern protocolTransitionReferred(
     self : ProtocolTransition,
     operation : Operation
@@ -786,7 +738,6 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.NullPointerException
 //@Surrogate(feature = "inheritedParameter")
-//@QueryExplorer(checked = false)
 //pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTemplateSignature, target: TemplateParameter) {}
 
 /*
@@ -794,7 +745,6 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: size
 //@Surrogate(feature = "isOrthogonal")
-//@QueryExplorer(checked = false)
 //pattern stateIsOrthogonal(source: State, target: Boolean) {}
 
 /*
@@ -802,7 +752,6 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: isSubmachineState
 //@Surrogate(feature = "isSimple")
-//@QueryExplorer(checked = false)
 //pattern stateIsSimple(source: State, target: Boolean) {}
 
 /*
@@ -810,7 +759,6 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //@Surrogate(feature = "isSubmachineState")
-//@QueryExplorer(checked = false)
 //pattern stateIsSubmachineState(source: State, target: Boolean) {}
 
 /*
@@ -818,14 +766,12 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingProfile
 //@Surrogate(feature = "profile")
-//@QueryExplorer(checked = false)
 //pattern stereotypeProfile(source: Stereotype, target: Profile) {}
 
 /*
 (Transition.allInstances()->select(target=self))
 */
 @Surrogate(feature = "incoming")
-@QueryExplorer(checked = false)
 pattern vertexIncoming(
     self : Vertex,
     temp1 : Transition
@@ -840,7 +786,6 @@ pattern vertexIncoming(
 (Transition.allInstances()->select(source=self))
 */
 @Surrogate(feature = "outgoing")
-@QueryExplorer(checked = false)
 pattern vertexOutgoing(
     self : Vertex,
     temp1 : Transition
@@ -863,7 +808,6 @@ else ConnectorKind::assembly
 endif)
 */
 @Surrogate(feature = "kind")
-@QueryExplorer(checked = false)
 pattern connectorKind(
     self : Connector,
     kind : ConnectorKind
@@ -891,7 +835,6 @@ private pattern connectorEndPartWithPort(connectorEnd: ConnectorEnd, partWithPor
 MessageOperations.getMessageKind
 */
 @Surrogate(feature = "messageKind")
-@QueryExplorer(checked = false)
 pattern messageMessageKind(self: Message, messageKind: MessageKind) {
     neg find messageSendEvent(self, _);
     neg find messageReceiveEvent(self, _);
@@ -922,7 +865,6 @@ private pattern messageReceiveEvent(self: Message, receiveEvent: MessageEnd) {
 (packagedElement->select(oclIsKindOf(Package))->collect(oclAsType(Package))->asSet())
 */
 @Surrogate(feature = "nestedPackage")
-@QueryExplorer(checked = false)
 pattern packageNestedPackage(
     self : Package,
     temp2 : Package
@@ -938,7 +880,6 @@ pattern packageNestedPackage(
 (packagedElement->select(oclIsKindOf(Stereotype))->collect(oclAsType(Stereotype))->asSet())
 */
 @Surrogate(feature = "ownedStereotype")
-@QueryExplorer(checked = false)
 pattern packageOwnedStereotype(
     self : Package,
     temp2 : Stereotype
@@ -954,7 +895,6 @@ pattern packageOwnedStereotype(
 (packagedElement->select(oclIsKindOf(Type))->collect(oclAsType(Type))->asSet())
 */
 @Surrogate(feature = "ownedType")
-@QueryExplorer(checked = false)
 pattern packageOwnedType(
     self : Package,
     temp2 : Type
@@ -970,9 +910,8 @@ pattern packageOwnedType(
 (aggregation = AggregationKind::composite)
 */
 @Surrogate(feature = "isComposite")
-@QueryExplorer(checked = false)
 pattern propertyIsComposite(
-    property : Property, isComposite
+    property : Property, isComposite : java Boolean
 ) {
     Property.aggregation(property, AggregationKind::composite);
     isComposite == true;
@@ -986,9 +925,8 @@ pattern propertyIsComposite(
 (region->notEmpty())
 */
 @Surrogate(feature = "isComposite")
-@QueryExplorer(checked = false)
 pattern stateIsComposite(
-    self : State, isComposite
+    self : State, isComposite : java Boolean
 ) {
     find stateIsComposite_0(self, _region);
     isComposite == true;
@@ -1008,7 +946,6 @@ private pattern stateIsComposite_0(
 NamedElementOperations.getNamespace
 */
 @Surrogate(feature = "namespace")
-@QueryExplorer(checked = false)
 pattern namedElementNamespace(source: NamedElement, target: Namespace) {
     // opposite of Namespace.ownedMember
     find namespaceOwnedMember(target, source);
@@ -1020,7 +957,6 @@ pattern namedElementNamespace(source: NamedElement, target: Namespace) {
 Specifies the owning Package of this Type, if any.
 */
 @Surrogate(feature = "package")
-@QueryExplorer(checked = false)
 pattern typePackage(source: Type, target: Package) { 
     Package.packagedElement(target,source);
 }
@@ -1031,7 +967,6 @@ pattern typePackage(source: Type, target: Package) {
   endTypes->includes(self) or endTypes.allParents()->includes(self) ))
 */
 @Surrogate(feature = "extension")
-@QueryExplorer(checked = false)
 pattern classExtension(source: Class, target: Extension) {
     Extension.memberEnd(target, memberEnd);
     Property.type(memberEnd, endType);
@@ -1050,7 +985,6 @@ private pattern typeOrAllParents(endType: Classifier, source: Class) {
 (self.general()->select(oclIsKindOf(Class))->collect(oclAsType(Class))->asSet())
 */
 @Surrogate(feature = "superClass")
-@QueryExplorer(checked = false)
 pattern classSuperClass(source: Class, target: Class) {
     find classifierGeneral(source, target);
 }
@@ -1066,7 +1000,6 @@ private pattern classifierAllParents(source: Classifier, target: Classifier) {
 (parents())
 */
 @Surrogate(feature = "general")
-@QueryExplorer(checked = false)
 pattern classifierGeneral(source: Classifier, target: Classifier) {
     neg find isClass(source);
     find classifierParents(source, target);
@@ -1089,7 +1022,6 @@ private pattern isClass(cls : Class) {
 */
 // WARNING: ordering is not preserved
 @Surrogate(feature = "ownedPort")
-@QueryExplorer(checked = false)
 pattern encapsulatedClassifierOwnedPort(source: EncapsulatedClassifier, target: Port) {
     EncapsulatedClassifier.ownedAttribute(source, target);
 }
@@ -1098,7 +1030,6 @@ pattern encapsulatedClassifierOwnedPort(source: EncapsulatedClassifier, target: 
 (metaclassEnd().type.oclAsType(Class))
 */
 @Surrogate(feature = "metaclass")
-@QueryExplorer(checked = false)
 pattern extensionMetaclass(source: Extension, target: Class) {
     find extensionMetaclassEnd(source, metaclassEnd);
     Property.type(metaclassEnd, target);
@@ -1125,8 +1056,7 @@ else
 endif)
 */
 @Surrogate(feature = "qualifiedName")
-@QueryExplorer(checked = false)
-pattern namedElementQualifiedName(namedElement: NamedElement, qualifiedName) {
+pattern namedElementQualifiedName(namedElement: NamedElement, qualifiedName : java String) {
     neg find internalNamedElementNamespace(namedElement, _);
     NamedElement.name(namedElement, qualifiedName);
     // qualifiedName is null if any of the names are empty!
@@ -1152,7 +1082,6 @@ private pattern internalNamedElementNamespace(namedElement: NamedElement, namesp
 (self.importMembers(elementImport.importedElement->asSet()->union(packageImport.importedPackage->collect(p | p.visibleMembers()))->asSet()))
 */
 @Surrogate(feature = "importedMember")
-@QueryExplorer(checked = false)
 pattern namespaceImportedMember(namespace: Namespace, importedMember: PackageableElement) {
     Namespace.elementImport(namespace, elementImport);
     ElementImport.importedElement(elementImport, importedMember);
@@ -1170,7 +1099,6 @@ else
 endif)
 */
 @Surrogate(feature = "result")
-@QueryExplorer(checked = false)
 pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {
     OpaqueExpression.behavior.ownedParameter(source, target); // XXX only first?
 }
@@ -1178,7 +1106,6 @@ pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {
 /*
 (member->select( m | m.oclIsKindOf(PackageableElement) and self.makesVisible(m))->collect(oclAsType(PackageableElement))->asSet())
 */
-@QueryExplorer(checked = false)
 private pattern packageVisibleMember(package_: Package, visibleMember: PackageableElement) {
     find packageDirectlyVisibleMember(package_, visibleMember);
 } or {
@@ -1206,7 +1133,6 @@ private pattern packageImportedPackage(package_: Package, importedPackage: Packa
 }
 
 @Surrogate(feature = "nestingPackage")
-@QueryExplorer(checked = false)
 pattern packageNestingPackage(nested: Package, nesting: Package) {
     find packageNestedPackage(nesting, nested);
 }
@@ -1215,7 +1141,6 @@ pattern packageNestingPackage(nested: Package, nesting: Package) {
 (if extendedSignature->isEmpty() then Set{} else extendedSignature.parameter->asSet() endif)
 */
 @Surrogate(feature = "inheritedParameter")
-@QueryExplorer(checked = false)
 pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTemplateSignature, target: TemplateParameter) {
     RedefinableTemplateSignature.extendedSignature.parameter(source, target);
 }
@@ -1224,7 +1149,6 @@ pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTempla
 (ownedAttribute->select(isComposite)->asSet())
 */
 @Surrogate(feature = "part")
-@QueryExplorer(checked = false)
 pattern structuredClassifierPart(structuredClassifier: StructuredClassifier, part: Property) {
     StructuredClassifier.ownedAttribute(structuredClassifier, part);
     find propertyIsComposite(part, true);
@@ -1234,8 +1158,7 @@ pattern structuredClassifierPart(structuredClassifier: StructuredClassifier, par
 (region->size () > 1)
 */
 @Surrogate(feature = "isOrthogonal")
-@QueryExplorer(checked = false)
-pattern stateIsOrthogonal(source: State, target) {
+pattern stateIsOrthogonal(source: State, target : java Boolean) {
     regionCount == count find stateIsComposite_0(source, _region);
     target == eval(regionCount > 1);
 }
@@ -1321,16 +1244,16 @@ private pattern classifierParents(
 /*
 (ownedParameter->select (direction = ParameterDirectionKind::return)->asSet())
 */
-private pattern operationReturnResult(
-    self : Operation,
-    temp1 : Parameter
-) {
-    Parameter.direction(temp1, parameterDirectionKind);
-    parameterDirectionKind_0 == ParameterDirectionKind::^return;
-    parameterDirectionKind == parameterDirectionKind_0;
-    BehavioralFeature.ownedParameter(self, parameter);
-    temp1 == parameter;
-}
+//private pattern operationReturnResult(
+//    self : Operation,
+//    temp1 : Parameter
+//) {
+//    Parameter.direction(temp1, parameterDirectionKind);
+//    parameterDirectionKind_0 == ParameterDirectionKind::^return;
+//    parameterDirectionKind == parameterDirectionKind_0;
+//    BehavioralFeature.ownedParameter(self, parameter);
+//    temp1 == parameter;
+//}
 
 /*
 (member->select( m | m.oclIsKindOf(PackageableElement) and self.makesVisible(m))->collect(oclAsType(PackageableElement))->asSet())
@@ -1415,7 +1338,7 @@ private pattern vertexContainingStateMachine(source: Vertex, target: StateMachin
     find stateMachineContainment+(source, target);
 }
 
-private pattern stateMachineContainment(child, container)
+private pattern stateMachineContainment(child : NamedElement, container : NamedElement)
 { Vertex.container(child, container); } or 
 { Pseudostate.stateMachine(child, container); } or
 { ConnectionPointReference.state(child, container); } or

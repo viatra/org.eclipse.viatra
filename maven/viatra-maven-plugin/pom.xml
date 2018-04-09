@@ -10,6 +10,7 @@
     <artifactId>viatra-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>VIATRA Maven Plug-in</name>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -46,6 +47,8 @@
             <artifactId>viatra-query-language</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        
 
         <dependency>
             <groupId>org.eclipse.xtext</groupId>

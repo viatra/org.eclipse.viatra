@@ -32,6 +32,7 @@
         <module>../../releng/org.eclipse.viatra.parent</module>
         <module>../../maven/viatra-query-runtime</module>
         <module>../../maven/viatra-query-language</module>
+        <module>../../maven/viatra-query-language-extensions</module>
         <module>../../maven/viatra-querybasedfeatures</module>
         <module>../../maven/viatra-transformation-runtime</module>
         <module>../../maven/viatra-maven-plugin</module>

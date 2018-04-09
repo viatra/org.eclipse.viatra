@@ -3,6 +3,11 @@
   <artifactId>viatra-query-language</artifactId>
   <name>VIATRA Query Language</name>
   <description>Maven module for VIATRA Query Language and Generic API</description>
+  
+  <properties>
+      <viatra.incubation.version>0.20.0-SNAPSHOT</viatra.incubation.version>
+  </properties>
+  
   <dependencies>
         <dependency>
             <groupId>org.eclipse.viatra</groupId>

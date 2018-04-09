@@ -161,9 +161,7 @@ In a project that contains multiple pattern definition files, there is a slight 
 
 This is a known issue we are working to fix; see http://bugs.eclipse.org/464120 and http://bugs.eclipse.org/480652 for details about the underlying issues.
 
-As workaround, we suggest that you have added types for all parameters, because that avoids this issue.
-
-If that is not enough, you have to ensure that the vql files are processed in calling order: all patterns are to be processed before they are used in a pattern call. This can be achieved either by moving patterns between vql files, or by renaming your .vql files so that the files that call patterns from other files should have names lexicographically greater than the referenced files. 
+As workaround, we suggest to explicitly define types for all parameters, because that avoids this issue. If that is not enough, you have to ensure that the vql files are processed in calling order: all patterns are to be processed before they are used in a pattern call. This can be achieved either by moving patterns between vql files, or by renaming your .vql files so that the files that call patterns from other files should have names lexicographically greater than the referenced files. 
 
 For example, let's suppose that you have a query file with two queries:
 

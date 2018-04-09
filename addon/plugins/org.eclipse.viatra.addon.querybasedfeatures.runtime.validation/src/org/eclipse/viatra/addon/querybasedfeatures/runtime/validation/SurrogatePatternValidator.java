@@ -11,7 +11,6 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime.validation;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -160,14 +159,13 @@ public class SurrogatePatternValidator extends PatternAnnotationValidator implem
             return;
         }
         
+        
+        
         // 4. second parameter is compatible(?) with feature type -> Target
         Variable target = pattern.getParameters().get(1);
-        //EClassifier targetClassifier = typeProvider.getClassifierForVariable(target);
-        Optional<EClassifier> targetClassifier = typeSystem.inputKeyToClassifier(typeInferrer.getType(target));
-        if (!targetClassifier.isPresent()) {
-            validator.warning("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
-                    PATTERN_ISSUE_CODE);
-        } else if (!Objects.equals(classifier, targetClassifier.get())) {
+        final IInputKey parameterType = typeInferrer.getType(target);
+        
+        if (!typeSystem.isConformant(typeSystem.classifierToInputKey(classifier), parameterType)) {
             validator.warning(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
                     featureName, sourceClass.getName()), target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
