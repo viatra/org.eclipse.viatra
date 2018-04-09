@@ -111,6 +111,8 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
   * Semantically equivalent to `true == eval(aNumberVariable > aStringVariable.length());`
   * The Java types of variables are inferred based on the EMF Ecore specification (using the generated Java classes).
 6. One can also use the transitive closure of binary patterns in a pattern call, such as the transitive closure of pattern friend (note the `+` symbol after the name of the called pattern): `find friend+(myGuy, friendOfAFriendOfAFriend);`
+7. Starting with VIATRA 2.0, it is also possible to calculate the reflexive transitive closure of a pattern call, e.g. to return all friends and
+(note the `*` symbol after the name of the called pattern): `find friend*(myGuy, friendOfAFriendOfAFriend);`. This is equivalent with the following construct: `pattern friendOrMySelf(self, other) { other == self; } or { find friend+(self, other);}`
 
 === Matches, Variables and References
 

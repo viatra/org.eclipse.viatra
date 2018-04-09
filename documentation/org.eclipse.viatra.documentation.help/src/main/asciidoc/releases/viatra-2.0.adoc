@@ -8,7 +8,24 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 === New Language Features
 
-VIATRA 2.0 introduces a new aggregator for calculating the average of numbers in matches. As an example, the following pattern can be used to calculate the average number of CPU values over a set of instances.
+Starting with version 2.0 it is possible to calculate both the transitive closure and the reflexive transitive closure of the matches of a given pattern. Using this construct, the following two patterns are equivalent:
+
+[source,vql]
+----
+/** Old syntax, using transitive closure and multiple bodies */
+pattern superclassOrSelf1(cl : Class, sup : Class) {
+  cl == sup;
+} or {
+  find superclass+(cl, sup);
+}
+
+/** New syntax, note the '*' symbol in the find constraint */
+pattern superclassOrSelf2(cl : Class, sup : Class) {
+  find superclass*(cl, sup);
+}
+----
+
+VIATRA 2.0 also introduces a new aggregator for calculating the average of numbers found in pattern matches. As an example, the following pattern can be used to calculate the average number of CPU values over a set of instances.
 
 [source,vql]
 ----

@@ -1,614 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.patternlanguage.emf" version="2">
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/AggregatedValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Annotation.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/AnnotationParameter.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/BoolValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/CheckConstraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ClassType.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/CompareConstraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/CompareFeature.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.CompareFeature">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.CompareFeature"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ComputationValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ComputationValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ComputationValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Constraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/EClassifierConstraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/EntityType.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.EntityType">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.EntityType"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/EnumValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ExecutionType.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ExecutionType">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ExecutionType"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Expression.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Expression">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Expression"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/FunctionEvaluationValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/JavaType.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ListValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/LiteralValueReference.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.LiteralValueReference">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.LiteralValueReference"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/LocalVariable.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.LocalVariable">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.LocalVariable"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Modifiers.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/NumberValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PackageImport.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Parameter.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ParameterDirection.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterDirection">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterDirection"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ParameterRef.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PathExpressionConstraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Pattern.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternBody.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternCall.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternCompositionConstraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternImport.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternImport">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternImport"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternLanguageFactory.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/PatternModel.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ReferenceType.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/RelationType.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.RelationType">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.RelationType"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/StringValue.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Type.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Type">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Type"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/TypeCheckConstraint.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/VQLImportSection.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/ValueReference.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/Variable.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.Variable">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.Variable"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/VariableReference.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/AggregatedValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AggregatedValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AggregatedValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/AnnotationImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AnnotationImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AnnotationImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/AnnotationParameterImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AnnotationParameterImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.AnnotationParameterImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/BoolValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.BoolValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.BoolValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/CheckConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.CheckConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.CheckConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ClassTypeImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ClassTypeImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ClassTypeImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/CompareConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.CompareConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.CompareConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ComputationValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ComputationValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ComputationValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/EClassifierConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.EClassifierConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.EClassifierConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/EntityTypeImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.EntityTypeImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.EntityTypeImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/EnumValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.EnumValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.EnumValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ExpressionImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ExpressionImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ExpressionImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/FunctionEvaluationValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.FunctionEvaluationValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.FunctionEvaluationValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/JavaTypeImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.JavaTypeImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.JavaTypeImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ListValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ListValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ListValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/LiteralValueReferenceImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.LiteralValueReferenceImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.LiteralValueReferenceImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/LocalVariableImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.LocalVariableImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.LocalVariableImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ModifiersImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ModifiersImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ModifiersImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/NumberValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.NumberValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.NumberValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PackageImportImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PackageImportImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PackageImportImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ParameterImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ParameterImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ParameterImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ParameterRefImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ParameterRefImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ParameterRefImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PathExpressionConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PathExpressionConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternBodyImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternBodyImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternBodyImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternCallImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternCallImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternCallImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternCompositionConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternCompositionConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternCompositionConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternImportImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternImportImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternImportImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternLanguageFactoryImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternLanguageFactoryImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternLanguageFactoryImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternLanguagePackageImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternLanguagePackageImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternLanguagePackageImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/PatternModelImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternModelImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.PatternModelImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ReferenceTypeImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ReferenceTypeImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ReferenceTypeImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/RelationTypeImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.RelationTypeImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.RelationTypeImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/StringValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.StringValueImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.StringValueImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/TypeCheckConstraintImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.TypeCheckConstraintImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.TypeCheckConstraintImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/TypeImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.TypeImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.TypeImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/VQLImportSectionImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VQLImportSectionImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VQLImportSectionImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/ValueReferenceImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ValueReferenceImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.ValueReferenceImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/VariableImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VariableImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VariableImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/impl/VariableReferenceImpl.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VariableReferenceImpl">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.impl.VariableReferenceImpl"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/util/PatternLanguageAdapterFactory.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageAdapterFactory">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageAdapterFactory"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="emf-gen/org/eclipse/viatra/query/patternlanguage/emf/vql/util/PatternLanguageSwitch.java" type="org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch">
-        <filter comment="EMF generated code" id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/AbstractEMFPatternLanguageRuntimeModule.java" type="org.eclipse.viatra.query.patternlanguage.emf.AbstractEMFPatternLanguageRuntimeModule">
         <filter comment="Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
@@ -625,11 +16,6 @@
                 <message_argument value="bindIJvmModelInferrer()"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="configureIScopeProviderDelegate(Binder)"/>
-            </message_arguments>
-        </filter>
         <filter comment="Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="configureRewritableImportSectionEnablement(Binder)"/>
@@ -637,6 +23,11 @@
         </filter>
     </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/parser/antlr/internal/InternalEMFPatternLanguageParser.java" type="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser">
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_111"/>
+            </message_arguments>
+        </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="dfa28"/>
@@ -650,6 +41,11 @@
         <filter comment="EMF/Xtext generated code, cannot touch" id="1143996420">
             <message_arguments>
                 <message_argument value="entryRuleVQLImportSection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleClosureType()"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -872,6 +268,16 @@
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
+                <message_argument value="getClosureTypeAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getClosureTypeRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
                 <message_argument value="getCompareConstraintAccess()"/>
             </message_arguments>
         </filter>
@@ -1043,6 +449,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$ClosureTypeElements">
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="ClosureTypeElements"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$CompareConstraintElements">
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
@@ -1173,6 +586,48 @@
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="TypeCheckConstraintElements"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$TypeElements">
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getClassnameAssignment_1()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getClassnameEClassifierCrossReference_1_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getClassnameEClassifierIDTerminalRuleCall_1_0_1()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getColonColonKeyword_0_1()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getGroup_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getMetamodelAssignment_0_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getMetamodelPackageImportCrossReference_0_0_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getMetamodelPackageImportIDTerminalRuleCall_0_0_0_1()"/>
             </message_arguments>
         </filter>
     </resource>

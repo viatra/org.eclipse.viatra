@@ -120,37 +120,22 @@
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="completePathExpressionConstraint_Head(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+                <message_argument value="completePathExpressionConstraint_Dst(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="completePathExpressionHead_Dst(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+                <message_argument value="completePathExpressionConstraint_EdgeTypes(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="completePathExpressionHead_Src(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+                <message_argument value="completePathExpressionConstraint_SourceType(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="completePathExpressionHead_Tail(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="completePathExpressionHead_Type(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="completePathExpressionTail_Tail(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="completePathExpressionTail_Type(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+                <message_argument value="completePathExpressionConstraint_Src(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -270,11 +255,6 @@
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="completeVariableValue_Value(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
                 <message_argument value="complete_AggregatedValue(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
@@ -301,6 +281,11 @@
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="complete_CheckConstraint(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_ClosureType(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -375,16 +360,6 @@
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
-                <message_argument value="complete_PathExpressionHead(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="complete_PathExpressionTail(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
                 <message_argument value="complete_Pattern(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
@@ -441,11 +416,6 @@
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="complete_VariableReference(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="1143996420">
-            <message_arguments>
-                <message_argument value="complete_VariableValue(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
     </resource>
