@@ -170,11 +170,7 @@ private pattern hostCommunication(fromHost : HostInstance, toHost : HostInstance
 }
 
 private pattern reachableHosts(source : HostInstance, target : HostInstance) {
-	find hostCommunication+(source, target);
-} or {
-	HostInstance(source);
-	HostInstance(target);
-	source == target;
+	find hostCommunication*(source, target);
 }
 
 private pattern reachableAppInstance(sourceHostInstance : HostInstance, app : ApplicationType, appInstance : ApplicationInstance) {
