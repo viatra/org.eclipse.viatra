@@ -18,7 +18,7 @@
    <feature url="features/org.eclipse.viatra.query.sdk.feature.source_2.0.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.feature.source" version="2.0.0.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.query.sdk.extensions.feature.source_0.20.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.extensions.feature.source" version="0.20.0.qualifier">
+   <feature url="features/org.eclipse.viatra.query.sdk.extensions.feature_0.20.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.extensions.feature" version="0.20.0.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
    <category-def name="org.eclipse.viatra.core" label="VIATRA Core"/>

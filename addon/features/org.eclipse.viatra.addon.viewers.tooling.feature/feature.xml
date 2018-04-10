@@ -33,10 +33,6 @@
          version="2.0.0.qualifier"
          name="VIATRA Viewers Runtime"/>
 
-   <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.0.0" match="equivalent"/>
-   </requires>
-
    <plugin
          id="org.eclipse.viatra.addon.viewers.tooling.ui.zest"
          download-size="0"

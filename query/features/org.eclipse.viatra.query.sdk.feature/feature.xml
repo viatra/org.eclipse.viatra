@@ -57,7 +57,11 @@
 
    <includes
          id="org.eclipse.viatra.query.testing.sdk.feature"
-         version="0.0.0"/>
+         version="2.0.0.qualifier"/>
+
+   <includes
+         id="org.eclipse.viatra.addon.viewers.tooling.feature"
+         version="2.0.0.qualifier"/>
 
    <requires>
       <import feature="org.eclipse.jdt"/>

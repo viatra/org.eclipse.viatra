@@ -27,10 +27,6 @@
          id="org.eclipse.viatra.transformation.debug.feature"
          version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.viatra.addon.viewers.tooling.feature"
-         version="0.0.0"/>
-
    <requires>
       <import feature="org.eclipse.viatra.query.sdk.feature" version="2.0.0" match="equivalent"/>
       <import feature="org.eclipse.jdt"/>
