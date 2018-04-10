@@ -127,7 +127,10 @@ public class ViatraViewersZestViewSupport extends
     protected Action clearGraph = new Action("Clear Graph") {
         @Override
         public void run() {
-            getGraphViewer().setInput(null);
+            final ModifiableZestContentViewer viewer = getGraphViewer();
+            if (viewer.getContentProvider() != null && viewer.getInput() != null) {
+                viewer.setInput(null);
+            }
         }
     };
 
