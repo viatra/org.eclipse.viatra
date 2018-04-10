@@ -51,6 +51,12 @@
 		<module>../../addon/features/org.eclipse.viatra.addon.querybasedfeatures.runtime.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.databinding.runtime.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.validation.runtime.feature</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime.zest</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui.zest</module>
+        <module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.feature</module>
+        <module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.zest.feature</module>
+        <module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.feature</module>
 
 		<!-- Integration -->
 		<module>../../integration/plugins/org.eclipse.viatra.integration.gmf</module>

@@ -18,7 +18,6 @@
         <module>../../query/features/org.eclipse.viatra.query.sdk.extensions.feature</module>
         
         <!-- Transformations -->
-        <module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.tooling.debug</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.tooling.debug.ui</module>
         <module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.tracer</module>
@@ -27,14 +26,6 @@
 
         <!-- DSE -->
         <module>../../dse/features/org.eclipse.viatra.dse.feature</module>
-
-        <!-- Addons -->
-        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui</module>
-        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui.zest</module>
-        <module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime.zest</module>
-        <module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.feature</module>
-        <module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.zest.feature</module>
-        <module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.feature</module>
 
         <!-- Integration -->
         <module>../../integration/plugins/org.eclipse.viatra.integration.graphiti</module>

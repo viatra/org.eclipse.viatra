@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-      label="VIATRA Viewers Runtime - Zest Integration (Incubation)"
-      version="0.20.0.qualifier"
+      label="VIATRA Viewers Runtime - Zest Integration"
+      version="2.0.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -24,7 +24,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.addon.viewers.runtime.feature" version="0.20.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.addon.viewers.runtime.feature" version="2.0.0" match="equivalent"/>
       <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.fx.jface" version="5.0.0" match="compatible"/>

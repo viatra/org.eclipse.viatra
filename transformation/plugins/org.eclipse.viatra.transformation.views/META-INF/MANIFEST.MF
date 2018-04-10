@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA View Model Transformation (Incubation)
+Bundle-Name: VIATRA View Model Transformation
 Bundle-SymbolicName: org.eclipse.viatra.transformation.views;singleton:=true
-Bundle-Version: 0.20.0.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
