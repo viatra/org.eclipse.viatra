@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 /**

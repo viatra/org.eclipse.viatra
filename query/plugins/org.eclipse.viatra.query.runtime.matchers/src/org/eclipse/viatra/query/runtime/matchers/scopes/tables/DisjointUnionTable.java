@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -66,31 +65,25 @@ public class DisjointUnionTable extends AbstractIndexTable {
 
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
-        return new Iterable<Tuple>() {
-            @Override
-            public Iterator<Tuple> iterator() {
-                Stream<Tuple> stream = Stream.empty();
-                for (IIndexTable child : childTables) {
-                    Iterable<Tuple> childResult = child.enumerateTuples(seedMask, seed);
-                    stream = Stream.concat(stream, StreamSupport.stream(childResult.spliterator(), false));
-                }
-                return stream.iterator();
+        return () -> {
+            Stream<Tuple> stream = Stream.empty();
+            for (IIndexTable child : childTables) {
+                Iterable<Tuple> childResult = child.enumerateTuples(seedMask, seed);
+                stream = Stream.concat(stream, StreamSupport.stream(childResult.spliterator(), false));
             }
+            return stream.iterator();
         };
     }
 
     @Override
     public Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed) {
-        return new Iterable<Object>() {
-            @Override
-            public Iterator<Object> iterator() {
-                Stream<Object> stream = Stream.empty();
-                for (IIndexTable child : childTables) {
-                    Iterable<? extends Object> childResult = child.enumerateValues(seedMask, seed);
-                    stream = Stream.concat(stream, StreamSupport.stream(childResult.spliterator(), false));
-                }
-                return stream.iterator();
+        return () -> {
+            Stream<Object> stream = Stream.empty();
+            for (IIndexTable child : childTables) {
+                Iterable<? extends Object> childResult = child.enumerateValues(seedMask, seed);
+                stream = Stream.concat(stream, StreamSupport.stream(childResult.spliterator(), false));
             }
+            return stream.iterator();
         };
     }
 

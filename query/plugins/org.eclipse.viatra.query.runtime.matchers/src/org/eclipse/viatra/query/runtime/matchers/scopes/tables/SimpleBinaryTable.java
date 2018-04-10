@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
@@ -112,11 +111,17 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
         return ChangeGranularity.DUPLICATE != valueToHolderMap.addPair(value, holder);
     }
 
-    private boolean removeFromHolderToValueMap(Target value, Source holder) throws IllegalStateException {
+    /**
+     * @throws IllegalStateException
+     */
+    private boolean removeFromHolderToValueMap(Target value, Source holder) {
         return ChangeGranularity.DUPLICATE != holderToValueMap.removePair(holder, value);
     }
 
-    private boolean removeFromValueToHolderMap(Target value, Source holder) throws IllegalStateException {
+    /**
+     * @throws IllegalStateException
+     */
+    private boolean removeFromValueToHolderMap(Target value, Source holder) {
         return ChangeGranularity.DUPLICATE != valueToHolderMap.removePair(value, holder);
     }
 
@@ -155,37 +160,26 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
         switch (seedMask.getSize()) {
         case 0: // unseeded
             // TODO we currently assume V2H map exists
-            return new Iterable<Tuple>() {
-                @Override
-                public Iterator<Tuple> iterator() {
-                    return StreamSupport.stream(getAllDistinctValues().spliterator(), false)
-                            .flatMap((value) -> valueToHolderMap.lookup(value).distinctValues().stream()
-                                    .map((source) -> Tuples.staticArityFlatTupleOf(source, value)))
-                            .iterator();
-                }
-            };
+            return () -> StreamSupport.stream(getAllDistinctValues().spliterator(), false)
+                    .flatMap(value -> valueToHolderMap.lookup(value).distinctValues().stream()
+                            .map(source -> Tuples.staticArityFlatTupleOf(source, value)))
+                    .iterator();
 
         case 1: // lookup by source or target
             int seedIndex = seedMask.indices[0];
             if (seedIndex == 0) { // lookup by source
-                return new Iterable<Tuple>() {
-                    @Override
-                    public Iterator<Tuple> iterator() {
-                        @SuppressWarnings("unchecked")
-                        Source source = (Source) seed.get(0);
-                        return getDistinctValuesOfHolder(source).stream()
-                                .map((target) -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
-                    }
+                return () -> {
+                    @SuppressWarnings("unchecked")
+                    Source source = (Source) seed.get(0);
+                    return getDistinctValuesOfHolder(source).stream()
+                            .map(target -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
                 };
             } else if (seedIndex == 1) { // lookup by target
-                return new Iterable<Tuple>() {
-                    @Override
-                    public Iterator<Tuple> iterator() {
-                        @SuppressWarnings("unchecked")
-                        Target target = (Target) seed.get(0);
-                        return getDistinctHoldersOfValue(target).stream()
-                                .map((source) -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
-                    }
+                return () -> {
+                    @SuppressWarnings("unchecked")
+                    Target target = (Target) seed.get(0);
+                    return getDistinctHoldersOfValue(target).stream()
+                            .map(source -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
                 };
 
             } else

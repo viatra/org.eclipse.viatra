@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
-import java.util.Iterator;
-
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -20,7 +18,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemory;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
-import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 
 /**
  * Demo default implementation - super inefficient right now, uses filtering instead of index lookup, please provide
@@ -75,18 +72,13 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
         case 0: // unseeded
             return rows.size();
         default:
-            return (int) rows.distinctValues().stream().filter((row) -> seedMask.transform(row).equals(seed)).count();
+            return (int) rows.distinctValues().stream().filter(row -> seedMask.transform(row).equals(seed)).count();
         }
     }
 
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
-        return new Iterable<Tuple>() {
-            @Override
-            public Iterator<Tuple> iterator() {
-                return rows.distinctValues().stream().filter((row) -> seedMask.transform(row).equals(seed)).iterator();
-            }
-        };
+        return () -> rows.distinctValues().stream().filter((row) -> seedMask.transform(row).equals(seed)).iterator();
     }
 
     @Override
@@ -94,12 +86,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
         // we assume there is a single omitted index in the mask
         int queriedColumn = seedMask.getFirstOmittedIndex().getAsInt();
 
-        return new Iterable<Object>() {
-            @Override
-            public Iterator<Object> iterator() {
-                return rows.distinctValues().stream().filter((row) -> seedMask.transform(row).equals(seed))
-                        .map((row) -> row.get(queriedColumn)).iterator();
-            }
-        };
+        return () -> rows.distinctValues().stream().filter(row1 -> seedMask.transform(row1).equals(seed))
+                .map(row2 -> row2.get(queriedColumn)).iterator();
     }
 }

@@ -30,12 +30,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  * {@link #registerIndexTable(IIndexTable)} to register them; this may happen either during a coalesced indexing, or on
  * external initiation. Afterwards, they will be visible to the query backends.
  * 
- * <p>
- * TODO: eliminate IQRC's deprecated methods
- * 
- * 
- * 
- * 
  * @author Gabor Bergmann
  * @since 2.0
  */

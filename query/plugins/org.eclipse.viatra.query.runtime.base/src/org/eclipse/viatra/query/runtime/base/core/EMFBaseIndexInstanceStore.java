@@ -308,12 +308,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             valueToFeatureMap = CollectionsFactory.createMap();
             for (FeatureData featureData : featureDataMap.values()) {
                 final Object featureKey = featureData.getFeatureKey();
-                featureData.forEach(new IStructuralFeatureInstanceProcessor() {
-                    @Override
-                    public void process(EObject source, Object target) {
-                        insertIntoValueToFeatureMap(featureKey, target);
-                    }
-                });
+                featureData.forEach((source, target) -> insertIntoValueToFeatureMap(featureKey, target));
             }
         }
         return valueToFeatureMap;

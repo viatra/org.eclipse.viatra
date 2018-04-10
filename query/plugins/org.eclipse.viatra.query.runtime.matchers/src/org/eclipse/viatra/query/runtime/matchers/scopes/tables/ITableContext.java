@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
-import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-
 /**
  * Callbacks that {@link IIndexTable} implementations are expected to invoke on their environment.
  * 

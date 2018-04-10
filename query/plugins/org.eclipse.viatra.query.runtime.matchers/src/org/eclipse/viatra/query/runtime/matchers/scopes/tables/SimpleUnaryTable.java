@@ -19,10 +19,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemory;
-import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 
 import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * Simple value set.
@@ -88,12 +86,7 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
         if (seedMask.getSize() == 0) { // unseeded
-            return new Iterable<Tuple>() {
-                @Override
-                public Iterator<Tuple> iterator() {
-                    return values.distinctValues().stream().map(Tuples::staticArityFlatTupleOf).iterator();
-                }
-            };
+            return () -> values.distinctValues().stream().map(Tuples::staticArityFlatTupleOf).iterator();
         } else {
             @SuppressWarnings("unchecked")
             Value value = (Value) seed.get(0);
