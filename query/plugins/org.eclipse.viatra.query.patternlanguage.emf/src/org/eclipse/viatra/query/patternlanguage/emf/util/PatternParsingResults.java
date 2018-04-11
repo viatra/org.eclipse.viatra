@@ -13,7 +13,10 @@ package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -110,15 +113,30 @@ public final class PatternParsingResults {
      */
     public Iterable<IQuerySpecification<?>> getQuerySpecifications() {
         return patterns.stream()
-                .map(pattern -> {
-                    List<Issue> errors = getErrors(pattern);
-                    if (errors.isEmpty()) {
-                        return builder.getOrCreateSpecification(pattern);
-                    } else {
-                        return builder.buildErroneousSpecification(pattern, errors.stream(), false);
-                    }
-                })
+                .map(this::getOrCreateQuerySpecification)
                 .filter(spec -> spec.getVisibility() == PVisibility.PUBLIC)
                 .collect(Collectors.toList());
+    }
+    
+    /**
+     * Finds and returns a given query specification by qualified name.
+     * @since 2.0
+     */
+    public Optional<IQuerySpecification<?>> getQuerySpecification(String fqn) {
+        // XXX This local variable is necessary otherwise the generic type information is lost between map and filter calls 
+        final Stream<IQuerySpecification<?>> stream = patterns.stream()
+                .map(this::getOrCreateQuerySpecification);
+        return stream
+                .filter(specification -> Objects.equals(fqn, specification.getFullyQualifiedName()))
+                .findAny();
+    }
+    
+    private IQuerySpecification<?> getOrCreateQuerySpecification(Pattern pattern) {
+        List<Issue> errors = getErrors(pattern);
+        if (errors.isEmpty()) {
+            return builder.getOrCreateSpecification(pattern);
+        } else {
+            return builder.buildErroneousSpecification(pattern, errors.stream(), false);
+        }
     }
 }
