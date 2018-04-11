@@ -45,7 +45,7 @@
       <feature id="org.eclipse.viatra.query.language.feature" version="2.0.0.qualifier"/>
       <feature id="org.eclipse.viatra.query.runtime.feature" version="2.0.0.qualifier"/>
       <feature id="org.eclipse.viatra.query.sdk.feature" version="2.0.0.qualifier"/>
-      <feature id="org.eclipse.viatra.query.sdk.extensions.feature" version="2.0.0.qualifier"/>
+      <feature id="org.eclipse.viatra.query.sdk.extensions.feature" version="0.20.0.qualifier"/>
       <feature id="org.eclipse.viatra.query.testing.sdk.feature" version="2.0.0.qualifier"/>
       <feature id="org.eclipse.viatra.integration.uml.feature" version="2.0.0.qualifier"/>
       <feature id="org.eclipse.viatra.transformation.debug.feature" version="0.20.0.qualifier"/>
