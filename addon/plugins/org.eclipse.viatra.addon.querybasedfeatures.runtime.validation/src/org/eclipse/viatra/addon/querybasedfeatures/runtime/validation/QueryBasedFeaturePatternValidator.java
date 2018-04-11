@@ -48,18 +48,20 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
  */
 public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
+    private static final String FEATURE_PARAMETER_NAME = "feature";
+    private static final String SOURCE_PARAMETER_NAME = "source";
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.addon.querybasedfeatures.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String METAMODEL_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_metamodel";
     public static final String PATTERN_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_pattern";
     public static final String ANNOTATION_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_annotation";
 
-    private static final PatternAnnotationParameter FEATURE_PARAMETER = new PatternAnnotationParameter("feature", 
+    private static final PatternAnnotationParameter FEATURE_PARAMETER = new PatternAnnotationParameter(FEATURE_PARAMETER_NAME, 
             PatternAnnotationParameter.STRING,
             "The name of the EStructuralFeature that the query will serve (default: pattern name).",
             /*multiple*/ false,
             /*mandatory*/ false);
-    private static final PatternAnnotationParameter SOURCE_PARAMETER = new PatternAnnotationParameter("source",
+    private static final PatternAnnotationParameter SOURCE_PARAMETER = new PatternAnnotationParameter(SOURCE_PARAMETER_NAME,
             PatternAnnotationParameter.VARIABLEREFERENCE,
             "The name of the parameter that is the source of the derived feature (default: type of first parameter).",
             /*multiple*/ false,
@@ -108,7 +110,7 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
         }
         // 2. first parameter or "source" (if set) is EClassifier -> Source
         Variable source = null;
-        ValueReference ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "source");
+        ValueReference ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, SOURCE_PARAMETER_NAME);
         if (ref == null) {
             source = pattern.getParameters().get(0);
         } else if (ref instanceof VariableReference) {
@@ -133,7 +135,7 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
         String featureName = null;
         EObject contextForFeature = null;
         EStructuralFeature contextESFForFeature = null;
-        ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+        ref = PatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
         if (ref == null) {
             featureName = pattern.getName();
             contextForFeature = pattern;
@@ -306,7 +308,7 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
     private boolean checkFeatureUniquenessOnQBFAnnotations(Annotation annotation, IIssueCallback validator, Pattern pattern) {
         Collection<Annotation> qbfAnnotations = PatternLanguageHelper.getAnnotationsByName(pattern, "QueryBasedFeature");
         if(qbfAnnotations.size() > 1) {
-            ValueReference feature = PatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+            ValueReference feature = PatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
             if(feature == null) {
                 validator.error("Feature must be specified when multiple QueryBasedFeature annotations are used on a single pattern.", annotation,
                         PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
@@ -314,7 +316,7 @@ public class QueryBasedFeaturePatternValidator extends PatternAnnotationValidato
             } else {
                 String featureName = ((StringValue) feature).getValue();
                 for (Annotation antn : qbfAnnotations) {
-                    ValueReference otherFeature = PatternLanguageHelper.getFirstAnnotationParameter(antn, "feature");
+                    ValueReference otherFeature = PatternLanguageHelper.getFirstAnnotationParameter(antn, FEATURE_PARAMETER_NAME);
                     if(otherFeature != null) {
                         String otherFeatureName = ((StringValue) otherFeature).getValue();
                         if(featureName.equals(otherFeatureName)) {

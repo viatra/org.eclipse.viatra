@@ -78,7 +78,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
 
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
-        return () -> rows.distinctValues().stream().filter((row) -> seedMask.transform(row).equals(seed)).iterator();
+        return () -> rows.distinctValues().stream().filter(row -> seedMask.transform(row).equals(seed)).iterator();
     }
 
     @Override
