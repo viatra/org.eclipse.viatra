@@ -20,20 +20,16 @@ To define queries, first a  _VIATRA Query Project_ has to be created with the st
 . Create a new query definition in a package named `org.eclipse.viatra.examples.cps.queries` and a file named `CPSQueries.vql`. In the wizard create an empty query. Fill the first query:
 +
 [[vql-first]]
-[source,vql]
+[source,vql,indent=0]
 .queries.vql
 ----
 // Java package declaration, must match the container of the file
-package org.eclipse.viatra.examples.cps.queries
+package org.eclipse.viatra.documentation.example.queries
 
 // EPackage import
 import "http://org.eclipse.viatra/model/cps"
 
-// Pattern declaration
-pattern hostIpAddress(host: HostInstance, ip : java String) {
-    // Type constraint stating that variables 'host' and 'ip' are connected via a 'nodeIp' attribute
-    HostInstance.nodeIp(host,ip);
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=hostIpAddress]
 ----
 
 Looking at the pattern header, we see that this pattern has two parameters, meaning its results will be a pair of values, the first selecting a `HostInstance` from the model, while the second one a `String` literal. The connection between these elements is described by a single constraint ensuring that `ip` variable stores the `nodeIp` attribute of a corresponding `HostInstance`.
@@ -69,11 +65,9 @@ In the following, we define a set of patterns that illustrate additional capabil
 * Notice that if you create a new `HostInstance` element, it will not appear in the match results. This happens because in EMF unset an empty attributes are different. You can write a pattern that finds missing attribute values using the `neg find` construct (see later).
 +
 [[vql-emptyipaddress]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern emptyIpAddress(host: HostInstance) {
-    HostInstance.nodeIp(host, "");
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=emptyIpAddress]
 ----
 +
 
@@ -81,13 +75,9 @@ pattern emptyIpAddress(host: HostInstance) {
 * This pattern is more complex, as it has three parameters and three constraints. The first two describe similar type constraints we have seen. The pattern also compares the values of variables `host1` and `host2` with each other using the `!=` (_not equal_) operator (The `==` operator is also available).
 +
 [[vql-sameipaddress]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : java String) {
-    HostInstance.nodeIp(host1, commonIp);
-    HostInstance.nodeIp(host2, commonIp);
-    host1!=host2;
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=sameIpAddress]
 ----
 +
 
@@ -96,14 +86,9 @@ pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : jav
 * It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables.
 +
 [[vql-ipformatinvalid]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern ipFormatInvalid(host : HostInstance, ip : java String) {
-    HostInstance.nodeIp(host,ip);
-    check (
-        !ip.matches("^[\\d\\.]+")
-    );
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=ipFormatInvalid]
 ----
 +
 
@@ -112,13 +97,9 @@ pattern ipFormatInvalid(host : HostInstance, ip : java String) {
 * It is important to note that if there are multiple transitions between two states, the match set will still include only a single pair of the states, because local variables are not included in the match tuples. If all edges are required, the corresponding transition variable should also be declared as a parameter.
 +
 [[vql-connectedto]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern connectedTo(state: State, other: State){
-    // There exists a transition from `state` to `other`
-    State.outgoingTransitions(state, transition);
-    Transition.targetState(transition, other);
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=connectedTo]
 ----
 +
 
@@ -128,16 +109,9 @@ pattern connectedTo(state: State, other: State){
 * This pattern also includes _single-use_ (or don't care) variables, starting with the character '_'. Such a declaration describes a variable where we are only interested in its existence but not its value.
 +
 [[vql-badhost]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern badHost(host : HostInstance, ip : java String) {
-    find sameIpAddress(host, _other, ip);
-} or {
-    HostInstance.nodeIp(host, ip);
-    find emptyIpAddress(host);
-} or {
-    find ipFormatInvalid(host, ip);
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=badHost]
 ----
 +
 
@@ -146,12 +120,9 @@ pattern badHost(host : HostInstance, ip : java String) {
 * Those actual parameters of the negative pattern call that are not used elsewhere in the calling body are _universally quantified_, meaning that the calling pattern only matches if variables of the calling pattern cannot be bound to matching elements.
 +
 [[vql-goodhost]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern goodHost(host : HostInstance, ip : java String) {
-    HostInstance.nodeIp(host, ip);
-    neg find badHost(host, _);
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=goodHost]
 ----
 +
 
@@ -160,33 +131,18 @@ pattern goodHost(host : HostInstance, ip : java String) {
 * It is possible to calculate the matches of a pattern using the `count find` expressions. The value of such an expression is the number of matches found with the selected number of matches.
 +
 [[vql-countapplications]]
-[source,vql]
+[source,vql,indent=0]
 ----
-private pattern applications(host : HostInstance, app : ApplicationInstance) {
-    HostInstance.applications(host, app);
-}
-
-pattern countApplications(host : HostInstance, m : java Integer) {
-    m == count find applications(host, _);
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=countApplications]
 ----
 
 . List all states of a state machine that are reachable from its initial state (either directly or indirectly)
 * The reachable states are calculated using the transitive closure of the previously introduced connectedTo pattern.
 +
 [[vql-reachablestate]]
-[source,vql]
+[source,vql,indent=0]
 ----
-pattern reachableState(sm :StateMachine, state: State){
-    // The initial state of the statemachine is reachable
-    StateMachine.initial(sm, state);
-} or {
-    StateMachine.initial(sm, initial);
-    // Ensure the state is indeed included in the state machine; unnecessary in a well-formed model
-    StateMachine.states(sm, state);
-    // The + symbol after the pattern name represents transitive closure
-    find connectedTo+(initial, state);
-}
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=reachableState]
 ----
 
 == Validation

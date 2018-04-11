@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.viatra.documentation.example.queries.TutorialQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.documentation.example.queries.TutorialQueries" id="org.eclipse.viatra.documentation.example.queries.TutorialQueries">
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostIpAddress"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.emptyIpAddress"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.sameIpAddress"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.ipFormatInvalid"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.connectedTo"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.badHost"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.goodHost"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.countApplications"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.reachableState"/>
+    </group>
+  </extension>
+</plugin>

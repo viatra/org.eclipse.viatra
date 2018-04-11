@@ -66,6 +66,7 @@
 		<module>../../integration/features/org.eclipse.viatra.integration.uml.feature</module>
 
 		<!-- Documentation -->
+		<module>../../documentation/org.eclipse.viatra.documentation.example</module>
 		<module>../../documentation/org.eclipse.viatra.documentation.help</module>
 		<module>../../releng/org.eclipse.viatra.docs</module>
 

@@ -267,84 +267,20 @@ prettyPrintMatches(results, matches);
 EClassNamesMatcher matcher2 = EClassNamesMatcher.on(engine);
 ----
 
-== The VIATRA Query Generic API
+== Parsing Patterns
 
-All features provided by the generated pattern matcher API can be executed using the generic pattern matcher API of VIATRA. This generic API differs from the generated one in two key aspects: 
+VIATRA provides an API to parse patterns from a text and creates query specifications from them that can be used similar to generated query specifications. This is based on the *generic* pattern matcher API that differs from the generated one in two key aspects: 
 
 * it can be used to apply queries and use other VIATRA Query features *without* generating code and loading the resulting bundles into the running configuration. In other words, you just need to supply the EMF-based in-memory representation (an instance of the Pattern class) 
 * the generic API is not "type safe" in the sense that the Java types of your pattern variables is not known and needs to be handled dynamically (typically by type casting).
 
+NOTE: To use this API, the code from the `org.eclipse.viatra.query.patternlanguage.emf` plug-in has to be added to the classpath (in standalone applications, rely on the Maven dependency `org.eclipse.viatra:viatra-query-language`). This will add further transitive dependencies, most notable on Xtext and Google Guice to your application.
+
 [[query-api-genericapi]]
-[source,java]
-.Example using the generic API
+[source,java,indent=0]
+.Using the Pattern Parser API
 ----
-public String executeDemo_GenericAPI_LoadFromEIQ(String modelPath, String patternFQN) {
-  final StringBuilder results = new StringBuilder();
-  Resource resource = loadModel(modelPath);
-  if (resource != null) {
-    try {
-      // get all matches of the pattern
-      // create an *unmanaged* engine to ensure that noone else is going
-      // to use our engine
-      AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(resource);
-      // instantiate a pattern matcher through the registry, by only knowing its FQN
-      // assuming that there is a pattern definition registered matching 'patternFQN'
-
-      Pattern p = null;
-				
-      // Initializing Xtext-based resource parser
-      // Do not use if VIATRA Query tooling is loaded!
-      EMFPatternLanguageStandaloneSetup.createInjectorAndDoEMFRegistration();
-
-      //Loading pattern resource from file
-      ResourceSet resourceSet = new ResourceSetImpl();
-      URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/src/headless/headlessQueries.vql", false);
-      Resource patternResource = resourceSet.getResource(fileURI, true);
-			    
-      // navigate to the pattern definition that we want
-      if (patternResource != null) {
-        if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
-          EObject topElement = patternResource.getContents().get(0);
-          if (topElement instanceof PatternModel) {
-            for (Pattern _p  : ((PatternModel) topElement).getPatterns()) {
-              if (patternFQN.equals(CorePatternLanguageHelper.getFullyQualifiedName(_p))) {
-                p = _p; break;
-              }
-            }
-          }
-        }
-      }
-      if (p == null) {
-        throw new RuntimeException(String.format("Pattern %s not found", patternFQN));
-      }
-      // A specification builder is used to translate patterns to query specifications
-      SpecificationBuilder builder = new SpecificationBuilder();
-			    
-      // attempt to retrieve a registered query specification		    
-      ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(builder.getOrCreateSpecification(p));
-				
-      if (matcher!=null) {
-        Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
-        prettyPrintMatches(results, matches);
-      }
-				
-      // wipe the engine
-      engine.wipe();
-      // after a wipe, new patterns can be rebuilt with much less overhead than 
-      // complete traversal (as the base indexes will be kept)
-
-      // completely dispose of the engine once's it is not needed
-      engine.dispose();
-      resource.unload();
-    } catch (ViatraQueryException e) {
-      e.printStackTrace();
-      results.append(e.getMessage());
-    }
-  } else {
-    results.append("Resource not found");
-  }
-  return results.toString();
-}
+include::../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/ViatraQueryHeadless.java[tag=patternParser]
 ----
 
 == VIATRA Query Base

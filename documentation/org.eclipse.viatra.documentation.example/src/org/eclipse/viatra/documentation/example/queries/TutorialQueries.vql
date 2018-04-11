@@ -1,0 +1,91 @@
+// Java package declaration, must match the container of the file
+package org.eclipse.viatra.documentation.example.queries
+
+// EPackage import
+import "http://org.eclipse.viatra/model/cps"
+
+// tag::hostIpAddress[]
+// Pattern declaration
+pattern hostIpAddress(host: HostInstance, ip : java String) {
+    // Type constraint stating that variables 'host' and 'ip' are connected via a 'nodeIp' attribute
+    HostInstance.nodeIp(host,ip);
+}
+// end::hostIpAddress[]
+
+// tag::emptyIpAddress[]
+pattern emptyIpAddress(host: HostInstance) {
+    HostInstance.nodeIp(host, "");
+}
+// end::emptyIpAddress[]
+
+
+// tag::sameIpAddress[]
+pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : java String) {
+    HostInstance.nodeIp(host1, commonIp);
+    HostInstance.nodeIp(host2, commonIp);
+    host1!=host2;
+}
+// end::sameIpAddress[]
+
+
+// tag::ipFormatInvalid[]
+pattern ipFormatInvalid(host : HostInstance, ip : java String) {
+    HostInstance.nodeIp(host,ip);
+    check (
+        !ip.matches("^[\\d\\.]+")
+    );
+}
+// end::ipFormatInvalid[]
+
+
+// tag::connectedTo[]
+pattern connectedTo(state: State, other: State){
+    // There exists a transition from `state` to `other`
+    State.outgoingTransitions(state, transition);
+    Transition.targetState(transition, other);
+}
+// end::connectedTo[]
+
+
+// tag::badHost[]
+pattern badHost(host : HostInstance, ip : java String) {
+    find sameIpAddress(host, _other, ip);
+} or {
+    HostInstance.nodeIp(host, ip);
+    find emptyIpAddress(host);
+} or {
+    find ipFormatInvalid(host, ip);
+}
+// end::badHost[]
+
+
+// tag::goodHost[]
+pattern goodHost(host : HostInstance, ip : java String) {
+    HostInstance.nodeIp(host, ip);
+    neg find badHost(host, _);
+}
+// end::goodHost[]
+
+
+// tag::countApplications[]
+private pattern allocatedApplications(host : HostInstance, app : ApplicationInstance) {
+    HostInstance.applications(host, app);
+}
+
+pattern countApplications(host : HostInstance, m : java Integer) {
+    m == count find allocatedApplications(host, _);
+}
+// end::countApplications[]
+
+// tag::reachableState[]
+pattern reachableState(sm :StateMachine, state: State){
+    // The initial state of the statemachine is reachable
+    StateMachine.initial(sm, state);
+} or {
+    StateMachine.initial(sm, initial);
+    // Ensure the state is indeed included in the state machine; unnecessary in a well-formed model
+    StateMachine.states(sm, state);
+    // The + symbol after the pattern name represents transitive closure
+    find connectedTo+(initial, state);
+}
+// end::reachableState[]
