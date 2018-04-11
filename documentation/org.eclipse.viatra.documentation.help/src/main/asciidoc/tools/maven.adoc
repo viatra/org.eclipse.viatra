@@ -152,6 +152,37 @@ Since 1.5, it is possible to use the project dependencies without declaring them
 </build>
 ----
 
+=== Language extension support
+
+Starting with VIATRA 2.0, the viatra-maven-compiler can understand custom annotations, and validate them. To support these features, the new `viatra-query-language-extensions` maven module has to be added to the dependencies of the project.
+
+.Custom annotation support
+[source,xml]
+----
+<plugins>
+<!-- Using maven-clean-plugin to remove previously generated code -->
+<!-- Setting up generator -->
+<plugin>
+  <groupId>org.eclipse.viatra</groupId>
+  <artifactId>viatra-maven-plugin</artifactId>
+  <version>${viatra.version}</version>
+  <configuration>
+    ...
+  </configuration>
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.viatra</groupId>
+      <artifactId>viatra-query-language-extensions</artifactId>
+      <version>${viatra.version}</version>
+    </dependency>
+  </dependencies>
+</plugin>
+</plugins>
+</build>
+----
+
+NOTE: Code generator features bound to annotations, e.g. in case of the validation framework or the query-based derived feature support are still not available in the Maven compiler.
+
 === Troubleshooting
 
 .Cyclic linking

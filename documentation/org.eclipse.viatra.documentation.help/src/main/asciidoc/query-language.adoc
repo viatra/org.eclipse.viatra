@@ -370,6 +370,13 @@ In order to actually use your aggregator in the query language, the second step 
 * Second, to actually instantiate the previously implemented operator class(es) for a given context in a query. The returned operator implementation and its output type may depend on the type of the aggregated values.
 Once again, please read the Javadoc carefully and take a look at the built-in implementations as well.
 
+== Custom annotations ==
+
+Annotations can be used to provide additional information about graph patterns. These can be used by the query runtime as hints (e.g. `@FunctionalDependency`), the query development interface (e.g. `@Label` in the _Query Results_ view) or various generic components (e.g. `@Constraint` is used by the VIATRA validation framework). Such annotations are defined in a similar fashion to the pure function whitelist:
+
+ * Annotations are defined by instances of `IPatternAnnotationValidator`.
+ * The extension point `org.eclipse.viatra.query.patternlanguage.emf.annotation` is used to register such annotations in Eclipse.
+ * Additionally, service loaders are used to register them to standalone applications.
 
 == Known Limitations (v1.7) ==
 

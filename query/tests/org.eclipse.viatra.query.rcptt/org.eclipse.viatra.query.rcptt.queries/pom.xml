@@ -49,8 +49,8 @@
                     <dependencies>
                     <dependency>
                         <groupId>org.eclipse.viatra</groupId>
-                        <artifactId>org.eclipse.viatra.addons.validation.runtime.validation</artifactId>
-                        <version>${viatra.incubation.version}</version>
+                        <artifactId>viatra-query-language-extensions</artifactId>
+                        <version>${viatra.main.version}</version>
                     </dependency>
                 </dependencies>
                 </configuration>
