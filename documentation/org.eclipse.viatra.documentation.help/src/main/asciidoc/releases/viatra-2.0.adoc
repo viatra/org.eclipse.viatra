@@ -25,6 +25,32 @@ pattern superclassOrSelf2(cl : Class, sup : Class) {
 }
 ----
 
+Another new feature is a simplified syntax for pattern calls if the called pattern only contains a single constraint. This is useful for easier negation, transitive closure calculation and aggregation as well. The following examples showcase where this feature can be used to reduce the complexity of existing patterns:
+
+[source,vql]
+----
+pattern simpleNegation(i : Identifiable) {
+	Identifiable(i); // not necessary, only added for readability
+	neg HostInstance(i);  // note there is no `find` keyword here
+}
+
+pattern applicationTypeWithoutHostedInstance(at : ApplicationType, hi : HostInstance) {
+	neg HostInstance.applications.type(hi, at);
+}
+
+pattern countHostInstances(n : java Integer) {
+	n == count HostInstance(_);
+}
+
+pattern sumAvailableCPU(n : java Integer) {
+	n == sum HostInstance.availableCpu(_, #c);
+}
+
+pattern reachableStates(s1 : State, s2 : State) {
+	State.outgoingTransitions.targetState*(s1, s2);
+}
+----
+
 VIATRA 2.0 also introduces a new aggregator for calculating the average of numbers found in pattern matches. As an example, the following pattern can be used to calculate the average number of CPU values over a set of instances.
 
 [source,vql]

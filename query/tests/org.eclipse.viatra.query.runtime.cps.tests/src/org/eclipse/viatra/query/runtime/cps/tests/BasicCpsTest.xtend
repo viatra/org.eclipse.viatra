@@ -48,6 +48,9 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
+import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.HasMoreHostedApplications2QuerySpecification
 
 @RunWith(Parameterized)
 class BasicCpsTest extends AbstractQueryComparisonTest {
@@ -249,6 +252,34 @@ class BasicCpsTest extends AbstractQueryComparisonTest {
                         .on(scope)
                         .with(snapshot)
                         .with(type.hints)
+                        .assertEquals
+    }
+    @Test
+    def void testHasMoreHostedApplications2() {
+        ViatraQueryTest.test("org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplications2")
+                        .on(scope)
+                        .with(snapshot)
+                        .with(type.hints)
+                        .assertEquals
+    }
+    @Test
+    def void testHasMoreHostedApplications2_generic() {
+        new EMFPatternLanguageStandaloneSetup().createStandaloneInjector
+        val IQuerySpecification spec = PatternParser.parser.parse('''
+            package org.eclipse.viatra.query.runtime.cps.tests.queries
+            
+            import "http://org.eclipse.viatra/model/cps"
+            
+            pattern hasMoreHostedApplications2(HI1 : HostInstance, HI2 : HostInstance) {
+                N == count HostInstance.applications(HI1, _AI1);
+                M == count HostInstance.applications(HI2, _AI2);
+                check(N > M);
+            }
+        ''').getQuerySpecification("org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplications2").get
+        ViatraQueryTest.test(spec)
+                        .on(scope)
+                        .with(snapshot)
+                        .with(type.hints)
                         .assertEquals 
     }
     @Test
@@ -440,6 +471,14 @@ class BasicCpsTest extends AbstractQueryComparisonTest {
     @Test
     def void mfTestHasMoreHostedApplications() {
         ViatraQueryTest.test(HasMoreHostedApplicationsQuerySpecification.instance).analyzeWith(coverage)
+                        .on(scope)
+                        .with(snapshot)
+                        .with(type.hints)
+                        .assertEquals 
+    }
+    @Test
+    def void mfTestHasMoreHostedApplications2() {
+        ViatraQueryTest.test(HasMoreHostedApplications2QuerySpecification.instance).analyzeWith(coverage)
                         .on(scope)
                         .with(snapshot)
                         .with(type.hints)

@@ -18,6 +18,7 @@ import org.eclipse.xtext.common.types.JvmTypeAnnotationValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AggregatorType
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 /** 
  * @author Tamas Szabo, Zoltan Ujhelyi
@@ -57,7 +58,7 @@ class AggregatorUtil {
 
     static def int getAggregateVariableIndex(AggregatedValue value) {
         var index = 0
-        for (param : value.getCall().getParameters()) {
+        for (param : PatternLanguageHelper.getCallParameters(value.getCall())) {
             if (param instanceof VariableReference && (param as VariableReference).isAggregator) {
                 return index
             }
@@ -73,7 +74,7 @@ class AggregatorUtil {
      * single aggregate variable should be present, this should be unique. 
      */
     static def VariableReference getAggregatorVariable(AggregatedValue value) {
-        value.getCall().getParameters().filter(VariableReference).findFirst(aggregator)
+        PatternLanguageHelper.getCallParameters(value.getCall()).filter(VariableReference).findFirst(aggregator)
     }
 
     /**
@@ -81,7 +82,7 @@ class AggregatorUtil {
      * it represents an error in the specification.
      */
     static def List<VariableReference> getAllAggregatorVariables(AggregatedValue value) {
-        ImmutableList.copyOf(value.getCall().getParameters().filter(VariableReference).filter(aggregator))
+        ImmutableList.copyOf(PatternLanguageHelper.getCallParameters(value.getCall()).filter(VariableReference).filter(aggregator))
     }
 
 }

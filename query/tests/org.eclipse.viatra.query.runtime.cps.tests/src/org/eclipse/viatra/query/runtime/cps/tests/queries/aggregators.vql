@@ -6,13 +6,23 @@ import "http://org.eclipse.viatra/model/cps"
 pattern sumPriority(s : java Integer) {
 	s == sum find hostPriority(_h, _aT, #c);
 }
+pattern sumPriorityEmbedded(s : java Integer) {
+	s == sum HostInstance.applications.priority(_, #);
+}
 
 pattern minPriority(m : java Integer) {
 	m == min find hostPriority(_h, _aT, #c);
 }
+pattern minPriorityEmbedded(m : java Integer) {
+	m == min HostInstance.applications.priority(_, #);
+}
 
 pattern maxPriority(m : java Integer) {
 	m == max find hostPriority(_h, _aT, #c);
+}
+
+pattern maxPriorityEmbedded(m : java Integer) {
+	m == max HostInstance.applications.priority(_, #);
 }
 
 pattern avgCPU(n : java Integer) {
@@ -21,25 +31,51 @@ pattern avgCPU(n : java Integer) {
 	n == eval(if (c == 0) null else (s / c));
 }
 
+pattern avgCPUEmbedded(n : java Integer) {
+	find sumCPUEmbedded(s);
+	find countHostEmbedded(c);
+	n == eval(if (c == 0) null else (s / c));
+}
+
 
 pattern avgCPU2(n : java Double) {
     n == avg find availableCPU(_, #c);
 }
 
+pattern avgCPU2Embedded(n : java Double) {
+    n == avg HostInstance.availableCpu(_, #c);
+}
+
 pattern avgRamRequirement(n : java Double) {
 	n == avg find ramRequirement(_, #r);
+}
+ 
+pattern avgRamRequirementEmbedded(n : java Double) {
+	n == avg ResourceRequirement.requiredRam(_, #r);
 } 
 
 pattern sumCPU(n : java Integer) {
 	n == sum find availableCPU(_, #c);
 }
 
+pattern sumCPUEmbedded(n : java Integer) {
+	n == sum HostInstance.availableCpu(_, #c);
+}
+
 pattern countHost(n : java Integer) {
 	n == count find hostInstance(_);
 }
 
+pattern countHostEmbedded(n : java Integer) {
+	n == count HostInstance(_);
+}
+
 pattern minCPU(n : java Integer) {
 	n == min find availableCPU(_, #c);
+}
+
+pattern minCPUEmbedded(n : java Integer) {
+	n == min HostInstance.availableCpu(_, #c);
 }
 
 pattern hostInstanceWithMinCPU1(host : HostInstance, value : java Integer) {
@@ -47,16 +83,20 @@ pattern hostInstanceWithMinCPU1(host : HostInstance, value : java Integer) {
 	find availableCPU(host, value);
 }
 
+
 pattern hostInstanceWithMinCPU2(host : HostInstance, value : java Integer) {
 	find minCPU(value);	
 	find availableCPU(host, value);
+}
+pattern hostInstanceWithMinCPUEmbedded(host : HostInstance, value : java Integer) {
+	value == min HostInstance.availableCpu(_, #);
+	HostInstance.availableCpu(host, value);
 }
 
 pattern hasOddApplications(hostInst: HostInstance, appInst : ApplicationInstance) = {
 	CT == count find manyParams(hostInst, _a, _b, appInst, _c);
 	check (CT % 2 == 1);
 }
-
 
 
 // HELPER PATTERNS

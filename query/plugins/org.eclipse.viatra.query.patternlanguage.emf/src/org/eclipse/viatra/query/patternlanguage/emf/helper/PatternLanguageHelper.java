@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,10 +40,14 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Expression;
@@ -61,10 +66,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstr
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.UnaryTypeConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
@@ -470,7 +477,7 @@ public final class PatternLanguageHelper {
                 resultSet.add(((VariableReference) valueReference).getVariable());
             } else if (valueReference instanceof AggregatedValue) {
                 AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-                for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
+                for (ValueReference valueReferenceInner : getCallParameters(aggregatedValue.getCall())) {
                     for (Variable variable : getVariablesFromValueReference(valueReferenceInner)) {
                         resultSet.add(variable);
                     }
@@ -517,7 +524,7 @@ public final class PatternLanguageHelper {
             } else if (constraint instanceof PatternCompositionConstraint) {
                 // All from here, aggregates and normal running variables
                 PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
-                for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                for (ValueReference valueReference : getCallParameters(patternCompositionConstraint.getCall())) {
                     resultList.addAll(getUnnamedVariablesFromValueReference(valueReference, false));
                 }
             } else if (constraint instanceof PathExpressionConstraint) {
@@ -541,7 +548,7 @@ public final class PatternLanguageHelper {
                 }
             } else if (valueReference instanceof AggregatedValue) {
                 AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-                for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
+                for (ValueReference valueReferenceInner : getCallParameters(aggregatedValue.getCall())) {
                     for (Variable variable : getUnnamedVariablesFromValueReference(valueReferenceInner, false)) {
                         if (variable.getName().startsWith("_") || hasAggregateReference(variable)) {
                             resultSet.add(variable);
@@ -770,5 +777,91 @@ public final class PatternLanguageHelper {
                 .map(ReferenceType::getRefname)
                 .map(EStructuralFeature::getEType);
         
+    }
+    
+    /**
+     * Extracts the parameters from a given callable relation
+     * @since 2.0
+     */
+    public static List<ValueReference> getCallParameters(CallableRelation relation) {
+        if (relation instanceof PatternCall) {
+            return ((PatternCall) relation).getParameters();
+        } else if (relation instanceof UnaryTypeConstraint) {
+            return Collections.singletonList(((UnaryTypeConstraint) relation).getVar());
+        } else if (relation instanceof PathExpressionConstraint) {
+            PathExpressionConstraint constraint = (PathExpressionConstraint) relation;
+            List<ValueReference> parameters = new ArrayList<ValueReference>();
+            parameters.add(constraint.getSrc());
+            parameters.add(constraint.getDst());
+            return parameters;
+        } else {
+            throw new IllegalArgumentException("Unknown relation type " + relation.eClass().getName());
+        }
+    }
+    
+    /**
+     * Returns the parameters required to call the mentioned patterns with their corresponding types. In case of
+     * embedded subpatterns, duplicate parameters are removed.
+     * 
+     * @param relation
+     * @since 2.0
+     */
+    public static LinkedHashMap<String, IInputKey> getParameterVariables(CallableRelation relation, ITypeSystem typeSystem, ITypeInferrer typeInferrer) {
+        LinkedHashMap<String, IInputKey> variableMap = new LinkedHashMap<>();
+        
+        List<IInputKey> expectedTypes = calculateExpectedTypes(relation, typeSystem, typeInferrer);
+                
+        for (int i=0; i < expectedTypes.size(); i++) {
+            variableMap.put("p" + Integer.toString(i), expectedTypes.get(i));
+        }
+        return variableMap;
+    }
+    
+    /**
+     * Returns the list of expected types for a given callable relation
+     * @since 2.0
+     */
+    public static List<IInputKey> calculateExpectedTypes(CallableRelation relation, ITypeSystem typeSystem, ITypeInferrer typeInferrer) {
+        if (relation instanceof PatternCall) {
+            List<Variable> patternParameters = ((PatternCall)relation).getPatternRef().getParameters();
+            return patternParameters.stream().map(typeInferrer::getType).collect(Collectors.toList());
+        } else if (relation instanceof UnaryTypeConstraint) {
+            return Collections.singletonList(typeSystem.extractTypeDescriptor(((UnaryTypeConstraint) relation).getType()));
+        } else if (relation instanceof PathExpressionConstraint) {
+            PathExpressionConstraint constraint = (PathExpressionConstraint) relation;
+            final EList<ReferenceType> edges = constraint.getEdgeTypes();
+            
+            List<IInputKey> types = new ArrayList<>();
+            types.add(typeSystem.extractTypeDescriptor(constraint.getSourceType()));
+            types.add(typeSystem.extractColumnDescriptor(edges.get(edges.size() - 1), 1));
+            return types;
+        } else {
+            throw new IllegalArgumentException("Unknown relation type");
+        }
+    }
+    
+    /**
+     * @return true if a given call is negated, aggregated or transitive closure is calculated; false otherwise
+     * @since 2.0
+     */
+    public static boolean isNonSimpleConstraint(CallableRelation constraint) {
+        return isNegative(constraint) || constraint.eContainer() instanceof AggregatedValue || isTransitive(constraint);
+
+    }
+    
+    /**
+     * Decides whether a call is negative
+     * @since 2.0
+     */
+    public static boolean isNegative(CallableRelation call) {
+        return call.eContainer() instanceof PatternCompositionConstraint && ((PatternCompositionConstraint)call.eContainer()).isNegative();
+    }
+    
+    /**
+     * Decides whether a call is transitive or reflexive transitive
+     * @since 2.0
+     */
+    public static boolean isTransitive(CallableRelation call) {
+        return call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE || call.getTransitive() == ClosureType.TRANSITIVE;
     }
 }

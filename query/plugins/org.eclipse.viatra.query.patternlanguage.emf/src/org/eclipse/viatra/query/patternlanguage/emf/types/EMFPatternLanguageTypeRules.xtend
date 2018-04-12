@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.PatternLanguageTypeRul
 import org.eclipse.viatra.query.patternlanguage.emf.types.TypeInformation
 import org.eclipse.viatra.query.patternlanguage.emf.types.judgements.TypeJudgement
 import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 /**
  * @author Zoltan Ujhelyi
@@ -30,6 +31,9 @@ class EMFPatternLanguageTypeRules extends PatternLanguageTypeRules {
     * @since 2.0
     */
    def dispatch void inferTypes(EClassifierConstraint constraint, TypeInformation information) {
+       if (PatternLanguageHelper.isNonSimpleConstraint(constraint)) {
+           return;
+       }
         val type = if (typeSystem.isValidType(constraint.type)) {
             typeSystem.extractTypeDescriptor(constraint.type)
         } else {

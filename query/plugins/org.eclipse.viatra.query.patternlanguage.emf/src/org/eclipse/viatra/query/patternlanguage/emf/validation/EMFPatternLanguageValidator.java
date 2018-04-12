@@ -513,7 +513,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                 PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
                 if (!patternCompositionConstraint.isNegative()) {
                     // Positive composition (find)
-                    for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                    for (ValueReference valueReference : PatternLanguageHelper.getCallParameters(patternCompositionConstraint.getCall())) {
                         if (!isValueReferenceComputed(valueReference)) {
                             positiveVariables
                                     .addAll(PatternLanguageHelper.getVariablesFromValueReference(valueReference));
@@ -527,7 +527,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     }
                 } else {
                     // Negative composition (neg find)
-                    for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                    for (ValueReference valueReference : PatternLanguageHelper.getCallParameters(patternCompositionConstraint.getCall())) {
                         generalVariables
                                 .addAll(PatternLanguageHelper.getVariablesFromValueReference(valueReference));
                     }
@@ -586,7 +586,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
                     if (!patternCompositionConstraint.isNegative()) {
                         // Positive composition (find), with aggregates in it
-                        for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                        for (ValueReference valueReference : PatternLanguageHelper.getCallParameters(patternCompositionConstraint.getCall())) {
                             addPositiveVariablesFromValueReference(unnamedRunningVariables,
                                     justPositiveUnionFindForVariables, positiveVariables, valueReference);
                         }

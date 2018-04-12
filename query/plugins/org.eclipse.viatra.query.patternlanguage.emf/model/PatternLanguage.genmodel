@@ -24,38 +24,49 @@
       <genEnumLiterals ecoreEnumLiteral="PatternLanguage.ecore#//CompareFeature/equality"/>
       <genEnumLiterals ecoreEnumLiteral="PatternLanguage.ecore#//CompareFeature/inequality"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="PatternLanguage.ecore#//ClosureType">
+      <genEnumLiterals ecoreEnumLiteral="PatternLanguage.ecore#//ClosureType/original"/>
+      <genEnumLiterals ecoreEnumLiteral="PatternLanguage.ecore#//ClosureType/reflexive_transitive"/>
+      <genEnumLiterals ecoreEnumLiteral="PatternLanguage.ecore#//ClosureType/transitive"/>
+    </genEnums>
     <genClasses ecoreClass="PatternLanguage.ecore#//VQLImportSection">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//VQLImportSection/packageImport"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//VQLImportSection/patternImport"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//VQLImportSection/toString"/>
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//PackageImport">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PackageImport/ePackage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//PackageImport/alias"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PackageImport/toString"/>
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//PatternImport">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternImport/pattern"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//PatternImport/packageName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternImport/patterns"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PatternImport/toString"/>
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//EClassifierConstraint">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//EClassifierConstraint/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//EClassifierConstraint/var"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//EClassifierConstraint/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//EnumValue">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//EnumValue/enumeration"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//EnumValue/literal"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//EnumValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//PatternModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternModel/importPackages"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//PatternModel/packageName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternModel/patterns"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PatternModel/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//ClassType">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//ClassType/metamodel"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//ClassType/classname"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//ClassType/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//ReferenceType">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//ReferenceType/refname"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//ReferenceType/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Pattern">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Pattern/annotations"/>
@@ -63,108 +74,138 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Pattern/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Pattern/parameters"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Pattern/bodies"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Pattern/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Annotation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Annotation/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Annotation/parameters"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Annotation/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//AnnotationParameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//AnnotationParameter/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//AnnotationParameter/value"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//AnnotationParameter/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Modifiers">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Modifiers/private"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Modifiers/execution"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Modifiers/toString" />
     </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//Expression"/>
+    <genClasses ecoreClass="PatternLanguage.ecore#//Expression">
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Expression/toString" />
+    </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Variable">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Variable/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//Variable/type"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Variable/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//VariableReference">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//VariableReference/aggregator"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//VariableReference/var"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//VariableReference/variable"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//VariableReference/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Type">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Type/typename"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Type/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//EntityType"/>
     <genClasses ecoreClass="PatternLanguage.ecore#//PatternBody">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//PatternBody/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternBody/constraints"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternBody/variables"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PatternBody/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Constraint"/>
     <genClasses ecoreClass="PatternLanguage.ecore#//PatternCall">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternCall/patternRef"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//PatternCall/transitive"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternCall/parameters"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PatternCall/toString" />
     </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//PathExpressionElement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionElement/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionElement/tail"/>
+    <genClasses ecoreClass="PatternLanguage.ecore#//ValueReference">
+      <genOperations ecoreOperation="PatternLanguage.ecore#//ValueReference/toString" />
     </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//ValueReference"/>
-    <genClasses ecoreClass="PatternLanguage.ecore#//LiteralValueReference"/>
-    <genClasses ecoreClass="PatternLanguage.ecore#//ComputationValue"/>
+    <genClasses ecoreClass="PatternLanguage.ecore#//LiteralValueReference">
+      <genOperations ecoreOperation="PatternLanguage.ecore#//LiteralValueReference/toString" />
+    </genClasses>
+    <genClasses ecoreClass="PatternLanguage.ecore#//ComputationValue">
+      <genOperations ecoreOperation="PatternLanguage.ecore#//ComputationValue/toString" />
+    </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//ParameterRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//ParameterRef/referredParam"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//ParameterRef/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//Parameter/direction"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//Parameter/toString" />
     </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//LocalVariable"/>
+    <genClasses ecoreClass="PatternLanguage.ecore#//LocalVariable">
+      <genOperations ecoreOperation="PatternLanguage.ecore#//LocalVariable/toString" />
+    </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//JavaType">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//JavaType/classRef"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//JavaType/toString" />
     </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//RelationType"/>
+    <genClasses ecoreClass="PatternLanguage.ecore#//RelationType">
+      <genOperations ecoreOperation="PatternLanguage.ecore#//RelationType/toString" />
+    </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//TypeCheckConstraint">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//TypeCheckConstraint/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//TypeCheckConstraint/var"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//TypeCheckConstraint/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//PatternCompositionConstraint">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//PatternCompositionConstraint/negative"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PatternCompositionConstraint/call"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PatternCompositionConstraint/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//CompareConstraint">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//CompareConstraint/leftOperand"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//CompareConstraint/feature"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//CompareConstraint/rightOperand"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//CompareConstraint/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//CheckConstraint">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//CheckConstraint/expression"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//CheckConstraint/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//PathExpressionConstraint">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionConstraint/head"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionConstraint/edgeTypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionConstraint/sourceType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionConstraint/src"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionConstraint/dst"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//PathExpressionConstraint/toString" />
     </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//PathExpressionHead">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionHead/src"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//PathExpressionHead/dst"/>
-    </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//PathExpressionTail"/>
     <genClasses ecoreClass="PatternLanguage.ecore#//StringValue">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//StringValue/value"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//StringValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//NumberValue">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//NumberValue/value"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//NumberValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//BoolValue">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//BoolValue/value"/>
-    </genClasses>
-    <genClasses ecoreClass="PatternLanguage.ecore#//VariableValue">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//VariableValue/value"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//BoolValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//ListValue">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//ListValue/values"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//ListValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//FunctionEvaluationValue">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//FunctionEvaluationValue/expression"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//FunctionEvaluationValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//AggregatedValue">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//AggregatedValue/aggregator"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//AggregatedValue/call"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//AggregatedValue/aggregateType"/>
+      <genOperations ecoreOperation="PatternLanguage.ecore#//AggregatedValue/toString" />
+    </genClasses>
+    <genClasses image="false" ecoreClass="PatternLanguage.ecore#//CallableRelation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//CallableRelation/transitive"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="PatternLanguage.ecore#//UnaryTypeConstraint">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//UnaryTypeConstraint/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//UnaryTypeConstraint/var"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

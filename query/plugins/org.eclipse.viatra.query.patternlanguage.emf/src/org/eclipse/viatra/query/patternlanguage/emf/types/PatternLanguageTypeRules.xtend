@@ -41,6 +41,8 @@ import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue
 import java.util.HashSet
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference
+import org.eclipse.viatra.query.patternlanguage.emf.vql.UnaryTypeConstraint
 
 /**
  * @author Zoltan Ujhelyi
@@ -97,7 +99,8 @@ class PatternLanguageTypeRules {
        if (!constraint.isNegative) {
            // No type information can be inferred from negative calls
            val call = constraint.call
-           inferCallTypes(call, information)
+           // in case of positive constraints the call can be only PatternCall
+           inferCallTypes(call as PatternCall, information)
        }
    }
    
@@ -109,6 +112,9 @@ class PatternLanguageTypeRules {
    }
    
    def dispatch void inferTypes(TypeCheckConstraint constraint, TypeInformation information) {
+        if (PatternLanguageHelper.isNonSimpleConstraint(constraint)) {
+            return;
+        }
         val constraintType = constraint.type
         if (constraintType instanceof JavaType && typeSystem.isValidType(constraintType)) {
             val sourceType = typeSystem.extractTypeDescriptor(constraintType)
@@ -119,6 +125,9 @@ class PatternLanguageTypeRules {
     }
    
    def dispatch void inferTypes(PathExpressionConstraint constraint, TypeInformation information) {
+       if (PatternLanguageHelper.isNonSimpleConstraint(constraint)) {
+           return;
+       }
        val sourceType = if (!typeSystem.isValidType(constraint.sourceType)) {
            BottomTypeKey.INSTANCE
        } else {
@@ -143,7 +152,7 @@ class PatternLanguageTypeRules {
             //Unresolved aggregator type, not a type error
             return
         }
-        if (reference.call?.patternRef === null) {
+        if (reference.call instanceof PatternCall && (reference.call as PatternCall)?.patternRef === null) {
             //Unresolved called pattern, not a type error
             return
         }
@@ -183,17 +192,18 @@ class PatternLanguageTypeRules {
             val boolean returnTypeUnique = returnTypeSet.size == returnTypes.size
 
             val index = AggregatorUtil.getAggregateVariableIndex(reference)
+            val callParameters = PatternLanguageHelper.getCallParameters(reference.call)
             for (var i=0; i < returnTypes.size; i++) {
                 information.provideType(new ConditionalJudgement(
                     reference, 
                     new JavaTransitiveInstancesKey(returnTypes.get(i).identifier),
-                    reference.call.parameters.get(index), 
+                    callParameters.get(index), 
                     new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier)
                 ))
                 // If return types are not unique for each source type, do not provide backward conditions
                 if (returnTypeUnique) {
                     information.provideType(new ConditionalJudgement(
-                        reference.call.parameters.get(index), 
+                        callParameters.get(index), 
                         new JavaTransitiveInstancesKey(parameterTypes.get(i).identifier),
                         reference, 
                         new JavaTransitiveInstancesKey(returnTypes.get(i).identifier)
@@ -203,13 +213,29 @@ class PatternLanguageTypeRules {
             
             // Aggregate variable needs to be connected to called pattern;
             // Other variables are not connected, similar to negative pattern calls
-            if (index < reference.call.parameters.size && index < reference.call.patternRef.parameters.size) {
-                // Only provide type judgement if appropriate number of parameters exists
-                information.provideType(
-                    new ParameterTypeJudgement(reference.call.parameters.get(index), reference.call.patternRef.parameters.get(index))
-                )
-            }
+            reference.call.inferParameterType(information, callParameters.get(index), index)
            }
+   }
+   
+   private def dispatch void inferParameterType(PatternCall call, TypeInformation information, ValueReference value, int parameterIndex) {
+       if (parameterIndex < call.parameters.size && parameterIndex < call.patternRef.parameters.size) {
+                // Only provide type judgement if appropriate number of parameters exists
+            information.provideType(new ParameterTypeJudgement(value, call.patternRef.parameters.get(parameterIndex)));
+       }
+   }
+   
+   private def dispatch void inferParameterType(UnaryTypeConstraint constraint, TypeInformation information, ValueReference value, int parameterIndex) {
+       information.provideType(new TypeJudgement(value, typeSystem.extractTypeDescriptor(constraint.type)));
+   }
+   
+   private def dispatch void inferParameterType(PathExpressionConstraint constraint, TypeInformation information, ValueReference value, int parameterIndex) {
+       if (parameterIndex === 0) {
+           information.provideType(new TypeJudgement(value, typeSystem.extractTypeDescriptor(constraint.sourceType)));    
+       } else if (parameterIndex === 1) {
+           information.provideType(new TypeJudgement(value, typeSystem.extractColumnDescriptor(constraint.edgeTypes.get(constraint.edgeTypes.size - 1), 1)));    
+       } else {
+           throw new IllegalArgumentException("Invalid parameter index")
+       }
    }
    
    def dispatch void inferTypes(Expression reference, TypeInformation information) {

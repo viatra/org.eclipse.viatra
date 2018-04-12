@@ -37,3 +37,29 @@ pattern notApplicationInstanceIdentifiable3(notApplicationInstance : Application
     Identifiable(notApplicationInstance);
     neg find applicationInstances(notApplicationInstance);
 }
+
+/**
+ * Reproduction case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=506253
+ * 
+ * <br /> If the inferred type is ApplicationInstance, the use of LS throws an exception. 
+ */
+pattern notApplicationInstanceIdentifiableEmbedded(notApplicationInstance){
+    Identifiable(notApplicationInstance);
+    neg ApplicationInstance(notApplicationInstance);
+}
+
+/**
+ * If the parameter is explicitly typed, the result should be the same for both matchers.
+ */
+pattern notApplicationInstanceIdentifiableEmbedded2(notApplicationInstance : Identifiable){
+    Identifiable(notApplicationInstance);
+    neg ApplicationInstance(notApplicationInstance);
+}
+
+/**
+ * If the parameters is explicitly downcast, the result should still be the same (but empty) for both matchers..
+ */
+pattern notApplicationInstanceIdentifiableEmbedded3(notApplicationInstance : ApplicationInstance){
+    Identifiable(notApplicationInstance);
+    neg ApplicationInstance(notApplicationInstance);
+}

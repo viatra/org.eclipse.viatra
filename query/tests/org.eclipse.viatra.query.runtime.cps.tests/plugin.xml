@@ -2,16 +2,26 @@
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.Aggregators" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.Aggregators" id="org.eclipse.viatra.query.runtime.cps.tests.queries.Aggregators">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sumPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sumPriorityEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.minPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.minPriorityEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.maxPriority"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.maxPriorityEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPUEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPU2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgCPU2Embedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgRamRequirement"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.avgRamRequirementEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sumCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.sumCPUEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.countHost"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.countHostEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.minCPU"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.minCPUEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithMinCPU1"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithMinCPU2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstanceWithMinCPUEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasOddApplications"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.availableCPU"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostPriority"/>
@@ -91,6 +101,9 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiable"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiable2"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiable3"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiableEmbedded"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiableEmbedded2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiableEmbedded3"/>
     </group>
   </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.RecursiveQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
@@ -127,6 +140,7 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostCommunicationPartner"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostedApplications"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplications"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasMoreHostedApplications2"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hasTheMostHostedApplications"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.finalPattern"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.instances"/>
@@ -135,8 +149,10 @@
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.TransitiveClosureQueries">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesTC"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesTCEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesRTC1"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesRTC2"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.statesRTCEmbedded"/>
     </group>
   </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.TrickyJoin" point="org.eclipse.viatra.query.runtime.queryspecification">

@@ -34,6 +34,9 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.testing.core.ModelLoadHelper
 import org.junit.Before
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.NotApplicationInstanceIdentifiableEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.NotApplicationInstanceIdentifiableEmbedded2QuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.NotApplicationInstanceIdentifiableEmbedded3QuerySpecification
 
 // This test is necessary because of 481263 and 491248 bugs
 @RunWith(Parameterized)
@@ -143,6 +146,7 @@ class VariableEqualityCpsTest {
                         .withAll
                         .assertEquals
     }
+    
     @Test
     def void invalidInferredParameterType2(){
         ViatraQueryTest.test(NotApplicationInstanceIdentifiable2QuerySpecification.instance)
@@ -150,9 +154,34 @@ class VariableEqualityCpsTest {
                         .withAll
                         .assertEquals
     }
+    
     @Test
     def void invalidInferredParameterType3(){
         ViatraQueryTest.test(NotApplicationInstanceIdentifiable3QuerySpecification.instance)
+                        .on(scope)
+                        .withAll
+                        .assertEquals
+    }
+    
+    @Test
+    def void invalidInferredParameterTypeEmbedded(){
+        ViatraQueryTest.test(NotApplicationInstanceIdentifiableEmbeddedQuerySpecification.instance)
+                        .on(scope)
+                        .withAll
+                        .assertEquals
+    }
+    
+    @Test
+    def void invalidInferredParameterTypeEmbedded2(){
+        ViatraQueryTest.test(NotApplicationInstanceIdentifiableEmbedded2QuerySpecification.instance)
+                        .on(scope)
+                        .withAll
+                        .assertEquals
+    }
+    
+    @Test
+    def void invalidInferredParameterTypeEmbedded3(){
+        ViatraQueryTest.test(NotApplicationInstanceIdentifiableEmbedded3QuerySpecification.instance)
                         .on(scope)
                         .withAll
                         .assertEquals

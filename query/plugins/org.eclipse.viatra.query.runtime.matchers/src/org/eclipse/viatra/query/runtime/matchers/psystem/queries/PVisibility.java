@@ -24,6 +24,10 @@ public enum PVisibility {
     /**
      * A private query is not expected to be called directly, only by a different query matcher. 
      */
-    PRIVATE
+    PRIVATE,
+    /**
+     * A query that is only used inside a single caller query and is invisible outside.
+     */
+    EMBEDDED
 
 }

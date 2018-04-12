@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareFeature;
@@ -38,6 +39,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.xtext.util.Strings;
@@ -118,6 +120,20 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
             return "+";
         default:
             return "";
+        }
+    }
+    
+    String text(CallableRelation relation) {
+        if (relation instanceof PatternCall) {
+            return text((PatternCall)relation);
+        } else if (relation instanceof EClassifierConstraint) {
+            return text((EClassifierConstraint)relation);
+        } else if (relation instanceof TypeCheckConstraint) {
+            return text((TypeCheckConstraint)relation);
+        } else if (relation instanceof PathExpressionConstraint) {
+            return text((PathExpressionConstraint)relation);
+        } else {
+            return "Unknown callable";
         }
     }
     

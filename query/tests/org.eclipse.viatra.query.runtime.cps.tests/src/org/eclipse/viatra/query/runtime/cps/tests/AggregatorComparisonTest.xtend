@@ -32,6 +32,23 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.SumPriorityQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.SumPriorityEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MinPriorityEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MinPriorityQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MaxPriorityQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MaxPriorityEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AvgCPUQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AvgCPUEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AvgCPU2EmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.AvgCPU2QuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.SumCPUQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.SumCPUEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.CountHostQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.CountHostEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MinCPUEmbeddedQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.MinCPUQuerySpecification
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.HostInstanceWithMinCPUEmbeddedQuerySpecification
 
 @RunWith(Parameterized)
 class AggregatorComparisonTest {
@@ -40,9 +57,20 @@ class AggregatorComparisonTest {
     def static Collection<Object[]> testData() {
         newArrayList(Sets.cartesianProduct(
             newHashSet(BackendType.values),
-            #{"org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem"},
+            #{
+                "org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem",
+                "org.eclipse.viatra.query.runtime.cps.tests/models/instances/aggregators.cyberphysicalsystem"
+            },
             <List<IQuerySpecification<?>>>newHashSet(
-                #[HostInstanceWithMinCPU1QuerySpecification.instance, HostInstanceWithMinCPU2QuerySpecification.instance]
+                #[HostInstanceWithMinCPU1QuerySpecification.instance, HostInstanceWithMinCPU2QuerySpecification.instance, HostInstanceWithMinCPUEmbeddedQuerySpecification.instance],
+                #[SumPriorityQuerySpecification.instance, SumPriorityEmbeddedQuerySpecification.instance],
+                #[MinPriorityQuerySpecification.instance, MinPriorityEmbeddedQuerySpecification.instance],
+                #[MaxPriorityQuerySpecification.instance, MaxPriorityEmbeddedQuerySpecification.instance],
+                #[AvgCPUQuerySpecification.instance, AvgCPUEmbeddedQuerySpecification.instance],
+                #[AvgCPU2QuerySpecification.instance, AvgCPU2EmbeddedQuerySpecification.instance],
+                #[SumCPUQuerySpecification.instance, SumCPUEmbeddedQuerySpecification.instance],
+                #[CountHostQuerySpecification.instance, CountHostEmbeddedQuerySpecification.instance],
+                #[MinCPUQuerySpecification.instance, MinCPUEmbeddedQuerySpecification.instance]
             )
         ).map[it.toArray])
     }

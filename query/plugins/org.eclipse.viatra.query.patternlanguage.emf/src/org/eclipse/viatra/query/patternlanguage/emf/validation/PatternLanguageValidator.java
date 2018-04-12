@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -32,6 +33,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotatio
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.DuplicationChecker;
+import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider;
@@ -39,6 +41,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
@@ -56,6 +59,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.emf.util.ASTStringProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.PureWhitelist;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -267,16 +271,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
      */
     @Check
     public void checkAggregatorCallTypes(AggregatedValue expression) {
-        Pattern calledPattern = expression.getCall().getPatternRef();
-        if (calledPattern == null || calledPattern.eIsProxy()) {
-            // If the called pattern is not available, type checking can be ignored
-            return;
+        if (expression.getCall() instanceof PatternCall) {
+            Pattern calledPattern = ((PatternCall)expression.getCall()).getPatternRef();
+            if (calledPattern == null || calledPattern.eIsProxy()) {
+                // If the called pattern is not available, type checking can be ignored
+                return;
+            }
         }
-        List<ValueReference> callVariables = expression.getCall().getParameters();
-        List<Variable> patternParameters = calledPattern.getParameters();
+        List<ValueReference> callVariables = PatternLanguageHelper.getCallParameters(expression.getCall());
+        List<IInputKey> expectedTypes = PatternLanguageHelper.calculateExpectedTypes(expression.getCall(), typeSystem, typeInferrer);
         //maxIndex is used to avoid overindexing in case of incorrect number of parameters
-        int maxIndex = Math.min(callVariables.size(), patternParameters.size());
-        produceParameterTypeWarnings(callVariables, patternParameters, maxIndex);
+        int maxIndex = Math.min(callVariables.size(), expectedTypes.size());
+        produceParameterTypeWarnings(callVariables, expectedTypes, maxIndex);
     }
 
     @Check
@@ -320,54 +326,50 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             final int callParameterSize = call.getParameters().size();
             if (definitionParameterSize != callParameterSize) {
                 error("The pattern " + getFormattedPattern(call.getPatternRef())
-                        + " is not applicable for the arguments(" + getFormattedArgumentsList(call) + ")",
+                        + " is not applicable for the arguments(" + getFormattedArgumentsList(call.getParameters()) + ")",
                         PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF,
                         IssueCodes.WRONG_NUMBER_PATTERNCALL_PARAMETER);
             }
         }
     }
-
-    private boolean isTransitive(PatternCall call) {
-        return call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE || call.getTransitive() == ClosureType.TRANSITIVE;
-    }
     
     @Check
-    public void checkApplicabilityOfTransitiveClosureInPatternCall(PatternCall call) {
-        final Pattern patternRef = call.getPatternRef();
-        final EObject eContainer = call.eContainer();
-        if (patternRef != null && isTransitive(call)) {
-            if (patternRef.getParameters() != null) {
-                final int arity = patternRef.getParameters().size();
-                if (2 != arity) {
-                    error(String.format(TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL, getFormattedPattern(patternRef),
-                            arity), PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
-                            IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
-                } else {
+    public void checkApplicabilityOfTransitiveClosureInPatternCall(CallableRelation call) {
+        if (PatternLanguageHelper.isTransitive(call)) {
+            final List<IInputKey> expectedTypes = PatternLanguageHelper.calculateExpectedTypes(call, typeSystem, typeInferrer);
+            final int arity = expectedTypes.size();
+            if (2 != arity) {
+                error(String.format(TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL, getFormattedCall(call),
+                        arity), PatternLanguagePackage.Literals.CALLABLE_RELATION__TRANSITIVE,
+                        IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
+            } else {
 
-                    IInputKey type1 = typeInferrer.getType(patternRef.getParameters().get(0));
-                    IInputKey type2 = typeInferrer.getType(patternRef.getParameters().get(1));
-                    if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
-                        error(String.format(
-                                "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
-                                typeSystem.typeString(type1), typeSystem.typeString(type2)),
-                                PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
-                                IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
-                    }
-                    
-                    if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE && !type1.isEnumerable()) {
-                        error(String.format(
-                                "Reflexive transitive closure is not supported over non enumerable type %s.",
-                                typeSystem.typeString(type1)),
-                                PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
-                                0,
-                                IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
-                    }
+                IInputKey type1 = expectedTypes.get(0);
+                IInputKey type2 = expectedTypes.get(1);
+                if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
+                    error(String.format(
+                            "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
+                            typeSystem.typeString(type1), typeSystem.typeString(type2)),
+                            PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
+                            IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
+                }
+                
+                if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE && !type1.isEnumerable()) {
+                    error(String.format(
+                            "Reflexive transitive closure is not supported over non enumerable type %s.",
+                            typeSystem.typeString(type1)),
+                            PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
+                            0,
+                            IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
                 }
             }
-            if (eContainer != null && (!(eContainer instanceof PatternCompositionConstraint)
-                    || ((PatternCompositionConstraint) eContainer).isNegative())) {
-                error(String.format(TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION, getFormattedPattern(patternRef)),
-                        PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
+            
+            final EObject eContainer = call.eContainer();
+            if ((eContainer instanceof PatternCompositionConstraint && ((PatternCompositionConstraint)eContainer).isNegative())
+                    ||
+                 eContainer instanceof AggregatedValue) {
+                error(String.format(TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION, getFormattedCall(call)),
+                        PatternLanguagePackage.Literals.CALLABLE_RELATION__TRANSITIVE,
                         IssueCodes.TRANSITIVE_PATTERNCALL_NOT_APPLICABLE);
             }
         }
@@ -579,7 +581,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             if (isNegativePatternCall(call)) {
                 error(String.format(RECURSIVE_PATTERN_CALL_NEGATIVE, buffer.toString()), call,
                         PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
-            } else if (isTransitive(call)) {
+            } else if (PatternLanguageHelper.isTransitive(call)) {
                 error(String.format(RECURSIVE_PATTERN_CALL_TRANSITIVE, buffer.toString()), call,
                         PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
             } else {
@@ -729,30 +731,21 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         return "UNDEFINED";
     }
 
-    private String getFormattedPattern(Pattern pattern) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(pattern.getName());
-        builder.append("(");
-        for (Iterator<Variable> iter = pattern.getParameters().iterator(); iter.hasNext();) {
-            builder.append(iter.next().getName());
-            if (iter.hasNext()) {
-                builder.append(", ");
-            }
+    private String getFormattedCall(CallableRelation relation) {
+        if (relation instanceof PatternCall) {
+            return getFormattedPattern(((PatternCall) relation).getPatternRef());
+        } else {
+            return ASTStringProvider.INSTANCE.doSwitch(relation);
         }
-        builder.append(")");
-        return builder.toString();
+    }
+    
+    private String getFormattedPattern(Pattern pattern) {
+        return pattern.getParameters().stream().map(Variable::getName)
+                .collect(Collectors.joining(", ", pattern.getName() + "(", ")"));
     }
 
-    protected String getFormattedArgumentsList(PatternCall call) {
-        StringBuilder builder = new StringBuilder();
-        for (Iterator<ValueReference> iter = call.getParameters().iterator(); iter.hasNext();) {
-            ValueReference parameter = iter.next();
-            builder.append(getConstantAsString(parameter));
-            if (iter.hasNext()) {
-                builder.append(", ");
-            }
-        }
-        return builder.toString();
+    protected String getFormattedArgumentsList(List<ValueReference> arguments) {
+        return arguments.stream().map(this::getConstantAsString).collect(Collectors.joining(", "));
     }
 
     @Check
@@ -868,10 +861,10 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         Predicate<ValueReference> isSingleUseVariable = input -> 
             input instanceof VariableReference ? ((VariableReference) input).getVar().startsWith("_") : false;
         if (constraint.isNegative()) {
-            List<ValueReference> callVariables = constraint.getCall().getParameters();
-            List<Variable> patternParameters = constraint.getCall().getPatternRef().getParameters();
+            List<ValueReference> callVariables = PatternLanguageHelper.getCallParameters(constraint.getCall());
+            List<IInputKey> expectedTypes = PatternLanguageHelper.calculateExpectedTypes(constraint.getCall(), typeSystem, typeInferrer);
             //maxIndex is used to avoid overindexing in case of incorrect number of parameters
-            int maxIndex = Math.min(callVariables.size(), patternParameters.size());
+            int maxIndex = Math.min(callVariables.size(), expectedTypes.size());
             
             if (Iterables.all(callVariables, isSingleUseVariable)) {
                 warning("This negative pattern call is a global constraint: "
@@ -881,17 +874,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                         IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
             }
             
-            produceParameterTypeWarnings(callVariables, patternParameters, maxIndex);
+            produceParameterTypeWarnings(callVariables, expectedTypes, maxIndex);
         }
     }
-
-    private void produceParameterTypeWarnings(List<ValueReference> callVariables, List<Variable> patternParameters,
+    
+    private void produceParameterTypeWarnings(List<ValueReference> callVariables, List<IInputKey> expectedTypes,
             int maxIndex) {
         for (int i = 0; i < maxIndex; i++ ) {
             IInputKey actualType = typeInferrer.getType(callVariables.get(i));
-            IInputKey expectedType = typeInferrer.getType(patternParameters.get(i));
+            IInputKey expectedType = expectedTypes.get(i);
             
-            if (actualType != null && expectedType != null && 
+            if (actualType != null && expectedType != null &&
+                    actualType != BottomTypeKey.INSTANCE && expectedType != BottomTypeKey.INSTANCE &&
                     // If the expression matches the parameter type, it is valid 
                     !( typeSystem.isConformant(expectedType, actualType) 
                     // The inverse relation is also valid: the neg only applies to a subset of the class 

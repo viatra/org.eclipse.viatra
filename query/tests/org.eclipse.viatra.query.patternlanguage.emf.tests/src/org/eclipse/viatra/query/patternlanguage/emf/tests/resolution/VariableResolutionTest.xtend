@@ -27,6 +27,7 @@ import static org.junit.Assert.*
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -87,8 +88,8 @@ class VariableResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(1)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PatternCompositionConstraint
-        assertNotSame((constraint.call.parameters.get(1) as VariableReference).variable.name,
-            (constraint.call.parameters.get(2) as VariableReference).variable.name
+        assertNotSame((PatternLanguageHelper.getCallParameters(constraint.call).get(1) as VariableReference).variable.name,
+            (PatternLanguageHelper.getCallParameters(constraint.call).get(2) as VariableReference).variable.name
         )
     }
     

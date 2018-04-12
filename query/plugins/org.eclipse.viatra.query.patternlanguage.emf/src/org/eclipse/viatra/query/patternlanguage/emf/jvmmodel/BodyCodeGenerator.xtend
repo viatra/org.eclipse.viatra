@@ -18,11 +18,13 @@ import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternModelAcceptor
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody
-import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider
@@ -35,6 +37,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
@@ -48,11 +51,12 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.xtext.xbase.XNumberLiteral
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
-import org.eclipse.xtext.xbase.XNumberLiteral
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer
+import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -64,20 +68,39 @@ class BodyCodeGenerator extends StringConcatenationClient {
 
     val Pattern pattern
     val PatternBody body
+    val CallableRelation call
     extension val EMFPatternLanguageJvmModelInferrerUtil util
     val IErrorFeedback feedback
     val Serializer serializer
     val JvmTypeReferenceBuilder typeReferences
     static val INDENTATION = '''    '''
+    val ITypeInferrer typeInferrer
+    val ITypeSystem typeSystem
 
     new(Pattern pattern, PatternBody body, EMFPatternLanguageJvmModelInferrerUtil util, IErrorFeedback feedback,
-        Serializer serializer, JvmTypeReferenceBuilder typeReferences) {
+        Serializer serializer, JvmTypeReferenceBuilder typeReferences, ITypeInferrer typeInferrer, ITypeSystem typeSystem) {
         this.pattern = pattern
         this.body = body
         this.util = util
         this.feedback = feedback
         this.serializer = serializer
         this.typeReferences = typeReferences
+        this.call = null
+        this.typeInferrer = typeInferrer
+        this.typeSystem = typeSystem
+    }
+    
+    new(Pattern pattern, CallableRelation call, EMFPatternLanguageJvmModelInferrerUtil util, IErrorFeedback feedback,
+        Serializer serializer, JvmTypeReferenceBuilder typeReferences, ITypeInferrer typeInferrer, ITypeSystem typeSystem) {
+        this.pattern = pattern
+        this.body = null
+        this.call = call
+        this.util = util
+        this.feedback = feedback
+        this.serializer = serializer
+        this.typeReferences = typeReferences
+        this.typeInferrer = typeInferrer
+        this.typeSystem = typeSystem
     }
 
     override protected appendTo(TargetStringConcatenation target) {
@@ -88,9 +111,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override getResult() {
             }
 
-            override acceptVariable(Variable variable) {
-                declareVariable(variable.name, target)
-                variable.name
+            override acceptVariable(String variableName) {
+                declareVariable(variableName, target)
+                variableName
             }
 
             override createVirtualVariable() {
@@ -132,7 +155,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 }
             }
 
-            override acceptExportedParameters(List<Variable> parameters) {
+            override acceptExportedParameters(List<String> parameterNames) {
                 target.append('''
                 body.setSymbolicParameters(''')
                 target.append(Arrays)
@@ -140,11 +163,11 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(ExportedParameter)
                 target.append('''>asList(
                             ''')
-                parameters.forEach[parameter, index |
+                parameterNames.forEach[parameterName, index |
                     target.append('''   new ''')
                     target.append(ExportedParameter)
-                    target.append('''(body, «parameter.name.escape», «parameter.PParameterName»)''')
-                    if (index < parameters.length - 1) { // XXX separator logic
+                    target.append('''(body, «parameterName.escape», «parameterName.PParameterName»)''')
+                    if (index < parameterNames.length - 1) { // XXX separator logic
                         target.append(',')
                     }
                     target.append('\n')
@@ -203,36 +226,47 @@ class BodyCodeGenerator extends StringConcatenationClient {
                     target.append('''.instance().getInternalQueryRepresentation()''')
                 }
             }
+            
+            private def referOrEmbedPQuery(CallableRelation call, Pattern callerPattern, TargetStringConcatenation target) {
+                if (call instanceof PatternCall) {
+                    referPQuery(call.patternRef, callerPattern, target)
+                } else {
+                    target.append('''new ''')
+                    target.append(call.findInferredClass(BaseGeneratedEMFPQuery))
+                    target.append('''()''')
+                }
+                
+            }
 
-            override acceptNegativePatternCall(List<String> argumentVariableNames, Pattern calledPattern) {
+            override acceptNegativePatternCall(List<String> argumentVariableNames, CallableRelation call) {
                 target.append('''new ''')
                 target.append(NegativePatternCall)
                 target.append('''(body, ''')
                 target.append(Tuples)
                 target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
-                referPQuery(calledPattern, pattern, target)
+                referOrEmbedPQuery(call, pattern, target)
                 target.append(''');
                 ''')
             }
 
-            override acceptBinaryTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern) {
+            override acceptBinaryTransitiveClosure(List<String> argumentVariableNames, CallableRelation call) {
                 target.append('''new ''')
                 target.append(BinaryTransitiveClosure)
                 target.append('''(body, ''')
                 target.append(Tuples)
                 target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
-                referPQuery(calledPattern, pattern, target)
+                referOrEmbedPQuery(call, pattern, target)
                 target.append(''');
                 ''')
             }
             
-            override acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern, IInputKey universeType) {
+            override acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, CallableRelation call, IInputKey universeType) {
                 target.append('''new ''')
                 target.append(BinaryReflexiveTransitiveClosure)
                 target.append('''(body, ''')
                 target.append(Tuples)
                 target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
-                referPQuery(calledPattern, pattern, target)
+                referOrEmbedPQuery(call, pattern, target)
                 target.append(''', ''')
                 target.appendInputKey(universeType, false)
                 target.append(''');
@@ -327,20 +361,20 @@ class BodyCodeGenerator extends StringConcatenationClient {
 
             }
 
-            override acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern,
+            override acceptPatternMatchCounter(List<String> argumentVariableNames, CallableRelation call,
                 String resultVariableName) {
                 target.append('''new ''')
                 target.append(PatternMatchCounter)
                 target.append('''(body, ''')
                 target.append(Tuples)
                 target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
-                referPQuery(calledPattern, pattern, target)
+                referOrEmbedPQuery(call, pattern, target)
                 target.append(''', «resultVariableName.escape»);
                 ''')
             }
 
             override acceptAggregator(JvmType aggregatorFactoryType, JvmType aggregatorParameterType,
-                List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName,
+                List<String> argumentVariableNames, CallableRelation call, String resultVariableName,
                 int aggregatedColumn) {
                     target.append('''new ''')
                     target.append(AggregatorConstraint)
@@ -356,13 +390,17 @@ class BodyCodeGenerator extends StringConcatenationClient {
                     target.append('''.class), body, ''')
                     target.append(Tuples)
                     target.append('''.flatTupleOf(«argumentVariableNames.output»), ''')
-                    referPQuery(calledPattern, pattern, target)
+                    referOrEmbedPQuery(call, pattern, target)
                     target.append(''', «resultVariableName.escape», «aggregatedColumn»);
                     ''')
                 }
 
             } // PatternModelAcceptor
-            new PatternBodyTransformer(pattern).transform(body, acceptor)
+            if (body !== null) {
+                new PatternBodyTransformer(pattern).transform(body, acceptor)
+            } else /*if (call !== null)*/ {
+                new PatternBodyTransformer(pattern, call, acceptor.createParameterMapping(call)).transform(call, acceptor)
+            }
         }
 
         /**

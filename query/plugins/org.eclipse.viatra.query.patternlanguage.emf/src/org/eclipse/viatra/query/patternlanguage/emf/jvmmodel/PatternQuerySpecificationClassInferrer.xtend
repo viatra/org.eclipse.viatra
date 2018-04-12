@@ -54,6 +54,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGener
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificationWithGenericMatcher
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility
 import java.util.LinkedHashSet
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall
+import java.util.Collections
+import org.eclipse.emf.ecore.EObject
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -66,7 +70,7 @@ class PatternQuerySpecificationClassInferrer {
     @Inject extension EMFJvmTypesBuilder
     @Inject extension EMFPatternLanguageJvmModelInferrerUtil util
     @Inject extension JavadocInferrer
-    @Inject extension ITypeInferrer
+    @Inject extension ITypeInferrer typeInferrer
     @Inject var ITypeSystem typeSystem
     @Inject var IErrorFeedback feedback
     @Inject var Serializer serializer
@@ -185,7 +189,7 @@ class PatternQuerySpecificationClassInferrer {
                 initializer = '''new «pattern.querySpecificationPQueryClassName»()'''
             ]
         for (parameter : pattern.parameters) {
-            pQueryClass.members += pattern.toField(parameter.PParameterName, typeRef(PParameter)) [
+            pQueryClass.members += pattern.toField(parameter.name.PParameterName, typeRef(PParameter)) [
                 final = true
                 visibility = JvmVisibility::PRIVATE
                 initializer = parameter.parameterInstantiation
@@ -194,8 +198,61 @@ class PatternQuerySpecificationClassInferrer {
         pQueryClass.members += pattern.toField("parameters", typeRef(List, typeRef(PParameter))) [
             final = true
             visibility = JvmVisibility::PRIVATE
-            initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.PParameterName»«ENDFOR»)'''
+            initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.name.PParameterName»«ENDFOR»)'''
         ]
+
+
+        // Created PQuery instances for embedded queries
+        pattern.eAllContents.filter(CallableRelation).filter[call | !(call instanceof PatternCall)].forEach[call |
+            val embeddedParameters = PatternLanguageHelper.getParameterVariables(call, typeSystem, typeInferrer)
+            
+            pQueryClass.members += call.toClass("EmbeddedQuery" + Integer.toString(call.hashCode)) [
+                for (entry : embeddedParameters.entrySet) {
+                    val variableName = entry.key
+                    members += call.toField(variableName.PParameterName, typeRef(PParameter)) [
+                        final = true
+                        visibility = JvmVisibility::PRIVATE
+                        initializer = variableName.parameterInstantiation(entry.value.getTypeString(call), entry.value)
+                    ]
+                }
+                members += pattern.toField("embeddedParameters", typeRef(List, typeRef(PParameter))) [
+                    final = true
+                    visibility = JvmVisibility::PRIVATE
+                    initializer = '''«Arrays».asList(«FOR paramName : embeddedParameters.keySet SEPARATOR ", "»«paramName.PParameterName»«ENDFOR»)'''
+                ]
+                
+                visibility = JvmVisibility::PRIVATE
+                superTypes += typeRef(BaseGeneratedEMFPQuery)
+                
+                members += call.toConstructor[
+                    body = '''super(«PVisibility».EMBEDDED);'''
+                ]
+                members += call.toMethod("getFullyQualifiedName", typeRef(String)) [
+                    annotations += annotationRef(Override)
+                    body = '''return «pQueryClass.simpleName».this.getFullyQualifiedName() + "$«call.hashCode»";'''
+                ]
+                members += call.toMethod("getParameters", typeRef(List, typeRef(PParameter))) [
+                    annotations += annotationRef(Override)
+                    body = '''return embeddedParameters;'''
+                ]
+                members += pattern.toMethod("doGetContainedBodies", typeRef(Set, typeRef(PBody))) [
+                    annotations += annotationRef(Override)
+                    try {
+                    body = '''
+                        «inferSingleConstraintBody(pattern, call)»
+                        return «Collections».singleton(body);
+                    '''
+                    } catch (Exception e) {
+                        // If called with an inconsistent pattern, then no body will be built
+                        body = '''
+                            addError(new «PProblem»("Inconsistent pattern definition threw exception «e.class.simpleName»  with message: «e.getMessage.escapeToQuotedString»"));
+                            return bodies;
+                        '''
+                    }
+                ]
+            ]    
+        ]
+
 
         pQueryClass.members += pattern.toConstructor[
             visibility = JvmVisibility::PRIVATE
@@ -241,6 +298,7 @@ class PatternQuerySpecificationClassInferrer {
             // logger.warn("Error while building PBodies", e)
             }
         ]
+        
 
     }
 
@@ -272,10 +330,17 @@ class PatternQuerySpecificationClassInferrer {
         '''«FOR body : pattern.bodies»
             {
                 PBody body = new PBody(this);
-                «new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder)»
+                «new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder, typeInferrer, typeSystem)»
                 bodies.add(body);
             }
             «ENDFOR»'''
+    }
+    
+    def StringConcatenationClient inferSingleConstraintBody(Pattern parentPattern, CallableRelation call) throws IllegalStateException {
+        '''
+            PBody body = new PBody(this);
+            «new BodyCodeGenerator(parentPattern, call, util, feedback, serializer, builder, typeInferrer, typeSystem)»
+       '''
     }
 
     /**
@@ -345,20 +410,42 @@ class PatternQuerySpecificationClassInferrer {
         }
 
         def StringConcatenationClient parameterInstantiation(Variable variable) {
-            val ref = getJvmType(variable, variable);
-            // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-            val clazz = if (ref === null || ref instanceof JvmUnknownTypeReference) {
-                    ""
-                } else {
-                    ref.getType().getQualifiedName()
-                }
+            val clazz = variable.getTypeString
             val type = variable.type
             if (type === null || !typeSystem.isValidType(type)) {
                 '''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
             } else {
                 val declaredInputKey = typeSystem.extractTypeDescriptor(type)
-                '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)», «variable.directionLiteral»)'''
+                return variable.parameterInstantiation(clazz, declaredInputKey)
             }
+        }
+        
+        def StringConcatenationClient parameterInstantiation(Variable variable, String clazz, IInputKey type) {
+            '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(type, true)», «variable.directionLiteral»)'''
+        }
+        
+        def StringConcatenationClient parameterInstantiation(String variableName, String clazz, IInputKey type) {
+            '''new PParameter("«variableName»", "«clazz»", «serializeInputKey(type, true)», «PParameterDirection».«PParameterDirection.INOUT.name()»)'''
+        }
+
+        def String getTypeString(Variable variable) {
+            val ref = getJvmType(variable, variable);
+            // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
+            return if (ref === null || ref instanceof JvmUnknownTypeReference) {
+                    ""
+                } else {
+                    ref.getType().getQualifiedName()
+                }
+        }
+        
+        def String getTypeString(IInputKey type, EObject context) {
+            val ref = typeSystem.toJvmTypeReference(type, context);
+            // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
+            return if (ref === null || ref instanceof JvmUnknownTypeReference) {
+                    ""
+                } else {
+                    ref.getType().getQualifiedName()
+                }
         }
 
         def StringConcatenationClient inferAnnotations(Pattern pattern) {

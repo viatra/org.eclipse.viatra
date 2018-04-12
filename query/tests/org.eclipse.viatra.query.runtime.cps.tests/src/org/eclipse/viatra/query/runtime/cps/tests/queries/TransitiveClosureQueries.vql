@@ -11,6 +11,10 @@ pattern statesTC(s1 : State, s2 : State) {
 	find stateTransition+(s1, s2);
 }
 
+pattern statesTCEmbedded(s1 : State, s2 : State) {
+	State.outgoingTransitions.targetState+(s1, s2);
+}
+
 pattern statesRTC1(s1 : State, s2 : State) {
 	find stateTransition+(s1, s2);
 } or {
@@ -19,4 +23,8 @@ pattern statesRTC1(s1 : State, s2 : State) {
 
 pattern statesRTC2(s1 : State, s2 : State) {
 	find stateTransition*(s1, s2);
+}
+
+pattern statesRTCEmbedded(s1 : State, s2 : State) {
+	State.outgoingTransitions.targetState*(s1, s2);
 }

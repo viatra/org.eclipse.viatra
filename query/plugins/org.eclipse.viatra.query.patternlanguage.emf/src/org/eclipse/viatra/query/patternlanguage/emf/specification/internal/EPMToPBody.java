@@ -18,10 +18,12 @@ import java.util.Objects;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericEMFPatternPQuery;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
+import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericSingleConstraintPQuery;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -69,8 +71,8 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     @Override
-    public String acceptVariable(Variable variable) {
-        return pBody.getOrCreateVariableByName(variable.getName()).getName();
+    public String acceptVariable(String variableName) {
+        return pBody.getOrCreateVariableByName(variableName).getName();
     }
 
     @Override
@@ -84,10 +86,9 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     @Override
-    public void acceptExportedParameters(List<Variable> parameters) {
+    public void acceptExportedParameters(List<String> parameters) {
         List<ExportedParameter> exportedParameters = new ArrayList<>();
-        for (Variable parameter : parameters) {
-            final String parameterName = parameter.getName();
+        for (String parameterName : parameters) {
             PVariable pVariable = findPVariable(parameterName);
             // param should always exist as PParameters are created from the input Variable list of this method
             PParameter param = pBody.getPattern().getParameters().stream().
@@ -141,25 +142,37 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         }
         return calledSpecification.getInternalQueryRepresentation();
     }
-
+    
+    /**
+     * Returns the PQuery instance required by the relation; if the relation calls an existing pattern, the
+     * corresponding specification is looked up by name; otherwise an embedded instance is created
+     */
+    private PQuery findPQuery(CallableRelation relation) {
+        if (relation instanceof PatternCall) {
+            return findCalledPQuery(((PatternCall) relation).getPatternRef());
+        } else {
+            return new GenericSingleConstraintPQuery(pattern, relation, Integer.toString(relation.hashCode()));
+        }
+    }
+    
     @Override
-    public void acceptNegativePatternCall(List<String> argumentVariableNames, Pattern calledPattern) {
+    public void acceptNegativePatternCall(List<String> argumentVariableNames, CallableRelation embeddedConstraint) {
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
-        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        PQuery calledPQuery = findPQuery(embeddedConstraint);
         new NegativePatternCall(pBody, pVariableTuple, calledPQuery);
     }
-
+    
     @Override
-    public void acceptBinaryTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern) {
+    public void acceptBinaryTransitiveClosure(List<String> argumentVariableNames, CallableRelation embeddedConstraint) {
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
-        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        PQuery calledPQuery = findPQuery(embeddedConstraint);
         new BinaryTransitiveClosure(pBody, pVariableTuple, calledPQuery);
     }
     
     @Override
-    public void acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern, IInputKey universeType) {
+    public void acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, CallableRelation embeddedConstraint, IInputKey universeType) {
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
-        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        PQuery calledPQuery = findPQuery(embeddedConstraint);
         new BinaryReflexiveTransitiveClosure(pBody, pVariableTuple, calledPQuery, universeType);
     }
 
@@ -183,21 +196,27 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         PVariable outputPVariable = outputVariableName == null ? null : findPVariable(outputVariableName);
         new ExpressionEvaluation(pBody, evaluator, outputPVariable);
     }
-
+    
     @Override
-    public void acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName) {
+    public void acceptPatternMatchCounter(List<String> argumentVariableNames, CallableRelation embeddedConstraint, String resultVariableName) {
         PVariable resultPVariable = findPVariable(resultVariableName);
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
-        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        PQuery calledPQuery = findPQuery(embeddedConstraint);
         new PatternMatchCounter(pBody, pVariableTuple, calledPQuery, resultPVariable);
     }
     
     @Override
-    public void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) {
+    public void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, CallableRelation embeddedConstraint, String resultVariableName, int aggregatedColumn) {
         PVariable resultPVariable = findPVariable(resultVariableName);
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
-        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        PQuery calledPQuery = findPQuery(embeddedConstraint);
         
+        initializeAggregator(aggregatorType, aggregateParameterType, aggregatedColumn, resultPVariable, pVariableTuple,
+                calledPQuery);                
+    }
+
+    private void initializeAggregator(JvmType aggregatorType, JvmType aggregateParameterType, int aggregatedColumn,
+            PVariable resultPVariable, Tuple pVariableTuple, PQuery calledPQuery) {
         // TODO experimental, the method of demand loading should be discussed
         // what about logging and Exception handling?
         
@@ -225,8 +244,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         } catch (IllegalAccessException | InstantiationException e) {
             throw new SpecificationBuilderException("Cannot instantiate aggregator.", new String[] {},
                     "Cannot instantiate aggregator.", pattern);
-        }                
-        
+        }
     }
 
     @Override

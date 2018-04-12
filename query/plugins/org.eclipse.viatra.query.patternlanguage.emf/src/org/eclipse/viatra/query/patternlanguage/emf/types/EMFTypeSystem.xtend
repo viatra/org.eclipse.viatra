@@ -120,6 +120,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     def IInputKey classifierToInputKey(EClassifier classifier) {
         switch (classifier) {
+            case classifier.eIsProxy : BottomTypeKey.INSTANCE
             EClass: new EClassTransitiveInstancesKey(classifier)
             EDataType: new EDataTypeInSlotsKey(classifier)
             default: BottomTypeKey.INSTANCE
@@ -151,6 +152,9 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     }
 
     def private IInputKey extractColumnDescriptor(EStructuralFeature feature, int columnIndex) {
+        if (feature === null || feature.eIsProxy) {
+            return BottomTypeKey.INSTANCE
+        }
         if (0 === columnIndex) {
             return new EClassTransitiveInstancesKey(feature.getEContainingClass())
         } else {

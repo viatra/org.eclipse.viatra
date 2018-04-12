@@ -236,6 +236,15 @@ pattern hasMoreHostedApplications(
 	check(N > M);
 }
 
+pattern hasMoreHostedApplications2(
+	HI1 : HostInstance,
+	HI2 : HostInstance
+) {
+	N == count HostInstance.applications(HI1, _AI1);
+	M == count HostInstance.applications(HI2, _AI2);
+	check(N > M);
+}
+
 pattern hasTheMostHostedApplications(
 	HI : HostInstance
 ) {

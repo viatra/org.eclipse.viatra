@@ -831,8 +831,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
         val model = parseHelper.parse('''
            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
            
-           pattern helper(v : VariableValue) = {
-               VariableValue(v);
+           pattern helper(v : BoolValue) = {
+               BoolValue(v);
            }
            
            pattern testPattern(n : NumberValue) = {

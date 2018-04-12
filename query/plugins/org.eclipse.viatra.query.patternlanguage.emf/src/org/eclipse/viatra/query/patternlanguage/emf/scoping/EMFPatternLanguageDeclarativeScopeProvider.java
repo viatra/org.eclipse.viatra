@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
@@ -59,6 +60,9 @@ import com.google.inject.Inject;
  */
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeProvider {
+    
+    private static final EClassifier UNRESOLVED_TYPE = EcoreFactory.eINSTANCE.createEClass();
+    
     @Inject
     private IQualifiedNameConverter qualifiedNameConverter;
     
@@ -104,6 +108,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ESTRUCTURAL_FEATURE, refType)) {
                 PathExpressionConstraint constraint = EcoreUtil2.getContainerOfType(ctx, PathExpressionConstraint.class);
                 
+                
                 final int referenceIndex = constraint.getEdgeTypes().indexOf(ctx);
                 /*
                  * Limiting access by referenceIndex serves two purposes: (1) it avoids cyclic linking by defining a
@@ -116,6 +121,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                     .filter(Objects::nonNull)
                     .map(ReferenceType::getRefname) // resolution
                     .map(EStructuralFeature::getEType)
+                    .map(obj -> obj == null ? UNRESOLVED_TYPE : obj) // Replace unresolved objects with a dedicated placeholder object
                     .reduce((a, b) -> b) //find the last element fulfilling the condition
                     .orElse(constraint.getSourceType().getClassname());
                 return calculateReferences(partialType);
@@ -230,6 +236,9 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
 
     private IScope calculateReferences(EClassifier referredType) {
         List<EStructuralFeature> targetReferences = Collections.emptyList();
+        if (Objects.equals(referredType, UNRESOLVED_TYPE)) {
+            return IScope.NULLSCOPE;
+        }
         if (referredType instanceof EClass) {
             targetReferences = ((EClass) referredType).getEAllStructuralFeatures();
         }

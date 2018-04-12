@@ -28,9 +28,124 @@
                 <message_argument value="FOLLOW_111"/>
             </message_arguments>
         </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_112"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_113"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa115"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa117"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa121"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa123"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa124"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa125"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa127"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa143"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa145"/>
+            </message_arguments>
+        </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="dfa28"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa30"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa44"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa46"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa56"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa59"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa74"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa75"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa76"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa78"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa87"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa93"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa94"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -219,9 +334,29 @@
         </filter>
     </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/serializer/AbstractEMFPatternLanguageSyntacticSequencer.java" type="org.eclipse.viatra.query.patternlanguage.emf.serializer.AbstractEMFPatternLanguageSyntacticSequencer">
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="emit_PathExpressionConstraint_FullStopKeyword_1_0_a(EObject, ISyntacticSequencerPDAProvider.ISynNavigable, List&lt;INode&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="emit_PathExpressionConstraint_FullStopKeyword_1_0_p(EObject, ISyntacticSequencerPDAProvider.ISynNavigable, List&lt;INode&gt;)"/>
+            </message_arguments>
+        </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="emit_PatternModel_SemicolonKeyword_0_2_q(EObject, ISyntacticSequencerPDAProvider.ISynNavigable, List&lt;INode&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="match_PathExpressionConstraint_FullStopKeyword_1_0_a"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="match_PathExpressionConstraint_FullStopKeyword_1_0_p"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">

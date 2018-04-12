@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -146,11 +145,6 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         return backendContext.getHintProvider().getQueryEvaluationHint(pQuery).overrideBy(userHints);
     }
 
-    private Stream<MatcherReference> computeExpectedAdornments() {
-        return StreamSupport.stream(overrideDefaultHints(query).getAdornmentProvider().getAdornments(query).spliterator(), false)
-                .map(input -> new MatcherReference(query, input, userHints));
-    }
-
     /**
      * Prepare this result provider. This phase is separated from the constructor to allow the backend to cache its instance before
      * requesting preparation for its dependencies.
@@ -171,10 +165,11 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
 
     protected void preparePlansForExpectedAdornments() {
         // Plan for possible adornments
-        computeExpectedAdornments().forEach(reference -> {
+        for (Set<PParameter> adornment : overrideDefaultHints(query).getAdornmentProvider().getAdornments(query)) {
+            MatcherReference reference = new MatcherReference(query, adornment, userHints);
             LocalSearchHints configuration = overrideDefaultHints(query);
             IOperationCompiler compiler = getOperationCompiler(backendContext, configuration);
-            IPlanDescriptor plan = getOrCreatePlan(reference, backendContext, compiler, configuration, planProvider); 
+            IPlanDescriptor plan = getOrCreatePlan(reference, backendContext, compiler, configuration, planProvider);
             // Index keys
             try {
                 indexKeys(plan.getIteratedKeys());
@@ -187,10 +182,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                     searchContext.getMatcher(dependency);
                 }
             }
-            
-        });
-        
-    
+        }
     }
 
     protected void prepareDirectDependencies() {

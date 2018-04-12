@@ -11,13 +11,18 @@
 
 package org.eclipse.viatra.query.patternlanguage.emf.specification.internal;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
@@ -26,6 +31,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
@@ -49,6 +55,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.emf.util.ASTStringProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
@@ -57,12 +64,12 @@ import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.aggregators.count;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 
@@ -77,8 +84,22 @@ public class PatternBodyTransformer {
     private final String patternFQN;
     private final EMFTypeSystem typeSystem;
     private final EMFTypeInferrer typeInferrer;
+    private final EObject bodySource;
+    private final Map<ValueReference, String> parameterMapping;
 
     public PatternBodyTransformer(Pattern pattern) {
+        this(pattern, pattern, Collections.emptyMap());
+    }
+
+    /**
+     * Initializes a transformer with a specific root object used as a source. This is used to detect in the gather
+     * calls whether we are in the caller or the generated embedded patterns.
+     * 
+     * @param pattern
+     * @param bodySource
+     * @since 2.0
+     */
+    public PatternBodyTransformer(Pattern pattern, EObject bodySource, Map<ValueReference, String> parameterMapping) {
         super();
         this.pattern = pattern;
         patternFQN = PatternLanguageHelper.getFullyQualifiedName(pattern);
@@ -86,8 +107,11 @@ public class PatternBodyTransformer {
         Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
         typeSystem = injector.getInstance(EMFTypeSystem.class);
         typeInferrer = injector.getInstance(EMFTypeInferrer.class);
+        this.bodySource = bodySource;
+        this.parameterMapping = parameterMapping;
+        
     }
-
+    
     /**
      * Traverses the given {@link PatternBody}, making proper calls to the given {@link PatternModelAcceptor} during the
      * traversal, then returns the result of the acceptor.
@@ -105,16 +129,40 @@ public class PatternBodyTransformer {
             throw e;
         }
     }
+    
+    /**
+     * Builds an embedded query specification from a given {@link Constraint}, making proper calls to the given
+     * {@link PatternModelAcceptor}, then returns the result of the acceptor.
+     * 
+     * @throws ViatraQueryRuntimeException
+     * @since 2.0
+     */
+    public <Result> Result transform(CallableRelation constraint, PatternModelAcceptor<Result> acceptor) {
+        Preconditions.checkArgument(constraint instanceof Constraint, "Embedded patterns must be created from a single constraint.");
+        try {
+            List<String> parameterNames = new ArrayList<>(acceptor.createParameterMapping(constraint).values());
+            for (String parameter : parameterNames) {
+                acceptor.acceptVariable(parameter);
+            }
+            acceptor.acceptExportedParameters(parameterNames);
+            
+            acceptor.acceptConstraint((Constraint)constraint);
+            gatherConstraint((Constraint)constraint, acceptor);
+            return acceptor.getResult();
+        } catch (SpecificationBuilderException e) {
+            e.setPatternDescription(pattern);
+            throw e;
+        }
+    }
 
     private void preprocessVariables(PatternBody body, PatternModelAcceptor<?> acceptor) {
         for (Variable variable : body.getVariables()) {
-            acceptor.acceptVariable(variable);
+            acceptor.acceptVariable(variable.getName());
         }
     }
 
     private void preprocessParameters(PatternModelAcceptor<?> acceptor) {
-        EList<Variable> parameters = pattern.getParameters();
-        for (Variable variable : parameters) {
+        for (Variable variable : pattern.getParameters()) {
             if (variable.getType() instanceof ClassType) {
                 EClassifier classifier = ((ClassType) variable.getType()).getClassname();
                 IInputKey inputKey = typeSystem.classifierToInputKey(classifier);
@@ -125,7 +173,7 @@ public class PatternBodyTransformer {
                 acceptor.acceptTypeCheckConstraint(ImmutableList.of(variable.getName()), inputKey);
             }
         }
-        acceptor.acceptExportedParameters(parameters);
+        acceptor.acceptExportedParameters(pattern.getParameters().stream().map(Variable::getName).collect(Collectors.toList()));
     }
 
     private void gatherBodyConstraints(PatternBody body, PatternModelAcceptor<?> acceptor) {
@@ -137,12 +185,20 @@ public class PatternBodyTransformer {
     }
 
     private void gatherConstraint(Constraint constraint, PatternModelAcceptor<?> acceptor) {
-        if (constraint instanceof EClassifierConstraint) { // EMF-specific
+        if (constraint instanceof EClassifierConstraint) {
             EClassifierConstraint classifierConstraint = (EClassifierConstraint) constraint;
-            gatherClassifierConstraint(classifierConstraint, acceptor);
+            if (!Objects.equals(classifierConstraint, bodySource) && PatternLanguageHelper.isTransitive(classifierConstraint)) {
+                gatherTransitiveClosure(classifierConstraint, acceptor);
+            } else {
+                gatherClassifierConstraint(classifierConstraint, acceptor);
+            }
         } else if (constraint instanceof TypeCheckConstraint) {
-                TypeCheckConstraint typeConstraint = (TypeCheckConstraint) constraint;
+            TypeCheckConstraint typeConstraint = (TypeCheckConstraint) constraint;
+            if (!Objects.equals(typeConstraint, bodySource) && PatternLanguageHelper.isTransitive(typeConstraint)) {
+                gatherTransitiveClosure(typeConstraint, acceptor);
+            } else {
                 gatherTypeConstraint(typeConstraint, acceptor);
+            }
         } else if (constraint instanceof PatternCompositionConstraint) {
             PatternCompositionConstraint compositionConstraint = (PatternCompositionConstraint) constraint;
             gatherCompositionConstraint(compositionConstraint, acceptor);
@@ -151,7 +207,11 @@ public class PatternBodyTransformer {
             gatherCompareConstraint(compare, acceptor);
         } else if (constraint instanceof PathExpressionConstraint) {
             PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;
-            gatherPathExpression(pathExpression, acceptor);
+            if (!Objects.equals(pathExpression, bodySource) && PatternLanguageHelper.isTransitive(pathExpression)) {
+                gatherTransitiveClosure(pathExpression, acceptor);
+            } else {
+                gatherPathExpression(pathExpression, acceptor);
+            }
         } else if (constraint instanceof CheckConstraint) {
             final CheckConstraint check = (CheckConstraint) constraint;
             gatherCheckConstraint(check, acceptor);
@@ -239,45 +299,59 @@ public class PatternBodyTransformer {
         }
     }
 
+    private void gatherTransitiveClosure(CallableRelation relation, PatternModelAcceptor<?> acceptor) {
+        final List<ValueReference> parameters = PatternLanguageHelper.getCallParameters(relation);
+        List<String> variableNames = getVariableNames(relation, acceptor);
+        if (relation.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE) {
+            verifyTransitiveCall(relation, parameters);
+            final IInputKey universeType = typeInferrer.getType(parameters.get(0));
+            verifyReflexiveCall(relation, parameters, universeType);
+            acceptor.acceptBinaryReflexiveTransitiveClosure(variableNames, relation, universeType);
+        } else if (relation.getTransitive() == ClosureType.TRANSITIVE) {
+            verifyTransitiveCall(relation, parameters);
+            acceptor.acceptBinaryTransitiveClosure(variableNames, relation);
+        }
+    }
+    
     private void gatherCompositionConstraint(PatternCompositionConstraint constraint, PatternModelAcceptor<?> acceptor) {
-        PatternCall call = constraint.getCall();
-        Pattern patternRef = call.getPatternRef();
-        List<String> variableNames = getVariableNames(call.getParameters(), acceptor);
-        if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE) {
-            verifyTransitiveCall(constraint, call, patternRef);
-            final IInputKey universeType = typeInferrer.getType(call.getParameters().get(0));
-            if (!universeType.isEnumerable()) {
-                throw new SpecificationBuilderException(
-                        "Reflexive transitive closure of {1} in pattern {2} is unsupported because parameter type {3} is not enumerable.",
-                        new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN, universeType.getPrettyPrintableName() },
-                        "Reflexive transitive closure only supported for patterns with enumerable parameters.", pattern);
-            }
-            acceptor.acceptBinaryReflexiveTransitiveClosure(variableNames, patternRef, universeType);
-        } else if (call.getTransitive() == ClosureType.TRANSITIVE) {
-            verifyTransitiveCall(constraint, call, patternRef);
-            acceptor.acceptBinaryTransitiveClosure(variableNames, patternRef);
+        CallableRelation call = constraint.getCall();
+        List<String> variableNames = getVariableNames(call, acceptor);
+        if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE || call.getTransitive() == ClosureType.TRANSITIVE) {
+            gatherTransitiveClosure(call, acceptor);
+        } else if (constraint.isNegative()) {
+            acceptor.acceptNegativePatternCall(variableNames, constraint.getCall());
         } else {
-            if (constraint.isNegative()) {
-                acceptor.acceptNegativePatternCall(variableNames, patternRef);
+            if ((constraint.getCall() instanceof PatternCall)) {
+                PatternCall patternCall = (PatternCall) constraint.getCall();
+                acceptor.acceptPositivePatternCall(variableNames, patternCall.getPatternRef());
             } else {
-                acceptor.acceptPositivePatternCall(variableNames, patternRef);
+                throw new SpecificationBuilderException("Embedded positive pattern call is not supported",
+                        new String[0], "Embedded positive pattern call is not supported", pattern);
             }
         }
     }
 
-    private void verifyTransitiveCall(PatternCompositionConstraint constraint, PatternCall call, Pattern patternRef) {
-        if (call.getParameters().size() != 2) {
+    private void verifyTransitiveCall(CallableRelation call, List<ValueReference> parameters) {
+        if (parameters.size() != 2) {
             throw new SpecificationBuilderException(
                     "Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.",
-                    new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                    new String[] {ASTStringProvider.INSTANCE.doSwitch(call), patternFQN},
                     "Transitive closure only supported for binary patterns.", pattern);
-        } else if (constraint.isNegative()) {
+        } else if (PatternLanguageHelper.isNegative(call)) {
             throw new SpecificationBuilderException("Unsupported negated transitive closure of {1} in pattern {2}",
-                    new String[] { PatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                    new String[] {ASTStringProvider.INSTANCE.doSwitch(call), patternFQN},
                     "Unsupported negated transitive closure", pattern);
         }
     }
     
+    private void verifyReflexiveCall(CallableRelation call, List<ValueReference> parameters, IInputKey universeType) {
+        if (!universeType.isEnumerable()) {
+            throw new SpecificationBuilderException(
+                    "Reflexive transitive closure of {1} in pattern {2} is unsupported because parameter type {3} is not enumerable.",
+                    new String[] {ASTStringProvider.INSTANCE.doSwitch(call), patternFQN, universeType.getPrettyPrintableName()},
+                    "Reflexive transitive closure only supported for patterns with enumerable parameters.", pattern);
+        }
+    }
 
     private void gatherClassifierConstraint(EClassifierConstraint constraint, PatternModelAcceptor<?> acceptor) {
         String variableName = getVariableName(constraint.getVar(), acceptor);
@@ -301,7 +375,11 @@ public class PatternBodyTransformer {
     private String getVariableName(VariableReference variable, PatternModelAcceptor<?> acceptor) {
         // Warning! variable.getVar() does not differentiate between
         // multiple anonymous variables ('_')
-        return getVariableName(variable.getVariable(), acceptor);
+        if (parameterMapping.containsKey(variable)) {
+            return parameterMapping.get(variable);
+        } else {
+            return getVariableName(variable.getVariable(), acceptor);
+        }
     }
 
     private String getVariableName(Variable variable, PatternModelAcceptor<?> acceptor) {
@@ -312,19 +390,15 @@ public class PatternBodyTransformer {
         }
     }
 
-    private List<String> getVariableNames(List<? extends ValueReference> valueReferences,
-            final PatternModelAcceptor<?> acceptor) {
-        return valueReferences.stream().map(valueReference -> {
-            try {
-                return getVariableName(valueReference, acceptor);
-            } catch (SpecificationBuilderException e) {
-                throw Throwables.propagate(e);
-            }
-        }).collect(Collectors.toList());
+    private List<String> getVariableNames(CallableRelation call, PatternModelAcceptor<?> acceptor) {
+        return PatternLanguageHelper.getCallParameters(call).stream().map(value -> getVariableName(value, acceptor))
+                .collect(Collectors.toList());
     }
 
     private String getVariableName(ValueReference reference, PatternModelAcceptor<?> acceptor) {
-        if (reference instanceof VariableReference) {
+        if (parameterMapping.containsKey(reference)) {
+            return parameterMapping.get(reference);
+        } else if (reference instanceof VariableReference) {
             return getVariableName(((VariableReference) reference), acceptor);
         } else if (reference instanceof AggregatedValue) {
             return aggregate((AggregatedValue) reference, acceptor);
@@ -359,14 +433,13 @@ public class PatternBodyTransformer {
 
     private String aggregate(AggregatedValue reference, PatternModelAcceptor<?> acceptor) {
         String resultVariableName = acceptor.createVirtualVariable();
-        PatternCall call = reference.getCall();
-        Pattern patternRef = call.getPatternRef();
-        List<String> variableNames = getVariableNames(call.getParameters(), acceptor);
+        CallableRelation call = reference.getCall();
+        List<String> variableNames = getVariableNames(call, acceptor);
         if (JavaTypesHelper.is(reference.getAggregator(), count.class)) {
-            acceptor.acceptPatternMatchCounter(variableNames, patternRef, resultVariableName);
+            acceptor.acceptPatternMatchCounter(variableNames, call, resultVariableName);
         } else {
             acceptor.acceptAggregator(reference.getAggregator(), reference.getAggregateType(), variableNames,
-                        patternRef, resultVariableName, AggregatorUtil.getAggregateVariableIndex(reference));
+                        call, resultVariableName, AggregatorUtil.getAggregateVariableIndex(reference));
         }
         return resultVariableName;
     }

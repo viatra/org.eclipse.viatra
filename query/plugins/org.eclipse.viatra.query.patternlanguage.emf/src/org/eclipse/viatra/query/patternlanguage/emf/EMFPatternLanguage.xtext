@@ -94,8 +94,8 @@ PatternBody:
 
 Constraint:
     CheckConstraint | TypeCheckConstraint |
-    CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
-    | EClassifierConstraint // Additions
+    CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint
+    | EClassifierConstraint
 ;
 
 TypeCheckConstraint:
@@ -103,10 +103,15 @@ TypeCheckConstraint:
 ;
 
 PatternCompositionConstraint:
-    negative?='neg'? call=PatternCall;
+    negative?='neg'? call=PatternCall
+    |
+    negative?='neg' (
+        call = EClassifierConstraint |
+        call = TypeCheckConstraint |
+        call = PathExpressionConstraint
+    )
+;
 
-    //'count' 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
-//parameters+=ValueReference)*)? ')';
 PatternCall:
     'find' patternRef=[Pattern|QualifiedName] (transitive=ClosureType)? '(' (parameters+=ValueReference (','
     parameters+=ValueReference)*)? ')';
@@ -121,7 +126,7 @@ CheckConstraint:
     'check' '(' expression=XExpression ')';
 
 PathExpressionConstraint:
-    sourceType=Type ('.' (edgeTypes += RefType)?)* '(' src=VariableReference ',' dst=ValueReference ')'
+    sourceType=Type ('.' (edgeTypes += RefType)?)* (transitive=ClosureType)? '(' src=VariableReference ',' dst=ValueReference ')'
 ;
 
 ValueReference:
@@ -160,7 +165,7 @@ FunctionEvaluationValue:
 
 AggregatedValue:
 // TODO aggregator should be QualifiedName
-    aggregator=[types::JvmDeclaredType|ValidID] call=PatternCall;
+    aggregator=[types::JvmDeclaredType|ValidID] (call=PatternCall | call=EClassifierConstraint | call = PathExpressionConstraint);
 
 EClassifierConstraint:
     type=Type '(' var=VariableReference ')';

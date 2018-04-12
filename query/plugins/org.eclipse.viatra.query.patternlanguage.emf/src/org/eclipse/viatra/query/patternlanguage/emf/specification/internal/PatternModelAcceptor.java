@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.specification.internal;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
@@ -33,8 +36,8 @@ import org.eclipse.xtext.xbase.XNumberLiteral;
 
 /**
  * Defines the mapping of {@link PatternModel} elements during the transformation of a {@link PatternBody}.
- * It has the responsibility to maintain an internal representation of the {@link Variable}s
- * both present in the {@link PatternBody} and additional {@link Variable}s needed for the {@link Constraint}s in the {@link PatternBody}.
+ * It has the responsibility to maintain an internal representation of the {@link String}s
+ * both present in the {@link PatternBody} and additional {@link String}s needed for the {@link Constraint}s in the {@link PatternBody}.
  * The methods use variable names which identify these internal variables.
  * <p>
  * WARNING! Implementations of this interface are typically stateful, so don't reuse instances of them!
@@ -49,9 +52,9 @@ public interface PatternModelAcceptor<Result> {
     Result getResult();
 
     /**
-     * Registers a {@link Variable} and returns the name of the internal variable.
+     * Registers a {@link String} and returns the name of the internal variable.
      */
-    String acceptVariable(Variable variable);
+    String acceptVariable(String variableName);
 
     /**
      * Creates an internal virtual variable and returns its name.
@@ -72,7 +75,7 @@ public interface PatternModelAcceptor<Result> {
     /**
      * Accepts the given parameters as exported parameter constraints.
      */
-    void acceptExportedParameters(List<Variable> parameters);
+    void acceptExportedParameters(List<String> parameters);
 
     /**
      * Accepts a general {@link Constraint}.
@@ -94,23 +97,25 @@ public interface PatternModelAcceptor<Result> {
     /**
      * Accepts a {@link PositivePatternCall}.
      */
-    void acceptPositivePatternCall(List<String> argumentVariableNames, Pattern calledPattern);  
-
-    /**
-     * Accepts a {@link NegativePatternCall}.
-     */
-    void acceptNegativePatternCall(List<String> argumentVariableNames, Pattern calledPattern);
-
-    /**
-     * Accepts a {@link BinaryTransitiveClosure}.
-     */
-    void acceptBinaryTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern);
+    void acceptPositivePatternCall(List<String> argumentVariableNames, Pattern calledPattern);
     
     /**
-     * Initializes a {@link BinaryReflexiveTransitiveClosure} instance.
+     * Accepts a {@link NegativePatternCall} over an embedded constraint.
      * @since 2.0
      */
-    void acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, Pattern calledPattern, IInputKey universeType);
+    void acceptNegativePatternCall(List<String> argumentVariableNames, CallableRelation embeddedConstraint);
+    
+    /**
+     * Accepts a {@link BinaryTransitiveClosure} over an embedded constraint.
+     * @since 2.0
+     */
+    void acceptBinaryTransitiveClosure(List<String> argumentVariableNames, CallableRelation embeddedConstraint);
+    
+    /**
+     * Initializes a {@link BinaryReflexiveTransitiveClosure} instance over an embedded constraint.
+     * @since 2.0
+     */
+    void acceptBinaryReflexiveTransitiveClosure(List<String> argumentVariableNames, CallableRelation embeddedConstraint, IInputKey universeType);
 
     /**
      * Accepts an {@link Equality}.
@@ -128,12 +133,25 @@ public interface PatternModelAcceptor<Result> {
     void acceptExpressionEvaluation(XExpression expression, String outputVariableName);
 
     /**
-     * Accepts a {@link AbstractAggregator}.
-     * @since 1.4
+     * Accepts a {@link AbstractAggregator} over an embedded constraint.
+     * @since 2.0
      */
-    void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn);
-
-    void acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern,
+    void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames,
+            CallableRelation embeddedConstraint, String resultVariableName, int aggregatedColumn);
+    
+    /**
+     * @since 2.0
+     */
+    void acceptPatternMatchCounter(List<String> argumentVariableNames, CallableRelation embeddedConstraint,
             String resultVariableName);
 
+    default LinkedHashMap<ValueReference, String> createParameterMapping(CallableRelation relation) {
+        LinkedHashMap<ValueReference, String> parameterMapping = new LinkedHashMap<>();
+        
+        List<ValueReference> parameters = PatternLanguageHelper.getCallParameters(relation);
+        for (int i=0; i < parameters.size(); i++) {
+            parameterMapping.put(parameters.get(i), "p" + Integer.toString(i));
+        }
+        return parameterMapping;
+    }
 }

@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.BoolValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
@@ -44,6 +45,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.TypeCheckConstraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.UnaryTypeConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.util.PatternLanguageSwitch;
@@ -84,10 +86,7 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
 
     @Override
     public String caseEClassifierConstraint(EClassifierConstraint object) {
-        return String.format("%s(%s)", 
-                Optional.ofNullable(object.getType()).map(EntityType::getTypename).orElse(UNDEFINED),
-                Optional.ofNullable(object.getVar()).map(VariableReference::getVar).orElse(UNDEFINED)
-        );
+        return getUnaryConstraintText(object, "");
     }
 
     @Override
@@ -160,10 +159,7 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
 
     @Override
     public String caseTypeCheckConstraint(TypeCheckConstraint object) {
-        return String.format("Type Check %s(%s)", 
-                Optional.ofNullable(object.getType()).map(EntityType::getTypename).orElse(UNDEFINED),
-                Optional.ofNullable(object.getVar()).map(VariableReference::getVar).orElse(UNDEFINED)
-        );
+        return getUnaryConstraintText(object, "Type Check ");
     }
 
     @Override
@@ -178,8 +174,9 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
         }
         return String.format("Pattern composition %s %s(%s)",
                 modifiers,
-                object.getCall().getPatternRef().getName(),
-                object.getCall().getParameters().stream().map(this::doSwitch).collect(Collectors.joining(", "))
+                getCallableName(object.getCall()),
+                
+                PatternLanguageHelper.getCallParameters(object.getCall()).stream().map(this::doSwitch).collect(Collectors.joining(", "))
             );
     }
 
@@ -199,12 +196,7 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
 
     @Override
     public String casePathExpressionConstraint(PathExpressionConstraint object) {
-        return String.format("Path Expression %s.%s(%s, %s)",
-                object.getSourceType().getClassname().getName(),
-                object.getEdgeTypes().stream().map(t -> t.getRefname().getName()).collect(Collectors.joining(".")),
-                object.getSrc().getVar(),
-                this.doSwitch(object.getDst())
-            );
+        return getPathExpressionConstraintText(object, "Path Expression ");
     }
 
     @Override
@@ -236,11 +228,41 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
     public String caseAggregatedValue(AggregatedValue object) {
         return String.format("Aggregate %s %s(%s)",
                     object.getAggregator().getSimpleName(),
-                    object.getCall().getPatternRef().getName(),
-                    object.getCall().getParameters().stream().map(this::doSwitch).collect(Collectors.joining(", "))
+                    getCallableName(object.getCall()),
+                    PatternLanguageHelper.getCallParameters(object.getCall()).stream().map(this::doSwitch).collect(Collectors.joining(", "))
                 );
     }
 
+    private String getCallableName(CallableRelation relation) {
+        if (relation instanceof PatternCall) {
+            return ((PatternCall) relation).getPatternRef().getName();
+        } else if (relation instanceof UnaryTypeConstraint) {
+            return getUnaryConstraintText((UnaryTypeConstraint) relation, "");
+        } else if (relation instanceof PathExpressionConstraint) {
+            return getPathExpressionConstraintText((PathExpressionConstraint) relation, "");
+        } else {
+            throw new IllegalArgumentException("Unknown relation type " + relation.eClass().getName());
+        }
+    }
+    
+    private String getUnaryConstraintText(UnaryTypeConstraint object, String prefix) {
+        return String.format("%s%s(%s)",
+                prefix,
+                Optional.ofNullable(object.getType()).map(EntityType::getTypename).orElse(UNDEFINED),
+                Optional.ofNullable(object.getVar()).map(VariableReference::getVar).orElse(UNDEFINED)
+        );
+    }
+    
+    private String getPathExpressionConstraintText(PathExpressionConstraint object, String prefix) {
+        return String.format("%s%s.%s(%s, %s)",
+                prefix,
+                object.getSourceType().getClassname().getName(),
+                object.getEdgeTypes().stream().map(t -> t.getRefname().getName()).collect(Collectors.joining(".")),
+                object.getSrc().getVar(),
+                this.doSwitch(object.getDst())
+            );
+    }
+    
     private String originalText(EObject object) {
         final ICompositeNode node = NodeModelUtils.getNode(object);
         return node == null ? UNDEFINED : node.getText();
