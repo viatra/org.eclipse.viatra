@@ -871,7 +871,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             List<ValueReference> callVariables = constraint.getCall().getParameters();
             List<Variable> patternParameters = constraint.getCall().getPatternRef().getParameters();
             //maxIndex is used to avoid overindexing in case of incorrect number of parameters
-            int maxIndex = Math.max(callVariables.size(), patternParameters.size());
+            int maxIndex = Math.min(callVariables.size(), patternParameters.size());
             
             if (Iterables.all(callVariables, isSingleUseVariable)) {
                 warning("This negative pattern call is a global constraint: "
