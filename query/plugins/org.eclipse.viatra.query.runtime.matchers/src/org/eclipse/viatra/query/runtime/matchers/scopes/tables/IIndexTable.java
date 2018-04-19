@@ -34,7 +34,11 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
  * 
  * <p>
  * <b>Precondition:</b> the associated input key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ *
  * @since 2.0
  * @author Gabor Bergmann
  * @noimplement This interface is not intended to be implemented directly. Extend {@link AbstractIndexTable} instead.

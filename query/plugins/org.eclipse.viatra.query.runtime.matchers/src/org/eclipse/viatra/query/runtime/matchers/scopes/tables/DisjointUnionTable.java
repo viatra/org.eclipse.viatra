@@ -26,7 +26,11 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  * Disjoint union of the provided child tables.
  * 
  * Used e.g. to present a transitive instance table as a view composed from direct instance tables.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ *
  * @since 2.0
  * @author Gabor Bergmann
  */

@@ -22,7 +22,11 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 /**
  * Demo default implementation - super inefficient right now, uses filtering instead of index lookup, please provide
  * proper indexing (e.g. using {@link IMultiLookup}) before actual deployment.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ *
  * @since 2.0
  * @author Gabor Bergmann
  */

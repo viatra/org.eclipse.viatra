@@ -35,7 +35,11 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranula
  * TODO: on-demand construction of valueToHolderMap
  * <p>
  * TODO: support for lean indexing, opposites, long surrogate ids, etc.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ *
  * @since 2.0
  * @author Gabor Bergmann
  */

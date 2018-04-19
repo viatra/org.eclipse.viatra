@@ -15,7 +15,11 @@ import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 /**
  * Modifies the contents of a unary {@link IIndexTable}.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ *
  * @since 2.0
  * @author Gabor Bergmann
  *
