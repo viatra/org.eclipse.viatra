@@ -165,7 +165,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
                 return null;
             });
         } catch (InvocationTargetException e) {
-            throw new QueryProcessingException("Error while building required indexes: {0}", new String[]{e.getTargetException().getMessage()}, "Error while building required indexes.", query, e);
+            throw new QueryProcessingException("Error while building required indexes: {1}", new String[]{e.getTargetException().getMessage()}, "Error while building required indexes.", query, e);
         }
     }
 
