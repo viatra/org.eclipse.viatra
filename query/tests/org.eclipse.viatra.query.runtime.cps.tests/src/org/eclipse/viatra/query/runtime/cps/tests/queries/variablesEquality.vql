@@ -13,13 +13,13 @@ package org.eclipse.viatra.query.runtime.cps.tests.queries
 
 import "http://org.eclipse.viatra/model/cps"
 
-pattern sameVariables(a1, a2) {
+pattern sameVariables(a1 : HostType, a2 : HostType) {
 	HostType(a1);
 	HostType(a2);
 	a1 == a2;
 }
 
-pattern enumNotEqual(a, s) {
+pattern enumNotEqual(a : ApplicationInstance, s : AppState) {
     ApplicationInstance.state(a, s);
     s != AppState::Stopped;
 }
@@ -36,11 +36,11 @@ pattern notOneInstance(at: ApplicationType){
     neg find oneInstance(at);
 }
 
-pattern cartesianProduct(a1, a2){
+pattern cartesianProduct(a1 : ApplicationType, a2 : ApplicationType){
     ApplicationType(a1);
     ApplicationType(a2);
 }
 
-pattern argumentsUnifiedByCaller(a){
+pattern argumentsUnifiedByCaller(a : ApplicationType){
     find cartesianProduct(a, a);
 }

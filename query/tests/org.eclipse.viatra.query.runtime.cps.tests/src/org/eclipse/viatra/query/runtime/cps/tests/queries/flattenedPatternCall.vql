@@ -13,17 +13,17 @@ package org.eclipse.viatra.query.runtime.cps.tests.queries
 
 import "http://org.eclipse.viatra/model/cps"
 
-pattern called(a) {
+pattern called(a : HostInstance) {
     HostInstance(a);
 }
 
-pattern callee(a1, a2) {
+pattern callee(a1 : HostInstance, a2 : HostInstance) {
     find called(a1);
     find called(a2);
     HostInstance.communicateWith(a1, a2);
 }
 
-pattern flattened(a1, a2) {
+pattern flattened(a1 : HostInstance, a2 : HostInstance) {
     //find called(a1);
     HostInstance(called_a1);
     a1 == called_a1;
@@ -33,13 +33,13 @@ pattern flattened(a1, a2) {
     HostInstance.communicateWith(a1, a2);
 }
 
-pattern called2(a1) {
+pattern called2(a1 : HostInstance) {
     HostInstance(a1);
 } or {
     HostInstance(a1);
 }
 
-pattern callee2(a1, a2) {
+pattern callee2(a1 : HostInstance, a2 : HostInstance) {
     find called2(a1);
     find called2(a2);
     HostInstance.communicateWith(a1, a2);

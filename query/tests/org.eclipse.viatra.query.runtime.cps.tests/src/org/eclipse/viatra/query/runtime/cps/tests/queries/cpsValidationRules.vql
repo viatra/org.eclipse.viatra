@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.cps.tests.queries
 
 import "http://org.eclipse.viatra/model/cps"
 
-@QueryExplorer(checked = false)
 pattern ReachableStates(
 	s1 : State,
 	s2 : State
@@ -20,7 +19,6 @@ pattern ReachableStates(
 	State.outgoingTransitions(s1, t);
 	Transition.targetState(t, s2);
 }
-@QueryExplorer(checked = false)
 pattern AllReachableStates(
 	s1 : State,
 	s2 : State

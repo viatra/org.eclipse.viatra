@@ -88,7 +88,8 @@ public class StringWhilelistProvider implements IPureElementProvider {
                     pureMethod(String.class.getMethod("valueOf", int.class)),
                     pureMethod(String.class.getMethod("valueOf", long.class)),
                     pureMethod(String.class.getMethod("valueOf", float.class)),
-                    pureMethod(String.class.getMethod("valueOf", double.class))
+                    pureMethod(String.class.getMethod("valueOf", double.class)),
+                    pureMethod(String.class.getMethod("toString"))
             );
         } catch (NoSuchMethodException | SecurityException e) {
             throw new RuntimeException("Error initializing white list: " + e.getMessage(), e);

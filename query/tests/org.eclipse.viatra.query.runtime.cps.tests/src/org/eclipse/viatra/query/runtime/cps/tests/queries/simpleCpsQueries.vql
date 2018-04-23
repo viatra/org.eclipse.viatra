@@ -27,13 +27,13 @@ pattern applicationInstances(
 }
 
 pattern applicationTypesIdentifiers(
-	ATIdentifier
+	ATIdentifier : java String
 ) {
 	ApplicationType.identifier(_, ATIdentifier);
 }
 
 pattern applicationInstancesIdentifiers(
-	AIIdentifier
+	AIIdentifier : java String
 ) {
 	ApplicationInstance.identifier(_, AIIdentifier);
 }
@@ -53,8 +53,8 @@ pattern applicationInstancesOfApplicationType(
 }
 
 pattern applicationInstancesOfApplicationTypeIdentifiers(
-	AIIdentifier,
-	ATIdentifier
+	AIIdentifier : java String,
+	ATIdentifier : java String
 ) {
 	ApplicationType.instances(aT, aI);
 	ApplicationInstance.identifier(aI, AIIdentifier);
@@ -72,8 +72,8 @@ pattern applicationTypeWithHostedInstances(
 }
 
 pattern applicationTypeWithHostedInstanceIdentifiers(
-	HIIdentifier,
-	ATIdentifier
+	HIIdentifier : java String,
+	ATIdentifier : java String
 ) {
 	find applicationTypeWithHostedInstances(aT, hI);
 	HostInstance.identifier(hI, HIIdentifier);
@@ -90,7 +90,7 @@ pattern applicationTypeWithoutHostedInstance(
 }
 
 pattern applicationTypeWithoutHostedInstanceIdentifiers(
-	ATIdentifier
+	ATIdentifier : java String
 ) {
 	neg find applicationTypeWithHostedInstances(aT, _);
 	ApplicationType.identifier(aT, ATIdentifier);
@@ -106,8 +106,8 @@ pattern transitionsOfApplicationType(
 }
 
 pattern transitionsOfApplicationTypeIdentifiers(
-	TIdentifier,
-	ATIdentifier
+	TIdentifier : java String,
+	ATIdentifier: java String
 ) {
 	ApplicationType.behavior.states.outgoingTransitions(aT, t);
 	ApplicationType.identifier(aT, ATIdentifier);
@@ -186,7 +186,6 @@ pattern hasTheMostHostedApplicationInstances(
 
 // Step 6: disjunction, recursion, transitive closure
 
-@QueryExplorer(checked = false)
 pattern communicateWith(
 	HI1 : HostInstance,
 	HI2 : HostInstance
@@ -243,16 +242,16 @@ pattern hasTheMostHostedApplications(
 	neg find hasMoreHostedApplications(_, HI);
 }
 
-@QueryExplorer(message = "The host instance $HI.identifier$ - which has the most hosted applications - has $CPU$ available CPU, $RAM$ available RAM and $HDD$ available HDD")
+@Label(label = "The host instance $HI.identifier$ - which has the most hosted applications - has $CPU$ available CPU, $RAM$ available RAM and $HDD$ available HDD")
 @ObservableValue(name = "HostInstance", expression = "HI.identifier")
 @ObservableValue(name = "CPU", expression = "CPU")
 @ObservableValue(name = "RAM", expression = "RAM")
 @ObservableValue(name = "HDD", expression = "HDD")
 pattern finalPattern(
 	HI : HostInstance,
-	CPU,
-	RAM,
-	HDD
+	CPU : java Integer,
+	RAM : java Integer,
+	HDD : java Integer
 ) {
 	find hasTheMostHostedApplications(HI);
 	
@@ -263,7 +262,7 @@ pattern finalPattern(
 
 // Step 8: advanced type inference features
 
-pattern instances(I) {
+pattern instances(I : Identifiable) {
 	HostInstance(I);
 } or {
 	ApplicationInstance(I);

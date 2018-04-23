@@ -12,54 +12,54 @@ package org.eclipse.viatra.query.runtime.cps.tests.queries
 import "http://www.eclipse.org/emf/2002/Ecore"
 import "http://org.eclipse.viatra/model/cps"
 
-pattern toOneFeature(obj, id) {
+pattern toOneFeature(obj : Identifiable, id : java String) {
 	Identifiable.identifier(obj, id);
 }
 
 @FunctionalDependency(forEach = id, unique = obj)
-pattern toOneFeatureWithSoftDep(obj, id) {
+pattern toOneFeatureWithSoftDep(obj : Identifiable, id : java String) {
 	Identifiable.identifier(obj, id);
 }
 
-pattern hasCall(obj, id) {
+pattern hasCall(obj : Identifiable, id : java String) {
 	find toOneFeatureWithSoftDep(obj, id);
 }
 
-pattern compositeKey(obj1, obj2, result) {
+pattern compositeKey(obj1 : Identifiable, obj2 : Identifiable, result : java String) {
 	Identifiable.identifier(obj1, id1);
 	Identifiable.identifier(obj2, id2);
 	result == eval(id1 + id2);
 }
 
 @FunctionalDependency(forEach = id, forEach = cps, unique = obj)
-pattern relativeID(cps, obj, id) {
+pattern relativeID(cps : CyberPhysicalSystem, obj : ApplicationType, id : java String) {
 	Identifiable.identifier(obj, id);
 	CyberPhysicalSystem.appTypes(cps, obj);
 }
 
-pattern evaluation(obj, id, upper) {
+pattern evaluation(obj : Identifiable, id : java String, upper : java String) {
 	Identifiable.identifier(obj, id);
 	upper == eval(id.toUpperCase);
 }
 
-pattern transitiveDep(obj, upper) {
+pattern transitiveDep(obj : Identifiable, upper : java String) {
 	Identifiable.identifier(obj, id);
 	upper == eval(id.toUpperCase);
 }
 
-pattern constant(obj, id) {
+pattern constant(obj : Identifiable, id : java String) {
 	find toOneFeature(obj, id);
 	id == "weather";
 }
 
-pattern constantWithSoft(obj, id) {
+pattern constantWithSoft(obj : Identifiable, id : java String) {
 	find toOneFeatureWithSoftDep(obj, id);
 	id == "weather";
 }
 
 @FunctionalDependency(forEach = id, unique = obj)
 @FunctionalDependency(forEach = obj, unique = id)
-pattern disjunctiveDependencies(obj, id) {
+pattern disjunctiveDependencies(obj : Identifiable, id : java String) {
 	CyberPhysicalSystem.identifier(obj, id);
 } or {
 	HostType.identifier(obj, id);

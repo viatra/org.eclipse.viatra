@@ -6,7 +6,7 @@ import "http://org.eclipse.viatra/model/cps"
  * Test pattern to check
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=495677
  */
-pattern partiallyUnboundUnifiedExportedParameters(at, ai){
+pattern partiallyUnboundUnifiedExportedParameters(at : ApplicationType, ai : ApplicationInstance){
     ApplicationType.instances(at, ai);
     neg find multipleExportedSame(at, _, ai);
 }
@@ -22,7 +22,7 @@ pattern multiInstanceTypes(at1: ApplicationType, at2: ApplicationType, ai: Appli
     at1 == at2;
 }
 
-pattern unifiedParametersWithDifferentValues2(at1, ai, c){
+pattern unifiedParametersWithDifferentValues2(at1 : ApplicationType, ai : ApplicationInstance, c : java Integer){
     ApplicationType.instances(at1, ai);
     ApplicationType(at2);
     c == count find multiInstanceTypes(at1, at2, ai);
@@ -32,7 +32,7 @@ pattern unifiedParametersWithDifferentValues2(at1, ai, c){
  * Test pattern to check
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=495677
  */
-pattern unifiedParametersWithDifferentValues(at1, ai, c){
+pattern unifiedParametersWithDifferentValues(at1 : ApplicationType, ai : ApplicationInstance, c : java Integer){
     ApplicationType.instances(at1, ai);
     ApplicationType(at2);
     c == count find multipleExportedSame(at1, at2, _);
@@ -47,7 +47,7 @@ pattern multipleEvals(at: ApplicationType){
     check(c > d);
 }
 
-private pattern countInstances(at: ApplicationType, value){
+private pattern countInstances(at: ApplicationType, value : java Integer){
     value == count find applicationInstancesOfApplicationType(_ai, at);
 }
 

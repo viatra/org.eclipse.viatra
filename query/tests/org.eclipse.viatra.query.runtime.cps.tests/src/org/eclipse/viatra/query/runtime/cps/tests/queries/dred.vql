@@ -7,7 +7,7 @@ pattern dependOn(dependant : ApplicationInstance, dependee : ApplicationInstance
 	ApplicationInstance.dependOn(dependant, dependee);
 }
 
-@QueryExplorer(message = "$dependant$ <- $dependee$")
+@Label(label = "$dependant$ <- $dependee$")
 pattern allDependencies(dependant : ApplicationInstance, dependee : ApplicationInstance) {
 	find dependOn(dependant, dependee);
 } or {
