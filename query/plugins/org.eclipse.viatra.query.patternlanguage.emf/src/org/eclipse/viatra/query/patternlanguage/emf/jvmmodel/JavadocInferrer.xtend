@@ -48,7 +48,7 @@ class JavadocInferrer {
         providing pattern-specific query methods.
         
         <p>Use the pattern matcher on a given model via {@link #on(ViatraQueryEngine)},
-        e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}.
+        e.g. in conjunction with {@link ViatraQueryEngine#on(QueryScope)}.
         
         <p>Matches of the pattern will be represented as {@link «pattern.findMatchClass?.simpleName»}.
         
@@ -247,7 +247,7 @@ class JavadocInferrer {
         «ENDFOR»
         </ul>
         
-        @see IPatternGroup
+        @see IQueryGroup
     '''
 
     def javadocGroupClassInstanceMethod(PatternModel model) '''
