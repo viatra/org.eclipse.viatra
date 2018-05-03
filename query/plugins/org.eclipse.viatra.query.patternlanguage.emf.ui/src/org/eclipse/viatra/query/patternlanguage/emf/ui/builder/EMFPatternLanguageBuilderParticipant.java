@@ -274,8 +274,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             if (!targetProject.exists()) {
                 ProjectGenerationHelper.initializePluginProject(targetProject, dependencies,
                         fragment.getAdditionalBinIncludes());
-                String directoryName = getOutputDirectoryName(context);
-                ProjectGenerationHelper.ensureSourceFolder(targetProject, directoryName, new NullProgressMonitor());
+                ProjectGenerationHelper.ensureSourceFolder(targetProject, getOutputConfigurations(context).values(), new NullProgressMonitor());
             } else {
                 if (!targetProject.isOpen()) {
                     targetProject.open(new NullProgressMonitor());
@@ -284,13 +283,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             }
             return targetProject;
         }
-    }
-
-    private String getOutputDirectoryName(IBuildContext context) {
-        Map<String, OutputConfiguration> outputConfigurations = getOutputConfigurations(context);
-        String directoryName = outputConfigurations.isEmpty() ? ViatraQueryNature.SRCGEN_DIR :
-                outputConfigurations.values().iterator().next().getOutputDirectory();
-        return directoryName;
     }
 
     private EMFPatternLanguageGeneratorConfig getConfiguration(EObject ctx) {

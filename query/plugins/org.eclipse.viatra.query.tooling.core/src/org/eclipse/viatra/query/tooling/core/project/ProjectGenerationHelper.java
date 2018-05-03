@@ -48,6 +48,10 @@ import org.eclipse.viatra.query.runtime.ViatraQueryRuntimePlugin;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
+import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
+import org.eclipse.xtext.builder.IXtextBuilderParticipant.IBuildContext;
+import org.eclipse.xtext.generator.OutputConfiguration;
+import org.eclipse.xtext.generator.OutputConfigurationProvider;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.BundleContext;
@@ -123,7 +127,7 @@ public abstract class ProjectGenerationHelper {
     public static final List<String> SINGLESOURCEFOLDER = ImmutableList.of("src");
 
     /**
-     * Creates a new VIATRA Query project: a plug-in project with src and src-gen folders and specific dependencies.
+     * Creates a new VIATRA Query project: a plug-in project with src source folder and specific dependencies.
      *
      */
     public static void createProject(IProjectDescription description, IProject proj,
@@ -676,6 +680,23 @@ public abstract class ProjectGenerationHelper {
         modifier.savePluginXml();
     }
     
+    /**
+     * Ensures that the project contains the output folder specified by its configuration as source folder.
+     *
+     * @param project
+     *            an existing, open plug-in project
+     * @param outputConfigurations output configurations defining the output folder
+     * @param monitor
+     * @throws CoreException
+     * @since 2.0
+     */
+    public static void ensureSourceFolder(IProject project, Collection<OutputConfiguration> outputConfigurations, IProgressMonitor monitor) throws CoreException {
+        if (!outputConfigurations.isEmpty()) {
+            String sourceFolder = outputConfigurations.iterator().next().getOutputDirectory();
+            ProjectGenerationHelper.ensureSourceFolder(project, sourceFolder, monitor);
+        }
+    }
+
     /**
      * Ensures that the project contains the required folder as source folder.
      *

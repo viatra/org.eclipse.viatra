@@ -1,0 +1,43 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.ecl
+Element-Name: Create Query Project Helper
+Element-Type: context
+Element-Version: 2.0
+Id: _uYL1oFqTEeiOt8o8P2LMSA
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 5/18/18 2:09 PM
+
+------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998
+Content-Type: text/ecl
+Entry-Name: .ecl.context
+
+/*******************************************************************************
+ * Copyright (c) 2010-2018, Denes Harmath, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Denes Harmath - Testing VIATRA GUI
+ *******************************************************************************/
+
+proc createQueryProject[val outputDirectory] {
+	get-menu "File/New/Other..." | click
+	with [get-window New] {
+	    get-tree | select "VIATRA/Query Project"
+	    get-button "Next >" | click
+	}
+	with [get-window -class WizardDialog] {
+	    get-editbox -after [get-label "Project name:"] | set-text "org.eclipse.viatra.examples.cps.testqueries"
+	    get-button Finish | click
+	}
+	get-view "Project Explorer" | get-tree | get-item "org.eclipse.viatra.examples.cps.testqueries" | get-property caption 
+	    | equals "org.eclipse.viatra.examples.cps.testqueries" | verify-true
+	with [get-view "Project Explorer" | get-tree] {
+	    get-item "org.eclipse.viatra.examples.cps.testqueries/src" | get-property childCount | equals 0 | verify-true
+	    get-item [concat "org.eclipse.viatra.examples.cps.testqueries/" $outputDirectory] | get-property childCount | equals 0 | verify-true
+	}
+}
+------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998--
