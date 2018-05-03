@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.builder;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -20,10 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
-import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
-import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -43,9 +42,6 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class EnsurePluginSupport {
-
-    @Inject
-    private IGenerationFragmentProvider fragmentProvider;
 
     @Inject
     private Logger logger;
@@ -128,8 +124,6 @@ public class EnsurePluginSupport {
         if (builderPreferenceAccess.isManifestGenerationEnabled(modelProject)) {
             // Export query packages
             ensurePackages(monitor); 
-            // Source folder settings might require updates in manifest files
-            ensureSourceFolders(modelProject, monitor); 
         }
         if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
             ensureExtensions(monitor);
@@ -187,16 +181,6 @@ public class EnsurePluginSupport {
                         }
                     });
             removeFrom.remove(found);
-        }
-    }
-
-    private void ensureSourceFolders(IProject modelProject, IProgressMonitor monitor) throws CoreException {
-        // ensure classpath entries on the projects
-        for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {
-            IProject fragmentProject = fragmentProvider.getFragmentProject(modelProject, fragment);
-            if (fragmentProject.exists()) {
-                ProjectGenerationHelper.ensureSourceFolder(fragmentProject, ViatraQueryNature.SRCGEN_DIR, monitor);
-            }
         }
     }
 

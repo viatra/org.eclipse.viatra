@@ -46,6 +46,10 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.runtime.ViatraQueryRuntimePlugin;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
+import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
+import org.eclipse.xtext.builder.IXtextBuilderParticipant.IBuildContext;
+import org.eclipse.xtext.generator.OutputConfiguration;
+import org.eclipse.xtext.generator.OutputConfigurationProvider;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.BundleContext;
@@ -118,17 +122,12 @@ public abstract class ProjectGenerationHelper {
     }
  
     /**
-     * Two source folders: src to be manually written and src-gen to contain generated code
-     */
-    public static final List<String> SOURCEFOLDERS = ImmutableList
-            .of(ViatraQueryNature.SRC_DIR, ViatraQueryNature.SRCGEN_DIR);
-    /**
      * A single source folder named src
      */
     public static final List<String> SINGLESOURCEFOLDER = ImmutableList.of("src");
 
     /**
-     * Creates a new VIATRA Query project: a plug-in project with src and src-gen folders and specific dependencies.
+     * Creates a new VIATRA Query project: a plug-in project with src source folder and specific dependencies.
      *
      */
     public static void createProject(IProjectDescription description, IProject proj,
@@ -249,7 +248,7 @@ public abstract class ProjectGenerationHelper {
         bundleDesc.setExtensionRegistry(true);
         bundleDesc.setBinIncludes(additionalBinIncludes);
 
-        bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], SOURCEFOLDERS, service));
+        bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], SINGLESOURCEFOLDER, service));
         bundleDesc.setExecutionEnvironments(new String[] { ViatraQueryNature.EXECUTION_ENVIRONMENT });
         // Adding dependencies
         IRequiredBundleDescription[] reqBundles = Lists.transform(dependencies,
@@ -731,9 +730,26 @@ public abstract class ProjectGenerationHelper {
      */
     @Deprecated
     public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
-        ensureSourceFolders(project, SOURCEFOLDERS, monitor);
+        ensureSourceFolders(project, SINGLESOURCEFOLDER, monitor);
     }
     
+    /**
+     * Ensures that the project contains the output folder specified by its configuration as source folder.
+     *
+     * @param project
+     *            an existing, open plug-in project
+     * @param outputConfigurations output configurations defining the output folder
+     * @param monitor
+     * @throws CoreException
+     * @since 1.7.3
+     */
+    public static void ensureSourceFolder(IProject project, Collection<OutputConfiguration> outputConfigurations, IProgressMonitor monitor) throws CoreException {
+        if (!outputConfigurations.isEmpty()) {
+            String sourceFolder = outputConfigurations.iterator().next().getOutputDirectory();
+            ProjectGenerationHelper.ensureSourceFolder(project, sourceFolder, monitor);
+        }
+    }
+
     /**
      * Ensures that the project contains the required folder as source folder.
      *

@@ -30,6 +30,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.operations.CreateProjectOperation;
+import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
@@ -49,6 +50,9 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
     @Inject
     private Logger logger;
+    
+    @Inject
+    private EclipseOutputConfigurationProvider outputConfigurationProvider;
 
     @Override
     public void addPages() {
@@ -76,7 +80,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
         final IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
         description.setLocationURI(projectURI);
 
-        WorkspaceModifyOperation op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String> of());
+        WorkspaceModifyOperation op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String> of(), outputConfigurationProvider);
 
         try {
             getContainer().run(true, true, op);

@@ -29,8 +29,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageIm
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig;
-import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
@@ -174,7 +174,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 Pattern pattern = (Pattern) obj;
                 boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
                 if (isPublic) {
-                    executeGeneratorFragments(context.getBuiltProject(), pattern);
+                    executeGeneratorFragments(context, pattern);
                     ensureSupport.exportPackage(project, util.getPackageName(pattern));
                     if (getConfiguration(pattern).getMatcherGenerationStrategy() == MatcherGenerationStrategy.SEPARATE_CLASS) {
                         // Util package is only used by the separate class generation strategy
@@ -214,15 +214,15 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
     /**
      * Executes all {@link IGenerationFragment} provided for the current {@link Pattern}.
      *
-     * @param modelProject
+     * @param context
      * @param pattern
      * @throws CoreException
      */
-    private void executeGeneratorFragments(IProject modelProject, Pattern pattern) throws CoreException {
+    private void executeGeneratorFragments(IBuildContext context, Pattern pattern) throws CoreException {
         for (IGenerationFragment fragment : fragmentProvider.getFragmentsForPattern(pattern)) {
             try {
                 injector.injectMembers(fragment);
-                executeGeneratorFragment(fragment, modelProject, pattern);
+                executeGeneratorFragment(fragment, context, pattern);
             } catch (Exception e) {
                 String msg = String.format("Exception when executing generation for '%s' in fragment '%s'",
                         CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass()
@@ -232,9 +232,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         }
     }
 
-    private void executeGeneratorFragment(IGenerationFragment fragment, IProject modelProject, Pattern pattern)
+    private void executeGeneratorFragment(IGenerationFragment fragment, IBuildContext context, Pattern pattern)
             throws CoreException {
-        IProject targetProject = createOrGetTargetProject(modelProject, fragment);
+        IProject targetProject = createOrGetTargetProject(context, fragment);
         EclipseResourceFileSystemAccess2 fsa = eclipseResourceSupport.createProjectFileSystemAccess(targetProject);
         fragment.generateFiles(pattern, fsa);
         // Generating Eclipse extensions
@@ -255,7 +255,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
      * @return
      * @throws CoreException
      */
-    private IProject createOrGetTargetProject(IProject modelProject, IGenerationFragment fragment) throws CoreException {
+    private IProject createOrGetTargetProject(IBuildContext context, IGenerationFragment fragment) throws CoreException {
+        IProject modelProject = context.getBuiltProject();
         String postfix = fragment.getProjectPostfix();
         String modelProjectName = ProjectGenerationHelper.getBundleSymbolicName(modelProject);
         if (postfix == null || postfix.isEmpty()) {
@@ -271,6 +272,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             if (!targetProject.exists()) {
                 ProjectGenerationHelper.initializePluginProject(targetProject, dependencies,
                         fragment.getAdditionalBinIncludes());
+                ProjectGenerationHelper.ensureSourceFolder(targetProject, getOutputConfigurations(context).values(), new NullProgressMonitor());
             } else {
                 if (!targetProject.isOpen()) {
                     targetProject.open(new NullProgressMonitor());

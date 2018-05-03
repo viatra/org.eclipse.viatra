@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.tests.generator
 
-import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.IPath
+import org.eclipse.core.runtime.Path
 
 class VQLGeneratorProperties {
     
@@ -139,5 +139,9 @@ class VQLGeneratorProperties {
     outlet.DEFAULT_OUTPUT.userOutputPerSourceFolder=
     targetJavaVersion=JAVA5
     useJavaCompilerCompliance=true
+    '''
+    
+    static def String customOutputDirectory(String directoryName) '''
+    outlet.DEFAULT_OUTPUT.directory=./«directoryName»
     '''
 }
