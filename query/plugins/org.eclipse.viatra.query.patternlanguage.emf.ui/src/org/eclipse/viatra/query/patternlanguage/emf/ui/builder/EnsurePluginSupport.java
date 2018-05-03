@@ -21,10 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
-import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
-import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -42,9 +40,6 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class EnsurePluginSupport {
-
-    @Inject
-    private IGenerationFragmentProvider fragmentProvider;
 
     @Inject
     private Logger logger;
@@ -127,8 +122,6 @@ public class EnsurePluginSupport {
         if (builderPreferenceAccess.isManifestGenerationEnabled(modelProject)) {
             // Export query packages
             ensurePackages(monitor); 
-            // Source folder settings might require updates in manifest files
-            ensureSourceFolders(modelProject, monitor); 
         }
         if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
             ensureExtensions(monitor);
@@ -179,16 +172,6 @@ public class EnsurePluginSupport {
         // not remove a removable if exist in the current extension map
         for (final ExtensionData ext : searchList) {
             removeFrom.removeIf(p -> Objects.equals(p.getKey(), ext.getId()) && Objects.equals(p.getValue(), ext.getPoint()));
-        }
-    }
-
-    private void ensureSourceFolders(IProject modelProject, IProgressMonitor monitor) throws CoreException {
-        // ensure classpath entries on the projects
-        for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {
-            IProject fragmentProject = fragmentProvider.getFragmentProject(modelProject, fragment);
-            if (fragmentProject.exists()) {
-                ProjectGenerationHelper.ensureSourceFolder(fragmentProject, ViatraQueryNature.SRCGEN_DIR, monitor);
-            }
         }
     }
 

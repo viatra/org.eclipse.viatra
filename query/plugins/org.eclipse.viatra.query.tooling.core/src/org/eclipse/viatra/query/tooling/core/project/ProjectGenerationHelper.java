@@ -118,11 +118,6 @@ public abstract class ProjectGenerationHelper {
     }
  
     /**
-     * Two source folders: src to be manually written and src-gen to contain generated code
-     */
-    public static final List<String> SOURCEFOLDERS = ImmutableList
-            .of(ViatraQueryNature.SRC_DIR, ViatraQueryNature.SRCGEN_DIR);
-    /**
      * A single source folder named src
      */
     public static final List<String> SINGLESOURCEFOLDER = ImmutableList.of("src");
@@ -249,7 +244,7 @@ public abstract class ProjectGenerationHelper {
         bundleDesc.setExtensionRegistry(true);
         bundleDesc.setBinIncludes(additionalBinIncludes);
 
-        bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], SOURCEFOLDERS, service));
+        bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], SINGLESOURCEFOLDER, service));
         bundleDesc.setExecutionEnvironments(new String[] { ViatraQueryNature.EXECUTION_ENVIRONMENT });
         // Adding dependencies
         IRequiredBundleDescription[] reqBundles = Lists.transform(dependencies,
