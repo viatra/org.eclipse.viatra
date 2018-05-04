@@ -27,6 +27,14 @@ public interface IMultiLookup<Key, Value> {
     public IMemoryView<Value> lookup(Key key);
     
     /**
+     * Returns a (read-only) bucket of values associated with the given key.
+     * Clients must not modify the returned bucket.
+     * @param key a key for which associated values are sought (may not be of Key type)
+     * @return null if key not found, a bucket of values otherwise
+     */
+    public IMemoryView<Value> lookupUnsafe(Object key);
+    
+    /**
      * @return the set of distinct keys that have values associated.
      */
     public Iterable<Key> distinctKeys();

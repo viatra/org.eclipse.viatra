@@ -54,6 +54,11 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
      * Implementor shall bind to the low-level get() or equivalent of the underlying Key-to-Object map
      */
     abstract Object lowLevelGet(Key key);
+
+    /**
+     * Implementor shall bind to the low-level get() or equivalent of the underlying Key-to-Object map
+     */
+    abstract Object lowLevelGetUnsafe(Object key);
     
     /**
      * Implementor shall bind to the low-level remove() or equivalent of the underlying Key-to-Object map
@@ -91,6 +96,14 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     @Override
     public default Bucket lookup(Key key) {
         Object object = lowLevelGet(key);
+        if (object == null) return null;
+        if (object instanceof MarkedMemory) return (Bucket) object;
+        return yieldSingleton((Value)object);
+    }
+    
+    @Override
+    public default Bucket lookupUnsafe(Object key) {
+        Object object = lowLevelGetUnsafe(key);
         if (object == null) return null;
         if (object instanceof MarkedMemory) return (Bucket) object;
         return yieldSingleton((Value)object);

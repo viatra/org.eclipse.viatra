@@ -9,15 +9,13 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.query.runtime.rete.tuple;
-
-import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+package org.eclipse.viatra.query.runtime.matchers.tuple;
 
 /**
  * A tuple that transparently provides a masked (transformed) view of another tuple.
  * 
  * @author Gabor Bergmann
+ * @since 2.0
  * 
  */
 public class MaskedTuple extends Tuple {

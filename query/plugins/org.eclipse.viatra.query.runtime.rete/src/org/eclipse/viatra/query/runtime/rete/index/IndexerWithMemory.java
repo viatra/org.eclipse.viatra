@@ -14,15 +14,16 @@ package org.eclipse.viatra.query.runtime.rete.index;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory;
 
 /**
  * @author Gabor Bergmann
@@ -42,7 +43,7 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
      */
     public IndexerWithMemory(ReteContainer reteContainer, TupleMask mask) {
         super(reteContainer, mask);
-        memory = new MaskedTupleMemory(mask, this);
+        memory = MaskedTupleMemory.create(mask, BucketType.SETS, this);
         reteContainer.registerClearable(memory);
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
@@ -64,6 +65,9 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
         return mailbox;
     }
 
+    /**
+     * @since 2.0
+     */
     public MaskedTupleMemory getMemory() {
         return memory;
     }

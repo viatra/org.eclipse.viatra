@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestLabelProvider;
+import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory;
@@ -27,7 +28,6 @@ import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.Mask;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
-import org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory;
 
 public class ReteVisualizationLabelProvider extends ZestLabelProvider {
 

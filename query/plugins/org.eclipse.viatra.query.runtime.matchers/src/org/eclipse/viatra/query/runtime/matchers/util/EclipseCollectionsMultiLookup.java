@@ -48,6 +48,11 @@ class EclipseCollectionsMultiLookup {
         }
         
         @Override
+        public Object lowLevelGetUnsafe(Object key) {
+            return super.get(key); 
+        }
+        
+        @Override
         public void lowLevelRemove(Key key) {
             super.remove(key);
         }
@@ -123,6 +128,11 @@ class EclipseCollectionsMultiLookup {
         @Override
         public Object lowLevelGet(Long key) {
             return super.get(key); 
+        }
+        
+        @Override
+        public Object lowLevelGetUnsafe(Object key) {
+            return key instanceof Long ? super.get((Long)key) : null; 
         }
         
         @Override

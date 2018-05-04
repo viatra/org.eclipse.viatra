@@ -25,7 +25,6 @@ Export-Package: org.eclipse.viatra.query.runtime.rete.aggregation,
  org.eclipse.viatra.query.runtime.rete.remote,
  org.eclipse.viatra.query.runtime.rete.single,
  org.eclipse.viatra.query.runtime.rete.traceability,
- org.eclipse.viatra.query.runtime.rete.tuple,
  org.eclipse.viatra.query.runtime.rete.util
 Bundle-ClassPath: .
 Import-Package: com.google.common.base;version="15.0.0",
