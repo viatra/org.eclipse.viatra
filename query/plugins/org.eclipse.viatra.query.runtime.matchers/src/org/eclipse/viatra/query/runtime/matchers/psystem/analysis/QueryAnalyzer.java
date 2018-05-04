@@ -69,16 +69,26 @@ public final class QueryAnalyzer {
      * @since 1.5
      */
     public Map<Set<Integer>, Set<Integer>> getProjectedFunctionalDependencies(PQuery query, boolean strict) {
-        Map<Set<Integer>, Set<Integer>> dependencies = strict 
-                ? strictFunctionalDependencyGuarantees.computeIfAbsent(query, q -> computeFunctionalDependencies(q, strict)) 
-                :   softFunctionalDependencyGuarantees.computeIfAbsent(query, q -> computeFunctionalDependencies(q, strict));
+        Map<PQuery, Map<Set<Integer>, Set<Integer>>> guaranteeStore =  strict ? strictFunctionalDependencyGuarantees : softFunctionalDependencyGuarantees;
+        Map<Set<Integer>, Set<Integer>> dependencies = guaranteeStore.get(query);
+        //  Why not computeIfAbsent? See Bug 532507
+        //      Invoked method #computeFunctionalDependencies may trigger functional dependency computation for called queries;
+        //      and may thus recurs back into #getProjectedFunctionalDependencies, causing a ConcurrentModificationException
+        //      if the called query has not been previously analyzed.
+        //
+        //      Note: if patterns are recursive, the empty accumulator will be found in the store 
+        //          (this yields a safe lower estimate and guarantees termination for #getProjectedFunctionalDependencies)
+        //          But this case probably will not occur due to recursive queries having a disjunction at some point, 
+        //          and thus ignored by #computeFunctionalDependencies  
+        if (dependencies == null) {
+            dependencies = new HashMap<>(); // accumulator
+            guaranteeStore.put(query, dependencies);
+            computeFunctionalDependencies(dependencies, query, strict);
+        }
         return dependencies;
     }
 
-    private Map<Set<Integer>, Set<Integer>> computeFunctionalDependencies(PQuery query, boolean strict) {
-        Map<Set<Integer>, Set<Integer>> dependencies;
-        dependencies = new HashMap<Set<Integer>, Set<Integer>>();
-
+    private void computeFunctionalDependencies(Map<Set<Integer>, Set<Integer>> accumulator, PQuery query, boolean strict) {
         Set<PBody> bodies = query.getDisjunctBodies().getBodies();            
         if (bodies.size() == 1) { // no support for recursion or disjunction
 
@@ -107,7 +117,7 @@ public final class QueryAnalyzer {
                 for (PVariable pVariable : entry.getValue()) {
                     right.add(parameters.get(pVariable));
                 }
-                dependencies.put(left, right);
+                accumulator.put(left, right);
             }
             
         } else {
@@ -137,10 +147,9 @@ public final class QueryAnalyzer {
                         rights.add(position);
                     }
                     
-                    FunctionalDependencyHelper.includeDependency(dependencies, lefts, rights);
+                    FunctionalDependencyHelper.includeDependency(accumulator, lefts, rights);
                 }
         }
-        return dependencies;
     }
 
     /**
