@@ -18,9 +18,14 @@ import java.util.List;
  * @since 1.7
  */
 public final class TupleMask0 extends TupleMask {
+    
+    private final static int[] EMPTY_ARRAY = {};
 
-    TupleMask0(int[] indices, int sourceWidth) {
-        super(indices, sourceWidth);
+    /**
+     * PRE: indices.length == 0
+     */
+    TupleMask0(int sourceWidth) {
+        super(EMPTY_ARRAY, sourceWidth, EMPTY_ARRAY, true);
     }
     
     @Override
@@ -35,7 +40,7 @@ public final class TupleMask0 extends TupleMask {
 
     @Override
     public TupleMask transform(TupleMask mask) {
-        return new TupleMask0(indices, mask.sourceWidth);
+        return new TupleMask0(mask.sourceWidth);
     }
 
     @Override
@@ -44,5 +49,10 @@ public final class TupleMask0 extends TupleMask {
             return unmasked;
         else
             return super.combine(unmasked, masked, useInheritance, asComplementer);
+    }
+    
+    @Override
+    public boolean isIdentity() {
+        return 0 == sourceWidth;
     }
 }

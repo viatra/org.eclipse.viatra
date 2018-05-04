@@ -18,8 +18,11 @@ import java.util.List;
  */
 public final class TupleMaskIdentity extends TupleMask {
 
+    TupleMaskIdentity(int sourceWidth) {
+        this(constructLinearSequence(sourceWidth), sourceWidth);
+    }
     TupleMaskIdentity(int[] indices, int sourceWidth) {
-        super(indices, sourceWidth);
+        super(indices, sourceWidth, indices, true);
     }
 
     @Override
@@ -40,6 +43,11 @@ public final class TupleMaskIdentity extends TupleMask {
     @Override
     public Tuple revertFrom(ITuple masked) {
         return masked.toImmutable();
+    }
+    
+    @Override
+    public boolean isIdentity() {
+        return true;
     }
     
 }

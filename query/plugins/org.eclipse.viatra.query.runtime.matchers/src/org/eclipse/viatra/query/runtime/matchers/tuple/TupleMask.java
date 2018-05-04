@@ -34,47 +34,45 @@ public class TupleMask {
      */
     public final int[] indices;
     /**
-     * indicesSorted is indices, sorted in ascending order.
-     */
-    public int[] indicesSorted;
-    /**
      * the size of the tuple this mask is applied to
      */
     public int sourceWidth;
+    /**
+     * indicesSorted is indices, sorted in ascending order. 
+     * null by default, call {@link #ensureIndicesSorted()} before using
+     */
+    int[] indicesSorted;
+    
+    /**
+     * true if no index occurs twice; computed on demand by {@link #isNonrepeating()}
+     */
+    Boolean isNonrepeating;
 
     /**
      * Creates a TupleMask instance with the given indices array
+     * <p> indicesSorted and isNonrepeating may be OPTIONALLY given if known.
+     * @since 2.0
      */
-    TupleMask(int[] indices, int sourceWidth) {
-        this.sourceWidth = sourceWidth;
+    protected TupleMask(int[] indices, int sourceWidth, int[] indicesSorted, Boolean isNonrepeating) {
         this.indices = indices;
-        indicesSorted = null;
-    }
-    /**
-     * Creates a TupleMask instance that selects positions where keep is true
-     */
-    TupleMask(boolean[] keep) {
-        this.sourceWidth = keep.length;
-        int size = 0;
-        for (int k = 0; k < keep.length; ++k)
-            if (keep[k])
-                size++;
-        this.indices = new int[size];
-        int l = 0;
-        for (int k = 0; k < keep.length; ++k)
-            if (keep[k])
-                indices[l++] = k;
-        indicesSorted = null;
+        this.sourceWidth = sourceWidth;
+        this.indicesSorted = indicesSorted;
+        this.isNonrepeating = isNonrepeating;
     }
     
     /**
      * Creates a TupleMask instance that selects given positions.
      * The mask takes ownership of the array selectedIndices, the client must not modify it afterwards.
-     * @since 1.7
+     * 
+     * <p> indicesSorted and isNonrepeating may be OPTIONALLY given if known.
+     * @since 2.0
      */
-    protected static TupleMask fromSelectedIndicesInternal(int[] selectedIndices, int sourceArity) {
+    protected static TupleMask fromSelectedIndicesInternal(
+            int[] selectedIndices, int sourceArity,
+            int[] indicesSorted, Boolean isNonrepeating) 
+    {
         if (selectedIndices.length == 0) // is it nullary?
-            return new TupleMask0(selectedIndices, sourceArity);
+            return new TupleMask0(sourceArity);
         
         // is it identity?
         boolean identity = sourceArity == selectedIndices.length;
@@ -90,24 +88,44 @@ public class TupleMask {
             return new TupleMaskIdentity(selectedIndices, sourceArity);
          
         // generic case
-        return new TupleMask(selectedIndices, sourceArity);
+        return new TupleMask(selectedIndices, sourceArity, indicesSorted, isNonrepeating);
+    }
+    
+    /**
+     * Creates a TupleMask instance that selects given positions in monotonically increasing order.
+     * The mask takes ownership of the array selectedIndices, the client must not modify it afterwards.
+     * @since 2.0
+     */
+    protected static TupleMask fromSelectedMonotonicIndicesInternal(int[] selectedIndices, int sourceArity)
+    {
+        return fromSelectedIndicesInternal(selectedIndices, sourceArity, selectedIndices /* also sorted */, true);
     }
 
     /**
      * Creates a TupleMask instance of the given size that maps the first 'size' elements intact
      */
     public static TupleMask linear(int size, int sourceWidth) {
+        if (size == sourceWidth) return new TupleMaskIdentity(sourceWidth);
+        int[] indices = constructLinearSequence(size);
+        return fromSelectedMonotonicIndicesInternal(indices, sourceWidth);
+    }
+
+    /**
+     * An array containing the first {@link size} nonnegative integers in order
+     * @since 2.0
+     */
+    protected static int[] constructLinearSequence(int size) {
         int[] indices = new int[size];
         for (int i = 0; i < size; i++)
             indices[i] = i;
-        return fromSelectedIndicesInternal(indices, sourceWidth);
+        return indices;
     }
 
     /**
      * Creates a TupleMask instance of the given size that maps every single element intact
      */
     public static TupleMask identity(int size) {
-        return linear(size, size);
+        return new TupleMaskIdentity(size);   
     }
 
     /**
@@ -128,7 +146,7 @@ public class TupleMask {
             indices[i] = i;
         for (int i = omission; i < size; i++)
             indices[i] = i + 1;
-        return fromSelectedIndicesInternal(indices, sourceWidth);
+        return fromSelectedMonotonicIndicesInternal(indices, sourceWidth);
     }
 
     
@@ -141,12 +159,13 @@ public class TupleMask {
         for (int k = 0; k < keep.length; ++k)
             if (keep[k])
                 size++;
+        if (size == keep.length) return new TupleMaskIdentity(size);
         int[] indices = new int[size];
         int l = 0;
         for (int k = 0; k < keep.length; ++k)
             if (keep[k])
                 indices[l++] = k;
-        return fromSelectedIndicesInternal(indices, keep.length);
+        return fromSelectedMonotonicIndicesInternal(indices, keep.length);
     }
     
     /**
@@ -155,14 +174,14 @@ public class TupleMask {
      */
     public static TupleMask fromSelectedIndices(int sourceArity, Collection<Integer> selectedIndices) {
         int[] selected = integersToIntArray(selectedIndices);
-        return fromSelectedIndicesInternal(selected, sourceArity);
+        return fromSelectedIndicesInternal(selected, sourceArity, null, null);
     }
     /**
      * Creates a TupleMask instance that selects given positions.
      * @since 1.7
      */
     public static TupleMask fromSelectedIndices(int sourceArity, int[] selectedIndices) {
-        return fromSelectedIndicesInternal(Arrays.copyOf(selectedIndices, selectedIndices.length), sourceArity);
+        return fromSelectedIndicesInternal(Arrays.copyOf(selectedIndices, selectedIndices.length), sourceArity, null, null);
     }
     /**
      * Creates a TupleMask instance that selects non-null positions of a given tuple
@@ -175,7 +194,8 @@ public class TupleMask {
                 indices.add(i);
             }
         }
-        return fromSelectedIndicesInternal(integersToIntArray(indices), tuple.getSize());
+        if (indices.size() == tuple.getSize()) return new TupleMaskIdentity(indices.size());
+        return fromSelectedMonotonicIndicesInternal(integersToIntArray(indices), tuple.getSize());
     }
     /**
      * @since 1.7
@@ -194,6 +214,7 @@ public class TupleMask {
      * Creates a TupleMask instance that moves an element from one index to other, shifting the others if neccessary.
      */
     public static TupleMask displace(int from, int to, int sourceWidth) {
+        if (from == to) return new TupleMaskIdentity(sourceWidth);
         int[] indices = new int[sourceWidth];
         for (int i = 0; i < sourceWidth; i++)
             if (i == to)
@@ -204,7 +225,7 @@ public class TupleMask {
                 indices[i] = i - 1;
             else
                 indices[i] = i;
-        return fromSelectedIndicesInternal(indices, sourceWidth);
+        return fromSelectedIndicesInternal(indices, sourceWidth, null, true);
     }
 
     /**
@@ -212,7 +233,7 @@ public class TupleMask {
      */
     public static TupleMask selectSingle(int selected, int sourceWidth) {
         int[] indices = { selected };
-        return fromSelectedIndicesInternal(indices, sourceWidth);
+        return fromSelectedMonotonicIndicesInternal(indices, sourceWidth);
     }
 
     /**
@@ -227,23 +248,26 @@ public class TupleMask {
             indices[i] = left.indices[i];
         for (int i = 0; i < rightLength; ++i)
             indices[i + leftLength] = right.indices[i];
-        return fromSelectedIndicesInternal(indices, left.sourceWidth);
+        return fromSelectedIndicesInternal(indices, left.sourceWidth, null, null);
     }
 
     /**
-     * Generates indicesSorted from indices
-     * 
+     * Generates indicesSorted from indices on demand
      */
-    public void sort() {
-        indicesSorted = new int[indices.length];
-        List<Integer> list = new LinkedList<Integer>();
-        for (int i = 0; i < indices.length; ++i)
-            list.add(indices[i]);
-        java.util.Collections.sort(list);
-        int i = 0;
-        for (Integer a : list)
-            indicesSorted[i++] = a;
+    void ensureIndicesSorted() {
+        if (indicesSorted == null) {
+            indicesSorted = new int[indices.length];
+            List<Integer> list = new LinkedList<Integer>();
+            for (int i = 0; i < indices.length; ++i)
+                list.add(indices[i]);
+            java.util.Collections.sort(list);
+            int i = 0;
+            for (Integer a : list)
+                indicesSorted[i++] = a;
+        }
     }
+    
+    
     
     /**
      * Returns the first index of the source that is not selected by the mask, or empty if all indices are selected.
@@ -251,12 +275,13 @@ public class TupleMask {
      * @since 2.0
      */
     public OptionalInt getFirstOmittedIndex() {
-        if (indicesSorted == null) sort();
+        ensureIndicesSorted();
         int column = 0; 
         while (column < getSize() && indicesSorted[column] == column) column++;
         if (column < getSize()) return OptionalInt.of(column);
         else return OptionalInt.empty();
     }
+
 
     /**
      * Returns a selected masked value from the selected tuple.
@@ -302,10 +327,27 @@ public class TupleMask {
     }
     
     /**
+     * @return true iff no two selected indices are the same
+     * @since 2.0
+     */
+    public boolean isNonrepeating() {
+        if (isNonrepeating == null) {
+            ensureIndicesSorted();
+            int previous = -1;
+            int i;
+            for (i = 0; i < sourceWidth && previous != indicesSorted[i]; ++i) {
+                previous = indicesSorted[i];
+            }
+            isNonrepeating = (i == sourceWidth); // if not, stopped due to detected repetition
+        }
+        return isNonrepeating;
+    }
+    
+    /**
      * Returns a tuple `result` that satisfies `this.transform(result).equals(masked)`. Positions of the result tuple
      * that are not determined this way will be filled with null.
      * 
-     * @pre: all indices of the mask must be different
+     * @pre: all indices of the mask must be different, i.e {@link #isNonrepeating()} must return true
      * @since 1.7
      */
     public Tuple revertFrom(ITuple masked) {
@@ -334,7 +376,7 @@ public class TupleMask {
         int[] cascadeIndices = new int[indices.length];
         for (int i = 0; i < indices.length; ++i)
             cascadeIndices[i] = mask.indices[indices[i]];
-        return fromSelectedIndicesInternal(cascadeIndices, mask.sourceWidth);
+        return fromSelectedIndicesInternal(cascadeIndices, mask.sourceWidth, null, null);
     }
 
     // /**
@@ -394,8 +436,7 @@ public class TupleMask {
             for (int i = 0; i < indices.length; ++i)
                 combined[cPos++] = masked.get(indices[i]);
         } else {
-            if (indicesSorted == null)
-                sort();
+            ensureIndicesSorted();
             int mPos = 0;
             for (int i = 0; i < masked.getSize(); ++i)
                 if (mPos < indicesSorted.length && i == indicesSorted[mPos])
@@ -461,6 +502,16 @@ public class TupleMask {
      */
     public int getSourceWidth() {
         return sourceWidth;
+    }
+    
+    
+    /**
+     * @return true iff this mask is a no-op
+     * @since 2.0
+     */
+    public boolean isIdentity() {
+        // Contract: if identity mask, a specialized subclass is constructed instead 
+        return false;
     }
     
     /**
