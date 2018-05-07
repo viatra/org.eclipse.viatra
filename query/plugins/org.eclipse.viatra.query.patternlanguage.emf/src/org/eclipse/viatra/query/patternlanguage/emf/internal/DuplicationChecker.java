@@ -85,7 +85,7 @@ public class DuplicationChecker {
         } else {
             // Otherwise collect all visible duplicates
             shadowingPatternDescriptions = resourceDescriptions
-                    .getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
+                    .getExportedObjects(sourceType, fullyQualifiedName, true);
             return processDuplicateCandidates(pattern, true, shadowingPatternDescriptions);
         }
     }
@@ -112,8 +112,8 @@ public class DuplicationChecker {
                             resourceDescriptions);
                     List<IContainer> visibleFromOther = containerManager.getVisibleContainers(otherResourceDescription,
                             resourceDescriptions);
-                    if ((Iterables.any(visible, contains(otherResourceDescription))
-                            || Iterables.any(visibleFromOther, contains(resourceDescription))) && !Objects.equals(resourceUri, otherResourceUri)) {
+                    if (Iterables.any(visible, contains(otherResourceDescription))
+                            || Iterables.any(visibleFromOther, contains(resourceDescription))) {
                         duplicates.add(shadowingPatternDescription);
                         
                     }
