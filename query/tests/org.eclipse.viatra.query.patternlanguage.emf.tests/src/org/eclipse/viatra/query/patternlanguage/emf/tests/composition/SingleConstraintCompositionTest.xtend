@@ -30,6 +30,9 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.xtext.common.types.JvmType
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -48,6 +51,9 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
     private Injector injector
     
     @Inject extension ValidationTestHelper
+    
+    @Inject
+    private IJvmModelAssociations associations
 
     private ValidatorTester<EMFPatternLanguageValidator> tester
 
@@ -56,6 +62,22 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
         tester = new ValidatorTester(validator, injector)
     }
 
+    @Test
+    def void noEmbeddedPattern() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern transitive(p : EClass) {
+                EClass.eSuperTypes(p, _p2);
+            }
+            '''
+        )
+        val constraint = model.patterns.get(0).bodies.get(0).constraints.get(0) as PathExpressionConstraint
+        tester.validate(model).assertOK
+        Assert.assertArrayEquals(#{}, associations.getJvmElements(constraint).filter(JvmType).toList.toArray)
+    }
+    
     @Test
     def void validClosure() {
         val model = parseHelper.parse('''

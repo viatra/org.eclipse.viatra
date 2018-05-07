@@ -203,7 +203,7 @@ class PatternQuerySpecificationClassInferrer {
 
 
         // Created PQuery instances for embedded queries
-        pattern.eAllContents.filter(CallableRelation).filter[call | !(call instanceof PatternCall)].forEach[call |
+        pattern.eAllContents.filter(CallableRelation).filter[call | !(call instanceof PatternCall)].filter[PatternLanguageHelper.isNonSimpleConstraint(it)].forEach[call |
             val embeddedParameters = PatternLanguageHelper.getParameterVariables(call, typeSystem, typeInferrer)
             
             pQueryClass.members += call.toClass("EmbeddedQuery" + Integer.toString(call.hashCode)) [
