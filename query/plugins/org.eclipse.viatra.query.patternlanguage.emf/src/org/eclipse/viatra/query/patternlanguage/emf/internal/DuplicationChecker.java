@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra.query.patternlanguage.emf.util.IProjectHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -26,9 +27,6 @@ import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.impl.LiveShadowedResourceDescriptions;
-import org.eclipse.xtext.workspace.IProjectConfig;
-import org.eclipse.xtext.workspace.IProjectConfigProvider;
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -39,7 +37,6 @@ import com.google.inject.Inject;
  * @since 2.0
  *
  */
-@SuppressWarnings("restriction")
 public class DuplicationChecker {
 
     @Inject
@@ -49,11 +46,9 @@ public class DuplicationChecker {
     @Inject
     private IContainer.Manager containerManager;
     @Inject
-    IProjectConfigProvider projectConfigurationProvider;
+    private IQualifiedNameConverter nameConverter;
     @Inject
-    IJvmModelAssociations associations;
-    @Inject
-    IQualifiedNameConverter nameConverter;
+    private IProjectHelper projectHelper; 
 
     private static Predicate<IContainer> contains(final IResourceDescription resourceDescription) {
         return container -> Iterables.contains(container.getResourceDescriptions(), resourceDescription);
@@ -77,7 +72,7 @@ public class DuplicationChecker {
         resourceDescriptions.setContext(pattern.eContainer());
         
         Iterable<IEObjectDescription> shadowingPatternDescriptions = null;
-        if (isStandaloneFileURI(pattern, pattern.eResource().getURI())) {
+        if (projectHelper.isStandaloneFileURI(pattern, pattern.eResource().getURI())) {
             // If pattern is not in a source folder, duplicate analysis is only meaningful inside the file
             shadowingPatternDescriptions = resourceDescriptions.getLocalDescriptions().getExportedObjects(sourceType, fullyQualifiedName, true);
             // Visibility can be ignored in case of local descriptions
@@ -99,7 +94,7 @@ public class DuplicationChecker {
                 URI resourceUri = pattern.eResource().getURI();
                 // not using shadowingPattern because it might be proxy
                 URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); 
-                if (!Objects.equals(resourceUri, otherResourceUri) && isStandaloneFileURI(shadowingPattern, otherResourceUri)) {
+                if (!Objects.equals(resourceUri, otherResourceUri) && projectHelper.isStandaloneFileURI(shadowingPattern, otherResourceUri)) {
                     // If shadowing pattern is not in another source file in a source folder, it does not matter
                     continue;
                 }
@@ -123,20 +118,5 @@ public class DuplicationChecker {
             }
         }
         return duplicates;
-    }
-    
-    /**
-     * Only returns true for uris that are (a) workspace file uris, but (b) are not in source folders 
-     * @param uri
-     * @return
-     */
-    private boolean isStandaloneFileURI(EObject context, URI uri) {
-        if (uri.isPlatformResource() && context.eResource() != null) {
-            IProjectConfig project = projectConfigurationProvider.getProjectConfig(context.eResource().getResourceSet());
-            if (project != null) {
-                return project.findSourceFolderContaining(uri) == null;
-            }
-        }
-        return true;
     }
 }

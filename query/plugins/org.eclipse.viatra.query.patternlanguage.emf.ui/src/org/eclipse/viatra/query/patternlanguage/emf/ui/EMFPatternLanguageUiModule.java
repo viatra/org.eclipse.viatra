@@ -41,6 +41,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.internal.SyntheticEditedResourceProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.validation.EMFPatternLanguageUniqueClassNameValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IExpectedPackageNameProvider;
@@ -77,6 +78,7 @@ import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
+import org.eclipse.xtext.xbase.validation.UniqueClassNameValidator;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -295,4 +297,11 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return EMFPatternLanguageSourceViewerConfiguration.class;
     }
  
+    /**
+     * @since 2.0
+     */
+    @SingletonBinding(eager = true)
+    public Class<? extends UniqueClassNameValidator> bindUniqueClassNameValidator() {
+        return EMFPatternLanguageUniqueClassNameValidator.class;
+    }
 }
