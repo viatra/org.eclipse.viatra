@@ -103,7 +103,7 @@ class PatternGroupClassInferrer {
             visibility = JvmVisibility::PRIVATE
             simpleName = groupClassName(model, includePrivate)
             body = '''
-                «FOR matcherRef : model.patterns.filter[includePrivate || public].filterNull.map[findInferredSpecification.typeRef]»
+                «FOR matcherRef : model.patterns.filter[includePrivate || public].filterNull.map[findInferredSpecification?.typeRef].filterNull»
                     querySpecifications.add(«matcherRef».instance());
                 «ENDFOR»
             '''

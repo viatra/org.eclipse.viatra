@@ -102,7 +102,7 @@ public class CleanSupport {
         // clean current model project
         List<Pair<String, String>> removableExtensions = new ArrayList<>();
         removableExtensions.addAll(GenerateQuerySpecificationExtension.getRemovableExtensionIdentifiers());
-        if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
+        if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)  && PDE.hasPluginNature(modelProject)) {
             ProjectGenerationHelper.removeAllExtension(modelProject, removableExtensions);
         }
     }

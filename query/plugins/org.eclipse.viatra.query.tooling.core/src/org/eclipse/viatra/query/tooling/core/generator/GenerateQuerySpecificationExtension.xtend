@@ -24,11 +24,11 @@ class GenerateQuerySpecificationExtension {
     @Inject extension ExtensionGenerator exGen
 
     def extensionContribution(PatternModel model) {
-        if (model.patterns.empty) {
+        val groupClass = model.findInferredClass(typeof(BaseGeneratedPatternGroup))
+        if (model.patterns.empty || groupClass === null) {
             newImmutableList()
         } else {
             newImmutableList({
-                val groupClass = model.findInferredClass(typeof(BaseGeneratedPatternGroup))
                 contribExtension(groupClass.qualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
                     contribElement(it, "group") [
                         contribAttribute(it, "id", groupClass.qualifiedName)
