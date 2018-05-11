@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemory;
 
@@ -85,7 +85,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
 
     private MaskedTupleMemory getIndexMemory(TupleMask seedMask) {
         return indexMemories.computeIfAbsent(seedMask, mask -> {
-            MaskedTupleMemory memory = MaskedTupleMemory.create(seedMask, BucketType.SETS, DefaultIndexTable.this);
+            MaskedTupleMemory memory = MaskedTupleMemory.create(seedMask, MemoryType.SETS, DefaultIndexTable.this);
             for (Tuple tuple : rows.distinctValues()) {
                 memory.add(tuple);
             }

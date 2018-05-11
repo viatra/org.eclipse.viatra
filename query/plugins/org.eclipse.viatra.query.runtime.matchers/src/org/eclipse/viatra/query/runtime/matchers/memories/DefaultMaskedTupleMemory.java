@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
@@ -41,9 +41,10 @@ public final class DefaultMaskedTupleMemory extends MaskedTupleMemory {
      * @param mask
      *            The mask used to index the matchings
      * @param owner the object "owning" this memory
+     * @param bucketType the kind of tuple collection maintained for each indexer bucket
      * @since 2.0
      */
-    DefaultMaskedTupleMemory(TupleMask mask, BucketType bucketType, Object owner) {
+    DefaultMaskedTupleMemory(TupleMask mask, MemoryType bucketType, Object owner) {
         super(mask, owner);
         signatureToTuples = CollectionsFactory.<Tuple, Tuple>createMultiLookup(
                 Object.class, bucketType, Object.class);

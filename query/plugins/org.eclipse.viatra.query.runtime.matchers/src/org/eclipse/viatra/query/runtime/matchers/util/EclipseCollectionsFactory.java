@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.collections.impl.factory.Sets;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.ICollectionsFramework;
 
 /**
@@ -69,9 +69,10 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
     }
     
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public <K, V> IMultiLookup<K, V> createMultiLookup(
             Class<? super K> fromKeys, 
-            BucketType toBuckets,
+            MemoryType toBuckets,
             Class<? super V> ofValues) 
     {
         boolean longKeys = Long.class.equals(fromKeys);
@@ -120,6 +121,30 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
                 default:
                     throw new IllegalArgumentException(toBuckets.toString());
                 }
+            }
+        }
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> IMemory<T> createMemory(Class<? super T> values, MemoryType memoryType) {
+        if (Long.class.equals(values)) { // T == java.lang.Long
+            switch(memoryType) {
+            case MULTISETS:
+                return (IMemory<T>) new EclipseCollectionsLongMultiset();
+            case SETS:
+                return (IMemory<T>) new EclipseCollectionsLongSetMemory();
+            default:
+                throw new IllegalArgumentException(memoryType.toString());
+            }
+        } else { // objectValues
+            switch(memoryType) {
+            case MULTISETS:
+                return new EclipseCollectionsMultiset<>();
+            case SETS:
+                return new EclipseCollectionsSetMemory<>();
+            default:
+                throw new IllegalArgumentException(memoryType.toString());
             }
         }
     }

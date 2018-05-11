@@ -60,10 +60,20 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
     public int getCount(Long value) {
         return wrapped.contains(value) ? 1 : 0;
     }
+    
+    @Override
+    public int getCountUnsafe(Object value) {
+        return value instanceof Long ? getCount((Long) value) : 0;
+    }
 
     @Override
     public boolean containsNonZero(Long value) {
         return wrapped.contains(value);
+    }
+    
+    @Override
+    public boolean containsNonZeroUnsafe(Object value) {
+        return value instanceof Long && containsNonZeroUnsafe((Long) value);
     }
 
     @Override
@@ -187,5 +197,4 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
         }
     }
 
-            
 }

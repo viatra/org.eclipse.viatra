@@ -78,10 +78,19 @@ public class EclipseCollectionsLongMultiset extends LongIntHashMap implements IM
     public int getCount(Long value) {
         return super.getIfAbsent(value, 0);
     }
+    @Override
+    public int getCountUnsafe(Object value) {
+        return value instanceof Long ? getCount((Long) value) : 0;
+    }
 
     @Override
     public boolean containsNonZero(Long value) {
         return super.containsKey(value);
+    }
+    
+    @Override
+    public boolean containsNonZeroUnsafe(Object value) {
+        return value instanceof Long && containsNonZero((Long) value);
     }
 
     @Override

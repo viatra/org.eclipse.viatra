@@ -32,10 +32,22 @@ public interface IMemoryView<T> extends Iterable<T> {
     int getCount(T value);
 
     /**
+     * Returns the number of occurrences of the given value (which may be of any type).
+     * 
+     * @return the number of occurrences
+     */
+    int getCountUnsafe(Object value);
+
+    /**
      * @return true if the given value is contained with a nonzero multiplicity
      */
     boolean containsNonZero(T value);
 
+    /**
+     * @return true if the given value (which may be of any type) is contained with a nonzero multiplicity
+     */
+    boolean containsNonZeroUnsafe(Object value);
+        
     /**
      * @return the number of distinct values 
      */
@@ -51,5 +63,33 @@ public interface IMemoryView<T> extends Iterable<T> {
      * The set of distinct values
      */
     Set<T> distinctValues();
+    
+
+    /**
+     * Where supported, returns the stored element that is equal to the given value, or null if none.
+     * Useful for canonicalization in case of non-identity equals(). 
+     * 
+     * <p> For collections that do not support canonicalization, simply returns the argument if contained, null if none.
+     * 
+     * @return a value equal to the argument if such a value is stored, or null if none
+     */
+    default T theContainedVersionOf(T value) {
+        if (containsNonZero(value)) return value; else return null;
+    }
+
+    /**
+     * Where supported, returns the stored element that is equal to the given value (of any type), 
+     * or null if none. 
+     * Useful for canonicalization in case of non-identity equals(). 
+     * 
+     * <p> For collections that do not support canonicalization, simply returns the argument if contained, null if none.
+     *
+     * @return a value equal to the argument if such a value is stored, or null if none
+     */
+    @SuppressWarnings("unchecked")
+    default T theContainedVersionOfUnsafe(Object value) {
+        if (containsNonZeroUnsafe(value)) return (T) value; else return null;
+    }
+    
 
 }

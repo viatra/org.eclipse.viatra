@@ -36,8 +36,27 @@ public class JavaBagMemory<T> extends HashMap<T, Integer> implements IMultiset<T
             return count;
         }
     }
+    /**
+     * @since 2.0
+     */
+    @Override
+    public int getCountUnsafe(Object value) {
+        Integer count = super.get(value);
+        if (count == null) {
+            return 0;
+        } else {
+            return count;
+        }
+    }
     @Override
     public boolean containsNonZero(T value) {
+        return super.containsKey(value);
+    }
+    /**
+     * @since 2.0
+     */
+    @Override
+    public boolean containsNonZeroUnsafe(Object value) {
         return super.containsKey(value);
     }
 

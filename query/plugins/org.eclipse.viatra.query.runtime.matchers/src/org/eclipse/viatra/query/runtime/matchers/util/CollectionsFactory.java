@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,16 +111,28 @@ public final class CollectionsFactory
      * @since 2.0
      */
     public static <K, V> IMultiLookup<K, V> createMultiLookup(
-            Class<? super K> fromKeys, BucketType toBuckets, Class<? super V> ofValues) {
+            Class<? super K> fromKeys, MemoryType toBuckets, Class<? super V> ofValues) {
         return FRAMEWORK.createMultiLookup(fromKeys, toBuckets, ofValues);
     }
-
+    
+    /**
+     * Instantiates a memory storing values.
+     * <p>For a single key, many values can be associated according to the given memory semantics.
+     * <p>The values are stored as type 'values'; 
+     *  currently Object.class and Long.class are supported.
+     * @since 2.0
+     */
+    public static <T> IMemory<T> createMemory(
+            Class<? super T> values, MemoryType memoryType) {
+        return FRAMEWORK.createMemory(values, memoryType);
+    }
     
    /**
+    * The type of {@link IMemory}
      * @since 2.0
-     * TODO add delta buckets
+     * TODO add delta as type
      */
-   public enum BucketType {
+   public enum MemoryType {
        /**
         * A single key-value pair is stored at most once
         */
@@ -158,54 +167,11 @@ public final class CollectionsFactory
          * @since 2.0
          */
         public abstract <K, V> IMultiLookup<K, V> createMultiLookup(
-                Class<? super K> fromKeys, BucketType toBuckets, Class<? super V> ofValues);
+                Class<? super K> fromKeys, MemoryType toBuckets, Class<? super V> ofValues);
+        /**
+         * @since 2.0
+         */
+        public abstract <T> IMemory<T> createMemory(Class<? super T> values, MemoryType memoryType);
     }
                 
-    /**
-     * Fall-back implementation with Java Collections.
-     * @since 1.7
-     */
-    public static class JavaCollectionsFactory implements ICollectionsFramework {
-
-        @Override
-        public <K, V> Map<K, V> createMap() {
-            return new HashMap<K, V>();
-        }
-        
-        @Override
-        public <K, V> Map<K, V> createMap(Map<K, V> initial) {
-            return new HashMap<K, V>(initial);
-        }
-
-        @Override
-        public <E> Set<E> createSet() {
-            return new HashSet<E>();
-        }
-
-        @Override
-        public <E> Set<E> createSet(Collection<E> initial) {
-            return new HashSet<E>(initial);
-        }
-
-        @Override
-        public <T> IMultiset<T> createMultiset() {
-            return new JavaBagMemory<T>();
-        }
-        
-        @Override
-        public <O> List<O> createObserverList() {
-            return new ArrayList<O>(1);
-        }
-
-        @Override
-        public <T> IDeltaBag<T> createDeltaBag() {
-            throw new UnsupportedOperationException();
-        }
-        
-        @Override
-        public <K, V> IMultiLookup<K, V> createMultiLookup(Class<? super K> fromKeys, BucketType toBuckets,
-                Class<? super V> ofValues) {
-            throw new UnsupportedOperationException();
-        }        
-    }    
 }

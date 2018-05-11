@@ -23,9 +23,17 @@ public class EclipseCollectionsSetMemory<Value> extends UnifiedSet<Value> implem
     public int getCount(Value value) {
         return super.contains(value) ? 1 : 0;
     }
-
+    @Override
+    public int getCountUnsafe(Object value) {
+        return super.contains(value) ? 1 : 0;
+    }
     @Override
     public boolean containsNonZero(Value value) {
+        return super.contains(value);
+    }
+    
+    @Override
+    public boolean containsNonZeroUnsafe(Object value) {
         return super.contains(value);
     }
 
@@ -56,5 +64,18 @@ public class EclipseCollectionsSetMemory<Value> extends UnifiedSet<Value> implem
     @Override
     public Set<Value> distinctValues() {
         return this;
+    }
+    
+    @Override
+    public Value theContainedVersionOf(Value value) {
+        return super.get(value);
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public Value theContainedVersionOfUnsafe(Object value) {
+        if (super.contains(value)) 
+            return super.get((Value)value);
+        else return null;
     }
 }

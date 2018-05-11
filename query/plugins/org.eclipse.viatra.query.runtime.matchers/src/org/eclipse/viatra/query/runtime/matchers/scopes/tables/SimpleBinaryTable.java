@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
@@ -67,7 +67,7 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
         super(inputKey, tableContext);
         this.unique = unique;
         valueToHolderMap = CollectionsFactory.createMultiLookup(Object.class,
-                unique ? BucketType.SETS : BucketType.MULTISETS, Object.class);
+                unique ? MemoryType.SETS : MemoryType.MULTISETS, Object.class);
         if (2 != inputKey.getArity())
             throw new IllegalArgumentException(inputKey.toString());
     }
@@ -261,7 +261,7 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
 
     private IMultiLookup<Source, Target> getHolderToValueMap() {
         if (holderToValueMap == null) {
-            holderToValueMap = CollectionsFactory.createMultiLookup(Object.class, BucketType.SETS, // no duplicates, as
+            holderToValueMap = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, // no duplicates, as
                                                                                                    // this is the
                                                                                                    // secondary
                                                                                                    // collection

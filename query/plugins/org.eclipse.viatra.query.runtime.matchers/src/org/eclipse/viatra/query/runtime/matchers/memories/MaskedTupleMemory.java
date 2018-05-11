@@ -17,7 +17,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.BucketType;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 
 /**
  *         Indexes a collection of Tuples by their signature (i.e. footprint, projection) obtained according to a mask.
@@ -37,8 +37,15 @@ public abstract class MaskedTupleMemory implements Clearable, Iterable<Tuple>  {
     /**
      * Creates a new memory for the given owner that indexes tuples according to the given mask.
      */
-    public static MaskedTupleMemory create(TupleMask mask, BucketType bucketType, Object owner) {
-        return new DefaultMaskedTupleMemory(mask, bucketType, owner);
+    public static MaskedTupleMemory create(TupleMask mask, MemoryType bucketType, Object owner) {
+        if (mask.isIdentity()) 
+            return new IdentityMaskedTupleMemory(mask, bucketType, owner);
+        else if (0 == mask.getSize())
+            return new NullaryMaskedTupleMemory(mask, bucketType, owner);
+        else if (1 == mask.getSize())
+            return new UnaryMaskedTupleMemory(mask, bucketType, owner);
+        else 
+            return new DefaultMaskedTupleMemory(mask, bucketType, owner);
     }
     
     /**
@@ -75,7 +82,8 @@ public abstract class MaskedTupleMemory implements Clearable, Iterable<Tuple>  {
     public abstract int getKeysetSize();
 
     /**
-     * @return the total number of distinct tuples stored.
+     * @return the total number of distinct tuples stored. 
+     * Multiple copies of the same tuple, if allowed, are counted as one.
      * 
      * <p> This is currently not cached but computed on demand. 
      * It is therefore not efficient, and shall only be used for debug / profiling purposes.

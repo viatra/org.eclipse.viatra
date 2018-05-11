@@ -37,7 +37,15 @@ public abstract class EclipseCollectionsBagMemory<T> extends ObjectIntHashMap<T>
         return super.getIfAbsent(value, 0);
     }
     @Override
+    public int getCountUnsafe(Object value) {
+        return super.getIfAbsent(value, 0);
+    }
+    @Override
     public boolean containsNonZero(T value) {
+        return super.containsKey(value);
+    }
+    @Override
+    public boolean containsNonZeroUnsafe(Object value) {
         return super.containsKey(value);
     }
 
