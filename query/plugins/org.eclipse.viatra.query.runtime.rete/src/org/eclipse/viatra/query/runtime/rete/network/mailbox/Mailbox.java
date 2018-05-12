@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
  * the mailbox. Different mailbox implementations may differ in the way how they deliver the posted messages.
  * 
  * @author Tamas Szabo
- * @since 1.6
+ * @since 2.0
  *
  */
 public interface Mailbox extends Clearable, IGroupable {

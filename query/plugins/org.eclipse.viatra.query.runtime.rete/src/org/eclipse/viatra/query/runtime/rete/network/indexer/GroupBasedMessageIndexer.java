@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * @author Tamas Szabo
+ * @since 2.0
  */
 public class GroupBasedMessageIndexer implements MessageIndexer {
 

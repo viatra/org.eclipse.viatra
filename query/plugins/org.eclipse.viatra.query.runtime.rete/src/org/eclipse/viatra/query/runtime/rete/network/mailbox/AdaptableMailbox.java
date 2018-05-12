@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker;
  * Adaptable mailboxes are used by the {@link AdaptiveMailbox}.
  * 
  * @author Tamas Szabo
+ * @since 2.0
  */
 public interface AdaptableMailbox extends Mailbox {
 

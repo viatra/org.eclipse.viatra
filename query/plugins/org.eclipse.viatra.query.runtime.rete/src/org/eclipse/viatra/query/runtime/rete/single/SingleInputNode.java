@@ -47,7 +47,7 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
      * Subclasses may override this method to provide their own mailbox implementation.
      * 
      * @return the mailbox
-     * @since 1.6
+     * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
         return new AdaptiveMailbox(this, this.reteContainer);

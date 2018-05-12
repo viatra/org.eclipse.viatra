@@ -155,7 +155,7 @@ public class UniquenessEnforcerNode extends StandardNode
     }
 
     /**
-     * @since 1.6
+     * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
         if (coreMask != null && posetMask != null && posetComparator != null) {

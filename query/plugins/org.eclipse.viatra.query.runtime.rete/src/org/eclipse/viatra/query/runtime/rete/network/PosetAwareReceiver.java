@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 
 /**
  * @author Tamas Szabo
- * @since 1.6
+ * @since 2.0
  */
 public interface PosetAwareReceiver extends Receiver {
 

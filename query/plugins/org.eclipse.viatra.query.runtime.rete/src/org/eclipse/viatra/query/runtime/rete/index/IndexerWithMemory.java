@@ -53,7 +53,7 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
      * mailbox implementation.
      * 
      * @return the mailbox
-     * @since 1.6
+     * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
         return new AdaptiveMailbox(this, this.reteContainer);

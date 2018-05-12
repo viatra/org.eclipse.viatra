@@ -29,7 +29,7 @@ import org.eclipse.viatra.query.runtime.rete.network.indexer.GroupBasedMessageIn
  * REVOKE - INSERT updates represent a monotone change pair. The mailbox is used by {@link PosetAwareReceiver}s.
  * 
  * @author Tamas Szabo
- * @since 1.6
+ * @since 2.0
  */
 public class PosetAwareMailbox extends AbstractUpdateSplittingMailbox<GroupBasedMessageIndexer, PosetAwareReceiver> {
 

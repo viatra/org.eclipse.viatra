@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
  * A message indexer is used by {@link Mailbox}es to index their contents. 
  * 
  * @author Tamas Szabo
+ * @since 2.0
  */
 public interface MessageIndexer extends Clearable {
 	

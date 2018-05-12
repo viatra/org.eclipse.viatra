@@ -33,7 +33,7 @@ public interface Receiver extends Node {
      * Returns the {@link Mailbox} of this receiver.
      * 
      * @return the mailbox
-     * @since 1.6
+     * @since 2.0
      */
     public Mailbox getMailbox();
         

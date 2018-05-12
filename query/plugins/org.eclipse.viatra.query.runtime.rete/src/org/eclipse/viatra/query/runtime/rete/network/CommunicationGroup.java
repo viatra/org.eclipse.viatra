@@ -64,8 +64,14 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 
 	public abstract boolean isEmpty();
 
+	/**
+     * @since 2.0
+     */
 	public abstract void notifyLostAllMessages(final Mailbox mailbox, final MessageKind kind);
 
+	/**
+     * @since 2.0
+     */
 	public abstract void notifyHasMessage(final Mailbox mailbox, final MessageKind kind);
 
 	public abstract void addRederivable(final RederivableNode node);

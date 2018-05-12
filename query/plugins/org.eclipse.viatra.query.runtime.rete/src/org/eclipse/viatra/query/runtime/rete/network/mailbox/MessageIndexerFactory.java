@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.runtime.rete.network.indexer.MessageIndexer;
  * A factory used to create message indexers for {@link Mailbox}es.
  * 
  * @author Tamas Szabo
+ * @since 2.0
  */
 public interface MessageIndexerFactory<I extends MessageIndexer> {
 

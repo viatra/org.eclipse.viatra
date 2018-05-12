@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.rete.network.indexer.MessageIndexer;
  * be the standard subset ordering among sets of tuples.
  * 
  * @author Tamas Szabo
+ * @since 2.0
  *
  */
 public abstract class AbstractUpdateSplittingMailbox<IndexerType extends MessageIndexer, ReceiverType extends Receiver>

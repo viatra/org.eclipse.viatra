@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  * fall-through mailbox, than update messages are delivered directly to the receiver node to reduce overhead.
  * 
  * @author Tamas Szabo
- * @since 1.6
+ * @since 2.0
  */
 public class DefaultMailbox implements AdaptableMailbox {
 
