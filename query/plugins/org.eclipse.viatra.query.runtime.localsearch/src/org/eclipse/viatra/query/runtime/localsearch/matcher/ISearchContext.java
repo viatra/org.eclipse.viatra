@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
@@ -128,7 +129,7 @@ public interface ISearchContext {
                 }
                 return Collections.emptySet();
             };
-            QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
+            QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), BackendRequirement.UNSPECIFIED);
             if (overrideHints != null){
                 hints = overrideHints.overrideBy(hints);
             }

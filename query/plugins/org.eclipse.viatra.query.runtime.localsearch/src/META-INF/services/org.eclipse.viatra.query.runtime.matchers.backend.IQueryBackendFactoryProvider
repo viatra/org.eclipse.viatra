@@ -1,0 +1,2 @@
+org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactoryProvider
+org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchGenericBackendFactoryProvider

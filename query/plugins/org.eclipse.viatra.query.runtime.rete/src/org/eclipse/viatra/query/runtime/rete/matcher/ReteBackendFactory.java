@@ -27,6 +27,17 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     private static final int reteThreads = 0;
     
     /**
+     * @since 2.0
+     */
+    public static final ReteBackendFactory INSTANCE = new ReteBackendFactory();
+    
+    /**
+     * @deprecated Use the static {@link #INSTANCE} field instead
+     */
+    @Deprecated
+    public ReteBackendFactory() {}
+    
+    /**
      * @since 1.5
      */
     @Override
@@ -79,6 +90,10 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     public IMatcherCapability calculateRequiredCapability(PQuery query, QueryEvaluationHint hint) {
         return new IncrementalMatcherCapability();
     }
-    
+
+    @Override
+    public boolean isCaching() {
+        return true;
+    }
     
 }

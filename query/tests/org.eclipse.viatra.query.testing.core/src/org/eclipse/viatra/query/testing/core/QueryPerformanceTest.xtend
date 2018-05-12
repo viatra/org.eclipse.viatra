@@ -21,8 +21,6 @@ import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.xtend.lib.annotations.Data
 import org.junit.Test
@@ -94,18 +92,6 @@ abstract class QueryPerformanceTest {
      */
     def IQueryGroup getQueryGroup()
 
-    /**
-     * This method shall return the query backend class that will be used for evaluation.
-     * 
-     * <p>Default implementation returns the registered default backend class.
-     * 
-     * @deprecated override {@link #getEngineOptions()} for more freedom in configuring the engine.
-     */
-    @Deprecated
-    def IQueryBackendFactory getQueryBackendFactory() {
-        new ReteBackendFactory()
-    }
-
     protected def prepare() {
         info("Preparing query performance test")
 
@@ -126,7 +112,7 @@ abstract class QueryPerformanceTest {
      * Default implementation returns the default options plus whatever is selected by {@link #getQueryBackendFactory()}; override to deviate.
      */
     def ViatraQueryEngineOptions getEngineOptions() {
-        ViatraQueryEngineOptions.copyOptions(ViatraQueryEngineOptions.DEFAULT).withDefaultBackend(queryBackendFactory).build;
+        ViatraQueryEngineOptions.copyOptions(ViatraQueryEngineOptions.^default).build;
     }
 
     /**

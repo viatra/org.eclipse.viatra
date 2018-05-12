@@ -36,10 +36,9 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -48,7 +47,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.Multimap;
@@ -381,22 +379,22 @@ public final class SpecificationBuilder {
      * @since 1.5
      */
     protected QueryEvaluationHint buildHints(Pattern pattern){
-        IQueryBackendFactory backendFactory = null;
+        BackendRequirement requirement = BackendRequirement.UNSPECIFIED;
         Modifiers modifiers = pattern.getModifiers();
         if (modifiers != null){
             switch(modifiers.getExecution()){
             case INCREMENTAL:
-                backendFactory = new ReteBackendFactory();
+                requirement = BackendRequirement.DEFAULT_CACHING;
                 break;
             case SEARCH:
-                backendFactory = LocalSearchBackendFactory.INSTANCE;
+                requirement = BackendRequirement.DEFAULT_SEARCH;
                 break;
             case UNSPECIFIED:
             default:
-                backendFactory = null;
+                requirement = BackendRequirement.UNSPECIFIED;
                 break;
             }
         }
-        return new QueryEvaluationHint(null, backendFactory);
+        return new QueryEvaluationHint(null, requirement);
     }
 }

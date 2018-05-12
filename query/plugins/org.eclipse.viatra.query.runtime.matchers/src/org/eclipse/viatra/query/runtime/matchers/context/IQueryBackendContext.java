@@ -11,8 +11,11 @@
 package org.eclipse.viatra.query.runtime.matchers.context;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * This interface is a collector which holds every API that is provided by the engine to control
@@ -34,6 +37,11 @@ public interface IQueryBackendContext {
     IQueryResultProviderAccess getResultProviderAccess();
     
     QueryAnalyzer getQueryAnalyzer();
+    
+    /**
+     * @since 2.0
+     */
+    IMatcherCapability getRequiredMatcherCapability(PQuery query, QueryEvaluationHint overrideHints);
     
     /**
      * @since 1.6

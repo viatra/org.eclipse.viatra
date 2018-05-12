@@ -45,7 +45,7 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
      * @since 1.6
      */
     protected ViatraQueryEngineOptions getEngineOptions(){
-        return ViatraQueryEngineOptions.DEFAULT;
+        return ViatraQueryEngineOptions.getDefault();
     }
     
     /**

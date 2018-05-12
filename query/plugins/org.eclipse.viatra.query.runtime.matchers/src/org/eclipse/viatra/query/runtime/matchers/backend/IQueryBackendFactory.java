@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  *
  */
 public interface IQueryBackendFactory {
+    
     /**
      * Creates a new {@link IQueryBackend} instance tied to the given context elements. 
      * 
@@ -45,4 +46,9 @@ public interface IQueryBackendFactory {
      */
     public IMatcherCapability calculateRequiredCapability(PQuery query, QueryEvaluationHint hint);
     
+    /**
+     * Returns whether the current backend is caching
+     * @since 2.0
+     */
+    public boolean isCaching();
 }

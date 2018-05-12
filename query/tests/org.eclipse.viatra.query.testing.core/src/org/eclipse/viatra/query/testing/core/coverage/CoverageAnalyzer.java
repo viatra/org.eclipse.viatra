@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
 import org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
@@ -44,7 +45,7 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
         if (hints.getQueryBackendFactory() instanceof ReteBackendFactory){
             Map<QueryHintOption<?>, Object> values = new HashMap<>(1);
             values.put(CommonQueryHintOptions.normalizationTraceCollector, traceCollector);
-            return hints.overrideBy(new QueryEvaluationHint(values, null));
+            return hints.overrideBy(new QueryEvaluationHint(values, BackendRequirement.UNSPECIFIED));
         }
         return hints;
     }
@@ -53,8 +54,8 @@ public class CoverageAnalyzer implements IPatternExecutionAnalyzer {
      * Returns the coverage information of every analyzed pattern.
      */
     public CoverageInfo<PTraceable> getCoverage() {
-		return coverage;
-	}
+        return coverage;
+    }
 
     @Override
     public void processMatcher(ViatraQueryMatcher<?> matcher) {

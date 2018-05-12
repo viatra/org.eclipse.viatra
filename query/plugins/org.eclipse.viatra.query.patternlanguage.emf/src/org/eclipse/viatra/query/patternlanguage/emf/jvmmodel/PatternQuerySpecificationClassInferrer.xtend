@@ -31,7 +31,6 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
@@ -40,7 +39,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterRe
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
@@ -314,10 +312,10 @@ class PatternQuerySpecificationClassInferrer {
     def StringConcatenationClient inferQueryEvaluationHints(Pattern pattern) {
         switch(getRequestedExecutionType(pattern)){
             case INCREMENTAL: {
-                '''setEvaluationHints(new «QueryEvaluationHint»(null, new «ReteBackendFactory»()));'''
+                '''setEvaluationHints(new «QueryEvaluationHint»(null, «QueryEvaluationHint.BackendRequirement».«QueryEvaluationHint.BackendRequirement::DEFAULT_CACHING»));'''
             }
             case SEARCH: {
-                '''setEvaluationHints(new «QueryEvaluationHint»(null, «LocalSearchBackendFactory».INSTANCE));'''
+                '''setEvaluationHints(new «QueryEvaluationHint»(null, «QueryEvaluationHint.BackendRequirement».«QueryEvaluationHint.BackendRequirement::DEFAULT_SEARCH»));'''
             }
             case UNSPECIFIED: {
                '''''' 

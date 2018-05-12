@@ -43,7 +43,7 @@ public enum QueryResultViewModel {
     
     private QueryResultViewModel() {
         this.inputs = Sets.newHashSet();
-        this.defaultHint = new QueryEvaluationHint(null, new ReteBackendFactory());
+        this.defaultHint = new QueryEvaluationHint(null, ReteBackendFactory.INSTANCE);
     }
     
     protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) {

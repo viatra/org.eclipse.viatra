@@ -39,6 +39,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
@@ -188,7 +189,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     protected void prepareDirectDependencies() {
         // Do not prepare for any adornment at this point
         IAdornmentProvider adornmentProvider = input -> Collections.emptySet();
-        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
+        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), BackendRequirement.UNSPECIFIED);
         for(PQuery dep : getDirectPositiveDependencies()){
             backendContext.getResultProviderAccess().getResultProvider(dep, hints);
         }

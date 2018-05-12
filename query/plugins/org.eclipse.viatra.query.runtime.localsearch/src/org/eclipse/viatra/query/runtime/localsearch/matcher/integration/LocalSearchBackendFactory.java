@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public enum LocalSearchBackendFactory implements IQueryBackendFactory {
     
+    
     INSTANCE;
     
     /**
@@ -50,6 +51,11 @@ public enum LocalSearchBackendFactory implements IQueryBackendFactory {
     @Override
     public IMatcherCapability calculateRequiredCapability(PQuery query, QueryEvaluationHint hint) {
         return LocalSearchHints.parse(hint);
+    }
+
+    @Override
+    public boolean isCaching() {
+        return false;
     }
 
 }

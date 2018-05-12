@@ -28,7 +28,7 @@ public enum BackendType {
     
     public IQueryBackendFactory getNewBackendInstance() {
         switch(this) {
-            case Rete: return new ReteBackendFactory();
+            case Rete: return ReteBackendFactory.INSTANCE;
             case LocalSearch_Flat:
             case LocalSearch_NoBase:
             case LocalSearch: 

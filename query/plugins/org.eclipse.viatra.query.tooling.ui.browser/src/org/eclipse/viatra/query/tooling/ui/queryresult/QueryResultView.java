@@ -152,7 +152,7 @@ public class QueryResultView extends ViewPart {
     
     public QueryResultView() {
         this.propertyPageContributor = () -> getSite().getId();
-        this.hint = new QueryEvaluationHint(null, new ReteBackendFactory());
+        this.hint = new QueryEvaluationHint(null, ReteBackendFactory.INSTANCE);
         this.connectorListener = modelConnector -> unloadModel();
     }
 

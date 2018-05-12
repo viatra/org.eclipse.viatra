@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.viatra.query.runtime.querybackend">
+      <backend
+            provider="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactoryProvider">
+      </backend>
+      <backend
+            provider="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchGenericBackendFactoryProvider">
+      </backend>
+   </extension>
+
+</plugin>

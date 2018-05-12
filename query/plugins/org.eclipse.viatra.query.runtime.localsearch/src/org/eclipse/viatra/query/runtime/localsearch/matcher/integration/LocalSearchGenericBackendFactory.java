@@ -54,4 +54,9 @@ public enum LocalSearchGenericBackendFactory implements IQueryBackendFactory {
         return LocalSearchHints.parse(hint);
     }
 
+    @Override
+    public boolean isCaching() {
+        return false;
+    }
+
 }

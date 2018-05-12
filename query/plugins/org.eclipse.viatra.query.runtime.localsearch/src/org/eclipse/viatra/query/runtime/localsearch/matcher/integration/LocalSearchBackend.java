@@ -79,7 +79,8 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     @Override
     public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints) {
         
-        IMatcherCapability requestedCapability = getHintProvider().getQueryEvaluationHint(query).overrideBy(hints).calculateRequiredCapability(query);
+        final QueryEvaluationHint callHints = getHintProvider().getQueryEvaluationHint(query).overrideBy(hints);
+        IMatcherCapability requestedCapability = context.getRequiredMatcherCapability(query, callHints);
         for(AbstractLocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
             if (requestedCapability.canBeSubstitute(existingResultProvider.getCapabilites())){
                 return existingResultProvider;

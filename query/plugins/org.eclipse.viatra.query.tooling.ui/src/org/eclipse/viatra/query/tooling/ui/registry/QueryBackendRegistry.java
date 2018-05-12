@@ -32,7 +32,7 @@ public class QueryBackendRegistry {
     /**
      * Default backend implementation.
      */
-    private static final IQueryBackendFactory DEFAULT_BACKEND = new ReteBackendFactory();
+    private static final IQueryBackendFactory DEFAULT_BACKEND = ReteBackendFactory.INSTANCE;
     private static final IQueryBackendFactory DEFAULT_CACHING_BACKEND = DEFAULT_BACKEND;
     private static final IQueryBackendFactory LOCAL_SEARCH_BACKEND = LocalSearchBackendFactory.INSTANCE;
     

@@ -87,6 +87,8 @@ String applicationIdentifiers = ApplicationTypesMatcher.on(engine)
         .collect(Collectors.joining(", "));
 ----
 
+The VIATRA Query engine also supports setting the default search-based and default caching backend instances, allowing further customization of the runtime behavior of the engine. The new feature is available through the previously used `ViatraQueryEngineOptions` class.
+
 == Migrating to VIATRA 2.0
 
 === Dependency updates
@@ -155,7 +157,7 @@ To migrate your code, you can do one of the following:
 * If you are using Xtend code, and the `"name" -> value` syntax does not compile anymore, add the following import declaration in the header: `import static extension org.eclipse.viatra.transformation.runtime.emf.transformation.TransformationExtensions.*`
 * If you are not using Xtend, or you don't want to rely on the mapped to operator, simply instantiate these entries with the call `new SimpleEntry<>("name", value)`.
 
-=== Avoid returning null values in the API
+=== Null parameters and return values
 
 A few APIs in VIATRA returned null if no possible values could be found. Given VIATRA 2.0 depends on Java 8, such APIs were reworked to return link:https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html[Optional] values instead.
 
@@ -168,6 +170,8 @@ The affected methods are the following:
 
 If the old behavior of returning `null` values is necessary the `Optional.orElse` call can be used, e.g. `query.getFirstAnnotationByName("Constraint").orElse(null);`
 
+The constructor of the `QueryEvaluationHint` class was updated: previously it was instantiated with a `Map` of settings and an optional query backend (that could be null). Starting with version 2.0, the constructor does not accept null for the query backend, but provides an alternative constructor where it can be selected via a new enum which default backend should be selected instead. This change was necessitated by the new search- and caching backend settings in `ViatraQueryEngineOptions`.
+
 === IMatchProcessor removal
 
 All usage of the IMatchProcessor interface was replaced with references to the link:https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html[Consumer] type. Generated match processors (if enabled), also implement the Consumer interface.
@@ -177,3 +181,9 @@ Before VIATRA 2.0, the various APIs of the Query component threw a set of differ
 
 1. All of them are now runtime exceptions, making it unnecessary to explicitly catch them. This makes it easier to put query processing code into lambda expressions, however, makes it entirely the developers responsibility to handle these exceptions as they happen.
 2. All of them have now a common base exception called ViatraQueryRuntimeException - this class can be used anywhere in catch blocks if appropriate.
+
+=== Dependency updates in query runtime
+
+In this version, the dependencies of the `org.eclipse.viatra.query.runtime` plug-in had been reorganized. This should not cause any issues for users who deploy the query runtime with the `org.eclipse.viatra.query.runtime.feature` (in Eclipse environment) or the `viatra-query-runtime` feature (available from the Maven repository), as they will deploy all required plug-ins.
+
+In other cases, if backend-specific code is used, the `org.eclipse.viatra.query.runtime.rete` and the `org.eclipse.viatra.query.runtime.localsearch` plugins might be necessary to add as additional dependencies to the developed code; and if necessary (e.g. in a non-Equinox OSGi environment), `ViatraQueryEngineOptions#setSystemDefaultBackends()` might need to be called with explicitly adding the corresponding entries.

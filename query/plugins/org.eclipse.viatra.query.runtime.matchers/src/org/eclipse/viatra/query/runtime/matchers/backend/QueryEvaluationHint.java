@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Provides VIATRA Query with additional hints on how a query should be evaluated. The same hint can be provided to multiple queries. 
@@ -32,14 +32,71 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public class QueryEvaluationHint {
     
+    /**
+     * @since 2.0
+     *
+     */
+    public enum BackendRequirement {
+        /**
+         * The current hint does not specify any backend requirement
+         */
+        UNSPECIFIED,
+        /**
+         * The current hint specifies that the default search backend of the engine should be used
+         */
+        DEFAULT_SEARCH,
+        /**
+         * The current hint specifies that the default caching backend of the engine should be used
+         */
+        DEFAULT_CACHING,
+        /**
+         * The current hint specifies that a specific backend is to be used
+         */
+        SPECIFIC
+    }
+    
     final IQueryBackendFactory queryBackendFactory; 
     final Map<QueryHintOption<?>, Object> backendHintSettings;
+    final BackendRequirement requirement;
+
+    /**
+     * Specifies the suggested query backend requirements, and value settings for additional backend-specific options.
+     * 
+     * <p>
+     * The backend requirement type must not be {@link BackendRequirement#SPECIFIC} - for that case, use the constructor
+     * {@link #QueryEvaluationHint(Map, IQueryBackendFactory)}.
+     * 
+     * @param backendHintSettings
+     *            if non-null, each entry in the map overrides backend-specific options regarding query evaluation
+     *            (null-valued map entries permitted to erase hints); passing null means default options associated with
+     *            the query
+     * @param backendRequirementType
+     *            defines the kind of backend requirement
+     * @since 2.0
+     */
+    public QueryEvaluationHint(Map<QueryHintOption<?>, Object> backendHintSettings, BackendRequirement backendRequirementType) {
+        super();
+        Preconditions.checkArgument(backendRequirementType != null, "Specific requirement needs to be set");
+        Preconditions.checkArgument(backendRequirementType != BackendRequirement.SPECIFIC, "Specific backend requirement needs providing a corresponding backend type");
+        this.queryBackendFactory = null;
+        this.requirement = backendRequirementType; 
+        this.backendHintSettings = (backendHintSettings == null) 
+                ? Collections.<QueryHintOption<?>, Object> emptyMap()
+                : new HashMap<>(backendHintSettings);
+    }
     
     /**
-     * Specifies the suggested query backend, and value settings for additional backend-specific options. Both parameters are optional (can be null).
+     * Specifies the suggested query backend, and value settings for additional backend-specific options. The first
+     * parameter can be null; if the second parameter is null, it is expected that the other constructor is called
+     * instead with a {@link BackendRequirement#UNSPECIFIED} parameter.
      * 
-     * @param backendHintSettings each entry in the map overrides backend-specific options regarding query evaluation (null-valued map entries permitted to erase hints); passing null means default options associated with the query
-     * @param queryBackendFactory overrides the query evaluator algorithm; passing null retains the default algorithm associated with the query
+     * @param backendHintSettings
+     *            if non-null, each entry in the map overrides backend-specific options regarding query evaluation
+     *            (null-valued map entries permitted to erase hints); passing null means default options associated with
+     *            the query
+     * @param queryBackendFactory
+     *            overrides the query evaluator algorithm; passing null retains the default algorithm associated with
+     *            the query
      * @since 1.5
      */
     public QueryEvaluationHint(
@@ -47,15 +104,26 @@ public class QueryEvaluationHint {
             IQueryBackendFactory queryBackendFactory) {
         super();
         this.queryBackendFactory = queryBackendFactory;
-        this.backendHintSettings = backendHintSettings == null 
+        this.requirement = (queryBackendFactory == null) ? BackendRequirement.UNSPECIFIED : BackendRequirement.SPECIFIC; 
+        this.backendHintSettings = (backendHintSettings == null) 
                 ? Collections.<QueryHintOption<?>, Object> emptyMap()
                 : new HashMap<>(backendHintSettings);
     }
     
     /**
-     * A suggestion for choosing the query evaluator algorithm. 
+     * Returns the backend requirement described by this hint. If a specific backend is required, that can be queried by {@link #getQueryBackendFactory()}.
+     * @since 2.0
+     */
+    public BackendRequirement getQueryBackendRequirementType() {
+        return requirement;
+    }
+    
+    /**
+     * A suggestion for choosing the query evaluator algorithm.
      * 
-     * <p> Can be null.
+     * <p>
+     * Returns null iff {@link #getQueryBackendRequirementType()} does not return {@link BackendRequirement#SPECIFIC};
+     * in such cases a corresponding default backend is selected inside the engine
      */
     public IQueryBackendFactory getQueryBackendFactory() {
         return queryBackendFactory;
@@ -83,15 +151,23 @@ public class QueryEvaluationHint {
         if (overridingHint == null)
             return this;
         
-        IQueryBackendFactory factory = this.getQueryBackendFactory();
-        if (overridingHint.getQueryBackendFactory() != null)
-            factory = overridingHint.getQueryBackendFactory();
-        
+        BackendRequirement requirement = this.getQueryBackendRequirementType();
+        if (overridingHint.getQueryBackendRequirementType() != BackendRequirement.UNSPECIFIED) {
+            requirement = overridingHint.getQueryBackendRequirementType();
+        }
         Map<QueryHintOption<?>, Object> hints = new HashMap<>(this.getBackendHintSettings());
-        if (overridingHint.getBackendHintSettings() != null)
+        if (overridingHint.getBackendHintSettings() != null) {
             hints.putAll(overridingHint.getBackendHintSettings());
-        
-        return new QueryEvaluationHint(hints, factory);
+        }
+        if (requirement == BackendRequirement.SPECIFIC) {
+            IQueryBackendFactory factory = this.getQueryBackendFactory();
+            if (overridingHint.getQueryBackendFactory() != null) {
+                factory = overridingHint.getQueryBackendFactory();
+            }
+            return new QueryEvaluationHint(hints, factory);
+        } else {
+            return new QueryEvaluationHint(backendHintSettings, requirement);
+        }
     }
     
     /**
@@ -119,22 +195,10 @@ public class QueryEvaluationHint {
     public <HintValue> HintValue getValueOrDefault(QueryHintOption<HintValue> option) {
         return option.getValueOrDefault(this);
     }
-   
-    
-    
-    /**
-     * Extract the requested capabilities
-     * @since 1.4
-     */
-    public IMatcherCapability calculateRequiredCapability(PQuery query){
-        return queryBackendFactory.calculateRequiredCapability(query, this);
-    }
-
-
     
     @Override
     public int hashCode() {
-        return Objects.hash(backendHintSettings, queryBackendFactory);
+        return Objects.hash(backendHintSettings, queryBackendFactory, requirement);
     }
 
     @Override
@@ -146,11 +210,12 @@ public class QueryEvaluationHint {
         if (getClass() != obj.getClass())
             return false;
         QueryEvaluationHint other = (QueryEvaluationHint) obj;
-        if (!Objects.equals(backendHintSettings, other.backendHintSettings))
-                return false;
-        if (!Objects.equals(queryBackendFactory, other.queryBackendFactory))
-            return false;
-        return true;
+        return Objects.equals(backendHintSettings, other.backendHintSettings)
+               &&
+               Objects.equals(queryBackendFactory, other.queryBackendFactory)
+               &&
+               Objects.equals(requirement, other.requirement)
+        ;
     }
 
     @Override

@@ -12,10 +12,12 @@ package org.eclipse.viatra.query.runtime.api;
 
 
 import java.util.Objects;
+import java.util.ServiceLoader;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactoryProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * This class is intended to provide options to a created {@link ViatraQueryEngine} instance. The {@link #DEFAULT}
@@ -29,18 +31,88 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
  */
 public final class ViatraQueryEngineOptions {
 
+    private static boolean areSystemDefaultsCalculated = false;
+    private static IQueryBackendFactory systemDefaultBackendFactory;
+    private static IQueryBackendFactory systemDefaultCachingBackendFactory;
+    private static IQueryBackendFactory systemDefaultSearchBackendFactory;
+    
+    /**
+     * @since 2.0
+     */
+    public static void setSystemDefaultBackends(IQueryBackendFactory systemDefaultBackendFactory,
+            IQueryBackendFactory systemDefaultCachingBackendFactory,
+            IQueryBackendFactory systemDefaultSearchBackendFactory) {
+                areSystemDefaultsCalculated = true;
+                ViatraQueryEngineOptions.systemDefaultBackendFactory = systemDefaultBackendFactory;
+                ViatraQueryEngineOptions.systemDefaultCachingBackendFactory = systemDefaultCachingBackendFactory;
+                ViatraQueryEngineOptions.systemDefaultSearchBackendFactory = systemDefaultSearchBackendFactory;
+    }
+    
+    /**
+     * If {@link #setSystemDefaultBackends(IQueryBackendFactory, IQueryBackendFactory, IQueryBackendFactory)} is not
+     * called, this method is responsible of finding the corresponding backends on the classpath using Java Service
+     * loaders.
+     */
+    private static void calculateSystemDefaultBackends() {
+        for (IQueryBackendFactoryProvider provider : ServiceLoader.load(IQueryBackendFactoryProvider.class)) {
+            if (provider.isSystemDefaultEngine()) {
+                systemDefaultBackendFactory = provider.getFactory();
+            }
+            if (provider.isSystemDefaultCachingBackend()) {
+                systemDefaultCachingBackendFactory = provider.getFactory();
+            }
+            if (provider.isSystemDefaultSearchBackend()) {
+                systemDefaultSearchBackendFactory = provider.getFactory();
+            }
+        }
+        areSystemDefaultsCalculated = true;
+    }
+    
+    private static IQueryBackendFactory getSystemDefaultBackend() {
+        if (!areSystemDefaultsCalculated) {
+            calculateSystemDefaultBackends();
+        }
+        return Objects.requireNonNull(systemDefaultBackendFactory, "System default backend not found");
+    }
+    
+    private static IQueryBackendFactory getSystemDefaultCachingBackend() {
+        if (!areSystemDefaultsCalculated) {
+            calculateSystemDefaultBackends();
+        }
+        return Objects.requireNonNull(systemDefaultCachingBackendFactory, "System default caching backend not found");
+    }
+    
+    private static IQueryBackendFactory getSystemDefaultSearchBackend() {
+        if (!areSystemDefaultsCalculated) {
+            calculateSystemDefaultBackends();
+        }
+        return Objects.requireNonNull(systemDefaultSearchBackendFactory, "System default search backend not found");
+    }
+    
     private final QueryEvaluationHint engineDefaultHints;
 
     private final IQueryBackendFactory defaultCachingBackendFactory;
+    private final IQueryBackendFactory defaultSearchBackendFactory;
 
     /** The default engine options; if options are not defined, this version will be used. */
-    public static final ViatraQueryEngineOptions DEFAULT = new Builder().build();
+    private static ViatraQueryEngineOptions DEFAULT;
+    
+    /**
+     * @since 2.0
+     */
+    public static final ViatraQueryEngineOptions getDefault() {
+        if (DEFAULT == null) {
+            DEFAULT = new Builder().build();
+        }
+        return DEFAULT;
+    }
 
     public static final class Builder {
         private QueryEvaluationHint engineDefaultHints;
 
         private IQueryBackendFactory defaultBackendFactory;
         private IQueryBackendFactory defaultCachingBackendFactory;
+        private IQueryBackendFactory defaultSearchBackendFactory;
 
         public Builder() {
 
@@ -50,6 +122,7 @@ public final class ViatraQueryEngineOptions {
             this.engineDefaultHints = from.engineDefaultHints;
             this.defaultBackendFactory = engineDefaultHints.getQueryBackendFactory();
             this.defaultCachingBackendFactory = from.defaultCachingBackendFactory;
+            this.defaultSearchBackendFactory = from.defaultSearchBackendFactory;
         }
 
         /**
@@ -70,16 +143,25 @@ public final class ViatraQueryEngineOptions {
             return this;
         }
 
+        /**
+         * @since 2.0
+         */
+        public Builder withDefaultSearchBackend(IQueryBackendFactory defaultSearchBackendFactory) {
+            Preconditions.checkArgument(!defaultSearchBackendFactory.isCaching(), "%s is not a search backend", defaultSearchBackendFactory.getClass());
+            this.defaultSearchBackendFactory = defaultSearchBackendFactory;
+            return this;
+        }
+        
         public Builder withDefaultCachingBackend(IQueryBackendFactory defaultCachingBackendFactory) {
+            Preconditions.checkArgument(defaultCachingBackendFactory.isCaching(), "%s is not a caching backend", defaultCachingBackendFactory.getClass());
             this.defaultCachingBackendFactory = defaultCachingBackendFactory;
             return this;
         }
 
         public ViatraQueryEngineOptions build() {
             IQueryBackendFactory defaultFactory = getDefaultBackend();
-            IQueryBackendFactory defaultCachingFactory = getDefaultCachingBackend();
             QueryEvaluationHint hint = getEngineDefaultHints(defaultFactory);
-            return new ViatraQueryEngineOptions(hint, defaultCachingFactory);
+            return new ViatraQueryEngineOptions(hint, getDefaultCachingBackend(), getDefaultSearchBackend());
         }
 
         private IQueryBackendFactory getDefaultBackend() {
@@ -88,15 +170,27 @@ public final class ViatraQueryEngineOptions {
             } else if (engineDefaultHints != null) {
                 return engineDefaultHints.getQueryBackendFactory();
             } else {
-                return new ReteBackendFactory();
+                return getSystemDefaultBackend();
             }
         }
 
         private IQueryBackendFactory getDefaultCachingBackend() {
             if (defaultCachingBackendFactory != null) {
+                return defaultCachingBackendFactory;
+            } else if (defaultBackendFactory != null && defaultBackendFactory.isCaching()) {
                 return defaultBackendFactory;
             } else {
-                return new ReteBackendFactory(); // TODO this should be defaultFactory if it is caching
+                return getSystemDefaultCachingBackend();
+            }
+        }
+        
+        private IQueryBackendFactory getDefaultSearchBackend() {
+            if (defaultSearchBackendFactory != null) {
+                return defaultSearchBackendFactory;
+            } else if (defaultBackendFactory != null && !defaultBackendFactory.isCaching()) {
+                return defaultBackendFactory;
+            } else {
+                return getSystemDefaultSearchBackend();
             }
         }
 
@@ -123,9 +217,11 @@ public final class ViatraQueryEngineOptions {
         return new Builder(options);
     }
 
-    private ViatraQueryEngineOptions(QueryEvaluationHint engineDefaultHints, IQueryBackendFactory defaultCachingBackendFactory) {
+    private ViatraQueryEngineOptions(QueryEvaluationHint engineDefaultHints,
+            IQueryBackendFactory defaultCachingBackendFactory, IQueryBackendFactory defaultSearchBackendFactory) {
         this.engineDefaultHints = engineDefaultHints;
         this.defaultCachingBackendFactory = defaultCachingBackendFactory;
+        this.defaultSearchBackendFactory = defaultSearchBackendFactory;
     }
 
     public QueryEvaluationHint getEngineDefaultHints() {
@@ -142,11 +238,20 @@ public final class ViatraQueryEngineOptions {
     }
 
     /**
-     * Returns the configured default caching backed. If the default backend caches matches, it is usually expected, but
+     * Returns the configured default caching backend. If the default backend caches matches, it is usually expected, but
      * not mandatory for the two default backends to be the same.
      */
     public IQueryBackendFactory getDefaultCachingBackendFactory() {
         return defaultCachingBackendFactory;
+    }
+    
+    /**
+     * Returns the configured default search-based backend. If the default backend is search-based, it is usually expected, but
+     * not mandatory for the two default backends to be the same.
+     * @since 2.0
+     */
+    public IQueryBackendFactory getDefaultSearchBackendFactory() {
+        return defaultSearchBackendFactory;
     }
 
     @Override
@@ -156,5 +261,25 @@ public final class ViatraQueryEngineOptions {
             return "defaults";
         else
             return engineDefaultHints.toString();
+    }
+    
+    /**
+     * @since 2.0
+     */
+    public IQueryBackendFactory getQueryBackendFactory(QueryEvaluationHint hint) {
+        if (hint == null) {
+            return getDefaultBackendFactory();
+        }
+
+        switch (hint.getQueryBackendRequirementType()) {
+        case DEFAULT_CACHING: 
+            return getDefaultCachingBackendFactory();
+        case DEFAULT_SEARCH: 
+            return getDefaultSearchBackendFactory();
+        case SPECIFIC:
+            return hint.getQueryBackendFactory();
+        default:
+            return getDefaultBackendFactory();
+        }
     }
 }

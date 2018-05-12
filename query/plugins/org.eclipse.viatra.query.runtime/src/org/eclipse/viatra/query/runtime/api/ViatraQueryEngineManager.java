@@ -83,7 +83,7 @@ public class ViatraQueryEngineManager {
      * @return a new or previously existing engine
      */
     public ViatraQueryEngine getQueryEngine(QueryScope scope) {
-        return getQueryEngine(scope, ViatraQueryEngineOptions.DEFAULT);
+        return getQueryEngine(scope, ViatraQueryEngineOptions.getDefault());
     }
     
     /**
