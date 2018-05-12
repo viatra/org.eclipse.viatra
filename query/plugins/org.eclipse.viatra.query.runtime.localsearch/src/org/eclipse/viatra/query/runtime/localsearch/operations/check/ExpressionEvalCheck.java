@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CheckOperationExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * @author Grill Balázs
@@ -41,8 +39,7 @@ public class ExpressionEvalCheck implements ISearchOperation {
                     return result.equals(currentValue);
                 }
             } catch (Exception e) {
-                Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
-                logger.warn("Error while evaluating expression", e);
+                context.getLogger().warn("Error while evaluating expression", e);
             }
             return false;
         }

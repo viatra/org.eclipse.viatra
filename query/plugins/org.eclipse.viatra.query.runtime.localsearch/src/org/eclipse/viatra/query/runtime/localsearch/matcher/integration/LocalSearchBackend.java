@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider;
@@ -218,8 +218,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
                 return null;
             });
         } catch (InvocationTargetException e) {
-            throw new ViatraQueryException("Error while rebuilding plans: " + e.getMessage(),
-                    "Error while rebuilding plans", e);
+            throw new LocalSearchException("Error while rebuilding plans: " + e.getMessage(), e);
         }
     }
     

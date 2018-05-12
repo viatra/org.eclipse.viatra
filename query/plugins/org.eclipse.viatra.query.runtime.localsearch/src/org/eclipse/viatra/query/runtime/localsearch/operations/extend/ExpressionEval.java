@@ -16,13 +16,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * Calculates the result of an expression and stores it inside a variable for future reference.
@@ -48,8 +46,7 @@ public class ExpressionEval implements ISearchOperation {
                     return Collections.emptyIterator();
                 }
             } catch (Exception e) {
-                Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
-                logger.warn("Error while evaluating expression", e);
+                context.getLogger().warn("Error while evaluating expression", e);
                 return Collections.emptyIterator();
             }
         }

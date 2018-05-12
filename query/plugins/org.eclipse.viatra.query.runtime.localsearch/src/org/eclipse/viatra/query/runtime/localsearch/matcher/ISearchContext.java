@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -72,6 +73,13 @@ public interface ISearchContext {
     <T> T accessBackendLevelCache(Object key, Class<? extends T> clazz, IProvider<T> valueProvider);
     
     /**
+     * Returns the engine-specific logger
+     * 
+     * @since 2.0
+     */
+    Logger getLogger();
+    
+    /**
      * @noreference This class is not intended to be referenced by clients.
      * @noimplement This interface is not intended to be implemented by clients.
      * @noextend This interface is not intended to be extended by clients.
@@ -84,12 +92,14 @@ public interface ISearchContext {
         private final IQueryRuntimeContext runtimeContext;
         
         private final ICache backendLevelCache;
+        private final Logger logger;
         
         /**
          * Initializes a search context using an arbitrary backend context
          */
         public SearchContext(IQueryBackendContext backendContext, QueryEvaluationHint overrideHints, ICache backendLevelCache) {
             this.runtimeContext = backendContext.getRuntimeContext();
+            this.logger = backendContext.getLogger();
             this.navigationHelper = null;
             this.resultProviderAccess = backendContext.getResultProviderAccess();
             this.overrideHints = overrideHints;
@@ -133,6 +143,11 @@ public interface ISearchContext {
 
         public IQueryRuntimeContext getRuntimeContext() {
             return runtimeContext;
+        }
+        
+        @Override
+        public Logger getLogger() {
+            return logger;
         }
         
     }

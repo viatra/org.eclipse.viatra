@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.exceptions;
 
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 
 /**
  * @author Zoltan Ujhelyi, Akos Horvath
  * 
  */
-public class LocalSearchException extends ViatraQueryException {
+public class LocalSearchException extends ViatraQueryRuntimeException {
 
     private static final long serialVersionUID = -2585896573351435974L;
 
@@ -24,11 +24,11 @@ public class LocalSearchException extends ViatraQueryException {
     public static final String TYPE_ERROR = "Invalid type of variable";
 
     public LocalSearchException(String description, Throwable rootException) {
-        super(description, description, rootException);
+        super(description, rootException);
     }
 
     public LocalSearchException(String description) {
-        super(description, description);
+        super(description);
     }
 
 

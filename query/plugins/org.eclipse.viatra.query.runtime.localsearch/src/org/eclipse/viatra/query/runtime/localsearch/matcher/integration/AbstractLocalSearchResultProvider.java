@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
@@ -287,7 +287,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             try {
                 indexKeys(plan.getIteratedKeys());
             } catch (InvocationTargetException e) {
-                throw new ViatraQueryException("Could not index keys","Could not index keys", e);
+                throw new LocalSearchException("Could not index keys", e);
             }
         }
         
