@@ -35,7 +35,8 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
 
     private final Map<MatcherReference, List<SearchPlan>> planReference = new HashMap<>();
     
-    private final Map<ISearchOperation, Integer> operationCounts = new HashMap<>();
+    private final Map<ISearchOperation, Integer> successfulOperationCounts = new HashMap<>();
+    private final Map<ISearchOperation, Integer> failedOperationCounts = new HashMap<>();
 
     @Override
     public void patternMatchingStarted(LocalSearchMatcher lsMatcher) {
@@ -46,7 +47,8 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
 
     @Override
     public void operationExecuted(SearchPlan plan, ISearchOperation operation, MatchingFrame frame, boolean isSuccessful) {
-        operationCounts.merge(operation, 
+        Map<ISearchOperation, Integer> counts = isSuccessful ? successfulOperationCounts : failedOperationCounts;
+        counts.merge(operation, 
                 /*no previous entry*/1, 
                 /*increase previous value*/(k, v) -> v + 1);
     }
@@ -65,7 +67,11 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
             for(int i=0;i<bodies.size();i++){
                 sb.append("\tbody #");sb.append(i);sb.append("(\n");
                 for(ISearchOperation operation : bodies.get(i).getOperations()){
-                    sb.append("\t\t");sb.append(operationCounts.computeIfAbsent(operation, op -> 0));
+                    final int successCount = successfulOperationCounts.computeIfAbsent(operation, op -> 0);
+                    final int failCount = failedOperationCounts.computeIfAbsent(operation, op -> 0);
+                    sb.append("\t\t");sb.append(successCount);
+                    sb.append("\t");sb.append(failCount);
+                    sb.append("\t");sb.append(successCount + failCount);
                     sb.append("\t");sb.append(operation);
                     sb.append("\n");
                 }
