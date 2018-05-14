@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -76,8 +77,15 @@ public class ScopeCheck implements ISearchOperation {
 
     @Override
     public String toString() {
-        return "check    +"+position+" in scope "+scope;
+        return toString(Object::toString);
     }
+    
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check    +"+variableMapping.apply(position) +" in scope "+scope;
+    }
+
     @Override
     public List<Integer> getVariablePositions() {
         return Arrays.asList(position);

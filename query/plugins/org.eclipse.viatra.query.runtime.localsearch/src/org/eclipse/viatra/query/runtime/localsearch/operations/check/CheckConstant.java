@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -60,7 +61,12 @@ public class CheckConstant implements ISearchOperation {
     
     @Override
     public String toString() {
-        return "check     constant "+position+"='"+value+"'";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     constant "+variableMapping.apply(position)+"='"+value+"'";
     }
     
 }

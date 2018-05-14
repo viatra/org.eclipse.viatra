@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -70,7 +71,12 @@ public class ContainmentCheck implements ISearchOperation {
 
     @Override
     public String toString() {
-        return "check     containment +"+containerPosition+" <>--> +"+childPosition+(transitive ? " transitively" : " directly");
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     containment +"+variableMapping.apply(containerPosition)+" <>--> +"+childPosition+(transitive ? " transitively" : " directly");
     }
 
     @Override

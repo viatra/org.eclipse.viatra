@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
@@ -71,7 +72,12 @@ public class IterateOverEClassInstances implements IIteratingSearchOperation {
 
     @Override
     public String toString() {
-        return "extend    "+clazz.getName()+"(-"+ position+") iterating";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    "+clazz.getName()+"(-"+ variableMapping.apply(position)+") iterating";
     }
     
     @Override

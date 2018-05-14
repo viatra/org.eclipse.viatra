@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -60,7 +61,12 @@ public class InstanceOfClassCheck implements ISearchOperation {
 
     @Override
     public String toString() {
-        return "check     "+clazz.getName()+"(+"+ position+")";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     "+clazz.getName()+"(+"+ variableMapping.apply(position)+")";
     }
     
     @Override

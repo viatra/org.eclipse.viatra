@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -69,7 +70,12 @@ public class ExpressionEval implements ISearchOperation {
     
     @Override
     public String toString() {
-        return "extend    -"+position+" = expression "+evaluator.getShortDescription();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    -"+variableMapping.apply(position)+" = expression "+evaluator.getShortDescription();
     }
     
     @Override

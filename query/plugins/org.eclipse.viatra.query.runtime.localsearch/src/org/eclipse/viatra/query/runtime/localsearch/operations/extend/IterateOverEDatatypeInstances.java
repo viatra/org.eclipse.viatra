@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
@@ -72,7 +73,12 @@ public class IterateOverEDatatypeInstances implements IIteratingSearchOperation 
 
     @Override
     public String toString() {
-        return "extend    "+dataType.getName()+"(-"+position+") indexed";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    "+dataType.getName()+"(-"+variableMapping.apply(position)+") indexed";
     }
     
     @Override

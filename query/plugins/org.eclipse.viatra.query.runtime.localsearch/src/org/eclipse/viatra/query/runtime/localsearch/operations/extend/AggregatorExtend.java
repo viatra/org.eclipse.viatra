@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -92,7 +93,12 @@ public class AggregatorExtend  implements ISearchOperation, IPatternMatcherOpera
     
     @Override
     public String toString() {
-        return "extend    -"+position+" = " + aggregator.getAggregator().getOperator().getName()+" find " + information.toString();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    -"+variableMapping.apply(position)+" = " + aggregator.getAggregator().getOperator().getName()+" find " + information.toString(variableMapping);
     }
     
 }

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -65,7 +66,12 @@ public class ExtendConstant implements ISearchOperation {
     
     @Override
     public String toString() {
-        return "extend    constant -"+position+"='"+value+"'";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    constant -"+variableMapping.apply(position)+"='"+value+"'";
     }
     
 }

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -67,10 +68,15 @@ public class NACOperation implements ISearchOperation, IPatternMatcherOperation 
     public ISearchOperationExecutor createExecutor() {
         return new Executor();
     }
-
+    
     @Override
     public String toString() {
-        return "check     neg find "+information.toString();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     neg find "+information.toString(variableMapping);
     }
     
     @Override

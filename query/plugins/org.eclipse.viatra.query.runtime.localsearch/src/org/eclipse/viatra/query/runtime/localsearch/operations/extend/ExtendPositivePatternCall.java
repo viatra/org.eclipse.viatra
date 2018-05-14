@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -104,7 +105,12 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
     
     @Override
     public String toString() {
-        return "extend find " + information.toString();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend find " + information.toString(variableMapping);
     }
     
 }

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,10 +101,15 @@ public class IterateOverEDatatypeInstances implements IIteratingSearchOperation 
     public ISearchOperationExecutor createExecutor() {
         return new Executor(position, scope);
     }
-
+    
     @Override
     public String toString() {
-        return "extend    "+dataType.getName()+"(-"+position+") iterating";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    "+dataType.getName()+"(-"+variableMapping.apply(position)+") iterating";
     }
     
     @Override

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -128,12 +129,17 @@ public class GenericTypeExtend implements IIteratingSearchOperation {
     public List<Integer> getVariablePositions() {
         return positionList;
     }
-
+    
     @Override
     public String toString() {
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
         return "extend    " + type.getPrettyPrintableName() + "("
                 + positionList.stream()
-                        .map(input -> String.format("%s%d", unboundVariableIndices.contains(input) ? "-" : "+", input))
+                        .map(input -> String.format("%s%s", unboundVariableIndices.contains(input) ? "-" : "+", variableMapping.apply(input)))
                         .collect(Collectors.joining(", "))
                 + ")";
     }

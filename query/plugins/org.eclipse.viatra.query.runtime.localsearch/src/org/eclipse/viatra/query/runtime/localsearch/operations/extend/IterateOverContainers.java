@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -29,7 +30,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * 
  */
 public class IterateOverContainers implements ISearchOperation {
-
 
     /**
      * A helper iterator for transitively traversing a parent of an object
@@ -110,10 +110,14 @@ public class IterateOverContainers implements ISearchOperation {
         return new Executor(containerPosition);
     }
 
-
     @Override
     public String toString() {
-        return "extend    containment -"+sourcePosition+" <>--> +"+containerPosition+(transitive ? " transitively" : " directly");
+        return toString(Object::toString);
+    }
+
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    containment -"+variableMapping.apply(sourcePosition)+" <>--> +"+variableMapping.apply(containerPosition)+(transitive ? " transitively" : " directly");
     }
 
     @Override

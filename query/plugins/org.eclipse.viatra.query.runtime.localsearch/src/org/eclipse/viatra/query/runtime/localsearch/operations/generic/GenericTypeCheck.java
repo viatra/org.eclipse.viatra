@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.generic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -80,8 +81,13 @@ public class GenericTypeCheck implements ISearchOperation, IIteratingSearchOpera
 
     @Override
     public String toString() {
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
         return "check     " + type.getPrettyPrintableName() + "("
-                + positionList.stream().map(input -> String.format("+%d", input)).collect(Collectors.joining(", "))
+                + positionList.stream().map(input -> String.format("+%s", variableMapping.apply(input))).collect(Collectors.joining(", "))
                 + ")";
     }
 

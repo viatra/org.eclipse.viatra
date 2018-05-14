@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -79,10 +80,14 @@ public class ExtendToEStructuralFeatureTarget implements ISearchOperation {
         this.feature = feature;
     }
 
-    
     @Override
     public String toString() {
-        return "extend    "+feature.getEContainingClass().getName()+"."+feature.getName()+"(+"+sourcePosition+", -"+ targetPosition +")";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    "+feature.getEContainingClass().getName()+"."+feature.getName()+"(+"+variableMapping.apply(sourcePosition)+", -"+ variableMapping.apply(targetPosition) +")";
     }
 
     @Override

@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
@@ -89,10 +90,15 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
     public ISearchOperationExecutor createExecutor() {
         return new Executor();
     }
-
+    
     @Override
     public String toString() {
-        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+sourcePosition+", -"+targetPosition+") indexed";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+variableMapping.apply(sourcePosition)+", -"+variableMapping.apply(targetPosition)+") indexed";
     }
 
     @Override

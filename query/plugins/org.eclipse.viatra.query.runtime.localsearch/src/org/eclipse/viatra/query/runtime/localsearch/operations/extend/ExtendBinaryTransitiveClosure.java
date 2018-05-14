@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -161,10 +162,15 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
     public ISearchOperationExecutor createExecutor() {
         return new Executor(targetPosition);
     }
-
+    
     @Override
     public String toString() {
-        String c = information.toString();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        String c = information.toString(variableMapping);
         int p = c.indexOf('(');
         return "extend    find " + c.substring(0, p) + "+" + c.substring(p);
     }

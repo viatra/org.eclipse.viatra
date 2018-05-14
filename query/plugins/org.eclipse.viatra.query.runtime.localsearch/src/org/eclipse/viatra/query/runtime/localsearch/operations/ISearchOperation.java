@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -77,4 +78,13 @@ public interface ISearchOperation {
      */
     List<Integer> getVariablePositions();
 
+    /**
+     * Creates a string representation of the search operation by replacing the variable numbers according to the
+     * parameter function. It is expected that the provided function does return a non-null value for each variable
+     * index that is returned by {@link #getVariablePositions()}; otherwise a {@link NullPointerException} will be
+     * thrown during the calculation of the string.
+     * 
+     * @since 2.0
+     */
+    String toString(Function<Integer, String> variableMapping);
 }

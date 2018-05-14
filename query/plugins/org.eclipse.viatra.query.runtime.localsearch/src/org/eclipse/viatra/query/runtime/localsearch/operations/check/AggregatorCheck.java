@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -101,7 +102,12 @@ public class AggregatorCheck implements ISearchOperation, IPatternMatcherOperati
     
     @Override
     public String toString() {
-        return "check     "+position+" = " + aggregator.getAggregator().getOperator().getName() + " find " + information.toString();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     "+variableMapping.apply(position)+" = " + aggregator.getAggregator().getOperator().getName() + " find " + information.toString(variableMapping);
     }
     
 }

@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -67,10 +68,14 @@ public class IterateOverChildren implements ISearchOperation {
         this.transitive = transitive;
     }
 
-    
     @Override
     public String toString() {
-        return "extend    containment +"+sourcePosition+" <>--> -"+position+(transitive ? " transitively" : " directly");
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "extend    containment +"+variableMapping.apply(sourcePosition)+" <>--> -"+variableMapping.apply(position)+(transitive ? " transitively" : " directly");
     }
     
     @Override

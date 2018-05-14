@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -82,8 +83,8 @@ public class CountCheck implements ISearchOperation, IPatternMatcherOperation {
     }
     
     @Override
-    public String toString() {
-        return "check     "+position+" = count find "+ information.toString();
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     "+variableMapping.apply(position)+" = count find "+ information.toString(variableMapping);
     }
     
 }

@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -68,6 +69,11 @@ public class ExpressionCheck implements ISearchOperation {
     
     @Override
     public String toString() {
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
         return "check     expression "+evaluator.getShortDescription();
     }
     

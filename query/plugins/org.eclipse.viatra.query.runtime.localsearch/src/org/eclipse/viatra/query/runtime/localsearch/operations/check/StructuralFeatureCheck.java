@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -76,7 +77,12 @@ public class StructuralFeatureCheck implements ISearchOperation {
 
     @Override
     public String toString() {
-        return "check     "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(+"+sourcePosition+", +"+targetPosition+")";
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(+"+variableMapping.apply(sourcePosition)+", +"+variableMapping.apply(targetPosition)+")";
     }
     
     @Override

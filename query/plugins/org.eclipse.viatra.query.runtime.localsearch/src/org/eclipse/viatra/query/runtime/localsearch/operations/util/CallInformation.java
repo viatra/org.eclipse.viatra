@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
@@ -145,11 +146,23 @@ public final class CallInformation {
         return variables;
     }
     
+    
+    
     @Override
     public String toString() {
-        return referredQuery.getFullyQualifiedName()+"("+
-                referredQuery.getParameters().stream().map(input -> (adornment.contains(input) ? "+" : "-") + mapping.get(input)).collect(Collectors.joining(","))
-                +")";
+        return toString(Object::toString);
     }
+    
+    /**
+     * @since 2.0
+     */
+    public String toString(Function<Integer, String> variableMapping) {
+        return referredQuery.getFullyQualifiedName() + "("
+                + referredQuery.getParameters().stream().map(
+                        input -> (adornment.contains(input) ? "+" : "-") + variableMapping.apply(mapping.get(input)))
+                        .collect(Collectors.joining(","))
+                + ")";
+    }
+    
     
 }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -113,9 +114,15 @@ public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternM
 
     @Override
     public String toString() {
-        String c = information.toString();
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        String c = information.toString(variableMapping);
         int p = c.indexOf('(');
-        return "check     find "+c.substring(0, p)+"+"+c.substring(p);
+        String modifier = reflexive ? "*" : "+";
+        return "check     find "+c.substring(0, p)+ modifier +c.substring(p);
     }
 
     @Override

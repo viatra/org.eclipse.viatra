@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -59,10 +60,15 @@ public class InequalityCheck implements ISearchOperation {
     public ISearchOperationExecutor createExecutor() {
         return new Executor();
     }
-
+    
     @Override
     public String toString() {
-        return "check     "+sourceLocation+" != "+targetLocation;
+        return toString(Object::toString);
+    }
+    
+    @Override
+    public String toString(Function<Integer, String> variableMapping) {
+        return "check     "+variableMapping.apply(sourceLocation)+" != "+variableMapping.apply(targetLocation);
     }
 
     @Override
