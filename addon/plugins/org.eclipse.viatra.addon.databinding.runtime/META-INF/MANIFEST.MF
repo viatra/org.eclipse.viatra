@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.databinding;visibility:=reexport,
  com.google.inject;bundle-version="[3.0.0,4.0.0)"
 Export-Package: org.eclipse.viatra.addon.databinding.runtime.adapter,
  org.eclipse.viatra.addon.databinding.runtime.api,
- org.eclipse.viatra.addon.databinding.runtime.collection;uses:="com.google.common.base",
+ org.eclipse.viatra.addon.databinding.runtime.collection,
  org.eclipse.viatra.addon.databinding.runtime.observables,
  org.eclipse.viatra.addon.databinding.runtime.util
 Bundle-Vendor: Eclipse VIATRA Project

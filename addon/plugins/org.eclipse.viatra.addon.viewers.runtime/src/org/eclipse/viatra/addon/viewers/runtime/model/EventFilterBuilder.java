@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,8 +18,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.views.traceability.generic.GenericReferencedQuerySpecification;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Csaba Debreceni
@@ -38,7 +37,7 @@ public final class EventFilterBuilder {
         }
         
         Collection<IPatternMatch> filterMatches = filterDefinition.filterMatches;
-        List<T> newFilterMatches = Lists.newArrayList();
+        List<T> newFilterMatches = new ArrayList<>();
         for (IPatternMatch filterMatch : filterMatches) {
             T newFilterMatch = (T) specification.createFromBaseMatch(filterMatch);
             newFilterMatches.add(newFilterMatch);

@@ -10,7 +10,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.viatra.addon.viewers.runtime,
   org.eclipse.viatra.addon.viewers.runtime.extensions,
   org.eclipse.viatra.addon.viewers.runtime.extensions.jface,
-  org.eclipse.viatra.addon.viewers.runtime.model;uses:="com.google.common.base",
+  org.eclipse.viatra.addon.viewers.runtime.model,
   org.eclipse.viatra.addon.viewers.runtime.model.listeners,
   org.eclipse.viatra.addon.viewers.runtime.model.patterns,
   org.eclipse.viatra.addon.viewers.runtime.notation,

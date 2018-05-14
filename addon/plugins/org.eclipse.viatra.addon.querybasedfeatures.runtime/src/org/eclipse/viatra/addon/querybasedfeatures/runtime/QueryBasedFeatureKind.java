@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -22,12 +21,14 @@ import com.google.common.collect.ImmutableMap;
 public enum QueryBasedFeatureKind {
     SINGLE_REFERENCE, MANY_REFERENCE, SUM, ITERATION;
     
-    private static final Map<String,QueryBasedFeatureKind> KIND_TEXT = ImmutableMap.<String,QueryBasedFeatureKind>builder(). 
-            put("single", QueryBasedFeatureKind.SINGLE_REFERENCE).
-            put("many", QueryBasedFeatureKind.MANY_REFERENCE).
-            put("sum", QueryBasedFeatureKind.SUM).
-            put("iteration", QueryBasedFeatureKind.ITERATION).
-            build();
+    private static final Map<String,QueryBasedFeatureKind> KIND_TEXT = new HashMap<>(); 
+    static {
+        KIND_TEXT.put("single", QueryBasedFeatureKind.SINGLE_REFERENCE);
+        KIND_TEXT.put("many", QueryBasedFeatureKind.MANY_REFERENCE);
+        KIND_TEXT.put("sum", QueryBasedFeatureKind.SUM);
+        KIND_TEXT.put("iteration", QueryBasedFeatureKind.ITERATION);
+    }
+    
     
     public static QueryBasedFeatureKind parseKindString(String desc) {
         if (KIND_TEXT.containsKey(desc)) {

@@ -33,7 +33,7 @@ import com.google.common.collect.Table;
 public final class InputConnector {
     Network network;
     
-    protected Table<IInputKey, Tuple, Address<ExternalInputEnumeratorNode>> externalInputRoots = HashBasedTable.create(100, 1);
+    private Table<IInputKey, Tuple, Address<ExternalInputEnumeratorNode>> externalInputRoots = HashBasedTable.create(100, 1);
     
 //    /*
 //     * arity:1 used as simple entity constraints label is the object representing the type null label means all entities

@@ -12,6 +12,7 @@ package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +32,6 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -153,8 +152,8 @@ public abstract class QueryBasedFeature {
                     "[QueryBasedFeature] Target parameter " + targetParamName + " not found!");
         }
 //        this.dm = matcher.newDeltaMonitor(true);
-        this.matchFoundEvents = Sets.newHashSet();
-        this.matchLostEvents = Sets.newHashSet();
+        this.matchFoundEvents = new HashSet<>();
+        this.matchLostEvents = new HashSet<>();
         matchUpdateListener = new MatchUpdateListener();
         engineLifecycleListener = new EngineLifecycleListener();
         listener = new ModelUpdateListener();

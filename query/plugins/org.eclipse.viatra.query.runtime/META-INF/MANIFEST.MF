@@ -16,15 +16,13 @@ Export-Package: org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.api,
  org.eclipse.viatra.query.runtime.api.impl,
  org.eclipse.viatra.query.runtime.api.scope,
- org.eclipse.viatra.query.runtime.emf;
-  uses:="com.google.common.collect",
- org.eclipse.viatra.query.runtime.emf.helper;uses:="com.google.common.base",
+ org.eclipse.viatra.query.runtime.emf,
  org.eclipse.viatra.query.runtime.emf.types,
  org.eclipse.viatra.query.runtime.exception,
  org.eclipse.viatra.query.runtime.extensibility,
  org.eclipse.viatra.query.runtime.registry,
  org.eclipse.viatra.query.runtime.registry.connector,
- org.eclipse.viatra.query.runtime.registry.view;uses:="com.google.common.collect",
+ org.eclipse.viatra.query.runtime.registry.view,
  org.eclipse.viatra.query.runtime.util
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.base;version="15.0.0",

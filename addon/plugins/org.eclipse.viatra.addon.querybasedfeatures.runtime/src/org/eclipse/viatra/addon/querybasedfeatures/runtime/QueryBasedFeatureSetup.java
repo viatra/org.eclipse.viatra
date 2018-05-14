@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.eclipse.viatra.query.runtime.matchers.util.Preconditions.checkArgument;
 
 import java.util.HashSet;
 import java.util.List;

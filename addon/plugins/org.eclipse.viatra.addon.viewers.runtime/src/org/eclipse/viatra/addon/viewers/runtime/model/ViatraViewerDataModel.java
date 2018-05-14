@@ -12,6 +12,7 @@
 package org.eclipse.viatra.addon.viewers.runtime.model;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -23,7 +24,6 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 
 /**
  * A {@link ViewerDataModel} implementation for VIATRA Query/EVM model sources.
@@ -48,7 +48,7 @@ public class ViatraViewerDataModel extends ViewerDataModel {
      */
     public ViatraViewerDataModel(Collection<IQuerySpecification<?>> patterns, ViatraQueryEngine engine) {
         super(engine);
-        this.patterns = Sets.newHashSet(patterns);
+        this.patterns = new HashSet<>(patterns);
         this.logger = ViatraQueryLoggingUtil.getLogger(getClass());
     }
 
