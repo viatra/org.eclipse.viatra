@@ -13,6 +13,6 @@
     <properties>
         <!-- Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=397015 -->
         <sonar.sources></sonar.sources>
-        <sonar.tests>src,src-gen</sonar.tests>
+        <sonar.tests>src-gen</sonar.tests>
     </properties>
 </project>
