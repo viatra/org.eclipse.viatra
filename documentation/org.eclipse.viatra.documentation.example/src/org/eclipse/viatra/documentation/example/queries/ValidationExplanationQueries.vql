@@ -1,0 +1,30 @@
+package org.eclipse.viatra.documentation.example.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+//tag::embedded[]
+pattern hostTypeRAMTotal_Wrong_Embedded(ht : HostType, total : java Integer) {
+	total == sum HostType.instances.totalRam(ht, #);
+}
+//end::embedded[]
+
+//tag::correct[]
+pattern hostTypeRAM(ht : HostType, hi : HostInstance, ram : java Integer) {
+	HostType.instances(ht, hi);
+	HostInstance.totalRam(hi, ram);
+}
+
+pattern hostTypeRAMTotal(ht : HostType, total : java Integer) {
+	total == sum find hostTypeRAM(ht, _, #);
+}
+//end::correct[]
+
+//tag::incorrect[]
+pattern hostTypeRAM_Simple(ht : HostType, ram : java Integer) {
+	HostType.instances.totalRam(ht, ram);
+}
+
+pattern hostTypeRAMTotal_Wrong(ht : HostType, total : java Integer) {
+	total == sum find hostTypeRAM_Simple(ht, #);
+}
+//end::incorrect[]

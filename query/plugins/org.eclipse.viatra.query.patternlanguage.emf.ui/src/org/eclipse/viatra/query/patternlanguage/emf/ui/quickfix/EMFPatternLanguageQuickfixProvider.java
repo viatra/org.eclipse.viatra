@@ -40,6 +40,7 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     
     private static final String WHITELIST_CONTEXT = "org.eclipse.viatra.documentation.help.whitelist";
     private static final String USAGECOUNTING_CONTEXT = "org.eclipse.viatra.documentation.help.usagecounting";
+    private static final String AGGREGATED_CHAIN_CONTEXT = "org.eclipse.viatra.documentation.help.aggregated-chain";
 
     private static final class AddDependency implements IModification {
 
@@ -173,6 +174,10 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
                 new AddDependency(issue));
     }
     
+    @Fix(IssueCodes.AGGREGATED_FEATURE_CHAIN)
+    public void explainAggregatedChain(final Issue issue, IssueResolutionAcceptor acceptor) {
+        explainWithHelp(issue, acceptor, AGGREGATED_CHAIN_CONTEXT);
+    }
     @Fix(IssueCodes.LOCAL_VARIABLE_READONLY)
     public void explainUsageCounting1(final Issue issue, IssueResolutionAcceptor acceptor) {
         explainWithHelp(issue, acceptor, USAGECOUNTING_CONTEXT);

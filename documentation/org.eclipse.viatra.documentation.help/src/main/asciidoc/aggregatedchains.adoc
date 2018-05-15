@@ -1,0 +1,39 @@
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
+= Aggregated Feature Chains
+
+Aggregating feature chains can result in surprising results, as multiple paths with the same start and end elements are merged together. This can be caused by (1) having multiple EObject instances reachable with the same checked attribute value (e.g. multiple machines with the same amount of RAM) or (2) reaching the same object in multiple paths. The duplicates can be correctly handled by making all objects through the path parameters, but the embedded aggregation syntax does not provide such support.
+
+To demonstrate the issue, consider the following query (based on the CPS domain): we are interested in the total amount of RAM available in hosts of a dedicated host type. Naively, we could write the following query:
+
+[[vql-embedded]]
+[source,vql,indent=0]
+----
+include::../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/ValidationExplanationQueries.vql[tag=embedded]
+----
+
+However, this results in an incorrect match set if there are multiple host instances of the same host type that have the same value assigned to the total RAM attribute.
+
+image::language/aggregated_chain_embedded_result.png[Match set of the embedded subpattern]
+
+This embedded query is equivalent of the following version without embedded aggregation:
+
+[[vql-incorrect]]
+[source,vql,indent=0]
+----
+include::../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/ValidationExplanationQueries.vql[tag=incorrect]
+----
+
+The problematic part is the hostTypeRAM_Simple pattern where the removal of the interim host instance variable results in multiple rows having the same value:
+
+image::language/aggregated_chain_result.png[Match set with the helper pattern]
+
+By modifying the called pattern not to remove the host instance variable, the result set becomes the expected one:
+
+[[vql-correct]]
+[source,vql,indent=0]
+----
+include::../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/ValidationExplanationQueries.vql[tag=correct]
+----
+
+image::language/aggregated_chain_correct_result.png[Match set with the fixed pattern]

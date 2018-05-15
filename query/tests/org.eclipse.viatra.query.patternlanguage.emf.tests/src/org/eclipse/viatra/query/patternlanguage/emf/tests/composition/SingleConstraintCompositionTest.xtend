@@ -410,6 +410,26 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
         )
         parsed.assertNoErrors
     }
+    
+    @Test
+    def void testMinAggregatorChain() {
+        var parsed = parseHelper.parse(
+            '''
+                package org.eclipse.viatra.query.patternlanguage.emf.tests
+                
+                import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+                import "http://www.eclipse.org/emf/2002/Ecore"
+                
+                pattern smallestValue(c : Circle, redness : EInt) {
+                    redness == min Circle.red.redness(c, #_);
+                }
+            '''
+        )
+        parsed.assertNoErrors
+        tester.validate(parsed).assertAll(
+            getWarningCode(IssueCodes.AGGREGATED_FEATURE_CHAIN)
+        )
+    }
 
     @Test
     def void testAggregatorMissingMarker() {

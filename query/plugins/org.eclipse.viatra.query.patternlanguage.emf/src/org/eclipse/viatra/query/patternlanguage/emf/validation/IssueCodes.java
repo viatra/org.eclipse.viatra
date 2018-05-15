@@ -143,9 +143,14 @@ public final class IssueCodes {
      * @since 2.0
      */
     public static final String DEPRECATION = ISSUE_CODE_PREFIX + "deprecated";
+    /**
+     * @since 2.0
+     */
+    public static final String AGGREGATED_FEATURE_CHAIN = ISSUE_CODE_PREFIX + "aggregated_feature_chain"; 
     
     public static final String OTHER_ISSUE = ISSUE_CODE_PREFIX + "other_issue";
 
+    
     
     /**
      * This prefix is used to distinguish between Java and EMF parameter type proposals

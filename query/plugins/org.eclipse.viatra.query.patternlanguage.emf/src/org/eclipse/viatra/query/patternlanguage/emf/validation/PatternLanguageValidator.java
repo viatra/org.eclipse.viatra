@@ -49,6 +49,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
@@ -285,6 +286,16 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         produceParameterTypeWarnings(callVariables, expectedTypes, maxIndex);
     }
 
+    @Check
+    public void checkEmbeddedAggregatorLength(AggregatedValue value) {
+        if (value.getCall() instanceof PathExpressionConstraint) {
+            PathExpressionConstraint constraint = (PathExpressionConstraint) value.getCall();
+            if (constraint.getEdgeTypes().size() > 1) {
+                warning("Aggregating feature chains might provide unexpected results.", value, null, IssueCodes.AGGREGATED_FEATURE_CHAIN);
+            }
+        }
+    }
+    
     @Check
     public void checkPatternParameters(Pattern pattern) {
         if (pattern.getParameters().isEmpty()) {

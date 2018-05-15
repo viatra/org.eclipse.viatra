@@ -26,7 +26,13 @@ public enum PVisibility {
      */
     PRIVATE,
     /**
-     * A query that is only used inside a single caller query and is invisible outside.
+     * A query that is only used inside a single caller query and is not visible outside its container query. Such
+     * patterns must also fulfill the following additional constraints:
+     * 
+     * <ul>
+     * <li>An embedded query must have only a single body.</li>
+     * <li>An embedded query must not be recursice.</li>
+     * </ul>
      */
     EMBEDDED
 

@@ -6,4 +6,7 @@
    <context id="whitelist">
       <topic href="html/language/whitelist.html" label="Pure Whitelist"/>
    </context>
+   <context id="aggregated-chain">
+      <topic href="html/aggregatedchains.html" label="Aggregated Chains"/>
+   </context>
 </contexts>
