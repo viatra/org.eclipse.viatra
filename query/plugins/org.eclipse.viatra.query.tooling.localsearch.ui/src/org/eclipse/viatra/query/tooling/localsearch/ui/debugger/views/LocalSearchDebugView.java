@@ -45,7 +45,7 @@ import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
@@ -99,7 +99,7 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
     }
     
     private void initializeDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> specification, final Object[] adornment) {
-        final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
+        final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchEMFBackendFactory.INSTANCE);
         final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
                 .getResultProvider(specification.getInternalQueryRepresentation());
         final LocalSearchBackend localSearchBackend = (LocalSearchBackend) lsBackend;

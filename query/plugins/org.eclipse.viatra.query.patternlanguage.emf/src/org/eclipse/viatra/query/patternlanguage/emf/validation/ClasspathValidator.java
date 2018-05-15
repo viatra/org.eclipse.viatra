@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.xtext.common.types.JvmEnumerationType;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -69,7 +69,7 @@ public class ClasspathValidator extends AbstractDeclarativeValidator {
             return;
         }
         if (modifier.getExecution() == ExecutionType.SEARCH) {
-            final JvmEnumerationType lsBackendType = (JvmEnumerationType) typeReferences.findDeclaredType(LocalSearchBackendFactory.class, modifier);
+            final JvmEnumerationType lsBackendType = (JvmEnumerationType) typeReferences.findDeclaredType(LocalSearchEMFBackendFactory.class, modifier);
             if (lsBackendType == null || lsBackendType.eIsProxy()) {
                 error("Couldn't find the mandatory library 'org.eclipse.viatra.query.runtime.localsearch' on the project's classpath.",
                         modifier, PatternLanguagePackage.Literals.MODIFIERS__EXECUTION,

@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.tooling.ui.registry;
 
 import java.util.Collection;
 
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 
@@ -34,7 +34,7 @@ public class QueryBackendRegistry {
      */
     private static final IQueryBackendFactory DEFAULT_BACKEND = ReteBackendFactory.INSTANCE;
     private static final IQueryBackendFactory DEFAULT_CACHING_BACKEND = DEFAULT_BACKEND;
-    private static final IQueryBackendFactory LOCAL_SEARCH_BACKEND = LocalSearchBackendFactory.INSTANCE;
+    private static final IQueryBackendFactory LOCAL_SEARCH_BACKEND = LocalSearchEMFBackendFactory.INSTANCE;
     
     private static Collection<IQueryBackendFactory> queryBackendFactories = Lists.newArrayList(DEFAULT_BACKEND, LOCAL_SEARCH_BACKEND);
 

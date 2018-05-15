@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.api.util.IncrementalBa
 import org.eclipse.viatra.query.runtime.cps.tests.queries.api.util.SearchBackendQuerySpecification;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.GenericLocalSearchResultProvider;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchGenericBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
@@ -53,13 +53,13 @@ public class MatcherAccessTest {
     
     private static final ViatraQueryEngineOptions ENGINE_DEFAULT = ViatraQueryEngineOptions.getDefault();
     private static final ViatraQueryEngineOptions ENGINE_RETE = options().withDefaultBackend(ReteBackendFactory.INSTANCE).build();
-    private static final ViatraQueryEngineOptions ENGINE_LS = options().withDefaultBackend(LocalSearchBackendFactory.INSTANCE).build();
+    private static final ViatraQueryEngineOptions ENGINE_LS = options().withDefaultBackend(LocalSearchEMFBackendFactory.INSTANCE).build();
     private static final ViatraQueryEngineOptions ENGINE_LS_GENERIC = options().withDefaultBackend(LocalSearchGenericBackendFactory.INSTANCE).build();
     
     private static final ViatraQueryEngineOptions ENGINE_RETE_LS = options()
             .withDefaultBackend(ReteBackendFactory.INSTANCE)
             .withDefaultCachingBackend(ReteBackendFactory.INSTANCE)
-            .withDefaultSearchBackend(LocalSearchBackendFactory.INSTANCE)
+            .withDefaultSearchBackend(LocalSearchEMFBackendFactory.INSTANCE)
             .build();
     private static final ViatraQueryEngineOptions ENGINE_RETE_GENERIC_LS = options()
             .withDefaultBackend(ReteBackendFactory.INSTANCE)
@@ -67,9 +67,9 @@ public class MatcherAccessTest {
             .withDefaultSearchBackend(LocalSearchGenericBackendFactory.INSTANCE)
             .build();
     private static final ViatraQueryEngineOptions ENGINE_LS_RETE = options()
-            .withDefaultBackend(LocalSearchBackendFactory.INSTANCE)
+            .withDefaultBackend(LocalSearchEMFBackendFactory.INSTANCE)
             .withDefaultCachingBackend(ReteBackendFactory.INSTANCE)
-            .withDefaultSearchBackend(LocalSearchBackendFactory.INSTANCE)
+            .withDefaultSearchBackend(LocalSearchEMFBackendFactory.INSTANCE)
             .build();
     
     

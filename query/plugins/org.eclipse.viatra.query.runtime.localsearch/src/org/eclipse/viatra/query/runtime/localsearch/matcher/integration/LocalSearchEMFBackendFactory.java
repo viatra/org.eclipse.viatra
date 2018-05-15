@@ -19,9 +19,10 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * @author Marton Bur, Zoltan Ujhelyi
+ * @since 2.0
  *
  */
-public enum LocalSearchBackendFactory implements IQueryBackendFactory {
+public enum LocalSearchEMFBackendFactory implements IQueryBackendFactory {
     
     
     INSTANCE;

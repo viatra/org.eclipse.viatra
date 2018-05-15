@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.runtime.cps.tests;
 
 import java.util.Collections;
 
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchGenericBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
@@ -32,7 +32,7 @@ public enum BackendType {
             case LocalSearch_Flat:
             case LocalSearch_NoBase:
             case LocalSearch: 
-                return LocalSearchBackendFactory.INSTANCE;
+                return LocalSearchEMFBackendFactory.INSTANCE;
             case LocalSearch_Generic:
                 return LocalSearchGenericBackendFactory.INSTANCE;
             default: return null;

@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction
@@ -68,7 +68,7 @@ class LocalSearchPlanCostOverflowTest {
        val scope = new EMFScope(rs);
        val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope)
        
-       val backend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE) as LocalSearchBackend
+       val backend = engine.getQueryBackend(LocalSearchEMFBackendFactory.INSTANCE) as LocalSearchBackend
        
        val planner = new SimplePlanProvider(null);
        val adornment = #{}

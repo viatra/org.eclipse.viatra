@@ -20,7 +20,7 @@ public class LocalSearchBackendFactoryProvider implements IQueryBackendFactoryPr
     
     @Override
     public IQueryBackendFactory getFactory() {
-        return LocalSearchBackendFactory.INSTANCE;
+        return LocalSearchEMFBackendFactory.INSTANCE;
     }
     
     @Override

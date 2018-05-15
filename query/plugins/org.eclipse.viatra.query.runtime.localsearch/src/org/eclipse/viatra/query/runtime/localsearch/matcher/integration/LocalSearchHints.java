@@ -76,7 +76,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = PLANNER_COST_FUNCTION.getDefaultValue();
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
-        result.backendFactory = LocalSearchBackendFactory.INSTANCE;
+        result.backendFactory = LocalSearchEMFBackendFactory.INSTANCE;
         return result;
     }
     
@@ -91,7 +91,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = new DefaultFlattenCallPredicate();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
-        result.backendFactory = LocalSearchBackendFactory.INSTANCE;
+        result.backendFactory = LocalSearchEMFBackendFactory.INSTANCE;
         return result;
     }
     
@@ -105,7 +105,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = new VariableBindingBasedCostFunction();
         result.flattenCallPredicate = new NeverFlattenCallPredicate();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
-        result.backendFactory = LocalSearchBackendFactory.INSTANCE;
+        result.backendFactory = LocalSearchEMFBackendFactory.INSTANCE;
         return result;
     }
     

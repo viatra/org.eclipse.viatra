@@ -30,7 +30,7 @@ public class DontFlattenIncrementalPredicate implements IFlattenCallPredicate {
         QueryEvaluationHint evaluationHints = positivePatternCall.getReferredQuery().getEvaluationHints();
         if (evaluationHints == null) return true;
         IQueryBackendFactory configuredBackend = evaluationHints.getQueryBackendFactory();
-        return configuredBackend == null || configuredBackend instanceof LocalSearchBackendFactory;
+        return configuredBackend == null || !configuredBackend.isCaching();
     }
 
 }
