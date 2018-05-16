@@ -310,18 +310,19 @@ class PatternQuerySpecificationClassInferrer {
     }
 
     def StringConcatenationClient inferQueryEvaluationHints(Pattern pattern) {
-        switch(getRequestedExecutionType(pattern)){
+        val requirement = switch(getRequestedExecutionType(pattern)){
             case INCREMENTAL: {
-                '''setEvaluationHints(new «QueryEvaluationHint»(null, «QueryEvaluationHint.BackendRequirement».«QueryEvaluationHint.BackendRequirement::DEFAULT_CACHING»));'''
+                QueryEvaluationHint.BackendRequirement::DEFAULT_CACHING
             }
             case SEARCH: {
-                '''setEvaluationHints(new «QueryEvaluationHint»(null, «QueryEvaluationHint.BackendRequirement».«QueryEvaluationHint.BackendRequirement::DEFAULT_SEARCH»));'''
+                QueryEvaluationHint.BackendRequirement::DEFAULT_SEARCH
             }
             case UNSPECIFIED: {
-               '''''' 
+                QueryEvaluationHint.BackendRequirement::UNSPECIFIED
             }
             
          }
+       '''setEvaluationHints(new «QueryEvaluationHint»(null, «QueryEvaluationHint.BackendRequirement».«requirement»));'''
     }
 
     def StringConcatenationClient inferBodies(Pattern pattern) throws IllegalStateException {
