@@ -50,12 +50,14 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFea
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
 
 /**
  * A component for the {@link ViewersMultiSandboxView}.
@@ -294,14 +296,11 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         if (engine != null) {
             engine.dispose();
         }
-        // make sure that the engine is initialized according to how the Query Explorer is set up through preferences
-        IPreferenceStore prefStore = ViatraQueryGUIPlugin.getDefault().getPreferenceStore();
-        IndexingLevel wildcardLevel = (prefStore.getBoolean(PreferenceConstants.WILDCARD_MODE)) ? IndexingLevel.FULL: IndexingLevel.NONE;
-        boolean dynamicEMFMode = prefStore.getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
-        
-        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(scope.getScopeRoots(),
-                new BaseIndexOptions().withDynamicEMFMode(dynamicEMFMode).withWildcardLevel(wildcardLevel)));
-        ViewersMultiSandboxView.log("Viewers initialized a new VIATRA Query engine with indexing level: " + wildcardLevel + ", dynamicMode: "+dynamicEMFMode);
+        // make sure that the engine is initialized according to how the Query Explorer is set up through preferences        
+        BaseIndexOptions baseIndexOptions = RuntimePreferencesInterpreter.getBaseIndexOptionsFromPreferences();
+        ViatraQueryEngineOptions engineOptions = RuntimePreferencesInterpreter.getQueryEngineOptionsFromPreferences();
+        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(scope.getScopeRoots(),baseIndexOptions), engineOptions);
+        ViewersMultiSandboxView.log("Viewers initialized a new VIATRA Query engine with base index options: " + baseIndexOptions.toString());
         return engine;
     }
 

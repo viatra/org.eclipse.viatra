@@ -12,6 +12,8 @@ package org.eclipse.viatra.query.tooling.ui.queryresult;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -22,11 +24,15 @@ import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
 
 import com.google.common.collect.Sets;
 
@@ -43,7 +49,7 @@ public enum QueryResultViewModel {
     
     private QueryResultViewModel() {
         this.inputs = Sets.newHashSet();
-        this.defaultHint = new QueryEvaluationHint(null, ReteBackendFactory.INSTANCE);
+        this.defaultHint = new QueryEvaluationHint(null, BackendRequirement.DEFAULT_CACHING);
     }
     
     protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) {
@@ -51,13 +57,7 @@ public enum QueryResultViewModel {
         checkArgument(type != null, "Type cannot be null");
         Notifier notifier = connector.getNotifier(type);
         
-        boolean wildcardMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.WILDCARD_MODE);
-        IndexingLevel wildcardLevel = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
-        boolean dynamicEMFMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
-        BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardLevel);
-        QueryScope scope = new EMFScope(notifier, options);
+        QueryScope scope = new EMFScope(notifier, RuntimePreferencesInterpreter.getBaseIndexOptionsFromPreferences());
         
         AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
         QueryResultTreeInput input = createInput(engine, false);
@@ -69,8 +69,9 @@ public enum QueryResultViewModel {
      * This method is intended to support existing engines 
      */
     protected QueryResultTreeInput createInput(AdvancedViatraQueryEngine engine, boolean readOnlyEngine) {
+        QueryEvaluationHint hints = defaultHint.overrideBy(RuntimePreferencesInterpreter.getHintOverridesFromPreferences());
         QueryResultTreeInput input = new QueryResultTreeInput(engine, QuerySpecificationRegistry.getInstance(),
-                readOnlyEngine, defaultHint);
+                readOnlyEngine, hints);
         inputs.add(input);
         return input;
     }

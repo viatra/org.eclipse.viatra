@@ -40,6 +40,12 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
             + "if duplicate EPackages with the same nsURI are encountered. This flag indicates whether indexing should be performed "
             + "in Dynamic EMF mode, i.e. EPackage nsURI collisions are tolerated and EPackages with the same URI are automatically considered as equal.";
 
+    private static final String DRED_MODE_DESCRIPTION = "The incremental query evaluator backend "
+            + "can evaluate recursive patterns. However, by default, instance models that contain cycles  "
+            + "are not supported with recursive queries and can lead to incorrect query results. "
+            + "Enabling DRED mode guarantees that recursive query evaluation leads to correct results in these cases as well. "
+            + "As DRED may diminish the performance of incremental maintenance, it is not enabled by default.";
+
     @Override
     public void init(IWorkbench workbench) {
 
@@ -74,6 +80,15 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
         dynamicEMFModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
         dynamicEMFModeEditor.load();
         dynamicEMFModeEditor.setPropertyChangeListener(event -> store.setValue(PreferenceConstants.DYNAMIC_EMF_MODE, dynamicEMFModeEditor.getBooleanValue()));
+        
+        Label dredDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
+        dredDescriptionLabel.setText(DRED_MODE_DESCRIPTION);
+        dredDescriptionLabel.setLayoutData(layoutData);
+        final BooleanFieldEditor dredModeEditor = new BooleanFieldEditor(PreferenceConstants.DRED_MODE,
+                "&Delete-and-Rederive (DRed) mode", control);
+        dredModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
+        dredModeEditor.load();
+        dredModeEditor.setPropertyChangeListener(event -> store.setValue(PreferenceConstants.DRED_MODE, dredModeEditor.getBooleanValue()));
         
         return control;
     }

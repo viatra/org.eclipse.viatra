@@ -17,5 +17,6 @@ public class PreferenceConstants {
     
     public static final String WILDCARD_MODE = "org.eclipse.viatra.query.tooling.ui.queryexplorer.WildcardMode";
     public static final String DYNAMIC_EMF_MODE = "org.eclipse.viatra.query.tooling.ui.queryexplorer.DynamicEMFMode";
+    public static final String DRED_MODE = "org.eclipse.viatra.query.tooling.ui.queryexplorer.DeleteRederiveMode";
 
 }
