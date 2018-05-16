@@ -11,11 +11,12 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 
 /**
  * This class can be used to wrap an {@link IGraphDataSource} into an {@link IBiDirectionalGraphDataSource}. This class
@@ -31,19 +32,21 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
 
     private IGraphDataSource<V> wrappedDataSource;
     // target -> source -> count
-    private Map<V, Map<V, Integer>> incomingEdges;
+    private IMultiLookup<V, V> incomingEdges;
 
     public IBiDirectionalWrapper(IGraphDataSource<V> gds) {
         this.wrappedDataSource = gds;
 
-        this.incomingEdges = new HashMap<V, Map<V, Integer>>();
+        this.incomingEdges = CollectionsFactory.createMultiLookup(
+                Object.class, MemoryType.MULTISETS, Object.class);
 
         if (gds.getAllNodes() != null) {
             for (V source : gds.getAllNodes()) {
-                Map<V, Integer> targets = gds.getTargetNodes(source);
-                for (Entry<V, Integer> entry : targets.entrySet()) {
-                    for (int i = 0; i < entry.getValue(); i++) {
-                        edgeInserted(source, entry.getKey());
+                IMemoryView<V> targets = gds.getTargetNodes(source);
+                for (V target : targets.distinctValues()) {
+                    int count = targets.getCount(target);
+                    for (int i = 0; i < count; i++) {
+                        edgeInserted(source, target);
                     }
                 }
             }
@@ -73,50 +76,23 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
     }
 
     @Override
-    public Map<V, Integer> getTargetNodes(V source) {
+    public IMemoryView<V> getTargetNodes(V source) {
         return wrappedDataSource.getTargetNodes(source);
     }
 
     @Override
-    public Map<V, Integer> getSourceNodes(V target) {
-        Map<V, Integer> result = incomingEdges.get(target);
-        if (result == null) {
-            return Collections.emptyMap();
-        } else {
-            return result;
-        }
+    public IMemoryView<V> getSourceNodes(V target) {
+        return incomingEdges.lookupOrEmpty(target);
     }
 
     @Override
     public void edgeInserted(V source, V target) {
-        Map<V, Integer> incoming = incomingEdges.get(target);
-        if (incoming == null) {
-            incoming = new HashMap<V, Integer>();
-            incomingEdges.put(target, incoming);
-        }
-        Integer count = incoming.get(source);
-        if (count == null) {
-            count = 0;
-        }
-        count++;
-        incoming.put(source, count);
+        incomingEdges.addPair(target, source);
     }
 
     @Override
     public void edgeDeleted(V source, V target) {
-        Map<V, Integer> incoming = incomingEdges.get(target);
-        if (incoming != null) {
-            Integer count = incoming.get(source);
-            if (count != null) {
-                count--;
-
-                if (count == 0) {
-                    incoming.remove(source);
-                } else {
-                    incoming.put(source, count);
-                }
-            }
-        }
+        incomingEdges.removePair(target, source);
     }
 
     @Override
@@ -126,15 +102,7 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
 
     @Override
     public void nodeDeleted(V node) {
-        Map<V, Integer> outgoing = wrappedDataSource.getTargetNodes(node);
-        if (outgoing != null) {
-            for (V target : outgoing.keySet()) {
-                Map<V, Integer> incoming = incomingEdges.get(target);
-                assert incoming != null;
-                incoming.remove(node);
-            }
-        }
-        incomingEdges.remove(node);
+
     }
 
     @Override

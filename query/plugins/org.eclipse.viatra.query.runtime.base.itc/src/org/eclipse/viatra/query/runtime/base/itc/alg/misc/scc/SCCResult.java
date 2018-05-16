@@ -49,7 +49,7 @@ public class SCCResult<V> {
 
         for (Set<V> scc : sccs) {
             for (V source : scc) {
-                for (Entry<V, Integer> entry : gds.getTargetNodes(source).entrySet()) {
+                for (Entry<V, Integer> entry : gds.getTargetNodes(source).entriesWithMultiplicities()) {
                     if (scc.contains(entry.getKey())) {
                         edgeSum += entry.getValue();
                     }

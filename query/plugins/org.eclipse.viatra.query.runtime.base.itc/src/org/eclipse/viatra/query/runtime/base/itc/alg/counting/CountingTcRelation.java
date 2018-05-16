@@ -13,15 +13,16 @@ package org.eclipse.viatra.query.runtime.base.itc.alg.counting;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.ITcRelation;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopologicalSorting;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
 
 /**
  * Transitive closure relation implementation for the Counting algorithm.
@@ -32,17 +33,17 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
  */
 public class CountingTcRelation<V> implements ITcRelation<V> {
 
-    private Map<V, IMultiset<V>> tuplesForward = null;
-    private Map<V, IMultiset<V>> tuplesBackward = null;
+    private IMultiLookup<V, V> tuplesForward = null;
+    private IMultiLookup<V, V> tuplesBackward = null;
 
     protected CountingTcRelation(boolean backwardIndexing) {
-        tuplesForward = CollectionsFactory.createMap();
+        tuplesForward = CollectionsFactory.createMultiLookup(Object.class, MemoryType.MULTISETS, Object.class);
         if (backwardIndexing)
-            tuplesBackward = CollectionsFactory.createMap();
+            tuplesBackward = CollectionsFactory.createMultiLookup(Object.class, MemoryType.MULTISETS, Object.class);
     }
     
     protected boolean isEmpty() {
-        return this.tuplesForward.isEmpty();
+        return 0 == this.tuplesForward.countKeys();
     }
 
     protected void clear() {
@@ -54,9 +55,9 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
     }
 
     protected void union(CountingTcRelation<V> rA) {
-        for (Entry<V, IMultiset<V>> entry : rA.tuplesForward.entrySet()) {
-            V source = entry.getKey();
-            IMultiset<V> targetBag = entry.getValue();
+        IMultiLookup<V, V> rForward = rA.tuplesForward;
+        for (V source : rForward.distinctKeys()) {
+            IMemoryView<V> targetBag = rForward.lookup(source);
             for (V target : targetBag.distinctValues()) {
                 this.addTuple(source, target, targetBag.getCount(target));
             }
@@ -64,11 +65,8 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
     }
 
     public int getCount(V source, V target) {
-        if (tuplesForward.containsKey(source) && tuplesForward.get(source).containsNonZero(target)) {
-            return tuplesForward.get(source).getCount(target);
-        } else {
-            return 0;
-        }
+        IMemoryView<V> bucket = tuplesForward.lookup(source);
+        return bucket == null ? 0 : bucket.getCount(target);
     }
 
     /**
@@ -84,33 +82,14 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
      * @return true if the relation did not contain previously the tuple
      */
     public boolean addTuple(V source, V target, int count) {
-
-        IMultiset<V> sMap = null;
-        IMultiset<V> tMap = null;
-
         if (tuplesBackward != null) {
-            tMap = tuplesBackward.get(target);
-
-            if (tMap == null) {
-                sMap = CollectionsFactory.<V>createMultiset();
-                sMap.addPositive(source, count);
-                tuplesBackward.put(target, sMap);
-            } else {
-                tMap.addPositive(source, count);
-            }
+            tuplesBackward.addPairPositiveMultiplicity(target, source, count);
         }
-
-        sMap = tuplesForward.get(source);
-
-        if (sMap == null) {
-            tMap = CollectionsFactory.createMultiset();
-            tMap.addPositive(target, count);
-            tuplesForward.put(source, tMap);
-            return true;
-        } else {
-            boolean newTarget = sMap.addPositive(target, count);
-            return newTarget;
-        }
+        
+        ChangeGranularity change = 
+                tuplesForward.addPairPositiveMultiplicity(source, target, count);
+        
+        return change != ChangeGranularity.DUPLICATE;
     }
     
     /**
@@ -119,74 +98,58 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
      * @since 1.7
      */
     public boolean updateTuple(V source, V target, boolean isInsertion) {
-
-        IMultiset<V> sMap = null;
-        IMultiset<V> tMap = null;
-
-        if (tuplesBackward != null) {
-            tMap = tuplesBackward.get(target);
-
-            if (tMap == null) {
-                tMap = CollectionsFactory.<V>createMultiset();
-                if (isInsertion) tMap.addOne(source); else /* should not happen, will throw */ tMap.removeOne(source);
-                tuplesBackward.put(target, tMap);
-            } else {
-                if (isInsertion) {
-                    tMap.addOne(source);
-                } else {
-                    if (tMap.removeOne(source) && tMap.isEmpty())
-                        tuplesBackward.remove(target);
-                }
+        if (isInsertion) {
+            if (tuplesBackward != null) {
+                tuplesBackward.addPair(target, source);
             }
-        }
-
-        sMap = tuplesForward.get(source);
-
-        if (sMap == null) {
-            sMap = CollectionsFactory.createMultiset();
-            if (isInsertion) sMap.addOne(target); else /* should not happen, will throw */ sMap.removeOne(target);
-            tuplesForward.put(source, sMap);
-            return true;
+            ChangeGranularity change = 
+                    tuplesForward.addPair(source, target);
+            return change != ChangeGranularity.DUPLICATE;
         } else {
-            if (isInsertion) {
-                return sMap.addOne(target);
-            } else {
-                boolean last = sMap.removeOne(target);
-                if (last && sMap.isEmpty())
-                    tuplesForward.remove(source);
-                return last;
+            if (tuplesBackward != null) {
+                tuplesBackward.removePair(target, source);
             }
-            
+            ChangeGranularity change = 
+                    tuplesForward.removePair(source, target);
+            return change != ChangeGranularity.DUPLICATE;
         }
     }
 
-    public void deleteTupleEnd(V tupleEnd) {
-        this.tuplesForward.remove(tupleEnd);
-
-        if (tuplesForward.keySet() != null) {
-            Set<V> tmp = CollectionsFactory.createSet(tuplesForward.keySet());
-
-            for (V key : tmp) {
-                IMultiset<V> pairs = this.tuplesForward.get(key);
-                pairs.clearAllOf(tupleEnd);
-                if (pairs.isEmpty())
-                    this.tuplesForward.remove(key);
+    public void deleteTupleEnd(V deleted) {
+        Set<V> sourcesToDelete = CollectionsFactory.createSet();
+        Set<V> targetsToDelete = CollectionsFactory.createSet();
+        
+        for (V target : tuplesForward.lookupOrEmpty(deleted).distinctValues()) {
+            targetsToDelete.add(target);
+        }
+        if (tuplesBackward != null) {
+            for (V source : tuplesBackward.lookupOrEmpty(deleted).distinctValues()) {
+                sourcesToDelete.add(source);
+            }
+        } else {
+            for (V sourceCandidate : tuplesForward.distinctKeys()) {
+                if (tuplesForward.lookupOrEmpty(sourceCandidate).containsNonZero(deleted))
+                    sourcesToDelete.add(sourceCandidate);
             }
         }
-
+        
+        for (V source : sourcesToDelete) {
+            int count = tuplesForward.lookupOrEmpty(source).getCount(deleted);
+            for (int i=0; i< count; ++i) tuplesForward.removePair(source, deleted);
+        }
+        for (V target : targetsToDelete) {
+            int count = tuplesForward.lookupOrEmpty(deleted).getCount(target);
+            for (int i=0; i< count; ++i) tuplesForward.removePair(deleted, target);
+        }
+        
         if (tuplesBackward != null) {
-            this.tuplesBackward.remove(tupleEnd);
-
-            if (tuplesBackward.keySet() != null) {
-                Set<V> tmp = CollectionsFactory.createSet(tuplesBackward.keySet());
-
-                for (V key : tmp) {
-                    IMultiset<V> pairs = this.tuplesBackward.get(key);
-                    pairs.clearAllOf(tupleEnd);
-                    if (pairs.isEmpty()) {
-                        this.tuplesBackward.remove(key);
-                    }
-                }
+            for (V source : sourcesToDelete) {
+                int count = tuplesBackward.lookupOrEmpty(deleted).getCount(source);
+                for (int i=0; i< count; ++i) tuplesBackward.removePair(deleted, source);
+            }
+            for (V target : targetsToDelete) {
+                int count = tuplesBackward.lookupOrEmpty(target).getCount(deleted);
+                for (int i=0; i< count; ++i) tuplesBackward.removePair(target, deleted);
             }
         }
     }
@@ -195,45 +158,49 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
     public String toString() {
         StringBuilder sb = new StringBuilder("TcRelation = ");
 
-        for (Entry<V, IMultiset<V>> outerEntry : this.tuplesForward.entrySet()) {
-            V source = outerEntry.getKey();
-            IMultiset<V> targets = outerEntry.getValue();
-            for (V target: targets.distinctValues()) {
+        for (V source : tuplesForward.distinctKeys()) {
+            IMemoryView<V> targets = tuplesForward.lookup(source);
+            for (V target : targets.distinctValues()) {
                 sb.append("{(" + source + "," + target + ")," + targets.getCount(target) + "} ");
             }
         }
+        
         return sb.toString();
     }
 
     @Override
     public Set<V> getTupleEnds(V source) {
-        IMultiset<V> tupEnds = tuplesForward.get(source);
+        IMemoryView<V> tupEnds = tuplesForward.lookup(source);
         if (tupEnds == null)
             return null;
         return tupEnds.distinctValues();
     }
 
     /**
-     * Returns the set of nodes from which the target node is reachable.
+     * Returns the set of nodes from which the target node is reachable, if already computed.
      * 
      * @param target
      *            the target node
      * @return the set of source nodes
+     * @throws UnsupportedOperationException if backwards index not computed
      */
     public Set<V> getTupleStarts(V target) {
         if (tuplesBackward != null) {
-            IMultiset<V> tupStarts = tuplesBackward.get(target);
+            IMemoryView<V> tupStarts = tuplesBackward.lookup(target);
             if (tupStarts == null)
                 return null;
             return tupStarts.distinctValues();
         } else {
-            return null;
+            throw new UnsupportedOperationException("built without backward indexing");
         }
     }
 
     @Override
     public Set<V> getTupleStarts() {
-        Set<V> nodes = CollectionsFactory.createSet(tuplesForward.keySet());
+        Set<V> nodes = CollectionsFactory.createSet();
+        for (V s : tuplesForward.distinctKeys()) {
+            nodes.add(s);
+        }
         return nodes;
     }
 
@@ -247,11 +214,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
      * @return true if tuple is present, false otherwise
      */
     public boolean containsTuple(V source, V target) {
-        if (tuplesForward.containsKey(source)) {
-            if (tuplesForward.get(source).containsNonZero(target))
-                return true;
-        }
-        return false;
+        return tuplesForward.lookupOrEmpty(source).containsNonZero(target);
     }
 
     @SuppressWarnings("unchecked")
@@ -278,11 +241,11 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         CountingTcRelation<V> tc = new CountingTcRelation<V>(true);
         Collections.reverse(topologicalSorting);
         for (V n : topologicalSorting) {
-            Map<V, Integer> sourceNodes = gds.getSourceNodes(n);
+            IMemoryView<V> sourceNodes = gds.getSourceNodes(n);
             Set<V> tupEnds = tc.getTupleEnds(n);
-            for (Entry<V, Integer> entry : sourceNodes.entrySet()) {
-                for (int i = 0; i < entry.getValue(); i++) {
-                    V s = entry.getKey();
+            for (V s : sourceNodes.distinctValues()) {
+                int count = sourceNodes.getCount(s);
+                for (int i = 0; i < count; i++) {
                     tc.updateTuple(s, n, true);
                     if (tupEnds != null) {
                         for (V t : tupEnds) {

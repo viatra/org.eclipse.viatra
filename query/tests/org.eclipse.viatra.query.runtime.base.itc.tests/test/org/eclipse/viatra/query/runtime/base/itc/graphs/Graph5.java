@@ -109,7 +109,7 @@ public class Graph5 extends TestGraph<Integer> {
         this.observer.addDeletedTuple(new Tuple<Integer>(n8, n5));
         this.observer.addDeletedTuple(new Tuple<Integer>(n8, n6));
         this.observer.addDeletedTuple(new Tuple<Integer>(n8, n7));
-        this.deleteEdge(n8, n4);
+        this.deleteEdgeIfExists(n8, n4);
     
         this.observer.clearTuples();
         this.observer.addDeletedTuple(new Tuple<Integer>(n4, n5));
@@ -128,12 +128,12 @@ public class Graph5 extends TestGraph<Integer> {
         this.observer.addDeletedTuple(new Tuple<Integer>(n3, n6));
         this.observer.addDeletedTuple(new Tuple<Integer>(n3, n7));
         this.observer.addDeletedTuple(new Tuple<Integer>(n3, n8));
-        this.deleteEdge(n4, n5);
+        this.deleteEdgeIfExists(n4, n5);
         
         this.observer.clearTuples();
-        this.deleteEdge(n8, n8);
-        this.deleteEdge(n8, n8);
+        this.deleteEdgeIfExists(n8, n8);
+        this.deleteEdgeIfExists(n8, n8);
         this.observer.addDeletedTuple(new Tuple<Integer>(n8, n8));
-        this.deleteEdge(n8, n8);
+        this.deleteEdgeIfExists(n8, n8);
     }
 }

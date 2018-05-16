@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 
 /**
  * A depth-first search implementation of the {@link IGraphPathFinder}.
@@ -67,9 +67,9 @@ public class DFSPathFinder<V> implements IGraphPathFinder<V> {
     }
 
     protected Iterable<Deque<V>> getPaths(List<Deque<V>> paths, Deque<V> visited, Set<V> targetNodes) {
-        Map<V, Integer> nodes = graph.getTargetNodes(visited.getLast());
+        IMemoryView<V> nodes = graph.getTargetNodes(visited.getLast());
         // examine adjacent nodes
-        for (V node : nodes.keySet()) {
+        for (V node : nodes.distinctValues()) {
             if (visited.contains(node)) {
                 continue;
             }
@@ -84,7 +84,7 @@ public class DFSPathFinder<V> implements IGraphPathFinder<V> {
         }
 
         // in breadth-first, recursion needs to come after visiting connected nodes
-        for (V node : nodes.keySet()) {
+        for (V node : nodes.distinctValues()) {
             if (visited.contains(node) || targetNodes.contains(node)) {
                 continue;
             }

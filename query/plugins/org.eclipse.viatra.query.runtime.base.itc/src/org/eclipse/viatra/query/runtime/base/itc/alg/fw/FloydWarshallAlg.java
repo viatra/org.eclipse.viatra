@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataS
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalWrapper;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 
 public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 
@@ -63,8 +64,8 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
         }
 
         for (V source : gds.getAllNodes()) {
-            Map<V, Integer> targets = gds.getTargetNodes(source);
-            for (V target : targets.keySet()) {
+            IMemoryView<V> targets = gds.getTargetNodes(source);
+            for (V target : targets.distinctValues()) {
                 P[mapForw.get(source)][mapForw.get(target)] = 1;
             }
         }

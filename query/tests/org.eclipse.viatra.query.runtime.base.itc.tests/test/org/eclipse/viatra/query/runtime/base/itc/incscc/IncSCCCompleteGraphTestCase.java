@@ -44,7 +44,7 @@ public class IncSCCCompleteGraphTestCase {
         for (int i = 0; i < nodeCount; i++) {
             for (int j = 0; j < nodeCount; j++) {
                 if (i != j) {
-                    graph.deleteEdge(i, j);
+                    graph.deleteEdgeIfExists(i, j);
                     assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
                 }
             }

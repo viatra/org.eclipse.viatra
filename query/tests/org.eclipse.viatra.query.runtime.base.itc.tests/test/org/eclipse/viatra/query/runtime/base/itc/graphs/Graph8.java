@@ -61,7 +61,7 @@ public class Graph8 extends TestGraph<Integer> {
         this.observer.clearTuples();
         this.observer.addDeletedTuple(new Tuple<Integer>(n3, n4));
         this.observer.addDeletedTuple(new Tuple<Integer>(n2, n4));
-        this.deleteEdge(n3, n4);
+        this.deleteEdgeIfExists(n3, n4);
         
         this.observer.clearTuples();
         this.observer.addInsertedTuple(new Tuple<Integer>(n5, n4));

@@ -62,7 +62,7 @@ public class DFSAlg<V> implements IGraphObserver<V> {
 
         visited[nodeMap.get(act)] = 1;
 
-        for (V t : gds.getTargetNodes(act).keySet()) {
+        for (V t : gds.getTargetNodes(act).distinctValues()) {
             if (visited[nodeMap.get(t)] == 0) {
                 oneDFS(t, source);
             }

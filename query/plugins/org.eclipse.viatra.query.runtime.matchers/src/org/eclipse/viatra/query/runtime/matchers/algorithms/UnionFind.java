@@ -12,11 +12,12 @@
 package org.eclipse.viatra.query.runtime.matchers.algorithms;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * Union-find data structure implementation. Note that the implementation relies on the correct implementation of the
@@ -36,8 +37,8 @@ public class UnionFind<V> {
      * Instantiate a new union-find data structure.
      */
     public UnionFind() {
-        nodeMap = new HashMap<V, UnionFindNodeProperty<V>>();
-        setMap = new HashMap<V, Set<V>>();
+        nodeMap = CollectionsFactory.createMap();
+        setMap = CollectionsFactory.createMap();
     }
 
     /**

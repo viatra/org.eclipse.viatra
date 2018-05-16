@@ -11,7 +11,8 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.util.Map;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 
 /**
  * A bi-directional graph data source supports all operations that an {@link IGraphDataSource} does, but it 
@@ -25,15 +26,14 @@ public interface IBiDirectionalGraphDataSource<V> extends IGraphDataSource<V> {
 
     /**
      * Returns the source nodes for the given target node.  
-     * The returned data structure is a map because of potential parallel edges in the graph data source.
-     * The values in the returned map represent the count of the given (source, target) edge. 
+     * The returned data structure is an {@link IMultiset} because of potential parallel edges in the graph data source.
      * 
      * The method must not return null.
      * 
      * @param target the target node
-     * @return the source nodes with their count values
-     * @since 1.6
+     * @return the multiset of source nodes
+     * @since 2.0
      */
-    public Map<V, Integer> getSourceNodes(V target);
+    public IMemoryView<V> getSourceNodes(V target);
     
 }

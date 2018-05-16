@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * Efficient algorithms to compute the Strongly Connected Components in a directed graph.
@@ -45,13 +46,13 @@ public class SCC<V> {
         Set<Set<V>> ret = new HashSet<Set<V>>();
 
         // stores the lowlink and index information for the given node
-        Map<V, SCCProperty> nodeMap = new HashMap<V, SCCProperty>();
+        Map<V, SCCProperty> nodeMap = CollectionsFactory.createMap();
 
         // stores all target nodes of a given node - the list will be modified
-        Map<V, Set<V>> targetNodeMap = new HashMap<V, Set<V>>();
+        Map<V, Set<V>> targetNodeMap = CollectionsFactory.createMap();
 
         // stores those target nodes for a given node which have not been visited
-        Map<V, Set<V>> notVisitedMap = new HashMap<V, Set<V>>();
+        Map<V, Set<V>> notVisitedMap = CollectionsFactory.createMap();
 
         // stores the nodes during the traversal
         Stack<V> nodeStack = new Stack<V>();
@@ -88,7 +89,8 @@ public class SCC<V> {
 
                         // storing the target nodes of the actual node
                         if (g.getTargetNodes(currentNode) != null) {
-                            targetNodeMap.put(currentNode, new HashSet<V>(g.getTargetNodes(currentNode).keySet()));
+                            Set<V> targets = g.getTargetNodes(currentNode).distinctValues();
+                            targetNodeMap.put(currentNode, CollectionsFactory.createSet(targets));
                         }
                     }
 
@@ -100,7 +102,7 @@ public class SCC<V> {
 
                             nodeStack.pop();
 
-                            for (V targetNode : g.getTargetNodes(currentNode).keySet()) {
+                            for (V targetNode : g.getTargetNodes(currentNode).distinctValues()) {
                                 if (notVisitedMap.get(currentNode).contains(targetNode)) {
                                     prop.setLowlink(Math.min(prop.getLowlink(), nodeMap.get(targetNode).getLowlink()));
                                 } else if (sccStack.contains(targetNode)) {

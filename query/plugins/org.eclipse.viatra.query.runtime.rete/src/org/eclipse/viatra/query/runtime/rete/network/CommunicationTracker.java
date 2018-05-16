@@ -163,7 +163,7 @@ public final class CommunicationTracker {
         if (node instanceof Receiver) {
             IGroupable mailbox = ((Receiver) node).getMailbox();
             if (mailbox instanceof AdaptiveMailbox) {
-                Set<Node> directParents = dependencyGraph.getSourceNodes(node).keySet();
+                Set<Node> directParents = dependencyGraph.getSourceNodes(node).distinctValues();
                 // decide between using quick&cheap fall-through, or allowing for update cancellation
                 boolean fallThrough =
                         // disallow fallthrough: updates at production nodes should cancel, if they can be trimmed or
@@ -351,7 +351,7 @@ public final class CommunicationTracker {
      */
     public void unregisterDependency(final Node source, final Node target) {
         // delete the edge first, and then query the SCC info provider
-        this.dependencyGraph.deleteEdge(source, target);
+        this.dependencyGraph.deleteEdgeIfExists(source, target);
 
         final Node sourceRepresentative = sccInformationProvider.getRepresentative(source);
         final Node targetRepresentative = sccInformationProvider.getRepresentative(target);
@@ -375,7 +375,7 @@ public final class CommunicationTracker {
     private void refreshFallThroughFlag(final Node target) {
         precomputeFallThroughFlag(target);
         if (target instanceof DualInputNode) {
-            for (Node indirectTarget : dependencyGraph.getTargetNodes(target).keySet()) {
+            for (Node indirectTarget : dependencyGraph.getTargetNodes(target).distinctValues()) {
                 precomputeFallThroughFlag(indirectTarget);
             }
         }
@@ -399,10 +399,13 @@ public final class CommunicationTracker {
         }
     }
 
+    /**
+     * @since 2.0
+     */
     public boolean isAtSCCBoundary(final Node node) {
         final CommunicationGroup ownGroup = this.groupMap.get(node);
         assert ownGroup != null;
-        for (final Node source : this.dependencyGraph.getSourceNodes(node).keySet()) {
+        for (final Node source : this.dependencyGraph.getSourceNodes(node).distinctValues()) {
             final Set<Node> sourcesToCheck = new HashSet<Node>();
             sourcesToCheck.add(source);
             // DualInputNodes must be checked additionally because they do not use a mailbox directly.

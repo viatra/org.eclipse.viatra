@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 
 /**
  * Utility class for graph related operations.
@@ -49,8 +49,8 @@ public class GraphHelper {
             }
 
             for (V node : nodesInSubGraph) {
-                Map<V, Integer> sources = graphDataSource.getSourceNodes(node);
-                for (Entry<V, Integer> entry : sources.entrySet()) {
+                IMemoryView<V> sources = graphDataSource.getSourceNodes(node);
+                for (Entry<V, Integer> entry : sources.entriesWithMultiplicities()) {
                     for (int i = 0; i < entry.getValue(); i++) {
                         V s = entry.getKey();
                         if (nodesInSubGraph.contains(s)) {
@@ -92,7 +92,7 @@ public class GraphHelper {
         V act = source;
 
         // if source and target are the same node
-        if (source.equals(target) && graphDataSource.getTargetNodes(source).containsKey(target)) {
+        if (source.equals(target) && graphDataSource.getTargetNodes(source).containsNonZero(target)) {
             // the node will be present in the path two times
             path.add(source);
             return path;
@@ -128,8 +128,8 @@ public class GraphHelper {
 
     private static <V> V getNextNodeToVisit(V act, IGraphDataSource<V> graphDataSource, Set<V> nodesInSubGraph,
             Set<V> visitedNodes) {
-        Map<V, Integer> targetNodes = graphDataSource.getTargetNodes(act);
-        for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+        IMemoryView<V> targetNodes = graphDataSource.getTargetNodes(act);
+        for (Entry<V, Integer> entry : targetNodes.entriesWithMultiplicities()) {
             for (int i = 0; i < entry.getValue(); i++) {
                 V node = entry.getKey();
                 if (nodesInSubGraph.contains(node) && !visitedNodes.contains(node)) {
@@ -165,7 +165,7 @@ public class GraphHelper {
      * @return the number of parallel edges between the two nodes
      */
     public static <V> int getEdgeCount(V source, V target, IGraphDataSource<V> graphDataSource) {
-        Integer count = graphDataSource.getTargetNodes(source).get(target);
+        Integer count = graphDataSource.getTargetNodes(source).getCount(target);
         if (count == null) {
             return 0;
         } else {

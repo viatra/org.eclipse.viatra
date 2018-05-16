@@ -133,7 +133,7 @@ public class PKAlg<V> implements IGraphObserver<V> {
         node2mark.put(node, true);
         RB.add(node);
 
-        for (V sn : gds.getSourceNodes(node).keySet()) {
+        for (V sn : gds.getSourceNodes(node).distinctValues()) {
             int top_id = index2topsort.get(node2index.get(sn));
 
             if (!node2mark.get(sn) && lower_bound < top_id)
@@ -145,7 +145,7 @@ public class PKAlg<V> implements IGraphObserver<V> {
         node2mark.put(node, true);
         RF.add(node);
 
-        for (V tn : gds.getTargetNodes(node).keySet()) {
+        for (V tn : gds.getTargetNodes(node).distinctValues()) {
             int top_id = index2topsort.get(node2index.get(tn));
 
             if (top_id == upper_bound)

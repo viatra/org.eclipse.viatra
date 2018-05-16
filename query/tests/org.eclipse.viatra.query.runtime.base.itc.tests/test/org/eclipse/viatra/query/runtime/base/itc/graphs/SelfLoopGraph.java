@@ -25,7 +25,7 @@ public class SelfLoopGraph extends TestGraph<Integer> {
         Integer n1 = Integer.valueOf(1);
         this.insertNode(n1);
         this.insertEdge(n1, n1);
-        this.deleteEdge(n1, n1);
+        this.deleteEdgeIfExists(n1, n1);
     }
 
 }

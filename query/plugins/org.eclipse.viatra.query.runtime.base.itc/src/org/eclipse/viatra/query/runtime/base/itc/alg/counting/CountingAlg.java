@@ -12,8 +12,6 @@
 package org.eclipse.viatra.query.runtime.base.itc.alg.counting;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.DFSPathFinder;
@@ -26,6 +24,7 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 
 /**
  * This class is the optimized implementation of the Counting algorithm.
@@ -137,7 +136,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         CountingTcRelation<V> tmp = null;
         dtc = new CountingTcRelation<V>(false);
         
-        Map<V, Integer> nodes = null;
+        IMemoryView<V> nodes = null;
 
         while (!newTuples.isEmpty()) {
 
@@ -148,9 +147,9 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
             for (V tS : dtc.getTupleStarts()) {
                 nodes = gds.getSourceNodes(tS);
-                for (Entry<V, Integer> entry : nodes.entrySet()) {
-                    for (int i = 0; i < entry.getValue(); i++) {
-                        V nS = entry.getKey();
+                for (V nS : nodes.distinctValues()) {
+                    int count = nodes.getCount(nS);
+                    for (int i = 0; i < count; i++) {
                         tupEnds = dtc.getTupleEnds(tS);
                         if (tupEnds != null) {
                             for (V tT : tupEnds) {

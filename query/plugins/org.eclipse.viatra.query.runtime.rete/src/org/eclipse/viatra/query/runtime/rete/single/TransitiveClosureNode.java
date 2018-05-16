@@ -87,7 +87,7 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
                 graphDataSource.insertEdge(source, target);
             }
             if (direction == Direction.REVOKE) {
-                graphDataSource.deleteEdge(source, target);
+                graphDataSource.deleteEdgeIfExists(source, target);
 
                 if (((IncSCCAlg<Object>) transitiveClosureAlgorithm).isIsolated(source)) {
                     graphDataSource.deleteNode(source);

@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 
 /**
  * This class is the optimized implementation of the DRED algorithm.
@@ -170,8 +171,8 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             // Modify overestimate with those tuples that have alternative derivations
             // 1. q+(tc(x,y)) :- lv(x,y)
             for (V s : graphDataSource.getAllNodes()) {
-                Map<V, Integer> targetNodes = graphDataSource.getTargetNodes(s);
-                for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+                IMemoryView<V> targetNodes = graphDataSource.getTargetNodes(s);
+                for (Entry<V, Integer> entry : targetNodes.entriesWithMultiplicities()) {
                     for (int i = 0; i < entry.getValue(); i++) {
                         V t = entry.getKey();
                         if (!s.equals(t)) {
@@ -200,9 +201,9 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
                 for (V s : newTups.getTupleStarts()) {
                     for (V t : newTups.getTupleEnds(s)) {
-                        Map<V, Integer> targetNodes = graphDataSource.getTargetNodes(t);
+                        IMemoryView<V> targetNodes = graphDataSource.getTargetNodes(t);
                         if (targetNodes != null) {
-                            for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+                            for (Entry<V, Integer> entry : targetNodes.entriesWithMultiplicities()) {
                                 for (int i = 0; i < entry.getValue(); i++) {
                                     V tn = entry.getKey();
                                     if (!s.equals(tn) && tc.addTuple(s, tn)) {

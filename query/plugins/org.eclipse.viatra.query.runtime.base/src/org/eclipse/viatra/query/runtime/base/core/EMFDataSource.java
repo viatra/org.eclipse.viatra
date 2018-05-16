@@ -11,10 +11,8 @@
 
 package org.eclipse.viatra.query.runtime.base.core;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -24,6 +22,7 @@ import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 
 // TODO IBiDirectionalGraphDataSource
@@ -54,18 +53,13 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
     }
 
     @Override
-    public Map<EObject, Integer> getTargetNodes(EObject source) {
-        Map<EObject, Integer> targetNodes = new HashMap<EObject, Integer>();
+    public IMemoryView<EObject> getTargetNodes(EObject source) {
+        IMultiset<EObject> targetNodes = CollectionsFactory.createMultiset();
 
         for (EReference ref : references) {
             final Set<EObject> referenceValues = navigationHelper.getReferenceValues(source, ref);
             for (EObject referenceValue : referenceValues) {
-                Integer count = targetNodes.get(referenceValue);
-                if (count == null) {
-                    count = 0;
-                }
-                count++;
-                targetNodes.put(referenceValue, count);
+                targetNodes.addOne(referenceValue);
             }
         }
 

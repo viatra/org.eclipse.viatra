@@ -51,7 +51,7 @@ public class BFS<V> {
 
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
-            for (V t : graph.getTargetNodes(node).keySet()) {
+            for (V t : graph.getTargetNodes(node).distinctValues()){
                 if (t.equals(target)) {
                     return true;
                 }
@@ -79,7 +79,7 @@ public class BFS<V> {
             Set<V> retSet) {
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
-            for (V _node : graph.getSourceNodes(node).keySet()) {
+            for (V _node : graph.getSourceNodes(node).distinctValues()) {
                 if (!retSet.contains(_node)) {
                     retSet.add(_node);
                     nodeQueue.add(_node);
@@ -103,7 +103,7 @@ public class BFS<V> {
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
 
-            for (V _node : graph.getTargetNodes(node).keySet()) {
+            for (V _node : graph.getTargetNodes(node).distinctValues()) {
 
                 if (!retSet.contains(_node)) {
                     retSet.add(_node);
@@ -142,7 +142,7 @@ public class BFS<V> {
             path.add(node);
             return true;
         } else {
-            for (V _nodeT : graph.getTargetNodes(node).keySet()) {
+            for (V _nodeT : graph.getTargetNodes(node).distinctValues()) {
                 res = (_collectNodesAlongPath(_nodeT, target, graph, path)) || res;
             }
             if (res)

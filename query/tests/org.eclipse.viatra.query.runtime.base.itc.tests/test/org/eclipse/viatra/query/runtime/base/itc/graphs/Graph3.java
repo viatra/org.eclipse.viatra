@@ -40,6 +40,6 @@ public class Graph3 extends TestGraph<Integer> {
         this.insertEdge(n1, n2);
         this.insertEdge(n2, n3);
         
-        this.deleteEdge(n3, n5);
+        this.deleteEdgeIfExists(n3, n5);
     }
 }

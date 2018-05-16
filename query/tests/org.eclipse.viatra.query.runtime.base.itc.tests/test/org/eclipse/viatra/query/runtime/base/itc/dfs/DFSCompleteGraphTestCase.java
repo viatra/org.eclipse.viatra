@@ -48,7 +48,7 @@ public class DFSCompleteGraphTestCase {
         for (int i = 0; i < nodeCount; i++) {
             for (int j = 0; j < nodeCount; j++) {
                 if (i != j) {
-                    g.deleteEdge(i, j);
+                    g.deleteEdgeIfExists(i, j);
 
                     fwa = new FloydWarshallAlg<Integer>(g);
 

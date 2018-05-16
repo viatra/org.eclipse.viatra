@@ -11,8 +11,10 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
 
 /**
  * The interface prescribes the set of operations that a graph data source must support. 
@@ -58,14 +60,13 @@ public interface IGraphDataSource<V> {
 
     /**
      * Returns the target nodes for the given source node.  
-     * The returned data structure is a map (essentially a MultiSet) because of potential parallel edges in the graph data source.
-     * The values in the returned map represent the count of the given (source, target) edge. 
+     * The returned data structure is an {@link IMultiset} because of potential parallel edges in the graph data source.
      * 
      * The method must not return null.
      * 
      * @param source the source node
-     * @return the target nodes with their count values
-     * @since 1.6
+     * @return the multiset of target nodes
+     * @since 2.0
      */
-    public Map<V, Integer> getTargetNodes(V source);
+    public IMemoryView<V> getTargetNodes(V source);
 }

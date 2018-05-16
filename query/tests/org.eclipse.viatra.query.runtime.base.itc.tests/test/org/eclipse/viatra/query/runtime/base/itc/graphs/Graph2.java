@@ -41,6 +41,6 @@ public class Graph2 extends TestGraph<Integer> {
         this.insertEdge(n4, n5);
         this.insertEdge(n5, n3);
         
-        this.deleteEdge(n2, n3);
+        this.deleteEdgeIfExists(n2, n3);
     }
 }

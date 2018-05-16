@@ -11,11 +11,9 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.graphimpl;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -25,130 +23,86 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataS
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 
 public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSource<V> {
 
     // source -> target -> count
-    private Map<V, Map<V, Integer>> outgoingEdges;
+    private IMultiLookup<V, V> outgoingEdges;
     // target -> source -> count
-    private Map<V, Map<V, Integer>> incomingEdges;
+    private IMultiLookup<V, V> incomingEdges;
+    
+    private Set<V> nodes;
+    
     private List<IGraphObserver<V>> observers;
 
     public Graph() {
-        outgoingEdges = CollectionsFactory.createMap();
-        incomingEdges = CollectionsFactory.createMap();
+        outgoingEdges = CollectionsFactory.createMultiLookup(Object.class, MemoryType.MULTISETS, Object.class);
+        incomingEdges = CollectionsFactory.createMultiLookup(Object.class, MemoryType.MULTISETS, Object.class);
+        nodes = CollectionsFactory.createSet();
         observers = CollectionsFactory.createObserverList();
     }
 
     public void insertEdge(V source, V target) {
-        Map<V, Integer> outgoing = outgoingEdges.get(source);
-        if (outgoing == null) {
-            outgoing = CollectionsFactory.createMap();
-            outgoingEdges.put(source, outgoing);
-        }
-        Integer count = outgoing.get(target);
-        if (count == null) {
-            count = 0;
-        }
-        count++;
-        outgoing.put(target, count);
-
-        Map<V, Integer> incoming = incomingEdges.get(target);
-        if (incoming == null) {
-            incoming = CollectionsFactory.createMap();
-            incomingEdges.put(target, incoming);
-        }
-        count = incoming.get(source);
-        if (count == null) {
-            count = 0;
-        }
-        count++;
-        incoming.put(source, count);
-
+        outgoingEdges.addPair(source, target);
+        incomingEdges.addPair(target, source);
+        
         for (IGraphObserver<V> go : observers) {
             go.edgeInserted(source, target);
         }
     }
 
-    public void deleteEdge(V source, V target) {
-        boolean containedEdge = false;
-        Integer count = null;
-
-        Map<V, Integer> outgoing = outgoingEdges.get(source);
-        if (outgoing != null) {
-            count = outgoing.get(target);
-            if (count != null) {
-                containedEdge = true;
-                count--;
-
-                if (count == 0) {
-                    outgoing.remove(target);
-                } else {
-                    outgoing.put(target, count);
-                }
-            }
-        }
-
-        Map<V, Integer> incoming = incomingEdges.get(target);
-        if (incoming != null) {
-            count = incoming.get(source);
-            if (count != null) {
-                count--;
-
-                if (count == 0) {
-                    incoming.remove(source);
-                } else {
-                    incoming.put(source, count);
-                }
-            }
-        }
-
+    /**
+     * No-op if trying to delete edge that does not exist
+     * @since 2.0
+     * @see #deleteEdgeIfExists(Object, Object)
+     */
+    public void deleteEdgeIfExists(V source, V target) {
+        boolean containedEdge = outgoingEdges.lookupOrEmpty(source).containsNonZero(target);
         if (containedEdge) {
-            for (IGraphObserver<V> go : observers) {
-                go.edgeDeleted(source, target);
-            }
+            deleteEdgeThatExists(source, target);
         }
     }
+    
+    /**
+     * @throws IllegalStateException if trying to delete edge that does not exist
+     * @since 2.0
+     * @see #deleteEdgeIfExists(Object, Object)
+     */
+    public void deleteEdgeThatExists(V source, V target) {
+        outgoingEdges.removePair(source, target);
+        incomingEdges.removePair(target, source);
+        for (IGraphObserver<V> go : observers) {
+            go.edgeDeleted(source, target);
+        }
+    }
+    
+    /**
+     * @deprecated use explicitly {@link #deleteEdgeThatExists(Object, Object)} 
+     * or {@link #deleteEdgeIfExists(Object, Object)} instead. 
+     * To preserve backwards compatibility, this method delegates to the latter.
+     * 
+     */
+    @Deprecated
+    public void deleteEdge(V source, V target) {
+        deleteEdgeIfExists(source, target);
+    }
+
+    
+    
 
     public void insertNode(V node) {
-        if (!outgoingEdges.containsKey(node)) {
-            outgoingEdges.put(node, null);
-        }
-        if (!incomingEdges.containsKey(node)) {
-            incomingEdges.put(node, null);
-        }
-
-        for (IGraphObserver<V> go : observers) {
-            go.nodeInserted(node);
+        if (nodes.add(node)) {
+            for (IGraphObserver<V> go : observers) {
+                go.nodeInserted(node);
+            }            
         }
     }
 
     public void deleteNode(V node) {
-        boolean containedNode = outgoingEdges.containsKey(node);
-        Map<V, Integer> incoming = incomingEdges.get(node);
-        Map<V, Integer> outgoing = outgoingEdges.get(node);
-
-        if (incoming != null) {
-            Map<V, Integer> _incoming = CollectionsFactory.createMap(incoming);
-
-            for (Entry<V, Integer> entry : _incoming.entrySet()) {
-                for (int i = 0; i < entry.getValue(); i++) {
-                    deleteEdge(entry.getKey(), node);
-                }
-            }
-        }
-
-        if (outgoing != null) {
-            Map<V, Integer> _outgoing = CollectionsFactory.createMap(outgoing);
-
-            for (Entry<V, Integer> entry : _outgoing.entrySet()) {
-                for (int i = 0; i < entry.getValue(); i++) {
-                    deleteEdge(node, entry.getKey());
-                }
-            }
-        }
-
-        if (containedNode) {
+        if (nodes.remove(node)) {
             for (IGraphObserver<V> go : observers) {
                 go.nodeDeleted(node);
             }
@@ -172,46 +126,34 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 
     @Override
     public Set<V> getAllNodes() {
-        return outgoingEdges.keySet();
+        return nodes;
     }
 
     @Override
-    public Map<V, Integer> getTargetNodes(V source) {
-        Map<V, Integer> result = outgoingEdges.get(source);
-        if (result == null) {
-            return Collections.emptyMap();
-        } else {
-            return result;
-        }
+    public IMemoryView<V> getTargetNodes(V source) {
+        return outgoingEdges.lookupOrEmpty(source);
     }
 
     @Override
-    public Map<V, Integer> getSourceNodes(V target) {
-        Map<V, Integer> result = incomingEdges.get(target);
-        if (result == null) {
-            return Collections.emptyMap();
-        } else {
-            return result;
-        }
+    public IMemoryView<V> getSourceNodes(V target) {
+        return incomingEdges.lookupOrEmpty(target);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("nodes = ");
-        for (V n : outgoingEdges.keySet()) {
+        for (V n : getAllNodes()) {
             sb.append(n.toString());
             sb.append(" ");
         }
         sb.append(" edges = ");
-        for (Entry<V, Map<V, Integer>> outgoingEntry: outgoingEdges.entrySet()) {
-            V source = outgoingEntry.getKey();
-            Map<V, Integer> targets = outgoingEntry.getValue();
-            if (targets != null) {
-                for (Entry<V, Integer> targetEntry : targets.entrySet()) {
-                    for (int i = 0; i < targetEntry.getValue(); i++) {
-                        sb.append("(" + source + "," + targetEntry.getKey() + ") ");
-                    }
+        for (V source: outgoingEdges.distinctKeys()) {
+            IMemoryView<V> targets = outgoingEdges.lookup(source);
+            for (V target : targets.distinctValues()) {
+                int count = targets.getCount(target);
+                for (int i = 0; i < count; i++) {
+                    sb.append("(" + source + "," + target + ") ");
                 }
             }
         }
@@ -246,19 +188,19 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             }
 
             // if a node has no color yet, then make it white
-            for (V node : outgoingEdges.keySet()) {
+            for (V node : getAllNodes()) {
                 if (!colorMap.containsKey(node)) {
                     colorMap.put(node, "white");
                 }
             }
         } else {
-            for (V node : outgoingEdges.keySet()) {
+            for (V node : getAllNodes()) {
                 colorMap.put(node, "white");
             }
         }
 
         if (colorMapper != null) {
-            for (V node : outgoingEdges.keySet()) {
+            for (V node : getAllNodes()) {
                 colorMap.put(node, colorMapper.apply(node));
             }
         }
@@ -266,24 +208,21 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         StringBuilder builder = new StringBuilder();
         builder.append("digraph g {\n");
 
-        for (V node : outgoingEdges.keySet()) {
+        for (V node : getAllNodes()) {
             String nodePresentation = nameMapper == null ? node.toString() : nameMapper.apply(node);
             builder.append("\"" + nodePresentation + "\"");
             builder.append("[style=filled,fillcolor=" + colorMap.get(node) + "]");
             builder.append(";\n");
         }
 
-        for (Entry<V, Map<V, Integer>> outgoingEntry : outgoingEdges.entrySet()) {
-            V source = outgoingEntry.getKey();
-            Map<V, Integer> targets = outgoingEntry.getValue();
-            if (targets != null) {
-                for (Entry<V, Integer> entry : targets.entrySet()) {
-                    for (int i = 0; i < entry.getValue(); i++) {
-                        String sourcePresentation = nameMapper == null ? source.toString() : nameMapper.apply(source);
-                        String targetPresentation = nameMapper == null ? entry.getKey().toString()
-                                : nameMapper.apply(entry.getKey());
-                        builder.append("\"" + sourcePresentation + "\" -> \"" + targetPresentation + "\";\n");
-                    }
+        for (V source: outgoingEdges.distinctKeys()) {
+            IMemoryView<V> targets = outgoingEdges.lookup(source);
+            String sourcePresentation = nameMapper == null ? source.toString() : nameMapper.apply(source);
+            for (V target : targets.distinctValues()) {
+                int count = targets.getCount(target);
+                String targetPresentation = nameMapper == null ? target.toString() : nameMapper.apply(target);
+                for (int i = 0; i < count; i++) {
+                    builder.append("\"" + sourcePresentation + "\" -> \"" + targetPresentation + "\";\n");
                 }
             }
         }

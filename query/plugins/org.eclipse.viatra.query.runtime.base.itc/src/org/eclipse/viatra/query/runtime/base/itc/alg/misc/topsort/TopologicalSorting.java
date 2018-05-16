@@ -65,7 +65,7 @@ public class TopologicalSorting {
                     visited.add(source);
                     dfsStack.push(new Pair<T>(source, true));
                     
-                    for (final T target : gds.getTargetNodes(source).keySet()) {
+                    for (final T target : gds.getTargetNodes(source).distinctValues()) {
                         if (!visited.contains(target)) {
                             dfsStack.push(new Pair<T>(target, false));
                         }

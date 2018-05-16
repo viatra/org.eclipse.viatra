@@ -39,6 +39,7 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 
 /**
  * Incremental SCC maintenance + counting algorithm.
@@ -88,8 +89,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
 
         for (V source : gds.getAllNodes()) {
-            final Map<V, Integer> targetNodes = gds.getTargetNodes(source);
-            for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+            final IMemoryView<V> targetNodes = gds.getTargetNodes(source);
+            for (Entry<V, Integer> entry : targetNodes.entriesWithMultiplicities()) {
                 for (int i = 0; i < entry.getValue(); i++) {
                     V target = entry.getKey();
                     V sourceRoot = sccs.find(source);
@@ -163,13 +164,13 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
                     for (V sourceSCC : sourceSCCsOfSCC) {
                         if (!sourceSCC.equals(r)) {
-                            reducedGraph.deleteEdge(sourceSCC, r);
+                            reducedGraph.deleteEdgeIfExists(sourceSCC, r);
                         }
                     }
 
                     for (V targetSCC : targetSCCsOfSCC) {
                         if (!isectRoots.contains(targetSCC) && !r.equals(targetSCC)) {
-                            reducedGraph.deleteEdge(r, targetSCC);
+                            reducedGraph.deleteEdgeIfExists(r, targetSCC);
                         }
                     }
 
@@ -229,7 +230,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             if (observers.size() > 0 && GraphHelper.getEdgeCount(source, target, gds) == 0) {
                 counting.attachObserver(countingListener);
             }
-            reducedGraph.deleteEdge(sourceRoot, targetRoot);
+            reducedGraph.deleteEdgeIfExists(sourceRoot, targetRoot);
             counting.detachObserver(countingListener);
         } else {
             // get the graph for the scc whose root is sourceRoot
@@ -237,25 +238,30 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
             // if source is not reachable from target anymore
             if (!BFS.isReachable(source, target, g)) {
-                Map<V, Integer> reachableSources = CollectionsFactory.createMap(
-                        reducedGraphIndexer.getSourceNodes(sourceRoot));
-                Map<V, Integer> reachableTargets = CollectionsFactory.createMap(
-                        reducedGraphIndexer.getTargetNodes(sourceRoot));
+                // create copies of the current state before destructive manipulation
+                Map<V, Integer> reachableSources = CollectionsFactory.createMap();
+                for (Entry<V, Integer> entry : reducedGraphIndexer.getSourceNodes(sourceRoot).entriesWithMultiplicities()) {
+                    reachableSources.put(entry.getKey(), entry.getValue());
+                }
+                Map<V, Integer> reachableTargets = CollectionsFactory.createMap();
+                for (Entry<V, Integer> entry : reducedGraphIndexer.getTargetNodes(sourceRoot).entriesWithMultiplicities()) {
+                    reachableTargets.put(entry.getKey(), entry.getValue());
+                }
 
                 SCCResult<V> _newSccs = SCC.computeSCC(g);
 
                 // delete scc node (and with its edges too)
                 for (Entry<V, Integer> entry : reachableSources.entrySet()) {
+                    V s = entry.getKey();
                     for (int i = 0; i < entry.getValue(); i++) {
-                        V s = entry.getKey();
-                        reducedGraph.deleteEdge(s, sourceRoot);
+                        reducedGraph.deleteEdgeIfExists(s, sourceRoot);
                     }
                 }
 
                 for (Entry<V, Integer> entry : reachableTargets.entrySet()) {
+                    V t = entry.getKey();
                     for (int i = 0; i < entry.getValue(); i++) {
-                        V t = entry.getKey();
-                        reducedGraph.deleteEdge(sourceRoot, t);
+                        reducedGraph.deleteEdgeIfExists(sourceRoot, t);
                     }
                 }
 
@@ -335,17 +341,17 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
     @Override
     public void nodeDeleted(V n) {
-        Map<V, Integer> sources = gds.getSourceNodes(n);
-        Map<V, Integer> targets = gds.getTargetNodes(n);
+        IMemoryView<V> sources = gds.getSourceNodes(n);
+        IMemoryView<V> targets = gds.getTargetNodes(n);
 
-        for (Entry<V, Integer> entry : sources.entrySet()) {
+        for (Entry<V, Integer> entry : sources.entriesWithMultiplicities()) {
             for (int i = 0; i < entry.getValue(); i++) {
                 V source = entry.getKey();
                 edgeDeleted(source, n);
             }
         }
 
-        for (Entry<V, Integer> entry : targets.entrySet()) {
+        for (Entry<V, Integer> entry : targets.entriesWithMultiplicities()) {
             for (int i = 0; i < entry.getValue(); i++) {
                 V target = entry.getKey();
                 edgeDeleted(n, target);
@@ -468,8 +474,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         List<V> sourceSCCs = new ArrayList<V>();
 
         for (V containedNode : this.sccs.getPartition(root)) {
-            Map<V, Integer> sourceNodes = this.gds.getSourceNodes(containedNode);
-            for (V source : sourceNodes.keySet()) {
+            IMemoryView<V> sourceNodes = this.gds.getSourceNodes(containedNode);
+            for (V source : sourceNodes.distinctValues()) {
                 sourceSCCs.add(this.sccs.find(source));
             }
         }
@@ -487,8 +493,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
      */
     public boolean hasIncomingEdges(final V root) {
         for (final V containedNode : this.sccs.getPartition(root)) {
-            final Map<V, Integer> sourceNodes = this.gds.getSourceNodes(containedNode);
-            for (final V source : sourceNodes.keySet()) {
+            final IMemoryView<V> sourceNodes = this.gds.getSourceNodes(containedNode);
+            for (final V source : sourceNodes.distinctValues()) {
                 final V otherRoot = this.sccs.find(source);
                 if (!Objects.equals(root, otherRoot)) {
                     return true;
@@ -509,8 +515,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         List<V> targetSCCs = new ArrayList<V>();
 
         for (V containedNode : this.sccs.getPartition(root)) {
-            Map<V, Integer> targetNodes = this.gds.getTargetNodes(containedNode);
-            for (V target : targetNodes.keySet()) {
+            IMemoryView<V> targetNodes = this.gds.getTargetNodes(containedNode);
+            for (V target : targetNodes.distinctValues()) {
                 targetSCCs.add(this.sccs.find(target));
             }
         }
@@ -528,8 +534,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
      */
     public boolean hasOutgoingEdges(V root) {
         for (final V containedNode : this.sccs.getPartition(root)) {
-            final Map<V, Integer> targetNodes = this.gds.getTargetNodes(containedNode);
-            for (final V target : targetNodes.keySet()) {
+            final IMemoryView<V> targetNodes = this.gds.getTargetNodes(containedNode);
+            for (final V target : targetNodes.distinctValues()) {
                 final V otherRoot = this.sccs.find(target);
                 if (!Objects.equals(root, otherRoot)) {
                     return true;
@@ -611,8 +617,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     }
 
     public boolean isIsolated(V node) {
-        Map<V, Integer> targets = gds.getTargetNodes(node);
-        Map<V, Integer> sources = gds.getSourceNodes(node);
+        IMemoryView<V> targets = gds.getTargetNodes(node);
+        IMemoryView<V> sources = gds.getSourceNodes(node);
         return targets.isEmpty() && sources.isEmpty();
     }
 

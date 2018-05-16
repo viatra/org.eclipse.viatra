@@ -187,3 +187,17 @@ Before VIATRA 2.0, the various APIs of the Query component threw a set of differ
 In this version, the dependencies of the `org.eclipse.viatra.query.runtime` plug-in had been reorganized. This should not cause any issues for users who deploy the query runtime with the `org.eclipse.viatra.query.runtime.feature` (in Eclipse environment) or the `viatra-query-runtime` feature (available from the Maven repository), as they will deploy all required plug-ins.
 
 In other cases, if backend-specific code is used, the `org.eclipse.viatra.query.runtime.rete` and the `org.eclipse.viatra.query.runtime.localsearch` plugins might be necessary to add as additional dependencies to the developed code; and if necessary (e.g. in a non-Equinox OSGi environment), `ViatraQueryEngineOptions#setSystemDefaultBackends()` might need to be called with explicitly adding the corresponding entries.
+
+=== API break in Transitive Closure Library
+This API breaking change affects users of the org.eclipse.viatra.query.runtime.base.itc Java library for incremental transitive closure computation over custom graph data sources. 
+
+*Not affected*: 
+
+* users of the transitive closure language element in vql. 
+* users of `TransitiveClosureHelper` providing transitive closure of EMF references. 
+
+*Details*: 
+We have internally rewritten several algorithm and data structure classes of the transitive closure service to be more memory efficient. In particular, we changed the way how the multiset of incoming/outgoing graph edges is represented, as visible in interfaces `IGraphDataSource` and `IBiDirectionalGraphDataSource` (the graph observer interface is unchanged.). 
+
+The old interfaces (since 1.6) used `java.util.Map` with vertices as keys, and positive integers representing the count of parallel edges as values, while in the new version, multisets are encoded as `org.eclipse.viatra.query.runtime.matchers.util.IMemoryView`. For easier migration of legacy clients and implementors,  conversions between the old and new representations are available at `org.eclipse.viatra.query.runtime.matchers.util.IMemoryView#asMap` and  `org.eclipse.viatra.query.runtime.matchers.util.IMemoryView#fromMap`.
+

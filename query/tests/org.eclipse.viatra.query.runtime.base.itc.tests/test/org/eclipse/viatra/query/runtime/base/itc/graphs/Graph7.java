@@ -55,7 +55,7 @@ public class Graph7 extends TestGraph<Integer> {
         this.observer.addDeletedTuple(new Tuple<Integer>(n1, n1));
         this.observer.addDeletedTuple(new Tuple<Integer>(n1, n2));
         this.observer.addDeletedTuple(new Tuple<Integer>(n1, n3));
-        this.deleteEdge(n1, n2);
+        this.deleteEdgeIfExists(n1, n2);
         
     }
 }
