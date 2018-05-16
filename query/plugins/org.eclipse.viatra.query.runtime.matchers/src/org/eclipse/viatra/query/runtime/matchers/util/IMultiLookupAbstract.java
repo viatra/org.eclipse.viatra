@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -94,7 +95,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     // generic multi-lookup logic
    
     @Override
-    public default Bucket lookup(Key key) {
+    public default IMemoryView<Value> lookup(Key key) {
         Object object = lowLevelGet(key);
         if (object == null) return null;
         if (object instanceof MarkedMemory) return (Bucket) object;
@@ -102,7 +103,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     }
     
     @Override
-    public default Bucket lookupUnsafe(Object key) {
+    public default IMemoryView<Value> lookupUnsafe(Object key) {
         Object object = lowLevelGetUnsafe(key);
         if (object == null) return null;
         if (object instanceof MarkedMemory) return (Bucket) object;
@@ -135,9 +136,37 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
                         handleSingleton(key, bucket);                    
                         return ChangeGranularity.VALUE;
                     }                    
-                } return ChangeGranularity.VALUE; 
+                } else return ChangeGranularity.VALUE; 
             } else return ChangeGranularity.DUPLICATE;
         }
+    }
+    
+    @Override
+    // TODO deltas not supproted yet
+    default ChangeGranularity addPairPositiveMultiplicity(Key key, Value value, int count) {
+        if (count == 1) return addPair(key, value);
+        // count > 1, always end up with non-singleton bucket
+        
+        Object old = lowLevelGet(key);
+        boolean keyChange = (old == null);
+        
+        Bucket bucket;
+        if (keyChange) { // ... nothing associated to key yet
+            bucket = createSingletonBucket(value);
+            lowLevelPut(key, bucket);
+            --count; // one less to increment later
+        } else if (old instanceof MarkedMemory) { // ... as collection
+            bucket = (Bucket) old;
+        } else { // ... as singleton
+            bucket = createSingletonBucket((Value) old);
+            lowLevelPut(key, bucket);
+        }
+        
+        boolean newValue = bucket.addSigned(value, count);
+        
+        if (keyChange) return ChangeGranularity.KEY;
+        else if (newValue) return ChangeGranularity.VALUE;
+        else return ChangeGranularity.DUPLICATE;
     }
 
     @Override
@@ -147,10 +176,12 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
             @SuppressWarnings("unchecked")
             Bucket bucket = (Bucket) old;
             // will throw if removing non-existent, return false if removing duplicate
-            if (removeFromBucket(bucket, value)) { 
-                handleSingleton(key, bucket);
+            boolean valueChange = removeFromBucket(bucket, value);
+            handleSingleton(key, bucket);
+            if (valueChange) 
                 return ChangeGranularity.VALUE;
-            } else return ChangeGranularity.DUPLICATE;
+            else 
+                return ChangeGranularity.DUPLICATE;
         } else if (value.equals(old)) { // matching singleton
             lowLevelRemove(key);
             return ChangeGranularity.KEY;
@@ -258,8 +289,8 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     /**
      * @return a read-only bucket consisting of a sole value, to be returned to the user
      */
-    default Bucket yieldSingleton(Value value) {
-        return createSingletonBucket(value);
+    default IMemoryView<Value> yieldSingleton(Value value) {
+        return new SingletonMemoryView<>(value);
     }
 
    /**

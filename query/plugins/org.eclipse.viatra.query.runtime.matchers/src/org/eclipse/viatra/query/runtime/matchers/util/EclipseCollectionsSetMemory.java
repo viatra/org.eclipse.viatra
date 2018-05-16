@@ -78,4 +78,15 @@ public class EclipseCollectionsSetMemory<Value> extends UnifiedSet<Value> implem
             return super.get((Value)value);
         else return null;
     }
+    
+    @Override
+    public int hashCode() {
+        return IMemoryView.hashCode(this);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return IMemoryView.equals(this, obj);
+    }
+
+
 }

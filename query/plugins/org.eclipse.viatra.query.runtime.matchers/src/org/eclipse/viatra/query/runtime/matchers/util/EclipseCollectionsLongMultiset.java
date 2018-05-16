@@ -12,13 +12,15 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.eclipse.collections.impl.map.mutable.primitive.LongIntHashMap;
 
 /**
  * @author Gabor Bergmann
  * @since 2.0
- * TODO refactor common methods with {@link EclipseCollectionsMultiset}
+ * <p> TODO refactor common methods with {@link EclipseCollectionsMultiset}
+ * <p> TODO refactor into LongBagMemory etc.
  */
 public class EclipseCollectionsLongMultiset extends LongIntHashMap implements IMultiset<Long> {
 
@@ -116,5 +118,18 @@ public class EclipseCollectionsLongMultiset extends LongIntHashMap implements IM
         return new EclipseCollectionsLongSetMemory.SetWrapper(super.keySet());
     }
 
+    @Override
+    public void forEachEntryWithMultiplicities(BiConsumer<Long, Integer> entryConsumer) {
+        super.forEachKeyValue((value, count) -> entryConsumer.accept(value, count));
+    }
+    
+    @Override
+    public int hashCode() {
+        return IMemoryView.hashCode(this);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return IMemoryView.equals(this, obj);
+    }
 
 }

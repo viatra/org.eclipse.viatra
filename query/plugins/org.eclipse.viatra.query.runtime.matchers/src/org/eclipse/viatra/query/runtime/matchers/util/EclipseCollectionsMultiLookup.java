@@ -38,6 +38,16 @@ class EclipseCollectionsMultiLookup {
         extends UnifiedMap<Key, Object> implements IMultiLookupAbstract<Key, Value, Bucket> {
         
         @Override
+        public boolean equals(Object obj) {
+            return IMultiLookup.equals(this, obj);
+        }
+        @Override
+        public int hashCode() {
+            return IMultiLookup.hashCode(this);
+        }
+        
+        
+        @Override
         public Object lowLevelPutIfAbsent(Key key, Value value) {
             return super.putIfAbsent(key, value);
         }
@@ -117,6 +127,15 @@ class EclipseCollectionsMultiLookup {
     
     public abstract static class FromLongs<Value, Bucket extends MarkedMemory<Value>> 
     extends LongObjectHashMap<Object> implements IMultiLookupAbstract<Long, Value, Bucket> {
+        
+        @Override
+        public boolean equals(Object obj) {
+            return IMultiLookup.equals(this, obj);
+        }
+        @Override
+        public int hashCode() {
+            return IMultiLookup.hashCode(this);
+        }
 
         @Override
         public Object lowLevelPutIfAbsent(Long key, Value value) {

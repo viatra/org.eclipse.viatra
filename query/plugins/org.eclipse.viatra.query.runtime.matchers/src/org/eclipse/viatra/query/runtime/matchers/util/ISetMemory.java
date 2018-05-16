@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
+import java.util.function.BiConsumer;
+
 /**
  * An {@link IMemory} that always contains values with a 0 or +1 multiplicity.
  * 
@@ -19,5 +21,10 @@ package org.eclipse.viatra.query.runtime.matchers.util;
  * @since 2.0
  */
 public interface ISetMemory<T> extends IMemory<T> {
+    
+    @Override
+    default void forEachEntryWithMultiplicities(BiConsumer<T, Integer> entryConsumer) {
+        for (T t : this.distinctValues()) entryConsumer.accept(t, 1);
+    }
 
 }

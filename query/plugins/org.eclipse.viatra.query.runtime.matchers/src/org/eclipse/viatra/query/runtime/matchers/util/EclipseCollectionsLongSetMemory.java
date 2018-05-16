@@ -113,6 +113,17 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
             }
         };
     }
+    
+    @Override
+    public int hashCode() {
+        return IMemoryView.hashCode(this);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return IMemoryView.equals(this, obj);
+    }
+
+    
     /**
      * Helper that presents a primitive collection as a Set view
      * @author Gabor Bergmann
@@ -158,12 +169,17 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
 
         @Override
         public Object[] toArray() {
-            throw new UnsupportedOperationException();
+            return toArray(new Long[wrapped.size()]);
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <T> T[] toArray(T[] a) {
-            throw new UnsupportedOperationException();
+            int k = 0;
+            LongIterator iterator = wrapped.longIterator();
+            while (iterator.hasNext()) 
+                a[k++] = (T) Long.valueOf(iterator.next());
+            return a;
         }
 
         @Override
@@ -195,6 +211,8 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
         public void clear() {
             throw new UnsupportedOperationException();
         }
+        
+        
     }
 
 }
