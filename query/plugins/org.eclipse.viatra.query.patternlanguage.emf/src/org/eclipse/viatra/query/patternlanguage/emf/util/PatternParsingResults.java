@@ -134,7 +134,8 @@ public final class PatternParsingResults {
     private IQuerySpecification<?> getOrCreateQuerySpecification(Pattern pattern) {
         List<Issue> errors = getErrors(pattern);
         if (errors.isEmpty()) {
-            return builder.getOrCreateSpecification(pattern);
+            // We can skip validation as the pattern has already been validated by the PatternParser
+            return builder.getOrCreateSpecification(pattern, true);
         } else {
             return builder.buildErroneousSpecification(pattern, errors.stream(), false);
         }
