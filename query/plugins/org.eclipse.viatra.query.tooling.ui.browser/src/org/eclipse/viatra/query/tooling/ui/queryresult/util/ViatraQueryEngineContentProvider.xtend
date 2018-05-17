@@ -25,6 +25,12 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.jface.viewers.Viewer
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import org.eclipse.jface.viewers.TreeViewer
+import java.util.ArrayList
+import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeInput.EngineLifecycleListener
 
 /**
  * @author Abel Hegedus
@@ -32,11 +38,48 @@ import org.eclipse.jface.viewers.Viewer
  */
 class ViatraQueryEngineContentProvider implements ITreeContentProvider {
     
+    private static class EngineListener implements ViatraQueryEngineLifecycleListener {
+        
+        val TreeViewer viewer
+        val AdvancedViatraQueryEngine engine
+        var disposed = false
+        
+        
+        new(AdvancedViatraQueryEngine engine, TreeViewer viewer) {
+            this.viewer = viewer
+            this.engine = engine
+            engine.addLifecycleListener(this)
+        }
+        
+        override engineBecameTainted(String message, Throwable t) {
+            viewer.tree.display.asyncExec[viewer.add(engine, new EngineError(message, t))]
+        }
+        
+        override engineDisposed() {
+            disposed = true
+        }
+        
+        override engineWiped() {}
+        
+        override matcherInstantiated(ViatraQueryMatcher<? extends IPatternMatch> matcher) {}
+        
+        def dispose() {
+            if (disposed) {
+                engine.removeLifecycleListener(this)
+                disposed = true
+            }
+        }
+    }
+    
     protected AdapterFactoryContentProvider adapterFactoryContentProvider
     @Accessors
     protected boolean traverseResources = true
     @Accessors
     protected boolean traverseEObjects = true
+    
+    private TreeViewer viewer
+    private List<EngineListener> listeners = new ArrayList()
+    
     
     new(){
         val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory()
@@ -74,6 +117,7 @@ class ViatraQueryEngineContentProvider implements ITreeContentProvider {
     dispatch def getChildrenInternal(AdvancedViatraQueryEngine parentElement) {
         val engineOptions = parentElement.engineOptions
         val scope = parentElement.scope
+        listeners.add(new EngineListener(parentElement, viewer))
         if(scope instanceof EMFScope) {
             val roots = scope.scopeRoots
             val options = scope.options
@@ -124,16 +168,12 @@ class ViatraQueryEngineContentProvider implements ITreeContentProvider {
         return element.children !== null && !element.children.empty
     }
     
-    /**
-     * Default implementation does nothing
-     */
     override dispose() {
+        listeners.forEach[dispose]
     }
     
-    /**
-     * Default implementation does nothing
-     */
     override inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        this.viewer = viewer as TreeViewer
     }
     
 }

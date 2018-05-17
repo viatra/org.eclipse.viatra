@@ -61,6 +61,10 @@ class ViatraQueryEngineLabelProvider extends LabelProvider {
         imageRegistry.get(ViatraQueryGUIPlugin.ICON_VQL)
     }
     
+    dispatch def getImageInternal(EngineError element) {
+        imageRegistry.get(ViatraQueryGUIPlugin.ICON_ERROR)
+    }
+    
     dispatch def getImageInternal(Entry<String,Object> element) {
         adapterFactoryLabelProvider.getImage(element.value)
     }
@@ -103,6 +107,10 @@ class ViatraQueryEngineLabelProvider extends LabelProvider {
     
     dispatch def getTextInternal(Pair<String,Object> element) {
         return '''«element.key»: «Optional.fromNullable(element.value).or("null")»'''
+    }
+    
+    dispatch def getTextInternal(EngineError element) {
+        return "Engine tainted: " + element.message
     }
     
     dispatch def getTextInternal(Object element) {
