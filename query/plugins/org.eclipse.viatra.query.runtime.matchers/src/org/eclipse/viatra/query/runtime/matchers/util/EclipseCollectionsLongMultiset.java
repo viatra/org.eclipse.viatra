@@ -120,7 +120,7 @@ public class EclipseCollectionsLongMultiset extends LongIntHashMap implements IM
 
     @Override
     public void forEachEntryWithMultiplicities(BiConsumer<Long, Integer> entryConsumer) {
-        super.forEachKeyValue((value, count) -> entryConsumer.accept(value, count));
+        super.forEachKeyValue(entryConsumer::accept);
     }
     
     @Override

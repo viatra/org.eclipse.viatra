@@ -151,22 +151,22 @@ public class QueryEvaluationHint {
         if (overridingHint == null)
             return this;
         
-        BackendRequirement requirement = this.getQueryBackendRequirementType();
+        BackendRequirement overriddenRequirement = this.getQueryBackendRequirementType();
         if (overridingHint.getQueryBackendRequirementType() != BackendRequirement.UNSPECIFIED) {
-            requirement = overridingHint.getQueryBackendRequirementType();
+            overriddenRequirement = overridingHint.getQueryBackendRequirementType();
         }
         Map<QueryHintOption<?>, Object> hints = new HashMap<>(this.getBackendHintSettings());
         if (overridingHint.getBackendHintSettings() != null) {
             hints.putAll(overridingHint.getBackendHintSettings());
         }
-        if (requirement == BackendRequirement.SPECIFIC) {
+        if (overriddenRequirement == BackendRequirement.SPECIFIC) {
             IQueryBackendFactory factory = this.getQueryBackendFactory();
             if (overridingHint.getQueryBackendFactory() != null) {
                 factory = overridingHint.getQueryBackendFactory();
             }
             return new QueryEvaluationHint(hints, factory);
         } else {
-            return new QueryEvaluationHint(backendHintSettings, requirement);
+            return new QueryEvaluationHint(backendHintSettings, overriddenRequirement);
         }
     }
     

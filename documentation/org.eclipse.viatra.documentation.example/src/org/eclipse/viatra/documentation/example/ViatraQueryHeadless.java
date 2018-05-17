@@ -55,7 +55,7 @@ public class ViatraQueryHeadless {
         for (IPatternMatch match : matches) {
             results.append(match.prettyPrint() + "\n");
         }
-        if (matches.size() == 0) {
+        if (matches.isEmpty()) {
             results.append("Empty match set");
         }
         results.append("\n");
@@ -118,10 +118,8 @@ public class ViatraQueryHeadless {
             if (args[i].equals(modelParam)) {
                 model = args[i + 1];
                 i += 2;
-                continue;
             } else {
                 i++;
-                continue;
             }
         }
 

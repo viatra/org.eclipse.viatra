@@ -447,61 +447,64 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     public void checkAnnotation(Annotation annotation) {
         if (annotationProvider.hasValidator(annotation.getName())) {
             IPatternAnnotationValidator validator = annotationProvider.getValidator(annotation.getName());
-            if (validator.isDeprecated()) {
-                warning(String.format("Annotation %s is deprecated.", annotation.getName()), annotation,
-                        PatternLanguagePackage.Literals.ANNOTATION__NAME, IssueCodes.DEPRECATION);
-            }
-            // Check for unknown annotation attributes
-            for (AnnotationParameter unknownParameter : validator.getUnknownAttributes(annotation)) {
-                error(UNKNOWN_ANNOTATION_ATTRIBUTE + unknownParameter.getName(), unknownParameter,
-                        PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
-                        annotation.getParameters().indexOf(unknownParameter), IssueCodes.UNKNOWN_ANNOTATION_PARAMETER);
-            }
-            // Check for missing mandatory attributes
-            for (String missingAttribute : validator.getMissingMandatoryAttributes(annotation)) {
-                error(MISSING_ANNOTATION_ATTRIBUTE + missingAttribute, annotation,
-                        PatternLanguagePackage.Literals.ANNOTATION__PARAMETERS,
-                        IssueCodes.MISSING_REQUIRED_ANNOTATION_PARAMETER);
-            }
-            // Check for annotation parameter types
-            for (AnnotationParameter parameter : annotation.getParameters()) {
-                if (validator.isDeprecated(parameter.getName())) {
-                    warning(String.format("Annotation parameter %s is deprecated.", parameter.getName()), parameter,
-                            PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, IssueCodes.DEPRECATION);
-                }
-                Class<? extends ValueReference> expectedParameterType = validator.getExpectedParameterType(parameter);
-                if (expectedParameterType != null && parameter.getValue() != null
-                        && !expectedParameterType.isAssignableFrom(parameter.getValue().getClass())) {
-                    error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR, getTypeName(parameter.getValue().getClass()),
-                            getTypeName(expectedParameterType)), parameter,
-                            PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
-                            annotation.getParameters().indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
-                } else if (parameter.getValue() instanceof VariableReference) {
-                    VariableReference reference = (VariableReference) parameter.getValue();
-                    if (reference.getVariable() == null) {
-                        error(String.format("Unknown variable %s", reference.getVar()), parameter,
-                                PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE,
-                                annotation.getParameters().indexOf(parameter),
-                                IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
-                    }
-                } else if (parameter.getValue() instanceof ListValue) {
-                    ListValue listValue = (ListValue) (parameter.getValue());
-                    for (VariableReference reference : Iterables.filter(listValue.getValues(), VariableReference.class)) {
-                        if (reference.getVariable() == null) {
-                            error(String.format("Unknown variable %s", reference.getVar()), listValue,
-                                    PatternLanguagePackage.Literals.LIST_VALUE__VALUES,
-                                    listValue.getValues().indexOf(reference), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
-                        }
-                    }
-                }
-                
-            }
+            executeDefaultAnnotationValidation(annotation, validator);
             // Execute extra validation
             validator.getAdditionalValidator()
                     .ifPresent(v -> v.executeAdditionalValidation(annotation, this));
         } else {
             warning("Unknown annotation " + annotation.getName(), PatternLanguagePackage.Literals.ANNOTATION__NAME,
                     IssueCodes.UNKNOWN_ANNOTATION);
+        }
+    }
+
+    private void executeDefaultAnnotationValidation(Annotation annotation, IPatternAnnotationValidator validator) {
+        if (validator.isDeprecated()) {
+            warning(String.format("Annotation %s is deprecated.", annotation.getName()), annotation,
+                    PatternLanguagePackage.Literals.ANNOTATION__NAME, IssueCodes.DEPRECATION);
+        }
+        // Check for unknown annotation attributes
+        for (AnnotationParameter unknownParameter : validator.getUnknownAttributes(annotation)) {
+            error(UNKNOWN_ANNOTATION_ATTRIBUTE + unknownParameter.getName(), unknownParameter,
+                    PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
+                    annotation.getParameters().indexOf(unknownParameter), IssueCodes.UNKNOWN_ANNOTATION_PARAMETER);
+        }
+        // Check for missing mandatory attributes
+        for (String missingAttribute : validator.getMissingMandatoryAttributes(annotation)) {
+            error(MISSING_ANNOTATION_ATTRIBUTE + missingAttribute, annotation,
+                    PatternLanguagePackage.Literals.ANNOTATION__PARAMETERS,
+                    IssueCodes.MISSING_REQUIRED_ANNOTATION_PARAMETER);
+        }
+        // Check for annotation parameter types
+        for (AnnotationParameter parameter : annotation.getParameters()) {
+            if (validator.isDeprecated(parameter.getName())) {
+                warning(String.format("Annotation parameter %s is deprecated.", parameter.getName()), parameter,
+                        PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, IssueCodes.DEPRECATION);
+            }
+            Class<? extends ValueReference> expectedParameterType = validator.getExpectedParameterType(parameter);
+            if (expectedParameterType != null && parameter.getValue() != null
+                    && !expectedParameterType.isAssignableFrom(parameter.getValue().getClass())) {
+                error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR, getTypeName(parameter.getValue().getClass()),
+                        getTypeName(expectedParameterType)), parameter,
+                        PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
+                        annotation.getParameters().indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+            } else if (parameter.getValue() instanceof VariableReference) {
+                VariableReference reference = (VariableReference) parameter.getValue();
+                if (reference.getVariable() == null) {
+                    error(String.format("Unknown variable %s", reference.getVar()), parameter,
+                            PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE,
+                            annotation.getParameters().indexOf(parameter),
+                            IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                }
+            } else if (parameter.getValue() instanceof ListValue) {
+                ListValue listValue = (ListValue) (parameter.getValue());
+                for (VariableReference reference : Iterables.filter(listValue.getValues(), VariableReference.class)) {
+                    if (reference.getVariable() == null) {
+                        error(String.format("Unknown variable %s", reference.getVar()), listValue,
+                                PatternLanguagePackage.Literals.LIST_VALUE__VALUES,
+                                listValue.getValues().indexOf(reference), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                    }
+                }
+            }
         }
     }
 

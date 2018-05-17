@@ -26,7 +26,7 @@ public interface IMultiLookup<Key, Value> {
      * @param key a key for which associated values are sought
      * @return null if key not found, a bucket of values otherwise
      */
-    public IMemoryView<Value> lookup(Key key);
+    IMemoryView<Value> lookup(Key key);
     
     /**
      * Returns a (read-only) bucket of values associated with the given key.
@@ -34,7 +34,7 @@ public interface IMultiLookup<Key, Value> {
      * @param key a key for which associated values are sought
      * @return a bucket of values, never null
      */
-    default public IMemoryView<Value> lookupOrEmpty(Key key) {
+    default IMemoryView<Value> lookupOrEmpty(Key key) {
         IMemoryView<Value> bucket = lookup(key);
         return bucket == null ? EmptyMemory.instance() : bucket;
     }
@@ -46,7 +46,7 @@ public interface IMultiLookup<Key, Value> {
      * @param key a key for which associated values are sought (may or may not be of Key type)
      * @return null if key not found, a bucket of values otherwise
      */
-    public IMemoryView<Value> lookupUnsafe(Object key);
+    IMemoryView<Value> lookupUnsafe(Object key);
     
     /**
      * Returns a (read-only) bucket of values associated with the given key.
@@ -54,7 +54,7 @@ public interface IMultiLookup<Key, Value> {
      * @param key a key for which associated values are sought (may or may not be of Key type)
      * @return a bucket of values, never null
      */
-    default public IMemoryView<Value> lookupUnsafeOrEmpty(Object key) {
+    default IMemoryView<Value> lookupUnsafeOrEmpty(Object key) {
         IMemoryView<Value> bucket = lookupUnsafe(key);
         return bucket == null ? EmptyMemory.instance() : bucket;
     }
@@ -64,17 +64,17 @@ public interface IMultiLookup<Key, Value> {
     /**
      * @return the set of distinct keys that have values associated.
      */
-    public Iterable<Key> distinctKeys();
+    Iterable<Key> distinctKeys();
     
     /**
      * @return the number of distinct keys that have values associated.
      */
-    public int countKeys();
+    int countKeys();
     
     /**
      * Iterates once over each distinct value.
      */
-    public Iterable<Value> distinctValues();
+    Iterable<Value> distinctValues();
     
     /**
      * How significant was the change?     * 

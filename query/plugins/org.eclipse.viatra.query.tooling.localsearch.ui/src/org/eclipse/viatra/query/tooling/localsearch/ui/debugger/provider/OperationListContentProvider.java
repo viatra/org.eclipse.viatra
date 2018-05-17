@@ -55,7 +55,7 @@ public class OperationListContentProvider implements ITreeContentProvider {
 
     @Override
     public boolean hasChildren(Object element) {
-        return element instanceof IPlanNode && ((IPlanNode) element).getChildren().size() > 0;
+        return element instanceof IPlanNode && !((IPlanNode) element).getChildren().isEmpty();
     }
     
     @Override

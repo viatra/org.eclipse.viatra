@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.rete.network.indexer.DefaultMessageIndex
  * (deletions) and monotonic (insertions) updates.
  * 
  * @author Tamas Szabo
+ * @since 2.0
  */
 public class UpdateSplittingMailbox extends AbstractUpdateSplittingMailbox<DefaultMessageIndexer, Receiver>
         implements AdaptableMailbox {
@@ -32,12 +33,7 @@ public class UpdateSplittingMailbox extends AbstractUpdateSplittingMailbox<Defau
     protected Mailbox adapter;
 
     public UpdateSplittingMailbox(final Receiver receiver, final ReteContainer container) {
-        super(receiver, container, new MessageIndexerFactory<DefaultMessageIndexer>() {
-            @Override
-            public DefaultMessageIndexer create() {
-                return new DefaultMessageIndexer();
-            }
-        });
+        super(receiver, container, DefaultMessageIndexer::new);
     }
 
     @Override

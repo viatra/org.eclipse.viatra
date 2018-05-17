@@ -105,7 +105,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
             if (matcher == null)
                 continue;
             final ReteEngine reteEngine = (ReteEngine) ((AdvancedViatraQueryEngine) matcher.getEngine())
-                    .getQueryBackend(new ReteBackendFactory());
+                    .getQueryBackend(ReteBackendFactory.INSTANCE);
 
             // compute RecipeNode to ReteNode map once
             if (recipeToReteMap.isEmpty()) {

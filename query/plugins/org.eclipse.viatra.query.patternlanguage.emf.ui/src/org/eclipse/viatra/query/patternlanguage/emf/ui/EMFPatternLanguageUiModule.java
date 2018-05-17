@@ -300,6 +300,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     /**
      * @since 2.0
      */
+    @Override
     @SingletonBinding(eager = true)
     public Class<? extends UniqueClassNameValidator> bindUniqueClassNameValidator() {
         return EMFPatternLanguageUniqueClassNameValidator.class;

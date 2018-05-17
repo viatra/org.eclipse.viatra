@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.ui.validation;
 
+import java.util.Objects;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IProjectHelper;
@@ -37,7 +39,7 @@ public class EMFPatternLanguageUniqueClassNameValidator extends ProjectAwareUniq
             String project = objectURI.segment(1);
             return super.checkUniqueInIndex(type, Iterables.filter(descriptions, it -> { 
                 URI candidate = it.getEObjectURI();
-                return candidate.isPlatformResource() && !!projectHelper.isStandaloneFileURI(type, candidate) && candidate.segment(1) == project;
+                return candidate.isPlatformResource() && !!projectHelper.isStandaloneFileURI(type, candidate) && Objects.equals(candidate.segment(1), project);
             }));
         }
         return true;

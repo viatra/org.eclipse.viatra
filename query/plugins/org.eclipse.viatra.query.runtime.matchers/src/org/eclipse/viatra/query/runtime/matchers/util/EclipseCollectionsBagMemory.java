@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
@@ -74,7 +73,7 @@ public abstract class EclipseCollectionsBagMemory<T> extends ObjectIntHashMap<T>
 
     @Override
     public void forEachEntryWithMultiplicities(BiConsumer<T, Integer> entryConsumer) {
-        super.forEachKeyValue((value, count) -> entryConsumer.accept(value, count));
+        super.forEachKeyValue(entryConsumer::accept);
     }
     
     @Override

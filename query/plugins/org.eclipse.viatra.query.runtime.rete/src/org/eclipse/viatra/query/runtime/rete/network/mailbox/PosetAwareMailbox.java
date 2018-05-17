@@ -36,12 +36,7 @@ public class PosetAwareMailbox extends AbstractUpdateSplittingMailbox<GroupBased
     protected final TupleMask groupMask;
 
     public PosetAwareMailbox(final PosetAwareReceiver receiver, final ReteContainer container) {
-        super(receiver, container, new MessageIndexerFactory<GroupBasedMessageIndexer>() {
-            @Override
-            public GroupBasedMessageIndexer create() {
-                return new GroupBasedMessageIndexer(receiver.getCoreMask());
-            }
-        });
+        super(receiver, container, () -> new GroupBasedMessageIndexer(receiver.getCoreMask()));
         this.groupMask = receiver.getCoreMask();
     }
 

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
-import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.xbase.lib.Pair;
 
