@@ -224,7 +224,9 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
             entry.loadQuery
             loadedEntries.put(entry.sourceIdentifier, entry.fullyQualifiedName, entry)
         }
-        schema.startUnscheduledExecution
+        if (engineOperational) {
+            schema.startUnscheduledExecution
+        }
     }
     
     private def loadQuery(IQuerySpecificationRegistryEntry entry) {
