@@ -390,8 +390,6 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     public void checkPatterns(PatternModel model) {
         resourceDescriptions.setContext(model);
         if (model.getPatterns() != null) {
-            // TODO: more precise calculation is needed for duplicate patterns
-            // (number and type of pattern parameters)
             for (Pattern pattern : model.getPatterns()) {
                 boolean isDuplicateFound = false;
                 for (IEObjectDescription shadowingPatternDescription : duplicateChecker.findDuplicates(pattern)) {

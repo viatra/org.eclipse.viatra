@@ -72,9 +72,11 @@ public class DuplicationChecker {
         resourceDescriptions.setContext(pattern.eContainer());
         
         Iterable<IEObjectDescription> shadowingPatternDescriptions = null;
-        if (projectHelper.isStandaloneFileURI(pattern, pattern.eResource().getURI())) {
+        final URI uri = pattern.eResource().getURI();
+        if (projectHelper.isStandaloneFileURI(pattern, uri)) {
             // If pattern is not in a source folder, duplicate analysis is only meaningful inside the file
-            shadowingPatternDescriptions = resourceDescriptions.getLocalDescriptions().getExportedObjects(sourceType, fullyQualifiedName, true);
+            shadowingPatternDescriptions = resourceDescriptions.getLocalDescriptions().getResourceDescription(uri)
+                    .getExportedObjects(sourceType, fullyQualifiedName, true);
             // Visibility can be ignored in case of local descriptions
             return processDuplicateCandidates(pattern, false, shadowingPatternDescriptions);
         } else {
