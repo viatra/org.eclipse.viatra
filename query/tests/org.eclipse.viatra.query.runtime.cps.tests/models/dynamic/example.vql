@@ -1,0 +1,6 @@
+package example.queries
+import "http://www.example.org/model"
+
+pattern BwithC(b:B,c:C){
+	B.c(b,c);
+}

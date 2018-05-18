@@ -27,7 +27,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -1226,16 +1225,27 @@ public class NavigationHelperImpl implements NavigationHelper {
                  *
                  * Technically, the statsStore cleanup seems only necessary for EDataTypes; otherwise everything
                  * works as expected, but it seems a better idea to do the cleanup for all types in the same way */
-                BiConsumer<Object, IndexingLevel> removeType = (key, value) -> {
-                    IndexingLevel oldIndexingLevel = getIndexingLevel(key);
+                toGatherClasses.forEach((key, value) -> {
+                    IndexingLevel oldIndexingLevel = getIndexingLevel(metaStore.getKnownClassifierForKey(key));
                     if (value.hasInstances() && oldIndexingLevel.hasStatistics() && !oldIndexingLevel.hasInstances()) {
                         statsStore.removeType(key);
                     }
                     
-                };
-                toGatherClasses.forEach(removeType);
-                toGatherFeatures.forEach(removeType);
-                toGatherDataTypes.forEach(removeType);
+                });
+                toGatherFeatures.forEach((key, value) -> {
+                    IndexingLevel oldIndexingLevel = getIndexingLevel(metaStore.getKnownFeatureForKey(key));
+                    if (value.hasInstances() && oldIndexingLevel.hasStatistics() && !oldIndexingLevel.hasInstances()) {
+                        statsStore.removeType(key);
+                    }
+                    
+                });
+                toGatherDataTypes.forEach((key, value) -> {
+                    IndexingLevel oldIndexingLevel = getIndexingLevel(metaStore.getKnownClassifierForKey(key));
+                    if (value.hasInstances() && oldIndexingLevel.hasStatistics() && !oldIndexingLevel.hasInstances()) {
+                        statsStore.removeType(key);
+                    }
+                    
+                });
                 
                 // Are there new classes to be observed that are not available via superclasses? 
                 //      (at sufficient level)
