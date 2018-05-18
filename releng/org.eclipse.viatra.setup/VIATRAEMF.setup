@@ -1131,7 +1131,7 @@
       <repository
           url="http://download.itemis.com/updates/releases"/>
       <repository
-          url="http://download.eclipse.org/efxclipse/updates-released/2.4.0/site"/>
+          url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
       <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
     </setupTask>
     <setupTask
@@ -1204,11 +1204,15 @@
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
         </repositoryList>
         <repositoryList
             name="Photon">
           <repository
               url="http://download.eclipse.org/releases/photon"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
         </repositoryList>
       </targlet>
       <targlet
@@ -1700,6 +1704,8 @@
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -1840,11 +1846,15 @@
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
         </repositoryList>
         <repositoryList
             name="Photon">
           <repository
               url="http://download.eclipse.org/releases/photon"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
         </repositoryList>
       </targlet>
       <targlet
