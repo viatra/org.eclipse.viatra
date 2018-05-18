@@ -34,6 +34,7 @@ public abstract class ViatraViewersPartSupport {
      * The "owner" of this support instance.
      */
     protected IWorkbenchPart owner;
+    protected boolean disposed;
     
     /**
      * Constructs a new support instance.
@@ -41,6 +42,7 @@ public abstract class ViatraViewersPartSupport {
     public ViatraViewersPartSupport(IWorkbenchPart _owner, ViewersComponentConfiguration _config) {
         this.owner = _owner;
         this.configuration = _config;
+        this.disposed = false;
     }
     
     /**
@@ -55,6 +57,7 @@ public abstract class ViatraViewersPartSupport {
      * Should be called when the owner {@link IWorkbenchPart} it starting to dispose itself.
      */
     public void dispose() {
+        this.disposed = true;
         this.owner.getSite().getPage().removeSelectionListener(forwardRevealListener);
     }
     

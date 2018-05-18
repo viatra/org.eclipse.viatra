@@ -69,8 +69,10 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
         private void updateModel() {
             if (currentSelection != null) {
                 unbindModel();
-                final Display display = owner.getSite().getShell().getDisplay();
-                display.asyncExec(() -> BusyIndicator.showWhile(display, ViatraViewersViewSupport.this::doUpdateDisplay));
+                if (!disposed) {
+                    final Display display = owner.getSite().getShell().getDisplay();
+                    display.asyncExec(() -> BusyIndicator.showWhile(display, ViatraViewersViewSupport.this::doUpdateDisplay));
+                }
             }
             delayUpdates = false;
         }
@@ -162,6 +164,9 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
     }
 
     protected void doUpdateDisplay() {
+        if (disposed) {
+            return;
+        }
         EMFScope target = extractModelSource(currentSelection);
         if (target != null && !target.equals(this.modelSource)) {
             // we have found a new target
