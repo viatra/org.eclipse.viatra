@@ -36,6 +36,6 @@ public class CreateProjectOperation extends WorkspaceModifyOperation {
 
     protected void execute(IProgressMonitor monitor) throws CoreException {
         ProjectGenerationHelper.createProject(description, projectHandle, dependencies, monitor);
-        ProjectGenerationHelper.ensureSourceFolder(projectHandle, outputConfigurationProvider.getOutputConfigurations(), monitor);
+        ProjectGenerationHelper.ensureSourceFolder(projectHandle, outputConfigurationProvider.getOutputConfigurations(projectHandle), monitor);
     }
 }

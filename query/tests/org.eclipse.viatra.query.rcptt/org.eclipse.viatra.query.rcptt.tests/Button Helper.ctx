@@ -1,0 +1,34 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.ecl
+Element-Name: Button Helper
+Element-Type: context
+Element-Version: 2.0
+Id: _bM6FoFzaEeiRKa-hzcQkPg
+Runtime-Version: 2.2.0.201706152316
+Save-Time: 5/21/18, 11:44 AM
+
+------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998
+Content-Type: text/ecl
+Entry-Name: .ecl.context
+
+/*******************************************************************************
+ * Copyright (c) 2010-2018, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - Testing VIATRA GUI
+ *******************************************************************************/
+
+//Clicks on an OK button; alternate name is used to handle renamed OK buttons
+proc clickOKButton[val alternateName] {
+	try {
+		get-button $alternateName | click
+	} -catch {
+		get-button "OK" | click
+	}
+}
+------=_.ecl.context-718f04b4-ed39-33e3-af62-0995e4561998--

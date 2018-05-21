@@ -234,7 +234,17 @@ public final class ViatraQueryEngineOptions {
      * @return the defaultBackendFactory
      */
     public IQueryBackendFactory getDefaultBackendFactory() {
-        return engineDefaultHints.getQueryBackendFactory();
+        switch (engineDefaultHints.getQueryBackendRequirementType()) {
+        case DEFAULT_CACHING:
+            return ViatraQueryEngineOptions.getSystemDefaultCachingBackend();
+        case DEFAULT_SEARCH:
+            return ViatraQueryEngineOptions.getSystemDefaultCachingBackend();
+        case SPECIFIC:
+            return engineDefaultHints.getQueryBackendFactory();
+        case UNSPECIFIED:
+        default:
+            return ViatraQueryEngineOptions.getSystemDefaultBackend();
+        }
     }
 
     /**
