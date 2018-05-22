@@ -7,7 +7,7 @@ Element-Version: 3.0
 External-Reference: 
 Id: _DHI3kPBQEeWlEbYJ7IoFCQ
 Runtime-Version: 2.2.0.201706152316
-Save-Time: 5/21/18, 8:55 PM
+Save-Time: 5/22/18, 9:34 AM
 Testcase-Type: ecl
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
@@ -93,7 +93,7 @@ with [get-editor "test.vql" | get-text-viewer] {
     type-text "pattern NotAllocatedApplicationInstances("
     key-type Enter
     type-text "inst : "
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
     key-type Down
     key-type Up
     key-type Enter
@@ -101,9 +101,10 @@ with [get-editor "test.vql" | get-text-viewer] {
     type-text " {"
     key-type Enter
     type-text "neg fin"
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
+    key-type Enter
     type-text " "
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
     key-type Enter
     key-type Left
     type-text inst
@@ -112,7 +113,7 @@ with [get-editor "test.vql" | get-text-viewer] {
     type-text "pattern ApplicationsWithAllocatedInstances("
     key-type Enter
     type-text "app : "
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
 }
 get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select ApplicationType | click 
     -default
@@ -121,7 +122,7 @@ with [get-editor "test.vql" | get-text-viewer] {
     type-text " {"
     key-type Enter
     type-text App
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
 }
 get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select ApplicationType | click 
     -default
@@ -135,12 +136,12 @@ with [get-editor "test.vql" | get-text-viewer] {
     key-type Right
     type-text ";"
     key-type Enter
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
 }
 get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table | select find | click -default
 with [get-editor "test.vql" | get-text-viewer] {
     type-text " "
-    key-type "M1+SPACE"
+    key-type "CTRL+SPACE"
 }
 get-window -from "CompletionProposalPopup.createProposalSelector()" | get-table 
     | select "AllocatedApplicationInstances - org.eclipse.viatra.examples.cps.testqueries.AllocatedApplicationInstances" 
