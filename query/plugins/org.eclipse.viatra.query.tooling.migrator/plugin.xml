@@ -115,7 +115,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra.migrator.metadata.ProjectNatureUpdater"
+            class="org.eclipse.viatra.query.patternlanguage.emf.ui.ReusablePatternLanguageExecutableExtensionFactory:org.eclipse.viatra.migrator.metadata.ProjectNatureUpdater"
             commandId="org.eclipse.viatra.query.tooling.migrator.metadata.command">
       </handler>
       <handler

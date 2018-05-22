@@ -48,10 +48,7 @@ import org.eclipse.viatra.query.runtime.ViatraQueryRuntimePlugin;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
-import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
-import org.eclipse.xtext.builder.IXtextBuilderParticipant.IBuildContext;
 import org.eclipse.xtext.generator.OutputConfiguration;
-import org.eclipse.xtext.generator.OutputConfigurationProvider;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.BundleContext;
@@ -75,6 +72,18 @@ public abstract class ProjectGenerationHelper {
     private static final String INVALID_PROJECT_MESSAGE = "Invalid project %s. Only existing, open plug-in projects are supported by the generator.";
     private static final String UTF8_ENCODING = "UTF-8";
 
+    /**
+     * Contains the default bundle requirements for VIATRA in a format that can be loaded into {@link #ensureBundleDependencies(IProject, List)}.
+     * @since 2.0
+     */
+    public static List<String> DEFAULT_VIATRA_BUNDLE_REQUIREMENTS = Arrays.asList("org.eclipse.emf.ecore", ViatraQueryRuntimePlugin.PLUGIN_ID,
+            "org.eclipse.viatra.query.runtime.rete", "org.eclipse.viatra.query.runtime.localsearch", "org.eclipse.xtext.xbase.lib");
+    /**
+     * Contains the default import package requirements for VIATRA in a format that can be loaded into {@link #ensurePackageImports(IProject, List)}.
+     * @since 2.0
+     */
+    public static List<String> DEFAULT_VIATRA_IMPORT_PACKAGES = Arrays.asList("org.apache.log4j");
+    
     private ProjectGenerationHelper() {/*Utility class constructor*/}
     
     private static final class IDToPackageImportTransformer implements Function<String, IPackageImportDescription> {
@@ -132,9 +141,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
-        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore", ViatraQueryRuntimePlugin.PLUGIN_ID,
-                "org.eclipse.viatra.query.runtime.localsearch", "org.eclipse.xtext.xbase.lib");
-        List<String> importPackages = Lists.newArrayList("org.apache.log4j");
+        List<String> dependencies = new ArrayList<String>(DEFAULT_VIATRA_BUNDLE_REQUIREMENTS);
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
         }
@@ -150,7 +157,7 @@ public abstract class ProjectGenerationHelper {
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(proj);
             IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml")};
-            ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, importPackages, service, bundleDesc, additionalBinIncludes);
+            ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, DEFAULT_VIATRA_IMPORT_PACKAGES, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
             //Ensure UTF-8 encoding
             proj.setDefaultCharset(UTF8_ENCODING, monitor);
@@ -296,6 +303,30 @@ public abstract class ProjectGenerationHelper {
     }
 
     /**
+     * Ensures that the given plug-in project is declared a singleton. This is required for extensions.
+     * @param project
+     * @throws CoreException
+     * @since 2.0
+     */
+    public static void ensureSingletonDeclaration(IProject project) throws CoreException {
+        checkOpenPDEProject(project);
+        BundleContext context = null;
+        ServiceReference<IBundleProjectService> ref = null;
+        try {
+            context = ViatraQueryGeneratorPlugin.getContext();
+            ref = context.getServiceReference(IBundleProjectService.class);
+            final IBundleProjectService service = context.getService(ref);
+            IBundleProjectDescription bundleDesc = service.getDescription(project);
+            bundleDesc.setSingleton(true);
+            bundleDesc.apply(new NullProgressMonitor());
+        } finally {
+            if (context != null && ref != null) {
+                context.ungetService(ref);
+            }
+        }
+    }
+    
+    /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
      *
@@ -401,6 +432,9 @@ public abstract class ProjectGenerationHelper {
             final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions){
         
         IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
+        if (existingDependencies == null) {
+            existingDependencies = new IRequiredBundleDescription[0];
+        }
         
         Set<String> toRemove = new HashSet<>();
         Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<>();

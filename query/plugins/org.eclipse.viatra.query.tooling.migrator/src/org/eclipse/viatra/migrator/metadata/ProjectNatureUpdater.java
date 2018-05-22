@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.migrator.metadata;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -23,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.migrator.MigratorConstants;
+import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 
 /**
  * @author Zoltan Ujhelyi
@@ -30,6 +33,9 @@ import org.eclipse.viatra.migrator.MigratorConstants;
  */
 public class ProjectNatureUpdater extends AbstractHandler {
 
+    @Inject
+    private EclipseOutputConfigurationProvider outputConfigurationProvider;
+    
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         ISelection currentSelection = HandlerUtil.getCurrentSelection(event);
@@ -43,7 +49,7 @@ public class ProjectNatureUpdater extends AbstractHandler {
                     project = ((IAdaptable) element).getAdapter(IProject.class);
                 }
                 if (project != null) {
-                    final NatureUpdaterJob job = new NatureUpdaterJob(project);
+                    final NatureUpdaterJob job = new NatureUpdaterJob(project, outputConfigurationProvider);
                     job.schedule();
                     try {
                         ICommandService service = HandlerUtil.getActiveSite(event).getService(ICommandService.class);

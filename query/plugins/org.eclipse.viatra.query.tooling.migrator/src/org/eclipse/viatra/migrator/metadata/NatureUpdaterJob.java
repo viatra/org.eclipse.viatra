@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.migrator.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -31,11 +32,10 @@ import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
+import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 import org.eclipse.xtext.xbase.lib.Pair;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 
 /**
@@ -53,11 +53,13 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("restriction")
 class NatureUpdaterJob extends Job {
 
-    private IProject project;
+    private final IProject project;
+    private final EclipseOutputConfigurationProvider outputConfigurationProvider;
 
-    public NatureUpdaterJob(IProject project) {
+    public NatureUpdaterJob(IProject project, EclipseOutputConfigurationProvider outputConfigurationProvider) {
         super(String.format("Updating project %s", project.getName()));
         this.project = project;
+        this.outputConfigurationProvider = outputConfigurationProvider;
     }
 
     /**
@@ -168,16 +170,19 @@ class NatureUpdaterJob extends Job {
             repairErroneousBuilderEntry(project);
             reorderBuilderEntries(project);
 
-            final ImmutableList<String> newIDs = project.hasNature(ViatraQueryNature.NATURE_ID)
-                    ? ImmutableList.<String> of() : ImmutableList.of(ViatraQueryNature.NATURE_ID);
-            Builder<String> builder = ImmutableList.<String> builder();
+            final List<String> newIDs = new ArrayList<>(); 
+            if (!project.hasNature(ViatraQueryNature.NATURE_ID)) {
+                newIDs.add(ViatraQueryNature.NATURE_ID);
+            }
+            if (!project.hasNature(XtextProjectHelper.NATURE_ID)) {
+                newIDs.add(XtextProjectHelper.NATURE_ID);
+            }
+            final List<String> oldIDs = new ArrayList<>();
             for (String ID : MigratorConstants.INCORRECT_NATURE_IDS) {
                 if (project.hasNature(ID)) {
-                    builder.add(ID);
+                    oldIDs.add(ID);
                 }
             }
-
-            final ImmutableList<String> oldIDs = builder.build();
 
             if (newIDs.size() + oldIDs.size() > 0) {
                 ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);
@@ -186,8 +191,13 @@ class NatureUpdaterJob extends Job {
             renamePatternDefinitionFiles(project);
             
             if (PDE.hasPluginNature(project)) {
+                ProjectGenerationHelper.ensureSourceFolder(project,
+                        outputConfigurationProvider.getOutputConfigurations(), monitor);
+                ProjectGenerationHelper.ensureSingletonDeclaration(project);
                 removeExpressionExtensions(project);
-                ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String> of("org.apache.log4j"));
+                ProjectGenerationHelper.ensureBundleDependenciesAndPackageImports(project,
+                ProjectGenerationHelper.DEFAULT_VIATRA_BUNDLE_REQUIREMENTS,
+                ProjectGenerationHelper.DEFAULT_VIATRA_IMPORT_PACKAGES, monitor);
             }
             project.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
         } catch (CoreException e) {
