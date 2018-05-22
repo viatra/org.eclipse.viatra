@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.Aggregator
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
+import java.util.Collections
 
 /** 
  * @author Tamas Szabo, Zoltan Ujhelyi
@@ -26,8 +27,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
  */
 class AggregatorUtil {
 
-    private static final String PARAMETER_TYPES_NAME = "parameterTypes";
-    private static final String RETURN_TYPES_NAME = "returnTypes";
+    static final String PARAMETER_TYPES_NAME = "parameterTypes";
+	static final String RETURN_TYPES_NAME = "returnTypes";
 
     private static def List<JvmType> getAggregatorType(JvmDeclaredType aggregatorType, String typeString) {
         val annotationType = aggregatorType.annotations.findFirst[annotation.qualifiedName == AggregatorType.name]
@@ -36,6 +37,8 @@ class AggregatorUtil {
         ]
         if (annotationValue instanceof JvmTypeAnnotationValue) {
             annotationValue.values.map[it.type]
+        } else {
+            Collections.emptyList
         }
     }
 

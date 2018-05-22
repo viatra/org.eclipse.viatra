@@ -31,6 +31,8 @@ import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -603,6 +605,25 @@ class AggregationTest extends AbstractValidatorTest {
         tester.validate(parsed).assertAll(
             getErrorCode(IssueCodes.INVALID_AGGREGATOR)
         )
+    }
+    
+    @Test
+    def void testMissingAggregatorClass() {
+        val parsed = parseHelper.parse('''
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern parameter(call : PatternCall, parameter : ValueReference) {
+                PatternCall.parameters(call, parameter);
+            }
+            
+            pattern parameterCount(c : java Integer) {
+                c == 1;
+                1 == coun find parameter(_, _);   
+            }
+        ''')
+        val aggregator = (parsed.patterns.get(1).bodies.get(0).constraints.get(1) as CompareConstraint).rightOperand as AggregatedValue
+        aggregator.assertError(PatternLanguagePackage.Literals.AGGREGATED_VALUE, Diagnostic::LINKING_DIAGNOSTIC)
+        tester.validate(parsed).assertOK
     }
     
     @Test
