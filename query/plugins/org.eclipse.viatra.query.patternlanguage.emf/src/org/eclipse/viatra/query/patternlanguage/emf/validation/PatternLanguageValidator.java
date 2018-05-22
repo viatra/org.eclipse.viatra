@@ -57,6 +57,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCompositionConstr
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.UnaryTypeConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
@@ -344,6 +345,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
         }
     }
     
+    private EStructuralFeature getParameterFeature(CallableRelation call) {
+        if (call instanceof PatternCall) {
+            return PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS;
+        } else if (call instanceof UnaryTypeConstraint) {
+            return PatternLanguagePackage.Literals.UNARY_TYPE_CONSTRAINT__VAR;
+        } else if (call instanceof PathExpressionConstraint) {
+            return PatternLanguagePackage.Literals.PATH_EXPRESSION_CONSTRAINT__SRC;
+        } else {
+            throw new IllegalArgumentException("Unknown callable relation type " + call.eClass().getName());
+        }
+    }
+    
     @Check
     public void checkApplicabilityOfTransitiveClosureInPatternCall(CallableRelation call) {
         if (PatternLanguageHelper.isTransitive(call)) {
@@ -361,7 +374,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                     error(String.format(
                             "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
                             typeSystem.typeString(type1), typeSystem.typeString(type2)),
-                            PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
+                            getParameterFeature(call),
                             IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
                 }
                 
@@ -369,7 +382,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                     error(String.format(
                             "Reflexive transitive closure is not supported over non enumerable type %s.",
                             typeSystem.typeString(type1)),
-                            PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
+                            getParameterFeature(call),
                             0,
                             IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
                 }
