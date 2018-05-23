@@ -655,8 +655,7 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected void notifyBaseIndexChangeListeners(boolean baseIndexChanged) {
         if (!baseIndexChangeListeners.isEmpty()) {
-            for (EMFBaseIndexChangeListener listener : new ArrayList<EMFBaseIndexChangeListener>(
-                    baseIndexChangeListeners)) {
+            for (EMFBaseIndexChangeListener listener : new ArrayList<>(baseIndexChangeListeners)) {
                 try {
                     if (!listener.onlyOnIndexChange() || baseIndexChanged) {
                         listener.notifyChanged(baseIndexChanged);
@@ -753,14 +752,14 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     public void notifyErrorListener(String message, Throwable t) {
         logger.error(message, t);
-        for (IEMFIndexingErrorListener listener : errorListeners) {
+        for (IEMFIndexingErrorListener listener : new ArrayList<>(errorListeners)) {
             listener.error(message, t);
         }
     }
 
     public void notifyFatalListener(String message, Throwable t) {
         logger.fatal(message, t);
-        for (IEMFIndexingErrorListener listener : errorListeners) {
+        for (IEMFIndexingErrorListener listener : new ArrayList<>(errorListeners)) {
             listener.fatal(message, t);
         }
     }

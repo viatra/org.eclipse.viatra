@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.base.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -438,6 +439,11 @@ public interface NavigationHelper {
     /**
      * The given <code>listener</code> will be notified from now on whenever instances the given {@link EClass}es 
      * (and any of their subtypes) are added to or removed from the model.  
+     * 
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link InstanceListener} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to add a listener 
+     * at that point, wrap the call with {@link #executeAfterTraversal(Runnable)}.
      *  
      * @param classes
      *            the collection of classes whose instances the listener should be notified of
@@ -449,6 +455,11 @@ public interface NavigationHelper {
     /**
      * Unregisters an instance listener for the given classes.
      * 
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link InstanceListener} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to remove a listener at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
+     * 
      * @param classes
      *            the collection of classes
      * @param listener
@@ -457,8 +468,13 @@ public interface NavigationHelper {
     public void removeInstanceListener(Collection<EClass> classes, InstanceListener listener);
 
     /**
-     * The given <code>listener</code> will be notified from now on whenever instances the given {@link EDataType}s 
-     * are added to or removed from the model.  
+     * The given <code>listener</code> will be notified from now on whenever instances the given {@link EDataType}s are
+     * added to or removed from the model.
+     * 
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link DataTypeListener} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to add a listener at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
      * 
      * @param types
      *            the collection of types associated to the listener
@@ -470,6 +486,11 @@ public interface NavigationHelper {
     /**
      * Unregisters a data type listener for the given types.
      * 
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link DataTypeListener} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to remove a listener at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
+     * 
      * @param types
      *            the collection of data types
      * @param listener
@@ -478,8 +499,13 @@ public interface NavigationHelper {
     public void removeDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
 
     /**
-     * The given <code>listener</code> will be notified from now on whenever instances the given {@link EStructuralFeature}s 
-     * are added to or removed from the model.  
+     * The given <code>listener</code> will be notified from now on whenever instances the given
+     * {@link EStructuralFeature}s are added to or removed from the model.
+     * 
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link FeatureListener} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to add a listener at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
      * 
      * @param features
      *            the collection of features associated to the listener
@@ -491,6 +517,11 @@ public interface NavigationHelper {
     /**
      * Unregisters a feature listener for the given features.
      * 
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link FeatureListener} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to remove a listener at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
+     * 
      * @param listener
      *            the listener instance
      * @param features
@@ -501,8 +532,15 @@ public interface NavigationHelper {
     /**
      * Register a lightweight observer that is notified if the value of any feature of the given EObject changes.
      * 
-     * @param observer the listener instance
-     * @param observedObject the observed EObject
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link LightweightEObjectObserver} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to add an observer at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
+     * 
+     * @param observer
+     *            the listener instance
+     * @param observedObject
+     *            the observed EObject
      * @return false if the observer was already attached to the object (call has no effect), true otherwise
      */
     public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
@@ -510,8 +548,15 @@ public interface NavigationHelper {
     /**
      * Unregisters a lightweight observer for the given EObject.
      * 
-     * @param observer the listener instance
-     * @param observedObject the observed EObject
+     * <br/>
+     * <b>Important</b>: Do not call this method from {@link LightweightEObjectObserver} methods as it may cause a
+     * {@link ConcurrentModificationException}, if you want to remove an observer at that point, wrap the call with
+     * {@link #executeAfterTraversal(Runnable)}.
+     * 
+     * @param observer
+     *            the listener instance
+     * @param observedObject
+     *            the observed EObject
      * @return false if the observer has not been previously attached to the object (call has no effect), true otherwise
      */
     public boolean removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
@@ -767,13 +812,16 @@ public interface NavigationHelper {
 
     /**
      * Adds a listener for internal errors in the index. A listener can only be added once.
+     * 
      * @param listener
      * @returns true if the listener was not already added
      * @since 0.8
      */
     boolean addIndexingErrorListener(IEMFIndexingErrorListener listener);
+    
     /**
-     * Removes a listener for internal errors in the index
+     * Removes a listener for internal errors in the index.
+     * 
      * @param listener
      * @returns true if the listener was successfully removed (e.g. it did exist)
      * @since 0.8
