@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<toc label="VIATRA" topic="html/tutorial/intro.html">
+<toc label="VIATRA" topic="html/viatra.html">
    <topic href="html/tutorial.html" label="Getting Started with VIATRA">
        <topic href="html/tutorial.html#_using_the_query_development_environment" label="Getting started with Query Development">
        </topic>

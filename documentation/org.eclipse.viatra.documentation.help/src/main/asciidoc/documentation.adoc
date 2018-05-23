@@ -1,0 +1,23 @@
+= Reference Documentation
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
+
+:imagesdir: {rootdir}/images
+:toclevels: 2
+:toc:
+:toc-placement: macro
+:numbered:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
+
+.Contents
+. link:query-language.html[The VIATRA Query Language]
+. link:query-api.html[The VIATRA Query Runtime]
+. link:transformations.html[Developing Model Transformations]
+. link:tools.html[Development Tools]
+. link:addons.html[Addons and Integrations]

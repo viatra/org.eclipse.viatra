@@ -7,9 +7,9 @@ The CPS Demonstrator application include various features to demonstrate various
 
 ## How to start
 
-Start a CPS Application Eclipse instance (https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.application.product/target/products[download from here]).
+Start the CPS Application Eclipse instance (https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.application.product/target/products[download from here]).
 
-WARNING: Starting multiple instances of this application causes `Java was started but returned exit code=1` error message caused by both applications opening port 1099 for the VIATRA debugger to connect to.  In order to support multiple instances, you link:../extra/VIATRA-debugger.html#_setting_up_the_transformation_under_debugging[modify the debug port number] in the corresponding eclipse.ini file.
+WARNING: Starting multiple instances of this application causes `Java was started but returned exit code=1` error message caused by both applications opening port 1099 for the VIATRA debugger to connect to.  In order to support multiple instances, you have to link:../extra/VIATRA-debugger.html#_setting_up_the_transformation_under_debugging[modify the debug port number] in the corresponding eclipse.ini file.
 
 ## Initializing CPS models
 
@@ -21,7 +21,7 @@ This project contains an example CPS model __(example.cyberphysicalsystem)__ as 
 The CPS Transformations view allows starting or stopping <<CPS-to-Deployment-Transformation#,CPS-to-Deployment M2M transformations>> using <<Alternative-transformation-methods#,different strategies>> and displays the running transformations. +
 To open the view press CTRL+3 and type the name of the view.
 
-image::cps/images/cps_transform_view.png[CPS Transformations view]
+image::cps/cps_transform_view.png[CPS Transformations view]
 
 The view shows the details of the currently running transformations:
 
@@ -61,7 +61,7 @@ The following views help the debugging:
 * Transformation Browser view shows which activation of the transformation rules can be executed. Here you can set breakpoints to suspend if a certain rule or activation is to be executed or a condition is true.
 * Transformation Model Instance Viewer shows the current state of the models during the transformation.
 
-image::cps/images/cps_debug.png[CPS Debug Configuration]
+image::cps/cps_debug.png[CPS Debug Configuration]
 
 WARNING: Using the same Eclipse instance for debugging an incremental transformation and changing a model causes the program to freeze. Use a different Eclipse instance or run a new Eclipse Application instance from __Run/Run Configurations__ and run the debugger from it.
 
@@ -75,7 +75,7 @@ Select __File/New/Other__ and in the __CPS Demonstrator__ category select __Gene
 
 NOTE: In contrast to __CPS Demonstrator Example__ project, which generates a source CPS model, a target Deployment model and a connector Traceability model, the CPS Model Generator only generates the CPS model, which must be connected to the other models to use it in a transformation. To do this manually refer <<init-models-manual,this section>>.
 
-image::cps/images/cps_wizard_type_page.png[Types of Models in CPS Model Generator]
+image::cps/cps_wizard_type_page.png[Types of Models in CPS Model Generator]
 
 To create a simple model you can choose from a few preset models under the __Simple Test Models__ option.
 
@@ -89,7 +89,7 @@ WARNING: Opening large models can take a while. Switch off opening if it is not 
 
 #### Model by Detailed Constraints
 
-image::cps/images/cps_wizard_details_page.png[Detailed Model Generator Constraints]
+image::cps/cps_wizard_details_page.png[Detailed Model Generator Constraints]
 
 CPS Model Generator uses a detailed configuration during generation phase. (<<Model-Generator#,Here> described in detail.) A simple version of this configuration can be used if you select Model by Detailed Constraints.
 
@@ -112,8 +112,8 @@ The number of ApplicationTypes and ApplicationInstances can be defined similarly
 * Open the Traceability file
 * In the Traceability editor, load both the existing CPS and the newly created Deployment models with _Load Resources\..._ in the context menu
 
-image::cps/../../tutorial/images/viatraIncr_example4.png[Load necessary resources into the Tracebility Model]
+image::tutorial/viatraIncr_example4.png[Load necessary resources into the Tracebility Model]
 
 * Set CPS and Deployment references of Traceability model in the properties view
 
-image::cps/../../tutorial/images/viatraIncr_example5.png[Set the references of the Traceability Model]
+image::tutorial/viatraIncr_example5.png[Set the references of the Traceability Model]
