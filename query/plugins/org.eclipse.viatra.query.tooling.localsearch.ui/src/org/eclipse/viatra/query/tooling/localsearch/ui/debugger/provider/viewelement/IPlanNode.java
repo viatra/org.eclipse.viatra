@@ -16,6 +16,11 @@ public interface IPlanNode {
 
     OperationStatus getOperationStatus();
     void setOperationStatus(OperationStatus status);
+    
+    default void setOperationStatusTransitively(OperationStatus status) {
+        setOperationStatus(status);
+        getChildren().forEach(child ->child.setOperationStatusTransitively(status));
+    }
 
     boolean isBreakpointSet();
 

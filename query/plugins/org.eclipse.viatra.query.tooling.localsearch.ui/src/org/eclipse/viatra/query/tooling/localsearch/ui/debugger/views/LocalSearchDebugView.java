@@ -13,9 +13,9 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -52,19 +52,20 @@ import org.eclipse.viatra.integration.zest.viewer.ZestContentViewer;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchEMFBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.FrameViewerContentProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.IPlanNode;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester;
 
 import com.google.common.collect.Maps;
@@ -87,6 +88,7 @@ public class LocalSearchDebugView extends ViewPart {
     private ZestContentViewer graphViewer;
     
     private CTabFolder matchesTabFolder;
+    private Map<PQuery, CTabItem> matchesTabIndex = new HashMap<>();
 
     private Map<String, TableViewer> matchViewersMap = new HashMap<>();
 
@@ -123,11 +125,29 @@ public class LocalSearchDebugView extends ViewPart {
         operationListViewer.refresh();
         
         // Create and start the matcher thread
-        Runnable planExecutorRunnable = () -> lsResultProvider.getAllMatches(adornment).collect(Collectors.toSet());
+        Runnable planExecutorRunnable = () -> {
+            Iterator<Tuple> tuples = lsResultProvider.getAllMatches(adornment).iterator();
+            while(!Thread.currentThread().isInterrupted() && tuples.hasNext()) {
+                // Right now we are only collecting the result matches but are ignoring them thus the empty body
+            }
+        };
 
         // Interrupt old executions
         if (planExecutorThread != null && planExecutorThread.isAlive()) {
             planExecutorThread.interrupt();
+            /*
+             * XXX not stopping this thread here might cause issues when restarting the debugger because of two separate
+             * issues:
+             *   (1) it is not possible to shut down local search-based matchers correctly, see
+             * https://bugs.eclipse.org/bugs/show_bug.cgi?id=535102
+             *   (2) if an interrupted matcher still runs in the
+             * background and instantiates a _new_ matcher, the new instance might send notifications to a new set of
+             * adapters, thus sending unparseable events to the debugger
+             * 
+             * Luckily, stopping the thread here should not cause any long-term issues as its entire lifecycle is
+             * managed internally. However, if matchers can be stopped correctly, this should be fixed as well.
+             */
+            planExecutorThread.stop();
         }
         planExecutorThread = new Thread(planExecutorRunnable);
         planExecutorThread.start();
@@ -135,7 +155,7 @@ public class LocalSearchDebugView extends ViewPart {
         IEvaluationService service = getSite().getService(IEvaluationService.class);
         service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
     }
-//    
+    
     public LocalSearchDebugger getDebugger() {
         return this.debugger;
     }
@@ -253,14 +273,23 @@ public class LocalSearchDebugView extends ViewPart {
         operationListViewer.getControl().setFocus();
     }
 
-    public void refreshView() {
+    public void refreshView(PQuery currentQuery, IPlanNode currentNode) {
         getViewSite().getShell().getDisplay().syncExec(() -> {
             operationListViewer.refresh();
             graphViewer.refresh();
+            
+            // Move to currently executed operation (if applicable)
+            if (currentNode != null) {
+                operationListViewer.expandToLevel(currentNode, 0);
+                operationListViewer.reveal(currentNode);
+            }
+            
+            
             Collection<TableViewer> tableViewers = matchViewersMap.values();
             for (TableViewer tableViewer : tableViewers) {
                 tableViewer.refresh();
             }
+            selectMatchTab(currentQuery);
         });
         
         IEvaluationService service = getSite().getService(IEvaluationService.class);
@@ -279,12 +308,17 @@ public class LocalSearchDebugView extends ViewPart {
         String queryName = getSimpleQueryName(query);
         TableViewer viewer = matchViewersMap.get(queryName);
         if(viewer == null){
-            getOrCreateMatchesTab(queryName);
+            getOrCreateMatchesTab(query);
         }
         return matchViewersMap.get(queryName);
     }
-
-    private void getOrCreateMatchesTab(final String tabTitle) {
+    
+    public void selectMatchTab(PQuery query) {
+        getMatchesTabFolder().setSelection(matchesTabIndex.get(query));
+    }
+    
+    private void getOrCreateMatchesTab(PQuery query) {
+        final String tabTitle = getSimpleQueryName(query);
         // This method is called from a non-ui thread so that a syncexec is required here
         getViewSite().getShell().getDisplay().syncExec(() -> {
             CTabItem item = new CTabItem(getMatchesTabFolder(), SWT.NULL);
@@ -292,6 +326,7 @@ public class LocalSearchDebugView extends ViewPart {
 
             // Mark as active
             getMatchesTabFolder().setSelection(item);
+            matchesTabIndex.put(query, item);
             
             // Table viewer for the matches
             Composite container = new Composite(getMatchesTabFolder(),SWT.NONE);
@@ -360,5 +395,6 @@ public class LocalSearchDebugView extends ViewPart {
             item.dispose();
         }
         matchViewersMap.clear();
+        matchesTabIndex.clear();
     }
 }

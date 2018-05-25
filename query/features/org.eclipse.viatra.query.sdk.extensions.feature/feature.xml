@@ -51,12 +51,11 @@
          version="0.0.0"
          unpack="false"/>
 
-   <!-- TODO: https://bugs.eclipse.org/bugs/show_bug.cgi?id=534690 Restore after the local search debugger is functional again
    <plugin
          id="org.eclipse.viatra.query.tooling.localsearch.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>-->
+         unpack="false"/>
 
 </feature>

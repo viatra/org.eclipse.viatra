@@ -58,7 +58,8 @@ public class MatchesTableLabelProvider extends ColumnLabelProvider {
         @SuppressWarnings("unchecked")
         List<MatchingFrame> input = (List<MatchingFrame>) viewer.getInput();
         MatchingFrame lastFrame = input.get(input.size() - 1);
-        if (currentFrame.equals(lastFrame)) {
+        // Note that here we really need object equality, otherwise sometimes two frames might be marked as work-in-progress
+        if (currentFrame == lastFrame) {
             return new Color(Display.getDefault(), 0xFF, 0, 0);
         }
         return super.getBackground(element);

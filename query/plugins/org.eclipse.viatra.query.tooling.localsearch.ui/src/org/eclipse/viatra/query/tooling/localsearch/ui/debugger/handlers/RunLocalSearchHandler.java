@@ -29,19 +29,17 @@ public class RunLocalSearchHandler extends AbstractHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
         try {
             LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
-            //TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=534690 replace with fixed version after local search debugger is operational again
-//            if (localSearchDebugView != null && localSearchDebugView.getDebugger() != null) {
-//                localSearchDebugView.getDebugger().setHalted(false);
-//            }
+            final LocalSearchDebugger debugger = localSearchDebugView.getDebugger();
+            if (localSearchDebugView != null && debugger != null) {
+                debugger.continueMatching();
+                synchronized (debugger.notifier) {
+                    // notifies the thread that does the matching
+                    debugger.notifier.notify();
+                }
+            }
         } catch (PartInitException e) {
             throw new ExecutionException(e.getMessage(), e);
         }
-        
-        synchronized (LocalSearchDebugger.notifier) {
-            // notifies the thread that does the matching
-            LocalSearchDebugger.notifier.notify();
-        }
-        
         return null;
     }
 

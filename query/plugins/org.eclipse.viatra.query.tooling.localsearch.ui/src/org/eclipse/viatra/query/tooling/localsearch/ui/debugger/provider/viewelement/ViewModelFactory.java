@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IPatternMatcherOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
@@ -41,9 +38,7 @@ public class ViewModelFactory {
     private IPlanNode createBodyNode(IPlanNode parent, SearchPlanForBody plan) {
         PatternBodyNode node = new PatternBodyNode(parent, plan);
         parent.addChild(plan.getBody(), node);
-        final List<ISearchOperation> operationList = plan.getCompiledOperations();
-        operationList.forEach(op -> createSearchOperationNode(node, op));
-        createMatchFoundNode(node, plan);
+        plan.getCompiledOperations().forEach(op -> createSearchOperationNode(node, op));
         return node;
     }
     
@@ -58,14 +53,7 @@ public class ViewModelFactory {
         return node;
     }
     
-    private IPlanNode createMatchFoundNode(IPlanNode parent, SearchPlanForBody plan) {
-        final MatchFoundNode node = new MatchFoundNode(parent);
-        parent.addChild(MatchFoundNode.ID, node);
-        return node;
-    }
-    
     private void doCreateChildren(IPlanNode node, IPlanDescriptor desc) {
-        final Collection<SearchPlanForBody> plans = desc.getPlan();
-        plans.forEach(plan -> createBodyNode(node, plan));
+        desc.getPlan().forEach(plan -> createBodyNode(node, plan));
     }
 }
