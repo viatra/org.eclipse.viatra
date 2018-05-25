@@ -55,7 +55,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Provider;
 
 import javafx.collections.ListChangeListener;
 import javafx.embed.swt.FXCanvas;
@@ -327,6 +326,13 @@ public class ZestContentViewer extends ContentViewer {
         Node node = new Node();
         contentNodeMap.put(contentNode, node);
 
+        doFormatNode(contentNode, graphContentProvider, labelProvider, node);
+
+        return node;
+    }
+
+    private void doFormatNode(final Object contentNode, IContentProvider graphContentProvider,
+            final ILabelProvider labelProvider, Node node) {
         // label
         ZestProperties.setLabel(node, () -> labelProvider.getText(contentNode));
 
@@ -400,8 +406,6 @@ public class ZestContentViewer extends ContentViewer {
 
         // create nested graph (optional)
         createNestedGraph(contentNode, graphContentProvider, labelProvider);
-
-        return node;
     }
     
     protected void createNodesAndEdges(IContentProvider contentProvider, ILabelProvider labelProvider, Graph graph, Object[] contentNodes) {
@@ -715,4 +719,8 @@ public class ZestContentViewer extends ContentViewer {
         return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
     }
 
+    public void refresh(Object element) {
+        final Node node = contentNodeMap.get(element);
+        doFormatNode(element, getContentProvider(), getLabelProvider(), node);
+    }
 }

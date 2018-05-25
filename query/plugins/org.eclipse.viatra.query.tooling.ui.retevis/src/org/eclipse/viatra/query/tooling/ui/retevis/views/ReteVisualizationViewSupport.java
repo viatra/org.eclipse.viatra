@@ -236,8 +236,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
                     ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             ModifiableZestContentViewer viewer = (ModifiableZestContentViewer) jfaceViewer;
             viewer.setContentProvider(new ZestContentProvider());
-            viewer.setLabelProvider(
-                    new ReteVisualizationLabelProvider(state, nodeTrace, viewer.getControl().getDisplay()));
+            viewer.setLabelProvider(new ReteVisualizationLabelProvider(nodeTrace));
             viewer.setInput(state);
         }
     }

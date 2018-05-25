@@ -32,9 +32,13 @@ public class ViatraGraphViewers {
      * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.
      */
     public static void bind(ModifiableZestContentViewer viewer, ViewerState state) {
-        viewer.setContentProvider(new ZestContentProvider());
-        viewer.setLabelProvider(new ZestLabelProvider(state, viewer
-                .getControl().getDisplay()));
+        if (!(viewer.getContentProvider() instanceof ZestContentProvider)) {
+            viewer.setContentProvider(new ZestContentProvider());
+        }
+        
+        if (!(viewer.getLabelProvider() instanceof ZestLabelProvider)) {
+            viewer.setLabelProvider(new ZestLabelProvider());
+        }
         viewer.setInput(state);
     }
 
@@ -45,9 +49,13 @@ public class ViatraGraphViewers {
      */
     public static void bind(ModifiableZestContentViewer viewer, ViewerState state,
             boolean displayContainment) {
-        viewer.setContentProvider(new ZestContentProvider(displayContainment));
-        viewer.setLabelProvider(new ZestLabelProvider(state, viewer
-                .getControl().getDisplay()));
+        if (!(viewer.getContentProvider() instanceof ZestContentProvider)) {
+            viewer.setContentProvider(new ZestContentProvider(displayContainment));
+        }
+        
+        if (!(viewer.getLabelProvider() instanceof ZestLabelProvider)) {
+            viewer.setLabelProvider(new ZestLabelProvider());
+        }
         viewer.setInput(state);
     }
 

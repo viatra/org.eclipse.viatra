@@ -13,14 +13,14 @@ package org.eclipse.viatra.addon.viewers.runtime.zest.sources;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.gef.zest.fx.ZestProperties;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.notation.FormattableElement;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.sources.QueryLabelProvider;
@@ -44,30 +44,16 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
         }
     }
     
-    private Map<RGB, Color> colorMap = new HashMap<>();
-
-    public ZestLabelProvider(ViewerState state, Display display) {
-        super(state, display);
-
-    }
+    private ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 
     private Color getColorProperty(FormattableElement element, String property) {
         if (FormatParser.isFormatted(element)) {
             RGB color = FormatParser.getColorFormatProperty(element,property);
             if (color != null) {
-                return getColor(color);
+                return resourceManager.createColor(color);
             }
         }
         return null;
-    }
-
-    private Color getColor(RGB rgb) {
-        if (!colorMap.containsKey(rgb)) {
-            Color newColor = new Color(display, rgb);
-            colorMap.put(rgb, newColor);
-            return newColor;
-        }
-        return colorMap.get(rgb);
     }
 
     @Override
@@ -88,12 +74,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
     
     @Override
     public void dispose() {
-        for (Entry<RGB, Color> colorEntry : colorMap.entrySet()) {
-            Color color = colorEntry.getValue();
-            if (color != null && !color.isDisposed()) {
-                color.dispose();
-            }
-        }
+        resourceManager.dispose();
         super.dispose();
     }
 

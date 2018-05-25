@@ -18,7 +18,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.viatra.addon.viewers.runtime.model.ItemExtender.RootItem;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.AbstractViewerStateListener;
+import org.eclipse.viatra.addon.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
+import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
@@ -26,7 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * @author Zoltan Ujhelyi
  *
  */
-public class TreeContentProvider extends AbstractViewerStateListener implements ITreeContentProvider {
+public class TreeContentProvider extends AbstractViewerStateListener implements ITreeContentProvider, IViewerLabelListener {
 
     AbstractTreeViewer viewer;
     ViewerState state;
@@ -38,6 +40,7 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
         this.viewer = (AbstractTreeViewer) viewer;
         if (oldInput instanceof ViewerState) {
             ((ViewerState) oldInput).removeStateListener(this);
+            ((ViewerState) oldInput).removeLabelListener(this);
         }
         if (newInput instanceof ViewerState) {
             this.state = (ViewerState) newInput;
@@ -45,6 +48,7 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
                 this.state = null;
             } else {
                 state.addStateListener(this);
+                state.addLabelListener(this);
             }
         } else if (newInput != null) {
             throw new IllegalArgumentException(String.format("Invalid input type %s for Tree Viewer.", newInput
@@ -114,4 +118,14 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
         }
     }
 
+    @Override
+    public void labelUpdated(Item item, String newLabel) {
+        viewer.getControl().getDisplay().syncExec(() -> viewer.refresh(item));
+        
+    }
+
+    @Override
+    public void labelUpdated(Edge edge, String newLabel) {
+        viewer.getControl().getDisplay().syncExec(() -> viewer.refresh(edge));
+    }
 }

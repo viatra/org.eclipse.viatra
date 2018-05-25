@@ -38,19 +38,15 @@ public class ViatraViewerSupport {
             viewer.setInput(null);
         }
         
-        if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof ListContentProvider) {
-            // dispose already existing content provider
-            ((ListContentProvider)viewer.getContentProvider()).dispose();
+        if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
+            viewer.setContentProvider(new ListContentProvider());
         }
 
         
-        if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
-            // dispose already existing label provider
-            ((QueryLabelProvider)viewer.getLabelProvider()).dispose();
+        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+            viewer.setLabelProvider(new QueryLabelProvider());
         }
 
-        viewer.setContentProvider(new ListContentProvider());
-        viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
         viewer.setInput(state);			
         viewer.refresh();
     }
@@ -67,18 +63,14 @@ public class ViatraViewerSupport {
             viewer.setInput(null);
         }
         
-        if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof TreeContentProvider) {
-            // dispose already existing content provider
-            ((TreeContentProvider)viewer.getContentProvider()).dispose();
+        if (!(viewer.getContentProvider() instanceof TreeContentProvider)) {
+            viewer.setContentProvider(new TreeContentProvider());
         }
         
-        if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
-            // dispose already existing label provider
-            ((QueryLabelProvider)viewer.getLabelProvider()).dispose();
+        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+            viewer.setLabelProvider(new QueryLabelProvider());
         }
                 
-        viewer.setContentProvider(new TreeContentProvider());
-        viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
         viewer.setInput(state);	
         viewer.refresh();
     }
