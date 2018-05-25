@@ -7,18 +7,32 @@
  *
  * Contributors:
  *   Marton Bur - initial API and implementation
+ *   Zoltan Ujhelyi - greatly redesigned version for VIATRA v2.0
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
 import java.util.Optional;
 
+import org.eclipse.viatra.query.runtime.localsearch.ExecutionLoggerAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.viatra.query.runtime.localsearch.profiler.LocalSearchProfilerAdapter;
 
 
 /**
+ * A local search adapter allows external code to follow the internal executions of the local search matcher. Possible
+ * implementations of the interface include profilers and debuggers.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. A few shortcomings have been found for this interface late during the development
+ * lifecycle of version 2.0 whose solution might need breaking possible future implementors. Because of this, right now
+ * it is not recommended to provide implementations outside of VIATRA. If necessary, have a look at the built-in
+ * adapters that should fulfill most cases in the meantime. See bugs https://bugs.eclipse.org/bugs/show_bug.cgi?id=535101
+ * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=535102 for details.
+ * 
  * @author Marton Bur
+ * @see ExecutionLoggerAdapter
+ * @see LocalSearchProfilerAdapter
  *
  */
 public interface ILocalSearchAdapter {
