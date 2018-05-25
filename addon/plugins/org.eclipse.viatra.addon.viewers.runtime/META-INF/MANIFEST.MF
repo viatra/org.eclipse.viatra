@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Viewers Runtime (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.runtime;singleton:=true
-Bundle-Version: 0.17.2.qualifier
+Bundle-Version: 0.17.3.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin
 Bundle-Vendor: Eclipse VIATRA Project

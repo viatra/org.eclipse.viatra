@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query Testing UI
 Bundle-SymbolicName: org.eclipse.viatra.query.testing.ui;singleton:=true
-Bundle-Version: 1.7.2.qualifier
+Bundle-Version: 1.7.3.qualifier
 Bundle-Activator: org.eclipse.viatra.query.testing.ui.ViatraQueryTestingUIPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.viatra.query.tooling.ui;bundle-version="[1.7.0,1.8.0)",

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query Debug IDE
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.debug;singleton:=true
-Bundle-Version: 1.7.2.qualifier
+Bundle-Version: 1.7.3.qualifier
 Bundle-Activator: org.eclipse.viatra.query.tooling.debug.ViatraQueryDebugPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Viewers IDE - Zest Support (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.tooling.ui.zest;singleton:=true
-Bundle-Version: 0.17.2.qualifier
+Bundle-Version: 0.17.3.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.core.runtime,

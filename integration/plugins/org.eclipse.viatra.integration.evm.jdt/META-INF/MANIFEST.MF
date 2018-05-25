@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA EVM Integration for JDT (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.integration.evm.jdt;singleton:=true
-Bundle-Version: 0.17.2.qualifier
+Bundle-Version: 0.17.3.qualifier
 Export-Package: org.eclipse.viatra.integration.evm.jdt;
   uses:="com.google.common.base",
  org.eclipse.viatra.integration.evm.jdt.job,
