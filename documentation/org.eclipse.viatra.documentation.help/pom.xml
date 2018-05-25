@@ -43,7 +43,10 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <backend>html5</backend>	
+                            <backend>html5</backend>
+                            <sourceDocumentExtensions>
+                                <sourceDocumentExtension>asciidoc</sourceDocumentExtension>
+                            </sourceDocumentExtensions>	
                             <sourceHighlighter>${asciidoc.highlighter}</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
                             <outputDirectory>html</outputDirectory>
