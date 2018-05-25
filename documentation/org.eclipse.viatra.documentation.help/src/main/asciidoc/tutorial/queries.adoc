@@ -176,6 +176,43 @@ pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp : java 
 
 When adding such a constraint annotation to a graph pattern, the code generator initializes a validation project that includes and registers the rules derived from the patterns for the framework. These rules can be tried out by opening a new, runtime Eclipse instance, opening an erroneous instance model in the model editor (the same one added to the `targetEditorId` parameter), and starting the validation from the popup menu items under *VIATRA Validation*.
 
+== More Complex Queries
+
+This section introduces a set of more complex queries, useful for both introducing the remaining language features such as aggregators while illustrating the way the query language allows breaking down more complex conditions.
+
+=== Calculate the Maximum Number of Instances
+
+It is possible to find the Application Type that has the most instances defined in the model by combining a _counting_ of the values of the related feature and a _max_ function.  The `numberOfInstances` helper pattern uses a `count` call of the `ApplicationType.instances` feature (note the omission of the `find` keyword there). This feature is available starting with VIATRA 2.0, and allows reducing the number of trivial helper patterns, like the pattern `hostIpAddress` introduced earlier in this tutorial.
+
+After the counts are available in the match set of a pattern, it is easy to calculate the maximum value using the `max find` construct.
+
+[[vql-maximumNumberOfInstances]]
+[source,vql,indent=0]
+----
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=maximumNumberOfInstances]
+----
+
+=== Check Memory Requirements of a Host
+
+The CPS metamodel explicitly stores requirements of applications, and both free and total resource values in case of host instances. However, checking that application requirements and free and total values are consistent requires checking.
+
+.Requirement handling in the metamodel
+image::tutorial/cps_resources.png[Requirements in the CPS Metamodel]
+
+In the following example we focus on the memory requirements, but similar queries can be provided for CPU or HDD requirements. The well-formedness constraint we are trying to enforce is as follows: `FREE MEMORY + SUM(MEMORY OF DEPLOYED APPLICATIONS) = TOTAL MEMORY`.
+
+The pattern requires two helper patterns: one of them (`applicationTypeRequirementRAM`) is responsible for collecting the RAM requirement for a selected `Application Type`, the other (`totalMemoryRequirements`) summarizes all memory requirements a selected application instance.
+
+Using these helper patterns, the `invalidMemoryRequirement` pattern executes two additional steps: (1) it _summarizes_ the results of the pattern `totalMemoryRequirements` with regards to the application instances allocated to a host instance, and (2) _checks_ whether the three requirements are consistent.
+
+NOTE: A Host Instance is allocated to at most a single application, so it is not required to summarize the requirements of all applications here as done in the `invalidMemoryRequirement` pattern. However, adding this element to the query illustrates how to use `sum` correctly if multiple levels of summarization is necessary.
+
+[[vql-invalidMemoryRequirement]]
+[source,vql,indent=0]
+----
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=invalidMemoryRequirement]
+----
+
 == References
 
 * link:query-language.html[Pattern Language]

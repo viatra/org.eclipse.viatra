@@ -89,3 +89,35 @@ pattern reachableState(sm :StateMachine, state: State){
     find connectedTo+(initial, state);
 }
 // end::reachableState[]
+
+
+// tag::maximumNumberOfInstances[]
+pattern maximumNumberOfInstances(at : ApplicationType, max : java Integer) {
+	max == max find sumNumberOfInstances(at, #);
+}
+
+pattern sumNumberOfInstances(at : ApplicationType, n : java Integer) {
+	n == count ApplicationType.instances(at, _);
+}
+// end::maximumNumberOfInstances[]
+
+
+// tag::invalidMemoryRequirement[]
+pattern invalidMemoryRequirement(h : HostInstance, available : java Integer, allocated : java Integer, total : java Integer) {
+	HostInstance.availableRam(h, available);
+	HostInstance.totalRam(h, total);
+	allocated == sum find totalMemoryRequirements(h, _, #);
+	check(total != allocated + available);
+}
+
+private pattern totalMemoryRequirements(h : HostInstance, ai : ApplicationInstance, ram : java Integer) {
+	HostInstance.applications(h, ai);
+	ApplicationInstance.type(ai, at);
+	ram == sum find applicationTypeRequirementRAM(at, #);
+}
+
+private pattern applicationTypeRequirementRAM(at : ApplicationType, ram : java Integer) {
+	ApplicationType.requirements(at, req);
+	ResourceRequirement.requiredRam(req, ram);	
+}
+// end::invalidMemoryRequirement[]

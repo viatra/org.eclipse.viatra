@@ -10,15 +10,9 @@
       <query-specification fqn="org.eclipse.viatra.documentation.example.queries.goodHost"/>
       <query-specification fqn="org.eclipse.viatra.documentation.example.queries.countApplications"/>
       <query-specification fqn="org.eclipse.viatra.documentation.example.queries.reachableState"/>
-    </group>
-  </extension>
-  <extension id="org.eclipse.viatra.documentation.example.queries.ValidationExplanationQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.documentation.example.queries.ValidationExplanationQueries" id="org.eclipse.viatra.documentation.example.queries.ValidationExplanationQueries">
-      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostTypeRAMTotal_Wrong_Embedded"/>
-      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostTypeRAM"/>
-      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostTypeRAMTotal"/>
-      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostTypeRAM_Simple"/>
-      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostTypeRAMTotal_Wrong"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.maximumNumberOfInstances"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.sumNumberOfInstances"/>
+      <query-specification fqn="org.eclipse.viatra.documentation.example.queries.invalidMemoryRequirement"/>
     </group>
   </extension>
 </plugin>
