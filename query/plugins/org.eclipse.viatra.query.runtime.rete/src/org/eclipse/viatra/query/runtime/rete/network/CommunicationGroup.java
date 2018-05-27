@@ -115,7 +115,11 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 	 */
 	public static final class Singleton extends CommunicationGroup {
 
-		private Mailbox mailbox;
+		/**
+         * 
+         */
+        private static final String UNSUPPORTED_MESSAGE_KIND = "Unsupported message kind ";
+        private Mailbox mailbox;
 
 		/**
 		 * @since 1.7
@@ -142,7 +146,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 					this.tracker.activateUnenqueued(this);
 				}
 			} else {
-				throw new IllegalArgumentException("Unsupported message kind " + kind);
+				throw new IllegalArgumentException(UNSUPPORTED_MESSAGE_KIND + kind);
 			}
 		}
 
@@ -152,7 +156,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 				this.mailbox = null;
 				this.tracker.deactivate(this);
 			} else {
-				throw new IllegalArgumentException("Unsupported message kind " + kind);
+				throw new IllegalArgumentException(UNSUPPORTED_MESSAGE_KIND + kind);
 			}
 		}
 

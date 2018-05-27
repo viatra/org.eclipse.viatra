@@ -30,7 +30,7 @@ public class StepLocalSearchHandler extends AbstractHandler {
         try {
             LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
             final LocalSearchDebugger debugger = localSearchDebugView.getDebugger();
-            if (localSearchDebugView != null && debugger != null) {
+            if (debugger != null) {
                 synchronized (debugger.notifier) {
                     // notifies the thread that does the matching
                     debugger.notifier.notify();

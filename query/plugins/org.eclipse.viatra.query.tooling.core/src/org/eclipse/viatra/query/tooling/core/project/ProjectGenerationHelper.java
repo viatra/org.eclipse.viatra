@@ -76,13 +76,13 @@ public abstract class ProjectGenerationHelper {
      * Contains the default bundle requirements for VIATRA in a format that can be loaded into {@link #ensureBundleDependencies(IProject, List)}.
      * @since 2.0
      */
-    public static List<String> DEFAULT_VIATRA_BUNDLE_REQUIREMENTS = Arrays.asList("org.eclipse.emf.ecore", ViatraQueryRuntimePlugin.PLUGIN_ID,
+    public static final List<String> DEFAULT_VIATRA_BUNDLE_REQUIREMENTS = Arrays.asList("org.eclipse.emf.ecore", ViatraQueryRuntimePlugin.PLUGIN_ID,
             "org.eclipse.viatra.query.runtime.rete", "org.eclipse.viatra.query.runtime.localsearch", "org.eclipse.xtext.xbase.lib");
     /**
      * Contains the default import package requirements for VIATRA in a format that can be loaded into {@link #ensurePackageImports(IProject, List)}.
      * @since 2.0
      */
-    public static List<String> DEFAULT_VIATRA_IMPORT_PACKAGES = Arrays.asList("org.apache.log4j");
+    public static final List<String> DEFAULT_VIATRA_IMPORT_PACKAGES = Arrays.asList("org.apache.log4j");
     
     private ProjectGenerationHelper() {/*Utility class constructor*/}
     

@@ -28,6 +28,7 @@ import java.util.Set;
  */
 public class MemoryViewBackedMapView<T> implements Map<T, Integer> {
     
+    private static final String READ_ONLY = "Read only";
     private final IMemoryView<T> wrapped;
     
     /**
@@ -65,7 +66,7 @@ public class MemoryViewBackedMapView<T> implements Map<T, Integer> {
 
     @Override
     public Integer put(T key, Integer value) {
-        throw new UnsupportedOperationException("Read only");
+        throw new UnsupportedOperationException(READ_ONLY);
     }
 
     @Override
@@ -76,17 +77,17 @@ public class MemoryViewBackedMapView<T> implements Map<T, Integer> {
 
     @Override
     public Integer remove(Object key) {
-        throw new UnsupportedOperationException("Read only");
+        throw new UnsupportedOperationException(READ_ONLY);
     }
 
     @Override
     public void putAll(Map<? extends T, ? extends Integer> m) {
-        throw new UnsupportedOperationException("Read only");
+        throw new UnsupportedOperationException(READ_ONLY);
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("Read only");
+        throw new UnsupportedOperationException(READ_ONLY);
     }
 
     @Override

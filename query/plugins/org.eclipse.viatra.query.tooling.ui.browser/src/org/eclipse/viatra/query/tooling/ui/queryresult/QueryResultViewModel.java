@@ -12,26 +12,17 @@ package org.eclipse.viatra.query.tooling.ui.queryresult;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
-import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
-import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
-import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
 
 import com.google.common.collect.Sets;

@@ -30,7 +30,7 @@ public class RunLocalSearchHandler extends AbstractHandler {
         try {
             LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
             final LocalSearchDebugger debugger = localSearchDebugView.getDebugger();
-            if (localSearchDebugView != null && debugger != null) {
+            if (debugger != null) {
                 debugger.continueMatching();
                 synchronized (debugger.notifier) {
                     // notifies the thread that does the matching
