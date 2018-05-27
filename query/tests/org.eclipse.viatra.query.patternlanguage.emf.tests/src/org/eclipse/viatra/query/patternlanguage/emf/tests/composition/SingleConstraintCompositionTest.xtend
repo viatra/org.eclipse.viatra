@@ -592,4 +592,51 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
             getWarningCode(IssueCodes.MISTYPED_PARAMETER)
         )
     }
+    
+    @Test
+    def void javaTypeEmbed1() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern p(a : java String){
+                a == "abc";
+                neg java String(a);
+            }
+            '''
+        )
+        parsed.assertError(PatternLanguagePackage.Literals.PATTERN_BODY, Diagnostic.SYNTAX_DIAGNOSTIC, "'neg'")
+    }
+    
+    @Test
+    def void javaTypeEmbed2() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern p(a : java String){
+                a == "abc";
+                java String+(a);
+            }
+            '''
+        )
+        parsed.assertError(PatternLanguagePackage.Literals.TYPE_CHECK_CONSTRAINT, Diagnostic.SYNTAX_DIAGNOSTIC, "extraneous input")
+    }
+    
+    @Test
+    def void javaTypeEmbed3() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern p(a : java Integer){
+                a == count java String(a);
+            }
+            '''
+        )
+        parsed.assertError(PatternLanguagePackage.Literals.COMPARE_CONSTRAINT, Diagnostic.SYNTAX_DIAGNOSTIC, "'count'")
+    }
 }

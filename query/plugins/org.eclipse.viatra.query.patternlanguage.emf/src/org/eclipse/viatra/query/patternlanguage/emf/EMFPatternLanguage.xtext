@@ -107,7 +107,6 @@ PatternCompositionConstraint:
     |
     negative?='neg' (
         call = EClassifierConstraint |
-        call = TypeCheckConstraint |
         call = PathExpressionConstraint
     )
 ;
