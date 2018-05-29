@@ -52,6 +52,7 @@ import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter
 
 /**
  * @author Abel Hegedus
@@ -87,7 +88,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     IRegistryView view
     
     @Accessors(PUBLIC_GETTER)
-    QueryEvaluationHint hint
+    QueryEvaluationHint hintForBackendSelection
     
     Set<IQueryResultViewModelListener> listeners
     
@@ -99,7 +100,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     ) {
         this.engine = engine
         this.engineOperational = true
-        this.hint = hint
+        this.hintForBackendSelection = hint
         this.readOnlyEngine = readOnlyEngine
         this.matchers = Maps.newTreeMap()
         this.loadedEntries = HashBasedTable.create
@@ -136,7 +137,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     
     def setHint(QueryEvaluationHint hint) {
         Preconditions.checkNotNull(hint);
-        this.hint = hint;
+        this.hintForBackendSelection = hint;
     }
     
     def <MATCH extends IPatternMatch> createMatcher(ViatraQueryMatcher<MATCH> matcher) {
@@ -242,7 +243,8 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
             if(specification.internalQueryRepresentation.status == PQueryStatus.ERROR){
                 entry.addErroneousMatcher(new IllegalArgumentException("Query definition contains errors"))
             } else {
-                val matcher = engine.getMatcher(specification, hint)
+                val currentHint = hintForBackendSelection.overrideBy(RuntimePreferencesInterpreter.getHintOverridesFromPreferences()) 
+                val matcher = engine.getMatcher(specification, currentHint)
                 val specificationFQN = specification.fullyQualifiedName
                 val treeMatcher = matchers.get(specificationFQN)
                 if(specificationFQN != entryFQN){
@@ -251,7 +253,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
                     matchers.put(entryFQN, treeMatcher)
                 }
                 treeMatcher.entry = entry
-                treeMatcher.hint = hint
+                treeMatcher.hint = currentHint
                 knownErrorEntries.remove(entry.sourceIdentifier, entryFQN)
                 return treeMatcher
             }

@@ -166,7 +166,7 @@ public class QueryEvaluationHint {
             }
             return new QueryEvaluationHint(hints, factory);
         } else {
-            return new QueryEvaluationHint(backendHintSettings, overriddenRequirement);
+            return new QueryEvaluationHint(hints, overriddenRequirement);
         }
     }
     

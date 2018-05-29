@@ -31,14 +31,15 @@ public class RuntimePreferencesInterpreter {
     private RuntimePreferencesInterpreter () {}
     
     /**
-     * @return the query evaluation hint overrides specified on the preferences page
+     * @return the query evaluation hint overrides specified on the preferences page; 
+     * selections matching the defaults will not be included
      */
     public static QueryEvaluationHint getHintOverridesFromPreferences() {
         Map<QueryHintOption<?>, Object> hintSettings = new HashMap<>();
 
         boolean dredMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.DRED_MODE);
-        ReteHintOptions.deleteRederiveEvaluation.insertOverridingValue(hintSettings, dredMode);
+        ReteHintOptions.deleteRederiveEvaluation.insertValueIfNondefault(hintSettings, dredMode);
         
         QueryEvaluationHint preferenceHintOverrides = new QueryEvaluationHint(hintSettings, BackendRequirement.UNSPECIFIED);
         return preferenceHintOverrides;

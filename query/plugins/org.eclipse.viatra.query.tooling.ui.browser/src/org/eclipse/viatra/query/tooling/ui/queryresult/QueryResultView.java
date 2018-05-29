@@ -60,6 +60,7 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
@@ -90,7 +91,7 @@ public class QueryResultView extends ViewPart {
     private QueryResultTreeInput input;
     private Label lblScopeDescription;
     private ITabbedPropertySheetPageContributor propertyPageContributor;
-    private QueryEvaluationHint hint;
+    private QueryEvaluationHint hintForBackendSelection;
     private CollapseAllHandler collapseHandler;
     private IModelConnectorListener connectorListener;
 
@@ -152,7 +153,7 @@ public class QueryResultView extends ViewPart {
     
     public QueryResultView() {
         this.propertyPageContributor = () -> getSite().getId();
-        this.hint = new QueryEvaluationHint(null, ReteBackendFactory.INSTANCE);
+        this.hintForBackendSelection = new QueryEvaluationHint(null, ReteBackendFactory.INSTANCE);
         this.connectorListener = modelConnector -> unloadModel();
     }
 
@@ -295,7 +296,7 @@ public class QueryResultView extends ViewPart {
         unloadModel();
 
         input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);
-        input.setHint(hint);
+        input.setHint(hintForBackendSelection);
         queryResultTreeViewer.setInput(input);
         modelConnector.addListener(connectorListener);
         loadEngineDetails(input.getEngine());
@@ -376,15 +377,19 @@ public class QueryResultView extends ViewPart {
         }
     }
 
+    /**
+     * @return the internally stored hint object representing a backend selection.
+     * Note that user hints specified in the preference pages are not yet taken into account here.
+     */
     public QueryEvaluationHint getHint() {
         if(input != null){
-            return input.getHint();
+            return input.getHintForBackendSelection();
         }
-        return hint;
+        return hintForBackendSelection;
     }
     
     public void setHint(QueryEvaluationHint hint) {
-        this.hint = hint;
+        this.hintForBackendSelection = hint;
         if(input != null){
             input.setHint(hint);
         }

@@ -31,10 +31,13 @@ class HintsPropertySource implements IPropertySource {
     }
     
     override toString() {
-        if(hint.backendHintSettings.empty){
-            return "No hints specified"
+        val numOverrides = hint.backendHintSettings.size
+        switch(numOverrides) {
+            case 0: return "No hints specified"
+            case 1: return "1 overridden hint option"
+            default: return String.format("%d overridden hint options", numOverrides)
         }
-        return ""
+       
     }
 
     override IPropertyDescriptor[] getPropertyDescriptors() {

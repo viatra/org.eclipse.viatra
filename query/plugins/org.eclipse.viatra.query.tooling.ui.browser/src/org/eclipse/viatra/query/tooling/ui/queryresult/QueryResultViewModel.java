@@ -43,6 +43,9 @@ public enum QueryResultViewModel {
         this.defaultHint = new QueryEvaluationHint(null, BackendRequirement.DEFAULT_CACHING);
     }
     
+    /**
+     * Note that default hints are used to parameterize the input, preferences are not yet taken into account. 
+     */
     protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) {
         checkArgument(connector != null, "Connector cannot be null");
         checkArgument(type != null, "Type cannot be null");
@@ -57,12 +60,12 @@ public enum QueryResultViewModel {
     }
 
     /**
-     * This method is intended to support existing engines 
+     * This method is intended to support existing engines.
+     * Note that default hints are used, preferences are not yet taken into account. 
      */
     protected QueryResultTreeInput createInput(AdvancedViatraQueryEngine engine, boolean readOnlyEngine) {
-        QueryEvaluationHint hints = defaultHint.overrideBy(RuntimePreferencesInterpreter.getHintOverridesFromPreferences());
         QueryResultTreeInput input = new QueryResultTreeInput(engine, QuerySpecificationRegistry.getInstance(),
-                readOnlyEngine, hints);
+                readOnlyEngine, defaultHint);
         inputs.add(input);
         return input;
     }

@@ -32,6 +32,12 @@ public final class ReteHintOptions {
             hintOption("cacheOutputOfEvaluatorsByDefault", true);
     
     /**
+     * The incremental query evaluator backend can evaluate recursive patterns. 
+     * However, by default, instance models that contain cycles are not supported with recursive queries 
+     * and can lead to incorrect query results. 
+     * Enabling Delete And Rederive (DRED) mode guarantees that recursive query evaluation leads to correct results in these cases as well.
+     *  
+     * <p> As DRED may diminish the performance of incremental maintenance, it is not enabled by default.
      * @since 1.6
      */
     public static final QueryHintOption<Boolean> deleteRederiveEvaluation = 
