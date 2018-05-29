@@ -89,6 +89,11 @@ String applicationIdentifiers = ApplicationTypesMatcher.on(engine)
 
 The VIATRA Query engine also supports setting the default search-based and default caching backend instances, allowing further customization of the runtime behavior of the engine. The new feature is available through the previously used `ViatraQueryEngineOptions` class.
 
+=== Improved UI Support for Recursive Query Evaluation 
+
+For users who want to evaluate <<recursion,recursive queries>> via the Query Result View, we proudly report that the <<recursion-dred,delete and rederive (DRED)>> evaluation mode can now be selected on the UI (specifically the Preferences page for the VIATRA Query Explorer).
+
+
 === p2 repository structure update
 
 The removal of various features in this release made us reconsider the contents  of our p2 repository. Previously we used a composite repository with all of our releases, but the features removed from version 2.0 show up in its earlier version that can be confusing. In order to handle this case better (and also for better performance), we have introduced a `/latest` p2 repository, and simplified the categorization instead. 

@@ -462,7 +462,7 @@ It is possible to pass extra information to the runtime of VIATRA Query using ev
 . A pattern definition can be extended with hints, e.g. for backend selection in the pattern language. Such hints will be generated into the generated query specification code.
 . When accessing a new pattern matcher through the Query Engine, further override hints might be presented using `AdvancedQueryEngine#getMatcher(IQuerySpecification, QueryEvaluationHint)`. Such hints override both the engine default and the pattern default hints.
 
-In version 1.4 the hints are mostly used to fine tune the <<sec-localsearch, local search based pattern matcher>>, but their usage is gradually being extended. See classes `ReteHintOptions` and `LocalSearchHints` for hint options provided by the query backends.
+In version 1.4 the hints are mostly used to fine tune the <<sec-localsearch, local search based pattern matcher>>, but their usage is gradually being extended. See classes `ReteHintOptions` and `LocalSearchHints` for hint options provided by the query backends. As of 2.0, the <<recursion-dred,delete and rederive (DRED)>> hint option is available on the UI as well.
 
 == Query specification registry
 

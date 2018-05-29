@@ -243,11 +243,12 @@ Therefore VIATRA Query, in its default mode of operation, can return incorrect r
 
 Fortunately, there is a solution!
 
+[[recursion-dred]]
 ==== Delete and REDerive: conquering the ill-founded case
 
 Since the 1.6 version, VIATRA Queries supports _Delete and REDerive_ evaluation in the query engine. This evaluation strategy makes it possible to correctly compute the results of _recursive graph patterns_ on _instance models that contain cycles_ (i.e. when the recursion is ill-founded). Prior versions of VIATRA Queries supported only scenarios where at least one of the cycles was missing, that is, either the patterns were not recursive or the instance models were acyclic. 
 
-As of now, the Delete and REDerive evaluation can be manually enabled using the query evaluation hint `ReteHintOptions.deleteRederiveEvaluation`.
+As of now, the Delete and REDerive evaluation can be manually enabled using the query evaluation hint `ReteHintOptions.deleteRederiveEvaluation`. From version 2.0, this option can be selected for query evaluation through the Query Results View in the Preferences page for the VIATRA Query Explorer.
 
 ===== Optional reading: under the hood
 We demonstrate the problems of the old execution mode and the DRED solution by a concrete example. 
@@ -291,7 +292,7 @@ There are some important things to note:
 
 [[recursion-summary]]
 ==== Summary and suggestions
-In summary, VIATRA Query supports positive (stratified) recursion only. Even for positive recursion, correct (minimal fixpoint) results are only guaranteed if either (i) we enable the new DRED mode, at a performance cost, or (ii) the recursion is well-founded (e.g. moves along a containment hierarchy or acyclic graph). Otherwise (in default mode, with ill-founded recursion), the results are OK only if the model is guaranteed to only ever change by monotonously inserting new stuff, never deleting, moving or changing. 
+In summary, VIATRA Query supports positive (stratified) recursion only. Even for positive recursion, correct (minimal fixpoint) results are only guaranteed if either (i) we enable the <<recursion-dred,new DRED mode>>, at a performance cost, or (ii) the recursion is well-founded (e.g. moves along a containment hierarchy or acyclic graph). Otherwise (in default mode, with ill-founded recursion), the results are OK only if the model is guaranteed to only ever change by monotonously inserting new stuff, never deleting, moving or replacing. 
 
 Note that in many typical cases, the <<advanced-constraints,transitive closure operator>> (e.g. `find knows+(x,y);`) is sufficient to expressed the desired query, without having to resort to recursions. Transitive closures are successfully evaluated and incrementally maintained by VIATRA Query even in cases where recursion would be ill-founded and fail (e.g. reachability along relationships that may contain cycles). Even in case the recursion is well-founded, the transitive closure operator may or may not lead to better performance. Therefore our primary recommendation is to *use transitive closure instead of recursion if possible*.
 
