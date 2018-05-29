@@ -64,6 +64,6 @@ class OpenManagedEngineHandler extends AbstractHandler {
         }
         engineSelectionDialog.open()
         val result = engineSelectionDialog.getResult()
-        return result?.filter(AdvancedViatraQueryEngine).head
+        return result?.filter(AdvancedViatraQueryEngine)?.head
     }
 }
