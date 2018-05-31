@@ -43,17 +43,22 @@ class CrossResourceContainmentTest {
     HostInstance myHostInstance
 
     @Parameters(name="With DanglingFreeAssumption: {0}")
-    def static Object[] testData() {
+    def static Collection<Object[]> testData() {
         newArrayList(
-            #[true, false]
+            #["true",  true,  new BaseIndexOptions().withDanglingFreeAssumption(true)],
+            #["false", false, new BaseIndexOptions().withDanglingFreeAssumption(false)],
+            #["unset", true,  new BaseIndexOptions()]
         )
     }
-
     @Parameter(0)
-    public var boolean danglingFreeAssum;
+    public var String desc
+    @Parameter(1)
+    public var boolean danglingFreeAssum
+    @Parameter(2)
+    public var BaseIndexOptions option
 
     @Before
-    public def void setUp() {
+    def void setUp() {
         resourceSet = new ResourceSetImpl()
         resourceHt = resourceSet.createResource(URI.createURI("protocol://ht"))
         resourceHi = resourceSet.createResource(URI.createURI("protocol://hi"))
@@ -68,7 +73,6 @@ class CrossResourceContainmentTest {
     // Target is in scope, Source is not
     @Test
     def void crossContTest_1() {        
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(
             new EMFScope(resourceHi, option));
         val ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(
@@ -81,7 +85,6 @@ class CrossResourceContainmentTest {
     // Source is in scope, Target is not (Resource scope)
     @Test
     def void crossContTest_2() {        
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(
             new EMFScope(resourceHt, option));
         val ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(
@@ -95,7 +98,6 @@ class CrossResourceContainmentTest {
     // Target and Source are in the Scope (ResourceSet scope)
     @Test
     def void crossContTest_3() {                
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(
             new EMFScope(resourceSet, option));
         val ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(
@@ -110,7 +112,6 @@ class CrossResourceContainmentTest {
     // Target and Source are in the Scope (Resource scope)
     @Test
     def void crossContTest_4() {        
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(
             new EMFScope(myHostType, option));
         val ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(

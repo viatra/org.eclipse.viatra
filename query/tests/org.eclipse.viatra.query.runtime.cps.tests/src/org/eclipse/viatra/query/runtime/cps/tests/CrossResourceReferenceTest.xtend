@@ -61,14 +61,19 @@ class CrossResourceReferenceTest {
     ApplicationInstance myAppInstance
 
     @Parameters(name="With DanglingFreeAssumption: {0}")
-    def static Object[] testData() {
+    def static Collection<Object[]> testData() {
         newArrayList(
-            #[true, false]
+            #["true",  true,  new BaseIndexOptions().withDanglingFreeAssumption(true)],
+            #["false", false, new BaseIndexOptions().withDanglingFreeAssumption(false)],
+            #["unset", true,  new BaseIndexOptions()]
         )
     }
-
     @Parameter(0)
-    public var boolean danglingFreeAssum;
+    public var String desc
+    @Parameter(1)
+    public var boolean danglingFreeAssum
+    @Parameter(2)
+    public var BaseIndexOptions option
 
     // Resource filters:
     static class AppsResourceFilter implements IBaseIndexResourceFilter {
@@ -148,7 +153,6 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
             new EMFScope(resourceHosts, option), // scope is on resourceHosts
             AppInstanceAllocatedToHostInstanceQuerySpecification.instance).allMatches;
@@ -162,7 +166,6 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
             new EMFScope(resourceApps, option), // scope is on resourceApps
             AppInstanceAllocatedToHostInstanceQuerySpecification.instance).allMatches;
@@ -178,7 +181,6 @@ class CrossResourceReferenceTest {
         resourceAIO.contents += myHostType
         resourceAIO.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
             new EMFScope(resourceAIO, option), // scope is on resourceAIO
             AppInstanceAllocatedToHostInstanceQuerySpecification.instance).allMatches;
@@ -194,7 +196,6 @@ class CrossResourceReferenceTest {
         resourceAIO.contents += myHostType
         resourceAIO.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
             new EMFScope(resourceEmpty, option), // Scope is on resourceEmpty
             AppInstanceAllocatedToHostInstanceQuerySpecification.instance).allMatches;
@@ -208,7 +209,6 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum)
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
             new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
@@ -224,10 +224,9 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).withObjectFilterConfiguration(
-            new ObjectFilter(myAppInstance)) // MyAppInstance is filtered
+        val baseOptions = option.withObjectFilterConfiguration(new ObjectFilter(myAppInstance)) // MyAppInstance is filtered
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertTrue(matches.empty)
@@ -239,10 +238,9 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).withObjectFilterConfiguration(
-            new ObjectFilter(myHostInstance)) // MyHostInstance is filtered
+        val baseOptions = option.withObjectFilterConfiguration(new ObjectFilter(myHostInstance)) // MyHostInstance is filtered
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertFalse(matches.empty)
@@ -260,10 +258,10 @@ class CrossResourceReferenceTest {
         val HostType MyDummyHostType = createHostType => [identifier = "MyDummyHostType"]
         resourceDummy.contents += MyDummyHostType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).withObjectFilterConfiguration(
+        val baseOptions = option.withDanglingFreeAssumption(danglingFreeAssum).withObjectFilterConfiguration(
             new ObjectFilter(MyDummyHostType)) // MyDummyHostType is filtered
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertFalse(matches.empty)
@@ -277,10 +275,9 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).withObjectFilterConfiguration(
-            new TwoObjectsFilter(myHostInstance, myAppInstance))
+        val baseOptions = option.withObjectFilterConfiguration(new TwoObjectsFilter(myHostInstance, myAppInstance))
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertTrue(matches.empty)
@@ -292,10 +289,9 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).
-            withResourceFilterConfiguration(new AppsResourceFilter())
+        val baseOptions = option.withResourceFilterConfiguration(new AppsResourceFilter())
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertTrue(matches.empty)
@@ -307,10 +303,9 @@ class CrossResourceReferenceTest {
         resourceHosts.contents += myHostType
         resourceApps.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).
-            withResourceFilterConfiguration(new HostsResourceFilter())
+        val baseOptions = option.withResourceFilterConfiguration(new HostsResourceFilter())
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertFalse(matches.empty)
@@ -324,10 +319,9 @@ class CrossResourceReferenceTest {
         resourceAIO.contents += myHostType
         resourceAIO.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).
-            withResourceFilterConfiguration(new EmptyResourceFilter())
+        val baseOptions = option.withResourceFilterConfiguration(new EmptyResourceFilter())
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertFalse(matches.empty)
@@ -341,10 +335,9 @@ class CrossResourceReferenceTest {
         resourceAIO.contents += myHostType
         resourceAIO.contents += myAppType
 
-        val option = new BaseIndexOptions().withDanglingFreeAssumption(danglingFreeAssum).
-            withResourceFilterConfiguration(new AllInOneResourceFilter()) // .withResourceFilterConfiguration(new AppsResourceFilter())        
+        val baseOptions = option.withResourceFilterConfiguration(new AllInOneResourceFilter())         
         val Collection<? extends IPatternMatch> matches = getMatchesOnScopeWithQuerySpec(
-            new EMFScope(resourceSet, option), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
+            new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
         Assert.assertTrue(matches.empty)

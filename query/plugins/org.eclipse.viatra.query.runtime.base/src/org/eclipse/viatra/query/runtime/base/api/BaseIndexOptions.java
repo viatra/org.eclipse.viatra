@@ -120,7 +120,7 @@ public class BaseIndexOptions {
     }
     
     /**
-     * 
+     * Sets the dangling edge handling property of the index option. If not set explicitly, it is considered as `true`.
      * @param danglingFreeAssumption if true, 
      *  the base index will assume that there are no dangling references 
      *  (pointing out of scope or to proxies)
