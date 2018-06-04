@@ -96,4 +96,9 @@ public class MapBackedMemoryView<T> implements IMemoryView<T> {
     public boolean equals(Object obj) {
         return IMemoryView.equals(this, obj);
     }
+    
+    @Override
+    public String toString() {
+        return wrapped.toString();
+    }
 }

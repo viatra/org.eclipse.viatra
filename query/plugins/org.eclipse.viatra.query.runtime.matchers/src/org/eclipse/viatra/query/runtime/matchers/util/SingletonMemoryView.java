@@ -100,4 +100,8 @@ public final class SingletonMemoryView<Value> implements IMemoryView<Value> {
         return wrapped.hashCode() ^ ONE_HASH;
     }
 
+    @Override
+    public String toString() {
+        return "{" + wrapped + "}";
+    }
 }

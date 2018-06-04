@@ -112,4 +112,8 @@ public class MemoryViewBackedMapView<T> implements Map<T, Integer> {
     }
 
 
+    @Override
+    public String toString() {
+        return wrapped.toString();
+    }
 }
