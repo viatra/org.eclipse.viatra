@@ -9,5 +9,3 @@ The tutorial relies on the link:https://github.com/viatra/viatra-docs/blob/maste
 We expect readers to be familiar with the basics of Eclipse plug-in development, more specifically creating plug-in projects and defining basic UI extensions such as commands. Additionally, we expect a basic understanding of EMF-based modeling. If required, look at the Plug-in development tutorial at link:http://www.vogella.com/tutorials/EclipsePlugin/article.html[] or the EMF tutorial at link:http://www.vogella.com/tutorials/EclipseEMF/article.html[] for a short presentation on these subjects.
 
 This tutorial includes a *quick setup guide*, then describes both *model query development* and their usage in the *query runtime*. Then, both *batch* and *event-driven transformations* are covered.
-
-This document is intended only as a short tutorial for the usage of the Query and Transformation capabilities of VIATRA. A more detailed documentation is maintained at link:http://wiki.eclipse.org/VIATRA[].
