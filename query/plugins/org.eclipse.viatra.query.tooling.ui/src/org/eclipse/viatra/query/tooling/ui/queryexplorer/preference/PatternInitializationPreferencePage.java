@@ -69,8 +69,6 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
         wildcardModeEditor.load();
         wildcardModeEditor.setPropertyChangeListener(event -> store.setValue(PreferenceConstants.WILDCARD_MODE, wildcardModeEditor.getBooleanValue()));
         
-        // Label separator= new Label(control, SWT.HORIZONTAL | SWT.SEPARATOR);
-        // separator.setLayoutData(layoutData);
         
         Label dynamicEMFDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
         dynamicEMFDescriptionLabel.setText(DYNAMIC_EMF_MODE_DESCRIPTION);
@@ -80,6 +78,9 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
         dynamicEMFModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
         dynamicEMFModeEditor.load();
         dynamicEMFModeEditor.setPropertyChangeListener(event -> store.setValue(PreferenceConstants.DYNAMIC_EMF_MODE, dynamicEMFModeEditor.getBooleanValue()));
+        
+        Label separator= new Label(control, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separator.setLayoutData(layoutData);
         
         Label dredDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
         dredDescriptionLabel.setText(DRED_MODE_DESCRIPTION);
