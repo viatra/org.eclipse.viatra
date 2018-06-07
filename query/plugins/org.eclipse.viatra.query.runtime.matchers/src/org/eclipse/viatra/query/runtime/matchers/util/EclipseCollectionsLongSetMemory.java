@@ -73,7 +73,7 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
     
     @Override
     public boolean containsNonZeroUnsafe(Object value) {
-        return value instanceof Long && containsNonZeroUnsafe((Long) value);
+        return value instanceof Long && containsNonZero((Long) value);
     }
 
     @Override
@@ -95,6 +95,12 @@ public class EclipseCollectionsLongSetMemory implements ISetMemory<Long> {
     public Set<Long> distinctValues() {
         return new SetWrapper(wrapped);
     }
+    
+    @Override
+    public String toString() {
+        return wrapped.toString();
+    }
+    
     /**
      * Helper for iterating a LongIterable
      */

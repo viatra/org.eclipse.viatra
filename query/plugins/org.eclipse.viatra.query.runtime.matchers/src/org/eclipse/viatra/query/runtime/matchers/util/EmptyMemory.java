@@ -88,4 +88,8 @@ public class EmptyMemory<T> implements IMemoryView<T> {
         return IMemoryView.equals(this, obj);
     }
 
+    @Override
+    public String toString() {
+        return "{}";
+    }
 }

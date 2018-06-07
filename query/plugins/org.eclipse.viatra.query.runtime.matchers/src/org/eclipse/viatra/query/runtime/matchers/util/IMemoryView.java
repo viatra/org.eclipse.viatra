@@ -130,6 +130,11 @@ public interface IMemoryView<T> extends Iterable<T> {
                             throw new UnsupportedOperationException();
                         }
                         
+                        @Override
+                        public String toString() {
+                            return String.format("%d of %s", count, key);
+                        }
+                        
                     };
                 }
                 
