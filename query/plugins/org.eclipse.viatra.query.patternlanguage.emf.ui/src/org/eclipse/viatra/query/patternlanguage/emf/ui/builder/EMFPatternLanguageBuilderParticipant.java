@@ -29,9 +29,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
@@ -85,9 +82,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
     @Inject
     private Logger logger;
 
-    @Inject
-    private PatternSetValidator validator;
-    
     @Inject
     private IGeneratorConfigProvider generatorConfigProvider;
 
@@ -159,11 +153,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
      * @throws CoreException
      */
     private void doPostGenerate(Resource deltaResource, IBuildContext context) throws CoreException {
-        PatternSetValidationDiagnostics validate = validator.validate(deltaResource);
-        if (validate.getStatus() == PatternValidationStatus.ERROR) {
-            // If there are errors in the resource, do not execute post-build steps
-            return;
-        }
         final IProject project = context.getBuiltProject();
         calculateEMFModelProjects(deltaResource, project);
         TreeIterator<EObject> it = deltaResource.getAllContents();
