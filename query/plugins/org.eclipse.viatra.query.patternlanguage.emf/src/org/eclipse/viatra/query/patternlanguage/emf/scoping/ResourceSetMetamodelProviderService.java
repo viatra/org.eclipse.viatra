@@ -54,10 +54,10 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
             try {
                 uri = URI.createURI(packageUri);
                 if (uri.fragment() == null) {
-                    Resource resource = resourceSet.getResource(uri, true);
+                    Resource resource = resourceSet.getResource(uri, false);
                     return (EPackage) resource.getContents().get(0);
                 }
-                return (EPackage) resourceSet.getEObject(uri, true);
+                return (EPackage) resourceSet.getEObject(uri, false);
             } catch (RuntimeException ex) {
                 if (uri != null && uri.isPlatformResource()) {
                     String platformString = uri.toPlatformString(true);

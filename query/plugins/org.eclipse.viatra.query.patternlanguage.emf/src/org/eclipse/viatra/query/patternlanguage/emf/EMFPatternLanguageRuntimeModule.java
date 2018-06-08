@@ -26,7 +26,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.MetamodelProviderService;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.PatternLanguageResourceDescriptionStrategy;
-import org.eclipse.viatra.query.patternlanguage.emf.scoping.ResourceSetMetamodelProviderService;
 import org.eclipse.viatra.query.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
@@ -88,7 +87,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         // .to(XImportSectionNamespaceScopeProvider.class);
         Multibinder<IMetamodelProviderInstance> metamodelProviderBinder = Multibinder.newSetBinder(binder, IMetamodelProviderInstance.class);
         metamodelProviderBinder.addBinding().to(MetamodelProviderService.class);
-        metamodelProviderBinder.addBinding().to(ResourceSetMetamodelProviderService.class);
     }
 
     /**
