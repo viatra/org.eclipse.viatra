@@ -14,7 +14,6 @@ import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -64,7 +63,6 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor.Delegate;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
-import org.eclipse.xtext.xbase.ui.hover.XbaseInformationControlInput;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -108,17 +106,10 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         super.createProposals(context, acceptor);
     }
 
-    private ICompletionProposal configureProposal(ICompletionProposal original) {
+    private ICompletionProposal configurePatternProposal(ICompletionProposal original) {
         if (original instanceof ConfigurableCompletionProposal) {
             ConfigurableCompletionProposal prop = (ConfigurableCompletionProposal) original;
-            Object info = prop.getAdditionalProposalInfo(new NullProgressMonitor());
-            if (info instanceof XbaseInformationControlInput) {
-                XbaseInformationControlInput input = (XbaseInformationControlInput) info;
-                if (input.getElement() instanceof Pattern) {
-                    final Pattern pattern = (Pattern) input.getElement();
-                    prop.setTextApplier(new PatternImporter(pattern));
-                }
-            }
+            prop.setTextApplier(new PatternImporter());
             
         }
         return original;
@@ -129,7 +120,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
             ContentAssistContext contentAssistContext) {
         Function<IEObjectDescription, ICompletionProposal> factory = super.getProposalFactory(ruleName, contentAssistContext);
         if (contentAssistContext.getCurrentNode().getSemanticElement() instanceof PatternCall && ga.getQualifiedNameRule().getName().equals(ruleName)) {
-            factory = Functions.compose(this::configureProposal, factory);
+            factory = Functions.compose(this::configurePatternProposal, factory);
         }
         
         return factory;

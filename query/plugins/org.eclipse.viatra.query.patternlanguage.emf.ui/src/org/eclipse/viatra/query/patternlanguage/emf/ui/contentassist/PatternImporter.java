@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist;
 
 import java.util.Objects;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -27,6 +28,7 @@ import org.eclipse.xtext.ui.editor.contentassist.ReplacementTextApplier;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork.Void;
+import org.eclipse.xtext.xbase.ui.hover.XbaseInformationControlInput;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
@@ -40,27 +42,35 @@ import com.google.common.collect.Iterators;
  * @author Zoltan Ujhelyi
  * 
  */
+@SuppressWarnings("restriction")
 final class PatternImporter extends ReplacementTextApplier {
-    private final Pattern targetPattern;
-    private final String targetPackage;
     private ImportState importStatus;
+    private Pattern targetPattern;
 
     private enum ImportState {
         NONE, SAMEPACKAGE, FOUND, CONFLICTING
     }
 
-    public PatternImporter(Pattern targetPattern) {
-        this.targetPattern = targetPattern;
-        targetPackage = PatternLanguageHelper.getPackageName(targetPattern);
+    private Pattern getTargetPattern(ConfigurableCompletionProposal prop) {
+        Object info = prop.getAdditionalProposalInfo(new NullProgressMonitor());
+        if (info instanceof XbaseInformationControlInput) {
+            XbaseInformationControlInput input = (XbaseInformationControlInput) info;
+            if (input.getElement() instanceof Pattern) {
+                return (Pattern) input.getElement();
+            }
+        }
+        return null;
     }
-
+    
     @Override
     public void apply(final IDocument document, final ConfigurableCompletionProposal proposal)
             throws BadLocationException {
         if (document instanceof IXtextDocument) {
             IXtextDocument xtextDocument = (IXtextDocument) document;
+           targetPattern = getTargetPattern(proposal);
             if (targetPattern == null || Strings.isNullOrEmpty(targetPattern.getName()))
                 return;
+            final String targetPackage = PatternLanguageHelper.getPackageName(targetPattern);
             importStatus = ((IXtextDocument) document).readOnly(new IUnitOfWork<ImportState, XtextResource>() {
 
                 @Override
