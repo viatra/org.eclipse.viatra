@@ -61,6 +61,29 @@ public abstract class AbstractTypeSystem implements ITypeSystem {
         }
         return typeClass;
     }
+    
+    protected static String getWrapperClassNameForTypeName(String className) {
+        if (className != null) {
+            if (className == boolean.class.getName()) {
+                return java.lang.Boolean.class.getName();
+            } else if (className == byte.class.getName()) {
+                return java.lang.Byte.class.getName();
+            } else if (className == char.class.getName()) {
+                return java.lang.Character.class.getName();
+            } else if (className == double.class.getName()) {
+                return java.lang.Double.class.getName();
+            } else if (className == float.class.getName()) {
+                return java.lang.Float.class.getName();
+            } else if (className == int.class.getName()) {
+                return java.lang.Integer.class.getName();
+            } else if (className == long.class.getName()) {
+                return java.lang.Long.class.getName();
+            } else if (className == short.class.getName()) {
+                return java.lang.Short.class.getName();
+            }
+        }
+        return className;
+    }
 
     /**
      * @since 1.4
