@@ -211,6 +211,13 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         if(dataTypeClass.isPrimitive) dataTypeClass = dataTypeClass?.wrapperClassForType
         return dataTypeClass
     }
+    
+    /**
+     * @since 2.1
+     */
+    def String getJavaClassName(EDataTypeInSlotsKey key) {
+        key.getEmfKey().instanceClassName.wrapperClassNameForTypeName
+    }
 
     /**
      * @since 1.5

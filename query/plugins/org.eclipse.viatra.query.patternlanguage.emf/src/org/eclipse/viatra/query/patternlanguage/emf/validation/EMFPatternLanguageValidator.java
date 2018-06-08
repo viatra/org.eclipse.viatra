@@ -122,8 +122,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                 return datatype.getName();
             } else {
                 // In case of non-enum datatypes use corresponding Java type instead
-                Class<?> clazz = typeSystem.getJavaClass((EDataTypeInSlotsKey) input);
-                return IssueCodes.JAVA_TYPE_PREFIX + new JavaTransitiveInstancesKey(clazz).getWrappedKey();
+                return IssueCodes.JAVA_TYPE_PREFIX + typeSystem.getJavaClassName((EDataTypeInSlotsKey) input);
             }
         } else if (input instanceof JavaTransitiveInstancesKey) {
             return IssueCodes.JAVA_TYPE_PREFIX + ((JavaTransitiveInstancesKey) input).getWrappedKey();
