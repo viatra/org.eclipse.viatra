@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.tooling.core.targetplatform;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -19,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.Path;
@@ -30,6 +31,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -43,7 +45,6 @@ import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugi
 import org.eclipse.viatra.query.tooling.core.preferences.ToolingCorePreferenceConstants;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -72,6 +73,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
     
     private boolean automaticIndexing = true;
     private boolean indexUpToDate = false;
+    private ResourceSet metamodelResourceSet = new ResourceSetImpl();
     
     /**
      * @since 1.6 
@@ -90,6 +92,11 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                     disableUpdatePreference = Boolean.valueOf(value.toString());
                 }
                 automaticIndexing = !disableUpdatePreference;
+                if (disableUpdatePreference) {
+                    metamodelResourceSet = null;
+                } else {
+                    metamodelResourceSet = new ResourceSetImpl();
+                }
                 // always update once after preference change
                 indexUpToDate = false;
             }
@@ -125,6 +132,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         // compute platform URI map only when platform plugin list changed
         if(!added.isEmpty()){
             platformURIMap = EcorePlugin.computePlatformURIMap(true);
+            if (!automaticIndexing) {
+                metamodelResourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
+            }
             // TODO this map could be used instead of reading the extensions ourselves
             // ePackageNsURIToGenModelLocationMap = EcorePlugin.getEPackageNsURIToGenModelLocationMap(true);
         }
@@ -268,46 +278,41 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         return platformUri;
     }
 
-    private Iterable<TargetPlatformMetamodel> load(){
+    private Stream<TargetPlatformMetamodel> load(){
         // FIXME we need to ensure that only one caller modifies entries at any given time
         synchronized (TargetPlatformMetamodelsIndex.class) {
             update();
             
-            return Iterables.filter(new ArrayList<>(entries.values()), Objects::nonNull);
+            return entries.values().stream().filter(Objects::nonNull);
         }
     }
 
     @Override
     public List<String> listEPackages() {
-        List<String> packageURIs = new LinkedList<>();
-        for(TargetPlatformMetamodel entry: load()){
-            packageURIs.add(entry.getPackageURI());
-        }
-        return packageURIs;
+        return load().map(entry -> entry.getPackageURI()).collect(Collectors.toList());
     }
 
     @Override
     public EPackage loadPackage(ResourceSet resourceSet, String nsURI) {
-        Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
-        resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
-        for(TargetPlatformMetamodel mm : targetPlatformMetamodels){
-            if (nsURI.equals(mm.packageURI)){
-                return mm.loadPackage(resourceSet);
-            }
+        Stream<TargetPlatformMetamodel> targetPlatformMetamodels = load();
+        if (automaticIndexing) {
+            resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
         }
-        return null;
+        return targetPlatformMetamodels
+                .filter(mm -> nsURI.equals(mm.packageURI))
+                .findFirst()
+                .map(mm -> mm.loadPackage(automaticIndexing ? resourceSet : metamodelResourceSet))
+                .orElse(null);
     }
 
     @Override
     public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI) {
-        Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
-        resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
-        for(TargetPlatformMetamodel mm : targetPlatformMetamodels){
-            if (nsURI.equals(mm.packageURI)){
-                return mm.loadGenPackage(resourceSet);
-            }
+        Stream<TargetPlatformMetamodel> targetPlatformMetamodels = load();
+        if (automaticIndexing) {
+            resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
         }
-        return null;
+        return targetPlatformMetamodels.filter(mm -> nsURI.equals(mm.packageURI)).findFirst()
+                .map(mm -> mm.loadGenPackage(automaticIndexing ? resourceSet : metamodelResourceSet)).orElse(null);
     }
     
 }

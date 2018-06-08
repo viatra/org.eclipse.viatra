@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
@@ -39,6 +40,7 @@ import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverDocumentationProvider;
 
 import com.google.common.base.Optional;
@@ -143,6 +145,18 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         return super.computeDocumentation(object);
     }
     
+    
+    
+    @Override
+    public Javadoc getJavaDoc() {
+        // External elements, e.g. metamodel types might be outside an XtextResourceSet; super implementation expects such resource sets here
+        return (context.eResource().getResourceSet() instanceof XtextResourceSet) 
+                ? super.getJavaDoc()
+                : null;
+    }
+
+
+
     private void appendStructuralFeatureHover(StringBuilder sb, EStructuralFeature feature) {
         sb.append(getGenmodelDocumentation(feature));
         sb.append("<dl>");
