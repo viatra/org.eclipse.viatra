@@ -45,7 +45,6 @@ import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
@@ -71,9 +70,8 @@ class PatternQuerySpecificationClassInferrer {
     @Inject extension ITypeInferrer typeInferrer
     @Inject var ITypeSystem typeSystem
     @Inject var IErrorFeedback feedback
-    @Inject var Serializer serializer
-    @Extension private JvmTypeReferenceBuilder builder
-    @Extension private JvmAnnotationReferenceBuilder annBuilder
+    @Extension JvmTypeReferenceBuilder builder
+    @Extension JvmAnnotationReferenceBuilder annBuilder
 
     /**
      * Infers the {@link IQuerySpecification} implementation class from {@link Pattern}.
@@ -329,7 +327,7 @@ class PatternQuerySpecificationClassInferrer {
         '''«FOR body : pattern.bodies»
             {
                 PBody body = new PBody(this);
-                «new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder, typeInferrer, typeSystem)»
+                «new BodyCodeGenerator(pattern, body, util, feedback, builder)»
                 bodies.add(body);
             }
             «ENDFOR»'''
@@ -338,7 +336,7 @@ class PatternQuerySpecificationClassInferrer {
     def StringConcatenationClient inferSingleConstraintBody(Pattern parentPattern, CallableRelation call) throws IllegalStateException {
         '''
             PBody body = new PBody(this);
-            «new BodyCodeGenerator(parentPattern, call, util, feedback, serializer, builder, typeInferrer, typeSystem)»
+            «new BodyCodeGenerator(parentPattern, call, util, feedback, builder)»
        '''
     }
 
