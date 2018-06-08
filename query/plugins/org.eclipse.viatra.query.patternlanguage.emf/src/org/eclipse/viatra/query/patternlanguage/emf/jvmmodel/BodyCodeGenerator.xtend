@@ -49,14 +49,12 @@ import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XNumberLiteral
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
-import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer
-import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -71,36 +69,27 @@ class BodyCodeGenerator extends StringConcatenationClient {
     val CallableRelation call
     extension val EMFPatternLanguageJvmModelInferrerUtil util
     val IErrorFeedback feedback
-    val Serializer serializer
     val JvmTypeReferenceBuilder typeReferences
     static val INDENTATION = '''    '''
-    val ITypeInferrer typeInferrer
-    val ITypeSystem typeSystem
 
     new(Pattern pattern, PatternBody body, EMFPatternLanguageJvmModelInferrerUtil util, IErrorFeedback feedback,
-        Serializer serializer, JvmTypeReferenceBuilder typeReferences, ITypeInferrer typeInferrer, ITypeSystem typeSystem) {
+        JvmTypeReferenceBuilder typeReferences) {
         this.pattern = pattern
         this.body = body
         this.util = util
         this.feedback = feedback
-        this.serializer = serializer
         this.typeReferences = typeReferences
         this.call = null
-        this.typeInferrer = typeInferrer
-        this.typeSystem = typeSystem
     }
     
     new(Pattern pattern, CallableRelation call, EMFPatternLanguageJvmModelInferrerUtil util, IErrorFeedback feedback,
-        Serializer serializer, JvmTypeReferenceBuilder typeReferences, ITypeInferrer typeInferrer, ITypeSystem typeSystem) {
+        JvmTypeReferenceBuilder typeReferences) {
         this.pattern = pattern
         this.body = null
         this.call = call
         this.util = util
         this.feedback = feedback
-        this.serializer = serializer
         this.typeReferences = typeReferences
-        this.typeInferrer = typeInferrer
-        this.typeSystem = typeSystem
     }
 
     override protected appendTo(TargetStringConcatenation target) {
@@ -177,8 +166,11 @@ class BodyCodeGenerator extends StringConcatenationClient {
             }
 
             override acceptConstraint(Constraint constraint) {
-                target.append('''// «serializer.serialize(constraint).replaceAll('\r\n?|\n','')»
-                ''')
+                val stringRepresentation = NodeModelUtils::getNode(constraint)?.text?.replaceAll('\r\n?|\n','')
+                if (stringRepresentation !== null) {
+                    target.append('''// «stringRepresentation»
+                    ''')
+                }
             }
 
             override acceptTypeConstraint(List<String> variableNames, IInputKey key) {
