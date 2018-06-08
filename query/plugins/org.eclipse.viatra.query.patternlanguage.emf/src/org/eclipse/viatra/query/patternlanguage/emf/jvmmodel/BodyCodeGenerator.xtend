@@ -14,7 +14,6 @@ import java.util.Arrays
 import java.util.List
 import org.eclipse.emf.common.util.Enumerator
 import org.eclipse.emf.ecore.EEnumLiteral
-import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternModelAcceptor
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
@@ -55,6 +54,7 @@ import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -280,11 +280,11 @@ class BodyCodeGenerator extends StringConcatenationClient {
             }
 
             override acceptExpressionEvaluation(XExpression expression, String outputVariableName) {
-                val xBaseEvaluator = new XBaseEvaluator(expression, pattern)
+                val inputParameterNames = PatternLanguageHelper.getUsedVariables(expression, body.getVariables()).map[name]
                 target.append(
                         '''
-                «if (xBaseEvaluator.inputParameterNames.empty) {
-                            feedback.reportError(xBaseEvaluator.expression, "No parameters defined", EMFPatternLanguageJvmModelInferrer.SPECIFICATION_BUILDER_CODE, Severity.WARNING, IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+                «if (inputParameterNames.empty) {
+                            feedback.reportError(expression, "No parameters defined", EMFPatternLanguageJvmModelInferrer.SPECIFICATION_BUILDER_CODE, Severity.WARNING, IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
                         }»
                 new ''')
                 target.append(ExpressionEvaluation)
@@ -306,7 +306,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                     return ''', INDENTATION)
                 target.append(Arrays)
                 target.
-                    append('''.asList(«FOR name : xBaseEvaluator.inputParameterNames SEPARATOR ", "»"«name»"«ENDFOR»);''')
+                    append('''.asList(«FOR name : inputParameterNames SEPARATOR ", "»"«name»"«ENDFOR»);''')
                 target.append('''}''', INDENTATION)
 
                 target.newLine
@@ -318,7 +318,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(IValueProvider)
                 target.append(''' provider) throws Exception {''')
                 target.newLine
-                val variables = variables(xBaseEvaluator.expression)
+                val variables = variables(expression)
                 for (variable : variables) {
                     val type = variable.calculateType.eraseGenerics
                     target.append(INDENTATION)
@@ -332,7 +332,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(INDENTATION)
                 target.append(INDENTATION)
                 target.
-                    append('''return «expressionMethodName(xBaseEvaluator.expression)»(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);''')
+                    append('''return «expressionMethodName(expression)»(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);''')
                 target.newLine
 
                 target.append(INDENTATION)
