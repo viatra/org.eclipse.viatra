@@ -2,12 +2,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>viatra-transformation-debugger-runtime</artifactId>
-    <name>VIATRA Transforamtion Debugger Runtime (Incubation)</name>
+    <name>VIATRA Transformation Debugger Runtime (Incubation)</name>
 
     <parent>
         <artifactId>org.eclipse.viatra.parent.incubation.maven</artifactId>
         <groupId>org.eclipse.viatra</groupId>
-        <version>0.20.0-SNAPSHOT</version>
+        <version>0.21.0-SNAPSHOT</version>
         <relativePath>../../releng/org.eclipse.viatra.parent.incubation.maven/pom.xml</relativePath>
     </parent>
 
