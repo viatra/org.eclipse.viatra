@@ -79,6 +79,11 @@ public class EclipseCollectionsLongSetMemory extends LongHashSet implements ISet
         return new SetWrapper(this);
     }
     
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty();
+    }
+    
     /**
      * Helper for iterating a LongIterable
      */
