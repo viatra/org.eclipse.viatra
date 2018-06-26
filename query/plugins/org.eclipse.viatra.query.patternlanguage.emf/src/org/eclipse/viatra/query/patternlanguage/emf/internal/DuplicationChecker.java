@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.internal;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -75,8 +76,9 @@ public class DuplicationChecker {
         final URI uri = pattern.eResource().getURI();
         if (projectHelper.isStandaloneFileURI(pattern, uri)) {
             // If pattern is not in a source folder, duplicate analysis is only meaningful inside the file
-            shadowingPatternDescriptions = resourceDescriptions.getLocalDescriptions().getResourceDescription(uri)
-                    .getExportedObjects(sourceType, fullyQualifiedName, true);
+            final IResourceDescription resourceDescription = resourceDescriptions.getLocalDescriptions().getResourceDescription(uri);
+            shadowingPatternDescriptions = resourceDescription == null ? new HashSet<>(): 
+                    resourceDescription.getExportedObjects(sourceType, fullyQualifiedName, true);
             // Visibility can be ignored in case of local descriptions
             return processDuplicateCandidates(pattern, false, shadowingPatternDescriptions);
         } else {

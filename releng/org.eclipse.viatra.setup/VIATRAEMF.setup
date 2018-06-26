@@ -316,6 +316,41 @@
               url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
       </targlet>
+      <targlet
+          name="Sirius"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/pre-6.0.0/neon"/>
+        </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/pre-6.0.0/oxygen"/>
+        </repositoryList>
+        <repositoryList
+            name="Photon">
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/pre-6.0.0/photon"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
     <setupTask
         xsi:type="setup:CompoundTask"
@@ -482,6 +517,25 @@
         </predicate>
       </workingSet>
       <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.sirius.specifier.ide.ui.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.specifier.ide.ui.aql.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+      <requirement
+          name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
     </setupTask>
     <stream
         name="master">

@@ -59,19 +59,19 @@
 <repository location="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.sdk.feature.group" version="3.12.0.v20160606-1311"/>
-<unit id="org.eclipse.jdt.feature.group" version="3.12.0.v20160606-1100"/>
-<unit id="org.eclipse.pde.feature.group" version="3.12.0.v20160606-1100"/>
-<unit id="org.eclipse.platform.feature.group" version="4.6.0.v20160606-1342"/>
-<unit id="org.eclipse.platform.sdk" version="4.6.0.I20160606-1100"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.6/R-4.6-201606061100"/>
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.12.0.v20170209-1843"/>
+<unit id="org.eclipse.jdt.feature.group" version="3.12.3.v20170301-0400"/>
+<unit id="org.eclipse.pde.feature.group" version="3.12.3.v20170301-0400"/>
+<unit id="org.eclipse.platform.feature.group" version="4.6.3.v20170301-0400"/>
+<unit id="org.eclipse.platform.sdk" version="4.6.3.M20170301-0400"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.6/R-4.6.3-201703010400"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.transaction.sdk.feature.group" version="1.10.0.201606071900"/>
 <unit id="org.eclipse.gmf.runtime.notation.sdk.feature.group" version="1.10.0.201606071631"/>
 <unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="1.10.0.201606071959"/>
-<unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.13.0.v20160608-1043"/>
-<repository location="http://download.eclipse.org/releases/neon/201606221000"/>
+<unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.13.2.v20161129-0820"/>
+<repository location="http://download.eclipse.org/releases/neon/201705151400"/>
 </location>
 <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
   <unit id="org.eclipse.collections.feature.feature.group" version="9.2.0.v20180518-1448"/>
@@ -80,6 +80,14 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.viatra.examples.cps.metamodel.feature.feature.group" version="2.0.0.201801280931"/>
 <repository location="http://download.eclipse.org/viatra/examples/cps/2.0.0.201801280453"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+  <unit id="org.eclipse.sirius.runtime.ide.ui.source.feature.group" version="6.0.0.201806111306"/>
+  <unit id="org.eclipse.sirius.runtime.aql.source.feature.group" version="6.0.0.201806111306"/>
+  <unit id="org.eclipse.sirius.properties.feature.source.feature.group" version="6.0.0.201806111306"/>
+  <unit id="org.eclipse.sirius.runtime.ide.eef.source.feature.group" version="6.0.0.201806111306" />
+  <unit id="org.eclipse.sirius.runtime.ide.xtext.source.feature.group" version="6.0.0.201806111306" />
+  <repository location="http://download.eclipse.org/sirius/updates/releases/6.0.0/neon"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
