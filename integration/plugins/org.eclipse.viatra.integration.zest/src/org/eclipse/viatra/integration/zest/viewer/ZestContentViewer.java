@@ -203,6 +203,11 @@ public class ZestContentViewer extends ContentViewer {
     protected Edge createEdge(ILabelProvider labelProvider, Object contentEdgeNode, Node sourceNode,
             Node targetNode) {
         Edge edge = new Edge(sourceNode, targetNode);
+        doFormatEdge(contentEdgeNode, labelProvider, edge);
+        return edge;
+    }
+
+    private void doFormatEdge(Object contentEdgeNode, ILabelProvider labelProvider, Edge edge) {
         ZestProperties.setLabel(edge, () -> labelProvider.getText(contentEdgeNode));
         if (labelProvider instanceof IGraphAttributesProvider2) {
             IGraphAttributesProvider2 graphNodeLabelProvider = (IGraphAttributesProvider2) labelProvider;
@@ -211,9 +216,7 @@ public class ZestContentViewer extends ContentViewer {
                 edge.attributesProperty().putAll(edgeAttributes);
             }
         }
-        return edge;
     }
-
     /**
      * Constructs and returns a new {@link Graph} and inserts default attributes
      * into it:
@@ -721,6 +724,13 @@ public class ZestContentViewer extends ContentViewer {
 
     public void refresh(Object element) {
         final Node node = contentNodeMap.get(element);
-        doFormatNode(element, getContentProvider(), getLabelProvider(), node);
+        if (node == null) {
+            final Edge edge = contentEdgeMap.get(element);
+            if (edge != null) {
+                doFormatEdge(element, getLabelProvider(), edge);
+            }
+        } else {
+            doFormatNode(element, getContentProvider(), getLabelProvider(), node);
+        }
     }
 }
