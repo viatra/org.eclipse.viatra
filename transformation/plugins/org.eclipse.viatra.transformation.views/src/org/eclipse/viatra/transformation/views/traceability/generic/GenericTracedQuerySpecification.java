@@ -41,13 +41,13 @@ public class GenericTracedQuerySpecification extends GenericQuerySpecification<G
     /**
      * @throws ViatraQueryRuntimeException
      */
-    public static GenericTracedQuerySpecification initiate(GenericReferencedQuerySpecification referenced) {
+    public static GenericTracedQuerySpecification initiate(GenericReferencedQuerySpecification referenced, Multimap<PParameter, PParameter> traceSource) {
         return new GenericTracedQuerySpecification(GenericTracedQuerySpecification.calculateTracedQuery((GenericReferencedPQuery) referenced
-                .getInternalQueryRepresentation()), referenced);
+                .getInternalQueryRepresentation(), traceSource), referenced);
     }
 
-    private static GenericTracedPQuery calculateTracedQuery(GenericReferencedPQuery referencedQuery) {
-        return new GenericTracedPQuery(referencedQuery);
+    private static GenericTracedPQuery calculateTracedQuery(GenericReferencedPQuery referencedQuery, Multimap<PParameter, PParameter> traceSource) {
+        return new GenericTracedPQuery(referencedQuery, traceSource);
     }
 
     @Override

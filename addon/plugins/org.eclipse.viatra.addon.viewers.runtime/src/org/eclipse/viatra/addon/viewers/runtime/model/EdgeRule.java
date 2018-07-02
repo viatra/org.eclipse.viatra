@@ -75,7 +75,7 @@ public class EdgeRule extends ViewModelRule {
 
                     EObject eObject = ViewModelUtil.create(NotationPackage.eINSTANCE.getEdge(),
                             state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Edges());
-                    ViewModelUtil.trace(state.getManager(), getBaseSpecification().getFullyQualifiedName(),
+                    ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
                             Collections.singleton(eObject), match.get(descriptor.getSource()),
                             match.get(descriptor.getTarget()));
 

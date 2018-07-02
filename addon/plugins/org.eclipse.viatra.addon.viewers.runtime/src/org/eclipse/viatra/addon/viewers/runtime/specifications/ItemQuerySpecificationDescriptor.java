@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.transformation.views.traceability.generic.AbstractQuerySpecificationDescriptor;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecificationDescriptor {
 
@@ -41,8 +42,7 @@ public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecification
      */
     public ItemQuerySpecificationDescriptor(IQuerySpecification<?> specification, PAnnotation annotation) {
 
-        super(specification, ArrayListMultimap.<PParameter, PParameter> create(), Collections
-                .<PParameter, String> emptyMap());
+        super(specification, getTraceSource(specification, annotation), ArrayListMultimap.create(), Collections.emptyMap());
 
         ParameterReference parameterName = annotation.getFirstValue(SOURCE_PARAMETER_NAME, ParameterReference.class).
                 orElseThrow(() -> new QueryProcessingException("Invalid item value", specification));
@@ -59,6 +59,17 @@ public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecification
 
     }
 
+    private static Multimap<PParameter, PParameter> getTraceSource(IQuerySpecification<?> specification,
+            PAnnotation annotation) {
+        Multimap<PParameter, PParameter> traces = ArrayListMultimap.create();
+        ParameterReference parameterSource = annotation.getFirstValue(SOURCE_PARAMETER_NAME, ParameterReference.class).
+                orElseThrow(() -> new QueryProcessingException("Invalid source value", specification));
+
+        SpecificationDescriptorUtilities.insertToTraces(specification, traces, parameterSource.getName());
+        
+        return traces;
+    }
+    
     public boolean isFormatted() {
         return formatAnnotation != null;
     }

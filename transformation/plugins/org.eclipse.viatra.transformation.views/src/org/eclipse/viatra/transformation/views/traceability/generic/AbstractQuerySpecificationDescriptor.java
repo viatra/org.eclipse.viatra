@@ -23,12 +23,19 @@ public abstract class AbstractQuerySpecificationDescriptor {
     protected GenericTracedQuerySpecification tracedSpecification;
     private IQuerySpecification<?> specification;
     private Multimap<PParameter, PParameter> traceSources;
+    private Multimap<PParameter, PParameter> referencedTraceSources;
     private Map<PParameter, String> traceIds;
 
     public AbstractQuerySpecificationDescriptor(IQuerySpecification<?> specification,
             Multimap<PParameter, PParameter> traceSources, Map<PParameter, String> traceIds) {
+        this(specification, traceSources, traceSources, traceIds);
+        
+    }
+    public AbstractQuerySpecificationDescriptor(IQuerySpecification<?> specification,
+            Multimap<PParameter, PParameter> traceSources, Multimap<PParameter, PParameter> referencedTraceSources, Map<PParameter, String> traceIds) {
         this.specification = specification;
         this.traceSources = traceSources;
+        this.referencedTraceSources = referencedTraceSources;
         this.traceIds = traceIds;
     }
 
@@ -37,7 +44,7 @@ public abstract class AbstractQuerySpecificationDescriptor {
      */
     public void initialize(String traceabilityId) {
         tracedSpecification = GenericTracedQuerySpecification.initiate(GenericReferencedQuerySpecification.initiate(
-                specification, traceSources, traceIds, traceabilityId));
+                specification, referencedTraceSources, traceIds, traceabilityId), traceSources);
     }
 
     public GenericTracedQuerySpecification getTracedSpecification() {

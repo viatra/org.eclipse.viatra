@@ -12,7 +12,6 @@ package org.eclipse.viatra.addon.viewers.runtime.specifications;
 
 import java.util.Collections;
 
-import org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -66,21 +65,10 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
         ParameterReference parameterTarget = annotation.getFirstValue(TARGET_PARAMETER_NAME, ParameterReference.class).
                 orElseThrow(() -> new QueryProcessingException("Invalid target value", specification));
 
-        insertToTraces(specification, traces, parameterSource.getName());
-        insertToTraces(specification, traces, parameterTarget.getName());
+        SpecificationDescriptorUtilities.insertToTraces(specification, traces, parameterSource.getName());
+        SpecificationDescriptorUtilities.insertToTraces(specification, traces, parameterTarget.getName());
         
         return traces;
-    }
-
-    private static void insertToTraces(IQuerySpecification<?> specification,
-            Multimap<PParameter, PParameter> traces, String parameter) {
-        String targetName = "trace<" + parameter + ">";
-        PParameter var_target = new PParameter(targetName, 
-                NotationPackage.eINSTANCE.getNsURI() + "||"
-                + NotationPackage.eINSTANCE.getItem().getName());
-        int positionOfParameter = specification.getPositionOfParameter(parameter);
-        PParameter var_source = specification.getParameters().get(positionOfParameter);
-        traces.put(var_target, var_source);
     }
 
     public boolean isFormatted() {
