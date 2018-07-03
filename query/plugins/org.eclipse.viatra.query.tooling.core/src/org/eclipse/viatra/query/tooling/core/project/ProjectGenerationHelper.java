@@ -406,6 +406,9 @@ public abstract class ProjectGenerationHelper {
             final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions){
         
         IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
+        if (existingDependencies == null) {
+            existingDependencies = new IRequiredBundleDescription[0];
+        }
         
         Set<String> toRemove = new HashSet<>();
         Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<>();
