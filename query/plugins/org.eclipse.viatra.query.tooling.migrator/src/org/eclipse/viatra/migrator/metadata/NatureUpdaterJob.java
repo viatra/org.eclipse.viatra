@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.migrator.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -168,16 +169,19 @@ class NatureUpdaterJob extends Job {
             repairErroneousBuilderEntry(project);
             reorderBuilderEntries(project);
 
-            final ImmutableList<String> newIDs = project.hasNature(ViatraQueryNature.NATURE_ID)
-                    ? ImmutableList.<String> of() : ImmutableList.of(ViatraQueryNature.NATURE_ID);
-            Builder<String> builder = ImmutableList.<String> builder();
+            final List<String> newIDs = new ArrayList<>(); 
+            if (!project.hasNature(ViatraQueryNature.NATURE_ID)) {
+                newIDs.add(ViatraQueryNature.NATURE_ID);
+            }
+            if (!project.hasNature(XtextProjectHelper.NATURE_ID)) {
+                newIDs.add(XtextProjectHelper.NATURE_ID);
+            }
+            final List<String> oldIDs = new ArrayList<>();
             for (String ID : MigratorConstants.INCORRECT_NATURE_IDS) {
                 if (project.hasNature(ID)) {
-                    builder.add(ID);
+                    oldIDs.add(ID);
                 }
             }
-
-            final ImmutableList<String> oldIDs = builder.build();
 
             if (newIDs.size() + oldIDs.size() > 0) {
                 ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);

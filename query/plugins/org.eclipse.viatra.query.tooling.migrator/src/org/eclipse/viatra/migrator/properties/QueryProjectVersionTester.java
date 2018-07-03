@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.xtext.ui.XtextProjectHelper;
@@ -65,11 +66,14 @@ public class QueryProjectVersionTester extends PropertyTester {
                 for (String ID : MigratorConstants.INCORRECT_NATURE_IDS) {
                     if (project.hasNature(ID)) {
                         return true;
-                    } else if (project.hasNature(ViatraQueryNature.NATURE_ID)) {
-                         return project.findMember(MigratorConstants.GLOBAL_EIQ_PATH) != null
-                            || hasIncorrectBuildCommandOrdering(project) || hasLog4jDependency(project);
                     }
                 }
+                if (project.hasNature(ViatraQueryNature.NATURE_ID)) {
+                    return project.findMember(MigratorConstants.GLOBAL_EIQ_PATH) != null
+                            || hasIncorrectBuildCommandOrdering(project) || hasLog4jDependency(project);
+                } else {
+                    return project.hasNature(PDE.PLUGIN_NATURE);
+                } 
             }
         } catch (Exception e) {
             /*
