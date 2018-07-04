@@ -300,7 +300,8 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
 
     
     public Set<Object> getFeatureKeysPointingTo(Object target) {
-        return getValueToFeatureMap().get(target).distinctValues();
+        final IMultiset<Object> sources = getValueToFeatureMap().get(target);
+        return sources == null ? Collections.emptySet() : sources.distinctValues();
     }
     
     private Map<Object, IMultiset<Object>> getValueToFeatureMap() {
