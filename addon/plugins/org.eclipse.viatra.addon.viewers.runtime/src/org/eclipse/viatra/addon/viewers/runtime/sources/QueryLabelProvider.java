@@ -47,10 +47,5 @@ public class QueryLabelProvider extends LabelProvider {
         }
         return "";
     }
-    
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 
 }

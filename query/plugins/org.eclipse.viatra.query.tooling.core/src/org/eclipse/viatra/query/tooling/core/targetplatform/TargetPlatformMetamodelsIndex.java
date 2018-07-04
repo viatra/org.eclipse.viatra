@@ -289,7 +289,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
     @Override
     public List<String> listEPackages() {
-        return load().map(entry -> entry.getPackageURI()).collect(Collectors.toList());
+        return load().map(TargetPlatformMetamodel::getPackageURI).collect(Collectors.toList());
     }
 
     @Override
