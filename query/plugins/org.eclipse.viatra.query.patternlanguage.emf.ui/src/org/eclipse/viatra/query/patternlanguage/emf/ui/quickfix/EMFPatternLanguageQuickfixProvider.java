@@ -18,16 +18,24 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModification;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
+import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
@@ -35,7 +43,9 @@ import org.eclipse.xtext.xbase.ui.quickfix.XbaseQuickfixProvider;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
+import com.google.inject.Inject;
 
+@SuppressWarnings("restriction")
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     
     private static final String WHITELIST_CONTEXT = "org.eclipse.viatra.documentation.help.whitelist";
@@ -67,6 +77,9 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         }
     }
 
+    @Inject
+    private IJvmTypeProvider.Factory typeProviderFactory;
+    
     @Fix(IssueCodes.IDENTIFIER_AS_KEYWORD)
     public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
         acceptor.accept(issue, "Prefix Identifier", "Adds a ^ prefix to the identifier", null, new IModification() {
@@ -86,12 +99,17 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
                 final String typeName = data.substring(IssueCodes.JAVA_TYPE_PREFIX.length());
                 acceptor.accept(issue, "Insert Java type '" + typeName + "'",
                         "Declares the inferred type " + typeName + " for the variable.",
-                        null, new IModification() {
+                        null, new ISemanticModification() {
 
                             @Override
-                            public void apply(IModificationContext context) throws Exception {
-                                IXtextDocument document = context.getXtextDocument();
-                                document.replace(issue.getOffset() + issue.getLength(), 0, " : java " + typeName);
+                            public void apply(EObject element, IModificationContext context) throws Exception {
+                                Variable var = (Variable) element;
+                                final JavaType typeRef = PatternLanguageFactory.eINSTANCE.createJavaType();
+                                
+                                final JvmType jvmType = typeProviderFactory.findOrCreateTypeProvider(element.eResource().getResourceSet()).findTypeByName(typeName);
+                                typeRef.setClassRef((JvmDeclaredType) jvmType);
+                                var.setType(typeRef);
+                                
                             }
 
                         });
