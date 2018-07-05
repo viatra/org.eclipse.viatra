@@ -7,4 +7,28 @@
 	       name="vqleditor">
     </component>
   </extension>
+  <extension
+        point="org.eclipse.ui.newWizards">
+        <wizard
+            category="org.eclipse.viatra.query.tooling.ui.category"
+            class="org.eclipse.viatra.query.patternlanguage.emf.ui.ReusablePatternLanguageExecutableExtensionFactory:org.eclipse.viatra.query.patternlanguage.emf.sirius.wizard.NewProjectWizard"
+            finalPerspective="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+            id="org.eclipse.viatra.query.tooling.ui.newproject"
+            name="Graphical Query Project"
+            preferredPerspectives="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
+            project="true">
+      </wizard>
+  </extension>
+  <extension
+         id="vgqlbuilder"
+         name="VIATRA Graphical Query Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="false">
+         <run
+               class="org.eclipse.viatra.query.patternlanguage.emf.ui.ReusablePatternLanguageExecutableExtensionFactory">
+               <parameter name="guicekey" value="org.eclipse.viatra.query.patternlanguage.emf.sirius.builder.GraphicalQueryProjectBuilder"/>
+         </run></builder>
+   </extension>
 </plugin>

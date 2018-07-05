@@ -74,4 +74,8 @@ public class SiriusVQLGraphicalEditorPlugin extends AbstractUIPlugin {
     public static SiriusVQLGraphicalEditorPlugin getDefault() {
         return INSTANCE;
     }
+    
+    public Set<Viewpoint> getViewpoints() {
+        return viewpoints;
+    }
 }
