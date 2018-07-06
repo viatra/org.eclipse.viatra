@@ -21,6 +21,8 @@ import org.junit.BeforeClass
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.resources.IMarker
 import org.eclipse.core.resources.IResource
+import java.util.function.Consumer
+import org.eclipse.core.resources.IProject
 
 abstract class AbstractQueryCompilerTest extends AbstractWorkbenchTest {
     
@@ -48,9 +50,14 @@ abstract class AbstractQueryCompilerTest extends AbstractWorkbenchTest {
     }
     
     protected def void testFileCreationAndBuild(String contents, int expectedIssueCount) {
+        testFileCreationAndBuild(contents, expectedIssueCount, [])
+    }
+    
+    protected def void testFileCreationAndBuild(String contents, int expectedIssueCount, Consumer<IProject> projectConfigurer) {
         val testFile = IResourcesSetupUtil.createFile(filePath, contents)
-        IResourcesSetupUtil.waitForBuild
         val project = testFile.project
+        projectConfigurer.accept(project)
+        IResourcesSetupUtil.waitForBuild
         val markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE).
                     filter[IMarker.SEVERITY_ERROR == it.attributes.get(IMarker.SEVERITY)]
         assertEquals(
