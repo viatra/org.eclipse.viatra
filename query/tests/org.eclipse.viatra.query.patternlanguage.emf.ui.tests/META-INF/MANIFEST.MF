@@ -23,6 +23,7 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.
  org.eclipse.xtext.xbase.junit;bundle-version="[2.12.0,3.0.0)",
  org.eclipse.xtext.common.types.ui;bundle-version="[2.12.0,3.0.0)",
  org.eclipse.jdt.core,
+ org.eclipse.jdt.launching,
  org.eclipse.pde.core,
  org.eclipse.xtext.testing;bundle-version="[2.12.0,3.0.0)",
  org.eclipse.xtext.ui.testing;bundle-version="[2.12.0,3.0.0)",

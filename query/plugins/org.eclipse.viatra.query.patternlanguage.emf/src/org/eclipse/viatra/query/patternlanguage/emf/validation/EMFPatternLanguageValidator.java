@@ -110,7 +110,7 @@ import com.google.inject.Inject;
  * 
  * @noreference
  */
-@ComposedChecks(validators = { PatternLanguageValidator.class, VariableUsageCounter.class })
+@ComposedChecks(validators = { PatternLanguageValidator.class, VariableUsageCounter.class, ClasspathValidator.class })
 public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValidator implements IIssueCallback {
 
     private String calculateIssueData(IInputKey input) {

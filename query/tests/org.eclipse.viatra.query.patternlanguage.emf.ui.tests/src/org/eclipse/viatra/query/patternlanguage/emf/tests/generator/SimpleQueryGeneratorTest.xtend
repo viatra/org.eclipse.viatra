@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.tests.generator
 
+import org.eclipse.core.resources.IncrementalProjectBuilder
+import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.jdt.core.IClasspathEntry
+import org.eclipse.jdt.core.JavaCore
+import org.eclipse.jdt.launching.JavaRuntime
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
+import org.junit.Ignore
 
 class SimpleQueryGeneratorTest extends AbstractQueryCompilerTest {
  
@@ -38,4 +44,28 @@ class SimpleQueryGeneratorTest extends AbstractQueryCompilerTest {
         ''', 0)
     }
     
+    //TODO Fix this test
+    @Test
+    @Ignore("The test does not run correctly on the build server - theory: the Eclipse did not find Java 7 installed.")
+    def void oldJavaVersion() {
+        testFileCreationAndBuild('''
+        package test
+        
+        import "http://www.eclipse.org/emf/2002/Ecore"
+        
+        pattern testPattern() {
+            EClass(x);
+        }
+        ''', 1, [project |
+            val javaProject = JavaCore.create(project)
+            javaProject.setRawClasspath(javaProject.rawClasspath.map[
+                if (it.entryKind === IClasspathEntry.CPE_CONTAINER && it.path.toString.endsWith("JavaSE-1.8")) {
+                    JavaCore.newContainerEntry(JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.7")))
+                } else {
+                    it                
+                }
+            ], new NullProgressMonitor)
+            project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor)
+        ])
+    }
 }
