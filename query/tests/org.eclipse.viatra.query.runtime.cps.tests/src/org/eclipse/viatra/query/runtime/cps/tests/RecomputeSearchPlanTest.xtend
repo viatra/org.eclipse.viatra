@@ -59,7 +59,7 @@ class RecomputeSearchPlanTest {
             super(hint)
         }
         
-        override public getOrCreateEngine(EMFScope scope) {
+        override getOrCreateEngine(EMFScope scope) {
                 return super.getOrCreateEngine(scope);
         }
     }

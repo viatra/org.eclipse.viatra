@@ -47,12 +47,10 @@ class AvgAggregatorTest {
         )
     }
     
-    val String modelPath
     val String snapshotPath
     val EMFScope scope
     
     new(String modelPath, String snapshotPath) {
-        this.modelPath = modelPath
         this.snapshotPath = snapshotPath
         val rs = new ResourceSetImpl
         

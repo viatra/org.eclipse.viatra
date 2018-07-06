@@ -60,7 +60,6 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;

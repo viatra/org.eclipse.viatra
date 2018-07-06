@@ -33,8 +33,8 @@ class DependencyTest extends AbstractWorkbenchTest {
  
     @Rule
     public val name = new TestName
-    private var String testProjectName
-    private var IProject project
+    var String testProjectName
+    var IProject project
  
     @BeforeClass
     def static void installTargetPlatform() {

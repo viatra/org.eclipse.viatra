@@ -27,7 +27,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
-import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -51,7 +50,7 @@ class EnumResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(1) as PathExpressionConstraint
-        val type = PatternLanguageHelper.getPathExpressionTailType(constraint).get as ReferenceType
+        val type = PatternLanguageHelper.getPathExpressionTailType(constraint).get
         assertEquals(type.refname.EType, GenModelPackage$Literals::GEN_RUNTIME_VERSION)
         val value = constraint.dst as EnumValue
         assertEquals(value.literal, GenModelPackage$Literals::GEN_RUNTIME_VERSION.getEEnumLiteral("EMF23"))		

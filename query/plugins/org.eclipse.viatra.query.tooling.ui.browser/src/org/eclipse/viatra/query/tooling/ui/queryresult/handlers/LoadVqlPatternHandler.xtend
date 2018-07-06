@@ -36,8 +36,7 @@ class LoadVqlPatternHandler extends AbstractHandler {
         val IEditorPart editorPart = HandlerUtil.getActiveEditorChecked(event)
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            val queryResultView = (resultView as QueryResultView)
-            val active = queryResultView.hasActiveEngine
+            val active = resultView.hasActiveEngine
             
             if (active && editorPart instanceof XtextEditor) {
                 val XtextEditor xtextEditor = (editorPart as XtextEditor)
@@ -55,10 +54,10 @@ class LoadVqlPatternHandler extends AbstractHandler {
                     return fqns
                 ]
                 
-                queryResultView.loadQueriesIntoActiveEngineInBackground(patternFQNs, sourceId)
+                resultView.loadQueriesIntoActiveEngineInBackground(patternFQNs, sourceId)
                     
             } else {
-                MessageDialog.openError(queryResultView.site.shell, "Query loading failed",
+                MessageDialog.openError(resultView.site.shell, "Query loading failed",
                     "Please load a model into the Query Results view before loading queries!"
                 )
             }

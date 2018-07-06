@@ -26,8 +26,8 @@ class MatchSetRecordDiff {
         this.removals = removals;
     }
     
-    private val Set<MatchRecord> additions
-    private val Set<MatchRecord> removals
+    val Set<MatchRecord> additions
+    val Set<MatchRecord> removals
 
     def Set<MatchRecord> getAdditions() {
         return additions

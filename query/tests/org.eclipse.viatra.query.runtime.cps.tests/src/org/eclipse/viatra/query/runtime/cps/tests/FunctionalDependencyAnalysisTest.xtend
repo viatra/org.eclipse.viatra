@@ -142,7 +142,7 @@ class FunctionalDependencyAnalysisTest {
 	
 	
 	def toNames(Set<Integer> paramIndices, IQuerySpecification<?> query) {
-		Sets.newHashSet(paramIndices.map[query.parameterNames.get(it) as String])
+		Sets.newHashSet(paramIndices.map[query.parameterNames.get(it)])
 	}
 	def assertDependencies(
 		IQuerySpecification<?> query,

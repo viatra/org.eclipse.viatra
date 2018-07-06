@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.testing.core.api.JavaObjectAccess
  */
 class AnalyzedPatternBasedMatchSetModelProvider extends PatternBasedMatchSetModelProvider {
     
-    private final Iterable<? extends IPatternExecutionAnalyzer> analyzers;
+    final Iterable<? extends IPatternExecutionAnalyzer> analyzers;
     
     new(QueryEvaluationHint hint, Map<String, JavaObjectAccess> accessmap, Iterable<? extends IPatternExecutionAnalyzer> analyzers) {
         super(hint, accessmap)

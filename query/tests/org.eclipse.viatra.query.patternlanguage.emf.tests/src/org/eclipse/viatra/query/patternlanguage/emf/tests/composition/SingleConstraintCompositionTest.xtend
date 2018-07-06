@@ -39,23 +39,23 @@ import org.eclipse.xtext.common.types.JvmType
 class SingleConstraintCompositionTest extends AbstractValidatorTest {
 
     @Inject
-    private ParseHelper<PatternModel> parseHelper
+    ParseHelper<PatternModel> parseHelper
 
     @Inject
-    private EMFPatternLanguageValidator validator
+    EMFPatternLanguageValidator validator
 
     @Inject
     ITypeInferrer typeInferrer
 
     @Inject
-    private Injector injector
+    Injector injector
     
     @Inject extension ValidationTestHelper
     
     @Inject
-    private IJvmModelAssociations associations
+    IJvmModelAssociations associations
 
-    private ValidatorTester<EMFPatternLanguageValidator> tester
+    ValidatorTester<EMFPatternLanguageValidator> tester
 
     @Before
     def void initialize() {

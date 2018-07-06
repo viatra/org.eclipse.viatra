@@ -43,18 +43,18 @@ import java.util.function.Consumer
  */
 class ViatraQueryTestCase {
 
-    private static val String SEVERITY_AGGREGATOR_LOGAPPENDER_NAME = ViatraQueryTestCase.name +
+    static val String SEVERITY_AGGREGATOR_LOGAPPENDER_NAME = ViatraQueryTestCase.name +
         ".severityAggregatorLogAppender";
 
     public static val String UNEXPECTED_MATCH = "Unexpected match"
     public static val String EXPECTED_NOT_FOUND = "Expected match not found"
 
-    private EMFScope scope = new EMFScope(new ResourceSetImpl)
-    private boolean isScopeSet = false
+    EMFScope scope = new EMFScope(new ResourceSetImpl)
+    boolean isScopeSet = false
 
     final List<IMatchSetModelProvider> modelProviders
     extension SnapshotHelper snapshotHelper
-    private Map<String, JavaObjectAccess> accessMap;
+    Map<String, JavaObjectAccess> accessMap;
     
     val TestingSeverityAggregatorLogAppender appender
 

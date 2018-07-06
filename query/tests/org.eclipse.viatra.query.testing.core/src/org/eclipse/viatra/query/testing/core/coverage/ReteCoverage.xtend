@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Supplier
  */
 class ReteCoverage {
     
-    private val ReteEngine reteEngine;
+    val ReteEngine reteEngine;
     
     val EMFScope scope
     
@@ -37,7 +37,7 @@ class ReteCoverage {
      */
     new(ViatraQueryMatcher<?> matcher) {
         this.reteEngine = (matcher.getEngine() as AdvancedViatraQueryEngine).getQueryBackend(
-            new ReteBackendFactory()) as ReteEngine
+            ReteBackendFactory.INSTANCE) as ReteEngine
         this.scope = matcher.engine.scope as EMFScope
     }
     

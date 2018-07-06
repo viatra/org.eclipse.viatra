@@ -73,8 +73,8 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
             if (value instanceof InternalEObject && (value as InternalEObject).eIsProxy) {
                 (value as InternalEObject).eProxyURI.hashCode
             } else if (value instanceof SerializedJavaObjectSubstitution) {
-                val access = accessMap.get((value as SerializedJavaObjectSubstitution).type)
-                return access.calculateHash((value as SerializedJavaObjectSubstitution))
+                val access = accessMap.get(value.type)
+                return access.calculateHash(value)
             } else {
                 value?.hashCode
             }

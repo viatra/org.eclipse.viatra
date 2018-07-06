@@ -48,7 +48,7 @@ import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
  */
 class SnapshotHelper {
     
-    private final Map<String, JavaObjectAccess> accessMap;
+    final Map<String, JavaObjectAccess> accessMap;
     
     new(){
         this(Maps.newHashMap)
@@ -236,55 +236,55 @@ class SnapshotHelper {
         return switch(value) {
             Enumerator: {
                 val sub = SnapshotFactory::eINSTANCE.createEnumSubstitution
-                sub.setValueLiteral((value as Enumerator).literal)
+                sub.setValueLiteral(value.literal)
                 sub.setParameterName(parameterName)
                 sub
             }
             EObject : {
                 val sub = SnapshotFactory::eINSTANCE.createEMFSubstitution
-                sub.setValue(value as EObject)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub
             }
             Integer : {
                 val sub = SnapshotFactory::eINSTANCE.createIntSubstitution
-                sub.setValue(value as Integer)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub
             }
             Long : {
                 val sub = SnapshotFactory::eINSTANCE.createLongSubstitution
-                sub.setValue(value as Long)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub
             }
             Double : {
                 val sub = SnapshotFactory::eINSTANCE.createDoubleSubstitution
-                sub.setValue(value as Double)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub				
             }
             Float : {
                 val sub = SnapshotFactory::eINSTANCE.createFloatSubstitution
-                sub.setValue(value as Float)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub	
             }
             Boolean : {
                 val sub = SnapshotFactory::eINSTANCE.createBooleanSubstitution
-                sub.setValue(value as Boolean)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub
             }
             String : {
                 val sub = SnapshotFactory::eINSTANCE.createStringSubstitution
-                sub.setValue(value as String)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub	
             }
             Date : {
                 val sub = SnapshotFactory::eINSTANCE.createDateSubstitution
-                sub.setValue(value as Date)
+                sub.setValue(value)
                 sub.setParameterName(parameterName)
                 sub				
             }

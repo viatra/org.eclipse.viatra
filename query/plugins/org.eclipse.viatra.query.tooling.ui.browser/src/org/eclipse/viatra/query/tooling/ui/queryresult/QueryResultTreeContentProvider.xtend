@@ -39,7 +39,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
              oldInput.removeListener(this)
         }
         if (newInput instanceof QueryResultTreeInput) {
-            this.input = newInput as QueryResultTreeInput
+            this.input = newInput
             // initialize listeners
             newInput.addListener(this)
         } else if (newInput !== null) {

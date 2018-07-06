@@ -65,7 +65,7 @@ class QueryRegistryTreeContentProvider implements ITreeContentProvider {
              oldInput.listener = null
         }
         if (newInput instanceof QueryRegistryTreeInput) {
-            this.input = newInput as QueryRegistryTreeInput
+            this.input = newInput
             // initialize listener
             newInput.listener = new QueryRegistryTreeViewListener(newInput, this.viewer)
         } else if (newInput !== null) {

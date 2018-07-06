@@ -31,14 +31,13 @@ class LoadQueriesHandler extends AbstractHandler {
         val selection = HandlerUtil.getCurrentSelection(event)
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            val queryResultView = (resultView as QueryResultView)
-            val active = queryResultView.hasActiveEngine
+            val active = resultView.hasActiveEngine
             
             if (active && selection instanceof IStructuredSelection) {
                 val selectedQueries = QueryResultViewUtil.getRegistryEntriesFromSelection(selection as IStructuredSelection)
-                queryResultView.loadQueriesIntoActiveEngineInBackground(selectedQueries)
+                resultView.loadQueriesIntoActiveEngineInBackground(selectedQueries)
             } else {
-                queryResultView.site.shell.queryLoadingFailed
+                resultView.site.shell.queryLoadingFailed
             }
         }
         return null

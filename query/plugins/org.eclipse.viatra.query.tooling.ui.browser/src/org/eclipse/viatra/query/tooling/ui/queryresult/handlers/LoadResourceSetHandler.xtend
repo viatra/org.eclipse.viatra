@@ -31,12 +31,10 @@ class LoadResourceSetHandler extends AbstractHandler {
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
             try {
-                var queryResultView = (resultView as QueryResultView)
                 var IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart)
                 if (modelConnector instanceof EMFModelConnector) {
-                    var EMFModelConnector emfModelConnector = (modelConnector as EMFModelConnector)
                     modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCESET)
-                    queryResultView.loadModel(emfModelConnector, IModelConnectorTypeEnum.RESOURCESET)
+                    resultView.loadModel(modelConnector, IModelConnectorTypeEnum.RESOURCESET)
                 }
             } catch (ViatraQueryException ex) {
                 throw new ExecutionException("Error while initializing Query Engine: " + ex.message, ex)

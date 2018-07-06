@@ -30,7 +30,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.jface.viewers.TreeViewer
 import java.util.ArrayList
-import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeInput.EngineLifecycleListener
 
 /**
  * @author Abel Hegedus
@@ -77,8 +76,8 @@ class ViatraQueryEngineContentProvider implements ITreeContentProvider {
     @Accessors
     protected boolean traverseEObjects = true
     
-    private TreeViewer viewer
-    private List<EngineListener> listeners = new ArrayList()
+    TreeViewer viewer
+    List<EngineListener> listeners = new ArrayList()
     
     
     new(){

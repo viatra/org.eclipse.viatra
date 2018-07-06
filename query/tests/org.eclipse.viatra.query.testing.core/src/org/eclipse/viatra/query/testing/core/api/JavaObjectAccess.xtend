@@ -21,7 +21,7 @@ import org.eclipse.xtend.lib.annotations.Data
  */
 @Data
 abstract class JavaObjectAccess {
-    final val Class<?> type
+    val Class<?> type
     
     /**
      * Constructs a {@link SerializedJavaObjectSubstitution} element based on the provided 

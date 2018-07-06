@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.extensibility.SingletonQueryGroupProvide
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries
 
 @RunWith(Parameterized)
-public class SimpleNameTests {
+class SimpleNameTests {
 
     @Parameters(name="{index} : {0}")
     static def Collection<Object[]> data() {

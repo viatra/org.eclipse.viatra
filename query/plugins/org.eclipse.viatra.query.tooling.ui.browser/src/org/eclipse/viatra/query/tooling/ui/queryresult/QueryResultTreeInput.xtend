@@ -158,7 +158,7 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
             ]
         ])
         val ruleSpec = Rules.newMatcherRuleSpecification(
-            matcher as ViatraQueryMatcher<MATCH>,
+            matcher,
             Lifecycles.getDefault(true, true),
             #{matchCreatedJob, matchUpdatedJob, matchDeletedJob}
         )
@@ -418,7 +418,7 @@ class QueryResultTreeMatcher <MATCH extends IPatternMatch> implements IFilteredM
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     int matchCount
     
-    override def getFilterMatch() {
+    override getFilterMatch() {
         if(filterMatch === null) {
             filterMatch = matcher.newEmptyMatch
         }

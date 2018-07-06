@@ -33,9 +33,9 @@ class OpenManagedEngineHandler extends AbstractHandler {
     override Object execute(ExecutionEvent event) throws ExecutionException {
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            var queryResultView = (resultView as QueryResultView)
+            var queryResultView = (resultView)
             // open dialog with list of managed engines
-            val engine = openDialog(queryResultView.site.shell) as AdvancedViatraQueryEngine
+            val engine = openDialog(queryResultView.site.shell)
             if(engine !== null){
                 queryResultView.loadExistingEngine(engine)
             }

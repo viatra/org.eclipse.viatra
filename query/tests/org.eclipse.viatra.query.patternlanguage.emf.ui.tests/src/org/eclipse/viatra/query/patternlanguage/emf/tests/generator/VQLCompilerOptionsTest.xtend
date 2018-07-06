@@ -48,7 +48,7 @@ class VQLCompilerOptionsTest extends AbstractQueryCompilerTest {
  
     @Rule
     public val name = new TestName
-    private var IPath configPath
+    var IPath configPath
  
     override setUp() {
         super.setUp

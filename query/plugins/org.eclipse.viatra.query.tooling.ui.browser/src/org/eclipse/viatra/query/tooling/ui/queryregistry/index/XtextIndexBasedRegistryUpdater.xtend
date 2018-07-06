@@ -50,16 +50,16 @@ class XtextIndexBasedRegistryUpdater {
     
     public static final String DYNAMIC_CONNECTOR_ID_PREFIX = "dynamic:"
     
-    private final IStateChangeEventBroker source
-    private final IResourceDescriptions descriptions
-    private final IResourceSetProvider resourceSetProvider
+    final IStateChangeEventBroker source
+    final IResourceDescriptions descriptions
+    final IResourceSetProvider resourceSetProvider
     
-    private final QueryRegistryUpdaterListener listener
-    private final Map<String,PatternDescriptionBasedSourceConnector> connectorMap
-    private final WorkspaceBuildCompletedListener workspaceListener
+    final QueryRegistryUpdaterListener listener
+    final Map<String,PatternDescriptionBasedSourceConnector> connectorMap
+    final WorkspaceBuildCompletedListener workspaceListener
     
     @Accessors(PROTECTED_GETTER)
-    private IQuerySpecificationRegistry connectedRegistry
+    IQuerySpecificationRegistry connectedRegistry
     
     @Inject
     new(IStateChangeEventBroker source, IResourceDescriptions descriptions, IResourceSetProvider resSetProvider) {

@@ -42,7 +42,7 @@ class MatcherFiltersPropertySource<MATCH extends IPatternMatch> implements IProp
 
     override IPropertyDescriptor[] getPropertyDescriptors() {
         val List<IPropertyDescriptor> filters = Lists.newArrayList()
-        val parameters = matcher.matcher.specification.parameters as List<PParameter>
+        val parameters = matcher.matcher.specification.parameters
         if(descriptors.empty) {
             parameters.forEach[
                 val property = new MatchParameterPropertyDescriptor(it, matcher)

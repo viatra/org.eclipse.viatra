@@ -22,8 +22,7 @@ class WipeEngineHandler extends AbstractHandler {
     override Object execute(ExecutionEvent event) throws ExecutionException {
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            var queryResultView = (resultView as QueryResultView)
-            queryResultView.wipeEngine
+            resultView.wipeEngine
         }
         return null
     }

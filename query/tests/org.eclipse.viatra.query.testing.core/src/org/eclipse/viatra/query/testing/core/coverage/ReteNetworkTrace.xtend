@@ -32,7 +32,7 @@ class ReteNetworkTrace {
 
 	final ReteEngine reteEngine
 	val EMFScope scope
-    final val Multimap<PTraceable, Node> traceableToNodeMap = Multimaps.newSetMultimap(newHashMap(), [newHashSet()])
+    val Multimap<PTraceable, Node> traceableToNodeMap = Multimaps.newSetMultimap(newHashMap(), [newHashSet()])
     final IPTraceableTraceProvider traceProvider
     
     private def void updateMapWithCanonicalTraceable(PTraceable derivedTraceable, Node node, IPTraceableTraceProvider traceProvider, Multimap<PTraceable, Node> traceableToNodeMap) {
@@ -46,7 +46,7 @@ class ReteNetworkTrace {
      */
     new(ViatraQueryMatcher<?> matcher, IPTraceableTraceProvider traceProvider) {
     	this.reteEngine = (matcher.getEngine() as AdvancedViatraQueryEngine).getQueryBackend(
-            new ReteBackendFactory()) as ReteEngine
+            ReteBackendFactory.INSTANCE) as ReteEngine
         this.scope = matcher.engine.scope as EMFScope
     	this.traceProvider = traceProvider
         reteEngine.getReteNet().getRecipeTraces().forEach[recipeTrace |

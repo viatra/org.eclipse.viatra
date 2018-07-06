@@ -24,17 +24,17 @@ import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 abstract class ModelManipulationAggregatorTest {
 
 	// INITIAL MODELS
-	protected final static val aggregators_baseLine = "org.eclipse.viatra.query.runtime.cps.tests/models/instances/aggregators.cyberphysicalsystem"
+	protected static val aggregators_baseLine = "org.eclipse.viatra.query.runtime.cps.tests/models/instances/aggregators.cyberphysicalsystem"
 
 	// SNAPSHOTS
-	protected final static val test_min0_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_min0_Priority.snapshot"
-	protected final static val test_min1_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_min1_Priority.snapshot"
-	protected final static val test_min2_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_min2_Priority.snapshot"
-	protected final static val test_max5_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_max5_Priority.snapshot"
-	protected final static val test_max6_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_max6_Priority.snapshot"
-	protected final static val test_max7_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_max7_Priority.snapshot"
-	protected final static val test_sum21_Priority = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_sum21_Priority.snapshot"
-	protected final static val test_sum0_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_sum0_Priority.snapshot"
+	protected static val test_min0_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_min0_Priority.snapshot"
+	protected static val test_min1_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_min1_Priority.snapshot"
+	protected static val test_min2_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_min2_Priority.snapshot"
+	protected static val test_max5_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_max5_Priority.snapshot"
+	protected static val test_max6_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_max6_Priority.snapshot"
+	protected static val test_max7_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_max7_Priority.snapshot"
+	protected static val test_sum21_Priority = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_sum21_Priority.snapshot"
+	protected static val test_sum0_Priority  = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_sum0_Priority.snapshot"
 
 	protected def void evaluateModifications(ViatraQueryTest test, Collection<Modification<EObject>> modifications) {
 		modifications.fold(test, [acc, modification |

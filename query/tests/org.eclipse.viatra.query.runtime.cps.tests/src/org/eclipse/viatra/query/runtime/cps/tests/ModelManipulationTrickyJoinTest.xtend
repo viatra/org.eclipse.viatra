@@ -32,7 +32,7 @@ class ModelManipulationTrickyJoinTest {
     public static val SNAPSHOT_PATH = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test_trickyJoin.snapshot"
     
     @Parameters(name = "{index}: {1}")
-    public static def data() {
+    static def data() {
         return TrickyJoin::instance.specifications.toList.sortBy[fullyQualifiedName].map[
         	val Object[] params = #[it,fullyQualifiedName]
         	params

@@ -47,7 +47,7 @@ class RewriterTraceTest {
         val IRewriterTraceCollector traceCollector = new MappingTraceCollector();
         val Map<QueryHintOption<?>, Object> hints = newHashMap(CommonQueryHintOptions.normalizationTraceCollector -> traceCollector);
         
-        var ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(rs), ViatraQueryEngineOptions.defineOptions.withDefaultHint(new QueryEvaluationHint(hints, new ReteBackendFactory)).build)
+        var ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(rs), ViatraQueryEngineOptions.defineOptions.withDefaultHint(new QueryEvaluationHint(hints, ReteBackendFactory.INSTANCE)).build)
         var String patternCode = 
         '''
         package org.eclipse.viatra.query.patternlanguage.emf.tests

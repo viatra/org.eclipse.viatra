@@ -119,7 +119,7 @@ abstract class QueryPerformanceTest {
      * This test case executes the performance evaluation on the given scope and with the provided query group.
      */
     @Test
-    public def queryPerformance() {
+    def queryPerformance() {
         logger.level = Level.DEBUG
         prepare()
 

@@ -145,23 +145,8 @@ class JavaProjectMigrator extends JavaProjectMigratorData{
         replacer.save
     }
     
-    /**
-     * Get JLS supported by the runtime JDT platform
-     */
-    def getJLS(){
-        try{
-            /* Viatra officially supports Java7, but in order to be able to precisely update
-             * Java8 code also, we detect whether current JDT supports it. 
-             * This detection uses reflection to avoid compile-time dependency. */ 
-            val f = AST.getField("JLS8")
-            return f.getInt(null);
-        }catch(NoSuchFieldException e){
-            return AST.JLS4;
-        }
-    }
-    
     def parse(ICompilationUnit unit, IProgressMonitor monitor){
-        val parser = ASTParser.newParser(JLS); 
+        val parser = ASTParser.newParser(AST.JLS8); 
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(unit);
         parser.setResolveBindings(true);

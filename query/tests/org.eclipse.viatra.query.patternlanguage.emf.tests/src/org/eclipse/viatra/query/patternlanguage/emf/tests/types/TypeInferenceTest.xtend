@@ -48,9 +48,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
     Injector injector
     
     @Inject
-    private ITypeInferrer typeInferrer
+    ITypeInferrer typeInferrer
     @Inject
-    extension private EMFTypeSystem typeSystem
+    extension EMFTypeSystem typeSystem
     
     
     ValidatorTester<EMFPatternLanguageValidator> tester

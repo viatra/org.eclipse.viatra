@@ -52,7 +52,7 @@ class CoverageTest {
          val IRewriterTraceCollector traceCollector = new MappingTraceCollector();
         val Map<QueryHintOption<?>, Object> hints = newHashMap(CommonQueryHintOptions.normalizationTraceCollector -> traceCollector);
         
-        val engineOptions = ViatraQueryEngineOptions.defineOptions.withDefaultHint(new QueryEvaluationHint(hints, new ReteBackendFactory)).build
+        val engineOptions = ViatraQueryEngineOptions.defineOptions.withDefaultHint(new QueryEvaluationHint(hints, ReteBackendFactory.INSTANCE)).build
         val ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(rs), engineOptions)
         val String patternCode ='''
         package org.eclipse.viatra.query.patternlanguage.emf.tests

@@ -29,11 +29,10 @@ class ShowMatchLocationHandler extends AbstractHandler {
         val selection = HandlerUtil.getCurrentSelection(event)
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            var queryResultView = (resultView as QueryResultView)
-            val active = queryResultView.hasActiveEngine
+            val active = resultView.hasActiveEngine
             
             if (active && selection instanceof IStructuredSelection) {
-                val connector = queryResultView.modelConnector
+                val connector = resultView.modelConnector
                 if(connector !== null) {
                     val eObjectsInSelection = newHashSet()
                     (selection as IStructuredSelection).iterator.forEach[

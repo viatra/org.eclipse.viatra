@@ -40,16 +40,13 @@ class AggregatorTest {
         )
     }
     
-    val String modelPath
     val EMFScope scope
     
     new(String modelPath) {
-        this.modelPath = modelPath
         val rs = new ResourceSetImpl
-        
         rs.getResource(URI.createPlatformPluginURI(modelPath, true), true)
         
-        scope = new EMFScope(rs)
+        this.scope = new EMFScope(rs)
     }
     
     @Test

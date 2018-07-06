@@ -31,15 +31,15 @@ import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLa
 class RecursivePatternCallTest extends AbstractValidatorTest {
 
     @Inject
-    private ParseHelper<EObject> parseHelper
+    ParseHelper<EObject> parseHelper
 
     @Inject
-    private EMFPatternLanguageValidator validator
+    EMFPatternLanguageValidator validator
 
     @Inject
-    private Injector injector
+    Injector injector
 
-    private ValidatorTester<EMFPatternLanguageValidator> tester
+    ValidatorTester<EMFPatternLanguageValidator> tester
 
     @Before
     def void initialize() {

@@ -45,13 +45,13 @@ class MatchParameterPropertyDescriptor implements IPropertyDescriptor {
     String category = "Filters"
     val PParameter parameter
     val QueryResultTreeMatcher<?> matcher
-    final val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory();
-    final val adapterFactoryItemDelegator = new AdapterFactoryItemDelegator(adapterFactory)
-    final val adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory)
+    val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory();
+    val adapterFactoryItemDelegator = new AdapterFactoryItemDelegator(adapterFactory)
+    val adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory)
     /**
      *  delegator handles EList as well
      */
-    final val labelProvider = new LabelProvider() {
+    val labelProvider = new LabelProvider() {
         
         override getText(Object element) {
             adapterFactoryItemDelegator.getText(element)

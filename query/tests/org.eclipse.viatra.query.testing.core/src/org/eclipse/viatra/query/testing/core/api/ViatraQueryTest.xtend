@@ -10,8 +10,6 @@
  */
 package org.eclipse.viatra.query.testing.core.api
 
-import com.google.common.base.Preconditions
-import com.google.common.collect.Maps
 import com.google.inject.Injector
 import java.util.LinkedList
 import java.util.List
@@ -38,6 +36,8 @@ import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivale
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import java.util.function.Predicate
 import java.util.function.Consumer
+import java.util.HashMap
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -47,12 +47,12 @@ import java.util.function.Consumer
 class ViatraQueryTest {
 
     val ViatraQueryTestCase testCase;
-    private val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
-    private Map<String, JavaObjectAccess> accessMap;
-    private val List<IPatternExecutionAnalyzer> analyzers = new LinkedList
+    val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
+    Map<String, JavaObjectAccess> accessMap;
+    val List<IPatternExecutionAnalyzer> analyzers = new LinkedList
 
     private new() {
-        this(Maps.newHashMap)
+        this(new HashMap())
     }
     
     /**

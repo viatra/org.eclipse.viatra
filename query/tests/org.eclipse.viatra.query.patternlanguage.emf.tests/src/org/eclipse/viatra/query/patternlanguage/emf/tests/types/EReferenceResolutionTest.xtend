@@ -25,7 +25,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
-import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -104,7 +103,7 @@ class EReferenceResolutionTest {
         model.assertNoErrors
         val pattern = model.patterns.get(0)
         val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
-        val type = PatternLanguageHelper.getPathExpressionTailType(constraint).get as ReferenceType
+        val type = PatternLanguageHelper.getPathExpressionTailType(constraint).get
         assertEquals(type.refname, PatternLanguagePackage$Literals::UNARY_TYPE_CONSTRAINT__VAR)
     }
     

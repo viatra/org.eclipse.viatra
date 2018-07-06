@@ -22,8 +22,7 @@ class BackendSelectionControl extends AbstractBackendSelectionControl {
     override protected getHints() {
         val resultView = workbenchWindow.activePage.findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            val queryResultView = (resultView as QueryResultView)
-            return queryResultView.hint
+            return resultView.hint
         }
         return null
     }
@@ -31,8 +30,7 @@ class BackendSelectionControl extends AbstractBackendSelectionControl {
     override protected setHints(QueryEvaluationHint newHint) {
         val resultView = workbenchWindow.activePage.findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            val queryResultView = (resultView as QueryResultView)
-            queryResultView.hint = newHint
+            resultView.hint = newHint
         }
     }
     

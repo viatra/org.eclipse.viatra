@@ -64,9 +64,9 @@ abstract class AbstractQueryComparisonTest {
         if (!res.loaded) {
             res.load(newHashMap)
         }
-        val _snapshot = res.getContents()?.findFirst[it instanceof QuerySnapshot]  
-        if (_snapshot instanceof QuerySnapshot) {
-            return _snapshot as QuerySnapshot
+        val snapshot = res.getContents()?.findFirst[it instanceof QuerySnapshot]  
+        if (snapshot instanceof QuerySnapshot) {
+            return snapshot
         } else {
             throw new IOException(String.format("Resource at uri %S does not contain a query snapshot.", uri.toString()));
         }
