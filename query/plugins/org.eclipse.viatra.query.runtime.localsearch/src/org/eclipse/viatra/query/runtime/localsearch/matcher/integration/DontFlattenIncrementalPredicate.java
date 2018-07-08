@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
 
 /**
- * This implementation forbids flattening of patterns marked to be executed with a backend other than the 
- * Local search engine (e.g. Rete). This makes is possible for the user to configure hybrid matching via using 
+ * This implementation forbids flattening of patterns marked to be executed with a caching / incremental backend. 
+ * This makes is possible for the user to configure hybrid matching via using 
  * the 'search' and 'incremental keywords in the pattern definition file.
  * 
  * @since 1.5
@@ -29,8 +29,18 @@ public class DontFlattenIncrementalPredicate implements IFlattenCallPredicate {
     public boolean shouldFlatten(PositivePatternCall positivePatternCall) {
         QueryEvaluationHint evaluationHints = positivePatternCall.getReferredQuery().getEvaluationHints();
         if (evaluationHints == null) return true;
-        IQueryBackendFactory configuredBackend = evaluationHints.getQueryBackendFactory();
-        return configuredBackend == null || !configuredBackend.isCaching();
+        
+        BackendRequirement backendRequirementType = evaluationHints.getQueryBackendRequirementType();
+        switch(backendRequirementType) {
+        case DEFAULT_CACHING:
+            return false;
+        case SPECIFIC:
+            return !evaluationHints.getQueryBackendFactory().isCaching();
+        case UNSPECIFIED:
+        case DEFAULT_SEARCH:
+        default:
+            return true;
+        }
     }
 
 }
