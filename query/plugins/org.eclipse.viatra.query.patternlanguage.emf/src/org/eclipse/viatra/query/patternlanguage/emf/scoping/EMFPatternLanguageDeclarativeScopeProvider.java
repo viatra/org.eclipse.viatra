@@ -106,25 +106,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                     return scope_Variable(containingAnnotationParameter);
                 }
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.ESTRUCTURAL_FEATURE, refType)) {
-                PathExpressionConstraint constraint = EcoreUtil2.getContainerOfType(ctx, PathExpressionConstraint.class);
-                
-                
-                final int referenceIndex = constraint.getEdgeTypes().indexOf(ctx);
-                /*
-                 * Limiting access by referenceIndex serves two purposes: (1) it avoids cyclic linking by defining a
-                 * clear dependency between the various elements (see reference.getRefName() and
-                 * constraint.getSourceType() calls), and (2) ignores possibly previously resolved future elements that
-                 * can happen when content assist is reqested in the middle of the chain
-                 */
-                EClassifier partialType = constraint.getEdgeTypes().stream()
-                    .limit(referenceIndex >= 0 ? referenceIndex : 0)
-                    .filter(Objects::nonNull)
-                    .map(ReferenceType::getRefname) // resolution
-                    .map(EStructuralFeature::getEType)
-                    .map(obj -> obj == null ? UNRESOLVED_TYPE : obj) // Replace unresolved objects with a dedicated placeholder object
-                    .reduce((a, b) -> b) //find the last element fulfilling the condition
-                    .orElse(constraint.getSourceType().getClassname());
-                return calculateReferences(partialType);
+                return scope_EStructuralFeature(ctx);
             } else if (EcoreUtil2.isAssignableFrom(EcorePackage.Literals.EENUM_LITERAL, refType)) {
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
                 if (containingValue != null) {
@@ -133,6 +115,33 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
             }
         }
         return super.getScope(ctx, ref);
+    }
+
+    private IScope scope_EStructuralFeature(EObject ctx) {
+        PathExpressionConstraint constraint = EcoreUtil2.getContainerOfType(ctx, PathExpressionConstraint.class);
+        
+        if (ctx instanceof ClassType) {
+            return calculateReferences(((ClassType) ctx).getClassname());
+        } else if (ctx instanceof ReferenceType && !((EObject)ctx.eGet(PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME, false)).eIsProxy()) {
+            return calculateReferences(((ReferenceType) ctx).getRefname().getEType());
+        } else {
+            final int referenceIndex = constraint.getEdgeTypes().indexOf(ctx);
+            /*
+             * Limiting access by referenceIndex serves two purposes: (1) it avoids cyclic linking by defining a
+             * clear dependency between the various elements (see reference.getRefName() and
+             * constraint.getSourceType() calls), and (2) ignores possibly previously resolved future elements that
+             * can happen when content assist is reqested in the middle of the chain
+             */
+            EClassifier partialType = constraint.getEdgeTypes().stream()
+                .limit(referenceIndex >= 0 ? referenceIndex : constraint.getEdgeTypes().size())
+                .filter(Objects::nonNull)
+                .map(ReferenceType::getRefname) // resolution
+                .map(EStructuralFeature::getEType)
+                .map(obj -> obj == null ? UNRESOLVED_TYPE : obj) // Replace unresolved objects with a dedicated placeholder object
+                .reduce((a, b) -> b) //find the last element fulfilling the condition
+                .orElse(constraint.getSourceType().getClassname());
+            return calculateReferences(partialType);
+        }
     }
 
     private IScope scope_EPackage(PackageImport ctx, EReference ref) {
