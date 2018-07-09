@@ -338,17 +338,17 @@
         <repositoryList
             name="Neon">
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/pre-6.0.0/neon"/>
+              url="http://download.eclipse.org/sirius/updates/releases/6.0.0/neon"/>
         </repositoryList>
         <repositoryList
             name="Oxygen">
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/pre-6.0.0/oxygen"/>
+              url="http://download.eclipse.org/sirius/updates/releases/6.0.0/oxygen"/>
         </repositoryList>
         <repositoryList
             name="Photon">
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/pre-6.0.0/photon"/>
+              url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
         </repositoryList>
       </targlet>
     </setupTask>
