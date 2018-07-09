@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist;
 
 import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -259,19 +260,21 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
      */
     public void complete_RefType(PathExpressionConstraint model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
-        IScope scope = scopeProvider.getScope(model,
+        EObject reference = NodeModelUtils.findActualSemanticObjectFor(context.getCurrentNode());
+        // If the semantic object is a ReferenceType, calculate its index
+        int index = model.getEdgeTypes().indexOf(reference);
+        final int edgeCount = model.getEdgeTypes().size();
+        // If the semantic object for the current node is the constraint, consider the last edge as context for the scope calculation
+        if (Objects.equals(model, reference) && edgeCount > 1) {
+            index = edgeCount;
+        }
+        // For the scope calculation, step one step back, to either the previous edge type or the source type
+        IScope scope = scopeProvider.getScope(index > 0 ? model.getEdgeTypes().get(index - 1) : model.getSourceType(),
                 PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
         crossReferenceProposalCreator.lookupCrossReference(scope, model,
                 PatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME, acceptor,
                 Predicates.<IEObjectDescription> alwaysTrue(),
                 getProposalFactory(ruleCall.getRule().getName(), context));
-    }
-
-    @Override
-    public void completeRefType_Refname(EObject model, Assignment assignment, ContentAssistContext context,
-            ICompletionProposalAcceptor acceptor) {
-        // This method is deliberately empty.
-        // This override prohibits the content assist to suggest incorrect parameters.
     }
 
     @Override
