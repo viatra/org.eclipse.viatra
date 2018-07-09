@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.viatra.query.patternlanguage.metamodel</name>
+	<name>org.eclipse.viatra.query.patternlanguage.metamodel.vql.generator.test</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,6 +27,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.sirius.nature.modelingproject</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>

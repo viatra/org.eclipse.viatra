@@ -46,6 +46,12 @@
                                             <exclude>.gitignore</exclude>
                                     </excludes>
                                 </fileset>
+                                <fileset>
+                                    <directory>xtend-gen</directory>
+                                    <excludes>
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
+                                </fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -79,7 +85,23 @@
 						<phase>generate-sources</phase>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>			
+            <plugin>
+                <groupId>org.eclipse.xtend</groupId>
+                <artifactId>xtend-maven-plugin</artifactId>
+                <configuration>
+                    <!-- need to prefix by basedir to generate to currently built module -->
+                    <outputDirectory>${basedir}/xtend-gen</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>

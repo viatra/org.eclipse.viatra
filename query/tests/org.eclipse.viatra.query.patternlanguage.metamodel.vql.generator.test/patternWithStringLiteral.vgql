@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraphPatternLanguage:PatternPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:GraphPatternLanguage="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" packageName="vgql.test">
+  <patterns name="test3">
+    <parameters name="hi" parameterReferences="//@patterns.0/@bodies.0/@nodes.0">
+      <types xsi:type="GraphPatternLanguage:EClassifierReference">
+        <classifier xsi:type="ecore:EClass" href="http://org.eclipse.viatra/model/cps#//HostInstance"/>
+      </types>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="GraphPatternLanguage:PathExpressionConstraint">
+        <edgeTypes>
+          <refname xsi:type="ecore:EAttribute" href="http://org.eclipse.viatra/model/cps#//Identifiable/identifier"/>
+        </edgeTypes>
+        <src expression="//@patterns.0/@bodies.0/@nodes.0"/>
+        <dst expression="//@patterns.0/@bodies.0/@nodes.1"/>
+      </constraints>
+      <nodes xsi:type="GraphPatternLanguage:ParameterRef" references="//@patterns.0/@bodies.0/@constraints.0/@src" name="hi" referredParam="//@patterns.0/@parameters.0"/>
+      <nodes xsi:type="GraphPatternLanguage:StringLiteral" references="//@patterns.0/@bodies.0/@constraints.0/@dst" value="abc"/>
+    </bodies>
+  </patterns>
+  <packageImports href="http://org.eclipse.viatra/model/cps#/"/>
+</GraphPatternLanguage:PatternPackage>
