@@ -258,8 +258,8 @@ public class ASTStringProvider extends PatternLanguageSwitch<String> {
                 prefix,
                 object.getSourceType().getClassname().getName(),
                 object.getEdgeTypes().stream().map(t -> t.getRefname().getName()).collect(Collectors.joining(".")),
-                object.getSrc().getVar(),
-                this.doSwitch(object.getDst())
+                Optional.ofNullable(object.getSrc()).map(VariableReference::getVar).orElse(UNDEFINED),
+                Optional.ofNullable(object.getDst()).map(this::doSwitch).orElse(UNDEFINED)
             );
     }
     
