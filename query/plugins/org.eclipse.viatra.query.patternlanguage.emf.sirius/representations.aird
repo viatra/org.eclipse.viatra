@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xmi:id="_DQB84GJYEei6N5YssTUpcg" version="13.0.0.201804031646">
+  <semanticResources>http://www.eclipse.org/xtext/xbase/Xtype</semanticResources>
+  <semanticResources>http://www.eclipse.org/emf/2002/Ecore</semanticResources>
+  <semanticResources>http://www.eclipse.org/xtext/common/JavaVMTypes</semanticResources>
+  <semanticResources>http://www.eclipse.org/xtext/xbase/Xbase</semanticResources>
+  <semanticResources>platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel</semanticResources>
+  <semanticResources>platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel</semanticResources>
+  <semanticResources>platform:/resource/org.eclipse.xtext.xbase/model/XAnnotations.ecore</semanticResources>
+  <semanticResources>platform:/resource/org.eclipse.xtext.xbase/model/Xtype.ecore</semanticResources>
+  <semanticResources>platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore</semanticResources>
+  <semanticResources>platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore</semanticResources>
+</viewpoint:DAnalysis>

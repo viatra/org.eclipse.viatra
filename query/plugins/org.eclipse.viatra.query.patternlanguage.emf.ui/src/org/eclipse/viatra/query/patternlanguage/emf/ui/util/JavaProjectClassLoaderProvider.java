@@ -69,7 +69,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
         return getIFile((EObject)pattern);
     }
 
-    private IFile getIFile(EObject ctx) {
+    public IFile getIFile(EObject ctx) {
         if (ctx != null) {
             Resource resource = ctx.eResource();
             if (resource != null) {

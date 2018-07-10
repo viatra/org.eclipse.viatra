@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2010-2018, Zoltan Ujhelyi, IncQuery Labs Ltd.&#xA;All rights reserved. This program and the accompanying materials&#xA;are made available under the terms of the Eclipse Public License v1.0&#xA;which accompanies this distribution, and is available at&#xA;http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;This file was generated from GraphicalPatternLanguage.genmodel"
+    modelDirectory="/org.eclipse.viatra.query.patternlanguage.metamodel/emf-gen" editDirectory="/org.eclipse.viatra.query.patternlanguage.metamodel.edit/emf-gen"
+    editorDirectory="" modelPluginID="org.eclipse.viatra.query.patternlanguage.metamodel"
+    modelName="GraphicalQueryLanguage" editPluginClass="org.eclipse.viatra.query.patternlanguage.metamodel.vgql.provider.GraphicalQueryLanguageEditPlugin"
+    editorPluginClass="org.eclipse.viatra.query.patternlanguage.metamodel.vgql.presentation.GraphicalQueryLanguageEditorPlugin"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" testsDirectory=""
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    optimizedHasChildren="true" runtimeVersion="2.10" operationReflection="true" importOrganizing="true">
+  <foreignModel>GraphicalPatternLanguage.ecore</foreignModel>
+  <genPackages prefix="Vgql" basePackage="org.eclipse.viatra.query.patternlanguage.metamodel"
+      disposableProviderFactory="true" ecorePackage="GraphicalPatternLanguage.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphicalPatternLanguage.ecore#//ExecutionType">
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ExecutionType/unspecified"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ExecutionType/search"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ExecutionType/incremental"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphicalPatternLanguage.ecore#//ParameterDirection">
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ParameterDirection/inout"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ParameterDirection/in"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ParameterDirection/out"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphicalPatternLanguage.ecore#//CompareFeature">
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//CompareFeature/equality"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//CompareFeature/inequality"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphicalPatternLanguage.ecore#//ClosureType">
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ClosureType/original"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ClosureType/reflexive_transitive"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphicalPatternLanguage.ecore#//ClosureType/transitive"/>
+    </genEnums>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//PatternPackage">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//PatternPackage/packageName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PatternPackage/patterns"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PatternPackage/packageImports"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//GraphPattern">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/annotations"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//GraphPattern/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/bodies"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/package"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//GraphPattern/private"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//GraphPattern/execution"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//GraphPatternBody">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPatternBody/constraints"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPatternBody/nodes"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPatternBody/pattern"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Constraint">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Constraint/body"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//PatternCompositionConstraint">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//PatternCompositionConstraint/negative"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PatternCompositionConstraint/call"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//CompareConstraint">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//CompareConstraint/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//CompareConstraint/feature"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//CompareConstraint/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//CheckConstraint"/>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//PathExpressionConstraint">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/edgeTypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/src"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/dst"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//EnumValue">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//EnumValue/literal"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//EClassifierReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//EClassifierReference/classifier"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//ReferenceType">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//ReferenceType/refname"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Annotation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//Annotation/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Annotation/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//AnnotationParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//AnnotationParameter/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//AnnotationParameter/value"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Expression">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Expression/references"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Expression/body"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Variable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//Variable/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Variable/types"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Literal"/>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Reference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//Reference/aggregator"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Reference/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Type"/>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//PatternCall">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PatternCall/patternRef"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PatternCall/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//ParameterRef">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//ParameterRef/referredParam"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//Parameter/direction"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Parameter/pattern"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Parameter/parameterReferences"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//LocalVariable"/>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//JavaClassReference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//JavaClassReference/className"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//StringLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//StringLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//NumberLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//NumberLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//BooleanLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//BooleanLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//ListLiteral">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//ListLiteral/values"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//FunctionEvaluationValue"/>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//AggregatedValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//AggregatedValue/call"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//AggregatedValue/aggregatorClassName"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="GraphicalPatternLanguage.ecore#//CallableRelation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//CallableRelation/transitive"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//UnaryType"/>
+    <genClasses image="false" ecoreClass="GraphicalPatternLanguage.ecore#//InterpretableExpression">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//InterpretableExpression/expression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//InterpretableExpression/variables"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
