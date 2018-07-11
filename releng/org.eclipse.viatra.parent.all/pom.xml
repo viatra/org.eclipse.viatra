@@ -41,6 +41,7 @@
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.ui</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.evm.transactions</module>
 		<module>../../transformation/tests/org.eclipse.viatra.transformation.evm.tests</module>
+		<module>../../transformation/tests/org.eclipse.viatra.transformation.runtime.emf.tests</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.runtime.emf.feature</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.evm.transactions.feature</module>
 

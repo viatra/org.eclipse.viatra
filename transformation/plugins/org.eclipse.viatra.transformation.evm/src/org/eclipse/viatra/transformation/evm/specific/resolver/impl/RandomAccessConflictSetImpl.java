@@ -13,6 +13,7 @@ package org.eclipse.viatra.transformation.evm.specific.resolver.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -28,7 +29,7 @@ public abstract class RandomAccessConflictSetImpl implements ChangeableConflictS
 
     @Override
     public Set<Activation<?>> getConflictingActivations() {
-        return Collections.unmodifiableSet(activationToPosition.keySet());
+        return Collections.unmodifiableSet(new HashSet<>(activationToPosition.keySet()));
     }
 
     @Override

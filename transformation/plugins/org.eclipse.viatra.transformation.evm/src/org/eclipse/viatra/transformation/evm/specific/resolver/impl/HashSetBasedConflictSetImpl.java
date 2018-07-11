@@ -23,7 +23,7 @@ public abstract class HashSetBasedConflictSetImpl implements ChangeableConflictS
 
     @Override
     public Set<Activation<?>> getConflictingActivations() {
-        return Collections.unmodifiableSet(container);
+        return Collections.unmodifiableSet(new HashSet<>(container));
     }
 
     @Override
@@ -38,7 +38,7 @@ public abstract class HashSetBasedConflictSetImpl implements ChangeableConflictS
 
     @Override
     public Set<Activation<?>> getNextActivations() {
-        return Collections.unmodifiableSet(container);
+        return Collections.unmodifiableSet(new HashSet<>(container));
     }
 
 }

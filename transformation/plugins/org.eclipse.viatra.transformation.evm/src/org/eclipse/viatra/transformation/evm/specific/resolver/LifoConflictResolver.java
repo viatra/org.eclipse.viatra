@@ -13,7 +13,6 @@ package org.eclipse.viatra.transformation.evm.specific.resolver;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -55,12 +54,7 @@ public class LifoConflictResolver implements ConflictResolver {
 
         @Override
         public Set<Activation<?>> getNextActivations() {
-            if (activations.isEmpty()) {
-                return Collections.emptySet();
-            }
-            Set<Activation<?>> activationSet = new HashSet<Activation<?>>();
-            activationSet.add(getNextActivation());
-            return activationSet;
+            return activations.isEmpty() ? Collections.emptySet() : Collections.singleton(getNextActivation());
         }
 
         @Override

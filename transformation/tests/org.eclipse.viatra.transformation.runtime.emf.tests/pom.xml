@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>org.eclipse.viatra.parent.all</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>2.0.1-SNAPSHOT</version>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+    </parent>
+    <artifactId>org.eclipse.viatra.transformation.runtime.emf.tests</artifactId>
+    <packaging>eclipse-test-plugin</packaging>
+    <properties>
+        <!-- Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=397015 -->
+	    <sonar.sources></sonar.sources>
+	    <sonar.tests>test,xtend-gen</sonar.tests>
+    </properties>
+    <build>
+    <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>xtend-gen</directory>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.xtend</groupId>
+                <artifactId>xtend-maven-plugin</artifactId>
+                <configuration>
+                    <!-- need to prefix by basedir to generate to currently built module -->
+                    <outputDirectory>${basedir}/xtend-gen</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+       </plugins>
+    </build>
+</project>

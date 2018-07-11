@@ -79,14 +79,12 @@ public class ComparingConflictResolver implements ConflictResolver {
 
         @Override
         public Set<Activation<?>> getNextActivations() {
-            Set<Activation<?>> hashSet = new HashSet<Activation<?>>();
-            hashSet.add(getNextActivation());
-            return Collections.unmodifiableSet(hashSet);
+            return Collections.singleton(getNextActivation());
         }
 
         @Override
         public Set<Activation<?>> getConflictingActivations() {
-            return Collections.unmodifiableSet(set);
+            return Collections.unmodifiableSet(new HashSet<>(set));
         }
         
     }
