@@ -27,14 +27,14 @@ public interface ConflictSet {
     Activation<?> getNextActivation();
 
     /**
-     *
-     * @return the set of activations that are considered as equal by the resolver
+     * Returns a snapshot of activations that are considered as equal by the resolver. Each time the method is called, a
+     * new copy of the activation set is returned.
      */
     Set<Activation<?>> getNextActivations();
 
     /**
-     *
-     * @return the set of all activations that are in conflict (all enabled activations)
+     * Returns a snapshot of all activations that are in conflict (all enabled activations). Each time the method is
+     * called, a new copy of the conflicting actions are returned.
      */
     Set<Activation<?>> getConflictingActivations();
 
