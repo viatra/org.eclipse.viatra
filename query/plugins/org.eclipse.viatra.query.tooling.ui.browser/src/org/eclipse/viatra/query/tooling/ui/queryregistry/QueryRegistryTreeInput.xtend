@@ -119,7 +119,7 @@ class QueryRegistryTreeInput {
     }
     
     def String getPackageName(String fullyQualifiedName) {
-        return fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.'))
+        return fullyQualifiedName.substring(0, Math.max(0, fullyQualifiedName.lastIndexOf('.')))
     }
     
     def dispatch TreePath getTreePath(QueryRegistryTreePackage pckg) {
