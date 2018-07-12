@@ -5,6 +5,10 @@ Bundle-SymbolicName: org.eclipse.viatra.query.runtime.cps.tests;singleton:=true
 Bundle-Version: 2.0.1.qualifier
 Bundle-Vendor: The Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.runtime.cps.tests.queries,
+  org.eclipse.viatra.query.runtime.cps.tests.queries.api,
+  org.eclipse.viatra.query.runtime.cps.tests.queries.api.util,
+  org.eclipse.viatra.query.runtime.cps.tests.queries.flattenerpredicate,
+  org.eclipse.viatra.query.runtime.cps.tests.queries.flattenerpredicate.util,
   org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering,
   org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.util,
   org.eclipse.viatra.query.runtime.cps.tests.queries.util
