@@ -57,8 +57,12 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Type;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlFactory;
 
 public class VGQLEditorUtil {
-	
-	/**
+
+    private VGQLEditorUtil() {
+        // Hidden utility class constructor
+    }
+
+    /**
 	 * Creates a {@link Reference} instance for the given variable
 	 * 
 	 * <p><b>The method is called from Sirius as a Java service!</b></p>
@@ -161,7 +165,7 @@ public class VGQLEditorUtil {
             return ((ReferenceType) type).getRefname().getEType().getName();
         } else if (type instanceof JavaClassReference) {
             final String fqn = ((JavaClassReference) type).getClassName();
-            return fqn == null ? "«UNDEFINED»" : fqn.substring(fqn.lastIndexOf(".") + 1);
+            return fqn == null ? "«UNDEFINED»" : fqn.substring(fqn.lastIndexOf('.') + 1);
         } else {
             return "Unknown type";
         }
@@ -177,14 +181,14 @@ public class VGQLEditorUtil {
      * @param targetViewEObject The view (in the Sirius diagram) of the target element
      */
     public static void openXtextEmbeddedEditor(InterpretableExpression target, EObject targetViewEObject) {
-        if (false == targetViewEObject instanceof DDiagramElement) {
+        if (!(targetViewEObject instanceof DDiagramElement)) {
             SiriusVQLGraphicalEditorPlugin.logError(new IllegalArgumentException(
                     "The 'targetView' parameter must be a DDiagramElement instance!"));
         }
         
         IEditorPart editor = Optional.ofNullable(PlatformUI.getWorkbench()).map(IWorkbench::getActiveWorkbenchWindow)
                 .map(IWorkbenchWindow::getActivePage).map(IWorkbenchPage::getActiveEditor).orElseThrow(null);
-        if (false == editor instanceof SiriusDiagramEditor) {
+        if (!(editor instanceof SiriusDiagramEditor)) {
             SiriusVQLGraphicalEditorPlugin.logError(new IllegalStateException("The currently"
                     + " active editor is not a SiriusDiagramEditor instance!"));
             return;
@@ -200,7 +204,7 @@ public class VGQLEditorUtil {
         } else {
             editPart = diagramEditPart.findEditPart(diagramEditPart, targetView);
         }
-        if (editPart == null || (false == editPart instanceof IGraphicalEditPart)) {
+        if (editPart == null || (!(editPart instanceof IGraphicalEditPart))) {
             SiriusVQLGraphicalEditorPlugin.logError(new IllegalStateException("Can not find"
                     + " appropriate edit part for the target element (" + target + ")"));
             return;

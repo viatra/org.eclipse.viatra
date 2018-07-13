@@ -105,7 +105,7 @@ public class XtextEmbeddedEditor {
 		this.hostEditPart = Objects.requireNonNull(editPart);
 		this.semanticElement = Objects.requireNonNull(targetSemanticElement);
 		this.originalSemanticElementView = Objects.requireNonNull(targetView);
-		this.xtextInjector = EMFPatternLanguageUIPlugin.getInstance().getInjector(EMFPatternLanguageUIPlugin.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);;
+		this.xtextInjector = EMFPatternLanguageUIPlugin.getInstance().getInjector(EMFPatternLanguageUIPlugin.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
 	}
 
     public void showEditor() {
@@ -214,7 +214,7 @@ public class XtextEmbeddedEditor {
         return getPrefixText(ex) + getEditableText(ex) + getPostfixText(ex);
     }
     
-	protected void createXtextEditor() throws Exception {
+	protected void createXtextEditor() {
 		GraphicalViewer viewer = (GraphicalViewer) VGQLEditorUtil.getViewer(originalSemanticElementView);
 		Composite parentComposite = (Composite) viewer.getControl();
 		

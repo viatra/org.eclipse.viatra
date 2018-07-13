@@ -34,8 +34,9 @@ public class SiriusVQLGraphicalEditorPlugin extends AbstractUIPlugin {
     public static final String ICON_EDATATYPE = "edatatype";
     public static final String ICON_EENUM = "eenum";
 
-    private static Set<Viewpoint> viewpoints; 
+    private Set<Viewpoint> viewpoints; 
 
+    @Override
     public void start(BundleContext context) throws Exception {
       super.start(context);
       
@@ -44,6 +45,7 @@ public class SiriusVQLGraphicalEditorPlugin extends AbstractUIPlugin {
 	  viewpoints.addAll(ViewpointRegistry.getInstance().registerFromPlugin(PLUGIN_ID + "/description/vqleditor.odesign"));	  
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
         if (viewpoints != null) {
             for (final Viewpoint viewpoint : viewpoints) {
@@ -61,6 +63,7 @@ public class SiriusVQLGraphicalEditorPlugin extends AbstractUIPlugin {
 		ViatraQueryLoggingUtil.getLogger(SiriusVQLGraphicalEditorPlugin.class).error(t.getMessage(), t);
 	}
 	
+	@Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
         reg.put(ICON_ECLASS, imageDescriptorFromPlugin(PLUGIN_ID, "icons/eclass.gif"));
