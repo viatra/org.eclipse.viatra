@@ -31,4 +31,6 @@ Bundle-Activator: org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryTooling
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"
 Automatic-Module-Name: org.eclipse.viatra.query.tooling.ui.browser
+Export-Package: org.eclipse.viatra.query.tooling.ui.queryregistry.index;x-friends:="org.eclipse.viatra.query.patternlanguage.emf.sirius",
+ org.eclipse.viatra.query.tooling.ui.queryresult;x-friends:="org.eclipse.viatra.query.patternlanguage.emf.sirius"
 
