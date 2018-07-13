@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.IIndexTable;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
@@ -95,7 +96,16 @@ public abstract class TabularRuntimeContext extends AbstractQueryRuntimeContext 
             return isContainedInStatelessKey(key, seed);
         }
     }
-
+    
+    @Override
+    public void addUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
+        getIndexTable(key).addUpdateListener(seed, listener);
+    }
+    @Override
+    public void removeUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
+        getIndexTable(key).removeUpdateListener(seed, listener);
+    }
+    
     /**
      * Handles non-enumerable input keys that are not backed by a table
      */

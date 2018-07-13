@@ -61,6 +61,9 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
                 for (MaskedTupleMemory indexMemory : indexMemories.values()) {
                     indexMemory.add(row);
                 }
+                if (emitNotifications) {
+                    deliverChangeNotifications(row, true);
+                }
             }
         } else { // DELETE
             boolean changed = rows.removeOne(row);
@@ -73,6 +76,9 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
             if (changed) {
                 for (MaskedTupleMemory indexMemory : indexMemories.values()) {
                     indexMemory.remove(row);
+                }
+                if (emitNotifications) {
+                    deliverChangeNotifications(row, false);
                 }
             }
         }
@@ -99,13 +105,13 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
         case 0: // unseeded
             return rows.size();
         default:
-            return getIndexMemory(seedMask).get(seed).size();
+            return getIndexMemory(seedMask).getOrEmpty(seed).size();
         }
     }
 
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
-        return getIndexMemory(seedMask).get(seed);
+        return getIndexMemory(seedMask).getOrEmpty(seed);
     }
 
     @Override
@@ -113,7 +119,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
         // we assume there is a single omitted index in the mask
         int queriedColumn = seedMask.getFirstOmittedIndex().getAsInt();
 
-        return () -> getIndexMemory(seedMask).get(seed).stream()
+        return () -> getIndexMemory(seedMask).getOrEmpty(seed).stream()
                 .map(row2 -> row2.get(queriedColumn)).iterator();
     }
 }

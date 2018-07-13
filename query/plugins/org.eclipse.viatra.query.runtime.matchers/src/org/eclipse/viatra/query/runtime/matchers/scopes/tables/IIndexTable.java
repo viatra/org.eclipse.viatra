@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
@@ -103,30 +104,28 @@ public interface IIndexTable {
 
     public int countTuples(TupleMask seedMask, ITuple seed);
 
-    // TODO Future work: design notification pathway
-    // Must be customizable to support EMFQRC use cases as well, e.g. subtyping
-
-    // /**
-    // * Subscribes for updates in the table, optionally seeded with the given tuple.
-    // * <p> This should be called after initializing a result cache by an enumeration method.
-    // *
-    // * @param seed can be null or a tuple with matching arity;
-    // * if non-null, only those updates in the model are notified about
-    // * that match the seed at positions where the seed is non-null.
-    // * @param listener will be notified of future changes
-    // *
-    // */
-    // public void addUpdateListener(Tuple seed, IQueryRuntimeContextListener listener);
-    //
-    // /**
-    // * Unsubscribes from updates in the table, optionally seeded with the given tuple.
-    // *
-    // * @param seed can be null or a tuple with matching arity;
-    // * if non-null, only those updates in the model are notified about
-    // * that match the seed at positions where the seed is non-null.
-    // * @param listener will no longer be notified of future changes
-    // *
-    // */
-    // public void removeUpdateListener(Tuple seed, IQueryRuntimeContextListener listener);
+     /**
+     * Subscribes for updates in the table, optionally seeded with the given tuple.
+     * <p> This should be called after initializing a result cache by an enumeration method.
+     *
+     * @param seed can be null or a tuple with matching arity;
+     *   if non-null, notifications will delivered only about those updates of the table
+     *   that match the seed at positions where the seed is non-null.
+     * @param listener will be notified of future changes
+     * 
+     * @since 2.1
+     */
+     public void addUpdateListener(Tuple seed, IQueryRuntimeContextListener listener);
+    
+     /**
+     * Unsubscribes from updates in the table, optionally seeded with the given tuple.
+     *
+     * @param seed can be null or a tuple with matching arity;
+     *   see {@link #addUpdateListener(Tuple, IQueryRuntimeContextListener)} for definition.
+     * @param listener will no longer be notified of future changes
+     * 
+     * @since 2.1
+     */
+     public void removeUpdateListener(Tuple seed, IQueryRuntimeContextListener listener);
 
 }

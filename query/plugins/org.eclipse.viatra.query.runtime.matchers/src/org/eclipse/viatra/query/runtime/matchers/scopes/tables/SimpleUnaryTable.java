@@ -59,6 +59,9 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
                         value, getInputKey().getPrettyPrintableName());
                 logError(msg);
             }
+            if (changed && emitNotifications) {
+                deliverChangeNotifications(Tuples.staticArityFlatTupleOf(value), true);
+            }
         } else { // DELETE
             boolean changed = values.removeOne(value);
             if (unique && !changed) {
@@ -66,6 +69,9 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
                         "Error: trying to remove duplicate value %s from the unique set %s. This indicates some errors in underlying model representation.",
                         value, getInputKey().getPrettyPrintableName());
                 logError(msg);
+            }
+            if (changed && emitNotifications) {
+                deliverChangeNotifications(Tuples.staticArityFlatTupleOf(value), false);
             }
         }
     }

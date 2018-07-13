@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.memories;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
@@ -107,6 +108,17 @@ public abstract class MaskedTupleMemory implements Clearable, Iterable<Tuple>  {
      * @return collection of tuples found, null if none
      */
     public abstract Collection<Tuple> get(ITuple signature);
+
+    /**
+     * Retrieves tuples that have the specified signature
+     * 
+     * @return collection of tuples found, never null
+     * @since 2.1
+     */
+    public Collection<Tuple> getOrEmpty(ITuple signature) {
+        Collection<Tuple> result = get(signature);
+        return result == null? Collections.emptySet() : result;
+    }
 
     /**
      * Removes a tuple occurrence from the memory, with given signature

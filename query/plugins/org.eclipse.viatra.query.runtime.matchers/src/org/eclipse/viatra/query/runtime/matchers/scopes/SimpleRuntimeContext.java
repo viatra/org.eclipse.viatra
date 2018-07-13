@@ -16,7 +16,6 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.IIndexTable;
@@ -79,16 +78,6 @@ public class SimpleRuntimeContext extends TabularRuntimeContext {
     public void ensureIndexed(IInputKey key, IndexingService service) {
         if (peekIndexTable(key) == null)
             throw new IllegalArgumentException(key.getPrettyPrintableName());
-    }
-
-    @Override
-    public void addUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
-        // TODO no listeners yet
-    }
-
-    @Override
-    public void removeUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
-        // TODO no listeners yet
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  * 
- * Specifies select indices of a tuple. If viewed through this mask, the signature of the pattern will consist of its
+ * Specifies select indices of a tuple. If viewed through this mask (see {@link #transform(ITuple)}), the signature of the pattern will consist of its
  * individual substitutions at the given positions, in the exact same order as they appear in indices[].
  * 
  * @author Gabor Bergmann
@@ -278,7 +278,7 @@ public class TupleMask {
         ensureIndicesSorted();
         int column = 0; 
         while (column < getSize() && indicesSorted[column] == column) column++;
-        if (column < getSize()) return OptionalInt.of(column);
+        if (column < getSourceWidth()) return OptionalInt.of(column);
         else return OptionalInt.empty();
     }
 
@@ -304,6 +304,8 @@ public class TupleMask {
     
     /**
      * Generates an immutable, masked view of the original tuple.
+     * <p> The new tuple will have arity {@link #getSize()}, 
+     *  and will consist of the elements of the original tuple, at positions indicated by this mask.
      * @since 1.7
      */
     public Tuple transform(ITuple original) {
@@ -356,9 +358,28 @@ public class TupleMask {
             signature[indices[i]] = masked.get(i);
         return Tuples.flatTupleOf(signature);
     }
+    
+    /**
+     * Returns a tuple `result`, same arity as the original tuple, that satisfies 
+     *   `this.transform(result).equals(this.transform(tuple))`. 
+     * Positions of the result tuple that are not determined this way will be filled with null. 
+     * <p> In other words, a copy of the original tuple is returned, 
+     *   with null substituted at each position that is <em>not</em> selected by this mask.
+     * 
+     * @pre: all indices of the mask must be different, i.e {@link #isNonrepeating()} must return true
+     * @since 2.1
+     */
+    public Tuple keepSelectedIndices(ITuple original) {
+        Object[] signature = new Object[sourceWidth];
+        for (int i = 0; i < indices.length; ++i)
+            signature[indices[i]] = original.get(indices[i]);
+        return Tuples.flatTupleOf(signature);
+    }
 
     /**
      * Generates an immutable, masked view of the original tuple.
+     * <p> The list will have arity {@link #getSize()}, 
+     *  and will consist of the elements of the original tuple, at positions indicated by this mask.
      */
     public <T> List<T> transform(List<T> original) {
         List<T> signature = new ArrayList<T>(indices.length);
@@ -526,4 +547,5 @@ public class TupleMask {
             signature.add(original.get(indices[i]));
         return signature;
     }
+
 }

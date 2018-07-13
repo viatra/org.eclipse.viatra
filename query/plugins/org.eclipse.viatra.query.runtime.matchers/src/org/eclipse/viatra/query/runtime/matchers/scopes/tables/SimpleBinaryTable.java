@@ -81,8 +81,12 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
                 if (holderToValueMap != null) {
                     addToHolderToValueMap(value, holder);
                 }
-                if (changed)
+                if (changed) {
                     totalRowCount++;
+                    if (emitNotifications) {
+                        deliverChangeNotifications(Tuples.staticArityFlatTupleOf(holder, value), true);
+                    }
+                }
             } catch (IllegalStateException ex) { // if unique table and duplicate tuple
                 String msg = String.format(
                         "Error: trying to add duplicate value %s to the unique feature %s of host object %s. This indicates some errors in underlying model representation.",
@@ -96,8 +100,12 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
                 if (holderToValueMap != null) {
                     removeFromHolderToValueMap(value, holder);
                 }
-                if (changed)
+                if (changed) {
                     totalRowCount--;
+                    if (emitNotifications) {
+                        deliverChangeNotifications(Tuples.staticArityFlatTupleOf(holder, value), false);
+                    }
+                }
             } catch (IllegalStateException ex) { // if unique table and duplicate tuple
                 String msg = String.format(
                         "Error: trying to remove non-existing value %s from the feature %s of host object %s. This indicates some errors in underlying model representation.",

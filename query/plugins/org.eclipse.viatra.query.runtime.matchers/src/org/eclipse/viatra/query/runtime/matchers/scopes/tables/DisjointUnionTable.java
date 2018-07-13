@@ -13,13 +13,16 @@ package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
@@ -35,8 +38,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  * @author Gabor Bergmann
  */
 public class DisjointUnionTable extends AbstractIndexTable {
-
-    // TODO aggregate notifications from child tables
 
     protected List<IIndexTable> childTables = CollectionsFactory.createObserverList();
 
@@ -56,6 +57,12 @@ public class DisjointUnionTable extends AbstractIndexTable {
             throw new IllegalArgumentException(child.toString());
 
         childTables.add(child);
+        
+        if (emitNotifications) {
+            for (Tuple tuple : child.enumerateTuples(emptyMask, Tuples.staticArityFlatTupleOf())) {
+                deliverChangeNotifications(tuple, true);
+            }
+        }
     }
 
     @Override
@@ -98,6 +105,64 @@ public class DisjointUnionTable extends AbstractIndexTable {
                 return true;
         }
         return false;
+    }
+    
+    @Override
+    public void addUpdateListener(Tuple seed, IQueryRuntimeContextListener listener) {
+        super.addUpdateListener(seed, listener);
+        
+        for (IIndexTable table : childTables) {
+            table.addUpdateListener(seed, new ListenerWrapper(listener));
+        }
+    }
+    @Override
+    public void removeUpdateListener(Tuple seed, IQueryRuntimeContextListener listener) {
+        super.removeUpdateListener(seed, listener);
+        
+        for (IIndexTable table : childTables) {
+            table.removeUpdateListener(seed, new ListenerWrapper(listener));
+        }
+    }
+    
+    
+    // TODO this would not be necessary 
+    // if we moved from IQRCL to an interface that does not expose the input key
+    private class ListenerWrapper implements IQueryRuntimeContextListener {
+
+        private IQueryRuntimeContextListener wrappedListener;
+        public ListenerWrapper(IQueryRuntimeContextListener wrappedListener) {
+            this.wrappedListener = wrappedListener;
+        }
+        
+        @Override
+        public void update(IInputKey key, Tuple updateTuple, boolean isInsertion) {
+            wrappedListener.update(getInputKey(), updateTuple, isInsertion);
+        }
+        
+        @Override
+        public int hashCode() {
+            return Objects.hash(wrappedListener, DisjointUnionTable.this);
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ListenerWrapper other = (ListenerWrapper) obj;
+            if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            return Objects.equals(wrappedListener, other.wrappedListener);
+        }
+        private DisjointUnionTable getOuterType() {
+            return DisjointUnionTable.this;
+        }
+        @Override
+        public String toString() {
+            return "Wrapper to DisjointUnion("+getInputKey().getPrettyPrintableName()+") for " + wrappedListener;
+        }
     }
 
 }
