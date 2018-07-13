@@ -101,11 +101,11 @@ public class XtextEmbeddedEditor {
 	private XtextResource virtualXtextResource;
 	
 	public XtextEmbeddedEditor(IGraphicalEditPart editPart,
-			InterpretableExpression targetSemanticElement, DDiagramElement targetView) {
-		this.hostEditPart = Objects.requireNonNull(editPart);
+			InterpretableExpression targetSemanticElement, DDiagramElement targetView, Injector xtextInjector) {
+        this.hostEditPart = Objects.requireNonNull(editPart);
 		this.semanticElement = Objects.requireNonNull(targetSemanticElement);
 		this.originalSemanticElementView = Objects.requireNonNull(targetView);
-		this.xtextInjector = EMFPatternLanguageUIPlugin.getInstance().getInjector(EMFPatternLanguageUIPlugin.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
+		this.xtextInjector = xtextInjector;
 	}
 
     public void showEditor() {

@@ -508,18 +508,23 @@
         <controls xsi:type="properties:ListDescription" name="prop_metamodels" label="Metamodels" labelExpression="Used metamodels" valueExpression="feature:packageImports" displayExpression="aql:value.nsURI">
           <actions labelExpression="Add">
             <initialOperation>
-              <firstModelOperations xsi:type="properties:DialogModelOperation" titleExpression="Not implemented">
-                <page name="Default Page" labelExpression="Page" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.0/@controls.0/@actions.0/@initialOperation/@firstModelOperations/@groups.0"/>
-                <groups name="Default Group" labelExpression="Group" semanticCandidateExpression="var:self"/>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:self">
+                <subModelOperations xsi:type="properties:DialogModelOperation" titleExpression="Select Metamodel">
+                  <page name="Default Page" labelExpression="Import Declaration" domainClass="vgql::PatternPackage" groups="//@extensions.0/@categories.0/@groups.0/@controls.0/@actions.0/@initialOperation/@firstModelOperations/@subModelOperations.0/@groups.0"/>
+                  <groups name="EPackage Import Group" domainClass="vgql::PatternPackage" semanticCandidateExpression="var:self">
+                    <controls xsi:type="properties:SelectDescription" name="metamodel_import" label="Import Metamodel" labelExpression="Metamodel" valueExpression="feature:packageImports" candidatesExpression="aql:self.getAllKnownMetamodels()" candidateDisplayExpression="aql:candidate.getPackageName()">
+                      <initialOperation>
+                        <firstModelOperations xsi:type="tool_1:SetValue" featureName="packageImports" valueExpression="aql:newValue.loadEPackageDeclaration()"/>
+                      </initialOperation>
+                    </controls>
+                  </groups>
+                </subModelOperations>
               </firstModelOperations>
             </initialOperation>
           </actions>
           <actions labelExpression="Remove">
             <initialOperation>
-              <firstModelOperations xsi:type="properties:DialogModelOperation" titleExpression="Not implemented">
-                <page name="Default Page" labelExpression="Page" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.0/@controls.0/@actions.1/@initialOperation/@firstModelOperations/@groups.0"/>
-                <groups name="Default Group" labelExpression="Group" semanticCandidateExpression="var:self"/>
-              </firstModelOperations>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self.oclAsType(vgql::PatternPackage).removePackageImport(selection, input.context().session())"/>
             </initialOperation>
           </actions>
         </controls>

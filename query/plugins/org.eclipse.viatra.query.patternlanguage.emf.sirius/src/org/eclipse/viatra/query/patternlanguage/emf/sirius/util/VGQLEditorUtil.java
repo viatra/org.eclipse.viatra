@@ -11,14 +11,21 @@
 package org.eclipse.viatra.query.patternlanguage.emf.sirius.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -38,7 +45,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.sirius.SiriusVQLGraphicalEditorPlugin;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.BooleanLiteral;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.EClassifierReference;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.EnumValue;
@@ -50,11 +59,17 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.LocalVariable;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.NumberLiteral;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Parameter;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ParameterRef;
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.PatternPackage;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Reference;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.StringLiteral;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Type;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlFactory;
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
+
+import com.google.inject.Injector;
 
 public class VGQLEditorUtil {
 
@@ -210,7 +225,7 @@ public class VGQLEditorUtil {
             return;
         }
          
-        XtextEmbeddedEditor embeddedEditor = new XtextEmbeddedEditor((IGraphicalEditPart) editPart, target, targetView);
+        XtextEmbeddedEditor embeddedEditor = new XtextEmbeddedEditor((IGraphicalEditPart) editPart, target, targetView, getEMFPatternLanguageInjector());
         embeddedEditor.showEditor();
     }
     
@@ -308,5 +323,36 @@ public class VGQLEditorUtil {
         }
         
         return false;
+    }
+    
+    private static Injector getEMFPatternLanguageInjector() {
+        return EMFPatternLanguageUIPlugin.getInstance().getInjector(EMFPatternLanguageUIPlugin.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
+    }
+    
+    public static Set<IEObjectDescription> getAllKnownMetamodels(EObject context) {
+        final IMetamodelProvider metamodelProvider = getEMFPatternLanguageInjector().getInstance(IMetamodelProvider.class);
+        final IScope metamodelScope = metamodelProvider.getAllMetamodelObjects(IScope.NULLSCOPE, context);
+        Set<IEObjectDescription> result = new TreeSet<>(Comparator.comparing(IEObjectDescription::getName));
+        metamodelScope.getAllElements().forEach(result::add);
+        return result;
+    }
+    
+    public static EPackage loadEPackageDeclaration(IEObjectDescription description) {
+        return (EPackage) description.getEObjectOrProxy();
+    }
+    
+    public static String getPackageName(IEObjectDescription description) {
+        return description.getName().toString();
+    }
+    
+    public static void removePackageImport(PatternPackage pkg, EObject declaration, Session session) {
+        final TransactionalEditingDomain ed = session.getTransactionalEditingDomain();
+        final Command command = RemoveCommand.create(ed, pkg, VgqlPackage.Literals.PATTERN_PACKAGE__PACKAGE_IMPORTS, declaration);
+        ed.getCommandStack().execute(command);
+    }
+    public static void removePackageImport(PatternPackage pkg, Collection<EPackage> declarations, Session session) {
+        final TransactionalEditingDomain ed = session.getTransactionalEditingDomain();
+        final Command command = RemoveCommand.create(ed, pkg, VgqlPackage.Literals.PATTERN_PACKAGE__PACKAGE_IMPORTS, declarations);
+        ed.getCommandStack().execute(command);
     }
 }
