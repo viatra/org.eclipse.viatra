@@ -124,6 +124,18 @@ public class BuildHelper {
         }
         return null;
     }
+    
+    /**
+     * Skips the last few steps, if any, that are projections, so that a custom projection can be added instead.
+     * Useful for connecting body final plans into the production node.
+     * 
+     * @since 2.1
+     */
+    public static SubPlan eliminateTrailingProjections(SubPlan plan) {
+        while (plan.getOperation() instanceof PProject)
+            plan = plan.getParentPlans().get(0);
+        return plan;
+    }
 
     /**
      * Verifies whether all constraints are enforced and exported parameters are present.
