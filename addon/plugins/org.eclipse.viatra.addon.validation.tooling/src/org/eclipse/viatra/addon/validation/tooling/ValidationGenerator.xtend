@@ -34,30 +34,26 @@ class ValidationGenerator implements IGenerationFragment {
     @Inject extension EMFPatternLanguageJvmModelInferrerUtil
 
     @Inject
-    private IVQGenmodelProvider vqGenModelProvider
+    IVQGenmodelProvider vqGenModelProvider
 
     @Inject extension ExtensionGenerator exGen
 
-    private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
-    private static String UI_VALIDATION_MENUS_PREFIX = "generated.viatra.addon.validation.menu."
-    private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra.addon.validation.runtime.constraint"
-    private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
-    private static String annotationLiteral = "Constraint"
+    final static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
+    final static String UI_VALIDATION_MENUS_PREFIX = "generated.viatra.addon.validation.menu."
+    final static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra.addon.validation.runtime.constraint"
+    final static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
+    final static String ANNOTATION_NAME = "Constraint"
 
     override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-        for (ann : pattern.annotations) {
-            if (ann.name == annotationLiteral) {
-                fsa.generateFile(pattern.constraintClassJavaFile(ann), pattern.patternHandler(ann))
-            }
-        }
+        pattern.annotations.filter[name == ANNOTATION_NAME].forEach[ann |
+            fsa.generateFile(pattern.constraintClassJavaFile(ann), pattern.patternHandler(ann))
+        ]
     }
 
     override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-        for (ann : pattern.annotations) {
-            if (ann.name == annotationLiteral) {
-                fsa.deleteFile(pattern.constraintClassJavaFile(ann))
-            }
-        }
+        pattern.annotations.filter[name == ANNOTATION_NAME].forEach[ann |
+            fsa.deleteFile(pattern.constraintClassJavaFile(ann))
+        ]
     }
 
     override removeExtension(Pattern pattern) {
@@ -78,7 +74,7 @@ class ValidationGenerator implements IGenerationFragment {
         }
 
         for (ann : pattern.annotations) {
-            if (ann.name == annotationLiteral) {
+            if (ann.name == ANNOTATION_NAME) {
                 val editorIds = ann.getAnnotationParameterValue("targetEditorId")
                 for (id : editorIds) {
                     val editorId = (id as StringValue).value
@@ -111,7 +107,7 @@ class ValidationGenerator implements IGenerationFragment {
         val extensionList = newArrayList(
             contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
                 for (ann : pattern.annotations) {
-                    if (ann.name == annotationLiteral) {
+                    if (ann.name == ANNOTATION_NAME) {
                         contribElement(it, "constraint") [
                             contribAttribute(it, "class", pattern.constraintClassName(ann))
                             contribAttribute(it, "name", pattern.fullyQualifiedName)
@@ -146,12 +142,12 @@ class ValidationGenerator implements IGenerationFragment {
     }
 
     def constraintClassName(Pattern pattern, Annotation annotation) {
-        String::format("%s.%s%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, annotationLiteral,
+        String::format("%s.%s%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, ANNOTATION_NAME,
             pattern.annotations.indexOf(annotation))
     }
 
     def constraintClassPath(Pattern pattern, Annotation annotation) {
-        String::format("%s/%s%s%s", pattern.packagePath, pattern.realPatternName.toFirstUpper, annotationLiteral,
+        String::format("%s/%s%s%s", pattern.packagePath, pattern.realPatternName.toFirstUpper, ANNOTATION_NAME,
             pattern.annotations.indexOf(annotation))
     }
 
@@ -192,7 +188,7 @@ class ValidationGenerator implements IGenerationFragment {
 
     def patternHandler(Pattern pattern, Annotation annotation) {
         val specificationType = pattern.findInferredSpecification
-        val className = pattern.name.toFirstUpper + annotationLiteral + pattern.annotations.indexOf(annotation)
+        val className = pattern.name.toFirstUpper + ANNOTATION_NAME + pattern.annotations.indexOf(annotation)
         '''
             /**
             «pattern.fileComment»
