@@ -255,35 +255,25 @@ class ValidationGenerator implements IGenerationFragment {
             
                 @Override
                 public Set<List<String>> getSymmetricPropertyNames() {
-                    Set<List<String>> symmetricPropertyNamesSet = new HashSet<>(
-                        «val symmetricProperties = pattern.getSymmetricList(annotation).filter[
+                    Set<List<String>> symmetricPropertyNamesSet = new HashSet<>();
+                    «val symmetricProperties = pattern.getSymmetricList(annotation).filter[
                         !pattern.getKeyList(annotation).containsAll(it)
                     ]»
-                        «FOR propertyList : symmetricProperties SEPARATOR ","»
-                            Arrays.asList(
-                                «FOR property : propertyList SEPARATOR ","»
-                                    "«property»"
-                                «ENDFOR»
-                            )
-                        «ENDFOR»
-                    );
+                    «FOR propertyList : symmetricProperties»
+                    symmetricPropertyNamesSet.add(Arrays.asList(«FOR property : propertyList SEPARATOR ","»"«property»"«ENDFOR»));
+                    «ENDFOR»
                     return symmetricPropertyNamesSet;
                 }
             
                 @Override
                 public Set<List<String>> getSymmetricKeyNames() {
-                    Set<List<String>> symmetricKeyNamesSet = new HashSet<>(
-                        «val symmetricKeys = pattern.getSymmetricList(annotation).filter[
+                    Set<List<String>> symmetricKeyNamesSet = new HashSet<>();
+                    «val symmetricKeys = pattern.getSymmetricList(annotation).filter[
                         pattern.getKeyList(annotation).containsAll(it)
                     ]»
-                        «FOR symmetricKeyList : symmetricKeys SEPARATOR ","»
-                            Arrays.asList(
-                            «FOR key : symmetricKeyList SEPARATOR ","»
-                                "«key»"
-                            «ENDFOR»
-                            )
-                        «ENDFOR»
-                    );
+                    «FOR symmetricKeyList : symmetricKeys»
+                    symmetricKeyNamesSet.add(Arrays.asList(«FOR key : symmetricKeyList SEPARATOR ","»"«key»"«ENDFOR»));
+                    «ENDFOR»
                     return symmetricKeyNamesSet;
                 }
             
