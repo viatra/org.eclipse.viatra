@@ -311,7 +311,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         if (automaticIndexing) {
             resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
         }
-        return targetPlatformMetamodels.filter(mm -> nsURI.equals(mm.packageURI)).findFirst()
+        return targetPlatformMetamodels.filter(mm -> Objects.equals(nsURI, mm.packageURI)).findFirst()
                 .map(mm -> mm.loadGenPackage(automaticIndexing ? resourceSet : metamodelResourceSet)).orElse(null);
     }
     
