@@ -1023,7 +1023,7 @@
         name="viatraBaseline"
         version="2.0"
         location="${installation.location}/api/v2.0/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.0.0.RC4.zip"/>
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.0.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
@@ -1357,7 +1357,7 @@
         name="viatraBaseline"
         version="2.0"
         location="${installation.location}/api/v2.0/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.0.0.RC4.zip"/>
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.0.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
