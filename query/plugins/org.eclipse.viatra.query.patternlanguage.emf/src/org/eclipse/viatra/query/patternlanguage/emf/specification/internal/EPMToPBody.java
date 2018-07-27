@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.specification.internal;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -248,9 +250,28 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     @Override
-    public String createConstantVariable(XNumberLiteral numberLiteral) {
+    public String createConstantVariable(boolean  negative, XNumberLiteral numberLiteral) {
         NumberLiterals literals = new NumberLiterals();
-        return createConstantVariable(literals.numberValue(numberLiteral, literals.getJavaType(numberLiteral)));
+        Number value = literals.numberValue(numberLiteral, literals.getJavaType(numberLiteral));
+        final Class<? extends Number> numberType = value.getClass();
+        // Simply calculating the inverse of a Number is not supported in Java, a type-specific solution is necessary
+        if (negative) {
+            if (numberType == Integer.TYPE || numberType == Integer.class) {
+                value = -value.intValue();
+            } else if (numberType == Double.TYPE || numberType == Double.class) {
+                value = -value.doubleValue();
+            } else if (numberType == Long.TYPE || numberType == Long.class) {
+                value = -value.longValue();
+            } else if (numberType == Float.TYPE || numberType == Float.class)
+                value = -value.floatValue();
+            else if (numberType == BigInteger.class)
+                value = ((BigInteger)value).negate();
+            else if (numberType == BigDecimal.class)
+                value = ((BigDecimal)value).negate();
+            else
+                throw new IllegalArgumentException("Cannot convert number literal to type" + numberType.getCanonicalName());
+        }
+        return createConstantVariable(value);
     }
 
 }

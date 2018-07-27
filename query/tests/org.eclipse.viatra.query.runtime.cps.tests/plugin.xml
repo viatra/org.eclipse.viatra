@@ -100,6 +100,10 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.runningAppInstances"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueConstant"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueConstantWithCheck"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.intValueNegativeConstant"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.intValueNegativeConstantWithCheck"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueNegativeConstant"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueNegativeConstantWithCheck"/>
     </group>
   </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.LocalsearchPlannerTests" point="org.eclipse.viatra.query.runtime.queryspecification">

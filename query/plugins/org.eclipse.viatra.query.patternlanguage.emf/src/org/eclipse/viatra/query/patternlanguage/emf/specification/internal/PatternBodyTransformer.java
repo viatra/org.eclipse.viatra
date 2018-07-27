@@ -406,7 +406,7 @@ public class PatternBodyTransformer {
             return eval((FunctionEvaluationValue) reference, acceptor);
         } else if (reference instanceof NumberValue) {
             XNumberLiteral literal = ((NumberValue) reference).getValue();
-            return acceptor.createConstantVariable(literal);
+            return acceptor.createConstantVariable(((NumberValue) reference).isNegative(), literal);
         } else if (reference instanceof StringValue) {
             return acceptor.createConstantVariable(((StringValue) reference).getValue());
         } else if (reference instanceof EnumValue) {// EMF-specific

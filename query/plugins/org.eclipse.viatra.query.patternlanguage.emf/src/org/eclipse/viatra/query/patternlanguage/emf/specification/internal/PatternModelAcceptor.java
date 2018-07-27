@@ -69,8 +69,17 @@ public interface PatternModelAcceptor<Result> {
     /**
      * Creates an internal virtual variable, a constant constraint which binds it to the given value, and returns its name.
      * @since 1.7
+     * @deprecated Use {@link #createConstantVariable(boolean, XNumberLiteral)} instead
      */
-    String createConstantVariable(XNumberLiteral numberLiteral);
+    @Deprecated
+    default String createConstantVariable(XNumberLiteral numberLiteral) {
+        return createConstantVariable(false, numberLiteral);
+    }
+    /**
+     * Creates an internal virtual variable, a constant constraint which binds it to the given value, and returns its name.
+     * @since 1.7
+     */
+    String createConstantVariable(boolean negative, XNumberLiteral numberLiteral);
 
     /**
      * Accepts the given parameters as exported parameter constraints.

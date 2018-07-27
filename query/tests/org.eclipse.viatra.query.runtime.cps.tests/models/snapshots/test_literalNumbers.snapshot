@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ASCII"?>
+<vqSnapshot:QuerySnapshot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vqSnapshot="http://www.eclipse.org/viatra/query/snapshot" inputSpecification="ResourceSet">
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueNegativeConstant">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="appT">
+        <value href="../instances/numbers.cyberphysicalsystem#appType"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.intValueNegativeConstantWithCheck">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="r">
+        <value href="../instances/numbers.cyberphysicalsystem#req"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueConstant">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="appT">
+        <value href="../instances/numbers.cyberphysicalsystem#appType0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.intValueNegativeConstant">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="r">
+        <value href="../instances/numbers.cyberphysicalsystem#req"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueNegativeConstantWithCheck">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="appT">
+        <value href="../instances/numbers.cyberphysicalsystem#appType"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.longValueConstantWithCheck">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="appT">
+        <value href="../instances/numbers.cyberphysicalsystem#appType0"/>
+      </substitutions>
+    </matches>
+    <filter/>
+  </matchSetRecords>
+  <modelRoots href="../instances/numbers.cyberphysicalsystem#/"/>
+</vqSnapshot:QuerySnapshot>
