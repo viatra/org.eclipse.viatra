@@ -280,7 +280,7 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/"/>
         </repositoryList>
         <repositoryList
             name="Neon">
@@ -289,7 +289,7 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20170307180635/repository/"/>
           <repository
               url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
@@ -300,7 +300,7 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository/"/>
           <repository
               url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
@@ -311,44 +311,20 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
           <repository
               url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
-      </targlet>
-      <targlet
-          name="Sirius"
-          activeRepositoryList="${eclipse.target.platform}">
-        <requirement
-            name="org.eclipse.sirius.specifier.ide.ui.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.specifier.ide.ui.aql.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.properties.feature.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
         <repositoryList
-            name="Neon">
+            name="2018-09">
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.0.0/neon"/>
-        </repositoryList>
-        <repositoryList
-            name="Oxygen">
+              url="http://download.eclipse.org/releases/photon"/>
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.0.0/oxygen"/>
-        </repositoryList>
-        <repositoryList
-            name="Photon">
+              url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -518,25 +494,6 @@
       </workingSet>
       <description>The dynamic working sets for ${scope.project.label}</description>
     </setupTask>
-    <setupTask
-        xsi:type="setup.p2:P2Task">
-      <requirement
-          name="org.eclipse.sirius.specifier.ide.ui.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.specifier.ide.ui.aql.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.properties.feature.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
-      <requirement
-          name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
-    </setupTask>
     <stream
         name="master">
       <setupTask
@@ -580,6 +537,73 @@
             launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
           <description></description>
         </setupTask>
+      </setupTask>
+      <setupTask
+          xsi:type="setup.p2:P2Task">
+        <requirement
+            name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
+        <repository
+            url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+      </setupTask>
+      <setupTask
+          xsi:type="setup.targlets:TargletTask"
+          successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
+        <targlet
+            name="Sirius"
+            activeRepositoryList="${eclipse.target.platform}">
+          <requirement
+              name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.diagram.elk.feature.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.specifier.ide.ui.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
+          <repositoryList
+              name="Neon">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/neon"/>
+          </repositoryList>
+          <repositoryList
+              name="Oxygen">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/oxygen"/>
+          </repositoryList>
+          <repositoryList
+              name="Photon">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2018-09">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+          </repositoryList>
+        </targlet>
       </setupTask>
     </stream>
     <stream
@@ -1055,6 +1079,13 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="2018-09">
+          <repository
+              url="http://download.eclipse.org/releases/2018-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1094,6 +1125,13 @@
               url="http://download.eclipse.org/releases/photon"/>
           <repository
               url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2018-09">
+          <repository
+              url="http://download.eclipse.org/releases/2018-09"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.3.0/site"/>
         </repositoryList>
       </targlet>
       <targlet
