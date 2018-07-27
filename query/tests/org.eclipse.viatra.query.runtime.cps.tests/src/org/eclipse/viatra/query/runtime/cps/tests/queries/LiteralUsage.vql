@@ -30,5 +30,23 @@ pattern longValueConstant(appT : ApplicationType){
 
 pattern longValueConstantWithCheck(appT : ApplicationType){
     ApplicationType.exeFileSize(appT, value);
-    check(value == 0l);
+    check(value === 0l);
+}
+
+
+pattern intValueNegativeConstant(r : Requirement) {
+	Requirement.count(r, -1);
+}
+pattern intValueNegativeConstantWithCheck(r : Requirement) {
+	Requirement.count(r, c);
+	check(c === -1);
+}
+
+pattern longValueNegativeConstant(appT : ApplicationType){
+    ApplicationType.exeFileSize(appT, -1l);
+}
+
+pattern longValueNegativeConstantWithCheck(appT : ApplicationType){
+    ApplicationType.exeFileSize(appT, value);
+    check(value === -1l);
 }

@@ -121,8 +121,13 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 virtualVariable
             }
 
-            override createConstantVariable(XNumberLiteral numberLiteral) {
-                createConstantVariable(numberLiteral as Object)
+            override createConstantVariable(boolean negative, XNumberLiteral numberLiteral) {
+                val virtualVariable = createVirtualVariable
+                target.append('''new ''')
+                target.append(ConstantValue)
+                target.append('''(body, «virtualVariable.escape», «IF negative»-«ENDIF»«numberLiteral.outputConstant»);
+                ''')
+                virtualVariable
             }
 
             private def StringConcatenationClient outputConstant(Object constant) {

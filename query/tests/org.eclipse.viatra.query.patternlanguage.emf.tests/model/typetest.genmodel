@@ -40,5 +40,13 @@
     <genClasses ecoreClass="typetest.ecore#//GrandChildD"/>
     <genClasses ecoreClass="typetest.ecore#//GrandGrandChildE"/>
     <genClasses ecoreClass="typetest.ecore#//GrandGrandChildF"/>
+    <genClasses ecoreClass="typetest.ecore#//Numbers">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/int"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/long"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/float"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/double"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/bigInt"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/bigDecimal"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

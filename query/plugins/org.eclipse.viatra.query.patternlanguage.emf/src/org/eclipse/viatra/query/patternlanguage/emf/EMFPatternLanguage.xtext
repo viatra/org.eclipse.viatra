@@ -141,7 +141,13 @@ StringValue returns LiteralValueReference:
     {StringValue} value=STRING;
 
 NumberValue returns LiteralValueReference:
-    {NumberValue} value=XNumberLiteral;
+    /* NOTE (bug 537374)
+     * XNumberLiteral is always unsigned to avoid conflicts with unary '-' operators in Xbase expressions,
+     * customizing it would change the behavior in check and eval expressions. On the other hand, providing
+     * an alternative syntax might easily result in different behavior inside and outside check expressions,
+     * thus it is easier to customize the VQL-specific NumberValue type with this information. 
+     */
+    {NumberValue} ('+'|negative?='-')? value=XNumberLiteral;
 
 @Override XNumberLiteral returns xbase::XNumberLiteral:
     {xbase::XNumberLiteral} value=Number;

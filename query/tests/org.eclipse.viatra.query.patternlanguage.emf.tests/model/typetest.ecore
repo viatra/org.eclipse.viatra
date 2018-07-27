@@ -30,4 +30,12 @@
   <eClassifiers xsi:type="ecore:EClass" name="GrandChildD" eSuperTypes="#//Child3"/>
   <eClassifiers xsi:type="ecore:EClass" name="GrandGrandChildE" eSuperTypes="#//GrandChildD #//Child1"/>
   <eClassifiers xsi:type="ecore:EClass" name="GrandGrandChildF" eSuperTypes="#//GrandChildD #//Child2"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Numbers">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="int" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="long" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="float" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="double" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bigInt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bigDecimal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+  </eClassifiers>
 </ecore:EPackage>
