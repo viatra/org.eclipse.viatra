@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query-based Features Annotation Validation
 Bundle-SymbolicName: org.eclipse.viatra.addon.querybasedfeatures.runtime.validation;singleton:=true
-Bundle-Version: 2.0.1.qualifier
+Bundle-Version: 2.0.2.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Fragment-Host: org.eclipse.viatra.addon.querybasedfeatures.runtime;bundle-version="[2.0.0,2.1.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

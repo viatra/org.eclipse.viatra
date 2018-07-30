@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Query Runtime Tests using the CPS Domain
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime.cps.tests;singleton:=true
-Bundle-Version: 2.0.1.qualifier
+Bundle-Version: 2.0.2.qualifier
 Bundle-Vendor: The Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.runtime.cps.tests.queries,
   org.eclipse.viatra.query.runtime.cps.tests.queries.api,

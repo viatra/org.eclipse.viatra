@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Viewers - Zest support
 Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.runtime.zest
-Bundle-Version: 2.0.1.qualifier
+Bundle-Version: 2.0.2.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
