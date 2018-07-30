@@ -29,16 +29,33 @@ import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 public class FixedPriorityConflictResolver extends ReconfigurableConflictResolver<FixedPriorityConflictSet> {
 
     protected Map<RuleSpecification<?>, Integer> priorities;
+    /**
+     * @since 2.1
+     */
+    protected final int defaultPriority;
     
+    /**
+     * Initializes the conflict resolver with a default priority of 0.
+     */
     public FixedPriorityConflictResolver() {
-        priorities = new HashMap<>();
+        this(0);
     }
 
+    /**
+     * Initializes the conflict resolver with a given default priority value
+     * @since 2.1
+     */
+    public FixedPriorityConflictResolver(int defaultPriority) {
+        priorities = new HashMap<>();
+        this.defaultPriority = defaultPriority;
+        
+    }
+    
     /**
      * Sets the priority for the given specification.
      * The activations of rules with the lowest priority value will be the next activations
      * while rules with higher priority values will only be included in the conflicting activations set.
-     * The default priority is 0 for all rules.
+     * The default priority is set when the resolver is created; if unspecified, it is 0.
      * 
      * @param specification
      * @param priority
@@ -61,7 +78,7 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
     
     @Override
     protected FixedPriorityConflictSet createReconfigurableConflictSet() {
-        return new FixedPriorityConflictSet(this, priorities);
+        return new FixedPriorityConflictSet(this, priorities, defaultPriority);
     }
 
     

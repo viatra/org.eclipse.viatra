@@ -39,9 +39,18 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
     private final Map<Integer, Set<Activation<?>>> priorityBuckets;
     private Map<RuleSpecification<?>, Integer> priorityMap;
     private FixedPriorityConflictResolver resolver;
+    private final int defaultPriority;
     
     public FixedPriorityConflictSet(FixedPriorityConflictResolver resolver, Map<RuleSpecification<?>, Integer> priorities) {
+        this(resolver, priorities, 0);
+    }
+
+    /**
+     * @since 2.1
+     */
+    public FixedPriorityConflictSet(FixedPriorityConflictResolver resolver, Map<RuleSpecification<?>, Integer> priorities, int defaultPriority) {
         this.resolver = resolver;
+        this.defaultPriority = defaultPriority;
         Preconditions.checkArgument(priorities != null, "Priority map cannot be null!");
         priorityMap = new HashMap<>(priorities);
         this.priorityBuckets = new TreeMap<>(); 
@@ -150,10 +159,6 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
     }
 
     protected Integer getRulePriority(RuleSpecification<?> specification) {
-        Integer rulePriority = 0;
-        if(priorityMap.containsKey(specification)) {
-            rulePriority = priorityMap.get(specification);
-        }
-        return rulePriority;
+        return priorityMap.getOrDefault(specification, defaultPriority);
     }
 }

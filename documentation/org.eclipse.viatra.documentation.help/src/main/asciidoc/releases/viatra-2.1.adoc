@@ -1,0 +1,13 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-21]]
+
+= VIATRA 2.1
+
+== New and Noteworthy
+
+== Migrating to VIATRA 2.1
+The default rule priority in InvertedDisappearancePriorityConflictResolver was changed in version 2.1 from 0 to 1. This change was motivated by the fact that in case of 0 priority additions and deletions would have the same priority that is in contrast with the goal of the resolver.
+
+This is a breaking change as transformations using both priority '0' and '1' might change their internal behavior. To avoid this, it is recommended not to use priority '0' at all with this conflict resolver.
