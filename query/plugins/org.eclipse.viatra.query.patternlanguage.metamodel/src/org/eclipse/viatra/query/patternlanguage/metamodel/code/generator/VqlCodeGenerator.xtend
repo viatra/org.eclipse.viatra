@@ -99,7 +99,7 @@ class VqlCodeGenerator {
 
     private def getTypeCode(UnaryType type) {
         switch type {
-            EClassifierReference: '''«type.classifier.name»'''
+            EClassifierReference: '''«IF type.classifier !== null»«type.classifier.name»«ELSE»«errorCode("EClassifierReference's classifier is undeclared.")»«ENDIF»'''
             JavaClassReference: '''«type.className»'''
             // TODO It should be filtered out with validation
             default:
@@ -140,7 +140,7 @@ class VqlCodeGenerator {
         }
         val feature = firstEdgeType.refname
 
-        if (feature.eIsProxy) {
+        if (feature === null || feature.eIsProxy) {
             // TODO It should be filtered out with validation 
             return '''«errorCode("Unresolvable edge type.")»'''
         }
