@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.tests.standalone
 
-import static org.junit.Assert.*
-
-import org.junit.Test
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
-import org.junit.BeforeClass
+import org.eclipse.emf.common.util.URI
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
+import org.junit.BeforeClass
+import org.junit.Test
+
+import static org.junit.Assert.*
 
 class PatternParserTest {
     
@@ -87,5 +88,100 @@ class PatternParserTest {
         assertFalse(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.OK])
         assertTrue(results.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.ERROR])
         assertTrue(results.hasError)
+    }
+    
+    @Test
+    def void crossFileDuplicatePatternsTest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = PatternParser.parser.build
+        parser.enableReuseSpecificationBuilder(true)
+        val results1 = parser.parse(pattern)
+        val results2 = parser.parse(pattern)
+        assertTrue(results1.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.OK])
+        assertTrue(results2.querySpecifications.forall[it.internalQueryRepresentation.status === PQueryStatus.ERROR])
+        assertTrue(results2.hasError)
+    }
+    
+    @Test()
+    def void defaultUnusedURIProviderTest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = PatternParser.parser.build
+        parser.enableReuseSpecificationBuilder(true)
+        val results = parser.parse(pattern)
+        assertTrue(results.patterns.forall[!(eResource.URI.isRelative)])
+    }
+    
+    @Test()
+    def void absoluteUnusedURIProviderTest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = PatternParser.parser.withUnusedURIComputer(PatternParser.UNUSED_ABSOLUTE_FILE_URI_PROVIDER).build
+        parser.enableReuseSpecificationBuilder(true)
+        val results = parser.parse(pattern)
+        assertTrue(results.patterns.forall[!(eResource.URI.isRelative)])
+    }
+    
+    @Test()
+    def void relativeUnusedURIProviderTest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = PatternParser.parser.withUnusedURIComputer(PatternParser.UNUSED_RELATIVE_URI_PROVIDER).build
+        parser.enableReuseSpecificationBuilder(true)
+        val results = parser.parse(pattern)
+        assertTrue(results.patterns.forall[eResource.URI.isRelative])
+    }
+    
+    @Test()
+    def void customURITest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = PatternParser.parser.build
+        parser.enableReuseSpecificationBuilder(true)
+        val uri = URI.createURI("__synthetic_custom")
+        val results = parser.parse(pattern, uri)
+        assertTrue(results.patterns.forall[eResource.URI == uri])
+    }
+    
+    @Test(expected = IllegalStateException)
+    def void duplicateCustomURITest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = PatternParser.parser.build
+        parser.enableReuseSpecificationBuilder(true)
+        val uri = URI.createURI("__synthetic_custom")
+        parser.parse(pattern, uri)
+        parser.parse(pattern, uri)
     }
 }

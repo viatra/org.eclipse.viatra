@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -53,6 +54,36 @@ import com.google.inject.name.Named;
 public class PatternParser {
 
     public static final String SYNTHETIC_URI_PREFIX = "__synthetic";
+    
+    /**
+     * This function encodes the default URI scheme generation used in VIATRA 2.0.0; it is not recommended to use as it
+     * can cause surprising behavior with regards to the Xtext index; only provided for backward compatibility. For most
+     * users the {@link #UNUSED_ABSOLUTE_FILE_URI_PROVIDER} provides an appropriate default implementations; other users
+     * can provide custom implementations with {@link Builder#unusedURIComputer(BiFunction)}.
+     * 
+     * @since 2.1
+     */
+    public static final BiFunction<ResourceSet, String, URI> UNUSED_RELATIVE_URI_PROVIDER = (resourceSet, fileExtension) -> {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + fileExtension);
+            if (resourceSet.getResource(syntheticUri, false) == null)
+                return syntheticUri;
+        }
+        throw new IllegalStateException();
+    };
+    /**
+     * This function encodes the a file URI scheme that is relative to folder described by the user.dir system property.
+     * @since 2.1
+     */
+    public static final BiFunction<ResourceSet, String, URI> UNUSED_ABSOLUTE_FILE_URI_PROVIDER = (resourceSet, fileExtension) -> {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + fileExtension)
+                    .resolve(URI.createFileURI(System.getProperty("user.dir")));
+            if (resourceSet.getResource(syntheticUri, false) == null)
+                return syntheticUri;
+        }
+        throw new IllegalStateException();
+    };
 
     public static class Builder {
         public static final String PPERROR = "The VIATRA query language parser infrastructure is not initialized, pattern parsing is not supported.";
@@ -60,6 +91,8 @@ public class PatternParser {
         private Injector injector = null;
         private Set<URI> libraryURIs = new HashSet<>();
         private Set<IQuerySpecification<?>> librarySpecifications = new HashSet<>();
+
+        private BiFunction<ResourceSet, String, URI> unusedURIComputer = UNUSED_ABSOLUTE_FILE_URI_PROVIDER;
 
         /**
          * Provide a specific injector instance to use with this parser
@@ -88,6 +121,14 @@ public class PatternParser {
             return this;
         }
 
+        /**
+         * @since 2.1
+         */
+        public Builder withUnusedURIComputer(BiFunction<ResourceSet, String, URI> unusedURIComputer) {
+            this.unusedURIComputer = Objects.requireNonNull(unusedURIComputer);
+            return this;
+        }
+        
         private Injector getInjector() {
             if (injector == null) {
                 return Objects.requireNonNull(XtextInjectorProvider.INSTANCE.getInjector(), PPERROR);
@@ -99,7 +140,7 @@ public class PatternParser {
          * Initializes the pattern parser instance
          */
         public PatternParser build() {
-            PatternParser parser = new PatternParser(librarySpecifications, libraryURIs);
+            PatternParser parser = new PatternParser(librarySpecifications, libraryURIs, unusedURIComputer);
             getInjector().injectMembers(parser);
             return parser;
         }
@@ -131,6 +172,7 @@ public class PatternParser {
 
     private final Set<URI> libraryURIs;
     private final Set<IQuerySpecification<?>> librarySpecifications;
+    private final BiFunction<ResourceSet, String, URI> unusedURIComputer;
     private boolean reuseSpecificationBuilder;
 
     public static Builder parser() {
@@ -150,16 +192,31 @@ public class PatternParser {
         }
     }
 
-    private PatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs) {
+    private PatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs, BiFunction<ResourceSet, String, URI> unusedURIComputer) {
         this.librarySpecifications = new HashSet<>(librarySpecifications);
         this.libraryURIs = libraryURIs;
+        this.unusedURIComputer = unusedURIComputer;
         this.reuseSpecificationBuilder = true;
     }
 
+    /**
+     * Parses a string as the contents of a VQL file and puts the results in a Resource with a previously unused URI
+     */
     public PatternParsingResults parse(String text) {
         Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
         fileExtension = extensionProvider.getPrimaryFileExtension();
         return parse(text, resourceSet);
+    }
+    
+    /**
+     * Parses a string as the contents of a VQL file and puts the results in a Resource with the specified URI
+     * @since 2.1
+     */
+    public PatternParsingResults parse(String text, URI uri) {
+        Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
+        Preconditions.checkState(resourceSet.getResource(uri, false) == null, "Specified URI was already used before.");
+        fileExtension = extensionProvider.getPrimaryFileExtension();
+        return parse(getAsStream(text), Objects.requireNonNull(uri), null, resourceSet);
     }
 
     protected PatternParsingResults parse(InputStream in, URI uriToUse, Map<?, ?> options, ResourceSet resourceSet) {
@@ -179,20 +236,11 @@ public class PatternParser {
     }
 
     protected PatternParsingResults parse(String text, ResourceSet resourceSetToUse) {
-        return parse(getAsStream(text), computeUnusedUri(resourceSetToUse), null, resourceSetToUse);
+        return parse(getAsStream(text), unusedURIComputer.apply(resourceSetToUse, fileExtension), null, resourceSetToUse);
     }
 
     protected PatternParsingResults parse(String text, URI uriToUse, ResourceSet resourceSetToUse) {
         return parse(getAsStream(text), uriToUse, null, resourceSetToUse);
-    }
-
-    protected URI computeUnusedUri(ResourceSet resourceSet) {
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + fileExtension);
-            if (resourceSet.getResource(syntheticUri, false) == null)
-                return syntheticUri;
-        }
-        throw new IllegalStateException();
     }
 
     protected InputStream getAsStream(CharSequence text) {
