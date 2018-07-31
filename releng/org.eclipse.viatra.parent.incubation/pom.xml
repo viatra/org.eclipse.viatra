@@ -16,6 +16,8 @@
         <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf.sirius</module>
         <module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
         <module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.metamodel.queries</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.metamodel.queries.validation</module>
         <module>../../query/features/org.eclipse.viatra.query.sdk.extensions.feature</module>
         <module>../../query/tests/org.eclipse.viatra.query.patternlanguage.metamodel.vql.generator.test</module>
         

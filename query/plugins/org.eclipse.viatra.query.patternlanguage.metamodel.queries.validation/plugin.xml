@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.declaredTypeLessSpecific" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.DeclaredTypeLessSpecificConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.declaredTypeLessSpecific">
+      <enabledForEditor editorId="*"/>
+    </constraint>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.inferredTypeLessSpecific" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.InferredTypeLessSpecificConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.inferredTypeLessSpecific">
+      <enabledForEditor editorId="*"/>
+    </constraint>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.multipleReferencesPathExpressionType" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.MultipleReferencesPathExpressionTypeConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.multipleReferencesPathExpressionType">
+      <enabledForEditor editorId="*"/>
+    </constraint>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.nonConformingType" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.NonConformingTypeConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.nonConformingType">
+      <enabledForEditor editorId="*"/>
+    </constraint>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.undefinedOrMultipleDeclarationParameterType" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.UndefinedOrMultipleDeclarationParameterTypeConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.undefinedOrMultipleDeclarationParameterType">
+      <enabledForEditor editorId="*"/>
+    </constraint>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.undefinedPathExpressionType" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.UndefinedPathExpressionTypeConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.undefinedPathExpressionType">
+      <enabledForEditor editorId="*"/>
+    </constraint>
+  </extension>
+</plugin>

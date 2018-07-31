@@ -1,0 +1,43 @@
+package test
+
+import "http://org.eclipse.viatra/model/cps"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern ParameterTypeFaulty(
+    param0: ApplicationInstance,
+    param1: <<<<<<<Type of the parameter should defined.>>>>>>>
+) {
+}
+
+pattern PathExpressionTypeFaulty(
+    param0: ApplicationInstance,
+    param1: StateMachine,
+    param2: ApplicationInstance,
+    param3: EEnum
+) {
+    <<<<<<<PathExpressionConstraint should have one edgeType at least.>>>>>>>;
+    ApplicationInstance.allocatedTo.nodeIp(param2, param3);
+}
+
+pattern Correct(
+    param0: HostInstance,
+    param1: EString,
+    param2: ApplicationInstance
+) {
+    HostInstance.nodeIp(param0, param1);
+    ApplicationInstance.allocatedTo(param2, param0);
+    HostInstance.totalCpu(param0, );
+}
+
+pattern ComformanceTypeFaulty(
+    param0: Identifiable,
+    param1: HostInstance,
+    param2: EString
+) {
+    ApplicationInstance(param0);
+    Identifiable(param1);
+    java String (param2);
+    ApplicationInstance.allocatedTo(param0, param1);
+    HostType.defaultHdd(param1, param2);
+}
+
