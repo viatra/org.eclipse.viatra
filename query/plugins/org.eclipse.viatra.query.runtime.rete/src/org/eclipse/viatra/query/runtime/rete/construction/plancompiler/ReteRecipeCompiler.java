@@ -696,11 +696,10 @@ public class ReteRecipeCompiler {
         List<PVariable> projectedVariables = new ArrayList<PVariable>(operation.getToVariables());
         // Determinizing projection: try to keep original order (hopefully facilitates node reuse)
         Map<PVariable, Integer> parentPosMapping = compiledParent.getPosMapping();
-        Collections.sort(projectedVariables, 
-                Comparator.<PVariable, Integer>comparing((variable) -> parentPosMapping.get(variable))); 
+        Collections.sort(projectedVariables, Comparator.comparing(parentPosMapping::get)); 
         
         return doProjectPlan(compiledParent, projectedVariables, true, 
-                (parentTrace) -> parentTrace.cloneFor(plan), 
+                parentTrace -> parentTrace.cloneFor(plan), 
                 (recipe, parentTrace) -> new PlanningTrace(plan, projectedVariables, recipe, parentTrace), 
                 (recipe, parentTrace) -> new CompiledSubPlan(plan, projectedVariables, recipe, parentTrace)
         );
@@ -781,7 +780,7 @@ public class ReteRecipeCompiler {
         final List<PVariable> parameterList = body.getSymbolicParameterVariables();
         
         return doProjectPlan(compiledBody, parameterList, enforceUniqueness, 
-                (parentTrace) -> parentTrace, 
+                parentTrace -> parentTrace, 
                 (recipe, parentTrace) -> new ParameterProjectionTrace(body, recipe, parentTrace),
                 (recipe, parentTrace) -> new ParameterProjectionTrace(body, recipe, parentTrace)
         );

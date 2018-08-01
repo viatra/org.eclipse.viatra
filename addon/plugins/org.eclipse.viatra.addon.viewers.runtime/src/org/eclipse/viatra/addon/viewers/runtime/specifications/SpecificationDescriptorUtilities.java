@@ -18,7 +18,7 @@ import com.google.common.collect.Multimap;
 
 class SpecificationDescriptorUtilities {
 
-    public SpecificationDescriptorUtilities() {
+    private SpecificationDescriptorUtilities() {
         //Hiding utility class constructor
     }
     
