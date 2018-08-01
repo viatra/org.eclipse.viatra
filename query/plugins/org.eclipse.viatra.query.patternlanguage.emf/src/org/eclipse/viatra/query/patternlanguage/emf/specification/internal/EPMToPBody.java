@@ -265,9 +265,9 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
             } else if (numberType == Float.TYPE || numberType == Float.class)
                 value = -value.floatValue();
             else if (numberType == BigInteger.class)
-                ((BigInteger)value).negate();
+                value = ((BigInteger)value).negate();
             else if (numberType == BigDecimal.class)
-                ((BigDecimal)value).negate();
+                value = ((BigDecimal)value).negate();
             else
                 throw new IllegalArgumentException("Cannot convert number literal to type" + numberType.getCanonicalName());
         }

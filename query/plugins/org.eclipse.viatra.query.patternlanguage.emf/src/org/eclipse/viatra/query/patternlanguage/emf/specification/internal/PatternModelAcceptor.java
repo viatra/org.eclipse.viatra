@@ -71,6 +71,7 @@ public interface PatternModelAcceptor<Result> {
      * @since 1.7
      * @deprecated Use {@link #createConstantVariable(boolean, XNumberLiteral)} instead
      */
+    @Deprecated
     default String createConstantVariable(XNumberLiteral numberLiteral) {
         return createConstantVariable(false, numberLiteral);
     }
