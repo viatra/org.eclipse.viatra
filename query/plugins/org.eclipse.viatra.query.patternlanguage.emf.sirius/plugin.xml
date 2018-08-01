@@ -53,6 +53,18 @@
             </with>
          </enabledWhen>
       </handler>
+     <handler
+           class="org.eclipse.viatra.query.patternlanguage.emf.sirius.handlers.InitValidatorsWithWriteTransaction"
+           commandId="org.eclipse.viatra.addon.validation.runtime.ui.initValidatorsOnEditor">
+        <activeWhen>
+           <with
+                 variable="activePartId">
+              <equals
+                    value="org.eclipse.sirius.diagram.ui.part.SiriusDiagramEditorID">
+              </equals>
+           </with>
+        </activeWhen>
+     </handler>
   </extension>
    
 </plugin>
