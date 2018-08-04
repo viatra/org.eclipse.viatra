@@ -133,7 +133,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Oxygen"
+      defaultValue="Photon"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -195,6 +195,17 @@
           name="Photon">
         <repository
             url="http://download.eclipse.org/releases/photon"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+      </repositoryList>
+      <repositoryList
+          name="2018-09">
+        <repository
+            url="http://download.eclipse.org/releases/2018-09"/>
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
@@ -647,7 +658,7 @@
           name="Generate query code">
         <setupTask
             xsi:type="projects:ProjectsBuildTask"
-            id="viatra.query.prequerygen"
+            id="viatra.query.prequerygen.20"
             onlyNewProjects="true"
             refresh="true"/>
         <setupTask
@@ -672,14 +683,14 @@
         </setupTask>
         <setupTask
             xsi:type="launching:LaunchTask"
-            predecessor="viatra.query.prequerygen"
+            predecessor="viatra.query.prequerygen.20"
             filter=""
             launcher="org.eclipse.viatra.setup/GenerateCPSFrameworkQueries.mwe2.launch">
           <description></description>
         </setupTask>
         <setupTask
             xsi:type="launching:LaunchTask"
-            predecessor="viatra.query.prequerygen"
+            predecessor="viatra.query.prequerygen.20"
             launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
           <description></description>
         </setupTask>
