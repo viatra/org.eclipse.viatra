@@ -66,5 +66,11 @@
         </activeWhen>
      </handler>
   </extension>
+  <extension
+        point="org.eclipse.sirius.ui.editor.sessionEditorPageProvider">
+     <pageProvider
+           class="org.eclipse.viatra.query.patternlanguage.emf.sirius.util.VGQLSessionPageProvider">
+     </pageProvider>
+  </extension>
    
 </plugin>
