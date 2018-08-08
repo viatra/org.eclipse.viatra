@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -21,11 +20,10 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -39,7 +37,7 @@ public enum QueryResultViewModel {
     private QueryEvaluationHint defaultHint;
     
     private QueryResultViewModel() {
-        this.inputs = Sets.newHashSet();
+        this.inputs = new HashSet<>();
         this.defaultHint = new QueryEvaluationHint(null, BackendRequirement.DEFAULT_CACHING);
     }
     
@@ -47,8 +45,8 @@ public enum QueryResultViewModel {
      * Note that default hints are used to parameterize the input, preferences are not yet taken into account. 
      */
     protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) {
-        checkArgument(connector != null, "Connector cannot be null");
-        checkArgument(type != null, "Type cannot be null");
+        Preconditions.checkArgument(connector != null, "Connector cannot be null");
+        Preconditions.checkArgument(type != null, "Type cannot be null");
         Notifier notifier = connector.getNotifier(type);
         
         QueryScope scope = new EMFScope(notifier, RuntimePreferencesInterpreter.getBaseIndexOptionsFromPreferences());
@@ -71,7 +69,7 @@ public enum QueryResultViewModel {
     }
     
     protected boolean removeInput(QueryResultTreeInput input) {
-        checkArgument(input != null, "Input cannot be null");
+        Preconditions.checkArgument(input != null, "Input cannot be null");
         boolean removed = inputs.remove(input);
         if(removed) {
             AdvancedViatraQueryEngine engine = input.getEngine();

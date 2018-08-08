@@ -11,9 +11,11 @@
 package org.eclipse.viatra.transformation.debug.model;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -36,9 +38,6 @@ import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleAct
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelProvider;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-
 public class TransformationThread extends TransformationDebugElement implements IThread, IDebuggerHostAgentListener, IBreakpointListener {
     private static final String CONNECTING_DECORATOR_STRING = " connecting...";
     private String name = "Model Transformation Debugger Session";
@@ -60,10 +59,9 @@ public class TransformationThread extends TransformationDebugElement implements 
     
     protected TransformationThread(IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass) {
         super(target);
-        Preconditions.checkNotNull(transformationClass, "Transformation Class must not be null.");
         frames = new IStackFrame[0];
         modelProvider = new TransformationModelProvider(agent);
-        this.transformationClass = transformationClass;
+        this.transformationClass = Objects.requireNonNull(transformationClass, "Transformation Class must not be null.");;
         this.agent = agent;
         //Register breakpoint listener
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);        
@@ -295,7 +293,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void transformationStateChanged(TransformationState state) {
-        List<TransformationStackFrame> stackFrames = Lists.newArrayList();
+        List<TransformationStackFrame> stackFrames = new ArrayList<>();
         
         if (state != null) {
             Deque<RuleActivation> activationStack = new ArrayDeque<>();

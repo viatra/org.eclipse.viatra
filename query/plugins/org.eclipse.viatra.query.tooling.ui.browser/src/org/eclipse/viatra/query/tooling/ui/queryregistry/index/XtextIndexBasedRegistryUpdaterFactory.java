@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryregistry.index;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 /**
@@ -28,7 +28,7 @@ public enum XtextIndexBasedRegistryUpdaterFactory {
 
     INSTANCE;
     
-    private Map<IQuerySpecificationRegistry, XtextIndexBasedRegistryUpdater> updaters = Maps.newHashMap();
+    private Map<IQuerySpecificationRegistry, XtextIndexBasedRegistryUpdater> updaters = new HashMap<>();
     
     /**
      * Returns an updater connecting the Xtext index with the given registry.

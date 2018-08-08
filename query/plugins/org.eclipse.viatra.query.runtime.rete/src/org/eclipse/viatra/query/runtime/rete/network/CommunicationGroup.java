@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
  */
 public abstract class CommunicationGroup implements Comparable<CommunicationGroup> {
 
+    private static final String UNSUPPORTED_MESSAGE_KIND = "Unsupported message kind ";
+    
 	/**
 	 * Marker for the {@link CommunicationTracker}
 	 */
@@ -115,10 +117,6 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 	 */
 	public static final class Singleton extends CommunicationGroup {
 
-		/**
-         * 
-         */
-        private static final String UNSUPPORTED_MESSAGE_KIND = "Unsupported message kind ";
         private Mailbox mailbox;
 
 		/**
@@ -278,7 +276,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
 			} else if (kind == MessageKind.DEFAULT) {
 				return this.defaultMailboxes;
 			} else {
-				throw new IllegalArgumentException("Unsupported message kind " + kind);
+				throw new IllegalArgumentException(UNSUPPORTED_MESSAGE_KIND + kind);
 			}
 		}
 

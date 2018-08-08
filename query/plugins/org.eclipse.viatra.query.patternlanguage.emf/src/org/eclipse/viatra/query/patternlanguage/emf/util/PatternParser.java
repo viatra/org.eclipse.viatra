@@ -63,10 +63,10 @@ public class PatternParser {
      * 
      * @since 2.1
      */
-    public static final BiFunction<ResourceSet, String, URI> UNUSED_RELATIVE_URI_PROVIDER = (resourceSet, fileExtension) -> {
+    public static final BiFunction<ResourceSet, String, URI> UNUSED_RELATIVE_URI_PROVIDER = (rs, ext) -> {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + fileExtension);
-            if (resourceSet.getResource(syntheticUri, false) == null)
+            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + ext);
+            if (rs.getResource(syntheticUri, false) == null)
                 return syntheticUri;
         }
         throw new IllegalStateException();
@@ -75,11 +75,11 @@ public class PatternParser {
      * This function encodes the a file URI scheme that is relative to folder described by the user.dir system property.
      * @since 2.1
      */
-    public static final BiFunction<ResourceSet, String, URI> UNUSED_ABSOLUTE_FILE_URI_PROVIDER = (resourceSet, fileExtension) -> {
+    public static final BiFunction<ResourceSet, String, URI> UNUSED_ABSOLUTE_FILE_URI_PROVIDER = (rs, ext) -> {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + fileExtension)
+            URI syntheticUri = URI.createURI(SYNTHETIC_URI_PREFIX + i + "." + ext)
                     .resolve(URI.createFileURI(System.getProperty("user.dir")));
-            if (resourceSet.getResource(syntheticUri, false) == null)
+            if (rs.getResource(syntheticUri, false) == null)
                 return syntheticUri;
         }
         throw new IllegalStateException();

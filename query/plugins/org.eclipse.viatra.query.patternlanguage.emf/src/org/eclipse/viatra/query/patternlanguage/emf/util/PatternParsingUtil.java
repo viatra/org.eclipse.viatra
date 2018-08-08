@@ -15,8 +15,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvid
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
 
 /**
