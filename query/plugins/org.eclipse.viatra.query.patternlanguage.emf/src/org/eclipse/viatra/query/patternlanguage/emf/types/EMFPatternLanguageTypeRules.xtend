@@ -46,7 +46,7 @@ class EMFPatternLanguageTypeRules extends PatternLanguageTypeRules {
     * @since 2.0
     */
    def dispatch void inferTypes(EnumValue reference, TypeInformation information) {
-       val type = if (reference.enumeration === null) {
+       val type = if (reference.enumeration === null || reference.literal === null) {
            // A previous resolution error will prevent type inference to work - it will be reported elsewhere
            BottomTypeKey.INSTANCE
        } else {
