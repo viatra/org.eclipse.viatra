@@ -124,7 +124,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
             'package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
-            pattern calledPattern(p : Pattern, p2) = {
+            pattern calledPattern(p : Pattern, p2 : Pattern) = {
                 Pattern(p);
                 Pattern(p2);
             }
@@ -135,8 +135,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
         )
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER),
-            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING)
         )
     }
     @Test
@@ -179,15 +178,14 @@ class CompositionValidatorTest extends AbstractValidatorTest{
                 Pattern(p);
             }
 
-            pattern callerPattern(c) = {
+            pattern callerPattern(c : Pattern) = {
                 Pattern(c);
                 Pattern(p);
                 neg find calledPattern(p);
             }'
         )
         tester.validate(model).assertAll(
-            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING)
         )
     }
     @Test
@@ -200,14 +198,13 @@ class CompositionValidatorTest extends AbstractValidatorTest{
                 Pattern(p);
             }
 
-            pattern callerPattern(c) = {
+            pattern callerPattern(c : Pattern) = {
                 Pattern(c);
                 neg find calledPattern(_);
             }'
         )
         tester.validate(model).assertAll(
-            getWarningCode(IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES)
         )
     }
     @Test @Ignore(value = "This call is unsafe because of a negative call circle. 

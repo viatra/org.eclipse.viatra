@@ -202,7 +202,7 @@ class CartesianProductTest extends AbstractValidatorTest{
                 X == Y;
             }
 
-            pattern PathExpression(X, Y : EClass) {
+            pattern PathExpression(X : java Integer, Y : EClass) {
                 EInt(X);
                 EClass(Y);
                 EClass.eStructuralFeatures.upperBound(Y,X);
@@ -217,9 +217,7 @@ class CartesianProductTest extends AbstractValidatorTest{
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
 
     @Test
@@ -294,15 +292,13 @@ class CartesianProductTest extends AbstractValidatorTest{
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern PathExpressionInequality(X : EClass, Y) {
+            pattern PathExpressionInequality(X : EClass, Y : java Integer) {
                 EClass.eStructuralFeatures.upperBound(X, Y);
                 Y != 1;
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
 
     @Test
@@ -333,16 +329,14 @@ class CartesianProductTest extends AbstractValidatorTest{
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern UnconnectedButSingleton(X : EClass, Y) {
+            pattern UnconnectedButSingleton(X : EClass, Y : java Integer) {
                 EClass(X);
                 EInt(Y);
                 Y == 10;
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
 
     @Test
@@ -360,8 +354,8 @@ class CartesianProductTest extends AbstractValidatorTest{
         model.assertNoErrors
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::CARTESIAN_SOFT_WARNING),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 

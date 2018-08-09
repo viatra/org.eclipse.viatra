@@ -62,7 +62,7 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -132,7 +132,7 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -148,7 +148,7 @@ class JavaTypesTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 

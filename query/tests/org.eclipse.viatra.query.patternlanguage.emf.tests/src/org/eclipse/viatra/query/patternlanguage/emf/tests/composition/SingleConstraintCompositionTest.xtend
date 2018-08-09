@@ -485,7 +485,7 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
         )
         tester.validate(parsed).assertAll(
             getErrorCode(IssueCodes.DUBIUS_VARIABLE_NAME),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     

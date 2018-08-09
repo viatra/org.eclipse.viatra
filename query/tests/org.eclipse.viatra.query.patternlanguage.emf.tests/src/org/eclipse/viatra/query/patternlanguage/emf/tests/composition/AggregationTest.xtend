@@ -341,8 +341,8 @@ class AggregationTest extends AbstractValidatorTest {
 			}
 		''')
         tester.validate(parsed).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -389,7 +389,7 @@ class AggregationTest extends AbstractValidatorTest {
 		''')
         tester.validate(parsed).assertAll(
             getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }    
     @Test
@@ -421,7 +421,7 @@ class AggregationTest extends AbstractValidatorTest {
 		''')
         tester.validate(parsed).assertAll(
             getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }    
     @Test
@@ -443,8 +443,8 @@ class AggregationTest extends AbstractValidatorTest {
 		''')
         tester.validate(parsed).assertAll(
             getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -470,8 +470,8 @@ class AggregationTest extends AbstractValidatorTest {
 		''')
         tester.validate(parsed).assertAll(
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -497,8 +497,8 @@ class AggregationTest extends AbstractValidatorTest {
 		''')
         tester.validate(parsed).assertAll(
             getWarningCode(IssueCodes::CARTESIAN_STRICT_WARNING),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         val parameter_c = parsed.patterns.get(0).parameters.get(0)
         val inferredType = typeInferrer.getType(parameter_c)
@@ -579,7 +579,7 @@ class AggregationTest extends AbstractValidatorTest {
         )
         tester.validate(parsed).assertAll(
             getErrorCode(IssueCodes.DUBIUS_VARIABLE_NAME),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -713,7 +713,7 @@ class AggregationTest extends AbstractValidatorTest {
 			'''
         )
         tester.validate(parsed).assertAll(
-            getInfoCode(IssueCodes.MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes.MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -736,7 +736,7 @@ class AggregationTest extends AbstractValidatorTest {
         )
         tester.validate(parsed).assertAll(
             getWarningCode(IssueCodes.MISTYPED_PARAMETER),
-            getInfoCode(IssueCodes.MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes.MISSING_PARAMETER_TYPE)
         )
     }
 

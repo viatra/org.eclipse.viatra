@@ -75,9 +75,9 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
             getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
             getErrorCode(IssueCodes::CHECK_MUST_BE_BOOLEAN),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -104,9 +104,9 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -131,9 +131,9 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -159,9 +159,9 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     @Test
@@ -188,9 +188,9 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     

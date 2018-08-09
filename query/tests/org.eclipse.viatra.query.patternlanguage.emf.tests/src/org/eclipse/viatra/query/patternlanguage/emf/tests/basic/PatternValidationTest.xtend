@@ -64,11 +64,11 @@ class PatternValidationTest extends AbstractValidatorTest {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
-            private pattern unusedPrivatePattern(Pattern) {
+            private pattern unusedPrivatePattern(Pattern : Pattern) {
                 Pattern(Pattern);
             }
         ')
-        tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN), getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN))
     }
     
     @Test
@@ -76,11 +76,11 @@ class PatternValidationTest extends AbstractValidatorTest {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
-            pattern unusedPrivatePattern(_Pattern) {
+            pattern unusedPrivatePattern(_Pattern : Pattern) {
                 Pattern(_Pattern);
             }
         ')
-        tester.validate(model).assertAll(getErrorCode(IssueCodes::SINGLEUSE_PARAMETER), getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getErrorCode(IssueCodes::SINGLEUSE_PARAMETER))
     }
     
     @Test
@@ -88,12 +88,12 @@ class PatternValidationTest extends AbstractValidatorTest {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
-            pattern unusedPrivatePattern(p) {
+            pattern unusedPrivatePattern(p : Pattern) {
                 Pattern(p);
                 Pattern.name(p, _p);
             }
         ''')
-        tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME))
     }
     
     @Test
@@ -113,12 +113,12 @@ class PatternValidationTest extends AbstractValidatorTest {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
-            pattern unusedPrivatePattern(p) {
+            pattern unusedPrivatePattern(p : Pattern) {
                 Pattern(p);
                 Pattern.name(p, _P);
             }
         ''')
-        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertOK
     }
     
     @Test

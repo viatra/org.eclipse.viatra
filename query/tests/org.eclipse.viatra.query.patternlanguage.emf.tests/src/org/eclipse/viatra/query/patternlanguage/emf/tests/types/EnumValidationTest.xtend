@@ -121,7 +121,7 @@ class EnumValidationTest extends AbstractValidatorTest {
             }
         ')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     

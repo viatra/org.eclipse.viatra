@@ -54,15 +54,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(D) = {
+            pattern name(D : java Double) = {
                 EDouble(D);
                 check(^java::lang::Math::abs(D) > 10.5);
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     
     @Test
@@ -71,15 +69,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(D) = {
+            pattern name(D : java Double) = {
                 EDouble(D);
                 check(Math::max(0,D) < 3);
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     @Test
     def whitelistedMethodCheck3() {
@@ -87,15 +83,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(S) = {
+            pattern name(S : java String) = {
                 EString(S);
                 check(Integer.parseInt(S) < 3);
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     @Test
     def whitelistedMethodCheck4() {
@@ -103,15 +97,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(S) = {
+            pattern name(S : java String) = {
                 EString(S);
                 check(S.contains("abc"));
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     @Test
     def whitelistedMethodCheck5() {
@@ -119,15 +111,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(S) = {
+            pattern name(S : java String) = {
                 EClass.name(_, name);
                 S == eval(String.format("Name: %s", name));
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     @Test
     def whitelistedClassCheck() {
@@ -135,15 +125,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(D) = {
+            pattern name(D : java Double) = {
                 EDouble(D);
                 check (org::eclipse::viatra::query::patternlanguage::emf::tests::DummyClass::alwaysTrue());
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     @Test
     def whitelistedImportedClassCheck() {
@@ -152,15 +140,13 @@ class CheckConstraintTest extends AbstractValidatorTest {
             import "http://www.eclipse.org/emf/2002/Ecore"
             import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass
 
-            pattern name(D) = {
+            pattern name(D : java Double) = {
                 EDouble(D);
                 check (DummyClass::alwaysFalse());
             }
         ''')
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
     @Test
     def nonwhitelistedImportedToplevelCheck() {
@@ -169,15 +155,14 @@ class CheckConstraintTest extends AbstractValidatorTest {
             import "http://www.eclipse.org/emf/2002/Ecore"
             import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass2
 
-            pattern name(D) = {
+            pattern name(D : java Double) = {
                 EDouble(D);
                 check (DummyClass2::alwaysFalse());
             }
         ''')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
         )
     }
 
@@ -187,7 +172,7 @@ class CheckConstraintTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(L) = {
+            pattern name(L : java Long) = {
                 ELong(L);
                 check(^java::util::Calendar::getInstance().getTime().getTime() > L);
             }
@@ -196,8 +181,7 @@ class CheckConstraintTest extends AbstractValidatorTest {
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
         )
     }
     

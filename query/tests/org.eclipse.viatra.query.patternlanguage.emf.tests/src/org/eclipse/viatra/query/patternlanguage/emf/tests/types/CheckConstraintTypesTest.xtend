@@ -63,7 +63,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 //      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -81,7 +81,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -102,7 +102,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
         ''')
 //      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
-        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
 
     @Test
@@ -122,7 +122,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
         ''')
 //      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
-        tester.validate(model).assertAll(getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE))
     }
 
     @Test
@@ -138,7 +138,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::CHECK_MUST_BE_BOOLEAN),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -163,8 +163,8 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -179,7 +179,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -195,7 +195,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -211,7 +211,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -228,7 +228,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -246,7 +246,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -264,7 +264,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -282,7 +282,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
         ''')
         tester.validate(model).assertAll(
             getErrorCode(IssueCodes::VARIABLE_TYPE_INVALID_ERROR),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -301,8 +301,8 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     

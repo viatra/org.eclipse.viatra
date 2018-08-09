@@ -425,7 +425,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             return;
         } else if (possibleTypes.size() == 1 && !(possibleTypes.iterator().next() instanceof BottomTypeKey)) {
             String[] issueData = new String[]{calculateIssueData(inferredType)};
-            info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
+            warning("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
                     PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.MISSING_PARAMETER_TYPE,
                     issueData);
         } else {
@@ -451,7 +451,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
             Iterable<String> typeNames = Iterables.concat(Iterables.filter(Iterables.transform(orderedTypes, this::calculateIssueData), Predicates.notNull()), superClasses);
             String[] issueData = Iterables.toArray(typeNames, String.class);
             if (issueData.length > 0) {
-                info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
+                warning("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
                         PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.MISSING_PARAMETER_TYPE,
                         issueData);
             }

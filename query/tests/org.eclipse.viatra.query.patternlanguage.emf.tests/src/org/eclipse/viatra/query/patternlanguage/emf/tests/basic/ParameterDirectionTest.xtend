@@ -60,7 +60,7 @@ class ParameterDirectionTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
     
@@ -76,8 +76,8 @@ class ParameterDirectionTest extends AbstractValidatorTest {
         ')
         model.assertNoErrors
         tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
         // There should be one diagnostic about missing type
     }

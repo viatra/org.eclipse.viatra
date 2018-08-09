@@ -54,7 +54,7 @@ class ImportValidationTest extends AbstractValidatorTest {
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 
-            pattern resolutionTest(Name) = {
+            pattern resolutionTest(Name : Pattern) = {
                 Pattern(Name);
             }
         ')
@@ -62,8 +62,7 @@ class ImportValidationTest extends AbstractValidatorTest {
         model.assertNoErrors
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::DUPLICATE_IMPORT),
-            getWarningCode(IssueCodes::DUPLICATE_IMPORT),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::DUPLICATE_IMPORT)
         );
     }
 
@@ -73,16 +72,14 @@ class ImportValidationTest extends AbstractValidatorTest {
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/emf/2002/Ecore"
 
-            pattern name(D) = {
+            pattern name(D : java Double) = {
                 EDouble(D);
                 check(Math::abs(D) > 10.5);
             }
         ')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
-        tester.validate(model).assertAll(
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
-        )
+        tester.validate(model).assertOK
     }
 
     @Test
@@ -103,7 +100,7 @@ class ImportValidationTest extends AbstractValidatorTest {
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
     }
 
@@ -114,7 +111,7 @@ class ImportValidationTest extends AbstractValidatorTest {
             import "http://www.eclipse.org/emf/2002/Ecore"
             import java ^java.util.*
 
-            pattern name(L) = {
+            pattern name(L : java Long) = {
                 ELong(L);
                 check(Calendar::getInstance().getTime().getTime() > L);
             }
@@ -123,8 +120,7 @@ class ImportValidationTest extends AbstractValidatorTest {
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
             getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-            getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED),
-            getInfoCode(IssueCodes::MISSING_PARAMETER_TYPE)
+            getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED)
         )
     }
 }

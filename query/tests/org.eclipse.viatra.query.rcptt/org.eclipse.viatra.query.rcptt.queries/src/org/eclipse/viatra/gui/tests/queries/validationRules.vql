@@ -73,7 +73,7 @@ pattern nodeIpIsNotUnique(host : HostInstance){
 	host != otherHost;
 }
 
-private pattern nodeIpOfHost(host : HostInstance, ip){
+private pattern nodeIpOfHost(host : HostInstance, ip : java String){
 	HostInstance.nodeIp(host, ip);
 }
 
@@ -88,7 +88,7 @@ pattern idIsNotUnique(identifiable : Identifiable) {
 	identifiable != otherIdentifiable; 
 }
 
-private pattern identifiableId(identifiable : Identifiable, id) {
+private pattern identifiableId(identifiable : Identifiable, id : java String) {
 	Identifiable.identifier(identifiable, id);
 }
 
@@ -137,7 +137,7 @@ pattern targetStateNotContainedBySameStateMachine(transition : Transition, targe
 	message = "Multiple outgoing transitions of $state.identifier$ define the same action ($action$)",
 	severity = "error"
 )
-pattern multipleTransitionsWithSameAction(state : State, action) {
+pattern multipleTransitionsWithSameAction(state : State, action : java String) {
 	State.outgoingTransitions(state, transition);
 	State.outgoingTransitions(state, otherTransition);
 	find actionOfTransition(transition, action);
@@ -145,7 +145,7 @@ pattern multipleTransitionsWithSameAction(state : State, action) {
 	transition != otherTransition;
 }
 
-private pattern actionOfTransition(transition : Transition, action) {
+private pattern actionOfTransition(transition : Transition, action : java String) {
 	Transition.action(transition, action);
 }
 
