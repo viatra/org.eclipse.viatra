@@ -57,15 +57,13 @@ public class InitialStateNotContainedByStateMachineConstraint0 implements IConst
 
     @Override
     public Set<List<String>> getSymmetricPropertyNames() {
-        Set<List<String>> symmetricPropertyNamesSet = new HashSet<>(
-        );
+        Set<List<String>> symmetricPropertyNamesSet = new HashSet<>();
         return symmetricPropertyNamesSet;
     }
 
     @Override
     public Set<List<String>> getSymmetricKeyNames() {
-        Set<List<String>> symmetricKeyNamesSet = new HashSet<>(
-        );
+        Set<List<String>> symmetricKeyNamesSet = new HashSet<>();
         return symmetricKeyNamesSet;
     }
 
