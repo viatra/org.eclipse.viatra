@@ -538,7 +538,6 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
 				package org.eclipse.viatra.query.patternlanguage.emf.tests
 				
-				import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 				import "http://www.eclipse.org/emf/2002/Ecore"
 				
 				pattern smallestValue(value) {
@@ -546,9 +545,8 @@ class AggregationTest extends AbstractValidatorTest {
 				}
 				            
 				// helper patterns
-				pattern extractValue(reference : IntValue, value : EInt) {
-				    IntValue(reference);
-				    IntValue.value(reference, value);
+				pattern extractValue(reference : ETypedElement, value : EInt) {
+				    ETypedElement.lowerBound(reference, value);
 				}
 			'''
         )
@@ -571,9 +569,8 @@ class AggregationTest extends AbstractValidatorTest {
 				}
 				            
 				// helper patterns
-				pattern extractValue(reference : IntValue, value : EInt) {
-				    IntValue(reference);
-				    IntValue.value(reference, value);
+				pattern extractValue(reference : ETypedElement, value : EInt) {
+				    ETypedElement.lowerBound(reference, value);
 				}
 			'''
         )
@@ -631,17 +628,15 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
 				package org.eclipse.viatra.query.patternlanguage.emf.tests
 				
-				import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 				import "http://www.eclipse.org/emf/2002/Ecore"
 				
-				pattern smallestValue(value : IntValue) {
+				pattern smallestValue(value : ETypedElement) {
 				    find extractValue(value, #v);
 				}
 				            
 				// helper patterns
-				pattern extractValue(reference : IntValue, value : EInt) {
-				    IntValue(reference);
-				    IntValue.value(reference, value);
+				pattern extractValue(reference : ETypedElement, value : EInt) {
+				    ETypedElement.lowerBound(reference, value);
 				}
 			'''
         )
@@ -655,17 +650,15 @@ class AggregationTest extends AbstractValidatorTest {
         var parsed = parseHelper.parse('''
 				package org.eclipse.viatra.query.patternlanguage.emf.tests
 				
-				import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
 				import "http://www.eclipse.org/emf/2002/Ecore"
 				
-				pattern smallestValue(value : IntValue) {
+				pattern smallestValue(value : ETypedElement) {
 				    find extractValue(value, #);
 				}
-				            
+				
 				// helper patterns
-				pattern extractValue(reference : IntValue, value : EInt) {
-				    IntValue(reference);
-				    IntValue.value(reference, value);
+				pattern extractValue(reference : ETypedElement, value : EInt) {
+				    ETypedElement.lowerBound(reference, value);
 				}
 			'''
         )
