@@ -76,7 +76,8 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
                 String modelPluginID = genmodel.getModelPluginID();
                 checkModelPluginDependencyOnProject(importDecl, project, ePackage, modelPluginID);
             }
-        } else {
+        } else if (!ePackage.eIsProxy()) {
+            // Avoid checking for contributor id if EPackage is a proxy, e.g. EPackage is unresolvable
             String contributorId = metamodelProvider.getModelPluginId(ePackage, resourceSet);
             if(contributorId != null) {
                 checkModelPluginDependencyOnProject(importDecl, project, ePackage, contributorId);
