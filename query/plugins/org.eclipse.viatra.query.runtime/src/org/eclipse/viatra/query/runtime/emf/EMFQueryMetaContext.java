@@ -51,10 +51,16 @@ import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveIn
 public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     
     /**
-     * Default static instance that only makes conservative assumptions that are valid for any scope.
+     * Default static instance that only makes conservative assumptions that are valid for any {@link EMFScope} (but not if objects are used).
      * @since 1.6
      */
-    public static final EMFQueryMetaContext DEFAULT = new EMFQueryMetaContext(false, true);
+    public static final EMFQueryMetaContext DEFAULT = new EMFQueryMetaContext(false, true, true);
+    
+    /**
+     * Default static instance that only makes conservative assumptions that are valid for any scope, even with surrogate objects.
+     * @since 2.1
+     */
+    public static final EMFQueryMetaContext DEFAULT_SURROGATE = new EMFQueryMetaContext(false, true, false);
 
     
     private static final EClass EOBJECT_CLASS = 
@@ -66,6 +72,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 
     private boolean assumeNonDangling;
     private boolean subResourceScopeSplit;
+    private boolean emitUnscopedEClassTypes;
 
     /**
      * Instantiates a specialized meta information that is aware of scope-specific details.
@@ -73,19 +80,22 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
      * 
      * @param assumeNonDangling assumes that all cross-references are non-dangling (do not lead out of scope), no matter what
      * @param subResourceScopeSplit the scope granularity may be finer than resource-level, i.e. proxy-non-resolving references can lead out of scope
+     * @param emitUnscopedEClassTypes if false, the metacontext will suppress unscoped input keys; this is recommended if surrogates are used instead of EObjects  
      */
-    EMFQueryMetaContext(boolean assumeNonDangling, boolean subResourceScopeSplit) {
+    EMFQueryMetaContext(boolean assumeNonDangling, boolean subResourceScopeSplit, boolean emitUnscopedEClassTypes) {
         this.assumeNonDangling = assumeNonDangling;
         this.subResourceScopeSplit = subResourceScopeSplit;
+        this.emitUnscopedEClassTypes = emitUnscopedEClassTypes;
     }
     
     /**
      * Instantiates a specialized meta information that is aware of scope-specific details.
-     * Note that this API is not stable and thus non-public.
+     * @since 2.1
      */ 
-    EMFQueryMetaContext(EMFScope scope) {
+    public EMFQueryMetaContext(EMFScope scope) {
         this(scope.getOptions().isDanglingFreeAssumption(), 
-                scope.getScopeRoots().size()==1 && scope.getScopeRoots().iterator().next() instanceof EObject);
+                scope.getScopeRoots().size()==1 && scope.getScopeRoots().iterator().next() instanceof EObject,
+                true);
     }
 
     
@@ -155,7 +165,8 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
                 }
             }
             // implies unscoped
-            result.add(new InputKeyImplication(implyingKey, new EClassUnscopedTransitiveInstancesKey(eClass),
+            if (emitUnscopedEClassTypes) result.add(new InputKeyImplication(implyingKey, 
+                    new EClassUnscopedTransitiveInstancesKey(eClass),
                     Arrays.asList(0)));
         } else if (implyingKey instanceof EClassUnscopedTransitiveInstancesKey) {
             EClass eClass = ((EClassUnscopedTransitiveInstancesKey) implyingKey).getEmfKey();
@@ -217,14 +228,17 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
                 if (!danglingPossible) {
                     impliedTarget = new EClassTransitiveInstancesKey((EClass) targetType);
                 } else {
-                    impliedTarget = new EClassUnscopedTransitiveInstancesKey((EClass) targetType);
+                    impliedTarget = emitUnscopedEClassTypes ? 
+                                    new EClassUnscopedTransitiveInstancesKey((EClass) targetType)
+                                    : null;
                 }
             } else { // EDatatype
                 impliedTarget = new EDataTypeInSlotsKey((EDataType) targetType);
             }
 
             result.add(new InputKeyImplication(implyingKey, impliedSource, Arrays.asList(0)));
-            result.add(new InputKeyImplication(implyingKey, impliedTarget, Arrays.asList(1)));
+            if (impliedTarget != null)
+                result.add(new InputKeyImplication(implyingKey, impliedTarget, Arrays.asList(1)));
 
             // opposite
             EReference opposite = featureOpposite(feature);
@@ -270,7 +284,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     @Override
     public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
         ensureValidKey(implyingKey);
-        if (implyingKey instanceof EClassTransitiveInstancesKey) {
+        if (emitUnscopedEClassTypes && implyingKey instanceof EClassTransitiveInstancesKey) {
             EClass emfKey = ((EClassTransitiveInstancesKey) implyingKey).getEmfKey();
             
             Collection<InputKeyImplication> result = new HashSet<InputKeyImplication>();
