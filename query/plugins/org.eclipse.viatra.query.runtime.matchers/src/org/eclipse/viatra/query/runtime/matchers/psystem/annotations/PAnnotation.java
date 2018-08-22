@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.annotations;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import org.eclipse.collections.api.multimap.MutableMultimap;
@@ -83,5 +84,13 @@ public class PAnnotation {
      */
     public void forEachValue(BiConsumer<String, Object> consumer) {
         attributes.forEachKeyValue(consumer::accept);
+    }
+
+    /**
+     * Returns a set of all attribute names used in this annotation
+     * @since 2.1
+     */
+    public Set<String> getAllAttributeNames() {
+        return attributes.keySet().toSet();
     }
 }
