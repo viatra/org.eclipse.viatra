@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.viatra.documentation.example.queries.TutorialQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.documentation.example.queries.TutorialQueries" id="org.eclipse.viatra.documentation.example.queries.TutorialQueries">
+  <extension id="org.eclipse.viatra.documentation.example.queries.CPSQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.documentation.example.queries.CPSQueries" id="org.eclipse.viatra.documentation.example.queries.CPSQueries">
       <query-specification fqn="org.eclipse.viatra.documentation.example.queries.hostIpAddress"/>
       <query-specification fqn="org.eclipse.viatra.documentation.example.queries.emptyIpAddress"/>
       <query-specification fqn="org.eclipse.viatra.documentation.example.queries.sameIpAddress"/>
