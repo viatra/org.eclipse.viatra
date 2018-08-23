@@ -76,20 +76,6 @@ class EnumResolutionTest {
     }
     
     @Test
-    def eEnumResolutionMissingLiteral() {
-        val model = parseHelper.parse('''
-            package org.eclipse.viatra.query.patternlanguage.emf.tests
-            import "http://www.eclipse.org/emf/2002/GenModel"
-
-            pattern resolutionTest(Model : GenModel) = {
-                GenModel.runtimeVersion(Model, GenRuntimeVersion::);
-            }
-        ''')
-        model.assertError(PatternLanguagePackage$Literals::PATH_EXPRESSION_CONSTRAINT,
-            Diagnostic::SYNTAX_DIAGNOSTIC, ")")	
-    }
-    
-    @Test
     def eEnumResolutionInvalidLiteral() {
         val model = parseHelper.parse('
             package org.eclipse.viatra.query.patternlanguage.emf.tests

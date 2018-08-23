@@ -50,7 +50,7 @@ public class LocalSearchProfilerAdapter implements ILocalSearchAdapter {
         Map<ISearchOperation, Integer> counts = isSuccessful ? successfulOperationCounts : failedOperationCounts;
         counts.merge(operation, 
                 /*no previous entry*/1, 
-                /*increase previous value*/(k, v) -> v + 1);
+                /*increase previous value*/(oldValue, v) -> oldValue + 1);
     }
 
     @Override

@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class PDisjunction {
     public PDisjunction(PQuery query, Set<PBody> bodies) {
         super();
         this.query = query;
-        this.bodies = Collections.unmodifiableSet(new HashSet<>(bodies));
+        this.bodies = Collections.unmodifiableSet(new LinkedHashSet<>(bodies));
         this.bodies.forEach(body -> body.setContainerDisjunction(this));
     }
 

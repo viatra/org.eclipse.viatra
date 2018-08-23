@@ -44,14 +44,25 @@ class SimpleQueryGeneratorTest extends AbstractQueryCompilerTest {
         ''', 0)
     }
     
+    @Test
+    def void compileUnresolvablePattern() {
+        testFileCreationAndBuild('''
+        package test
+        
+        import "http://foo"
+        
+        pattern foo(foo : Foo, bar : java Integer) {
+            Foo.bar(foo, bar);
+        }
+        ''', 4)
+    }
+    
     //TODO Fix this test
     @Test
     @Ignore("The test does not run correctly on the build server - theory: the Eclipse did not find Java 7 installed.")
     def void oldJavaVersion() {
         testFileCreationAndBuild('''
         package test
-        
-        import "http://www.eclipse.org/emf/2002/Ecore"
         
         pattern testPattern() {
             EClass(x);

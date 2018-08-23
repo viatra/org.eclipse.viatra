@@ -16,15 +16,18 @@ import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageConfigurationConstants;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.util.TypeReferences;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
@@ -88,6 +91,32 @@ public class ClasspathValidator extends AbstractDeclarativeValidator {
         EClassifier classifier = typeDecl.getClassname();
         String clazz = metamodelProvider.getQualifiedClassName(classifier, classifier);
         if (clazz != null && !clazz.isEmpty() && typeReferences.findDeclaredType(clazz, typeDecl) == null) {
+            error(String.format("Couldn't find type %s on the project's classpath", clazz), typeDecl, null,
+                    IssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
+        }
+    }
+    
+    /**
+     * @since 2.1
+     */
+    @Check(CheckType.NORMAL)
+    public void checkClassPath(ReferenceType typeDecl) {
+        final EStructuralFeature reference = typeDecl.getRefname();
+        if (!classpathValidationEnabled || reference == null || reference.eIsProxy()) {
+            return;
+        }
+        
+        EClassifier classifier = reference.getEType();
+        if (classifier == null || classifier.eIsProxy()) {
+            error(String.format("Cannot find type for reference %s", NodeModelUtils.getNode(typeDecl).getText()),
+                    typeDecl, null, IssueCodes.OTHER_ISSUE);
+            return;
+        }
+        String clazz = metamodelProvider.getQualifiedClassName(classifier, classifier);
+        if (clazz == null || clazz.isEmpty()) {
+            error(String.format("Cannot find type for reference %s", NodeModelUtils.getNode(typeDecl).getText()),
+                    typeDecl, null, IssueCodes.OTHER_ISSUE);
+        } else if (typeReferences.findDeclaredType(clazz, typeDecl) == null) {
             error(String.format("Couldn't find type %s on the project's classpath", clazz), typeDecl, null,
                     IssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
         }

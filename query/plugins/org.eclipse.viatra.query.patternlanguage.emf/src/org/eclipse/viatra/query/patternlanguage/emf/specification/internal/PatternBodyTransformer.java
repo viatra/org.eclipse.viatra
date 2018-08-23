@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
@@ -263,11 +264,14 @@ public class PatternBodyTransformer {
             //  target type constraint introduced to ensure scope semantics and reject dangling edges
             //  as EStructuralFeatureInstancesKey does not guarantee that target is in scope 
             EClassifier targetType = typeObject.getEType();
-            if (targetType instanceof EClass) {
-                acceptor.acceptTypeConstraint(ImmutableList.of(trgName),
+            if (targetType.eIsProxy()) {
+                // Avoid writing unresolved proxies, see bug 531295
+                acceptor.acceptTypeCheckConstraint(Collections.singletonList(trgName), BottomTypeKey.INSTANCE);
+            } else if (targetType instanceof EClass) {
+                acceptor.acceptTypeConstraint(Collections.singletonList(trgName),
                         new EClassTransitiveInstancesKey((EClass) targetType));
             } else if (targetType instanceof EDataType) {
-                acceptor.acceptTypeConstraint(ImmutableList.of(trgName),
+                acceptor.acceptTypeConstraint(Collections.singletonList(trgName),
                         new EDataTypeInSlotsKey((EDataType) targetType));
             }
             
