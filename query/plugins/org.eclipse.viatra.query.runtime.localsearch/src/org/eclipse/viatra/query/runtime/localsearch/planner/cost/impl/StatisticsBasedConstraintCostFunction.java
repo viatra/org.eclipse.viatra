@@ -100,39 +100,72 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         IQueryMetaContext metaContext = input.getRuntimeContext().getMetaContext();
 
         Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey);
-        // TODO prepare for cases when this info is not available - use only metamodel related cost calculation
+
         double srcCount = -1;
         double dstCount = -1;
         // Obtain runtime information
         for (final InputKeyImplication implication : implications) {
+            if (! implication.getImpliedKey().isEnumerable()) 
+                continue;
+            
             List<Integer> impliedIndices = implication.getImpliedIndices();
             if (impliedIndices.size() == 1 && impliedIndices.contains(0)) {
                 // Source key implication
-                srcCount = this.countTuples(input, implication.getImpliedKey());
+                long estimate = this.countTuples(input, implication.getImpliedKey());
+                if (srcCount < 0 || srcCount > estimate) srcCount = estimate;
             } else if (impliedIndices.size() == 1 && impliedIndices.contains(1)) {
                 // Target key implication
-                dstCount = this.countTuples(input, implication.getImpliedKey());
+                long estimate = this.countTuples(input, implication.getImpliedKey());
+                if (dstCount < 0 || dstCount > estimate) dstCount = estimate;
             }
         }
 
         if (freeMaskVariables.contains(srcVariable) && freeMaskVariables.contains(dstVariable)) {
-            return (dstCount * srcCount);
+            // both variables unbound, iterate over edges 
+            if (edgeCount > -1) {
+                return edgeCount;
+            } else { // edge count unknown, estimate from product of node counts
+                return (dstCount > -1 ? dstCount : DEFAULT_COST) * 
+                       (srcCount > -1 ? srcCount : DEFAULT_COST);                
+            }
+                
         } else {
             double srcNodeCount = (isInverse) ? dstCount : srcCount;
             double dstNodeCount = (isInverse) ? srcCount : dstCount;
 
+            double costEstimate = Double.POSITIVE_INFINITY;
+            
+            if (!freeMaskVariables.contains(srcVariable) && !freeMaskVariables.contains(dstVariable)) {
+                // both variables bound, this is a simple check
+                costEstimate = Math.min(costEstimate, 0.9);
+            }
             if (srcNodeCount > -1 && edgeCount > -1) {
                 // The end nodes had implied (type) constraint and both nodes and adjacent edges are indexed
-                return (srcNodeCount == 0) ? 0.0 : ((double) edgeCount) / srcNodeCount;
-            } else if (srcCount > -1 && dstCount > -1) {
+                double amortizedEdgeCount = (srcNodeCount == 0) ? 0.0 : ((double) edgeCount) / srcNodeCount;
+                costEstimate = Math.min(costEstimate, amortizedEdgeCount);
+            } 
+            if (srcNodeCount > -1 && dstNodeCount > -1 && navigatesThroughFunctionalDependencyInverse(input, constraint)) {
+                // Both of the end nodes had implied (type) constraint, and 
+                // due to a reverse functional dependency, the destination count is an upper bound for the edge count
+                double amortizedEdgeLimit = (srcNodeCount == 0) ? 0.0 : ((double) dstNodeCount) / srcNodeCount;
+                costEstimate = Math.min(costEstimate, amortizedEdgeLimit);
+            }
+            if (srcNodeCount > -1 && dstNodeCount > -1 && edgeCount < 0) {
                 // Both of the end nodes had implied (type) constraint
                 // If count is 0, no such element exists in the model, so there will be no branching
-                return srcCount != 0 ? (dstNodeCount / srcNodeCount) : 1.0;
-            } else {
-                // At least one of the end variables had no restricting type information
-                // Strategy: try to navigate along many-to-one relations
-                return navigatesThroughFunctionalDependency(input, constraint) ? 1.0 : DEFAULT_COST; 
+                // TODO rethink, why dstNodeCount / srcNodeCount instead of dstNodeCount? 
+                // The universally valid bound would be something like sparseEdgeEstimate = dstNodeCount + 1.0
+                // If we assume sparseness, we can reduce it by a SPARSENESS_FACTOR (e.g. 0.1). 
+                // Alternatively, discount dstNodeCount * srcNodeCount on a SPARSENESS_EXPONENT (e.g 0.75) and then amortize over srcNodeCount.
+                double sparseEdgeEstimate = srcNodeCount != 0 ? Math.max(1.0, ((double) dstNodeCount) / srcNodeCount) : 1.0;
+                costEstimate = Math.min(costEstimate, sparseEdgeEstimate);
+            } 
+            if (navigatesThroughFunctionalDependency(input, constraint)) {
+                // At most one destination value
+                costEstimate = Math.min(costEstimate, 1.0); 
             }
+            
+            return (Double.POSITIVE_INFINITY == costEstimate) ? DEFAULT_COST : costEstimate;
 
         }
     }
@@ -142,12 +175,26 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
      */
     protected boolean navigatesThroughFunctionalDependency(final IConstraintEvaluationContext input,
             final PConstraint constraint) {
+        return navigatesThroughFunctionalDependency(input, constraint, input.getBoundVariables(), input.getFreeVariables());
+    }
+    /**
+     * @since 2.1
+     */
+    protected boolean navigatesThroughFunctionalDependencyInverse(final IConstraintEvaluationContext input,
+            final PConstraint constraint) {
+        return navigatesThroughFunctionalDependency(input, constraint, input.getFreeVariables(), input.getBoundVariables());
+    }
+    /**
+     * @since 2.1
+     */
+    protected boolean navigatesThroughFunctionalDependency(final IConstraintEvaluationContext input,
+            final PConstraint constraint, Collection<PVariable> determining, Collection<PVariable> determined) {
         final QueryAnalyzer queryAnalyzer = input.getQueryAnalyzer();
         final Map<Set<PVariable>, Set<PVariable>> functionalDependencies = queryAnalyzer
                 .getFunctionalDependencies(Collections.singleton(constraint), false);
-        final Set<PVariable> impliedVariables = FunctionalDependencyHelper.closureOf(input.getBoundVariables(),
+        final Set<PVariable> impliedVariables = FunctionalDependencyHelper.closureOf(determining,
                 functionalDependencies);
-        return ((impliedVariables != null) && impliedVariables.containsAll(input.getFreeVariables()));
+        return ((impliedVariables != null) && impliedVariables.containsAll(determined));
     }
     
     protected double calculateUnaryConstraintCost(final TypeConstraint constraint,
@@ -156,7 +203,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         if (input.getBoundVariables().contains(variable)) {
             return 0.9;
         } else {
-            return countTuples(input, constraint.getSupplierKey()) + DEFAULT_COST;
+            return countTuples(input, constraint.getSupplierKey()) + 1.0;
         }
     }
 

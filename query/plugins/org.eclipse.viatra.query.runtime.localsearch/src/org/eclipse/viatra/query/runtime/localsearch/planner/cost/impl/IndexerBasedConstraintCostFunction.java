@@ -26,7 +26,7 @@ public class IndexerBasedConstraintCostFunction extends StatisticsBasedConstrain
     public long countTuples(IConstraintEvaluationContext input, IInputKey supplierKey) {
         return (supplierKey.isEnumerable()) 
             ? input.getRuntimeContext().countTuples(supplierKey, TupleMask.empty(supplierKey.getArity()), Tuples.staticArityFlatTupleOf())
-            : Math.round(DEFAULT_COST);
+            : Math.round(DEFAULT_COST) /* why not -1, as in unspecified? */;
     }
     
 }

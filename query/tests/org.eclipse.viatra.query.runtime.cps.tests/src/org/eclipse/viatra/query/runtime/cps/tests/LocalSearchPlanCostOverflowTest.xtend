@@ -60,7 +60,7 @@ class LocalSearchPlanCostOverflowTest {
         val hints = LocalSearchHints.defaultNoBase.setCostFunction(new StatisticsBasedConstraintCostFunction(){
         
             override countTuples(IConstraintEvaluationContext input, IInputKey supplierKey) {
-                if (statistics.containsKey(supplierKey)) statistics.get(supplierKey) else 0
+                if (statistics.containsKey(supplierKey)) statistics.get(supplierKey) else 0 // TODO Why 0 why not DEFAULT or -1
             }
            
        });
