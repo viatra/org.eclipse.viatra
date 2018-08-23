@@ -54,13 +54,14 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
      * Default static instance that only makes conservative assumptions that are valid for any {@link EMFScope} (but not if objects are used).
      * @since 1.6
      */
-    public static final EMFQueryMetaContext DEFAULT = new EMFQueryMetaContext(false, true, true);
+    public static final EMFQueryMetaContext DEFAULT = new EMFQueryMetaContext(false, true, UnscopedTypeSupport.EMIT_ALWAYS);
     
     /**
      * Default static instance that only makes conservative assumptions that are valid for any scope, even with surrogate objects.
+     * Unscoped types are used for inference, but not emitted as replacement candidates, as they cannot be checked at runtime.
      * @since 2.1
      */
-    public static final EMFQueryMetaContext DEFAULT_SURROGATE = new EMFQueryMetaContext(false, true, false);
+    public static final EMFQueryMetaContext DEFAULT_SURROGATE = new EMFQueryMetaContext(false, true, UnscopedTypeSupport.EMIT_EXCEPT_AS_WEAKENED_REPLACEMENT);
 
     
     private static final EClass EOBJECT_CLASS = 
@@ -72,7 +73,14 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 
     private boolean assumeNonDangling;
     private boolean subResourceScopeSplit;
-    private boolean emitUnscopedEClassTypes;
+    private UnscopedTypeSupport emitUnscopedEClassTypes;
+    
+    private enum UnscopedTypeSupport {
+        EMIT_ALWAYS,
+        EMIT_EXCEPT_AS_WEAKENED_REPLACEMENT,
+        EMIT_NEVER
+    }
+
 
     /**
      * Instantiates a specialized meta information that is aware of scope-specific details.
@@ -80,9 +88,9 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
      * 
      * @param assumeNonDangling assumes that all cross-references are non-dangling (do not lead out of scope), no matter what
      * @param subResourceScopeSplit the scope granularity may be finer than resource-level, i.e. proxy-non-resolving references can lead out of scope
-     * @param emitUnscopedEClassTypes if false, the metacontext will suppress unscoped input keys; this is recommended if surrogates are used instead of EObjects  
+     * @param emitUnscopedEClassTypes if requested, the metacontext will suppress unscoped input keys; this is recommended if surrogates are used instead of EObjects  
      */
-    EMFQueryMetaContext(boolean assumeNonDangling, boolean subResourceScopeSplit, boolean emitUnscopedEClassTypes) {
+    EMFQueryMetaContext(boolean assumeNonDangling, boolean subResourceScopeSplit, UnscopedTypeSupport emitUnscopedEClassTypes) {
         this.assumeNonDangling = assumeNonDangling;
         this.subResourceScopeSplit = subResourceScopeSplit;
         this.emitUnscopedEClassTypes = emitUnscopedEClassTypes;
@@ -95,7 +103,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     public EMFQueryMetaContext(EMFScope scope) {
         this(scope.getOptions().isDanglingFreeAssumption(), 
                 scope.getScopeRoots().size()==1 && scope.getScopeRoots().iterator().next() instanceof EObject,
-                true);
+                        UnscopedTypeSupport.EMIT_ALWAYS);
     }
 
     
@@ -165,7 +173,8 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
                 }
             }
             // implies unscoped
-            if (emitUnscopedEClassTypes) result.add(new InputKeyImplication(implyingKey, 
+            if (UnscopedTypeSupport.EMIT_NEVER != emitUnscopedEClassTypes) 
+                result.add(new InputKeyImplication(implyingKey, 
                     new EClassUnscopedTransitiveInstancesKey(eClass),
                     Arrays.asList(0)));
         } else if (implyingKey instanceof EClassUnscopedTransitiveInstancesKey) {
@@ -228,7 +237,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
                 if (!danglingPossible) {
                     impliedTarget = new EClassTransitiveInstancesKey((EClass) targetType);
                 } else {
-                    impliedTarget = emitUnscopedEClassTypes ? 
+                    impliedTarget = (UnscopedTypeSupport.EMIT_NEVER != emitUnscopedEClassTypes) ? 
                                     new EClassUnscopedTransitiveInstancesKey((EClass) targetType)
                                     : null;
                 }
@@ -284,7 +293,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
     @Override
     public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
         ensureValidKey(implyingKey);
-        if (emitUnscopedEClassTypes && implyingKey instanceof EClassTransitiveInstancesKey) {
+        if (UnscopedTypeSupport.EMIT_ALWAYS == emitUnscopedEClassTypes && implyingKey instanceof EClassTransitiveInstancesKey) {
             EClass emfKey = ((EClassTransitiveInstancesKey) implyingKey).getEmfKey();
             
             Collection<InputKeyImplication> result = new HashSet<InputKeyImplication>();
