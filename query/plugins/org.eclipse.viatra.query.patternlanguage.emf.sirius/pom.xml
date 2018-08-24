@@ -11,6 +11,6 @@
   <artifactId>org.eclipse.viatra.query.patternlanguage.emf.sirius</artifactId>
   <packaging>eclipse-plugin</packaging>
   <properties>
-    <target.classifier>neon</target.classifier>
+    <target.classifier>oxygen</target.classifier>
   </properties>
 </project>

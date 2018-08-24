@@ -568,7 +568,7 @@
         <requirement
             name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
         <repository
-            url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+            url="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
       </setupTask>
       <setupTask
           xsi:type="setup.targlets:TargletTask"
@@ -602,12 +602,12 @@
           <repositoryList
               name="Oxygen">
             <repository
-                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/oxygen"/>
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.1/oxygen"/>
           </repositoryList>
           <repositoryList
               name="Photon">
             <repository
-                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
           </repositoryList>
           <repositoryList
               name="2018-09">

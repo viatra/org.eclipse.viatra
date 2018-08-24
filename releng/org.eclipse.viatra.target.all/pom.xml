@@ -38,6 +38,11 @@
                                     <type>target</type>
                                     <classifier>neon</classifier>
                                 </artifact>
+                                <artifact>
+                                    <file>oxygen.target</file>
+                                    <type>target</type>
+                                    <classifier>oxygen</classifier>
+                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>
