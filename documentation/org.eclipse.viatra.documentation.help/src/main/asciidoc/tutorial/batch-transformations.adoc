@@ -100,7 +100,7 @@ new(CPSToDeployment cps2dep, ViatraQueryEngine engine) {
 [[bmt-rule-structure]]
 [source,java]
 ----
-val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).action[/*Action part*/].build
+val hostRule = createRule.precondition(HostInstance.instance).action[/*Action part*/].build
 ----
 
 * Specify which action to run when the rule fires. It will create the transformed `DeploymentHost` element in the output model as well as a trace element associating the source `HostInstance` and the target `DeploymentHost`:
@@ -108,7 +108,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).a
 [[bmt-hostrule]]
 [source,java]
 ----
-val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).action[
+val hostRule = createRule.precondition(HostInstance.instance).action[
     val cpsHostInstance = it.hostInstance
     val nodeIp = cpsHostInstance.nodeIp
     println('''Mapping host with IP: «nodeIp»''')
@@ -133,7 +133,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification).a
 [[bmt-apprule]]
 [source,java]
 ----
-val applicationRule = createRule.precondition(ApplicationInstanceMatcher.querySpecification).action[
+val applicationRule = createRule.precondition(ApplicationInstance.instance).action[
     val cpsApplicationInstance = it.appInstance
     val appId = cpsApplicationInstance.identifier
     println('''Mapping application with ID: «appId»''')

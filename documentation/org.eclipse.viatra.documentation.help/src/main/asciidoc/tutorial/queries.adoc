@@ -29,7 +29,7 @@ package org.eclipse.viatra.documentation.example.queries
 // EPackage import
 import "http://org.eclipse.viatra/model/cps"
 
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=hostIpAddress]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=hostIpAddress]
 ----
 
 Looking at the pattern header, we see that this pattern has two parameters, meaning its results will be a pair of values, the first selecting a `HostInstance` from the model, while the second one a `String` literal. The connection between these elements is described by a single constraint ensuring that `ip` variable stores the `nodeIp` attribute of a corresponding `HostInstance`.
@@ -67,7 +67,7 @@ In the following, we define a set of patterns that illustrate additional capabil
 [[vql-emptyipaddress]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=emptyIpAddress]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=emptyIpAddress]
 ----
 +
 
@@ -77,7 +77,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-sameipaddress]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=sameIpAddress]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=sameIpAddress]
 ----
 +
 
@@ -88,7 +88,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-ipformatinvalid]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=ipFormatInvalid]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=ipFormatInvalid]
 ----
 +
 
@@ -99,7 +99,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-connectedto]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=connectedTo]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=connectedTo]
 ----
 +
 
@@ -111,7 +111,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-badhost]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=badHost]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=badHost]
 ----
 +
 
@@ -122,7 +122,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-goodhost]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=goodHost]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=goodHost]
 ----
 +
 
@@ -133,7 +133,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-countapplications]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=countApplications]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=countApplications]
 ----
 
 . List all states of a state machine that are reachable from its initial state (either directly or indirectly)
@@ -142,7 +142,7 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 [[vql-reachablestate]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=reachableState]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=reachableState]
 ----
 
 == Validation
@@ -189,7 +189,7 @@ After the counts are available in the match set of a pattern, it is easy to calc
 [[vql-maximumNumberOfInstances]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=maximumNumberOfInstances]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=maximumNumberOfInstances]
 ----
 
 === Check Memory Requirements of a Host
@@ -210,7 +210,7 @@ NOTE: A Host Instance is allocated to at most a single application, so it is not
 [[vql-invalidMemoryRequirement]]
 [source,vql,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/TutorialQueries.vql[tag=invalidMemoryRequirement]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=invalidMemoryRequirement]
 ----
 
 == References
