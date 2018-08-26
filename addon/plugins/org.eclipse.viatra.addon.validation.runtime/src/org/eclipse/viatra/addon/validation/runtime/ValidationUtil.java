@@ -41,6 +41,13 @@ public final class ValidationUtil {
     public static synchronized void addNotifier(IEditorPart editorPart, Notifier notifier) {
         adapterMap.put(editorPart, new ConstraintAdapter(editorPart, notifier, ViatraQueryLoggingUtil.getLogger(ValidationUtil.class)));
     }
+    
+    /**
+     * @since 2.1
+     */
+    public static synchronized void addConstraintAdapter(IEditorPart editorPart, ConstraintAdapter adapter) {
+        adapterMap.put(editorPart, adapter);
+    }
 
     public static void registerEditorPart(IEditorPart editorPart) {
         IWorkbenchPage page = editorPart.getSite().getPage();

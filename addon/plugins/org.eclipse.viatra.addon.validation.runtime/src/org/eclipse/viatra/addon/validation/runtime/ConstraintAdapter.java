@@ -11,15 +11,12 @@
 
 package org.eclipse.viatra.addon.validation.runtime;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -27,11 +24,9 @@ import org.eclipse.viatra.addon.validation.core.ValidationEngine;
 import org.eclipse.viatra.addon.validation.core.api.IConstraint;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
-import org.eclipse.viatra.addon.validation.core.api.IViolation;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.addon.validation.core.listeners.ConstraintListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * The constraint adapter class is used to collect the constraints and deal with their maintenance for a given EMF
@@ -42,37 +37,34 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
  */
 public class ConstraintAdapter {
 
-    private Map<IPatternMatch, IMarker> markerMap;
-    private Map<IViolation, IMarker> violationMarkerMap;
-    private IResource resourceForEditor;
-    private IValidationEngine engine;
-    private Logger logger;
+    private final IResource resourceForEditor;
+    private final IValidationEngine engine;
+    private final ConstraintListener constraintListener; 
 
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
-        this.logger = logger;
-        resourceForEditor = getIResourceForEditor(editorPart);
-        this.markerMap = new HashMap<IPatternMatch, IMarker>();
-        this.violationMarkerMap = new HashMap<IViolation, IMarker>();
-
-        try {
-            ViatraQueryEngine queryEngine = ViatraQueryEngine.on(new EMFScope(notifier));
-            engine = ValidationEngine.builder().setEngine(queryEngine).setLogger(logger).build();
-            engine.initialize();
-            
-            MarkerManagerViolationListener markerManagerViolationListener = new MarkerManagerViolationListener(logger, this);
-            Set<IConstraintSpecification> constraintSpecificationsForEditorId = ConstraintExtensionRegistry
-                    .getConstraintSpecificationsForEditorId(editorPart.getSite().getId());
-            for (IConstraintSpecification constraint : constraintSpecificationsForEditorId) {
-                IConstraint coreConstraint = engine.addConstraintSpecification(constraint);
-                coreConstraint.addListener(markerManagerViolationListener);
-            }
-        } catch (ViatraQueryException e) {
-            logger.error(String.format("Exception occured during validation initialization: %s", e.getMessage()), e);
+        this(getIResourceForEditor(editorPart),
+                ConstraintExtensionRegistry.getConstraintSpecificationsForEditorId(editorPart.getSite().getId()),
+                new MarkerManagerViolationListener(getIResourceForEditor(editorPart), logger),
+                notifier, logger);
+    }
+    
+    /**
+     * @since 2.1
+     */
+    public ConstraintAdapter(IResource resourceForEditor, Set<IConstraintSpecification> constraintSpecificationsForEditorId, ConstraintListener constraintListener, Notifier notifier, Logger logger) {
+        this.resourceForEditor = resourceForEditor;
+        ViatraQueryEngine queryEngine = ViatraQueryEngine.on(new EMFScope(notifier));
+        engine = ValidationEngine.builder().setEngine(queryEngine).setLogger(logger).build();
+        engine.initialize();
+        
+        this.constraintListener = Objects.requireNonNull(constraintListener);
+        for (IConstraintSpecification constraint : constraintSpecificationsForEditorId) {
+            IConstraint coreConstraint = engine.addConstraintSpecification(constraint);
+            coreConstraint.addListener(this.constraintListener);
         }
-
     }
 
-    private IResource getIResourceForEditor(IEditorPart editorPart) {
+    private static IResource getIResourceForEditor(IEditorPart editorPart) {
         // get resource for editor input (see org.eclipse.ui.ide.ResourceUtil.getResource)
         IEditorInput input = editorPart.getEditorInput();
         IResource resource = null;
@@ -86,39 +78,8 @@ public class ConstraintAdapter {
     }
 
     public void dispose() {
-        for (IMarker marker : violationMarkerMap.values()) {
-            try {
-                marker.delete();
-            } catch (CoreException e) {
-                logger.error(String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()),
-                        e);
-            }
-        }
+        constraintListener.dispose();
         engine.dispose();
-    }
-
-    public IMarker getMarker(IPatternMatch match) {
-        return this.markerMap.get(match);
-    }
-
-    public IMarker addMarker(IPatternMatch match, IMarker marker) {
-        return this.markerMap.put(match, marker);
-    }
-
-    public IMarker removeMarker(IPatternMatch match) {
-        return this.markerMap.remove(match);
-    }
-
-    public IMarker getMarker(IViolation violation) {
-        return this.violationMarkerMap.get(violation);
-    }
-
-    public IMarker addMarker(IViolation violation, IMarker marker) {
-        return this.violationMarkerMap.put(violation, marker);
-    }
-
-    public IMarker removeMarker(IViolation violation) {
-        return this.violationMarkerMap.remove(violation);
     }
 
     protected IResource getResourceForEditor() {

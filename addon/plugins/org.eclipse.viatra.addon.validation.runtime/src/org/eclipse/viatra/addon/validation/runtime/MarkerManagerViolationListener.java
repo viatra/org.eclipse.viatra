@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.validation.runtime;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,12 +38,16 @@ import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 public class MarkerManagerViolationListener implements ConstraintListener, ViolationListener {
 
     private Logger logger;
-    private ConstraintAdapter adapter;
+    private Map<IViolation, IMarker> markerMap = new HashMap<>();
+    private IResource editorLocation;
 
-    public MarkerManagerViolationListener(Logger logger, ConstraintAdapter adapter) {
+    /**
+     * @since 2.1
+     */
+    public MarkerManagerViolationListener(IResource editorLocation, Logger logger) {
         super();
+        this.editorLocation = editorLocation;
         this.logger = logger;
-        this.adapter = adapter;
     }
 
     @Override
@@ -54,7 +59,7 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
             if (keyObject instanceof EObject) {
                 EObject location = (EObject) keyObject;
                 if (location.eResource() != null) {
-                    IResource markerLoc = adapter.getResourceForEditor();
+                    IResource markerLoc = editorLocation;
                     if (markerLoc == null) {
                         URI uri = location.eResource().getURI();
                         String platformString = uri.toPlatformString(true);
@@ -100,7 +105,7 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
                         }
                         marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(location).toString());
                         marker.setAttribute(IMarker.MESSAGE, violation.getMessage());
-                        adapter.addMarker(violation, marker);
+                        markerMap.put(violation, marker);
                         violation.addListener(this);
                     } catch (CoreException e) {
                         logger.error("Error during marker initialization!", e);
@@ -113,7 +118,7 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
 
     @Override
     public void violationDisappeared(IViolation violation) {
-        IMarker marker = adapter.removeMarker(violation);
+        IMarker marker = markerMap.remove(violation);
         if (marker != null) {
             try {
                 marker.delete();
@@ -131,7 +136,7 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
 
     @Override
     public void violationMessageUpdated(IViolation violation) {
-        IMarker marker = adapter.getMarker(violation);
+        IMarker marker = markerMap.get(violation);
         if (marker != null) {
             try {
                 marker.setAttribute(IMarker.MESSAGE, violation.getMessage());
@@ -146,4 +151,17 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
         // entries not handled in markers currently
     }
 
+    @Override
+    public void dispose() {
+        for (IMarker marker : markerMap.values()) {
+            try {
+                marker.delete();
+            } catch (CoreException e) {
+                logger.error(String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()),
+                        e);
+            }
+        }
+    }
+
+    
 }

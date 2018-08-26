@@ -37,5 +37,11 @@ public interface ConstraintListener {
      *            The violation which disappeared.
      */
     public void violationDisappeared(IViolation violation);
+    
+    /**
+     * Callback when the listener has to be cleaned up
+     * @since 2.1
+     */
+    default void dispose() {}
 
 }
