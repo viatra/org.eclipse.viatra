@@ -13,14 +13,21 @@
 package org.eclipse.viatra.query.patternlanguage.emf.sirius.util;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.antlr.runtime.ANTLRStringStream;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.jface.text.contentassist.ContentAssistEvent;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.ICompletionListener;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.sirius.business.api.session.SessionManager;
 import org.eclipse.sirius.diagram.DDiagramElement;
 import org.eclipse.swt.SWT;
@@ -35,6 +42,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer;
 import org.eclipse.viatra.query.patternlanguage.emf.sirius.SiriusVQLGraphicalEditorPlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CheckConstraint;
@@ -60,8 +68,11 @@ import com.google.inject.Injector;
 @SuppressWarnings("restriction")
 public class XtextEmbeddedEditor {
 
-	private final class CloseEditorHandler extends KeyAdapter implements VerifyKeyListener {
-        @Override
+	private final class CloseEditorHandler extends KeyAdapter implements VerifyKeyListener, ICompletionListener {
+        
+	    boolean contentAssistStopping = false;
+	    
+	    @Override
         public void verifyKey(VerifyEvent e) {
         	int keyCode = e.keyCode;
         	if ((e.stateMask & SWT.CTRL) != 0
@@ -70,10 +81,32 @@ public class XtextEmbeddedEditor {
         		closeEditor(true);
         	}
         	
-        	if ((e.stateMask & SWT.CTRL) != 0 && (keyCode == SWT.ESC)) {
-        		e.doit = false;
-        		closeEditor(false);
-        	}
+        	/*
+             * When content assist is stopped with the esc key, in the same run this verify key method is also called.
+             * This means, when this method is called with the ESC key pressed, the assistSessionEnded method was
+             * already called, thus the content assist overlay is always hidden. For this reason, when the assist
+             * session ends, a single press of the ESC key is ignored.
+             */
+            if (keyCode == SWT.ESC && !contentAssistStopping) {
+            	e.doit = false;
+            	closeEditor(false);
+            }
+            contentAssistStopping = false;
+        }
+
+        @Override
+        public void assistSessionStarted(ContentAssistEvent event) {
+            contentAssistStopping = false;
+        }
+
+        @Override
+        public void assistSessionEnded(ContentAssistEvent event) {
+            contentAssistStopping = true;
+        }
+
+        @Override
+        public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
+            
         }
     }
 
@@ -155,7 +188,7 @@ public class XtextEmbeddedEditor {
 	}
 
 	private XtextResource createVirtualXtextResource(InterpretableExpression container) throws IOException {
-	    URI uri = container.eResource().getURI().appendFileExtension("vql");
+	    URI uri = container.eResource().getURI().trimFileExtension().appendFileExtension("vql");
 	    return createVirtualXtextResource(uri, getFullText(container));
 	}
 	
@@ -175,24 +208,32 @@ public class XtextEmbeddedEditor {
         return resource;
     }
 	
-    private String buildVariableDeclaration(Variable v) {
+    private String buildParameterDeclaration(Variable v) {
         if (!v.getTypes().isEmpty() && v.getTypes().get(0) instanceof JavaClassReference) {
-            return "  java " + ((JavaClassReference)v.getTypes().get(0)).getClassName() + "(" + v.getName() + ");\n";
+            return v.getName() + " : java " + escapeTypeName(((JavaClassReference)v.getTypes().get(0)).getClassName());
         } else {
             return "";
         }
     }
     
+    private String escapeTypeName(String name) {
+        return Arrays.stream(name.split("\\.")).map(n -> {
+            InternalEMFPatternLanguageLexer lexer = new InternalEMFPatternLanguageLexer(new ANTLRStringStream(n));
+            // Escape VQL keywords, e.g. "java"
+            return (lexer.nextToken().getType() == InternalEMFPatternLanguageLexer.T__19) ? "^" + n : n; 
+        }).collect(Collectors.joining("."));
+    }
+    
     private String getPrefixText(InterpretableExpression ex) {
         StringBuilder sb = new StringBuilder();
-        sb.append("pattern temporary() {\n");
-        ex.getVariables().stream()
+        sb.append("pattern temporary(");
+        sb.append(ex.getVariables().stream()
                 .map(Reference::getExpression)
                 .filter(Variable.class::isInstance)
                 .map(Variable.class::cast)
-                .map(this::buildVariableDeclaration)
-                .forEach(sb::append);
-        sb.append("\n");
+                .map(this::buildParameterDeclaration)
+                .collect(Collectors.joining(", ")));
+        sb.append(") {\n");
         if (ex instanceof FunctionEvaluationValue) {
             sb.append(" _ == eval(");
         } else if (ex instanceof CheckConstraint) {
@@ -210,7 +251,7 @@ public class XtextEmbeddedEditor {
     }
     
     private String getFullText(InterpretableExpression ex) {
-        return getPrefixText(ex) + getEditableText(ex) + getPostfixText(ex);
+        return getPrefixText(ex) + '\n' +getEditableText(ex) + '\n' + getPostfixText(ex);
     }
     
 	protected void createXtextEditor() {
@@ -218,20 +259,28 @@ public class XtextEmbeddedEditor {
 		Composite parentComposite = (Composite) viewer.getControl();
 		
 		xtextEditorComposite = new Decorations(parentComposite, SWT.RESIZE
-				| SWT.ON_TOP | SWT.BORDER);
+				| SWT.ON_TOP | SWT.BORDER | SWT.CLOSE);
 		xtextEditorComposite.setLayout(new FillLayout());
 
 		EmbeddedEditorFactory factory = new EmbeddedEditorFactory();
 		xtextInjector.injectMembers(factory);
 		xtextEmbeddedEditor = factory.newEditor(() -> virtualXtextResource).
 		        showErrorAndWarningAnnotations().
+		        
 		        withParent(xtextEditorComposite);
-		xtextPartialEditor = xtextEmbeddedEditor.createPartialEditor(getPrefixText(semanticElement), getEditableText(semanticElement), getPostfixText(semanticElement), true);
-		// The following version displays all the computed text representation for the expression
-		//xtextPartialEditor = xtextEmbeddedEditor.createPartialEditor("", getFullText(semanticElement), "", true);
+		
+        // When insertLineBreaks is set to true, the resulting editor used some kind of incorrect offset, resulting in
+        // strange behavior (e.g. off-by-one deletion, content assist not working, etc.). This is most likely caused by
+        // inconsistency of the getFullText() method (used to initialize the contents of the underlying Resource) and
+        // the prefix/content/postfix separation (however, this is only a guess here).
+        // To avoid that, line breaks are added manually.
+        xtextPartialEditor = xtextEmbeddedEditor.createPartialEditor(getPrefixText(semanticElement) + "\n",
+                getEditableText(semanticElement), "\n" + getPostfixText(semanticElement), false);
 
 		addKeyVerifyListener();
 		setEditorBounds();
+		
+		xtextEmbeddedEditor.getDocument().getValidationJob().schedule();
 		xtextEditorComposite.setVisible(true);
 		xtextEditorComposite.forceFocus();
 	}
@@ -239,7 +288,9 @@ public class XtextEmbeddedEditor {
 	private void addKeyVerifyListener() {
 		final StyledText xtextTextWidget = xtextEmbeddedEditor.getViewer()
 				.getTextWidget();
-		xtextTextWidget.addVerifyKeyListener(new CloseEditorHandler());
+		final CloseEditorHandler listener = new CloseEditorHandler();
+        xtextTextWidget.addVerifyKeyListener(listener);
+        xtextEmbeddedEditor.getViewer().getContentAssistantFacade().addCompletionListener(listener);
 	}
 
 	/**
