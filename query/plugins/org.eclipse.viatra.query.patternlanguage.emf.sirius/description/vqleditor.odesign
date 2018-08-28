@@ -549,7 +549,7 @@
           </actions>
           <actions labelExpression="Remove">
             <initialOperation>
-              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self.oclAsType(vgql::PatternPackage).removePackageImport(selection, input.context().session())"/>
+              <firstModelOperations xsi:type="tool_1:Unset" featureName="packageImports" elementExpression="var:selection"/>
             </initialOperation>
           </actions>
         </controls>
