@@ -23,6 +23,7 @@ Export-Package: org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.registry,
  org.eclipse.viatra.query.runtime.registry.connector,
  org.eclipse.viatra.query.runtime.registry.view,
+ org.eclipse.viatra.query.runtime.tabular;x-internal:=true,
  org.eclipse.viatra.query.runtime.util
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.base;version="15.0.0",
