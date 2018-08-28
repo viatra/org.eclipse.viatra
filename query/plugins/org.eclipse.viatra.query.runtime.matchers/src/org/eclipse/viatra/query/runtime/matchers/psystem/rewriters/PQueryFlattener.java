@@ -160,7 +160,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         List<PDisjunction> dependencies = disjunctionDependencies(rootDisjunction);
 
         for (PDisjunction disjunction : dependencies) {
-            Set<PBody> flatBodies = new HashSet<>();
+            Set<PBody> flatBodies = new LinkedHashSet<>();
             for (PBody body : disjunction.getBodies()) {
                 if (isFlatteningNeeded(body)) {
                     Map<PositivePatternCall, Set<PBody>> flattenedBodies = new HashMap<>();

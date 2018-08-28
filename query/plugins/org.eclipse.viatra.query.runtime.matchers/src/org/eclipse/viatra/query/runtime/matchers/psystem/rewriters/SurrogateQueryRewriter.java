@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -33,7 +33,7 @@ public class SurrogateQueryRewriter extends PDisjunctionRewriter {
 
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) {
-        Set<PBody> replacedBodies = new HashSet<>();
+        Set<PBody> replacedBodies = new LinkedHashSet<>();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body, getTraceCollector()) {
             	
