@@ -7,6 +7,8 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == New and Noteworthy
 
+The severity of missing variable types is increased to warning. The reason for this change is that explicitly declaring parameter types helps increases readability of patterns and helps precise error localization in case of type errors. However, to avoid breaking existing pattern declarations, such missing types are not considered as errors. However, in a future release such missing declarations might be considered as erroneous, so it is recommended to add the missing declarations (e.g. using the appropriate quick fix functionality).
+
 == Migrating to VIATRA 2.1
 The default rule priority in InvertedDisappearancePriorityConflictResolver was changed in version 2.1 from 0 to 1. This change was motivated by the fact that in case of 0 priority additions and deletions would have the same priority that is in contrast with the goal of the resolver.
 
