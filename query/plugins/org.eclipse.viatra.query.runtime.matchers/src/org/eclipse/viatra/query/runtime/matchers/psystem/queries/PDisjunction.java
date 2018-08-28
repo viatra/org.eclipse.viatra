@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,7 +65,7 @@ public class PDisjunction {
     public Set<PQuery> getDirectReferredQueries() {
         return this.getBodies().stream().
                 flatMap(PQueries.directlyReferencedQueriesFunction()). // flatten stream of streams
-                collect(Collectors.toSet());
+                collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -75,10 +74,10 @@ public class PDisjunction {
      * @return a non-null, but possibly empty list of query definitions
      */
     public Set<PQuery> getAllReferredQueries() {
-        Set<PQuery> processedQueries = new HashSet<>();
+        Set<PQuery> processedQueries = new LinkedHashSet<>();
         processedQueries.add(this.getQuery());
         Set<PQuery> foundQueries = getDirectReferredQueries();
-        Set<PQuery> newQueries = new HashSet<>(foundQueries);
+        Set<PQuery> newQueries = new LinkedHashSet<>(foundQueries);
     
         while(!processedQueries.containsAll(newQueries)) {
             PQuery query = newQueries.iterator().next();

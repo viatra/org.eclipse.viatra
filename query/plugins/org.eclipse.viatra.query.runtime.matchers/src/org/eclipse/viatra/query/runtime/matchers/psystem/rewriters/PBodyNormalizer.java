@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -79,7 +80,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
 
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) {
-        Set<PBody> normalizedBodies = new HashSet<>();
+        Set<PBody> normalizedBodies = new LinkedHashSet<>();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body, getTraceCollector());
             PBody modifiedBody = copier.getCopiedBody();
