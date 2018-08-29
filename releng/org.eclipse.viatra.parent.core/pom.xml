@@ -11,8 +11,6 @@
     <modules>
         <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf</module>
         <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf.ide</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.metamodel</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.metamodel.edit</module>
         <module>../../query/plugins/org.eclipse.viatra.query.runtime</module>
         <module>../../query/plugins/org.eclipse.viatra.query.runtime.matchers</module>
         <module>../../query/plugins/org.eclipse.viatra.query.runtime.base</module>

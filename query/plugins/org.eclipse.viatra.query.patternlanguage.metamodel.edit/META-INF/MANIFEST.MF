@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.metamodel.edit;singleton:=true
 Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.metamodel.edit
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 0.21.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.metamodel.vgql.provider.GraphicalQueryLanguageEditPlugin$Implementation
 Bundle-Vendor: %providerName

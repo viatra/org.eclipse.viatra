@@ -21,6 +21,9 @@
    <feature url="features/org.eclipse.viatra.query.sdk.extensions.feature_0.21.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.extensions.feature" version="0.21.0.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
+   <feature url="features/org.eclipse.viatra.query.language.vgql.feature_0.21.0.qualifier.jar" id="org.eclipse.viatra.query.language.vgql.feature" version="0.21.0.qualifier">
+      <category name="org.eclipse.viatra.core"/>
+   </feature>
    <category-def name="org.eclipse.viatra.core" label="VIATRA Core"/>
    <category-def name="org.eclipse.viatra.extensions" label="VIATRA Extensions"/>
 </site>

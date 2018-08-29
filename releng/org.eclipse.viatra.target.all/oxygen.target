@@ -12,15 +12,15 @@
 <unit id="org.eclipse.emf.facet.sdk.feature.feature.group" version="1.0.1.201508190910"/>
 <repository location="http://archive.eclipse.org/facet/updates/release/1.0.1/"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.google.inject" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
-<unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
-<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
+<location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+<unit id="com.google.inject" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
 <unit id="org.junit" version="4.12.0.v201504281640"/>
-<unit id="org.mockito" version="1.9.5.v201605172210"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository/"/>
+<unit id="org.mockito" version="1.9.5.v201311280930"/>
+<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
