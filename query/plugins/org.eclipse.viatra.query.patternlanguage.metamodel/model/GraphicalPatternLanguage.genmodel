@@ -37,7 +37,6 @@
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//GraphPattern">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/annotations"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//GraphPattern/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/parameters"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/bodies"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//GraphPattern/package"/>
@@ -77,11 +76,9 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//ReferenceType/refname"/>
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Annotation">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//Annotation/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Annotation/parameters"/>
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//AnnotationParameter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//AnnotationParameter/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//AnnotationParameter/value"/>
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Expression">
@@ -89,7 +86,6 @@
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Expression/body"/>
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Variable">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//Variable/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//Variable/types"/>
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//Literal"/>
@@ -141,6 +137,9 @@
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//CalledParameter">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//CalledParameter/calledParameter"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="GraphicalPatternLanguage.ecore#//NamedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//NamedElement/name"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

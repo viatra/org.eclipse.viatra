@@ -146,7 +146,7 @@
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
                 <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::GraphPattern" referenceName="patterns" variableName="newPattern">
-                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="aql:'pattern' + container.patterns->size()"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="aql: 'pattern'.getFirstUnusedName(container.patterns )"/>
                   <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:newPattern">
                     <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::GraphPatternBody" referenceName="bodies" variableName=""/>
                   </subModelOperations>
@@ -159,19 +159,15 @@
             <viewVariable name="containerView"/>
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:container.eContainerOrSelf(vgql::GraphPattern)">
-                <subModelOperations xsi:type="tool_1:Let" variableName="pattern" valueExpression="aql:container.eContainerOrSelf(vgql::GraphPattern)">
-                  <subModelOperations xsi:type="tool_1:Let" variableName="newName" valueExpression="aql:'param' + pattern.parameters->size()">
-                    <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:pattern">
-                      <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::Parameter" referenceName="parameters" variableName="newParam">
+                <subModelOperations xsi:type="tool_1:Let" variableName="newName" valueExpression="aql: 'param'.toString().getFirstUnusedName(self.parameters )">
+                  <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::Parameter" referenceName="parameters" variableName="newParam">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="var:newName"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:For" expression="feature:bodies" iteratorName="body">
+                    <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:body">
+                      <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::ParameterRef" referenceName="nodes" variableName="nodes">
                         <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="var:newName"/>
-                      </subModelOperations>
-                      <subModelOperations xsi:type="tool_1:For" expression="feature:bodies" iteratorName="body">
-                        <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:body">
-                          <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::ParameterRef" referenceName="nodes" variableName="nodes">
-                            <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="var:newName"/>
-                            <subModelOperations xsi:type="tool_1:SetValue" featureName="referredParam" valueExpression="var:newParam"/>
-                          </subModelOperations>
-                        </subModelOperations>
+                        <subModelOperations xsi:type="tool_1:SetValue" featureName="referredParam" valueExpression="var:newParam"/>
                       </subModelOperations>
                     </subModelOperations>
                   </subModelOperations>

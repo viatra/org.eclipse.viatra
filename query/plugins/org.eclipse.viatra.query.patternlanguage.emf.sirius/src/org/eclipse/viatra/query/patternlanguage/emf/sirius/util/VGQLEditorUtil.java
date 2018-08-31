@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -59,6 +60,7 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.InterpretableExpr
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.JavaClassReference;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Literal;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.LocalVariable;
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.NamedElement;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.NumberLiteral;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Parameter;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ParameterRef;
@@ -159,7 +161,15 @@ public class VGQLEditorUtil {
         // Delete parameter from the model
         EcoreUtil.delete(parameter);
     }
-    
+
+    /**
+     * This method removes the given {@link Expression} element from the model. Also handle objects which have reference
+     * to it if needed.
+     * 
+     * <p>
+     * <b>The method is called from Sirius as a Java service!</b>
+     * </p>
+     */
     public static void removeExpression(Expression exp) {
         ListIterator<Reference> iterator = exp.getReferences().listIterator();
         
@@ -176,6 +186,28 @@ public class VGQLEditorUtil {
         }
         
         EcoreUtil.delete(exp);
+    }
+
+    /**
+     * This method search for first unused name in the given {@link List}.
+     * 
+     * <p>
+     * <b>The method is called from Sirius as a Java service!</b>
+     * </p>
+     */
+    public static String getFirstUnusedName(String name, List<NamedElement> list) {
+        int i = 0;
+        boolean occupied = true;
+        while (occupied) {
+            occupied = isNameUsed(name + ++i, list);
+        }
+
+        String nameWithIndex = name + i;
+        return nameWithIndex;
+    }
+
+    private static boolean isNameUsed(String name, List<NamedElement> list) {
+        return list.stream().anyMatch(el -> Objects.equals(el.getName(), name));
     }
 
     /**

@@ -12,10 +12,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="packageImports" upperBound="-1"
         eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EPackage"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GraphPattern">
+  <eClassifiers xsi:type="ecore:EClass" name="GraphPattern" eSuperTypes="#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
         eType="#//Annotation" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//Parameter" containment="true" eOpposite="#//Parameter/pattern"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bodies" upperBound="-1"
@@ -67,13 +66,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="ReferenceType" eSuperTypes="#//Type">
     <eStructuralFeatures xsi:type="ecore:EReference" name="refname" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Annotation">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotation" eSuperTypes="#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//AnnotationParameter" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AnnotationParameter">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AnnotationParameter" eSuperTypes="#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Reference"
         containment="true"/>
   </eClassifiers>
@@ -88,8 +85,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//GraphPatternBody"
         eOpposite="#//GraphPatternBody/nodes"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Variable" abstract="true" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Variable" abstract="true" eSuperTypes="#//Expression #//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="types" upperBound="-1"
         eType="#//UnaryType" containment="true"/>
   </eClassifiers>
@@ -170,5 +166,8 @@
       <details key="documentation" value="This class connects a local node to a parameter of another pattern, used in PatternCall elements."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="calledParameter" eType="#//Parameter"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>
