@@ -111,9 +111,13 @@ class VqlCodeGenerator {
     private def patternBodyCode(GraphPatternBody body) {
         '''
             «FOR variable : body.nodes.filter(Variable)»
-                «FOR type : variable.types»
+              «IF variable instanceof ParameterRef && variable.types.isEmpty && !(variable as ParameterRef).referredParam.types.isEmpty»
+                «INDENTATION»«(variable as ParameterRef).referredParam.types.get(0).typeCode»(«variable.expressionCode»);
+              «ELSE»
+                  «FOR type : variable.types»
                     «INDENTATION»«type.typeCode»(«variable.expressionCode»);
-                «ENDFOR»
+                  «ENDFOR»
+              «ENDIF»
             «ENDFOR»
             «FOR constraint : body.constraints»
                 «INDENTATION»«constraint.constraintCode»;

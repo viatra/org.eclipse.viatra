@@ -33,6 +33,8 @@ class ExpectedOutputs {
         hi: HostInstance,
         ai: java.Integer
     ) {
+        HostInstance(hi);
+        java.Integer(ai);
         HostInstance.applications.totalCpu(hi, ai);
     }
     '''
@@ -45,6 +47,7 @@ class ExpectedOutputs {
     pattern test3(
         hi: HostInstance
     ) {
+        HostInstance(hi);
         Identifiable.identifier(hi, "abc");
     }
     
@@ -65,18 +68,21 @@ class ExpectedOutputs {
         hi: HostInstance,
         ai: <<<<<<<Type of the parameter should defined.>>>>>>>
     ) {
+        HostInstance(hi);
         HostInstance.applications(hi, ai);
     }
     
     pattern test3(
         hi: HostInstance
     ) {
+        HostInstance(hi);
         Identifiable.identifier(hi, "abc");
     }
     
     pattern test4(
         hi: HostInstance
     ) {
+        HostInstance(hi);
         Identifiable.identifier(hi, name);
         check(name != name.toLowerCase);
     }
@@ -85,6 +91,7 @@ class ExpectedOutputs {
         hi: HostInstance,
         out name: <<<<<<<Type of the parameter should defined.>>>>>>>
     ) {
+        HostInstance(hi);
         Identifiable.identifier(hi, n);
         expression2 == name;
         expression2 == eval(n.toLowerCase);
@@ -93,12 +100,14 @@ class ExpectedOutputs {
     pattern test6(
         hi: HostInstance
     ) {
+        HostInstance(hi);
         find test4(hi);
     }
     
     pattern test7(
         hi: HostInstance
     ) {
+        HostInstance(hi);
         neg find test4(hi);
     }
     
@@ -106,6 +115,8 @@ class ExpectedOutputs {
         hi: HostInstance,
         ai: ApplicationInstance
     ) {
+        HostInstance(hi);
+        ApplicationInstance(ai);
         <<<<<<<PathExpressionConstraint should have one edgeType at least.>>>>>>>;
     }
     
@@ -113,6 +124,7 @@ class ExpectedOutputs {
         hi: HostInstance,
         c: <<<<<<<Type of the parameter should defined.>>>>>>>
     ) {
+        HostInstance(hi);
         expression2 == c;
         expression2 == find test8(hi, _);
     }
