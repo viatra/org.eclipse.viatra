@@ -5,10 +5,10 @@
       <types xsi:type="GraphPatternLanguage:EClassifierReference">
         <classifier xsi:type="ecore:EClass" href="http://org.eclipse.viatra/model/cps#//HostInstance"/>
       </types>
-      <types xsi:type="GraphPatternLanguage:JavaClassReference" className="java.Integer"/>
+      <types xsi:type="GraphPatternLanguage:JavaClassReference" className="java.lang.Integer"/>
     </parameters>
     <parameters name="ai" parameterReferences="//@patterns.0/@bodies.0/@nodes.1">
-      <types xsi:type="GraphPatternLanguage:JavaClassReference" className="java.Integer"/>
+      <types xsi:type="GraphPatternLanguage:JavaClassReference" className="java.lang.Integer"/>
     </parameters>
     <bodies>
       <constraints xsi:type="GraphPatternLanguage:PathExpressionConstraint">

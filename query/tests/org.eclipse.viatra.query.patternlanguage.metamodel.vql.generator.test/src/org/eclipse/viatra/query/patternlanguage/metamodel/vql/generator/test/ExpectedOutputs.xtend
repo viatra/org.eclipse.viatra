@@ -31,10 +31,10 @@ class ExpectedOutputs {
     
     pattern test2(
         hi: HostInstance,
-        ai: java.Integer
+        ai: java ^java.lang.Integer
     ) {
         HostInstance(hi);
-        java.Integer(ai);
+        java ^java.lang.Integer(ai);
         HostInstance.applications.totalCpu(hi, ai);
     }
     '''
@@ -66,7 +66,7 @@ class ExpectedOutputs {
     
     pattern test2(
         hi: HostInstance,
-        ai: <<<<<<<Type of the parameter should defined.>>>>>>>
+        ai: <<<<<<<Unexpected type declaration.>>>>>>>
     ) {
         HostInstance(hi);
         HostInstance.applications(hi, ai);
@@ -89,7 +89,7 @@ class ExpectedOutputs {
     
     pattern test5(
         hi: HostInstance,
-        out name: <<<<<<<Type of the parameter should defined.>>>>>>>
+        out name: <<<<<<<Unexpected type declaration.>>>>>>>
     ) {
         HostInstance(hi);
         Identifiable.identifier(hi, n);
@@ -122,7 +122,7 @@ class ExpectedOutputs {
     
     pattern test9(
         hi: HostInstance,
-        c: <<<<<<<Type of the parameter should defined.>>>>>>>
+        c: <<<<<<<Unexpected type declaration.>>>>>>>
     ) {
         HostInstance(hi);
         expression2 == c;

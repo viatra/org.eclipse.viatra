@@ -39,6 +39,8 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.PatternPackage
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.StringLiteral
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.UnaryType
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer
+import org.antlr.runtime.ANTLRStringStream
 
 class VqlCodeGenerator {
 
@@ -99,13 +101,27 @@ class VqlCodeGenerator {
     }
 
     private def getTypeCode(UnaryType type) {
+        if (type === null) {
+            errorCode("Missing type declaration.")
+        }
         switch type {
-            EClassifierReference: '''«IF type.classifier !== null»«type.classifier.name»«ELSE»«errorCode("EClassifierReference's classifier is undeclared.")»«ENDIF»'''
-            JavaClassReference: '''«type.className»'''
+            EClassifierReference: '''«IF type.classifier !== null»«type.classifier.name.escapeTypeString»«ELSE»«errorCode("EClassifierReference's classifier is undeclared.")»«ENDIF»'''
+            JavaClassReference: '''java «type.className.escapeTypeString»'''
             // TODO It should be filtered out with validation
             default:
-                errorCode("Type of the parameter should defined.")
+                errorCode("Unexpected type declaration.")
         }
+    }
+    
+    private def escapeTypeString(String typeString) {
+        typeString.split("\\.").map[name |
+            val lexer = new InternalEMFPatternLanguageLexer(new ANTLRStringStream(name))
+            if (lexer.nextToken.type !== InternalEMFPatternLanguageLexer.RULE_ID) {
+                return "^" + name
+            } else {
+                return name
+            }
+        ].join(".")
     }
 
     private def patternBodyCode(GraphPatternBody body) {
