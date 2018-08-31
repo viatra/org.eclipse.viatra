@@ -139,5 +139,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphicalPatternLanguage.ecore#//InterpretableExpression/expression"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//InterpretableExpression/variables"/>
     </genClasses>
+    <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//CalledParameter">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//CalledParameter/calledParameter"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

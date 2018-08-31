@@ -86,7 +86,8 @@ class ExpectedOutputs {
         out name: <<<<<<<Type of the parameter should defined.>>>>>>>
     ) {
         Identifiable.identifier(hi, n);
-        eval(n.toLowerCase) == name;
+        expression2 == name;
+        expression2 == eval(n.toLowerCase);
     }
     
     pattern test6(
@@ -112,11 +113,13 @@ class ExpectedOutputs {
         hi: HostInstance,
         c: <<<<<<<Type of the parameter should defined.>>>>>>>
     ) {
-        find test8(hi, _) == c;
+        expression2 == c;
+        expression2 == find test8(hi, _);
     }
     
     pattern pattern10(
     ) {
+        expression0 == count find test7(_);
     }
     
     pattern BeforeOrAfter(

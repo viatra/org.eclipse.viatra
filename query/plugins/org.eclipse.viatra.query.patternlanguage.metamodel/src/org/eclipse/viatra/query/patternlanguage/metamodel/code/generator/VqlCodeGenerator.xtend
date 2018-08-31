@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.AggregatedValue
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.BooleanLiteral
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CallableRelation
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CheckConstraint
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ClosureType
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CompareConstraint
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.EClassifierReference
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.EnumValue
@@ -27,6 +28,9 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.GraphPatternBody
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.JavaClassReference
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ListLiteral
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.NumberLiteral
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Parameter
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CalledParameter
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ParameterDirection
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ParameterRef
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.PatternCall
@@ -35,9 +39,6 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.PatternPackage
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.StringLiteral
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.UnaryType
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Variable
-import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Parameter
-import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ParameterDirection
-import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.ClosureType
 
 class VqlCodeGenerator {
 
@@ -110,12 +111,17 @@ class VqlCodeGenerator {
     private def patternBodyCode(GraphPatternBody body) {
         '''
             «FOR variable : body.nodes.filter(Variable)»
-              «FOR type : variable.types»
-                «INDENTATION»«type.typeCode»(«variable.expressionCode»);
-              «ENDFOR»
+                «FOR type : variable.types»
+                    «INDENTATION»«type.typeCode»(«variable.expressionCode»);
+                «ENDFOR»
             «ENDFOR»
             «FOR constraint : body.constraints»
                 «INDENTATION»«constraint.constraintCode»;
+            «ENDFOR»
+            «FOR node : body.nodes»
+                «IF node instanceof FunctionEvaluationValue || node instanceof AggregatedValue»
+                    «INDENTATION»«node.complexExpressionCode»;
+                «ENDIF»
             «ENDFOR»
         '''
     }
@@ -154,6 +160,10 @@ class VqlCodeGenerator {
     }
 
     private def String expressionCode(Expression exp) {
+        if (exp === null) {
+            // TODO It should be filtered out with validation 
+            return '''«errorCode("Undeclared expression")»'''
+        }
         switch exp {
             EnumValue: '''«exp.literal.literal»'''
             ParameterRef: '''«exp.referredParam.name»'''
@@ -162,10 +172,23 @@ class VqlCodeGenerator {
             NumberLiteral: '''«exp.value»'''
             BooleanLiteral: '''«exp.value.toString»'''
             ListLiteral: '''«FOR ref : exp.values SEPARATOR ", "»«ref.expression.expressionCode»«ENDFOR»'''
-            FunctionEvaluationValue: '''eval(«exp.expression»)'''
-            AggregatedValue: '''«exp.call.callableRelationCode»'''
+            FunctionEvaluationValue: '''«exp.computeIndex»'''
+            AggregatedValue: '''«exp.computeIndex»'''
         }
+    }
 
+    private def complexExpressionCode(Expression exp) {
+        if (exp instanceof FunctionEvaluationValue) {
+            '''«exp.computeIndex» == eval(«exp.expression»)'''
+        } else if (exp instanceof AggregatedValue) {
+            '''«exp.computeIndex» == «exp.aggregatorClassName» «exp.call.callableRelationCode»'''
+        }
+    }
+
+    private def String computeIndex(Expression exp) {
+        val patternBody = exp.eContainer as GraphPatternBody
+        val index = patternBody.nodes.indexOf(exp)
+        return '''expression«index»'''
     }
 
     private def String callableRelationCode(CallableRelation callableRelation) {
@@ -182,9 +205,17 @@ class VqlCodeGenerator {
     }
 
     private def PatternCallCode(PatternCall patternCall, String closureType) {
-        val parameterList = '''«FOR parameterRef : patternCall.parameters SEPARATOR ", "»«parameterRef.expression.expressionCode»«ENDFOR»'''
+        val parameterList = '''«FOR parameterCall : patternCall.parameters SEPARATOR ", "»«parameterCall.ParameterCallCode»«ENDFOR»'''
 
         '''find «patternCall.patternRef.name»«closureType»(«parameterList»)'''
+    }
+
+    private def String ParameterCallCode(CalledParameter parameterCall) {
+        if (parameterCall.expression === null) {
+            '''_'''
+        } else {
+            '''«parameterCall.expression.expressionCode»'''
+        }
     }
 
     private def errorCode(String description) {

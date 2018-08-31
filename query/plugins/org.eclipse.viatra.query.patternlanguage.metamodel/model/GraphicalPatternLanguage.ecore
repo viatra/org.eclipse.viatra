@@ -108,7 +108,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="PatternCall" eSuperTypes="#//CallableRelation">
     <eStructuralFeatures xsi:type="ecore:EReference" name="patternRef" eType="#//GraphPattern"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
-        eType="#//Reference" containment="true"/>
+        eType="#//CalledParameter" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="CompareFeature">
     <eLiterals name="equality" literal="=="/>
@@ -164,5 +164,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
         eType="#//Reference" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CalledParameter" eSuperTypes="#//Reference">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="This class connects a local node to a parameter of another pattern, used in PatternCall elements."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="calledParameter" eType="#//Parameter"/>
   </eClassifiers>
 </ecore:EPackage>
