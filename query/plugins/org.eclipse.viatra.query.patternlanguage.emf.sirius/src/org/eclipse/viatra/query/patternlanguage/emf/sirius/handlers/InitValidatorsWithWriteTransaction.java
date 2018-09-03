@@ -63,13 +63,9 @@ public class InitValidatorsWithWriteTransaction extends AbstractHandler {
                     final VGQLViolationListener listener = new VGQLViolationListener(diagramEditPart, editorLocation, logger);
                     
                     final ConstraintAdapter adapter = new ConstraintAdapter(editorLocation, ConstraintExtensionRegistry.getConstraintSpecificationsForEditorId(HandlerUtil.getActiveEditorId(event)), listener, resourceSet, logger);
-                    session.addListener(new SessionListener() {
-                        
-                        @Override
-                        public void notify(int changeKind) {
-                            if (changeKind == SessionListener.CLOSING) {
-                                adapter.dispose();
-                            }
+                    session.addListener(changeKind -> {
+                        if (changeKind == SessionListener.CLOSING) {
+                            adapter.dispose();
                         }
                     });
                 }

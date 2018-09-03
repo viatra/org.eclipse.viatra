@@ -68,20 +68,18 @@ public class GraphicalQueryProjectBuilder extends IncrementalProjectBuilder {
         default:
             final IPath sourceFolderPath = getProject().getFolder(SOURCE_FOLDER_NAME).getFullPath();
             getDelta(getProject()).accept(delta -> {
-                if (sourceFolderPath.isPrefixOf(delta.getFullPath())) {
-                    if (delta.getResource() instanceof IFile
-                            && Objects.equals("vgql", delta.getResource().getFileExtension())) {
-                        switch (delta.getKind()) {
-                        case IResourceDelta.REMOVED:
-                        case IResourceDelta.REMOVED_PHANTOM:
-                            final IResource outputFile = getProject().findMember(getOutputPath(delta.getFullPath()));
-                            outputFile.delete(true, monitor);
-                            break;
-                        default:
-                            buildFile(set, (IFile) delta.getResource());
-                        }
-                    }
-                }
+                if (sourceFolderPath.isPrefixOf(delta.getFullPath()) && delta.getResource() instanceof IFile
+                        && Objects.equals("vgql", delta.getResource().getFileExtension())) {
+                  switch (delta.getKind()) {
+                  case IResourceDelta.REMOVED:
+                  case IResourceDelta.REMOVED_PHANTOM:
+                final IResource outputFile = getProject().findMember(getOutputPath(delta.getFullPath()));
+                outputFile.delete(true, monitor);
+                break;
+                  default:
+                buildFile(set, (IFile) delta.getResource());
+                  }
+               }
                 return true;
             });
         }

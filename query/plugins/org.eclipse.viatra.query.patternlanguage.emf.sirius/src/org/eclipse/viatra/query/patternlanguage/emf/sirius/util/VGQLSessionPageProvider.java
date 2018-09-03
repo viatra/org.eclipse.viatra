@@ -27,9 +27,7 @@ public class VGQLSessionPageProvider extends PageProvider {
     @Override
     public Map<String, Supplier<AbstractSessionEditorPage>> getPages(SessionEditor editor) {
         Map<String, Supplier<AbstractSessionEditorPage>> resultMap = new HashMap<>();
-        resultMap.put(VGQLSessionEditorPage.PAGE_ID, () -> {
-            return new VGQLSessionEditorPage(editor);
-        });
+        resultMap.put(VGQLSessionEditorPage.PAGE_ID, () -> new VGQLSessionEditorPage(editor));
         return resultMap;
     }
 

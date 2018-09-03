@@ -144,29 +144,27 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
             .stream()
             .filter(vp -> Objects.equals(vp.getName(), "vp_vql_editor"))
             .findFirst()
-            .ifPresent(vp -> {
-                ted.getCommandStack().execute(new RecordingCommand(ted) {
+            .ifPresent(vp -> ted.getCommandStack().execute(new RecordingCommand(ted) {
+            
+            @Override
+            protected void doExecute() {
+                session.createView(vp, Collections.singletonList(pkg), subMonitor.split(1));
+                new ChangeViewpointSelectionCommand(session, new ViewpointSelectionCallback(), Collections.singleton(vp), Collections.emptySet(), subMonitor.split(1)).execute();
                 
-                @Override
-                protected void doExecute() {
-                    session.createView(vp, Collections.singletonList(pkg), subMonitor.split(1));
-                    new ChangeViewpointSelectionCommand(session, new ViewpointSelectionCallback(), Collections.singleton(vp), Collections.emptySet(), subMonitor.split(1)).execute();
-                    
-                    vp.getOwnedRepresentations()
-                        .stream()
-                        .filter(rep -> Objects.equals("dd_vql_model_diagram", rep.getName()))
-                        .findFirst()
-                        .ifPresent(repDescriptor -> {
-                            new CreateRepresentationCommand(session, repDescriptor, pkg, fileName, subMonitor.split(1)).execute();
-                            final DRepresentation representation = DialectManager.INSTANCE.getRepresentations(repDescriptor, session).iterator().next();
-                            
-                            DialectUIManager.INSTANCE.openEditor(session, representation, subMonitor.split(1));
-                            SessionManager.INSTANCE.notifyRepresentationCreated(session);
-                            
-                        });
-                }
-            });
-        });
+                vp.getOwnedRepresentations()
+                    .stream()
+                    .filter(rep -> Objects.equals("dd_vql_model_diagram", rep.getName()))
+                    .findFirst()
+                    .ifPresent(repDescriptor -> {
+                        new CreateRepresentationCommand(session, repDescriptor, pkg, fileName, subMonitor.split(1)).execute();
+                        final DRepresentation representation = DialectManager.INSTANCE.getRepresentations(repDescriptor, session).iterator().next();
+                        
+                        DialectUIManager.INSTANCE.openEditor(session, representation, subMonitor.split(1));
+                        SessionManager.INSTANCE.notifyRepresentationCreated(session);
+                        
+                    });
+            }
+         }));
         return file;
     }
 

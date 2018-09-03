@@ -51,9 +51,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.sirius.SiriusVQLGraphicalEditorPlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.BooleanLiteral;
-import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.CompareConstraint;
-import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.EClassifierReference;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Expression;
@@ -78,6 +76,8 @@ import org.eclipse.xtext.scoping.IScope;
 import com.google.inject.Injector;
 
 public class VGQLEditorUtil {
+
+    private static final String UNDEFINED_TYPE_LITERAL = "«UNDEFINED»";
 
     private VGQLEditorUtil() {
         // Hidden utility class constructor
@@ -210,13 +210,13 @@ public class VGQLEditorUtil {
     public static String getTypeLabel(Type type) {
         if (type instanceof EClassifierReference) {
             final EClassifier classifier = ((EClassifierReference) type).getClassifier();
-            return classifier == null ? "«UNDEFINED»" : classifier.getName();
+            return classifier == null ? UNDEFINED_TYPE_LITERAL : classifier.getName();
         } else if (type instanceof ReferenceType) {
             final EClassifier eType = ((ReferenceType) type).getRefname().getEType();
-            return eType == null ? "«UNDEFINED»" : eType.getName();
+            return eType == null ? UNDEFINED_TYPE_LITERAL : eType.getName();
         } else if (type instanceof JavaClassReference) {
             final String fqn = ((JavaClassReference) type).getClassName();
-            return fqn == null ? "«UNDEFINED»" : fqn.substring(fqn.lastIndexOf('.') + 1);
+            return fqn == null ? UNDEFINED_TYPE_LITERAL : fqn.substring(fqn.lastIndexOf('.') + 1);
         } else {
             return "Unknown type";
         }
@@ -259,7 +259,7 @@ public class VGQLEditorUtil {
         } else {
             editPart = diagramEditPart.findEditPart(diagramEditPart, targetView);
         }
-        if (editPart == null || (!(editPart instanceof IGraphicalEditPart))) {
+        if (!(editPart instanceof IGraphicalEditPart)) {
             SiriusVQLGraphicalEditorPlugin.logError(new IllegalStateException(
                     "Can not find" + " appropriate edit part for the target element (" + target + ")"));
             return;

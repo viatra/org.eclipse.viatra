@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
@@ -59,7 +58,7 @@ public class QueryRunnerApplication implements IApplication {
 	}
 
 	// tag::initializeModelScope[]
-	private EMFScope initializeModelScope() throws ViatraQueryException {
+	private EMFScope initializeModelScope() {
 		ResourceSet rs = new ResourceSetImpl();
 		rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.examples.cps.queries/example.cyberphysicalsystem", true), true);
 		
@@ -80,7 +79,7 @@ public class QueryRunnerApplication implements IApplication {
 	// end::prepareQueryEngine[]
 	
 	// tag::printAllMatches[]
-	private void printAllMatches(ViatraQueryEngine engine ) throws ViatraQueryException {
+	private void printAllMatches(ViatraQueryEngine engine ) {
 		// Access pattern matcher
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		// Get and iterate over all matches
@@ -92,14 +91,14 @@ public class QueryRunnerApplication implements IApplication {
 	// end::printAllMatches[]
 	
 	// tag::printAllMatches2[]
-	private void printAllMatches2(ViatraQueryEngine engine ) throws ViatraQueryException {
+	private void printAllMatches2(ViatraQueryEngine engine ) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		matcher.forEachMatch(match -> System.out.println(match.getHost()));
 	}
 	// end::printAllMatches2[]
 	
 	// tag::printAllMatches3[]
-	private void printAllMatches3(ViatraQueryEngine engine ) throws ViatraQueryException {
+	private void printAllMatches3(ViatraQueryEngine engine ) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		for (HostInstance hi : matcher.getAllValuesOfhost()) {
 			System.out.println(hi);
@@ -108,7 +107,7 @@ public class QueryRunnerApplication implements IApplication {
 	// end::printAllMatches3[]
 	
 	// tag::printOneMatch[]
-	private void printOneMatch(ViatraQueryEngine engine) throws ViatraQueryException {
+	private void printOneMatch(ViatraQueryEngine engine) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		// getOneArbitraryMatch returns an optional
 		matcher.getOneArbitraryMatch()
@@ -127,7 +126,7 @@ public class QueryRunnerApplication implements IApplication {
 	// end::printAllAddresses[]
 	
 	// tag::printFilteredMatches[]
-	private void printFilteredMatches(ViatraQueryEngine engine) throws ViatraQueryException {
+	private void printFilteredMatches(ViatraQueryEngine engine) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		for (HostIpAddress.Match match : matcher.getAllMatches(null, "152.66.102.1")) {
 			System.out.println(match);
@@ -136,7 +135,7 @@ public class QueryRunnerApplication implements IApplication {
 	// end::printFilteredMatches[]
 	
 	// tag::printFilteredMatches2[]
-	private void printFilteredMatches2(ViatraQueryEngine engine) throws ViatraQueryException {
+	private void printFilteredMatches2(ViatraQueryEngine engine) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		HostIpAddress.Match filter = matcher.newMatch(null, "152.66.102.1");
 		for (HostIpAddress.Match match : matcher.getAllMatches(filter)) {
@@ -146,7 +145,7 @@ public class QueryRunnerApplication implements IApplication {
 	// end::printFilteredMatches2[]
 	
 	// tag::printCounts[]
-	private void printCounts(ViatraQueryEngine engine) throws ViatraQueryException {
+	private void printCounts(ViatraQueryEngine engine) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		System.out.println(matcher.countMatches());
 		System.out.println(matcher.hasMatch(null, null));
