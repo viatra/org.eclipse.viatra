@@ -48,10 +48,10 @@
 <repository location="http://archive.eclipse.org/modeling/mdt/modisco/updates/release/0.13.0/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.0.0.201708280201"/>
-<unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201708280201"/>
-<unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.0.1.201708280201"/>
-<repository location="http://download.eclipse.org/tools/gef/updates/releases/5.0.1_gef-maintenance_73"/>
+<unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.0.0.201711130301"/>
+<unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201711130301"/>
+<unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.0.2.201711130301"/>
+<repository location="http://download.eclipse.org/tools/gef/updates/releases/5.0.2_gef-maintenance_164"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.1.0.201712060601"/>
