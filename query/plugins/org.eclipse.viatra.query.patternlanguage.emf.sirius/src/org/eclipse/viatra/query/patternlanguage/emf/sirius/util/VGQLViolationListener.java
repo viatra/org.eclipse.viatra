@@ -91,8 +91,8 @@ public class VGQLViolationListener implements ConstraintListener, ViolationListe
                     markerMap.put(violation, marker);
                     violation.addListener(this);
                 }
+                break;
             }
-            break;
         }
     }
 

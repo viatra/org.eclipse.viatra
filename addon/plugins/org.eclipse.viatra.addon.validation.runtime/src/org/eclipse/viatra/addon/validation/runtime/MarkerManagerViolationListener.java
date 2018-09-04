@@ -111,8 +111,8 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
                         logger.error("Error during marker initialization!", e);
                     }
                 }
+                break;
             }
-            break;
         }
     }
 
