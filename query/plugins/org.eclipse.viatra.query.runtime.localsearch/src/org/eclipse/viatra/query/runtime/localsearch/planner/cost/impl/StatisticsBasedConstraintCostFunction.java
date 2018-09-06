@@ -228,7 +228,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         for (int i = 0; (i < parameters.size()); i++) {
             final PVariable variable = patternCall.getVariableInTuple(i);
             final IInputKey type = parameters.get(i).getDeclaredUnaryType();
-            double multiplier = (boundOrImplied.contains(variable)) ? 0.9 : (type == null) ? DEFAULT_COST : countTuples(input, type);
+            double multiplier = (boundOrImplied.contains(variable)) ? 0.9 : (type == null || !type.isEnumerable()) ? DEFAULT_COST : countTuples(input, type);
             result *= multiplier;
         }
         return result;

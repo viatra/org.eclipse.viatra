@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.CallWithAdornment;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.AggregatorCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
@@ -91,7 +91,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected abstract void createUnaryTypeCheck(IInputKey type, int position);
     
     protected List<ISearchOperation> operations;
-    protected Set<MatcherReference> dependencies = new HashSet<>();
+    protected Set<CallWithAdornment> dependencies = new HashSet<>();
     protected Map<PConstraint, Set<Integer>> variableBindings;
     private Map<PVariable, Integer> variableMappings;
     protected final IQueryRuntimeContext runtimeContext;
@@ -254,7 +254,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     }
 
     @Override
-    public Set<MatcherReference> getDependencies() {
+    public Set<CallWithAdornment> getDependencies() {
         return dependencies;
     }
 
@@ -269,13 +269,13 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected void createCheck(PatternMatchCounter counter, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(counter, variableMapping, variableBindings.get(counter));
         operations.add(new CountCheck(information, variableMapping.get(counter.getResultVariable())));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createCheck(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(pCall, variableMapping, variableBindings.get(pCall));
         operations.add(new CheckPositivePatternCall(information));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createCheck(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
@@ -290,7 +290,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         //The second parameter is NOT bound during execution!
         CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));
         operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition, false));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
     
     /**
@@ -304,7 +304,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));
         createUnaryTypeCheck(binaryTransitiveClosure.getUniverseType(), sourcePosition);
         operations.add(new BinaryTransitiveClosureCheck(information, sourcePosition, targetPosition, true));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createCheck(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
@@ -328,13 +328,13 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected void createCheck(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(aggregator, variableMapping, variableBindings.get(aggregator));
         operations.add(new AggregatorCheck(information, aggregator, variableMapping.get(aggregator.getResultVariable())));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createCheck(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(negativePatternCall, variableMapping, variableBindings.get(negativePatternCall));
         operations.add(new NACOperation(information));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createCheck(Inequality inequality, Map<PVariable, Integer> variableMapping) {
@@ -344,7 +344,7 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected void createExtend(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(pCall, variableMapping, variableBindings.get(pCall));
         operations.add(new ExtendPositivePatternCall(information));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
@@ -358,10 +358,10 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         
         if (sourceBound && !targetBound) {
             operations.add(new ExtendBinaryTransitiveClosure.Forward(information, sourcePosition, targetPosition, false));
-            dependencies.add(information.getReference());            
+            dependencies.add(information.getCallWithAdornment());            
         } else if (!sourceBound && targetBound) {
             operations.add(new ExtendBinaryTransitiveClosure.Backward(information, sourcePosition, targetPosition, false));
-            dependencies.add(information.getReference());                        
+            dependencies.add(information.getCallWithAdornment());                        
         } else {
             String msg = "Binary transitive closure not supported with two unbound parameters";
             throw new QueryProcessingException(msg, null, msg, binaryTransitiveClosure.getPSystem().getPattern());
@@ -383,11 +383,11 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         if (sourceBound && !targetBound) {
             createUnaryTypeCheck(binaryTransitiveClosure.getUniverseType(), sourcePosition);
             operations.add(new ExtendBinaryTransitiveClosure.Forward(information, sourcePosition, targetPosition, true));
-            dependencies.add(information.getReference());            
+            dependencies.add(information.getCallWithAdornment());            
         } else if (!sourceBound && targetBound) {
             createUnaryTypeCheck(binaryTransitiveClosure.getUniverseType(), targetPosition);
             operations.add(new ExtendBinaryTransitiveClosure.Backward(information, sourcePosition, targetPosition, true));
-            dependencies.add(information.getReference());                        
+            dependencies.add(information.getCallWithAdornment());                        
         } else {
             String msg = "Binary reflective transitive closure not supported with two unbound parameters";
             throw new QueryProcessingException(msg, null, msg, binaryTransitiveClosure.getPSystem().getPattern());
@@ -420,13 +420,13 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     protected void createExtend(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(aggregator, variableMapping, variableBindings.get(aggregator));
         operations.add(new AggregatorExtend(information, aggregator, variableMapping.get(aggregator.getResultVariable())));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
 
     protected void createExtend(PatternMatchCounter patternMatchCounter, Map<PVariable, Integer> variableMapping) {
         CallInformation information = CallInformation.create(patternMatchCounter, variableMapping, variableBindings.get(patternMatchCounter));
         operations.add(new CountOperation(information, variableMapping.get(patternMatchCounter.getResultVariable())));
-        dependencies.add(information.getReference());
+        dependencies.add(information.getCallWithAdornment());
     }
     
 }

@@ -44,7 +44,7 @@ public class BinaryTransitiveClosureCheck implements ISearchOperation, IPatternM
         @Override
         public void onInitialize(MatchingFrame frame, ISearchContext context) {
             super.onInitialize(frame, context);
-            matcher = context.getMatcher(information.getReference());
+            matcher = context.getMatcher(information.getCallWithAdornment());
             // Note: second parameter is NOT bound during execution, but the first is
         }
 

@@ -14,7 +14,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 
 
 /**
- * Interface used by the PQueryFlattener to decide which pattern calls to flatten
+ * Interface used by the PQueryFlattener to decide which positive pattern calls to flatten
  * 
  * @author Marton Bur
  *
@@ -30,4 +30,23 @@ public interface IFlattenCallPredicate {
      */
     boolean shouldFlatten(PositivePatternCall positivePatternCall);
     
+    /**
+     * Flattens only if all operand predicates vote for flattening.
+     * @author Gabor Bergmann
+     * @since 2.1
+     */
+    public static class And implements IFlattenCallPredicate {
+        private IFlattenCallPredicate[] operands;
+        public And(IFlattenCallPredicate... operands) {
+            this.operands = operands;
+        }
+        
+        @Override
+        public boolean shouldFlatten(PositivePatternCall positivePatternCall) {
+            for (IFlattenCallPredicate operand : operands) {
+                if (!operand.shouldFlatten(positivePatternCall)) return false;
+            }
+            return true;
+        }
+    }
 }

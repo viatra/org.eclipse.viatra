@@ -44,7 +44,7 @@ public class CountCheck implements ISearchOperation, IPatternMatcherOperation {
         public void onInitialize(MatchingFrame frame, ISearchContext context) {
             super.onInitialize(frame, context);
             maskedTuple.updateTuple(frame);
-            matcher = context.getMatcher(information.getReference());
+            matcher = context.getMatcher(information.getCallWithAdornment());
         }
         
         @Override

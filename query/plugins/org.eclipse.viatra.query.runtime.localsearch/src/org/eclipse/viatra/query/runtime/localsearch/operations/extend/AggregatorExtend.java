@@ -48,7 +48,7 @@ public class AggregatorExtend  implements ISearchOperation, IPatternMatcherOpera
         @Override
         public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
             maskedTuple.updateTuple(frame);
-            matcher = context.getMatcher(information.getReference());
+            matcher = context.getMatcher(information.getCallWithAdornment());
             Object aggregate = aggregate(aggregator.getAggregator().getOperator(), aggregator.getAggregatedColumn());
             return aggregate == null ? Collections.emptyIterator() : Collections.singletonList(aggregate).iterator();
             

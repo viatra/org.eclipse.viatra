@@ -93,7 +93,7 @@ class FlattenerPredicateTest {
     def void flattenedPatternCallTest() {
         val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs), engineOptions)
         try {
-            engine.getMatcher(queryToFlatten, LocalSearchHints.^default.build)
+            engine.getMatcher(queryToFlatten, LocalSearchHints.defaultGenericHybrid.build)
             Assert.assertTrue(shouldCallBeFlattened.xor(engine.hasResultProviderForQuery(queryFlattened)))
         } finally {
             engine.dispose

@@ -46,7 +46,7 @@ public abstract class ExtendBinaryTransitiveClosure implements ISearchOperation,
         @Override
         public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
             // Note: second parameter is NOT bound during execution, but the first is
-            IQueryResultProvider matcher = context.getMatcher(information.getReference());
+            IQueryResultProvider matcher = context.getMatcher(information.getCallWithAdornment());
 
             Queue<Object> seedsToEvaluate = new LinkedList<>();
             final Object seedValue = frame.get(seedPosition);

@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
@@ -57,15 +58,15 @@ public class LocalSearchRuntimeBasedStrategy {
      * @param context the backend context
      * @param configuration the planner configuration
      * @return the complete search plan for the given {@link PBody}
-     * @since 1.5
+     * @since 2.1
      */
     public SubPlan plan(PBody pBody, Set<PVariable> initialBoundVariables,
-            IQueryBackendContext context, 
+            IQueryBackendContext context, final ResultProviderRequestor resultRequestor,
             LocalSearchHints configuration) {
 
         final ICostFunction costFunction = configuration.getCostFunction();
         PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(
-                configuration.isUseBase(), context, costFunction::apply);
+                configuration.isUseBase(), context, resultRequestor, costFunction::apply);
         
         // 1. INITIALIZATION
         // Create a starting plan

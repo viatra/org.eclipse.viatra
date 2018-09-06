@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.CallWithAdornment;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
@@ -39,13 +40,14 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -73,6 +75,10 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     private static final String PLAN_CACHE_KEY = AbstractLocalSearchResultProvider.class.getName() + "#planCache"; 
     private final Map<MatcherReference, IPlanDescriptor> planCache;
     protected final ISearchContext searchContext;
+    /**
+     * @since 2.1
+     */
+    protected ResultProviderRequestor resultProviderRequestor;
 
     /**
      * @since 1.5
@@ -87,7 +93,8 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         this.planProvider = planProvider;
         this.userHints = userHints;
         this.runtimeContext = context.getRuntimeContext();
-        this.searchContext = new ISearchContext.SearchContext(backendContext, userHints, backend.getCache());
+        this.resultProviderRequestor = backend.getResultProviderRequestor(query, userHints);
+        this.searchContext = new ISearchContext.SearchContext(backendContext, backend.getCache(), resultProviderRequestor);
         this.planCache = backend.getCache().getValue(PLAN_CACHE_KEY, Map.class, HashMap::new);
     }
     
@@ -109,7 +116,8 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         if (planCache.containsKey(key)){
             return planCache.get(key);
         } else {
-            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, configuration, key);
+            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, 
+                    resultProviderRequestor, configuration, key);
             planCache.put(key, plan);
             return plan;
         }
@@ -121,7 +129,8 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         } else {
             LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
             IOperationCompiler compiler = getOperationCompiler(backendContext, configuration);
-            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, configuration, key);
+            IPlanDescriptor plan = planProvider.getPlan(backendContext, compiler, 
+                    resultProviderRequestor, configuration, key);
             planCache.put(key, plan);
             return plan;
         }
@@ -179,7 +188,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             }
             //Prepare dependencies
             for(SearchPlanForBody body: plan.getPlan()){
-                for(MatcherReference dependency : body.getDependencies()){
+                for(CallWithAdornment dependency : body.getDependencies()){
                     searchContext.getMatcher(dependency);
                 }
             }
@@ -189,9 +198,10 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     protected void prepareDirectDependencies() {
         // Do not prepare for any adornment at this point
         IAdornmentProvider adornmentProvider = input -> Collections.emptySet();
-        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), BackendRequirement.UNSPECIFIED);
-        for(PQuery dep : getDirectPositiveDependencies()){
-            backendContext.getResultProviderAccess().getResultProvider(dep, hints);
+        QueryEvaluationHint adornmentHint = IAdornmentProvider.toHint(adornmentProvider);
+
+        for(IQueryReference call : getDirectDependencies()){
+            resultProviderRequestor.requestResultProvider(call, adornmentHint);
         }
     }
 
@@ -216,25 +226,27 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         );
     }
     
-    private Set<PQuery> getDirectPositiveDependencies() {
+    private Set<IQueryReference> getDirectDependencies() {
         IFlattenCallPredicate flattenPredicate = overrideDefaultHints(query).getFlattenCallPredicate();
         Queue<PQuery> queue = new LinkedList<>();
         Set<PQuery> visited = new HashSet<>();
-        Set<PQuery> result = new HashSet<>();
+        Set<IQueryReference> result = new HashSet<>();
         queue.add(query);
         
         while(!queue.isEmpty()){
             PQuery next = queue.poll();
             visited.add(next);
             for(PBody body : next.getDisjunctBodies().getBodies()){
-                for(PositivePatternCall ppc : body.getConstraintsOfType(PositivePatternCall.class)){
-                    PQuery dep = ppc.getSupplierKey();
-                    if (flattenPredicate.shouldFlatten(ppc)){
+                for (IQueryReference call : body.getConstraintsOfType(IQueryReference.class)) {
+                    if (call instanceof PositivePatternCall && 
+                            flattenPredicate.shouldFlatten((PositivePatternCall) call)) 
+                    {
+                        PQuery dep = ((PositivePatternCall) call).getReferredQuery();
                         if (!visited.contains(dep)){
                             queue.add(dep);
                         }
-                    }else{
-                        result.add(dep);
+                    } else {
+                        result.add(call);
                     }
                 }
             }

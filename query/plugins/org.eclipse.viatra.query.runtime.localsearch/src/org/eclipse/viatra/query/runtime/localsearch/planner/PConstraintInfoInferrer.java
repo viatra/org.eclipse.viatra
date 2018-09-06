@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
@@ -61,12 +62,16 @@ class PConstraintInfoInferrer {
     private final Function<IConstraintEvaluationContext, Double> costFunction;
     private final EMFModelComprehension modelComprehension;
     private final IQueryBackendContext context;
+    private final ResultProviderRequestor resultRequestor;
+
     
     public PConstraintInfoInferrer(boolean useIndex, 
             IQueryBackendContext backendContext, 
+            ResultProviderRequestor resultRequestor,
             Function<IConstraintEvaluationContext, Double> costFunction) {
         this.useIndex = useIndex;
         this.context = backendContext;
+        this.resultRequestor = resultRequestor;
         this.costFunction = costFunction;
         this.modelComprehension = new EMFModelComprehension(new BaseIndexOptions());
     }
@@ -298,7 +303,7 @@ class PConstraintInfoInferrer {
             
             PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables,
                     affectedVariables.stream().filter(input -> !boundVariables.contains(input)).collect(Collectors.toSet()),
-                    sameWithDifferentBindings, context, costFunction);
+                    sameWithDifferentBindings, context, resultRequestor, costFunction);
             constraintInfos.add(info);
             sameWithDifferentBindings.add(info);
         }

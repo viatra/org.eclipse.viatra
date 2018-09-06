@@ -19,7 +19,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.CallWithAdornment;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
@@ -47,29 +49,32 @@ public final class CallInformation {
     private final Set<PParameter> adornment = new HashSet<>();
     private final PQuery referredQuery;
     private final MatcherReference matcherReference;
+    private final IQueryReference call;
+    private CallWithAdornment callWithAdornment;
     
     public static CallInformation create(PatternCallBasedDeferred constraint, Map<PVariable, Integer> variableMapping, Set<Integer> bindings) {
-        return new CallInformation(constraint.getActualParametersTuple(), constraint.getReferredQuery(), bindings, variableMapping);
+        return new CallInformation(constraint.getActualParametersTuple(), constraint, bindings, variableMapping);
     }
     
     public static CallInformation create(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping, Set<Integer> bindings) {
-        return new CallInformation(pCall.getVariablesTuple(), pCall.getReferredQuery(), bindings, variableMapping);
+        return new CallInformation(pCall.getVariablesTuple(), pCall, bindings, variableMapping);
     }
     
     public static CallInformation create(BinaryTransitiveClosure constraint, Map<PVariable, Integer> variableMapping, Set<Integer> bindings) {
-        return new CallInformation(constraint.getVariablesTuple(), constraint.getReferredQuery(), bindings, variableMapping);
+        return new CallInformation(constraint.getVariablesTuple(), constraint, bindings, variableMapping);
     }
     
     /**
      * @since 2.0
      */
     public static CallInformation create(BinaryReflexiveTransitiveClosure constraint, Map<PVariable, Integer> variableMapping, Set<Integer> bindings) {
-        return new CallInformation(constraint.getVariablesTuple(), constraint.getReferredQuery(), bindings, variableMapping);
+        return new CallInformation(constraint.getVariablesTuple(), constraint, bindings, variableMapping);
     }
     
-    private CallInformation(Tuple actualParameters, PQuery referredQuery, final Set<Integer> bindings,
+    private CallInformation(Tuple actualParameters, IQueryReference call, final Set<Integer> bindings,
             Map<PVariable, Integer> variableMapping) {
-        this.referredQuery = referredQuery;
+        this.call = call;
+        this.referredQuery = call.getReferredQuery();
         int keySize = actualParameters.getSize();
         List<Integer> parameterMaskIndices = new ArrayList<>();
         int[] fullParameterMaskIndices = new int[keySize];
@@ -103,7 +108,8 @@ public final class CallInformation {
             }
         }
         parameterMask = TupleMask.fromSelectedIndices(keySize, boundParameterIndices);
-        matcherReference = new MatcherReference(referredQuery, adornment);
+        callWithAdornment = new CallWithAdornment(call, adornment);
+        matcherReference = callWithAdornment.getMatcherReference();
     }
 
     /** 
@@ -129,6 +135,20 @@ public final class CallInformation {
     
     public MatcherReference getReference() {
         return matcherReference;
+    }
+    
+    /**
+     * @since 2.1
+     */
+    public IQueryReference getCall() {
+        return call;
+    }
+    
+    /**
+     * @since 2.1
+     */
+    public CallWithAdornment getCallWithAdornment() {
+        return callWithAdornment;
     }
 
     /**

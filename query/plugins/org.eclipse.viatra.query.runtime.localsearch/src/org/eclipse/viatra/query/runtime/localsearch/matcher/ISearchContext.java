@@ -20,14 +20,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.IAdornmentProvider;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
@@ -59,11 +55,10 @@ public interface ISearchContext {
     /**
      * Returns a matcher for a selected query specification.
      * 
-     * @param reference
      * @throws ViatraQueryRuntimeException
      * @since 1.5
      */
-    IQueryResultProvider getMatcher(MatcherReference reference);
+    IQueryResultProvider getMatcher(CallWithAdornment dependency);
     
     /**
      * Allows search operations to cache values through the entire lifecycle of the local search backend. The values are
@@ -88,22 +83,21 @@ public interface ISearchContext {
     public class SearchContext implements ISearchContext {
 
         private final NavigationHelper navigationHelper;
-        private final IQueryResultProviderAccess resultProviderAccess;
-        private final QueryEvaluationHint overrideHints;
         private final IQueryRuntimeContext runtimeContext;
         
         private final ICache backendLevelCache;
         private final Logger logger;
+        private final ResultProviderRequestor resultProviderRequestor;
         
         /**
          * Initializes a search context using an arbitrary backend context
          */
-        public SearchContext(IQueryBackendContext backendContext, QueryEvaluationHint overrideHints, ICache backendLevelCache) {
+        public SearchContext(IQueryBackendContext backendContext, ICache backendLevelCache, 
+                ResultProviderRequestor resultProviderRequestor) {
+            this.resultProviderRequestor = resultProviderRequestor;
             this.runtimeContext = backendContext.getRuntimeContext();
             this.logger = backendContext.getLogger();
             this.navigationHelper = null;
-            this.resultProviderAccess = backendContext.getResultProviderAccess();
-            this.overrideHints = overrideHints;
             
             this.backendLevelCache = backendLevelCache;
         }
@@ -118,23 +112,19 @@ public interface ISearchContext {
         
         /**
          * @throws ViatraQueryRuntimeException
-         * @since 1.5
+         * @since 2.1
          */
         @Override
-        public IQueryResultProvider getMatcher(final MatcherReference reference) {
+        public IQueryResultProvider getMatcher(CallWithAdornment dependency) {
             // Inject adornment for referenced pattern
             IAdornmentProvider adornmentProvider = query -> {
-                if (query.equals(reference.query)){
-                    return Collections.singleton(reference.adornment);
+                if (query.equals(dependency.getReferredQuery())){
+                    return Collections.singleton(dependency.getAdornment());
                 }
                 return Collections.emptySet();
             };
-            QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), BackendRequirement.UNSPECIFIED);
-            if (overrideHints != null){
-                hints = overrideHints.overrideBy(hints);
-            }
-                    
-            return resultProviderAccess.getResultProvider(reference.getQuery(), hints);
+            return resultProviderRequestor.requestResultProvider(dependency.getCall(), 
+                    IAdornmentProvider.toHint(adornmentProvider));
         }
 
         @Override

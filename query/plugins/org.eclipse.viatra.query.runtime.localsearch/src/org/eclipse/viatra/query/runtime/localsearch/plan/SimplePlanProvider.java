@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 
 /**
@@ -35,9 +36,11 @@ public class SimplePlanProvider implements IPlanProvider {
     }
     
     @Override
-    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, final LocalSearchHints configuration, MatcherReference key) {
+    public IPlanDescriptor getPlan(IQueryBackendContext backend, IOperationCompiler compiler, 
+            final ResultProviderRequestor resultRequestor,
+            final LocalSearchHints configuration, MatcherReference key) {
         
-        LocalSearchPlanner planner = new LocalSearchPlanner(backend, compiler, logger, configuration);
+        LocalSearchPlanner planner = new LocalSearchPlanner(backend, compiler, logger, configuration, resultRequestor);
         
         Collection<SearchPlanForBody> plansForBodies = planner.plan(key.getQuery(), key.getAdornment());
       

@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.localsearch.planner.compiler.IOperationCompiler;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -50,15 +51,20 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
     private final LocalSearchHints configuration;
     private final IOperationCompiler operationCompiler;
     private final IQueryBackendContext context;
+    private final ResultProviderRequestor resultRequestor;
     
     /**
+     * @param resultRequestor 
      * @since 1.7
      */
-    public LocalSearchPlanner(IQueryBackendContext backendContext, IOperationCompiler compiler, Logger logger, final LocalSearchHints configuration) {
+    public LocalSearchPlanner(IQueryBackendContext backendContext, IOperationCompiler compiler, Logger logger, 
+            final LocalSearchHints configuration, ResultProviderRequestor resultRequestor) 
+    {
 
         this.runtimeContext = backendContext.getRuntimeContext();
         this.configuration = configuration;
         this.operationCompiler = compiler;
+        this.resultRequestor = resultRequestor;
         PQueryFlattener flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         /*
          * TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=439358: The normalizer is initialized with the false
@@ -103,7 +109,7 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context, configuration);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context, resultRequestor, configuration);
             // 3. PConstraint -> POperation compilation step
             // * Pay extra caution to extend operations, when more than one variables are unbound
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);

@@ -84,6 +84,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/backend/IQueryBackend.java" type="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend">
+        <filter comment="interface used internally only" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend"/>
+                <message_argument value="getFactory()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/context/AbstractQueryMetaContext.java" type="org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryMetaContext">
         <filter comment="Internal API implementation" id="576725006">
             <message_arguments>

@@ -38,6 +38,11 @@ public enum LocalSearchEMFBackendFactory implements IQueryBackendFactory {
             protected AbstractLocalSearchResultProvider initializeResultProvider(PQuery query, QueryEvaluationHint hints) {
                 return new LocalSearchResultProvider(this, context, query, planProvider, hints);
             }
+            
+            @Override
+            public IQueryBackendFactory getFactory() {
+                return INSTANCE;
+            }
         };
     }
     

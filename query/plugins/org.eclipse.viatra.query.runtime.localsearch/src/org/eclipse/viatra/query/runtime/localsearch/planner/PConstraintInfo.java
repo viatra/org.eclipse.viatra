@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 
@@ -37,6 +38,7 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     private IQueryRuntimeContext runtimeContext;
     private QueryAnalyzer queryAnalyzer;
     private IQueryResultProviderAccess resultProviderAccess;
+    private ResultProviderRequestor resultRequestor;
 
     private double cost;
     
@@ -54,11 +56,13 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     public PConstraintInfo(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
         Set<PConstraintInfo> sameWithDifferentBindings, 
         IQueryBackendContext context,
+        ResultProviderRequestor resultRequestor,
         Function<IConstraintEvaluationContext, Double> costFunction) {
         this.constraint = constraint;
         this.boundMaskVariables = boundMaskVariables;
         this.freeMaskVariables = freeMaskVariables;
         this.sameWithDifferentBindings = sameWithDifferentBindings;
+        this.resultRequestor = resultRequestor;
         this.runtimeContext = context.getRuntimeContext();
         this.queryAnalyzer = context.getQueryAnalyzer();
         this.resultProviderAccess = context.getResultProviderAccess();
@@ -116,9 +120,18 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
         return String.format("%s, bound variables: %s, cost: \"%.2f\"", constraint.toString(), boundMaskVariables.toString(), cost);
     }
 
+    /**
+     * @deprecated use {@link #resultProviderRequestor()}
+     */
     @Override
+    @Deprecated
     public IQueryResultProviderAccess resultProviderAccess() {
         return resultProviderAccess;
+    }
+    
+    @Override
+    public ResultProviderRequestor resultProviderRequestor() {
+        return resultRequestor;
     }
 
 }

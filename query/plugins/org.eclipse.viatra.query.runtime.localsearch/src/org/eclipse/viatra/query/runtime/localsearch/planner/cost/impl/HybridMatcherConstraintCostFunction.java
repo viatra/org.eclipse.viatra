@@ -64,7 +64,7 @@ public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintC
                 .map(variableIndices::get)
                 .collect(Collectors.toList());
 
-        IQueryResultProvider resultProvider = context.resultProviderAccess().getResultProvider(patternCall.getReferredQuery(), null);
+        IQueryResultProvider resultProvider = context.resultProviderRequestor().requestResultProvider(patternCall, null);
         Map<Tuple, Integer> aggregatedCounts = new HashMap<>();
         
         // Iterate over all matches and count together matches that has equal values on

@@ -69,11 +69,14 @@ class LocalSearchPlanCostOverflowTest {
        val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope)
        
        val backend = engine.getQueryBackend(LocalSearchEMFBackendFactory.INSTANCE) as LocalSearchBackend
+       val requestor = backend.getResultProviderRequestor(pattern.internalQueryRepresentation, null)
        
        val planner = new SimplePlanProvider(null);
        val adornment = #{}
        val compiler = new EMFOperationCompiler(backend.getRuntimeContext(), hints.isUseBase());
-       val plan = planner.getPlan(backend.backendContext, compiler, hints, new MatcherReference(pattern.internalQueryRepresentation, adornment))
+       val plan = planner.getPlan(backend.backendContext, compiler, requestor, hints, 
+           new MatcherReference(pattern.internalQueryRepresentation, adornment)
+       )
        
        Assert.assertEquals(1,plan.iteratedKeys.size)
        engine.dispose
