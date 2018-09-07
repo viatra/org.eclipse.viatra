@@ -11,12 +11,14 @@
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
@@ -110,6 +112,18 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
     }
 
     @Override
+    public Optional<Long> estimateProjectionSize(TupleMask groupMask, Accuracy requiredAccuracy) {
+        // always exact count
+        if (groupMask.getSize() == 0) {
+            return rows.size() == 0 ? Optional.of(0L) : Optional.of(1L);
+        } else if (groupMask.getSize() == this.emptyTuple.getSize()) {
+            return Optional.of((long) rows.size());
+        } else { 
+            return Optional.of((long)getIndexMemory(groupMask).getKeysetSize());
+        }
+    }
+
+    @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
         return getIndexMemory(seedMask).getOrEmpty(seed);
     }
@@ -122,4 +136,5 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
         return () -> getIndexMemory(seedMask).getOrEmpty(seed).stream()
                 .map(row2 -> row2.get(queriedColumn)).iterator();
     }
+
 }

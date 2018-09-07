@@ -405,6 +405,10 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         FeatureData featureData = getFeatureData(featureKey);
         return featureData.getAllDistinctHolders();
     }
+    protected Set<Object> getValuesOfFeature(Object featureKey) {
+        FeatureData featureData = getFeatureData(featureKey);
+        return featureData.getAllDistinctValues();
+    }
 
     /**
      * Returns all EClasses that currently have direct instances cached by the index.

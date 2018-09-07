@@ -11,11 +11,14 @@
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
 import java.util.Optional;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 
 /**
  * An internal interface of the query backend that provides results of a given query. 
@@ -72,6 +75,22 @@ public interface IQueryResultProvider {
      * @since 1.7
      */
     public int countMatches(TupleMask parameterSeedMask, ITuple projectedParameterSeed);
+    
+    /**
+     * Gives an estimate of the number of different groups the matches are projected into by the given mask
+     * (e.g. for an identity mask, this means the full match set size). The estimate must meet the required accuracy.
+     * 
+     * <p> If there is insufficient information to provide an answer up to the required precision, {@link Optional<Long>#empty()} may be returned.
+     * In other words, query backends may deny an answer, or do their best to give an estimate without actually determining the match set of the query. 
+     * However, caching backends are expected to simply return the indexed (projection) size, initialized on-demand if necessary.
+     * 
+     * <p> PRE: {@link TupleMask#isNonrepeating()} must hold for the group mask.
+     * 
+     * @return if available, an estimate of the cardinality of the projection of the match set, with the desired accuracy.
+     * 
+     * @since 2.1
+     */
+    public Optional<Long> estimateCardinality(TupleMask groupMask, Accuracy requiredAccuracy);
     
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.

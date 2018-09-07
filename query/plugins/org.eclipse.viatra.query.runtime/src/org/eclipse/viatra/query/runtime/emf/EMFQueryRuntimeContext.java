@@ -17,6 +17,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -46,6 +47,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 
 /**
  * The EMF-based runtime query context, backed by an IQBase NavigationHelper.
@@ -398,6 +400,146 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         return 0;
     }
     
+    
+    /**
+     * @since 2.1
+     */
+    @Override
+    public Optional<Long> estimateCardinality(IInputKey key, TupleMask groupMask, Accuracy requiredAccuracy) {
+
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            
+            if (isIndexed(key, IndexingService.STATISTICS)) { // exact answer known
+                if (groupMask.indices.length == 0) { // empty projection
+                    return (0 != baseIndex.countAllInstances(eClass)) ? Optional.of(1L) : Optional.of(0L);
+                } else { // unprojected
+                    return Optional.of((long)baseIndex.countAllInstances(eClass));
+                }                
+            } else return Optional.empty(); // TODO use known supertype counts as upper, subtypes as lower bounds
+            
+        } else if (key instanceof EClassUnscopedTransitiveInstancesKey) {
+            EClass eClass = ((EClassUnscopedTransitiveInstancesKey) key).getEmfKey();
+            
+            // can give only lower bound based on the scoped key
+            if (Accuracy.BEST_LOWER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) {
+                return estimateCardinality(new EClassTransitiveInstancesKey(eClass), groupMask, requiredAccuracy);
+            } else return Optional.empty();
+            
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            
+            if (isIndexed(key, IndexingService.STATISTICS)) {
+                if (groupMask.indices.length == 0) { // empty projection
+                    return (0 != baseIndex.countDataTypeInstances(dataType)) ? Optional.of(1L) : Optional.of(0L);
+                } else { // unprojected
+                    return Optional.of((long)baseIndex.countDataTypeInstances(dataType));
+                }                
+            } else return Optional.empty();
+            
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeatureInstancesKey featureKey = (EStructuralFeatureInstancesKey) key;
+            EStructuralFeature feature = featureKey.getEmfKey();
+            
+
+            boolean isSourceSelected = false;
+            boolean isTargetSelected = false;
+            for (int i = 0; i < groupMask.getSize(); i++) {
+                int index = groupMask.indices[i];
+                if (index == 0) {
+                    isSourceSelected = true;
+                } else if (index == 1) {
+                    isTargetSelected = true;
+                }
+            }
+            
+            Optional<Long> sourceTypeUpperEstimate = 
+                    estimateCardinality(metaContext.getSourceTypeKey(featureKey), 
+                            TupleMask.identity(1), Accuracy.BEST_UPPER_BOUND);
+            Optional<Long> targetTypeUpperEstimate = 
+                    estimateCardinality(metaContext.getTargetTypeKey(featureKey), 
+                            TupleMask.identity(1), Accuracy.BEST_UPPER_BOUND);                    
+
+            if (!isSourceSelected && !isTargetSelected) { // empty projection
+                if (isIndexed(key, IndexingService.STATISTICS)) { // we have exact node counts
+                    return (0 == baseIndex.countFeatures(feature)) ? Optional.of(0L) : Optional.of(1L);
+                } else { // we can still say 0 in a few cases
+                    if (0 == sourceTypeUpperEstimate.orElse(-1L))
+                        return Optional.of(0L);
+
+                    if (0 == targetTypeUpperEstimate.orElse(-1L))
+                        return Optional.of(0L);
+                                        
+                    return Optional.empty();
+                }
+                
+            } else if (isSourceSelected && !isTargetSelected) { // count sources
+                if (isIndexed(key, IndexingService.INSTANCES)) { // we have instances, therefore feature end counts
+                    return Optional.of((long)(baseIndex.getHoldersOfFeature(feature).size()));
+                } else if (metaContext.isFeatureMultiplicityToOne(feature) && 
+                        isIndexed(key, IndexingService.STATISTICS)) { // count of edges = count of sources due to func. dep.
+                    return Optional.of((long)(baseIndex.countFeatures(feature)));
+                } else if (Accuracy.BEST_UPPER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) { 
+                    // upper bound by source type
+                    Optional<Long> estimate = sourceTypeUpperEstimate;
+                    // total edge counts are another upper bound (even if instances are unindexed) 
+                    if (isIndexed(key, IndexingService.STATISTICS)) { 
+                        estimate = Optional.of(Math.min(
+                                baseIndex.countFeatures(feature), 
+                                estimate.orElse(Long.MAX_VALUE)));
+                    }
+                    return estimate;
+                } else return Optional.empty();
+                
+            } else if (!isSourceSelected && isTargetSelected) { // count targets
+                if (isIndexed(key, IndexingService.INSTANCES)) { // we have instances, therefore feature end counts
+                    return Optional.of((long)(baseIndex.getValuesOfFeature(feature).size()));
+                } else if (metaContext.isFeatureMultiplicityOneTo(feature) && 
+                        isIndexed(key, IndexingService.STATISTICS)) { // count of edges = count of targets due to func. dep.
+                    return Optional.of((long)(baseIndex.countFeatures(feature)));
+               } else if (Accuracy.BEST_UPPER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) { // upper bound by target type
+                   // upper bound by target type
+                   Optional<Long> estimate = targetTypeUpperEstimate;                    
+                   // total edge counts are another upper bound (even if instances are unindexed) 
+                   if (isIndexed(key, IndexingService.STATISTICS)) { 
+                       estimate = Optional.of(Math.min(
+                               baseIndex.countFeatures(feature), 
+                               estimate.orElse(Long.MAX_VALUE)));
+                   }
+                   return estimate;
+                } else return Optional.empty();
+                
+            } else { // (isSourceSelected && isTargetSelected) // count edges
+                if (isIndexed(key, IndexingService.STATISTICS)) { // we have exact edge counts
+                    return Optional.of((long)baseIndex.countFeatures(feature));
+                } else if (Accuracy.BEST_UPPER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) { // overestimates may still be available
+                    Optional<Long> estimate = // trivial upper bound: product of source & target type sizes (if available)
+                            (sourceTypeUpperEstimate.isPresent() && targetTypeUpperEstimate.isPresent()) ?
+                                    Optional.of(
+                                            ((long)sourceTypeUpperEstimate.get()) * targetTypeUpperEstimate.get()
+                                    ) : Optional.empty();
+                                    
+                    if (metaContext.isFeatureMultiplicityToOne(feature) && sourceTypeUpperEstimate.isPresent()) { 
+                        // upper bounded by source type due to func. dep.              
+                        estimate = Optional.of(Math.min(
+                                sourceTypeUpperEstimate.get(), 
+                                estimate.orElse(Long.MAX_VALUE)));
+                    }
+                    if (metaContext.isFeatureMultiplicityOneTo(feature) && targetTypeUpperEstimate.isPresent()) { 
+                        // upper bounded by target type due to func. dep.              
+                        estimate = Optional.of(Math.min(
+                                targetTypeUpperEstimate.get(), 
+                                estimate.orElse(Long.MAX_VALUE)));
+                    }
+                    
+                    return estimate;
+                } else return Optional.empty();
+            }
+            
+        } else {
+            return Optional.empty();
+        }
+    }
     
     
     public void ensureEnumerableKey(IInputKey key) {

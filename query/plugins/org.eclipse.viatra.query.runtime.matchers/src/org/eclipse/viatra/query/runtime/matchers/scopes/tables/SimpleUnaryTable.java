@@ -11,16 +11,18 @@
 
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemory;
-
-import java.util.Collections;
 
 /**
  * Simple value set.
@@ -82,7 +84,7 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
         return values.containsNonZero((Value) seed.get(0));
     }
 
-    // @Override
+    @Override
     public int countTuples(TupleMask seedMask, ITuple seed) {
         if (seedMask.getSize() == 0) { // unseeded
             return values.size();
@@ -93,6 +95,18 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
         }
     }
 
+
+    @Override
+    public Optional<Long> estimateProjectionSize(TupleMask groupMask, Accuracy requiredAccuracy) {
+        // always exact count
+        if (groupMask.getSize() == 0) {
+            return values.isEmpty() ? Optional.of(0L) : Optional.of(1L);
+        } else {
+            return Optional.of((long)values.size());
+        }
+    }
+
+    
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
         if (seedMask.getSize() == 0) { // unseeded

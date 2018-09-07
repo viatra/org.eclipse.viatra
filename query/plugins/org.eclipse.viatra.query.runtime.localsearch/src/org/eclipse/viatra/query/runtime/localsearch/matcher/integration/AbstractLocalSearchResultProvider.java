@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -57,6 +58,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 
 /**
  * @author Zoltan Ujhelyi
@@ -361,6 +363,12 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         final LocalSearchMatcher matcher = initializeMatcher(parameterSeedMask);
         // Count returns long; casting to int - in case of integer overflow casting will throw the exception
         return (int) matcher.streamMatches(parameterSeedMask, parameters).count();
+    }
+    
+    @Override
+    public Optional<Long> estimateCardinality(TupleMask groupMask, Accuracy requiredAccuracy) {
+        // TODO use approximate cardinality based on plan, branching factors, etc.
+        return Optional.empty();
     }
 
     @Override

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
@@ -19,6 +20,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
@@ -164,6 +166,20 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
                 return 0;
         default:
             throw new IllegalArgumentException(seedMask.toString());
+        }
+    }
+
+    @Override
+    public Optional<Long> estimateProjectionSize(TupleMask groupMask, Accuracy requiredAccuracy) {
+        // always exact count
+        if (groupMask.getSize() == 0) {
+            return totalRowCount == 0 ? Optional.of(0L) : Optional.of(1L);
+        } else if (groupMask.getSize() == 2) {
+            return Optional.of((long)totalRowCount);
+        } else if (groupMask.indices[0] == 0) { // project to holder
+            return Optional.of((long)getHolderToValueMap().countKeys());
+        } else { // (groupMask.indices[0] == 0) // project to value 
+            return Optional.of((long)getValueToHolderMap().countKeys());
         }
     }
 

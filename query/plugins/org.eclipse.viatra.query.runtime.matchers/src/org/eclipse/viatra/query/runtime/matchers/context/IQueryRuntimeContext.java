@@ -11,11 +11,13 @@
 package org.eclipse.viatra.query.runtime.matchers.context;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 
 /**
  * Provides instance model information (relations corresponding to input keys) to query evaluator backends at runtime.
@@ -91,7 +93,22 @@ public interface IQueryRuntimeContext {
      * @since 1.7
      */
     public int countTuples(IInputKey key, TupleMask seedMask, ITuple seed);
-
+    
+    
+    /**
+     * Gives an estimate of the number of different groups the tuples of the given relation are projected into by the given mask
+     * (e.g. for an identity mask, this means the full relation size). The estimate must meet the required accuracy.
+     * 
+     * <p> Must accept any input key, even non-enumerables or those not recognized by this runtime context. 
+     * If there is insufficient information to provide an answer up to the required precision, {@link Optional<Long>#empty()} is returned.  
+     * 
+     * <p> PRE: {@link TupleMask#isNonrepeating()} must hold for the group mask.
+     * 
+     * @return if available, an estimate of the cardinality of the projection of the given extensional relation, with the desired accuracy.
+     * 
+     * @since 2.1
+     */
+    public Optional<Long> estimateCardinality(IInputKey key, TupleMask groupMask, Accuracy requiredAccuracy);
     
     /**
      * Returns the tuples in the extensional relation identified by the input key, optionally seeded with the given tuple.

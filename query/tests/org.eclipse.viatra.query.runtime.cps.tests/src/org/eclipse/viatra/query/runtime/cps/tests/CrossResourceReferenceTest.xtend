@@ -170,9 +170,12 @@ class CrossResourceReferenceTest {
             new EMFScope(resourceApps, option), // scope is on resourceApps
             AppInstanceAllocatedToHostInstanceQuerySpecification.instance).allMatches;
 
-        Assert.assertFalse(matches.empty)
-        Assert.assertEquals(matches.get(0).get(0), myAppInstance)
-        Assert.assertEquals(matches.get(0).get(1), myHostInstance)
+
+        if (danglingFreeAssum) {
+            // behaviour undefined, since reality contradicts the assumption; no assertions to make
+        } else { // dangling edge must be filtered out
+            Assert.assertTrue(matches.empty)
+        }
     }
 
     // RESOURCE, Target and Source are in the Scope
@@ -243,9 +246,11 @@ class CrossResourceReferenceTest {
             new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
-        Assert.assertFalse(matches.empty)
-        Assert.assertEquals(matches.get(0).get(0), myAppInstance)
-        Assert.assertEquals(matches.get(0).get(1), myHostInstance)
+        if (danglingFreeAssum) {
+            // behaviour undefined, since reality contradicts the assumption; no assertions to make
+        } else { // dangling edge must be filtered out
+            Assert.assertTrue(matches.empty)
+        }
     }
 
     // NODE FILTER + RESOURCESET, Target and Source are in the Scope (A Dummy EObject is filtered)
@@ -308,9 +313,11 @@ class CrossResourceReferenceTest {
             new EMFScope(resourceSet, baseOptions), AppInstanceAllocatedToHostInstanceQuerySpecification.instance).
             allMatches;
 
-        Assert.assertFalse(matches.empty)
-        Assert.assertEquals(matches.get(0).get(0), myAppInstance)
-        Assert.assertEquals(matches.get(0).get(1), myHostInstance)
+        if (danglingFreeAssum) {
+            // behaviour undefined, since reality contradicts the assumption; no assertions to make
+        } else { // dangling edge must be filtered out
+            Assert.assertTrue(matches.empty)
+        }
     }
 
     // RESOURCE FILTER + RESOURCESET, Target and Source are in the Scope
