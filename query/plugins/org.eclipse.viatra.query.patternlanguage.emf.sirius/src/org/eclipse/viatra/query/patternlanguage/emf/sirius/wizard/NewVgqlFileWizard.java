@@ -37,8 +37,10 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.sirius.business.api.componentization.ViewpointRegistry;
 import org.eclipse.sirius.business.api.dialect.DialectManager;
 import org.eclipse.sirius.business.api.dialect.command.CreateRepresentationCommand;
+import org.eclipse.sirius.business.api.modelingproject.ModelingProject;
 import org.eclipse.sirius.business.api.session.Session;
 import org.eclipse.sirius.business.api.session.SessionManager;
+import org.eclipse.sirius.ext.base.Option;
 import org.eclipse.sirius.tools.api.command.semantic.AddSemanticResourceCommand;
 import org.eclipse.sirius.ui.business.api.dialect.DialectUIManager;
 import org.eclipse.sirius.ui.business.api.viewpoint.ViewpointSelectionCallback;
@@ -60,11 +62,9 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
     private NewVgqlFileConfigurationPage page1;
     private ISelection selection;
     private final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    private final Session session;
 
-    public NewVgqlFileWizard(Session session) {
+    public NewVgqlFileWizard() {
         super();
-        this.session = session;
         setNeedsProgressMonitor(true);
     }
 
@@ -121,7 +121,7 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
     }
 
     private IFile createVgqlFile(String containerName, String fileName, String packageName, IProgressMonitor monitor) throws IOException, CoreException {
-        final SubMonitor subMonitor = SubMonitor.convert(monitor, 5);
+        final SubMonitor subMonitor = SubMonitor.convert(monitor, 7);
         IResource containerResource = root.findMember(new Path(containerName));
 
         IPath filePath = containerResource.getFullPath().append(packageName).append(fileName);
@@ -129,6 +129,9 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
         String fullPath = filePath.toString();
 
         URI fileURI = URI.createPlatformResourceURI(fullPath, false);
+        
+        final URI representationURI = ModelingProject.asModelingProject(containerResource.getProject()).get().getMainRepresentationsFileURI(subMonitor.split(1)).get();
+        Session session = SessionManager.INSTANCE.getSession(representationURI, subMonitor.split(1));
         
         final TransactionalEditingDomain ted = session.getTransactionalEditingDomain();
         Resource resource = ted.createResource(fileURI.toString());
