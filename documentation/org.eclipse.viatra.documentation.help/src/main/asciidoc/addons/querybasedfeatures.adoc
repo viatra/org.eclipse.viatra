@@ -31,7 +31,7 @@ If your application uses volatile (and often derived) features, you provide prop
 [[viatra-qbf]]
 == Query-based Features
 
-For demonstration, we will use the BPM metamodel from the link:https://github.com/IncQueryLabs/org.eclipse.viatra/tree/master/examples/bpm[examples repository].
+For demonstration, we will use the BPM metamodel from the link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/query/bpm[examples repository].
 
 Other examples include the Simulink model in link:https://github.com/viatra/massif/[Massif] uses query based features for supporting library blocks, model references, port filtering and many more.
 
@@ -49,7 +49,7 @@ VIATRA only provides the back-end for derived features, the developer must defin
 . In the Generator model (.genmodel), right-click on the top-level element and select Reload, click Next, Load, and Finish to update the Generator model with the changes done in the Ecore model.
 . Right-click on the top-level element and select Generate Model Code to ensure that the getters are properly generated into the EMF model code. You can regenerate the Edit and Editor code as well, though those are not necessary here.
 
-==== Definition of the model query ===
+==== Definition of the model query
 * Create a VIATRA query project and query definition (.vql) file as described in the cheat sheet or this tutorial.
 * Make sure that you imported your metamodel into the query definition. Create the VIATRA generator model, if necessary (.vqlgen file).
 * Make sure that the project containing the Ecore model or generated code is in the same workspace as the VIATRA query project.
