@@ -7,6 +7,12 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == New and Noteworthy
 
+=== Graphical Query Editor
+
+VIATRA 2.1 includes an experimental graphical editor for model queries based on Sirius. The queries created by the graphical editor are translated to the existing textual syntax, then handled with the existing runtime and IDE features.
+
+=== Other Language Features
+
 The severity of missing variable types is increased to warning. The reason for this change is that explicitly declaring parameter types helps increases readability of patterns and helps precise error localization in case of type errors. However, to avoid breaking existing pattern declarations, such missing types are not considered as errors. However, in a future release such missing declarations might be considered as erroneous, so it is recommended to add the missing declarations (e.g. using the appropriate quick fix functionality).
 
 == Migrating to VIATRA 2.1
