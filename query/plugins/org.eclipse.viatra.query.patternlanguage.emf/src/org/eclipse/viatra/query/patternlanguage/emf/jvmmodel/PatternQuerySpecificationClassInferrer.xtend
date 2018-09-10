@@ -55,6 +55,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall
 import java.util.Collections
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.viatra.query.patternlanguage.emf.vql.UnaryTypeConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.EntityType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
+import java.util.HashSet
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -197,12 +203,13 @@ class PatternQuerySpecificationClassInferrer {
             initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.name.PParameterName»«ENDFOR»)'''
         ]
 
-
+        val Set<CallableRelation> relations = new HashSet()
         // Created PQuery instances for embedded queries
         pattern.eAllContents.filter(CallableRelation).filter[call | !(call instanceof PatternCall)].filter[PatternLanguageHelper.isNonSimpleConstraint(it)].forEach[call |
+            relations += call
             val embeddedParameters = PatternLanguageHelper.getParameterVariables(call, typeSystem, typeInferrer)
             
-            pQueryClass.members += call.toClass("EmbeddedQuery" + Integer.toString(call.hashCode)) [
+            pQueryClass.members += call.toClass(call.getEmbeddedClassName(relations.size)) [
                 for (entry : embeddedParameters.entrySet) {
                     val variableName = entry.key
                     members += call.toField(variableName.PParameterName, typeRef(PParameter)) [
@@ -225,7 +232,7 @@ class PatternQuerySpecificationClassInferrer {
                 ]
                 members += call.toMethod("getFullyQualifiedName", typeRef(String)) [
                     annotations += annotationRef(Override)
-                    body = '''return «pQueryClass.simpleName».this.getFullyQualifiedName() + "$«call.hashCode»";'''
+                    body = '''return «pQueryClass.simpleName».this.getFullyQualifiedName() + "$«call.getEmbeddedClassName(relations.size)»";'''
                 ]
                 members += call.toMethod("getParameters", typeRef(List, typeRef(PParameter))) [
                     annotations += annotationRef(Override)
@@ -296,6 +303,21 @@ class PatternQuerySpecificationClassInferrer {
         ]
         
 
+    }
+
+    private def String getEmbeddedClassName(CallableRelation relation, int no) {
+        "Embedded_" + Integer.toString(no) + "_" + switch(relation) {
+            UnaryTypeConstraint: relation.type.typeName
+            PathExpressionConstraint: relation.sourceType.typeName + "_"+ relation.edgeTypes.map[it.refname.name].join("_")
+        }
+    }
+    
+    private def String typeName(EntityType type) {
+        if (type instanceof ClassType) {
+            return type.getClassname().name
+        } else if (type instanceof JavaType) {
+            return type.classRef.identifier
+        }
     }
 
     def ExecutionType getRequestedExecutionType(Pattern pattern) {
