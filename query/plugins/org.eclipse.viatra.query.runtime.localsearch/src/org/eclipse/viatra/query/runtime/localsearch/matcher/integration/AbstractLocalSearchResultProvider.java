@@ -11,9 +11,12 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -48,6 +52,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -364,12 +369,93 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         // Count returns long; casting to int - in case of integer overflow casting will throw the exception
         return (int) matcher.streamMatches(parameterSeedMask, parameters).count();
     }
+        
+    private static final double ESTIMATE_CEILING = Long.MAX_VALUE / 16.0;
     
     @Override
     public Optional<Long> estimateCardinality(TupleMask groupMask, Accuracy requiredAccuracy) {
-        // TODO use approximate cardinality based on plan, branching factors, etc.
-        return Optional.empty();
+        if (Accuracy.BEST_UPPER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) { // approximate using parameter types
+            final List<PParameter> parameters = query.getParameters();
+            final Map<Set<Integer>, Set<Integer>> dependencies = backendContext.getQueryAnalyzer()
+                    .getProjectedFunctionalDependencies(query, false);
+            
+            List<Integer> projectionIndices = groupMask.getIndicesAsList();
+            
+            return estimateParameterCombinations(requiredAccuracy, parameters, dependencies, 
+                    projectionIndices,
+                    Collections.emptySet() /* No parameters with fixed value */).map(Double::longValue);
+        }        
+        else return Optional.empty();
     }
+    
+    @Override
+    public Optional<Double> estimateAverageBucketSize(TupleMask groupMask, Accuracy requiredAccuracy) {
+        if (Accuracy.BEST_UPPER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) { // approximate using parameter types            
+            final List<PParameter> parameters = query.getParameters();
+            final Map<Set<Integer>, Set<Integer>> dependencies = backendContext.getQueryAnalyzer()
+                    .getProjectedFunctionalDependencies(query, false);
+            
+            // all parameters used for the estimation - determinized order
+            final List<Integer> allParameterIndices = 
+                    IntStream.range(0, parameters.size()).boxed().collect(Collectors.toList());
+            
+            // some free parameters are functionally determined by bound parameters
+            final Set<Integer> boundOrImplied = FunctionalDependencyHelper.closureOf(groupMask.getIndicesAsList(),
+                    dependencies);
+            
+            return estimateParameterCombinations(requiredAccuracy, parameters, dependencies, 
+                    allParameterIndices,
+                    boundOrImplied);
+        }
+        else return Optional.empty();
+    }
+
+    /**
+     * Approximates using parameter types
+     */
+    private Optional<Double> estimateParameterCombinations(
+            Accuracy requiredAccuracy, 
+            final List<PParameter> parameters,
+            final Map<Set<Integer>, Set<Integer>> functionalDependencies,
+            final Collection<Integer> parameterIndicesToEstimate, 
+            final Set<Integer> otherDeterminingIndices) 
+    {
+        // keep order deterministic
+        LinkedHashSet<Integer> freeParameterIndices = new LinkedHashSet<>(parameterIndicesToEstimate);
+        
+        // determining indices are bound
+        freeParameterIndices.removeAll(otherDeterminingIndices);
+        
+        // some free parameters are functionally determined by other free parameters
+        for (Integer candidateForRemoval : new ArrayList<>(freeParameterIndices)) {
+            List<Integer> others = Stream.concat(
+                    otherDeterminingIndices.stream(), 
+                    freeParameterIndices.stream().filter((index) -> index != candidateForRemoval)
+            ).collect(Collectors.toList());
+            Set<Integer> othersClosure = FunctionalDependencyHelper.closureOf(others, functionalDependencies);
+            if (othersClosure.contains(candidateForRemoval)) { 
+                // other parameters functionally determine this mone, does not count towards estimate
+                freeParameterIndices.remove(candidateForRemoval);
+            }
+        }
+        
+        
+        Optional<Double> result = Optional.of(1.0);
+        // TODO this is currently works with declared types only. For better results, information from
+        // the Type inferrer should be included in the PSystem
+        for (int i = 0; (i < parameters.size()); i++) {
+            final IInputKey type = parameters.get(i).getDeclaredUnaryType();
+            if (freeParameterIndices.contains(i) && type != null) {
+                result = result.flatMap((accumulator) ->
+                runtimeContext.estimateCardinality(type, TupleMask.identity(1), requiredAccuracy).map((multiplier) ->
+                    Math.min(accumulator * multiplier, ESTIMATE_CEILING /* avoid overflow */)
+                ));                    
+            }
+        }
+        // TODO better approximate cardinality based on plan, branching factors, etc.
+        return result;
+    }
+    
 
     @Override
     public Stream<Tuple> getAllMatches(Object[] parameters) {

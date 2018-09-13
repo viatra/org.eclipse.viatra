@@ -17,6 +17,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 
 /**
+ * Helpers dealing with optionally present statistics information 
+ * 
  * @author Gabor Bergmann
  * @since 2.1
  *
@@ -40,5 +42,19 @@ public class StatisticsHelper {
                 bucketCount == 0L ? 0L : ((double) matchCount) / bucketCount
         ));
     }
+
+    public static Optional<Double> min(Optional<Double> a,  Optional<Double> b) {
+        if (b.isPresent()) {
+            if (a.isPresent()) {
+                return Optional.of(Math.min(a.get(), b.get()));
+            } else return b;
+        } else return a;
+    }
+    public static Optional<Double> min(Optional<Double> a, double b) {
+        if (a.isPresent()) {
+            return Optional.of(Math.min(a.get(), b));
+        } else return Optional.of(b);
+    }
+
 
 }

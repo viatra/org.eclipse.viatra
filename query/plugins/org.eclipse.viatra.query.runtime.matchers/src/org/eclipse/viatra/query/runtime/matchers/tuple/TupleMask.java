@@ -548,4 +548,15 @@ public class TupleMask {
         return signature;
     }
 
+    /**
+     * @return the list of selected indices
+     * @since 2.1
+     */
+    public List<Integer> getIndicesAsList() {
+        List<Integer> result = new ArrayList<Integer>(indices.length);
+        for (int i = 0; i < indices.length; ++i)
+            result.add(indices[i]);
+        return result;
+    }
+
 }

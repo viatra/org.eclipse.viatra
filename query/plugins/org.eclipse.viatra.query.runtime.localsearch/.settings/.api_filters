@@ -117,4 +117,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/cost/impl/StatisticsBasedConstraintCostFunction.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction"/>
+                <message_argument value="StatisticsBasedConstraintCostFunction()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

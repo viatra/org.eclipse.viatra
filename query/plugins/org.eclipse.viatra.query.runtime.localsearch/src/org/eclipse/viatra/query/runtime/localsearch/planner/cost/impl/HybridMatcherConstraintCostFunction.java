@@ -29,8 +29,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
  * This cost function is intended to be used on hybrid configuration, with the strict restriction than any
  * non-flattened positive pattern call is executed with Rete engine. This implementation provides the exact number
  * of matches by invoking the result provider for the called pattern.
- *
+ * 
+ * @deprecated {@link StatisticsBasedConstraintCostFunction} should use {@link IQueryResultProvider#estimateCardinality(org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask, org.eclipse.viatra.query.runtime.matchers.util.Accuracy)} 
  */
+@Deprecated
 public class HybridMatcherConstraintCostFunction extends IndexerBasedConstraintCostFunction {
     
     @Override

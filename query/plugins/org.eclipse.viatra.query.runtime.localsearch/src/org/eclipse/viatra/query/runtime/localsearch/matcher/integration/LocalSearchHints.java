@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.StatisticsBasedConstraintCostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostFunction;
 import org.eclipse.viatra.query.runtime.matchers.backend.ICallDelegationStrategy;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
@@ -124,7 +125,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         LocalSearchHints result = new LocalSearchHints();
         result.useBase = true; // Should be unused; but a false value might cause surprises as an engine-default hint
         result.rowCount = 4;
-        result.costFunction = new IndexerBasedConstraintCostFunction();
+        result.costFunction = new IndexerBasedConstraintCostFunction(StatisticsBasedConstraintCostFunction.INVERSE_NAVIGATION_PENALTY_GENERIC);
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
         result.callDelegationStrategy = ICallDelegationStrategy.FULL_BACKEND_ADHESION;
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
