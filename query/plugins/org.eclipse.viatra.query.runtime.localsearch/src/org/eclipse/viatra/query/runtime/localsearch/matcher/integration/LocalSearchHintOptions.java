@@ -46,7 +46,7 @@ public final class LocalSearchHintOptions {
      * @since 1.4
      */
     public static final QueryHintOption<IFlattenCallPredicate> FLATTEN_CALL_PREDICATE = 
-            hintOption("FLATTEN_CALL_PREDICATE", new DontFlattenIncrementalPredicate());
+            hintOption("FLATTEN_CALL_PREDICATE", new DontFlattenDisjunctive());
     /**
      * Strategy to decide how hints (most importantly, backend selection) propagate across pattern calls. 
      * Must implement {@link ICallDelegationStrategy}.
