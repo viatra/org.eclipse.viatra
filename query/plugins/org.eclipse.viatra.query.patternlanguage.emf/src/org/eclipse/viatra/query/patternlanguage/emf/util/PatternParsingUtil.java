@@ -25,12 +25,12 @@ import com.google.inject.Injector;
  * 
  * @author Peter Lunk
  * @since 1.5
- * @deprecated use the new {@link PatternParser.Builder} infrastructure instead
+ * @deprecated use the new {@link PatternParserBuilder} infrastructure instead
  */
 @Deprecated
 public class PatternParsingUtil {
     
-    public static final String PPERROR = PatternParser.Builder.PPERROR;
+    public static final String PPERROR = PatternParserBuilder.PPERROR;
 
     private PatternParsingUtil() {
         // Empty utility constructor

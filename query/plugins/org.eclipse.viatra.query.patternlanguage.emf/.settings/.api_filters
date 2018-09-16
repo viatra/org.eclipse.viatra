@@ -808,14 +808,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/PatternParser.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser">
-        <filter comment="It is practically impossible to create a custom pattern parser" id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser"/>
-                <message_argument value="computeUnusedUri(ResourceSet)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/validation/ClasspathValidator.java" type="org.eclipse.viatra.query.patternlanguage.emf.validation.ClasspathValidator">
         <filter comment="Internal API update" id="338792546">
             <message_arguments>

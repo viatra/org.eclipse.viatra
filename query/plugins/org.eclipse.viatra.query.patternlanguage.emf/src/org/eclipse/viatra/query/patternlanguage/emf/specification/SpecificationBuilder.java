@@ -18,11 +18,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.EPMToPBody;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.NameToSpecificationMap;
@@ -360,6 +362,28 @@ public final class SpecificationBuilder {
             }
         }
         dependantQueries.removeAll(specification.getInternalQueryRepresentation());
+    }
+    
+    /**
+     * 
+     * Removes {@link IQuerySpecification} objects from the cache that originate from a given URI
+     * 
+     * @since 2.1
+     */
+    public void forgetURI(URI uri) {
+        //Collect elements to avoid Concurrent modification of patternNameMap
+        Set<Pattern> patternsWithUri = patternNameMap.values().stream().filter(pattern -> {
+            if(pattern.eResource() != null) {
+                return Objects.equals(pattern.eResource().getURI(), uri);
+            }
+            return true;
+        }).collect(Collectors.toSet());
+        patternsWithUri.forEach(pattern -> {
+            IQuerySpecification<?> specification = patternMap.get(PatternLanguageHelper.getFullyQualifiedName(pattern));
+            if(specification!=null) {
+                forgetSpecification(specification);
+            }
+        });
     }
 
     /**
