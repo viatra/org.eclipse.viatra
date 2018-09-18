@@ -22,7 +22,7 @@
           </style>
         </edgeMappings>
         <edgeMappings name="ebe_patternCallParameter_expression_assignment" label="Reference" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.2/@ownedTools[name='de_reference']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_checkConstraint'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue']/@borderedNodeMappings[name='bn_aggregatedValue_patternParameter'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='cn_patternCompositionConstraint']/@borderedNodeMappings[name='bn_patternCompositionConstraint_parameter']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']" targetFinderExpression="aql:self.expression" sourceFinderExpression="aql:if self.oclIsKindOf(vgql::CalledParameter) then self else self.eContainer() endif" domainClass="vgql::Reference" useDomainElement="true">
-          <style sizeComputationExpression="2">
+          <style targetArrow="NoDecoration" sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_red']"/>
             <centerLabelStyleDescription>
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
@@ -37,7 +37,7 @@
             </centerLabelStyleDescription>
           </style>
         </edgeMappings>
-        <containerMappings name="node_pattern" label="Pattern" semanticCandidatesExpression="aql: self.patterns" domainClass="vgql::GraphPattern" childrenPresentation="HorizontalStack">
+        <containerMappings name="node_pattern" label="Pattern" labelDirectEdit="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='de_patternName']" semanticCandidatesExpression="aql: self.patterns" domainClass="vgql::GraphPattern" childrenPresentation="HorizontalStack">
           <borderedNodeMappings name="bn_patternParameter" label="Pattern - Parameter" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='de_parameter']" labelDirectEdit="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='de_parameterName']" semanticCandidatesExpression="feature:parameters" domainClass="vgql::Parameter">
             <style xsi:type="style:SquareDescription" borderSizeComputationExpression="1" showIcon="false" labelPosition="node" resizeKind="NSEW">
               <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
@@ -235,6 +235,14 @@
               <firstModelOperations xsi:type="tool_1:RemoveElement"/>
             </initialOperation>
           </ownedTools>
+          <ownedTools xsi:type="tool:DirectEditLabel" name="de_patternName" label="Pattern Name" inputLabelExpression="feature:name">
+            <mask mask="{0}"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="var:arg0"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
         </toolSections>
         <toolSections name="section_constraints" label="Constraints">
           <ownedTools xsi:type="tool:EdgeCreationDescription" name="ec_PathExpressionConstraint" label="Path Expression" edgeMappings="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_pathExpressionConstraint']">
@@ -288,11 +296,11 @@
                       <subModelOperations xsi:type="properties:DialogModelOperation" titleExpression="Select Called Pattern">
                         <page name="Default Page" labelExpression="Page" domainClass="vgql::PatternCall" groups="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='cc_patternCompositionConstraint']/@initialOperation/@firstModelOperations/@subModelOperations.0/@subModelOperations.0/@subModelOperations.0/@subModelOperations.0/@groups.0"/>
                         <groups name="Default Group" domainClass="vgql::PatternCall" semanticCandidateExpression="var:self">
-                          <controls xsi:type="properties:SelectDescription" name="ex_eenum_literal" label="EClassifier" labelExpression="Pattern" valueExpression="feature:patternRef" candidatesExpression="aql:self.eContainerOrSelf(vgql::PatternPackage).patterns" candidateDisplayExpression="aql:candidate.name">
+                          <controls xsi:type="properties:SelectDescription" name="composition_call" label="Set Called Pattern" labelExpression="Pattern" valueExpression="feature:patternRef" candidatesExpression="aql:self.eContainerOrSelf(vgql::PatternPackage).patterns" candidateDisplayExpression="aql:candidate.name">
                             <initialOperation>
                               <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:call">
                                 <subModelOperations xsi:type="tool_1:SetValue" featureName="patternRef" valueExpression="var:newValue"/>
-                                <subModelOperations xsi:type="tool_1:Unset" featureName="parameters"/>
+                                <subModelOperations xsi:type="tool_1:Unset" featureName="parameters" elementExpression="feature:parameters"/>
                                 <subModelOperations xsi:type="tool_1:For" expression="aql:call.patternRef.parameters" iteratorName="param">
                                   <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:call">
                                     <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::CalledParameter" referenceName="parameters">
@@ -468,7 +476,7 @@
                             <initialOperation>
                               <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:call">
                                 <subModelOperations xsi:type="tool_1:SetValue" featureName="patternRef" valueExpression="var:newValue"/>
-                                <subModelOperations xsi:type="tool_1:Unset" featureName="parameters"/>
+                                <subModelOperations xsi:type="tool_1:Unset" featureName="parameters" elementExpression="feature:parameters"/>
                                 <subModelOperations xsi:type="tool_1:For" expression="aql:call.patternRef.parameters" iteratorName="param">
                                   <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:call">
                                     <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::CalledParameter" referenceName="parameters">

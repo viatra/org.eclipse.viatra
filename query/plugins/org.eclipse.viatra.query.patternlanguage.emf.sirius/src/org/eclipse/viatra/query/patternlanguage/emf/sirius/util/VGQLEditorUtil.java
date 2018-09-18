@@ -221,7 +221,7 @@ public class VGQLEditorUtil {
         if (lvr instanceof NumberLiteral) {
             return ((NumberLiteral) lvr).getValue();
         } else if (lvr instanceof StringLiteral) {
-            return ((StringLiteral) lvr).getValue();
+            return "\"" + ((StringLiteral) lvr).getValue() + "\"";
         } else if (lvr instanceof BooleanLiteral) {
             return Boolean.toString(((BooleanLiteral) lvr).isValue());
         } else if (lvr instanceof EnumValue) {
