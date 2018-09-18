@@ -35,7 +35,7 @@ class ExpectedOutputs {
     ) {
         HostInstance(hi);
         java ^java.lang.Integer(ai);
-        HostInstance.applications.totalCpu(hi, ai);
+        HostInstance.applications(hi, ai);
     }
     '''
     

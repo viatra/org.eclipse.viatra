@@ -62,7 +62,7 @@
     </genClasses>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//CheckConstraint"/>
     <genClasses ecoreClass="GraphicalPatternLanguage.ecore#//PathExpressionConstraint">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/edgeTypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/edgeType"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/src"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphicalPatternLanguage.ecore#//PathExpressionConstraint/dst"/>
     </genClasses>

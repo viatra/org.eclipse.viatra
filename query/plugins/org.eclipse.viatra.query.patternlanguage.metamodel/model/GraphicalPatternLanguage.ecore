@@ -50,8 +50,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CheckConstraint" eSuperTypes="#//Constraint #//InterpretableExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="PathExpressionConstraint" eSuperTypes="#//Constraint #//CallableRelation">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="edgeTypes" upperBound="-1"
-        eType="#//ReferenceType" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edgeType" eType="#//ReferenceType"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="src" eType="#//Reference"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="dst" eType="#//Reference"

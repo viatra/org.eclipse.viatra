@@ -159,24 +159,19 @@ class VqlCodeGenerator {
     }
 
     private dispatch def String constraintCode(PathExpressionConstraint constraint) {
-        val firstEdgeType = constraint.edgeTypes.head
-        if (firstEdgeType === null) {
+        val edgeType = constraint.edgeType
+        if (edgeType === null) {
             // TODO It should be filtered out with validation 
             return '''«errorCode("PathExpressionConstraint should have one edgeType at least.")»'''
         }
-        val feature = firstEdgeType.refname
+        val feature = edgeType.refname
 
         if (feature === null || feature.eIsProxy) {
             // TODO It should be filtered out with validation 
             return '''«errorCode("Unresolvable edge type.")»'''
         }
         val mainClass = (feature.eContainer as EClass).name
-        /* TODO referenceList should be type correct between each consecutive pair in edgeTypes
-         * It should be filtered out with validation
-         */
-        val referenceList = '''«FOR edgeType : constraint.edgeTypes SEPARATOR "."»«edgeType.refname.name»«ENDFOR»'''
-
-        '''«mainClass».«referenceList»(«constraint.src.expression.expressionCode», «constraint.dst.expression.expressionCode»)'''
+        '''«mainClass».«feature.name»(«constraint.src.expression.expressionCode», «constraint.dst.expression.expressionCode»)'''
     }
 
     private def String expressionCode(Expression exp) {

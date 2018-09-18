@@ -9,11 +9,6 @@
       <enabledForEditor editorId="*"/>
     </constraint>
   </extension>
-  <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.multipleReferencesPathExpressionType" point="org.eclipse.viatra.addon.validation.runtime.constraint">
-    <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.MultipleReferencesPathExpressionTypeConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.multipleReferencesPathExpressionType">
-      <enabledForEditor editorId="*"/>
-    </constraint>
-  </extension>
   <extension id="validation.constraint.org.eclipse.viatra.query.patternlanguage.metamodel.queries.nonConformingType" point="org.eclipse.viatra.addon.validation.runtime.constraint">
     <constraint class="org.eclipse.viatra.query.patternlanguage.metamodel.queries.NonConformingTypeConstraint0" name="org.eclipse.viatra.query.patternlanguage.metamodel.queries.nonConformingType">
       <enabledForEditor editorId="*"/>

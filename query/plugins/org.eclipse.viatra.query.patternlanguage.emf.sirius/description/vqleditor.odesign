@@ -32,7 +32,7 @@
         <edgeMappings name="ebe_pathExpressionConstraint" label="Path Expression Constraint" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='de_constraint']" doubleClickDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.2/@ownedTools[name='dc_openEmbeddedXTextEditor']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetFinderExpression="aql:self.dst.expression" sourceFinderExpression="aql:self.src.expression" domainClass="vgql::PathExpressionConstraint" useDomainElement="true">
           <style sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
-            <centerLabelStyleDescription showIcon="false" labelExpression="aql:if self.edgeTypes->size() > 0 then Sequence{self.edgeTypes->at(1).refname.eContainingClass.name}->concat(self.edgeTypes->collect(ref|ref.refname.name))->sep('.')->toString() else '«undefined»' endif">
+            <centerLabelStyleDescription showIcon="false" labelExpression="aql:self.edgeType.refname.name">
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             </centerLabelStyleDescription>
           </style>
@@ -631,34 +631,17 @@
         </controls>
       </groups>
       <groups name="Path Expression" domainClass="vgql::PathExpressionConstraint">
-        <controls xsi:type="properties:ListDescription" name="prop_typedecls" label="Edge Types" labelExpression="Edge Types" valueExpression="feature:edgeTypes" displayExpression="aql:value.refname.eContainingClass.name + '::' + value.refname.name">
-          <actions labelExpression="Add Structural Feature">
-            <initialOperation>
-              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:self">
-                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::ReferenceType" referenceName="edgeTypes" variableName="featureReference">
-                  <subModelOperations xsi:type="properties:DialogModelOperation" titleExpression="Select Feature">
-                    <page name="Default Page" labelExpression="Page" domainClass="vgql::ReferenceType" groups="//@extensions.0/@categories.0/@groups.2/@controls.0/@actions.0/@initialOperation/@firstModelOperations/@subModelOperations.0/@subModelOperations.0/@groups.0"/>
-                    <groups name="Default Group" domainClass="vgql::ReferenceType" semanticCandidateExpression="var:self">
-                      <controls xsi:type="properties:SelectDescription" name="ex_eenum_literal" label="EStructural Feature" labelExpression="Feature" valueExpression="feature:refname" candidatesExpression="aql:self.eContainerOrSelf(vgql::PatternPackage).packageImports->collect(p | p.eAllContents()) -> filter(ecore::EStructuralFeature)" candidateDisplayExpression="aql:candidate.eContainingClass.name + '::' + candidate.name">
-                        <initialOperation>
-                          <firstModelOperations xsi:type="tool_1:SetValue" featureName="refname" valueExpression="var:newValue"/>
-                        </initialOperation>
-                      </controls>
-                    </groups>
-                  </subModelOperations>
+        <controls xsi:type="properties:SelectDescription" name="prop_pe_typedecl" label="Edge Type" labelExpression="Edge Type" valueExpression="aql:self.edgeType.refname" candidatesExpression="aql:self.eContainerOrSelf(vgql::PatternPackage).packageImports->collect(p | p.eAllContents()) -> filter(ecore::EStructuralFeature)" candidateDisplayExpression="aql:candidate.eContainingClass.name + '::' + candidate.name">
+          <initialOperation>
+            <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:self">
+              <subModelOperations xsi:type="tool_1:Unset" featureName="edgeType"/>
+              <subModelOperations xsi:type="tool_1:CreateInstance" typeName="vgql::ReferenceType" referenceName="edgeType" variableName="reference">
+                <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:reference">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="refname" valueExpression="var:newValue"/>
                 </subModelOperations>
-              </firstModelOperations>
-            </initialOperation>
-          </actions>
-          <actions labelExpression="Remove">
-            <initialOperation>
-              <firstModelOperations xsi:type="tool_1:For" expression="var:selection" iteratorName="type">
-                <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:type">
-                  <subModelOperations xsi:type="tool_1:RemoveElement"/>
-                </subModelOperations>
-              </firstModelOperations>
-            </initialOperation>
-          </actions>
+              </subModelOperations>
+            </firstModelOperations>
+          </initialOperation>
         </controls>
       </groups>
     </categories>

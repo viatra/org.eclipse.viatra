@@ -15,7 +15,6 @@
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.patternlanguage.metamodel.queries.ValidationQueries" id="org.eclipse.viatra.query.patternlanguage.metamodel.queries.ValidationQueries">
       <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.queries.undefinedOrMultipleDeclarationParameterType"/>
       <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.queries.undefinedPathExpressionType"/>
-      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.queries.multipleReferencesPathExpressionType"/>
       <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.queries.nonConformingType"/>
       <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.queries.declaredTypeLessSpecific"/>
       <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.queries.inferredTypeLessSpecific"/>

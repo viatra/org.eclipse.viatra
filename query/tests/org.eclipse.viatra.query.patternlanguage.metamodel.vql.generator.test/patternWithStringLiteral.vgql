@@ -8,9 +8,9 @@
     </parameters>
     <bodies>
       <constraints xsi:type="GraphPatternLanguage:PathExpressionConstraint">
-        <edgeTypes>
+        <edgeType>
           <refname xsi:type="ecore:EAttribute" href="http://org.eclipse.viatra/model/cps#//Identifiable/identifier"/>
-        </edgeTypes>
+        </edgeType>
         <src expression="//@patterns.0/@bodies.0/@nodes.0"/>
         <dst expression="//@patterns.0/@bodies.0/@nodes.1"/>
       </constraints>

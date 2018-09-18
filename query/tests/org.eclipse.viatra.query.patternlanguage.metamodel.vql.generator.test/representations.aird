@@ -2157,7 +2157,7 @@
               <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-T3coN7Eeif-6OnQS-eDQ"/>
             </children>
             <styles xmi:type="notation:ShapeStyle" xmi:id="_v-SpVIN7Eeif-6OnQS-eDQ" fontName="Ubuntu" fontHeight="8"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-SpVYN7Eeif-6OnQS-eDQ" y="155" width="30" height="30"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-SpVYN7Eeif-6OnQS-eDQ" y="290" width="30" height="30"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_t4dmQIXhEeiC4Ph9Zz8fcg" type="3012" element="_t4Pj0IXhEeiC4Ph9Zz8fcg">
             <children xmi:type="notation:Node" xmi:id="_t4eNUIXhEeiC4Ph9Zz8fcg" type="5010">
@@ -2175,34 +2175,34 @@
             <children xmi:type="notation:Node" xmi:id="_v-T3doN7Eeif-6OnQS-eDQ" type="3008" element="_v9JZ4YN7Eeif-6OnQS-eDQ">
               <children xmi:type="notation:Node" xmi:id="_v-UegIN7Eeif-6OnQS-eDQ" visible="false" type="5005"/>
               <children xmi:type="notation:Node" xmi:id="_v-UegYN7Eeif-6OnQS-eDQ" type="7002">
-                <children xmi:type="notation:Node" xmi:id="_v-UehYN7Eeif-6OnQS-eDQ" type="3007" element="_v9JZ5IN7Eeif-6OnQS-eDQ">
-                  <children xmi:type="notation:Node" xmi:id="_v-UeiIN7Eeif-6OnQS-eDQ" type="5003">
-                    <layoutConstraint xmi:type="notation:Location" xmi:id="_v-UeiYN7Eeif-6OnQS-eDQ" y="5"/>
+                <children xmi:type="notation:Node" xmi:id="_P3gPsLt5EeiJB9OQbIffUw" type="3007" element="_P239kLt5EeiJB9OQbIffUw">
+                  <children xmi:type="notation:Node" xmi:id="_P3lIMLt5EeiJB9OQbIffUw" type="5003">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_P3lIMbt5EeiJB9OQbIffUw" y="5"/>
                   </children>
-                  <children xmi:type="notation:Node" xmi:id="_v-VFlYN7Eeif-6OnQS-eDQ" type="3003" element="_v9JZ5YN7Eeif-6OnQS-eDQ">
-                    <styles xmi:type="notation:ShapeStyle" xmi:id="_v-VFloN7Eeif-6OnQS-eDQ" fontName="Ubuntu"/>
-                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-VFl4N7Eeif-6OnQS-eDQ"/>
+                  <children xmi:type="notation:Node" xmi:id="_P3oykLt5EeiJB9OQbIffUw" type="3003" element="_P26Z0Lt5EeiJB9OQbIffUw">
+                    <styles xmi:type="notation:ShapeStyle" xmi:id="_P3oykbt5EeiJB9OQbIffUw" fontName=".SF NS Text"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3oykrt5EeiJB9OQbIffUw"/>
                   </children>
-                  <styles xmi:type="notation:ShapeStyle" xmi:id="_v-UehoN7Eeif-6OnQS-eDQ" fontName="Ubuntu" fontHeight="8"/>
-                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-Ueh4N7Eeif-6OnQS-eDQ" x="30" y="86" width="30" height="30"/>
+                  <styles xmi:type="notation:ShapeStyle" xmi:id="_P3gPsbt5EeiJB9OQbIffUw" fontName=".SF NS Text" fontHeight="8"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3gPsrt5EeiJB9OQbIffUw" x="30" y="92" width="30" height="30"/>
                 </children>
-                <children xmi:type="notation:Node" xmi:id="_t4eNVYXhEeiC4Ph9Zz8fcg" type="3007" element="_t4XfoIXhEeiC4Ph9Zz8fcg">
-                  <children xmi:type="notation:Node" xmi:id="_t4e0YIXhEeiC4Ph9Zz8fcg" type="5003">
-                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4e0YYXhEeiC4Ph9Zz8fcg" y="5"/>
+                <children xmi:type="notation:Node" xmi:id="_P3m9YLt5EeiJB9OQbIffUw" type="3007" element="_P27n8Lt5EeiJB9OQbIffUw">
+                  <children xmi:type="notation:Node" xmi:id="_P3nkcLt5EeiJB9OQbIffUw" type="5003">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_P3nkcbt5EeiJB9OQbIffUw" y="5"/>
                   </children>
-                  <children xmi:type="notation:Node" xmi:id="_t4e0YoXhEeiC4Ph9Zz8fcg" type="3003" element="_t4XfoYXhEeiC4Ph9Zz8fcg">
-                    <styles xmi:type="notation:ShapeStyle" xmi:id="_t4e0Y4XhEeiC4Ph9Zz8fcg" fontName="Ubuntu"/>
-                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4e0ZIXhEeiC4Ph9Zz8fcg"/>
+                  <children xmi:type="notation:Node" xmi:id="_P3pZoLt5EeiJB9OQbIffUw" type="3003" element="_P28PALt5EeiJB9OQbIffUw">
+                    <styles xmi:type="notation:ShapeStyle" xmi:id="_P3pZobt5EeiJB9OQbIffUw" fontName=".SF NS Text"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3pZort5EeiJB9OQbIffUw"/>
                   </children>
-                  <styles xmi:type="notation:ShapeStyle" xmi:id="_t4eNVoXhEeiC4Ph9Zz8fcg" fontName="Ubuntu" fontHeight="8"/>
-                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4eNV4XhEeiC4Ph9Zz8fcg" x="90" y="26" width="30" height="30"/>
+                  <styles xmi:type="notation:ShapeStyle" xmi:id="_P3m9Ybt5EeiJB9OQbIffUw" fontName=".SF NS Text" fontHeight="8"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3m9Yrt5EeiJB9OQbIffUw" x="30" y="29" width="30" height="30"/>
                 </children>
                 <styles xmi:type="notation:SortingStyle" xmi:id="_v-UegoN7Eeif-6OnQS-eDQ"/>
                 <styles xmi:type="notation:FilteringStyle" xmi:id="_v-Ueg4N7Eeif-6OnQS-eDQ"/>
                 <styles xmi:type="notation:DrawerStyle" xmi:id="_v-UehIN7Eeif-6OnQS-eDQ"/>
               </children>
               <styles xmi:type="notation:ShapeStyle" xmi:id="_v-T3d4N7Eeif-6OnQS-eDQ" fontName="Ubuntu" fontHeight="11"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-T3eIN7Eeif-6OnQS-eDQ"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v-T3eIN7Eeif-6OnQS-eDQ" width="294" height="181"/>
             </children>
             <styles xmi:type="notation:SortingStyle" xmi:id="_v97c8oN7Eeif-6OnQS-eDQ"/>
             <styles xmi:type="notation:FilteringStyle" xmi:id="_v97c84N7Eeif-6OnQS-eDQ"/>
@@ -2211,44 +2211,60 @@
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v9614oN7Eeif-6OnQS-eDQ" x="144"/>
         </children>
         <styles xmi:type="notation:DiagramStyle" xmi:id="_v9eJ8oN7Eeif-6OnQS-eDQ"/>
-        <edges xmi:type="notation:Edge" xmi:id="_v_VLJYN7Eeif-6OnQS-eDQ" type="4001" element="_v9JaeIN7Eeif-6OnQS-eDQ" source="_v-SpU4N7Eeif-6OnQS-eDQ" target="_v-UehYN7Eeif-6OnQS-eDQ">
-          <children xmi:type="notation:Node" xmi:id="_v_VLKYN7Eeif-6OnQS-eDQ" type="6001">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v_VLKoN7Eeif-6OnQS-eDQ" y="-10"/>
+        <edges xmi:type="notation:Edge" xmi:id="_P3r14Lt5EeiJB9OQbIffUw" type="4001" element="_P3GnELt5EeiJB9OQbIffUw" source="_v-SpU4N7Eeif-6OnQS-eDQ" target="_P3gPsLt5EeiJB9OQbIffUw">
+          <children xmi:type="notation:Node" xmi:id="_P3tEALt5EeiJB9OQbIffUw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3tEAbt5EeiJB9OQbIffUw" y="-10"/>
           </children>
-          <children xmi:type="notation:Node" xmi:id="_v_VyMIN7Eeif-6OnQS-eDQ" type="6002">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v_VyMYN7Eeif-6OnQS-eDQ" y="10"/>
+          <children xmi:type="notation:Node" xmi:id="_P3uSILt5EeiJB9OQbIffUw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3uSIbt5EeiJB9OQbIffUw" y="10"/>
           </children>
-          <children xmi:type="notation:Node" xmi:id="_v_VyMoN7Eeif-6OnQS-eDQ" type="6003">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_v_VyM4N7Eeif-6OnQS-eDQ" y="10"/>
+          <children xmi:type="notation:Node" xmi:id="_P3u5MLt5EeiJB9OQbIffUw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P3u5Mbt5EeiJB9OQbIffUw" y="10"/>
           </children>
-          <styles xmi:type="notation:ConnectorStyle" xmi:id="_v_VLJoN7Eeif-6OnQS-eDQ"/>
-          <styles xmi:type="notation:FontStyle" xmi:id="_v_VLJ4N7Eeif-6OnQS-eDQ" fontName="Ubuntu" fontHeight="8"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_v_VLKIN7Eeif-6OnQS-eDQ" points="[0, 0, -31, 18]$[31, -18, 0, 0]"/>
-          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_v_VyNIN7Eeif-6OnQS-eDQ" id="(0.5,0.5)"/>
-          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_v_VyNYN7Eeif-6OnQS-eDQ" id="(0.5,0.5)"/>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_P3r14bt5EeiJB9OQbIffUw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_P3r14rt5EeiJB9OQbIffUw" fontName=".SF NS Text" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_P3r147t5EeiJB9OQbIffUw" points="[0, -15, 0, 140]$[0, -140, 0, 15]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_P3zKoLt5EeiJB9OQbIffUw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_P3zKobt5EeiJB9OQbIffUw" id="(0.5,0.5)"/>
         </edges>
-        <edges xmi:type="notation:Edge" xmi:id="_t4e0ZYXhEeiC4Ph9Zz8fcg" type="4001" element="_t4ai8IXhEeiC4Ph9Zz8fcg" source="_t4dmQIXhEeiC4Ph9Zz8fcg" target="_t4eNVYXhEeiC4Ph9Zz8fcg">
-          <children xmi:type="notation:Node" xmi:id="_t4fbcIXhEeiC4Ph9Zz8fcg" type="6001">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4fbcYXhEeiC4Ph9Zz8fcg" y="-10"/>
+        <edges xmi:type="notation:Edge" xmi:id="_P3zxsLt5EeiJB9OQbIffUw" type="4001" element="_P3H1MLt5EeiJB9OQbIffUw" source="_t4dmQIXhEeiC4Ph9Zz8fcg" target="_P3m9YLt5EeiJB9OQbIffUw">
+          <children xmi:type="notation:Node" xmi:id="_P30YwLt5EeiJB9OQbIffUw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P30Ywbt5EeiJB9OQbIffUw" y="-10"/>
           </children>
-          <children xmi:type="notation:Node" xmi:id="_t4fbcoXhEeiC4Ph9Zz8fcg" type="6002">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4fbc4XhEeiC4Ph9Zz8fcg" y="10"/>
+          <children xmi:type="notation:Node" xmi:id="_P30Ywrt5EeiJB9OQbIffUw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P30Yw7t5EeiJB9OQbIffUw" y="10"/>
           </children>
-          <children xmi:type="notation:Node" xmi:id="_t4fbdIXhEeiC4Ph9Zz8fcg" type="6003">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4fbdYXhEeiC4Ph9Zz8fcg" y="10"/>
+          <children xmi:type="notation:Node" xmi:id="_P30YxLt5EeiJB9OQbIffUw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P30Yxbt5EeiJB9OQbIffUw" y="10"/>
           </children>
-          <styles xmi:type="notation:ConnectorStyle" xmi:id="_t4e0ZoXhEeiC4Ph9Zz8fcg"/>
-          <styles xmi:type="notation:FontStyle" xmi:id="_t4e0Z4XhEeiC4Ph9Zz8fcg" fontName="Ubuntu" fontHeight="8"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t4e0aIXhEeiC4Ph9Zz8fcg" points="[15, 0, -7, 0]$[7, 0, -15, 0]"/>
-          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_t4fbdoXhEeiC4Ph9Zz8fcg" id="(0.5,0.5)"/>
-          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_t4gCgIXhEeiC4Ph9Zz8fcg" id="(0.5,0.5)"/>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_P3zxsbt5EeiJB9OQbIffUw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_P3zxsrt5EeiJB9OQbIffUw" fontName=".SF NS Text" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_P3zxs7t5EeiJB9OQbIffUw" points="[15, 0, -7, 0]$[7, 0, -15, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_P30Yxrt5EeiJB9OQbIffUw" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_P30Yx7t5EeiJB9OQbIffUw" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_P30_0Lt5EeiJB9OQbIffUw" type="4001" element="_P3XFwLt5EeiJB9OQbIffUw" source="_P3gPsLt5EeiJB9OQbIffUw" target="_P3m9YLt5EeiJB9OQbIffUw">
+          <children xmi:type="notation:Node" xmi:id="_P30_1Lt5EeiJB9OQbIffUw" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P30_1bt5EeiJB9OQbIffUw" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_P30_1rt5EeiJB9OQbIffUw" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P30_17t5EeiJB9OQbIffUw" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_P30_2Lt5EeiJB9OQbIffUw" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_P30_2bt5EeiJB9OQbIffUw" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_P30_0bt5EeiJB9OQbIffUw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_P30_0rt5EeiJB9OQbIffUw" fontName=".SF NS Text" fontHeight="8"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_P30_07t5EeiJB9OQbIffUw" points="[0, 0, 0, 60]$[0, -60, 0, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_P321ALt5EeiJB9OQbIffUw" id="(0.5,0.0)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_P321Abt5EeiJB9OQbIffUw" id="(0.5,1.0)"/>
         </edges>
       </data>
     </ownedAnnotationEntries>
     <ownedDiagramElements xmi:type="diagram:DNodeContainer" xmi:id="_v9JZ24N7Eeif-6OnQS-eDQ" name="test2" childrenPresentation="HorizontalStack">
       <target xmi:type="GraphPatternLanguage:GraphPattern" href="patternWithPathExpression.vgql#//@patterns.0"/>
       <semanticElements xmi:type="GraphPatternLanguage:GraphPattern" href="patternWithPathExpression.vgql#//@patterns.0"/>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_v9JZ3IN7Eeif-6OnQS-eDQ" name="hi" outgoingEdges="_v9JaeIN7Eeif-6OnQS-eDQ" width="3" height="3">
+      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_v9JZ3IN7Eeif-6OnQS-eDQ" name="hi" outgoingEdges="_P3GnELt5EeiJB9OQbIffUw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="GraphPatternLanguage:Parameter" href="patternWithPathExpression.vgql#//@patterns.0/@parameters.0"/>
         <semanticElements xmi:type="GraphPatternLanguage:Parameter" href="patternWithPathExpression.vgql#//@patterns.0/@parameters.0"/>
         <ownedStyle xmi:type="diagram:Square" xmi:id="_v9JZ3YN7Eeif-6OnQS-eDQ" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" color="255,255,255">
@@ -2256,7 +2272,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@borderedNodeMappings[name='bn_patternParameter']"/>
       </ownedBorderedNodes>
-      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_t4Pj0IXhEeiC4Ph9Zz8fcg" name="ai" outgoingEdges="_t4ai8IXhEeiC4Ph9Zz8fcg" width="3" height="3">
+      <ownedBorderedNodes xmi:type="diagram:DNode" xmi:id="_t4Pj0IXhEeiC4Ph9Zz8fcg" name="ai" outgoingEdges="_P3H1MLt5EeiJB9OQbIffUw" width="3" height="3" resizeKind="NSEW">
         <target xmi:type="GraphPatternLanguage:Parameter" href="patternWithPathExpression.vgql#//@patterns.0/@parameters.1"/>
         <semanticElements xmi:type="GraphPatternLanguage:Parameter" href="patternWithPathExpression.vgql#//@patterns.0/@parameters.1"/>
         <ownedStyle xmi:type="diagram:Square" xmi:id="_t4QK4IXhEeiC4Ph9Zz8fcg" showIcon="false" borderSize="1" borderSizeComputationExpression="1" labelPosition="node" color="255,255,255">
@@ -2277,39 +2293,48 @@
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']"/>
-        <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_v9JZ5IN7Eeif-6OnQS-eDQ" name="hi" incomingEdges="_v9JaeIN7Eeif-6OnQS-eDQ" width="3" height="3" resizeKind="NSEW">
+        <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_P239kLt5EeiJB9OQbIffUw" name="hi" outgoingEdges="_P3XFwLt5EeiJB9OQbIffUw" incomingEdges="_P3GnELt5EeiJB9OQbIffUw" width="3" height="3" resizeKind="NSEW">
           <target xmi:type="GraphPatternLanguage:ParameterRef" href="patternWithPathExpression.vgql#//@patterns.0/@bodies.0/@nodes.0"/>
           <semanticElements xmi:type="GraphPatternLanguage:ParameterRef" href="patternWithPathExpression.vgql#//@patterns.0/@bodies.0/@nodes.0"/>
-          <ownedStyle xmi:type="diagram:Square" xmi:id="_v9JZ5YN7Eeif-6OnQS-eDQ" showIcon="false" labelPosition="node" color="255,255,255">
-            <description xmi:type="style:SquareDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']/@style"/>
+          <ownedStyle xmi:type="diagram:Square" xmi:id="_P26Z0Lt5EeiJB9OQbIffUw" showIcon="false" labelPosition="node" color="255,255,255">
+            <description xmi:type="style:SquareDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']/@style"/>
           </ownedStyle>
-          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']"/>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']"/>
         </ownedDiagramElements>
-        <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_t4XfoIXhEeiC4Ph9Zz8fcg" name="ai" incomingEdges="_t4ai8IXhEeiC4Ph9Zz8fcg" width="3" height="3" resizeKind="NSEW">
+        <ownedDiagramElements xmi:type="diagram:DNode" xmi:id="_P27n8Lt5EeiJB9OQbIffUw" name="ai" incomingEdges="_P3H1MLt5EeiJB9OQbIffUw _P3XFwLt5EeiJB9OQbIffUw" width="3" height="3" resizeKind="NSEW">
           <target xmi:type="GraphPatternLanguage:ParameterRef" href="patternWithPathExpression.vgql#//@patterns.0/@bodies.0/@nodes.1"/>
           <semanticElements xmi:type="GraphPatternLanguage:ParameterRef" href="patternWithPathExpression.vgql#//@patterns.0/@bodies.0/@nodes.1"/>
-          <ownedStyle xmi:type="diagram:Square" xmi:id="_t4XfoYXhEeiC4Ph9Zz8fcg" showIcon="false" labelPosition="node" color="255,255,255">
-            <description xmi:type="style:SquareDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']/@style"/>
+          <ownedStyle xmi:type="diagram:Square" xmi:id="_P28PALt5EeiJB9OQbIffUw" showIcon="false" labelPosition="node" color="255,255,255">
+            <description xmi:type="style:SquareDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']/@style"/>
           </ownedStyle>
-          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']"/>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']"/>
         </ownedDiagramElements>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_v9JaeIN7Eeif-6OnQS-eDQ" sourceNode="_v9JZ3IN7Eeif-6OnQS-eDQ" targetNode="_v9JZ5IN7Eeif-6OnQS-eDQ">
+    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_P3GnELt5EeiJB9OQbIffUw" sourceNode="_v9JZ3IN7Eeif-6OnQS-eDQ" targetNode="_P239kLt5EeiJB9OQbIffUw">
       <target xmi:type="GraphPatternLanguage:Parameter" href="patternWithPathExpression.vgql#//@patterns.0/@parameters.0"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_v9JaeYN7Eeif-6OnQS-eDQ" lineStyle="dot" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_P3GnEbt5EeiJB9OQbIffUw" targetArrow="NoDecoration" size="2" strokeColor="173,127,168">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='rbe_patternParameter_variable']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_v9JaeoN7Eeif-6OnQS-eDQ"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_P3GnErt5EeiJB9OQbIffUw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='rbe_patternParameter_variable']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_t4ai8IXhEeiC4Ph9Zz8fcg" sourceNode="_t4Pj0IXhEeiC4Ph9Zz8fcg" targetNode="_t4XfoIXhEeiC4Ph9Zz8fcg">
+    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_P3H1MLt5EeiJB9OQbIffUw" sourceNode="_t4Pj0IXhEeiC4Ph9Zz8fcg" targetNode="_P27n8Lt5EeiJB9OQbIffUw">
       <target xmi:type="GraphPatternLanguage:Parameter" href="patternWithPathExpression.vgql#//@patterns.0/@parameters.1"/>
-      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_t4bKAIXhEeiC4Ph9Zz8fcg" lineStyle="dot" targetArrow="NoDecoration" size="2">
+      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_P3H1Mbt5EeiJB9OQbIffUw" targetArrow="NoDecoration" size="2" strokeColor="173,127,168">
         <description xmi:type="style:EdgeStyleDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='rbe_patternParameter_variable']/@style"/>
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_t4bKAYXhEeiC4Ph9Zz8fcg"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_P3H1Mrt5EeiJB9OQbIffUw"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='rbe_patternParameter_variable']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_P3XFwLt5EeiJB9OQbIffUw" name="applications" sourceNode="_P239kLt5EeiJB9OQbIffUw" targetNode="_P27n8Lt5EeiJB9OQbIffUw">
+      <target xmi:type="GraphPatternLanguage:PathExpressionConstraint" href="patternWithPathExpression.vgql#//@patterns.0/@bodies.0/@constraints.0"/>
+      <semanticElements xmi:type="GraphPatternLanguage:PathExpressionConstraint" href="patternWithPathExpression.vgql#//@patterns.0/@bodies.0/@constraints.0"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_P3Xs0Lt5EeiJB9OQbIffUw" size="2">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_pathExpressionConstraint']/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_P3Xs0bt5EeiJB9OQbIffUw" showIcon="false"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_pathExpressionConstraint']"/>
     </ownedDiagramElements>
     <description xmi:type="description_1:DiagramDescription" href="platform:/resource/org.eclipse.viatra.query.patternlanguage.emf.sirius/description/vqleditor.odesign#//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']"/>
     <filterVariableHistory xmi:type="diagram:FilterVariableHistory" xmi:id="_v9Ja1YN7Eeif-6OnQS-eDQ"/>

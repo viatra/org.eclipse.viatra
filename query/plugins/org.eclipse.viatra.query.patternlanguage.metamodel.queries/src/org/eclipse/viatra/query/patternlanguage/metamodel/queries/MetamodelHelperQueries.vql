@@ -17,11 +17,11 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 
 pattern variableEClassifier(variable : Variable, eClass : EClassifier) {
     PathExpressionConstraint.src.expression(pathExp, variable);
-    PathExpressionConstraint.edgeTypes.refname(pathExp, feature);
+    PathExpressionConstraint.edgeType.refname(pathExp, feature);
     EClass.eStructuralFeatures(eClass, feature);
 } or {
     PathExpressionConstraint.dst.expression(pathExp, variable);
-    PathExpressionConstraint.edgeTypes.refname(pathExp, feature);
+    PathExpressionConstraint.edgeType.refname(pathExp, feature);
     EReference.eType(feature, eClass);
 } or {
     find variableType(variable, type);

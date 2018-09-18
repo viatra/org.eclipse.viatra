@@ -28,15 +28,7 @@ pattern undefinedOrMultipleDeclarationParameterType(parameter : Parameter) {
 @Constraint(targetEditorId = "*", severity = "error", message = "Missing type declaration.", key = {
     pathExp })
 pattern undefinedPathExpressionType(pathExp : PathExpressionConstraint) {
-    neg PathExpressionConstraint.edgeTypes(pathExp, _);
-}
-
-@Constraint(targetEditorId = "*", severity = "error", message = "Multiple EReference types found.", key = {
-    pathExp })
-pattern multipleReferencesPathExpressionType(pathExp : PathExpressionConstraint) {
-    PathExpressionConstraint.edgeTypes(pathExp, edgeType1);
-    PathExpressionConstraint.edgeTypes(pathExp, edgeType2);
-    edgeType1 != edgeType2;
+    neg PathExpressionConstraint.edgeType(pathExp, _);
 }
 
 @Constraint(targetEditorId = "*", severity = "error", key = {
@@ -85,8 +77,3 @@ inferredTypeLessSpecific(paramref : ParameterRef, declaredEClass : EClass, eClas
 
     find superclass(declaredEClass, eClass);
 }
-
-
-
-
-
