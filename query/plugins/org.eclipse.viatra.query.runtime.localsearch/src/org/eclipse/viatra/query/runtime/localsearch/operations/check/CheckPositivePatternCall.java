@@ -43,7 +43,7 @@ public class CheckPositivePatternCall implements ISearchOperation, IPatternMatch
         public void onInitialize(MatchingFrame frame, ISearchContext context) {
             super.onInitialize(frame, context);
             maskedTuple.updateTuple(frame);
-            matcher = context.getMatcher(information.getReference());
+            matcher = context.getMatcher(information.getCallWithAdornment());
         }
         
         /**

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.FLATTEN_CALL_PREDICATE;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.CALL_DELEGATION_STRATEGY;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_COST_FUNCTION;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_TABLE_ROW_COUNT;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.USE_BASE_INDEX;
@@ -24,6 +25,7 @@ import java.util.Objects;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostFunction;
+import org.eclipse.viatra.query.runtime.matchers.backend.ICallDelegationStrategy;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -51,6 +53,8 @@ public final class LocalSearchHints implements IMatcherCapability {
     
     private IFlattenCallPredicate flattenCallPredicate = null;
     
+    private ICallDelegationStrategy callDelegationStrategy = null;
+    
     private IAdornmentProvider adornmentProvider = null;
     
     private IRewriterTraceCollector traceCollector = NopTraceCollector.INSTANCE;
@@ -75,13 +79,14 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = PLANNER_TABLE_ROW_COUNT.getDefaultValue();
         result.costFunction = PLANNER_COST_FUNCTION.getDefaultValue();
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
+        result.callDelegationStrategy = CALL_DELEGATION_STRATEGY.getDefaultValue();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         result.backendFactory = LocalSearchEMFBackendFactory.INSTANCE;
         return result;
     }
     
     /**
-     * With this setting, the patterns are flattened before planning. This may cause performance gain in most of the cases compared to the {@link #getDefault()} settings,
+     * With this setting, the patterns are flattened before planning. This may cause performance gain in some cases compared to the {@link #getDefault()} settings,
      * However this should be used with care for patterns containing calls with several bodies.
      */
     public static LocalSearchHints getDefaultFlatten(){
@@ -90,6 +95,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = 4;
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = new DefaultFlattenCallPredicate();
+        result.callDelegationStrategy = CALL_DELEGATION_STRATEGY.getDefaultValue();
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         result.backendFactory = LocalSearchEMFBackendFactory.INSTANCE;
         return result;
@@ -104,6 +110,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = 4;
         result.costFunction = new VariableBindingBasedCostFunction();
         result.flattenCallPredicate = new NeverFlattenCallPredicate();
+        result.callDelegationStrategy = ICallDelegationStrategy.FULL_BACKEND_ADHESION;
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         result.backendFactory = LocalSearchEMFBackendFactory.INSTANCE;
         return result;
@@ -119,8 +126,33 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = 4;
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
+        result.callDelegationStrategy = ICallDelegationStrategy.FULL_BACKEND_ADHESION;
         result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         result.backendFactory = LocalSearchGenericBackendFactory.INSTANCE;
+        return result;
+    }
+    
+    /**
+     * Initializes the default search backend with hybrid-enabled settings
+     * @since 2.1
+     */
+    public static LocalSearchHints getDefaultHybrid(){
+        LocalSearchHints result = getDefault();
+        result.callDelegationStrategy = ICallDelegationStrategy.PARTIAL_BACKEND_ADHESION;
+        result.flattenCallPredicate = new IFlattenCallPredicate.And(
+                new DontFlattenIncrementalPredicate(), new DontFlattenDisjunctive());
+        return result;
+    }
+   
+    /**
+     * Initializes the generic (not EMF specific) search backend with hybrid-enabled settings
+     * @since 2.1
+     */
+    public static LocalSearchHints getDefaultGenericHybrid(){
+        LocalSearchHints result = getDefaultGeneric();
+        result.callDelegationStrategy = ICallDelegationStrategy.PARTIAL_BACKEND_ADHESION;
+        result.flattenCallPredicate = new IFlattenCallPredicate.And(
+                new DontFlattenIncrementalPredicate(), new DontFlattenDisjunctive());
         return result;
     }
     
@@ -130,6 +162,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.useBase = USE_BASE_INDEX.getValueOrNull(hint);
         result.rowCount = PLANNER_TABLE_ROW_COUNT.getValueOrNull(hint);
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getValueOrNull(hint);
+        result.callDelegationStrategy = CALL_DELEGATION_STRATEGY.getValueOrNull(hint);
         result.costFunction = PLANNER_COST_FUNCTION.getValueOrNull(hint);
         result.adornmentProvider = ADORNMENT_PROVIDER.getValueOrNull(hint);
         result.traceCollector = normalizationTraceCollector.getValueOrDefault(hint);
@@ -151,6 +184,9 @@ public final class LocalSearchHints implements IMatcherCapability {
         }
         if (flattenCallPredicate != null){
             FLATTEN_CALL_PREDICATE.insertOverridingValue(map, flattenCallPredicate);
+        }
+        if (callDelegationStrategy != null){
+            CALL_DELEGATION_STRATEGY.insertOverridingValue(map, callDelegationStrategy);
         }
         if (adornmentProvider != null){
             ADORNMENT_PROVIDER.insertOverridingValue(map, adornmentProvider);
@@ -196,6 +232,13 @@ public final class LocalSearchHints implements IMatcherCapability {
     public IFlattenCallPredicate getFlattenCallPredicate() {
         return flattenCallPredicate;
     }
+    
+    /**
+     * @since 2.1
+     */
+    public ICallDelegationStrategy getCallDelegationStrategy() {
+        return callDelegationStrategy;
+    }
 
     public Integer getRowCount() {
         return rowCount;
@@ -235,6 +278,15 @@ public final class LocalSearchHints implements IMatcherCapability {
         return this;
     }
     
+    
+    /**
+     * @since 2.1
+     */
+    public LocalSearchHints setCallDelegationStrategy(ICallDelegationStrategy callDelegationStrategy) {
+        this.callDelegationStrategy = callDelegationStrategy;
+        return this;
+    }
+
     /**
      * @since 1.6
      */
@@ -265,6 +317,13 @@ public final class LocalSearchHints implements IMatcherCapability {
     
     public static LocalSearchHints customizeFlattenCallPredicate(IFlattenCallPredicate predicate){
         return new LocalSearchHints().setFlattenCallPredicate(predicate);
+    }
+    
+    /**
+     * @since 2.1
+     */
+    public static LocalSearchHints customizeCallDelegationStrategy(ICallDelegationStrategy strategy){
+        return new LocalSearchHints().setCallDelegationStrategy(strategy);
     }
     
     /**

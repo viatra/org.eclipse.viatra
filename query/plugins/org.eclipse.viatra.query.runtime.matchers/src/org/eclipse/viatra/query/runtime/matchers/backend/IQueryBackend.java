@@ -59,5 +59,11 @@ public interface IQueryBackend {
 	 * Disposes the query backend.
 	 */
 	public abstract void dispose();
+	
+	/**
+	 * @return the factory that created this backend, if this functionality is supported
+	 * @since 2.1
+	 */
+	public IQueryBackendFactory getFactory();
 
 }

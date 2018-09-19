@@ -38,6 +38,11 @@ public enum LocalSearchGenericBackendFactory implements IQueryBackendFactory {
                 return new GenericLocalSearchResultProvider(this, context, query, planProvider, hints);
             }
             
+            @Override
+            public IQueryBackendFactory getFactory() {
+                return INSTANCE;
+            }
+            
         };
     }
     

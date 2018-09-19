@@ -41,7 +41,7 @@ public class CountOperation implements ISearchOperation, IPatternMatcherOperatio
         
         @Override
         public Iterator<Integer> getIterator(MatchingFrame frame, ISearchContext context) {
-            matcher = context.getMatcher(information.getReference());
+            matcher = context.getMatcher(information.getCallWithAdornment());
             maskedTuple.updateTuple(frame);
             return Collections.singletonList(matcher.countMatches(information.getParameterMask(), maskedTuple)).iterator();
         }

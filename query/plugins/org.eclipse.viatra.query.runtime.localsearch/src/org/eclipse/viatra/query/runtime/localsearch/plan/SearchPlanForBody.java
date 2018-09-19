@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.CallWithAdornment;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -35,10 +36,10 @@ public class SearchPlanForBody {
     private int[] parameterKeys;
     private SubPlan plan;
     private List<ISearchOperation> compiledOperations;
-    private Collection<MatcherReference> dependencies;
+    private Collection<CallWithAdornment> dependencies;
     
     public SearchPlanForBody(PBody body, Map<PVariable, Integer> variableKeys,
-            SubPlan plan, List<ISearchOperation> compiledOperations, Collection<MatcherReference> dependencies) {
+            SubPlan plan, List<ISearchOperation> compiledOperations, Collection<CallWithAdornment> dependencies) {
         super();
         this.body = body;
         this.variableKeys = variableKeys;
@@ -74,7 +75,7 @@ public class SearchPlanForBody {
         return plan;
     }
     
-    public Collection<MatcherReference> getDependencies() {
+    public Collection<CallWithAdornment> getDependencies() {
         return dependencies;
     }
     

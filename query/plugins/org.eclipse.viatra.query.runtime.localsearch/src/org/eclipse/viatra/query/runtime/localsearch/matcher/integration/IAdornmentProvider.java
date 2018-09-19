@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
+import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -55,5 +58,15 @@ public interface IAdornmentProvider {
      * The bound parameter sets
      */
     public Iterable<Set<PParameter>> getAdornments(PQuery query);
+    
+    /**
+     * @return a simple hint that only overrides the adornment provider
+     * @since 2.1
+     */
+    public static QueryEvaluationHint toHint(IAdornmentProvider adornmentProvider) {
+        return new QueryEvaluationHint(
+                Collections.singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), 
+                BackendRequirement.UNSPECIFIED);
+    }
     
 }

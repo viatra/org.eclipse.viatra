@@ -30,6 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
@@ -94,6 +95,24 @@ public abstract class LocalSearchBackend implements IQueryBackend {
         resultProviderCache.put(query, resultProvider);
         resultProvider.prepare();
         return resultProvider;
+    }
+    
+    /**
+     * Returns a requestor that this backend uses while processing pattern calls <i>from</i> this query.
+     * @noreference This method is not intended to be referenced by clients.
+     * @since 2.1
+     */
+    public ResultProviderRequestor getResultProviderRequestor(PQuery query, QueryEvaluationHint userHints) {
+        QueryEvaluationHint hintOnQuery = 
+                context.getHintProvider().getQueryEvaluationHint(query).overrideBy(userHints);
+        LocalSearchHints defaultsApplied = LocalSearchHints.getDefaultOverriddenBy(hintOnQuery);
+
+        return new ResultProviderRequestor(this, 
+                context.getResultProviderAccess(), 
+                context.getHintProvider(), 
+                defaultsApplied.getCallDelegationStrategy(), 
+                userHints, 
+                /* no global overrides */ null);
     }
     
     /**

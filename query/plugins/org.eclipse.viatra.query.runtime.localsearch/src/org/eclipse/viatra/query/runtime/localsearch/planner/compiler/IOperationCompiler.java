@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.CallWithAdornment;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -40,7 +41,11 @@ public interface IOperationCompiler {
      */
     List<ISearchOperation> compile(SubPlan plan, Set<PParameter> boundParameters);
 
-    Set<MatcherReference> getDependencies();
+    /**
+     * Replaces previous method returning {@link MatcherReference}
+     * @since 2.1
+     */
+    Set<CallWithAdornment> getDependencies();
 
     /**
      * @return the cached variable bindings for the previously created plan

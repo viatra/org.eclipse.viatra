@@ -12,8 +12,10 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
+import org.eclipse.viatra.query.runtime.matchers.backend.ICallDelegationStrategy;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NeverFlattenCallPredicate;
 
 /**
  * 
@@ -44,7 +46,14 @@ public final class LocalSearchHintOptions {
      * @since 1.4
      */
     public static final QueryHintOption<IFlattenCallPredicate> FLATTEN_CALL_PREDICATE = 
-            hintOption("FLATTEN_CALL_PREDICATE", new DontFlattenIncrementalPredicate());
+            hintOption("FLATTEN_CALL_PREDICATE", new DontFlattenDisjunctive());
+    /**
+     * Strategy to decide how hints (most importantly, backend selection) propagate across pattern calls. 
+     * Must implement {@link ICallDelegationStrategy}.
+     * @since 2.1
+     */
+    public static final QueryHintOption<ICallDelegationStrategy> CALL_DELEGATION_STRATEGY = 
+            hintOption("CALL_DELEGATION_STRATEGY", ICallDelegationStrategy.FULL_BACKEND_ADHESION);
     
     /**
      * A provider of expected adornments {@link IAdornmentProvider}

@@ -20,6 +20,16 @@ The severity of missing variable types is increased to warning. The reason for t
 TODO
 
 == Migrating to VIATRA 2.1
+
+=== Conflict Resolution between Transformation Rules
+
 The default rule priority in InvertedDisappearancePriorityConflictResolver was changed in version 2.1 from 0 to 1. This change was motivated by the fact that in case of 0 priority additions and deletions would have the same priority that is in contrast with the goal of the resolver.
 
 This is a breaking change as transformations using both priority '0' and '1' might change their internal behavior. To avoid this, it is recommended not to use priority '0' at all with this conflict resolver.
+
+=== Changed hybridization behaviour in the Local Search Query Backend
+
+To make behaviour more predictable, the default configuration of the Local Search query engine no longer allows hybrid pattern matching in conjuction with the incremental query backend across pattern calls, i.e. if the caller pattern is evaluated with LS, so will the callee pattern during the same matcher invocation. To enable hybrid matching, where the local search backend may request results of called patterns from the incremental backend (in case the callee is declared `incremental pattern`), use configurations that explicitly enable this, such as `LocalSearchHints.getDefaultGenericHybrid()`. 
+
+ 
+

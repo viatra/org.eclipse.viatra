@@ -42,7 +42,7 @@ public class ExtendPositivePatternCall implements ISearchOperation, IPatternMatc
         @Override
         protected Iterator<? extends Tuple> getIterator(MatchingFrame frame, ISearchContext context) {
             maskedTuple.updateTuple(frame);
-            IQueryResultProvider matcher = context.getMatcher(information.getReference());
+            IQueryResultProvider matcher = context.getMatcher(information.getCallWithAdornment());
             return matcher.getAllMatches(information.getParameterMask(), maskedTuple).iterator();
         }
         
