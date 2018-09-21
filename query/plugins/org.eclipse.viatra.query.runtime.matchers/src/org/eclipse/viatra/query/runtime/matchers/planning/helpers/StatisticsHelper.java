@@ -1,0 +1,44 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2018, Gabor Bergmann, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Gabor Bergmann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.matchers.planning.helpers;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
+
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
+
+/**
+ * @author Gabor Bergmann
+ * @since 2.1
+ *
+ */
+public class StatisticsHelper {
+    
+    public static Optional<Double> estimateAverageBucketSize(TupleMask groupMask, Accuracy requiredAccuracy, 
+            BiFunction<TupleMask, Accuracy, Optional<Long>> estimateCardinality) 
+    {
+        if (groupMask.isIdentity()) return Optional.of(1.0);
+        
+        Accuracy numeratorAccuracy = requiredAccuracy;
+        Accuracy denominatorAccuracy = requiredAccuracy.reciprocal();
+        TupleMask identityMask = TupleMask.identity(groupMask.sourceWidth);
+        
+        Optional<Long> totalCountEstimate  = estimateCardinality.apply(identityMask, numeratorAccuracy);
+        Optional<Long> bucketCountEstimate = estimateCardinality.apply(groupMask,    denominatorAccuracy);
+
+        return totalCountEstimate.flatMap((matchCount) -> 
+            bucketCountEstimate.map((bucketCount) -> 
+                bucketCount == 0L ? 0L : ((double) matchCount) / bucketCount
+        ));
+    }
+
+}

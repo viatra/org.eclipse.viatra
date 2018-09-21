@@ -33,4 +33,18 @@ public enum Accuracy {
         default: throw new IllegalArgumentException();
         }
     }
+    
+    /**
+     * @return another accuracy value that is anti-monotonic to this one, 
+     * i.e. an accuracy that should be used in the denominator to obtain a fraction with this accuracy
+     */
+    public Accuracy reciprocal() {
+        switch(this) {
+        case APPROXIMATION: return APPROXIMATION;
+        case BEST_UPPER_BOUND: return BEST_LOWER_BOUND;
+        case BEST_LOWER_BOUND: return BEST_UPPER_BOUND;
+        case EXACT_COUNT: return EXACT_COUNT;
+        default: throw new IllegalArgumentException();
+        }
+    }
 }

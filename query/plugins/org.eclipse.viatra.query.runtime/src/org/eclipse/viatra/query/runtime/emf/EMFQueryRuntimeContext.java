@@ -541,6 +541,30 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         }
     }
     
+    /**
+     * @since 2.1
+     */
+    @Override
+    public Optional<Double> estimateAverageBucketSize(IInputKey key, TupleMask groupMask, Accuracy requiredAccuracy) {
+        // smart handling of special cases
+        if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeatureInstancesKey featureKey = (EStructuralFeatureInstancesKey) key;
+            EStructuralFeature feature = featureKey.getEmfKey();
+
+            // special treatment for edge navigation
+            if (1 == groupMask.getSize()) {
+                if (0 == groupMask.indices[0] && metaContext.isFeatureMultiplicityToOne(feature)) { // count targets per source
+                    return Optional.of(1.0);
+                } else if (1 == groupMask.indices[0] && metaContext.isFeatureMultiplicityOneTo(feature)) { // count sources per target
+                    return Optional.of(1.0);
+                }
+            }
+        }
+        
+        // keep the default behaviour
+        return super.estimateAverageBucketSize(key, groupMask, requiredAccuracy);
+    }
+    
     
     public void ensureEnumerableKey(IInputKey key) {
         ensureValidKey(key);
