@@ -12,6 +12,7 @@
 
 package org.eclipse.viatra.addon.validation.core;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,8 +39,6 @@ import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * This class uses an {@link ViatraQueryEngine} for tracking violations of {@link ConstraintSpecification}s.
@@ -95,10 +94,9 @@ public class ValidationEngine implements IValidationEngine {
 
     private Map<IConstraintSpecification, Constraint> constraintMap;
 
-    @SuppressWarnings("unchecked")
     @Override
     public Set<IConstraint> getConstraints() {
-        return (Set<IConstraint>) (Set<?>) ImmutableSet.copyOf(constraintMap.values());
+        return Collections.unmodifiableSet(new HashSet<>(constraintMap.values()));
     }
 
     @Override
@@ -122,11 +120,13 @@ public class ValidationEngine implements IValidationEngine {
 
     @SuppressWarnings("unchecked")
     protected boolean addRuleSpecificationToExecutionSchema(Constraint constraint) {
-        Set<Job<IPatternMatch>> jobs = ImmutableSet.of(Jobs.newErrorLoggingJob(Jobs.newStatelessJob(
-                CRUDActivationStateEnum.CREATED, new MatchAppearanceJob(constraint, logger))), Jobs
-                .newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
-                        new MatchDisappearanceJob(constraint, logger))), Jobs.newErrorLoggingJob(Jobs.newStatelessJob(
-                CRUDActivationStateEnum.UPDATED, new MatchUpdateJob(constraint, logger))));
+        Set<Job<IPatternMatch>> jobs = new HashSet<>();
+        jobs.add(Jobs.newErrorLoggingJob(
+                Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED, new MatchAppearanceJob(constraint, logger))));
+        jobs.add(Jobs.newErrorLoggingJob(
+                Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED, new MatchDisappearanceJob(constraint, logger))));
+        jobs.add(Jobs.newErrorLoggingJob(
+                Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED, new MatchUpdateJob(constraint, logger))));
         IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) constraint
                 .getSpecification().getQuerySpecification();
         RuleSpecification<IPatternMatch> rule = Rules.newMatcherRuleSpecification(querySpecification,
@@ -150,7 +150,7 @@ public class ValidationEngine implements IValidationEngine {
 
     @Override
     public Set<ValidationEngineListener> getListeners() {
-        return ImmutableSet.copyOf(listeners);
+        return Collections.unmodifiableSet(new HashSet<>(listeners));
     }
 
     @Override

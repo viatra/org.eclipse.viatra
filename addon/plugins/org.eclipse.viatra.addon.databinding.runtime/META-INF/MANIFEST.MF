@@ -10,8 +10,7 @@ Require-Bundle: org.eclipse.core.databinding;visibility:=reexport,
  org.eclipse.emf.databinding;visibility:=reexport,
  org.eclipse.core.databinding.property;visibility:=reexport,
  org.eclipse.viatra.transformation.evm;bundle-version="[2.1.0,2.2.0)",
- org.eclipse.core.runtime;bundle-version="3.7.0",
- com.google.inject;bundle-version="[3.0.0,4.0.0)"
+ org.eclipse.core.runtime;bundle-version="3.7.0"
 Export-Package: org.eclipse.viatra.addon.databinding.runtime.adapter,
  org.eclipse.viatra.addon.databinding.runtime.api,
  org.eclipse.viatra.addon.databinding.runtime.collection,

@@ -12,7 +12,5 @@ Export-Package: org.eclipse.viatra.addon.validation.core,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse VIATRA Project
-Import-Package: com.google.common.base;version="15.0.0",
- com.google.common.collect;version="15.0.0",
- org.apache.log4j
+Import-Package: org.apache.log4j
 Automatic-Module-Name: org.eclipse.viatra.addon.validation.core

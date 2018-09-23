@@ -12,6 +12,7 @@
 
 package org.eclipse.viatra.addon.validation.core;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,8 +25,6 @@ import org.eclipse.viatra.addon.validation.core.listeners.ViolationListener;
 import org.eclipse.viatra.addon.validation.core.violationkey.CompositeSymmetricViolationKey;
 import org.eclipse.viatra.addon.validation.core.violationkey.ViolationKey;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-
-import com.google.common.collect.ImmutableSet;
 
 public class Violation implements IViolation {
 
@@ -124,7 +123,7 @@ public class Violation implements IViolation {
 
     @Override
     public Set<ViolationListener> getListeners() {
-        return ImmutableSet.copyOf(listeners);
+        return Collections.unmodifiableSet(new HashSet<>(listeners));
     }
 
     @Override

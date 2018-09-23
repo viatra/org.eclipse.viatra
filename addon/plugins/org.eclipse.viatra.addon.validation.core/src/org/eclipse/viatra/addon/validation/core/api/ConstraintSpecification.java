@@ -13,6 +13,7 @@
 package org.eclipse.viatra.addon.validation.core.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +24,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Generic implementation of the IConstraintSpecification interface for code buildable constraint specifications.
@@ -98,12 +96,12 @@ public class ConstraintSpecification implements IConstraintSpecification {
 
     @Override
     public List<String> getKeyNames() {
-        return ImmutableList.copyOf(keyNames);
+        return Collections.unmodifiableList(new ArrayList<>(keyNames));
     }
 
     @Override
     public List<String> getPropertyNames() {
-        return ImmutableList.copyOf(propertyNames);
+        return Collections.unmodifiableList(new ArrayList<>(propertyNames));
     }
 
     @Override
@@ -113,12 +111,12 @@ public class ConstraintSpecification implements IConstraintSpecification {
 
     @Override
     public Set<List<String>> getSymmetricPropertyNames() {
-        return ImmutableSet.copyOf(symmetricPropertyNames);
+        return Collections.unmodifiableSet(new HashSet<>(symmetricPropertyNames));
     }
 
     @Override
     public Set<List<String>> getSymmetricKeyNames() {
-        return ImmutableSet.copyOf(symmetricKeyNames);
+        return Collections.unmodifiableSet(new HashSet<>(symmetricKeyNames));
     }
 
     @Override

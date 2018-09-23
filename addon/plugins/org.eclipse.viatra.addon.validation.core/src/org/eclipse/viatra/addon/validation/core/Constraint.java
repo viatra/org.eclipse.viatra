@@ -35,8 +35,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
-import com.google.common.collect.ImmutableSet;
-
 public class Constraint implements IConstraint {
 
     private Logger logger;
@@ -143,7 +141,7 @@ public class Constraint implements IConstraint {
 
     @Override
     public Set<ConstraintListener> getListeners() {
-        return ImmutableSet.copyOf(listeners.keySet());
+        return Collections.unmodifiableSet(new HashSet<>(listeners.keySet()));
     }
 
     @Override

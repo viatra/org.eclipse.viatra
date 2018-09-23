@@ -98,7 +98,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
             } else if (EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.VARIABLE, refType)) {
                 PatternBody containingBody = EcoreUtil2.getContainerOfType(ctx, PatternBody.class);
                 if (containingBody != null) {
-                    return scope_Variable((PatternBody) containingBody);
+                    return scope_Variable(containingBody);
                 }
                 AnnotationParameter containingAnnotationParameter = EcoreUtil2.getContainerOfType(ctx,
                         AnnotationParameter.class);

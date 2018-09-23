@@ -27,7 +27,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.StringValue;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.xtext.EcoreUtil2;
@@ -105,7 +104,7 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
         final Pattern containingPattern = EcoreUtil2.getContainerOfType(var, Pattern.class);
         TypeInformation information = collectConstraints(containingPattern);
         if (PatternLanguageHelper.isParameter(var)) {
-            return ImmutableSet.of(information.getType((Variable) var));
+            return ImmutableSet.of(information.getType(var));
         } else {
             return information.getAllTypes(var);
         }

@@ -15,7 +15,6 @@ package org.eclipse.viatra.addon.validation.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.addon.validation.core.api.IEntry;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
@@ -39,7 +38,7 @@ public class Entry implements IEntry {
         List<Object> properties = new ArrayList<Object>();
         List<String> propertyNames = violation.getConstraint().getSpecification().getPropertyNames();
         for (String parameterName : propertyNames) {
-            properties.add((EObject) match.get(parameterName));
+            properties.add(match.get(parameterName));
         }
         return properties;
     }
