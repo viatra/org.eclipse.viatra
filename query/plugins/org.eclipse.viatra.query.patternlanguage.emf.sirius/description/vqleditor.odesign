@@ -5,7 +5,7 @@
       <metamodel href="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage#/"/>
       <metamodel href="http://www.eclipse.org/emf/2002/Ecore#/"/>
       <defaultLayer name="Default">
-        <edgeMappings name="ebe_compareConstraint" label="Compare Constraint" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='de_constraint']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_enum_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_enum_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetFinderExpression="aql:self.rightOperand.expression" sourceFinderExpression="aql:self.leftOperand.expression" domainClass="vgql::CompareConstraint" useDomainElement="true">
+        <edgeMappings name="ebe_compareConstraint" label="Compare Constraint" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='de_constraint']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_enum_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_enum_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetFinderExpression="aql:self.rightOperand.expression" sourceFinderExpression="aql:self.leftOperand.expression" domainClass="vgql::CompareConstraint" useDomainElement="true" reconnections="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.2 //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.3">
           <style targetArrow="NoDecoration" sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
             <centerLabelStyleDescription showIcon="false" labelExpression="aql: self.feature.toString()">
@@ -21,7 +21,7 @@
             </centerLabelStyleDescription>
           </style>
         </edgeMappings>
-        <edgeMappings name="ebe_patternCallParameter_expression_assignment" label="Reference" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.2/@ownedTools[name='de_reference']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_checkConstraint'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue']/@borderedNodeMappings[name='bn_aggregatedValue_patternParameter'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='cn_patternCompositionConstraint']/@borderedNodeMappings[name='bn_patternCompositionConstraint_parameter']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']" targetFinderExpression="aql:self.expression" sourceFinderExpression="aql:if self.oclIsKindOf(vgql::CalledParameter) then self else self.eContainer() endif" domainClass="vgql::Reference" useDomainElement="true">
+        <edgeMappings name="ebe_patternCallParameter_expression_assignment" label="Reference" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.2/@ownedTools[name='de_reference']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_checkConstraint'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue']/@borderedNodeMappings[name='bn_aggregatedValue_patternParameter'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='cn_patternCompositionConstraint']/@borderedNodeMappings[name='bn_patternCompositionConstraint_parameter']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable']" targetFinderExpression="aql:self.expression" sourceFinderExpression="aql:if self.oclIsKindOf(vgql::CalledParameter) then self else self.eContainer() endif" domainClass="vgql::Reference" useDomainElement="true" reconnections="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.4 //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.6 //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.5">
           <style targetArrow="NoDecoration" sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_red']"/>
             <centerLabelStyleDescription>
@@ -29,7 +29,7 @@
             </centerLabelStyleDescription>
           </style>
         </edgeMappings>
-        <edgeMappings name="ebe_pathExpressionConstraint" label="Path Expression Constraint" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='de_constraint']" doubleClickDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.2/@ownedTools[name='dc_openEmbeddedXTextEditor']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetFinderExpression="aql:self.dst.expression" sourceFinderExpression="aql:self.src.expression" domainClass="vgql::PathExpressionConstraint" useDomainElement="true">
+        <edgeMappings name="ebe_pathExpressionConstraint" label="Path Expression Constraint" deletionDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='de_constraint']" doubleClickDescription="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.2/@ownedTools[name='dc_openEmbeddedXTextEditor']" sourceMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue']" targetMapping="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_functionEvaluationValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='sn_literal'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='Variable'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subContainerMappings[name='ci_aggregatedValue'] //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@containerMappings[name='node_pattern']/@subContainerMappings[name='cn_patternBody']/@subNodeMappings[name='ParameterReference']" targetFinderExpression="aql:self.dst.expression" sourceFinderExpression="aql:self.src.expression" domainClass="vgql::PathExpressionConstraint" useDomainElement="true" reconnections="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.0 //@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@toolSections.1/@ownedTools[name='g%20Reconnect%20Edges']/@tools.1">
           <style sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
             <centerLabelStyleDescription showIcon="false" labelExpression="aql:self.edgeType.refname.name">
@@ -245,7 +245,7 @@
           </ownedTools>
         </toolSections>
         <toolSections name="section_constraints" label="Constraints">
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="ec_PathExpressionConstraint" label="Path Expression" edgeMappings="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_pathExpressionConstraint']">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="ec_PathExpressionConstraint" label="Path Expression" precondition="aql: preSource.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(preTarget)" edgeMappings="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_pathExpressionConstraint']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
@@ -259,7 +259,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="ec_create_compare_constraint" label="Compare" edgeMappings="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_compareConstraint']">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="ec_create_compare_constraint" label="Compare" precondition="aql: preSource.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(preTarget)" edgeMappings="//@ownedViewpoints[name='vp_vql_editor']/@ownedRepresentations[name='dd_vql_model_diagram']/@defaultLayer/@edgeMappings[name='ebe_compareConstraint']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
@@ -326,6 +326,117 @@
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:RemoveElement"/>
             </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:ToolGroup" name="g Reconnect Edges" label="Reconnect Edges">
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re PathExpressionConstraint Source" label="Path Expression Source" precondition="aql: source.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(target)" reconnectionKind="RECONNECT_SOURCE">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self.src">
+                    <subModelOperations xsi:type="tool_1:RemoveElement"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="src" valueExpression="aql:target.createReference()"/>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re PathExpressionConstraint Target" label="Path Expression Target" precondition="aql: source.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(target)">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self.dst">
+                    <subModelOperations xsi:type="tool_1:RemoveElement"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="dst" valueExpression="aql:target.createReference()"/>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re CompareConstraint Source" label="Compare Source" precondition="aql: source.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(target)" reconnectionKind="RECONNECT_SOURCE">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self.leftOperand">
+                    <subModelOperations xsi:type="tool_1:RemoveElement"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="leftOperand" valueExpression="aql:target.createReference()"/>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re CompareConstraint Target" label="Compare Target" precondition="aql: source.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(target)">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:self.rightOperand">
+                    <subModelOperations xsi:type="tool_1:RemoveElement"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="rightOperand" valueExpression="aql:target.createReference()"/>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re Reference Source1" label="Reference Source1" precondition="aql: source.eContainerOrSelf(vgql::PatternCall).parameters->includes(target) and source.oclIsKindOf(vgql::CalledParameter) and target.oclIsKindOf(vgql::CalledParameter) and  target.expression=null " reconnectionKind="RECONNECT_SOURCE">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:source.expression">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:target.oclAsType(vgql::CalledParameter)">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="expression" valueExpression="aql:source.expression"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:source.oclAsType(vgql::CalledParameter)">
+                    <subModelOperations xsi:type="tool_1:Unset" featureName="expression"/>
+                  </subModelOperations>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re Reference Source2" label="Reference Source2" precondition="aql:(source.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(target) or source.eContainerOrSelf(vgql::GraphPatternBody).constraints->includes(target))and source.oclIsKindOf(vgql::InterpretableExpression) and target.oclIsKindOf(vgql::InterpretableExpression)" reconnectionKind="RECONNECT_SOURCE">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:element.oclAsType(vgql::Reference)">
+                  <subModelOperations xsi:type="tool_1:MoveElement" newContainerExpression="aql:target" featureName="variables"/>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
+            <tools xsi:type="tool:ReconnectEdgeDescription" name="re Reference Target" label="Reference Target" precondition="aql: source.eContainerOrSelf(vgql::GraphPatternBody).nodes->includes(target)">
+              <source name="source"/>
+              <target name="target"/>
+              <sourceView name="sourceView"/>
+              <targetView name="targetView"/>
+              <element name="element"/>
+              <initialOperation>
+                <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:element">
+                  <subModelOperations xsi:type="tool_1:Unset" featureName="expression" elementExpression="aql:source"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="expression" valueExpression="aql:target"/>
+                </firstModelOperations>
+              </initialOperation>
+              <edgeView name="edgeView"/>
+            </tools>
           </ownedTools>
         </toolSections>
         <toolSections name="section_tools" label="Tools">
