@@ -136,19 +136,21 @@ public class LocalSearchRuntimeBasedStrategy {
                 PlanState currentState = stateTable.get(i).get(j);
 
                 for (PConstraintInfo constraintInfo : currentState.getPresentExtends()) {
-                    // for each present operation
+                    // for each present EXTEND operation
                     PlanState newState = calculateNextState(currentState, constraintInfo);
-                    int i2 = Sets.difference(pBody.getUniqueVariables(), newState.getBoundVariables()).size();
+                    
                     if(currentState.getBoundVariables().size() == newState.getBoundVariables().size()){
                         // This means no variable binding was done, go on with the next constraint info
                         continue;
                     }
+                    int i2 = Sets.difference(pBody.getUniqueVariables(), newState.getBoundVariables()).size();
+                    updateOperations(newState, currentState, constraintInfo); // also perform any CHECK operations 
+                    
                     List<Integer> newIndices = determineIndices(stateTable, i2, newState, k);
                     int a = newIndices.get(0);
                     int c = newIndices.get(1);
 
                     if (checkInsertCondition(stateTable.get(i2), newState, reachableBoundVariableSets, a, c, k)) {
-                        updateOperations(newState, currentState, constraintInfo);
                         insert(stateTable,i2, newState, a, c, k);
                     }
                 }

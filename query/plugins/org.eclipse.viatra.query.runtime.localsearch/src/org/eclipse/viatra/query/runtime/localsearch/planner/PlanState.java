@@ -33,7 +33,10 @@ public class PlanState {
     private PBody pBody;
     private List<PConstraintInfo> operationsList;
     private Set<PVariable> boundVariables;
-    private double cost;
+    
+    private double cummulativeProduct = 1;
+    private double cost = 0;
+
     /*
      * For a short explanation of past, present and future operations,
      * see class 
@@ -49,16 +52,19 @@ public class PlanState {
         this.boundVariables = boundVariables;
 
         // Calculate and store cost for the associated search plan
-        cost = 0;
-        double cummulativeProduct = 1;
         for (PConstraintInfo constraintInfo : operationsList) {
-            double constraintCost = constraintInfo.getCost();
-            if (constraintCost > 0){
-                cummulativeProduct *= constraintCost;
-                cost += cummulativeProduct;
-            }
+            accountCost(constraintInfo);
         }
 
+    }
+
+    private void accountCost(PConstraintInfo constraintInfo) {
+        double constraintCost = constraintInfo.getCost();
+        double branchFactor = constraintCost;
+        if (constraintCost > 0){
+            cost += cummulativeProduct * constraintCost;
+            cummulativeProduct *= branchFactor;
+        }
     }
 
     public void updateOperations(List<PConstraintInfo> allPotentialExtendInfos, List<PConstraintInfo> allPotentialChecks) {
@@ -97,6 +103,7 @@ public class PlanState {
             PConstraintCategory category = checkInfo.getCategory(pBody, boundVariables);
             if(category == PConstraintCategory.PRESENT){
                 operationsList.add(checkInfo);
+                accountCost(checkInfo);
             } else if (category == PConstraintCategory.FUTURE) {
                 futureChecks.add(checkInfo);
             } else {
@@ -163,6 +170,15 @@ public class PlanState {
      */
     public double getCost() {
         return cost;
+    }
+
+    
+    /**
+     * @return cumulative branching factor
+     * @since 2.1
+     */
+    public double getCummulativeProduct() {
+        return cummulativeProduct;
     }
 
     public List<PConstraintInfo> getFutureChecks() {
