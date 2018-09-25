@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 /**
  * This class is responsible for storing the results of the planner and operation compiler for a selected body.
  * @since 2.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SearchPlanForBody {
 
@@ -37,13 +38,21 @@ public class SearchPlanForBody {
     private SubPlan plan;
     private List<ISearchOperation> compiledOperations;
     private Collection<CallWithAdornment> dependencies;
+    private double cost;
+    private Object internalRepresentation;
     
+    /**
+     * @since 2.1
+     */
     public SearchPlanForBody(PBody body, Map<PVariable, Integer> variableKeys,
-            SubPlan plan, List<ISearchOperation> compiledOperations, Collection<CallWithAdornment> dependencies) {
+            SubPlan plan, List<ISearchOperation> compiledOperations, Collection<CallWithAdornment> dependencies,
+            Object internalRepresentation, double cost) {
         super();
         this.body = body;
         this.variableKeys = variableKeys;
         this.plan = plan;
+        this.internalRepresentation = internalRepresentation;
+        this.cost = cost;
         List<PVariable> parameters = body.getSymbolicParameterVariables();
         parameterKeys = new int[parameters.size()];
         for (int i=0; i<parameters.size(); i++) {
@@ -87,5 +96,23 @@ public class SearchPlanForBody {
     public String toString() {
         return compiledOperations.stream().map(Object::toString).collect(Collectors.joining("\n"));
     }
+
+    /**
+     * @since 2.1
+     */
+    public double getCost() {
+        return cost;
+    }
+
+    /**
+     * @return The internal representation of the search plan, if any, for traceability
+     * @since 2.1
+     */
+    public Object getInternalRepresentation() {
+        return internalRepresentation;
+    }
+    
+    
+    
     
 }

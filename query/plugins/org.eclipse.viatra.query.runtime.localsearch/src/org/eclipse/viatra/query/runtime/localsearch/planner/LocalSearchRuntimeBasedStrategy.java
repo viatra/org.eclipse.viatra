@@ -49,24 +49,13 @@ import com.google.common.collect.Sets.SetView;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class LocalSearchRuntimeBasedStrategy {
-        
-    /**
-     * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
-     * PBody
-     * @param pBody for which the plan is to be created
-     * @param initialBoundVariables variables that are known to have already assigned values
-     * @param context the backend context
-     * @param configuration the planner configuration
-     * @return the complete search plan for the given {@link PBody}
-     * @since 2.1
-     */
-    public SubPlan plan(PBody pBody, Set<PVariable> initialBoundVariables,
-            IQueryBackendContext context, final ResultProviderRequestor resultRequestor,
-            LocalSearchHints configuration) {
 
-        final ICostFunction costFunction = configuration.getCostFunction();
-        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(
-                configuration.isUseBase(), context, resultRequestor, costFunction::apply);
+    /**
+     * Converts a plan to the standard format
+     */
+    protected SubPlan convertPlan(Set<PVariable> initialBoundVariables, PlanState searchPlan) {
+        PBody pBody;
+        pBody = searchPlan.getAssociatedPBody();
         
         // 1. INITIALIZATION
         // Create a starting plan
@@ -74,19 +63,6 @@ public class LocalSearchRuntimeBasedStrategy {
 
         // We assume that the adornment (now the bound variables) is previously set
         SubPlan plan = subPlanFactory.createSubPlan(new PStart(initialBoundVariables));
-        // Create mask infos
-        Set<PConstraint> constraintSet = pBody.getConstraints();
-        List<PConstraintInfo> constraintInfos = 
-                pConstraintInfoInferrer.createPConstraintInfos(constraintSet);
-
-        // Calculate the characteristic function
-        // The characteristic function tells whether a given adornment is backward reachable from the (B)* state, where
-        // each variable is bound.
-        // The characteristic function is represented as a set of set of variables
-        // TODO this calculation is not not implemented yet, thus the contents of the returned set is not considered later
-        List<Set<PVariable>> reachableBoundVariableSets = reachabilityAnalysis(pBody, constraintInfos);
-        int k = configuration.getRowCount();
-        PlanState searchPlan = calculateSearchPlan(pBody, initialBoundVariables, k, reachableBoundVariableSets, constraintInfos);
 
         List<PConstraintInfo> operations = searchPlan.getOperations();
         for (PConstraintInfo pConstraintPlanInfo : operations) {
@@ -95,6 +71,40 @@ public class LocalSearchRuntimeBasedStrategy {
         }
 
         return subPlanFactory.createSubPlan(new PProject(pBody.getSymbolicParameterVariables()), plan);
+    }
+
+    /**
+     * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
+     * PBody
+     * @param pBody for which the plan is to be created
+     * @param initialBoundVariables variables that are known to have already assigned values
+     * @param context the backend context
+     * @param resultProviderRequestor requestor for accessing result providers of called patterns
+     * @param configuration the planner configuration
+     * @return the complete search plan for the given {@link PBody}
+     * @since 2.1
+     */
+    protected PlanState plan(PBody pBody, Set<PVariable> initialBoundVariables,
+            IQueryBackendContext context, final ResultProviderRequestor resultProviderRequestor,
+            LocalSearchHints configuration) {
+        final ICostFunction costFunction = configuration.getCostFunction();
+        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(
+                configuration.isUseBase(), context, resultProviderRequestor, costFunction::apply);
+        
+        // Create mask infos
+        Set<PConstraint> constraintSet = pBody.getConstraints();
+        List<PConstraintInfo> constraintInfos = 
+                pConstraintInfoInferrer.createPConstraintInfos(constraintSet);
+        
+        // Calculate the characteristic function
+        // The characteristic function tells whether a given adornment is backward reachable from the (B)* state, where
+        // each variable is bound.
+        // The characteristic function is represented as a set of set of variables
+        // TODO this calculation is not not implemented yet, thus the contents of the returned set is not considered later
+        List<Set<PVariable>> reachableBoundVariableSets = reachabilityAnalysis(pBody, constraintInfos);
+        int k = configuration.getRowCount();
+        PlanState searchPlan = calculateSearchPlan(pBody, initialBoundVariables, k, reachableBoundVariableSets, constraintInfos);
+        return searchPlan;
     }
 
     private PlanState calculateSearchPlan(PBody pBody, Set<PVariable> initialBoundVariables, int k,

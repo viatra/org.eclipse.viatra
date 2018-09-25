@@ -79,6 +79,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/SearchPlanForBody.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanForBody">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanForBody"/>
+                <message_argument value="SearchPlanForBody(PBody, Map&lt;PVariable,Integer&gt;, SubPlan, List&lt;ISearchOperation&gt;, Collection&lt;MatcherReference&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/SimplePlanProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider">
         <filter id="338792546">
             <message_arguments>

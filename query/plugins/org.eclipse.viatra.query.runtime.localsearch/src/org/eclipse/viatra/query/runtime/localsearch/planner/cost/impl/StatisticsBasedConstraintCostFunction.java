@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.AbstractLocalSearchResultProvider;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -112,7 +113,13 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     public Optional<Double> bucketSize(final IQueryReference patternCall,
             final IConstraintEvaluationContext input, TupleMask projMask) {
         IQueryResultProvider resultProvider = input.resultProviderRequestor().requestResultProvider(patternCall, null);
-        return resultProvider.estimateAverageBucketSize(projMask, Accuracy.APPROXIMATION);
+        // TODO hack: use LS cost instead of true bucket size estimate
+        if (resultProvider instanceof AbstractLocalSearchResultProvider) {
+            double estimatedCost = ((AbstractLocalSearchResultProvider) resultProvider).estimateCost(projMask);
+            return Optional.of(estimatedCost);
+        } else {            
+            return resultProvider.estimateAverageBucketSize(projMask, Accuracy.APPROXIMATION);
+        }
     }
    
     

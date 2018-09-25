@@ -409,6 +409,20 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         }
         else return Optional.empty();
     }
+    
+    /**
+     * @since 2.1
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    public double estimateCost(TupleMask inputBindingMask) {
+        // TODO this is currently an abstract cost, not really a branching factor
+        
+        HashSet<PParameter> adornment = new HashSet<>(inputBindingMask.transform(query.getParameters()));
+        final MatcherReference reference = new MatcherReference(query, adornment, userHints);
+        IPlanDescriptor plan = getOrCreatePlan(reference, planProvider);
+
+        return plan.getPlan().stream().mapToDouble(SearchPlanForBody::getCost).sum();
+    }
 
     /**
      * Approximates using parameter types
