@@ -11,7 +11,7 @@ NOTE: The section is based on the version available at the early September 2018.
 
 == Requirements and Installation
 
-The current version of the editor is based on Sirius 6.0 (and thus transitively requires Eclipse Oxygen as well). Furthermore, it requires a current version of VIATRA 2.1 IDE installed as well (more precisely, it requires a 2.1 build newer than 09 September, 2018).
+The current version of the editor is based on Sirius 6.0 (and thus transitively requires Eclipse Oxygen as well). Furthermore, it requires a current version of VIATRA 2.1 IDE installed as well (more precisely, the 2.1.0.M2 is the recommended starting point). To download that version, use the following p2 repository: `http://download.eclipse.org/viatra/updates/milestone/latest`
 
 image:tools/vgql_install.png[height=300]
 
@@ -58,8 +58,6 @@ Our first pattern will be used to enumerate all members of the EClass `HostInsta
 . First pattern
 image:tools/vgql_first_pattern.png[height=300]
 
-To ensure all required elements are filled out, live validation rules are available. In the first prototype these validation rules are not started by default, but can be initialized by right clicking the pattern editor, and selecting `VIATRA Validation`/`Initialize VIATRA Validators on Editor`.
-
 === Evaluating Query Results
 
 When everything works, an error-free `vql` file is generated from the graphical patterns automatically. At this point, the patterns can be loaded to the `Query Results` view using the standard components.
@@ -71,10 +69,4 @@ NOTE: This integration assumes that the `vql` file is generated, so it requires 
 
 == Missing Feature and Known Issues
 
-In the early prototype available now there are a few known issues. It is planned that these will be addressed before VIATRA 2.1 is released.
-
-* When adding a metamodel, the Eclipse bundle providing the generated code for that metamodel is not added to the bundle, but has to be added manually using the plug-in manifest editor. Without the corresponding dependency added, the generated `vgl` files will be erroneous.
-* Validation does not start automatically. To start validation, right click on an opened diagram, and select `VIATRA Validation`/`Initialize VIATRA Validators on Editor`.
-* Currently assigning documentation to the patterns is not supported.
-* There is no support in automatically updating an existing VIATRA Query project to a Graphical Query project.
-* When creating a second graphical query file in a project with the wizard, only the `vgql` file is created, but the diagram is not. To create the second diagram, the `aird` editor provided by Sirius can be used instead.
+In the early prototype available in VIATRA 2.1.0 2 there are a few known issues that are planned to be addressed before the final VIATRA 2.1 is released in December 2012. These issues are maintained in link:https://bugs.eclipse.org/bugs/buglist.cgi?list_id=17930299&product=Viatra&query_format=advanced&status_whiteboard=vgql-editor&status_whiteboard_type=allwordssubstr[Bugzilla].
