@@ -9,6 +9,7 @@
  */
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -105,10 +106,9 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     }
 
     public PConstraintCategory getCategory(PBody pBody, Set<PVariable> boundVariables) {
-        if (boundVariables.stream().anyMatch(this.freeMaskVariables::contains)) {
+        if (!Collections.disjoint(boundVariables, this.freeMaskVariables)) {
             return PConstraintCategory.PAST;
-        } else if (pBody.getAllVariables().stream().filter(var -> !boundVariables.contains(var))
-                .anyMatch(this.boundMaskVariables::contains)) {
+        } else if (!boundVariables.containsAll(this.boundMaskVariables)) {
             return PConstraintCategory.FUTURE;
         } else {
             return PConstraintCategory.PRESENT;

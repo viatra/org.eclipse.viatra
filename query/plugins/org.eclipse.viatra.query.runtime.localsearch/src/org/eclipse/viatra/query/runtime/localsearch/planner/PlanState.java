@@ -79,15 +79,15 @@ public class PlanState {
 
         final Set<PConstraintInfo> allUsedAppliedConstraintsArg = allUsedAppliedConstraints;
 
-        Collection<PConstraintInfo> allRelevantExtendInfos = allPotentialExtendInfos.stream().filter(
-            input -> !allUsedAppliedConstraintsArg.contains(input) && isPossibleExtend(input)).collect(Collectors.toList());
         // categorize extend constraint infos
-        categorizeExtends(allRelevantExtendInfos);
+        allPotentialExtendInfos.stream().filter(
+            input -> !allUsedAppliedConstraintsArg.contains(input) && isPossibleExtend(input))
+                .forEach(this::categorizeExtend);
         
-        Collection<PConstraintInfo> allRelevantCheckInfos = allPotentialChecks.stream().filter(
-            input -> !allUsedAppliedConstraintsArg.contains(input) && isPossibleCheck(input)).collect(Collectors.toList());
         // categorize check constraint infos
-        categorizeChecks(allRelevantCheckInfos);
+        allPotentialChecks.stream().filter(
+            input -> !allUsedAppliedConstraintsArg.contains(input) && isPossibleCheck(input))
+                .forEach(this::categorizeCheck);
         
         // sort them by cost
         // TODO this sort is just for sure, most likely it's unnecessary
@@ -98,30 +98,26 @@ public class PlanState {
         Collections.sort(presentExtends, infoComparator);
     }
 
-    private void categorizeChecks(Collection<PConstraintInfo> allRelevantCheckInfos) {
-        for (PConstraintInfo checkInfo : allRelevantCheckInfos) {
-            PConstraintCategory category = checkInfo.getCategory(pBody, boundVariables);
-            if(category == PConstraintCategory.PRESENT){
-                operationsList.add(checkInfo);
-                accountCost(checkInfo);
-            } else if (category == PConstraintCategory.FUTURE) {
-                futureChecks.add(checkInfo);
-            } else {
-                // discard
-            }
+    private void categorizeCheck(PConstraintInfo checkInfo) {
+        PConstraintCategory category = checkInfo.getCategory(pBody, boundVariables);
+        if(category == PConstraintCategory.PRESENT){
+            operationsList.add(checkInfo);
+            accountCost(checkInfo);
+        } else if (category == PConstraintCategory.FUTURE) {
+            futureChecks.add(checkInfo);
+        } else {
+            // discard
         }
     }
 
-    private void categorizeExtends(Collection<PConstraintInfo> allRelevantExtendInfos) {
-        for (PConstraintInfo constraintInfo : allRelevantExtendInfos) {
-            PConstraintCategory category = constraintInfo.getCategory(pBody, boundVariables);
-            if (category == PConstraintCategory.FUTURE) {
-                futureExtends.add(constraintInfo);
-            } else if (category == PConstraintCategory.PRESENT) {
-                presentExtends.add(constraintInfo);
-            } else {
-                // do not categorize past operations
-            }
+    private void categorizeExtend(PConstraintInfo constraintInfo) {
+        PConstraintCategory category = constraintInfo.getCategory(pBody, boundVariables);
+        if (category == PConstraintCategory.FUTURE) {
+            futureExtends.add(constraintInfo);
+        } else if (category == PConstraintCategory.PRESENT) {
+            presentExtends.add(constraintInfo);
+        } else {
+            // do not categorize past operations
         }
     }
 
@@ -131,13 +127,7 @@ public class PlanState {
      *         the state
      */
     private boolean isPossibleExtend(PConstraintInfo constraintInfo) {
-
-        PConstraintCategory category = constraintInfo.getCategory(getAssociatedPBody(), boundVariables);
-        if (category == PConstraintCategory.PAST) {
-            return false;
-        } else {
-            return !constraintInfo.getFreeVariables().isEmpty();
-        }
+        return !constraintInfo.getFreeVariables().isEmpty();
     }
 
     /**
@@ -145,12 +135,7 @@ public class PlanState {
      * @return true, if constraintInfo is a present or future check w.r.t. the current operation binding
      */
     private boolean isPossibleCheck(PConstraintInfo constraintInfo) {
-        PConstraintCategory category = constraintInfo.getCategory(getAssociatedPBody(), boundVariables);
-        if (category == PConstraintCategory.PAST) {
-            return false;
-        } else {
-            return constraintInfo.getFreeVariables().isEmpty();
-        }
+        return constraintInfo.getFreeVariables().isEmpty();
     }
 
     public PBody getAssociatedPBody() {
