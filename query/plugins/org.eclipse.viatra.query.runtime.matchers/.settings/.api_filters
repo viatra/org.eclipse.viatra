@@ -116,6 +116,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/PConstraint.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint">
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint"/>
+                <message_argument value="getBody()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/basicdeferred/AggregatorConstraint.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint">
         <filter id="643842064">
             <message_arguments>

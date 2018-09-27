@@ -109,14 +109,16 @@ public class LocalSearchPlanner implements ILocalSearchPlanner {
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context, resultRequestor, configuration);
+            PlanState searchPlanInternal = plannerStrategy.plan(normalizedBody, boundVariables, context, resultRequestor, configuration);
+            SubPlan plan = plannerStrategy.convertPlan(boundVariables, searchPlanInternal);
             // 3. PConstraint -> POperation compilation step
             // * Pay extra caution to extend operations, when more than one variables are unbound
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);
             // Store the variable mappings for the plans for debug purposes (traceability information)
             SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody,
                     operationCompiler.getVariableMappings(), plan, compiledOperations,
-                    operationCompiler.getDependencies());
+                    operationCompiler.getDependencies(), 
+                    searchPlanInternal, searchPlanInternal.getCost());
 
             plansForBodies.add(compiledPlan);
         }

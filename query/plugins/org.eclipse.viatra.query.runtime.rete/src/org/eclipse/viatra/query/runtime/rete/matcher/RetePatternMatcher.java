@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,8 +27,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
+import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Production;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
@@ -153,6 +156,21 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         engine.reteNet.waitForReteTermination(fetcher);
         
         return fetcher.getCount();
+    }
+    
+    /**
+     * Counts the number of distinct tuples attainable from the match set by projecting match tuples according to the given mask. 
+     * 
+     *
+     * @return the size of the projection
+     * @since 2.1
+     */
+    public int projectionSize(TupleMask groupMask) {
+        ProjectionSizeFetcher fetcher = new ProjectionSizeFetcher(
+                (IterableIndexer) engine.accessProjection(productionNodeTrace, groupMask));
+        engine.reteNet.waitForReteTermination(fetcher);
+        
+        return fetcher.getSize();
     }
 
     /**
@@ -340,6 +358,25 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         }
 
     }
+    
+    class ProjectionSizeFetcher implements Runnable {
+        IterableIndexer indexer;
+        int size = 0;
+
+        public ProjectionSizeFetcher(IterableIndexer indexer) {
+            super();
+            this.indexer = indexer;
+        }
+
+        public void run() {
+            size = indexer.getBucketCount();
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+    }
 
     private boolean[] notNull(Object[] parameters) {
         boolean[] notNull = new boolean[parameters.length];
@@ -371,6 +408,10 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     }
 
 
+    @Override
+    public Optional<Long> estimateCardinality(TupleMask groupMask, Accuracy requiredAccuracy) {
+        return Optional.of((long)projectionSize(groupMask)); // always accurate
+    }
 
     @Override
     public Optional<Tuple> getOneArbitraryMatch(Object[] parameters) {

@@ -529,6 +529,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = toKey(_feature);
         return Collections.unmodifiableSet(instanceStore.getHoldersOfFeature(feature));
     }
+    @Override
+    public Set<Object> getValuesOfFeature(EStructuralFeature _feature) {
+        Object feature = toKey(_feature);
+        return Collections.unmodifiableSet(instanceStore.getValuesOfFeature(feature));
+    }
 
     @Override
     public void addInstanceListener(Collection<EClass> classes, InstanceListener listener) {

@@ -423,7 +423,24 @@ public interface NavigationHelper {
      * @return the collection of {@link EObject}s that have some value for the given structural feature
      */
     public Set<EObject> getHoldersOfFeature(EStructuralFeature feature);
-
+    /**
+     * Returns all non-null values that the given feature takes at least once for any {@link EObject} in the scope 
+     * 
+     * <p>
+     * Unset / null-valued features are not indexed, and will not be included in the results.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
+     * registered using {@link #registerEStructuralFeatures(Set)}, or (b) running in <em>wildcard mode</em> (see
+     * {@link #isInWildcardMode()}).
+     * 
+     * @param feature
+     *            a structural feature 
+     * @return the collection of values that the given structural feature takes
+     * @since 2.1
+     */
+    public Set<Object> getValuesOfFeature(EStructuralFeature feature);
+    
     /**
      * Call this method to dispose the NavigationHelper. 
      * 
@@ -873,5 +890,6 @@ public interface NavigationHelper {
      * @since 1.4
      */
     public int countFeatures(EStructuralFeature feature);
+
     
 }

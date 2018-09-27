@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.matchers.scopes;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -21,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
@@ -76,6 +78,11 @@ public abstract class TabularRuntimeContext extends AbstractQueryRuntimeContext 
     @Override
     public int countTuples(IInputKey key, TupleMask seedMask, ITuple seed) {
         return getIndexTable(key).countTuples(seedMask, seed);
+    }
+    
+    @Override
+    public Optional<Long> estimateCardinality(IInputKey key, TupleMask groupMask, Accuracy requiredAccuracy) {
+        return getIndexTable(key).estimateProjectionSize(groupMask, requiredAccuracy);
     }
 
     @Override

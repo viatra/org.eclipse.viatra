@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
+import java.util.Optional;
+
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -17,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextLis
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 
 /**
  * Read-only interface that provides the {@link IInputKey}-specific slice of an instance store to realize a
@@ -102,9 +105,39 @@ public interface IIndexTable {
      */
     public boolean containsTuple(ITuple seed);
 
+    /**
+     * Returns the number of tuples, optionally seeded with the given tuple.
+     * 
+     * <p>
+     * Selects the tuples in the table, optionally seeded with the given tuple, and then returns their number.
+     * 
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value; must not be null. <strong>Note</strong>: any given index must occur at most
+     *            once in seedMask.
+     * @param seed
+     *            the tuple of fixed values restricting the row set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered row tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(row)) should hold. Must not be null.
+     * @return the number of tuples in the table for the given key and seed
+     * 
+     */
     public int countTuples(TupleMask seedMask, ITuple seed);
 
-     /**
+    /**
+     * Gives an estimate of the number of different groups the tuples of the table are projected into by the given mask
+     * (e.g. for an identity mask, this means the full relation size). The estimate must meet the required accuracy.
+     * 
+     * <p> Derived tables may return {@link Optional<Long>#empty()} if it would be costly to provide an answer up to the required precision.
+     * Direct storage tables are expected to always be able to give an exact count.  
+     *  
+     * <p> PRE: {@link TupleMask#isNonrepeating()} must hold for the group mask.
+     * 
+     * @since 2.1
+     */
+    public Optional<Long> estimateProjectionSize(TupleMask groupMask, Accuracy requiredAccuracy);
+    
+    /**
      * Subscribes for updates in the table, optionally seeded with the given tuple.
      * <p> This should be called after initializing a result cache by an enumeration method.
      *

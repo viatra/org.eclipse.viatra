@@ -25,6 +25,12 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 public interface PConstraint extends PTraceable {
 
     /**
+     * @since 2.1
+     * @return the query body this constraint belongs to
+     */
+    public PBody getBody();
+
+    /**
      * All variables affected by this constraint.
      */
     public Set<PVariable> getAffectedVariables();
@@ -52,6 +58,7 @@ public interface PConstraint extends PTraceable {
      */
     public abstract int getMonotonousID();
     
+
     /**
      * A comparator that orders constraints by their {@link #getMonotonousID() monotonous identifiers}. Should only used
      * for tiebreaking in other comparators.
@@ -60,4 +67,6 @@ public interface PConstraint extends PTraceable {
      */
     public static final Comparator<PConstraint> COMPARE_BY_MONOTONOUS_ID = (arg0, arg1) -> arg0.getMonotonousID() - arg1.getMonotonousID();
 
+    
+    
 }

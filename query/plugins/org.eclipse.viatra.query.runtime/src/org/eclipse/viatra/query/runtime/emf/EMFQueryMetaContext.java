@@ -123,10 +123,26 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
         if (key instanceof EStructuralFeatureInstancesKey) {
             EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
             if (feature instanceof EReference){
-                return ((EReference) feature).isResolveProxies();
+                return canLeadOutOfScope((EReference) feature);
             }
         }
         return false;
+    }
+
+    /**
+     * Tells whether the given reference may lead out of scope.
+     * @since 2.1
+     */
+    public boolean canLeadOutOfScope(EReference reference) {
+        // Is it possible that this edge is dangling, i.e. its target lies outside of the scope?
+        // Unless non-dangling is globally assumed,
+        // proxy-resolving references (incl. containment) might point to proxies and are thus considered unsafe.
+        // Additionally, if the scope is sub-resource (containment subtree of object),
+        // all non-containment edges are also unsafe.
+        // Note that in case of cross-resource containment,
+        // the scope includes the contained object even if it is in a foreign resource.
+        return (!assumeNonDangling)
+                && (reference.isResolveProxies() || (subResourceScopeSplit && !reference.isContainment()));
     }
     
     @Override
@@ -150,6 +166,29 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
         } else {
             return Collections.emptyMap();
         }
+    }
+    
+    /**
+     * @since 2.1
+     */
+    public EClassTransitiveInstancesKey getSourceTypeKey(EStructuralFeatureInstancesKey key) {
+        return new EClassTransitiveInstancesKey(key.getEmfKey().getEContainingClass());
+    }
+    /**
+     * @since 2.1
+     */
+    public IInputKey getTargetTypeKey(EStructuralFeatureInstancesKey key) {
+        EStructuralFeature feature = key.getEmfKey();
+        if (feature instanceof EAttribute) {
+            return new EDataTypeInSlotsKey(((EAttribute) feature).getEAttributeType());            
+        } else if (feature instanceof EReference) {
+            EClass eReferenceType = ((EReference) feature).getEReferenceType();
+            if (canLeadOutOfScope(key)) {
+                return new EClassUnscopedTransitiveInstancesKey(eReferenceType);            
+            } else {
+                return new EClassTransitiveInstancesKey(eReferenceType);            
+            }
+        } else throw new IllegalArgumentException();
     }
     
     @Override
@@ -224,17 +263,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
             if (feature instanceof EReference) {
                 EReference reference = (EReference) feature;
 
-                // Is it possible that this edge is dangling, i.e. its target lies outside of the scope?
-                // Unless non-dangling is globally assumed,
-                // proxy-resolving references (incl. containment) might point to proxies and are thus considered unsafe.
-                // Additionally, if the scope is sub-resource (containment subtree of object),
-                // all non-containment edges are also unsafe.
-                // Note that in case of cross-resource containment,
-                // the scope includes the contained object even if it is in a foreign resource.
-                boolean danglingPossible = (!assumeNonDangling)
-                        && (reference.isResolveProxies() || (subResourceScopeSplit && !reference.isContainment()));
-
-                if (!danglingPossible) {
+                if (!canLeadOutOfScope(reference)) {
                     impliedTarget = new EClassTransitiveInstancesKey((EClass) targetType);
                 } else {
                     impliedTarget = (UnscopedTypeSupport.EMIT_NEVER != emitUnscopedEClassTypes) ? 
@@ -251,7 +280,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 
             // opposite
             EReference opposite = featureOpposite(feature);
-            if (opposite != null) {
+            if (opposite != null && !canLeadOutOfScope((EReference) feature)) {
                 EStructuralFeatureInstancesKey impliedOpposite = new EStructuralFeatureInstancesKey(opposite);
                 result.add(new InputKeyImplication(implyingKey, impliedOpposite, Arrays.asList(1, 0)));
             }

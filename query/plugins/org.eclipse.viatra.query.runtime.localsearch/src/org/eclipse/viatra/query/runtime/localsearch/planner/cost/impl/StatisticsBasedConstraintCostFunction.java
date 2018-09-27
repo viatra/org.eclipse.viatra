@@ -9,19 +9,25 @@
  */
 package org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl;
 
+import static org.eclipse.viatra.query.runtime.matchers.planning.helpers.StatisticsHelper.min;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.AbstractLocalSearchResultProvider;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
+import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
@@ -38,10 +44,16 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Consta
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * Cost function which calculates cost based on the cardinality of items in the runtime model
+ * 
+ * <p> To provide custom statistics, override 
+ *  {@link #projectionSize(IConstraintEvaluationContext, IInputKey, TupleMask, Accuracy)} 
+ *  and {@link #bucketSize(IQueryReference, IConstraintEvaluationContext, TupleMask)}.
  * 
  * @author Grill Balázs
  * @since 1.4
@@ -50,8 +62,67 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     protected static final double MAX_COST = 250.0;
 
     protected static final double DEFAULT_COST = StatisticsBasedConstraintCostFunction.MAX_COST - 100.0;
+        
+    /**
+     * @since 2.1
+     */
+    public static final double INVERSE_NAVIGATION_PENALTY_DEFAULT =      1.0;
+    /**
+     * @since 2.1
+     */
+    public static final double INVERSE_NAVIGATION_PENALTY_GENERIC =  0.01;
+    
+    
+    private final double inverseNavigationPenalty;
+    
+    
+    /**
+     * @since 2.1
+     */
+    public StatisticsBasedConstraintCostFunction(double inverseNavigationPenalty) {
+        super();
+        this.inverseNavigationPenalty = inverseNavigationPenalty;
+    }
+    public StatisticsBasedConstraintCostFunction() {
+        this(INVERSE_NAVIGATION_PENALTY_DEFAULT);
+    }
 
-    public abstract long countTuples(final IConstraintEvaluationContext input, final IInputKey supplierKey);
+    /**
+     * @deprecated call and implement {@link #projectionSize(IConstraintEvaluationContext, IInputKey, TupleMask, Accuracy)} instead
+     */
+    @Deprecated
+    public long countTuples(final IConstraintEvaluationContext input, final IInputKey supplierKey) {
+        return projectionSize(input, supplierKey, TupleMask.identity(supplierKey.getArity()), Accuracy.EXACT_COUNT).orElse(-1L);
+    }
+    
+    /**
+     * Override this to provide custom statistics on edge/node counts.
+     * New implementors shall implement this instead of {@link #countTuples(IConstraintEvaluationContext, IInputKey)}
+     * @since 2.1
+     */
+    public Optional<Long> projectionSize(final IConstraintEvaluationContext input, final IInputKey supplierKey,
+            final TupleMask groupMask, Accuracy requiredAccuracy) {
+        long legacyCount = countTuples(input, supplierKey);
+        return legacyCount < 0 ? Optional.empty() : Optional.of(legacyCount);
+    }
+
+    /**
+     * Override this to provide custom estimates for match set sizes of called patterns.
+     * @since 2.1
+     */
+    public Optional<Double> bucketSize(final IQueryReference patternCall,
+            final IConstraintEvaluationContext input, TupleMask projMask) {
+        IQueryResultProvider resultProvider = input.resultProviderRequestor().requestResultProvider(patternCall, null);
+        // TODO hack: use LS cost instead of true bucket size estimate
+        if (resultProvider instanceof AbstractLocalSearchResultProvider) {
+            double estimatedCost = ((AbstractLocalSearchResultProvider) resultProvider).estimateCost(projMask);
+            return Optional.of(estimatedCost);
+        } else {            
+            return resultProvider.estimateAverageBucketSize(projMask, Accuracy.APPROXIMATION);
+        }
+    }
+   
+    
 
     @Override
     public double apply(final IConstraintEvaluationContext input) {
@@ -73,7 +144,6 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             return calculateUnaryConstraintCost(constraint, input);
         } else if ((arity == 2)) {
             // binary constraint
-            long edgeCount = countTuples(input, supplierKey);
             PVariable srcVariable = ((PVariable) constraint.getVariablesTuple().get(0));
             PVariable dstVariable = ((PVariable) constraint.getVariablesTuple().get(1));
             boolean isInverse = false;
@@ -81,91 +151,100 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             if ((freeMaskVariables.contains(srcVariable) && boundMaskVariables.contains(dstVariable))) {
                 isInverse = true;
             }
-            double binaryExtendCost = calculateBinaryExtendCost(supplierKey, srcVariable, dstVariable, isInverse,
-                    edgeCount, input);
+            double binaryExtendCost = calculateBinaryCost(supplierKey, srcVariable, dstVariable, isInverse, input);
             // Make inverse navigation slightly more expensive than forward navigation
             // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=501078
-            return (isInverse) ? binaryExtendCost + 1.0 : binaryExtendCost;
+            return (isInverse) ? binaryExtendCost + inverseNavigationPenalty : binaryExtendCost;
         } else {
             // n-ary constraint
             throw new UnsupportedOperationException("Cost calculation for arity " + arity + " is not implemented yet");
         }
     }
 
+    
+    /**
+     * @deprecated use/implement {@link #calculateBinaryCost(IInputKey, PVariable, PVariable, boolean, IConstraintEvaluationContext)} instead
+     */
+    @Deprecated
     protected double calculateBinaryExtendCost(final IInputKey supplierKey, final PVariable srcVariable,
-            final PVariable dstVariable, final boolean isInverse, final long edgeCount,
+            final PVariable dstVariable, final boolean isInverse, long edgeCount /* TODO remove */,
+            final IConstraintEvaluationContext input) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * @since 2.1
+     */
+    protected double calculateBinaryCost(final IInputKey supplierKey, final PVariable srcVariable,
+            final PVariable dstVariable, final boolean isInverse, 
             final IConstraintEvaluationContext input) {
         final Collection<PVariable> freeMaskVariables = input.getFreeVariables();
         final PConstraint constraint = input.getConstraint();
-        IQueryMetaContext metaContext = input.getRuntimeContext().getMetaContext();
+        
+//        IQueryMetaContext metaContext = input.getRuntimeContext().getMetaContext();
+//        Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey);
 
-        Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey);
-
-        double srcCount = -1;
-        double dstCount = -1;
-        // Obtain runtime information
-        for (final InputKeyImplication implication : implications) {
-            if (! implication.getImpliedKey().isEnumerable()) 
-                continue;
-            
-            List<Integer> impliedIndices = implication.getImpliedIndices();
-            if (impliedIndices.size() == 1 && impliedIndices.contains(0)) {
-                // Source key implication
-                long estimate = this.countTuples(input, implication.getImpliedKey());
-                if (srcCount < 0 || srcCount > estimate) srcCount = estimate;
-            } else if (impliedIndices.size() == 1 && impliedIndices.contains(1)) {
-                // Target key implication
-                long estimate = this.countTuples(input, implication.getImpliedKey());
-                if (dstCount < 0 || dstCount > estimate) dstCount = estimate;
-            }
-        }
+        Optional<Long> edgeUpper = projectionSize(input,   supplierKey,    TupleMask.identity(2),          Accuracy.BEST_UPPER_BOUND);
+        Optional<Long> srcUpper  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(0, 2),   Accuracy.BEST_UPPER_BOUND);
+        Optional<Long> dstUpper  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(1, 2),   Accuracy.BEST_UPPER_BOUND);
 
         if (freeMaskVariables.contains(srcVariable) && freeMaskVariables.contains(dstVariable)) {
-            // both variables unbound, iterate over edges 
-            if (edgeCount > -1) {
-                return edgeCount;
-            } else { // edge count unknown, estimate from product of node counts
-                return (dstCount > -1 ? dstCount : DEFAULT_COST) * 
-                       (srcCount > -1 ? srcCount : DEFAULT_COST);                
-            }
-                
+            Double branchCount = edgeUpper.map(Long::doubleValue).orElse(
+                    srcUpper.map(Long::doubleValue).orElse(DEFAULT_COST)
+                    *
+                    dstUpper.map(Long::doubleValue).orElse(DEFAULT_COST)
+            );      
+            return branchCount;
+            
         } else {
-            double srcNodeCount = (isInverse) ? dstCount : srcCount;
-            double dstNodeCount = (isInverse) ? srcCount : dstCount;
-
-            double costEstimate = Double.POSITIVE_INFINITY;
+            
+            Optional<Long> srcLower  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(0, 2),   Accuracy.BEST_LOWER_BOUND);
+            Optional<Long> dstLower  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(1, 2),   Accuracy.BEST_LOWER_BOUND);
+            
+            List<Optional<Long>> nodeLower = Arrays.asList(srcLower, dstLower);
+            List<Optional<Long>> nodeUpper = Arrays.asList(srcUpper, dstUpper);
+            
+            int from = isInverse ? 1 : 0;
+            int to   = isInverse ? 0 : 1;
+            
+            Optional<Double> costEstimate = Optional.empty();
             
             if (!freeMaskVariables.contains(srcVariable) && !freeMaskVariables.contains(dstVariable)) {
                 // both variables bound, this is a simple check
-                costEstimate = Math.min(costEstimate, 0.9);
+                costEstimate = min(costEstimate, 0.9);
+            } // TODO use bucket size estimation in the runtime context
+            costEstimate = min(costEstimate, 
+                edgeUpper.flatMap((edges) -> 
+                nodeLower.get(from).map((fromNodes) ->
+                    // amortize edges over start nodes
+                    (fromNodes == 0) ? 0.0 : (((double) edges) / fromNodes)
+            )));
+            if (navigatesThroughFunctionalDependencyInverse(input, constraint)) {
+                costEstimate = min(costEstimate, 
+                        nodeUpper.get(to).flatMap((toNodes) -> 
+                        nodeLower.get(from).map((fromNodes) ->
+                        // due to a reverse functional dependency, the destination count is an upper bound for the edge count
+                        (fromNodes == 0) ? 0.0 : ((double) toNodes) / fromNodes
+                    )));
             }
-            if (srcNodeCount > -1 && edgeCount > -1) {
-                // The end nodes had implied (type) constraint and both nodes and adjacent edges are indexed
-                double amortizedEdgeCount = (srcNodeCount == 0) ? 0.0 : ((double) edgeCount) / srcNodeCount;
-                costEstimate = Math.min(costEstimate, amortizedEdgeCount);
-            } 
-            if (srcNodeCount > -1 && dstNodeCount > -1 && navigatesThroughFunctionalDependencyInverse(input, constraint)) {
-                // Both of the end nodes had implied (type) constraint, and 
-                // due to a reverse functional dependency, the destination count is an upper bound for the edge count
-                double amortizedEdgeLimit = (srcNodeCount == 0) ? 0.0 : ((double) dstNodeCount) / srcNodeCount;
-                costEstimate = Math.min(costEstimate, amortizedEdgeLimit);
-            }
-            if (srcNodeCount > -1 && dstNodeCount > -1 && edgeCount < 0) {
-                // Both of the end nodes had implied (type) constraint
-                // If count is 0, no such element exists in the model, so there will be no branching
-                // TODO rethink, why dstNodeCount / srcNodeCount instead of dstNodeCount? 
-                // The universally valid bound would be something like sparseEdgeEstimate = dstNodeCount + 1.0
-                // If we assume sparseness, we can reduce it by a SPARSENESS_FACTOR (e.g. 0.1). 
-                // Alternatively, discount dstNodeCount * srcNodeCount on a SPARSENESS_EXPONENT (e.g 0.75) and then amortize over srcNodeCount.
-                double sparseEdgeEstimate = srcNodeCount != 0 ? Math.max(1.0, ((double) dstNodeCount) / srcNodeCount) : 1.0;
-                costEstimate = Math.min(costEstimate, sparseEdgeEstimate);
+            if (! edgeUpper.isPresent()) {
+                costEstimate = min(costEstimate, 
+                        nodeUpper.get(to).flatMap((toNodes) -> 
+                        nodeLower.get(from).map((fromNodes) ->
+                        // If count is 0, no such element exists in the model, so there will be no branching
+                        // TODO rethink, why dstNodeCount / srcNodeCount instead of dstNodeCount? 
+                        // The universally valid bound would be something like sparseEdgeEstimate = dstNodeCount + 1.0
+                        // If we assume sparseness, we can reduce it by a SPARSENESS_FACTOR (e.g. 0.1). 
+                        // Alternatively, discount dstNodeCount * srcNodeCount on a SPARSENESS_EXPONENT (e.g 0.75) and then amortize over srcNodeCount.
+                        fromNodes != 0 ? Math.max(1.0, ((double) toNodes) / fromNodes) : 1.0
+                    )));
             } 
             if (navigatesThroughFunctionalDependency(input, constraint)) {
                 // At most one destination value
-                costEstimate = Math.min(costEstimate, 1.0); 
+                costEstimate = min(costEstimate, 1.0); 
             }
             
-            return (Double.POSITIVE_INFINITY == costEstimate) ? DEFAULT_COST : costEstimate;
+            return costEstimate.orElse(DEFAULT_COST);
 
         }
     }
@@ -217,22 +296,17 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     }
 
     protected double _calculateCost(final PositivePatternCall patternCall, final IConstraintEvaluationContext input) {
-        final Map<Set<PVariable>, Set<PVariable>> dependencies = input.getQueryAnalyzer()
-                .getFunctionalDependencies(Collections.singleton(patternCall), false);
-        final Set<PVariable> boundOrImplied = FunctionalDependencyHelper.closureOf(input.getBoundVariables(),
-                dependencies);
+        final List<Integer> boundPositions = new ArrayList<>();
         final List<PParameter> parameters = patternCall.getReferredQuery().getParameters();
-        double result = 1.0;
-        // TODO this is currently works with declared types only. For better results, information from
-        // the Type inferrer should be included in the PSystem
         for (int i = 0; (i < parameters.size()); i++) {
             final PVariable variable = patternCall.getVariableInTuple(i);
-            final IInputKey type = parameters.get(i).getDeclaredUnaryType();
-            double multiplier = (boundOrImplied.contains(variable)) ? 0.9 : (type == null || !type.isEnumerable()) ? DEFAULT_COST : countTuples(input, type);
-            result *= multiplier;
+            if (input.getBoundVariables().contains(variable)) boundPositions.add(i);
         }
-        return result;
+        TupleMask projMask = TupleMask.fromSelectedIndices(parameters.size(), boundPositions);
+        
+        return bucketSize(patternCall, input, projMask).orElse(DEFAULT_COST);        
     }
+
 
     /**
      * @since 1.7
@@ -273,14 +347,16 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
      * @since 1.7
      */
     protected double _calculateCost(final BinaryTransitiveClosure closure, final IConstraintEvaluationContext input) {
-        return _calculateCost((PConstraint)closure, input);
+        // if (input.getFreeVariables().size() == 1) return 3.0; 
+        return StatisticsBasedConstraintCostFunction.DEFAULT_COST;
     }
     
     /**
      * @since 2.0
      */
     protected double _calculateCost(final BinaryReflexiveTransitiveClosure closure, final IConstraintEvaluationContext input) {
-        return _calculateCost((PConstraint)closure, input);
+        // if (input.getFreeVariables().size() == 1) return 3.0; 
+        return StatisticsBasedConstraintCostFunction.DEFAULT_COST;
     }
     
     /**

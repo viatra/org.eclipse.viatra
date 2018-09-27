@@ -87,7 +87,17 @@ public abstract class BasePConstraint implements PConstraint {
     public void checkSanity() {
     }
 
+    /**
+     * For backwards compatibility. Equivalent to {@link #getBody()}
+     */
     public PBody getPSystem() {
+        return pBody;
+    }
+    /**
+     * @since 2.1
+     */
+    @Override
+    public PBody getBody() {
         return pBody;
     }
     

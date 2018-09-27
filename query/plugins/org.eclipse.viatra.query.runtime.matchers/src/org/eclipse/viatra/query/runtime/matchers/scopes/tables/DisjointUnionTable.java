@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -23,6 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
@@ -74,6 +76,35 @@ public class DisjointUnionTable extends AbstractIndexTable {
         return count;
     }
 
+
+    @Override
+    public Optional<Long> estimateProjectionSize(TupleMask groupMask, Accuracy requiredAccuracy) {
+        // exact results for trivial projections
+        if (groupMask.getSize() == 0) {
+            for (IIndexTable child : childTables) {
+                if (0 != child.countTuples(this.emptyMask, Tuples.staticArityFlatTupleOf()))
+                    return Optional.of(1L);
+            }
+            return Optional.of(0L);
+        } else if (groupMask.getSize() == emptyTuple.getSize()) {
+            return Optional.of((long)countTuples(this.emptyMask, Tuples.staticArityFlatTupleOf()));
+        }
+        // summing child tables is an upper bound
+        if (Accuracy.BEST_UPPER_BOUND.atLeastAsPreciseAs(requiredAccuracy)) {
+            return Optional.of((long)countTuples(this.emptyMask, Tuples.staticArityFlatTupleOf()));
+        } else { // (Accuracy.BEST_LOWER_BOUND == requiredAccuracy)  
+            //projections of child tables may coincide, but the largest one is still a lower bound
+            Optional<Long> maxProjection = Optional.empty();
+            for (IIndexTable child : childTables) {
+                Optional<Long> estimateOfChild = child.estimateProjectionSize(groupMask, requiredAccuracy);
+                if (estimateOfChild.isPresent()) {
+                    maxProjection = Optional.of(Math.max(estimateOfChild.get(), maxProjection.orElse(0L)));
+                }
+            }
+            return maxProjection;
+        } 
+    }
+    
     @Override
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
         return () -> {
