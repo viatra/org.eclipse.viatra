@@ -57,7 +57,6 @@ public class LocalSearchRuntimeBasedStrategy {
         PBody pBody;
         pBody = searchPlan.getAssociatedPBody();
         
-        // 1. INITIALIZATION
         // Create a starting plan
         SubPlanFactory subPlanFactory = new SubPlanFactory(pBody);
 

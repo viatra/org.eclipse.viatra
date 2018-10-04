@@ -23,7 +23,11 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
 /**
- * This class represents the state of the plan during planning
+ * This class represents the state of the plan during planning.
+ * 
+ * <p> A PlanState represents a sequence of operations (operationsList) and caches the computed cost 
+ * for this operation sequence. The list and the cost are initialized in the constructor. 
+ * However, #categorizeChecks() also updates the operations list (by suffixing checks)
  * 
  * @author Marton Bur
  * @noreference This class is not intended to be referenced by clients.

@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.localsearch.matcher.CallWithAdornment;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -32,14 +31,14 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
  */
 public class SearchPlanForBody {
 
-    private PBody body;
-    private Map<PVariable, Integer> variableKeys;
-    private int[] parameterKeys;
-    private SubPlan plan;
-    private List<ISearchOperation> compiledOperations;
-    private Collection<CallWithAdornment> dependencies;
-    private double cost;
-    private Object internalRepresentation;
+    private final PBody body;
+    private final Map<PVariable, Integer> variableKeys;
+    private final int[] parameterKeys;
+    private final SubPlan plan;
+    private final List<ISearchOperation> compiledOperations;
+    private final Collection<CallWithAdornment> dependencies;
+    private final double cost;
+    private final Object internalRepresentation;
     
     /**
      * @since 2.1

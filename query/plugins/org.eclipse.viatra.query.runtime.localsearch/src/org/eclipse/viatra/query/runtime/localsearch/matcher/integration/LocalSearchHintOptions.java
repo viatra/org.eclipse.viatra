@@ -15,7 +15,6 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBas
 import org.eclipse.viatra.query.runtime.matchers.backend.ICallDelegationStrategy;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NeverFlattenCallPredicate;
 
 /**
  * 
