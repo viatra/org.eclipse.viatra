@@ -11,12 +11,13 @@
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
@@ -30,10 +31,8 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 /**
  * This class contains the logic for local search plan calculation based on costs of the operations.
@@ -49,6 +48,9 @@ import com.google.common.collect.Sets.SetView;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class LocalSearchRuntimeBasedStrategy {
+    
+    private final OperationCostComparator infoComparator = new OperationCostComparator();
+
 
     /**
      * Converts a plan to the standard format
@@ -109,24 +111,46 @@ public class LocalSearchRuntimeBasedStrategy {
     private PlanState calculateSearchPlan(PBody pBody, Set<PVariable> initialBoundVariables, int k,
             List<Set<PVariable>> reachableBoundVariableSets, List<PConstraintInfo> allMaskInfos) {
 
+        List<PConstraintInfo> allPotentialExtendInfos = new ArrayList<>();
+        List<PConstraintInfo> allPotentialCheckInfos = new ArrayList<>();
+        Map<PVariable, List<PConstraintInfo>> checkOpsByVariables = new HashMap<>();
+        Map<PVariable, Collection<PConstraintInfo>> extendOpsByBoundVariables = new HashMap<>();
+        
+        for (PConstraintInfo op : allMaskInfos) {
+            if (op.getFreeVariables().isEmpty()) { // CHECK
+                allPotentialCheckInfos.add(op);
+            } else { // EXTEND
+                allPotentialExtendInfos.add(op);
+                for (PVariable variable : op.getBoundVariables()) {
+                    extendOpsByBoundVariables.computeIfAbsent(variable, (v) -> new ArrayList<>()).add(op);
+                }
+            }
+        }
+        // For CHECKs only, we must start from lists that are ordered by the cost of the constraint application
+        Collections.sort(allPotentialCheckInfos, infoComparator);  // costs are eagerly needed for check ops          
+        for (PConstraintInfo op : allPotentialCheckInfos) {
+            for (PVariable variable : op.getBoundVariables()) {
+                checkOpsByVariables.computeIfAbsent(variable, (v) -> new ArrayList<>()).add(op);
+            }
+        }
+        // costs are not needed for extend ops until they are first applied (TODO make cost computaiton on demand) 
+        
+        
         // rename for better understanding
         Set<PVariable> boundVariables = initialBoundVariables;
-        
         Set<PVariable> freeVariables = Sets.difference(pBody.getUniqueVariables(), initialBoundVariables);
 
+        int variableCount = pBody.getUniqueVariables().size();
         int n = freeVariables.size();
 
         List<List<PlanState>> stateTable = initializeStateTable(k, n);
 
         // Set initial state: begin with an empty operation list
-        PlanState initialState = new PlanState(pBody, new ArrayList<>(), boundVariables);
-        
-        // It is needed to start from a list that is ordered by the cost of the constraint application
-        OperationCostComparator infoComparator = new OperationCostComparator();
-        Collections.sort(allMaskInfos, infoComparator);
+        PlanState initialState = new PlanState(pBody, boundVariables);
         
         // Initial state creation, categorizes all operations; add present checks to operationsList
-        initialState.updateOperations(allMaskInfos, allMaskInfos);
+        initialState.updateExtends(allPotentialExtendInfos);
+        initialState.applyChecks(allPotentialCheckInfos);
         stateTable.get(n).add(0, initialState);
         
         // stateTable.get(0) will contain the states with adornment B*
@@ -137,19 +161,21 @@ public class LocalSearchRuntimeBasedStrategy {
                 for (PConstraintInfo constraintInfo : currentState.getPresentExtends()) {
                     // for each present EXTEND operation
                     PlanState newState = calculateNextState(currentState, constraintInfo);
+                    // also eagerly perform any CHECK operations that become applicable (extends still deferred)
+                    newState.applyChecksBasedOnDelta(checkOpsByVariables);
                     
                     if(currentState.getBoundVariables().size() == newState.getBoundVariables().size()){
                         // This means no variable binding was done, go on with the next constraint info
                         continue;
                     }
-                    int i2 = Sets.difference(pBody.getUniqueVariables(), newState.getBoundVariables()).size();
-                    updateOperations(newState, currentState, constraintInfo); // also perform any CHECK operations 
+                    int i2 = variableCount - newState.getBoundVariables().size();
                     
                     List<Integer> newIndices = determineIndices(stateTable, i2, newState, k);
                     int a = newIndices.get(0);
                     int c = newIndices.get(1);
 
                     if (checkInsertCondition(stateTable.get(i2), newState, reachableBoundVariableSets, a, c, k)) {
+                        updateExtends(newState, currentState, extendOpsByBoundVariables); // preprocess next steps 
                         insert(stateTable,i2, newState, a, c, k);
                     }
                 }
@@ -176,36 +202,15 @@ public class LocalSearchRuntimeBasedStrategy {
         }
     }
 
-    private void updateOperations(PlanState newState, PlanState currentState, PConstraintInfo constraintInfo) {
+    private void updateExtends(PlanState newState, PlanState currentState,  
+            Map<PVariable, ? extends Collection<PConstraintInfo>> extendOpsByBoundVariables) 
+    {
         List<PConstraintInfo> presentExtends = currentState.getPresentExtends();
-        List<PConstraintInfo> futureExtends = currentState.getFutureExtends();
-        // Compile the list of extend operations
-        List<PConstraintInfo> extendz = merge(presentExtends,futureExtends);
-                
-        // Check operations
-        newState.updateOperations(extendz, currentState.getFutureChecks());
+
+        // Recategorize operations
+        newState.updateExtendsBasedOnDelta(presentExtends, extendOpsByBoundVariables);
         
         return;
-    }
-
-    private List<PConstraintInfo> merge(List<PConstraintInfo> presentExtensionsForState, List<PConstraintInfo> futureExtensionsForState) {
-        int presentExtensionsIndex = 0;
-        int futureExtensionsIndex = 0;
-        int extensionIndex = 0;
-
-        List<PConstraintInfo> extensions = new ArrayList<>();
-
-        while (presentExtensionsIndex < presentExtensionsForState.size() || futureExtensionsIndex < futureExtensionsForState.size()) {
-            if (futureExtensionsIndex >= futureExtensionsForState.size() || (presentExtensionsIndex < presentExtensionsForState.size() && presentExtensionsForState.get(presentExtensionsIndex).getCost() < futureExtensionsForState.get(futureExtensionsIndex).getCost())) {
-                extensions.add(extensionIndex, presentExtensionsForState.get(presentExtensionsIndex));
-                presentExtensionsIndex++;
-            } else {
-                extensions.add(extensionIndex, futureExtensionsForState.get(futureExtensionsIndex));
-                futureExtensionsIndex++;
-            }
-            extensionIndex++;
-        }
-        return extensions;
     }
 
     private boolean checkInsertCondition(List<PlanState> list, PlanState newState,
@@ -242,15 +247,7 @@ public class LocalSearchRuntimeBasedStrategy {
     }
 
     private PlanState calculateNextState(PlanState currentState, PConstraintInfo constraintInfo) {
-        // Create operation list based on the current state
-        ArrayList<PConstraintInfo> newOperationsList = new ArrayList<>(currentState.getOperations());
-        newOperationsList.add(constraintInfo);
-
-        // Bound the free variables
-        SetView<PVariable> allBoundVariables = Sets.union(currentState.getBoundVariables(), constraintInfo.getFreeVariables());
-        PlanState newState = new PlanState(currentState.getAssociatedPBody(), newOperationsList, allBoundVariables.immutableCopy());
-
-        return newState;
+        return currentState.cloneWithApplied(constraintInfo);
     }
 
     private List<Set<PVariable>> reachabilityAnalysis(PBody pBody, List<PConstraintInfo> constraintInfos) {
@@ -259,17 +256,5 @@ public class LocalSearchRuntimeBasedStrategy {
         return reachableBoundVariableSets;
     }
 
-    protected EClassifier extractClassifierLiteral(String packageUriAndClassifierName) {
-        int lastSlashPosition = packageUriAndClassifierName.lastIndexOf('/');
-        int scopingPosition = packageUriAndClassifierName.lastIndexOf("::");
-        String packageUri = packageUriAndClassifierName.substring(scopingPosition + 2, lastSlashPosition);
-        String classifierName = packageUriAndClassifierName.substring(lastSlashPosition + 1);
-
-        EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
-        Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);
-        EClassifier literal = ePackage.getEClassifier(classifierName);
-        Preconditions.checkState(literal != null, "Classifier %s not found in EPackage %s", classifierName, packageUri);
-        return literal;
-    }
     
 }
