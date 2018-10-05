@@ -42,7 +42,8 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     private IQueryResultProviderAccess resultProviderAccess;
     private ResultProviderRequestor resultRequestor;
 
-    private double cost;
+    private Double cost;
+    private Function<IConstraintEvaluationContext, Double> costFunction;
     
 
     /** 
@@ -61,6 +62,7 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
         ResultProviderRequestor resultRequestor,
         Function<IConstraintEvaluationContext, Double> costFunction) {
         this.constraint = constraint;
+        this.costFunction = costFunction;
         this.boundMaskVariables = new LinkedHashSet<>(boundMaskVariables);
         this.freeMaskVariables = new LinkedHashSet<>(freeMaskVariables);
         this.sameWithDifferentBindings = sameWithDifferentBindings;
@@ -69,8 +71,7 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
         this.queryAnalyzer = context.getQueryAnalyzer();
         this.resultProviderAccess = context.getResultProviderAccess();
 
-        // Calculate cost of the constraint based on its type
-        this.cost = costFunction.apply(this);
+        this.cost = null; // cost will be computed lazily (esp. important for pattern calls)
     }
     
     @Override
@@ -103,6 +104,10 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     }
 
     public double getCost() {
+        if (cost == null) {
+            // Calculate cost of the constraint based on its type
+            cost = costFunction.apply(this);
+        }
         return cost;
     }
 
