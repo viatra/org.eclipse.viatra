@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
-import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.FLATTEN_CALL_PREDICATE;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.ADORNMENT_PROVIDER;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.CALL_DELEGATION_STRATEGY;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.FLATTEN_CALL_PREDICATE;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_COST_FUNCTION;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_TABLE_ROW_COUNT;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.USE_BASE_INDEX;
-import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.ADORNMENT_PROVIDER;
 import static org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions.normalizationTraceCollector;
 
 import java.util.HashMap;
@@ -128,7 +128,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.costFunction = new IndexerBasedConstraintCostFunction(StatisticsBasedConstraintCostFunction.INVERSE_NAVIGATION_PENALTY_GENERIC);
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
         result.callDelegationStrategy = ICallDelegationStrategy.FULL_BACKEND_ADHESION;
-        result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
+        result.adornmentProvider = new LazyPlanningAdornments();
         result.backendFactory = LocalSearchGenericBackendFactory.INSTANCE;
         return result;
     }

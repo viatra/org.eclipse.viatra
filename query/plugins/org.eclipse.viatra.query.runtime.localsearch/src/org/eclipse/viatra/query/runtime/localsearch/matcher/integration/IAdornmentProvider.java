@@ -19,9 +19,11 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * An adornment provider is used to define the adornments the pattern matcher should prepare for. 
- * A default implementation is available in {@link AllValidAdornments} that describes all 
- * adornments fulfilling the parameter direction declarations.
+ * An adornment provider is used to define the adornments the pattern matcher should prepare for.
+ *  
+ * <p>A default implementation is available in {@link AllValidAdornments} that describes all 
+ * adornments fulfilling the parameter direction declarations; 
+ * another default option (with better performance but restricted applicability) is {@link LazyPlanningAdornments}.
  * 
  * <br><br>
  * 
