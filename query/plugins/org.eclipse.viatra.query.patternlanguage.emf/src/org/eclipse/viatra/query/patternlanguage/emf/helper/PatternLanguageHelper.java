@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AggregatedValue;
@@ -833,7 +834,7 @@ public final class PatternLanguageHelper {
             
             List<IInputKey> types = new ArrayList<>();
             types.add(typeSystem.extractTypeDescriptor(constraint.getSourceType()));
-            types.add(typeSystem.extractColumnDescriptor(edges.get(edges.size() - 1), 1));
+            types.add(edges.isEmpty() ? BottomTypeKey.INSTANCE : typeSystem.extractColumnDescriptor(edges.get(edges.size() - 1), 1));
             return types;
         } else {
             throw new IllegalArgumentException("Unknown relation type");
