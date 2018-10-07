@@ -40,7 +40,6 @@ import org.eclipse.sirius.business.api.dialect.command.CreateRepresentationComma
 import org.eclipse.sirius.business.api.modelingproject.ModelingProject;
 import org.eclipse.sirius.business.api.session.Session;
 import org.eclipse.sirius.business.api.session.SessionManager;
-import org.eclipse.sirius.ext.base.Option;
 import org.eclipse.sirius.tools.api.command.semantic.AddSemanticResourceCommand;
 import org.eclipse.sirius.ui.business.api.dialect.DialectUIManager;
 import org.eclipse.sirius.ui.business.api.viewpoint.ViewpointSelectionCallback;
@@ -138,7 +137,6 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
 
         PatternPackage pkg = createPackage(packageName, ted, resource);
 
-        resource.save(Collections.emptyMap());
         final AddSemanticResourceCommand addResourceCommand = new AddSemanticResourceCommand(session, fileURI, subMonitor.split(1));
         ted.getCommandStack().execute(addResourceCommand);
         
@@ -168,6 +166,7 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
                     });
             }
          }));
+        session.save(subMonitor.split(1));
         return file;
     }
 

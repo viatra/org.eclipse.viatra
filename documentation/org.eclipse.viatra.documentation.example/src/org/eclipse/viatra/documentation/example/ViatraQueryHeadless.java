@@ -23,6 +23,7 @@ import org.eclipse.viatra.documentation.example.queries.HostIpAddress;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser;
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -88,7 +89,7 @@ public class ViatraQueryHeadless {
         new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 
         // Parse pattern definition
-        PatternParsingResults parseResults = PatternParser.parser()
+        PatternParsingResults parseResults = PatternParserBuilder.instance()
                 .parse("import \"http://org.eclipse.viatra/model/cps\" \n"
                         + "\n"
                         + "pattern hostIpAddress(host: HostInstance, ip : java String) {\n"

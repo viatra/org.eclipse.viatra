@@ -130,6 +130,7 @@ public class PatternParser extends BasePatternParser{
     /**
      * @deprecated use {@link PatternParserBuilder}
      */
+    @Deprecated
     public static Builder parser() {
         return new Builder();
     }
