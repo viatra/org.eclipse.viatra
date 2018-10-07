@@ -179,7 +179,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     public ViatraQueryGeneratorModel getGeneratorModel(ResourceSet set) {
-        if (projectProvider != null) {
+        if (projectProvider != null && set != null) {
             IJavaProject javaProject = projectProvider.getJavaProject(set);
             if (javaProject != null) {
                 return getGeneratorModel(javaProject.getProject(), set);
