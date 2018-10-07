@@ -281,7 +281,10 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         } else if (type instanceof EDataTypeInSlotsKey) {
             return getJvmType(type.getEmfKey(), context)
         } else if (type instanceof JavaTransitiveInstancesKey) {
-            return typeReferences.getTypeForName(type.getWrappedKey(), context)
+            val wrappedKey = type.getWrappedKey()
+            if (!wrappedKey.nullOrEmpty) {
+                return typeReferences.getTypeForName(wrappedKey, context)
+            }
         }
         return typeReferences.getTypeForName(Object, context)
     }
