@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notification;
@@ -64,7 +65,6 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
             EStructuralFeature navigationFeature, EStructuralFeature dependantFeature, EStructuralFeature localFeature) {
         this(source, derivedFeature);
-        comprehension = new EMFModelComprehension(new BaseIndexOptions());
         addNavigatedDependencyInternal(navigationFeature, dependantFeature);
         addLocalDependencyInternal(localFeature);
     }
@@ -88,6 +88,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
     public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature) {
         super();
+        comprehension = new EMFModelComprehension(new BaseIndexOptions());
         this.source = (InternalEObject) source;
         this.derivedFeature = derivedFeature;
         source.eAdapters().add(this);
@@ -130,7 +131,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     public void notifyChanged(Notification notification) {
         logger.trace("[Source: " + derivedFeature.getName() + "] New notification: " + notification);
         for (DependentFeaturePath path : featurePaths) {
-            if (notification.getFeature().equals(path.getNavigationFeature())) {
+            if (Objects.equals(notification.getFeature(), path.getNavigationFeature())) {
                 logger.trace("Handling notification.");
                 switch (notification.getEventType()) {
                 case Notification.SET:
@@ -217,8 +218,13 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                         }
                     }
                 } else {
+                    oldValue = currentValue;
                     Object target = source.eGet(derivedFeature);
                     comprehension.traverseFeature(visitor, source, derivedFeature, target, null);
+                    if (!Objects.equals(oldValue, target)) {
+                        comprehension.traverseFeature(visitor, source, derivedFeature, target, null);
+                        currentValue = target;
+                    }             
                 }
             }
         } catch (Exception ex) {
@@ -238,7 +244,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
             @Override
             public void notifyChanged(Notification msg) {
                 logger.trace("[Dependant: " + derivedFeature.getName() + "] New notification: " + msg);
-                if (msg.getFeature().equals(dependantFeature)) {
+                if (Objects.equals(msg.getFeature(), dependantFeature)) {
                     refreshDerivedFeature();
                 }
             }
@@ -337,7 +343,9 @@ public class DerivedFeatureAdapter extends AdapterImpl {
             }
             ((Collection<EObject>) currentValue).add(target);
         } else {
-            sendSetNotification(source, feature, currentValue, target);
+            if (!Objects.equals(oldValue, target)) {
+                sendSetNotification(source, feature, currentValue, target);
+            }
         }
     }
 
