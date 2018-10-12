@@ -282,7 +282,8 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
         if (input.getBoundVariables().contains(variable)) {
             return 0.9;
         } else {
-            return countTuples(input, constraint.getSupplierKey()) + 1.0;
+            return projectionSize(input, constraint.getSupplierKey(), TupleMask.identity(1), Accuracy.APPROXIMATION)
+                    .map((count) -> 1.0 + count).orElse(DEFAULT_COST);
         }
     }
 

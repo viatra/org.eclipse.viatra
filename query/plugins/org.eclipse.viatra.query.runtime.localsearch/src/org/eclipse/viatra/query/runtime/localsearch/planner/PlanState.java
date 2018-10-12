@@ -43,8 +43,8 @@ public class PlanState {
     private final Collection<PVariable> deltaVariables; /* bound since ancestor plan */
     private final Set<PConstraint> enforcedConstraints;
     
-    private double cummulativeProduct = 1;
-    private double cost = 0;
+    private double cummulativeProduct;
+    private double cost;
 
     private static Comparator<PConstraintInfo> infoComparator = new OperationCostComparator();
 
@@ -59,7 +59,8 @@ public class PlanState {
      */
     public PlanState(PBody pBody, Set<PVariable> boundVariables) {
 
-        this(pBody, new ArrayList<>(), boundVariables, boundVariables);
+        this(pBody, new ArrayList<>(), boundVariables, boundVariables /* also the delta */, 
+                0.0 /* initial cost */, 1.0 /*initial branch count */);
     }
     
     public PlanState cloneWithApplied(PConstraintInfo op) {
@@ -79,17 +80,23 @@ public class PlanState {
         allBoundVariables.addAll(this.getBoundVariables());
         allBoundVariables.addAll(deltaVariables);
         
-        PlanState newState = new PlanState(getAssociatedPBody(), newOperationsList, allBoundVariables, deltaVariables);
+        PlanState newState = new PlanState(getAssociatedPBody(), newOperationsList, allBoundVariables, deltaVariables,
+                cost, cummulativeProduct);
         newState.accountNewOperation(op);
         return newState;
     }
 
-    private PlanState(PBody pBody, List<PConstraintInfo> operationsList, Set<PVariable> boundVariables, Collection<PVariable> deltaVariables) {
+    private PlanState(PBody pBody, List<PConstraintInfo> operationsList, 
+            Set<PVariable> boundVariables, Collection<PVariable> deltaVariables, 
+            double cost, double cummulativeProduct) 
+    {
         this.pBody = pBody;
         this.operationsList = operationsList;
         this.boundVariables = boundVariables;
         this.enforcedConstraints = new HashSet<>();
         this.deltaVariables = deltaVariables;
+        this.cost = cost;
+        this.cummulativeProduct = cummulativeProduct;
     }
 
     // NOT included for EXTEND: bind all variables of op

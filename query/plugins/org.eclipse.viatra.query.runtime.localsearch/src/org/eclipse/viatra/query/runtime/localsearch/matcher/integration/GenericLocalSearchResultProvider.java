@@ -39,6 +39,7 @@ public class GenericLocalSearchResultProvider extends AbstractLocalSearchResultP
         super.indexInitializationBeforePlanning();
         
         indexReferredTypesOfQuery(query, IndexingService.INSTANCES);
+        indexReferredTypesOfQuery(query, IndexingService.STATISTICS);
     }
 
     @Override
