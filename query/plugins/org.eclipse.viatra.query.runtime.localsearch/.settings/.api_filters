@@ -107,6 +107,12 @@
         <filter id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy"/>
+                <message_argument value="extractClassifierLiteral(String)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy"/>
                 <message_argument value="plan(PBody, Set&lt;PVariable&gt;, IQueryBackendContext, LocalSearchHints)"/>
             </message_arguments>
         </filter>
@@ -122,6 +128,32 @@
             <message_arguments>
                 <message_argument value="IConstraintEvaluationContext"/>
                 <message_argument value="PConstraintInfo"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PlanState.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
+                <message_argument value="PlanState(PBody, List&lt;PConstraintInfo&gt;, Set&lt;PVariable&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
+                <message_argument value="getFutureChecks()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
+                <message_argument value="getFutureExtends()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
+                <message_argument value="updateOperations(List&lt;PConstraintInfo&gt;, List&lt;PConstraintInfo&gt;)"/>
             </message_arguments>
         </filter>
     </resource>

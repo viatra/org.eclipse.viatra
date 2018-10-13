@@ -10,18 +10,19 @@
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
+import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
-import org.eclipse.viatra.query.runtime.matchers.backend.ResultProviderRequestor;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 
 /** 
  * Wraps a PConstraint together with information required for the planner. Currently contains information about the expected binding state of
@@ -41,7 +42,8 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     private IQueryResultProviderAccess resultProviderAccess;
     private ResultProviderRequestor resultRequestor;
 
-    private double cost;
+    private Double cost;
+    private Function<IConstraintEvaluationContext, Double> costFunction;
     
 
     /** 
@@ -60,16 +62,16 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
         ResultProviderRequestor resultRequestor,
         Function<IConstraintEvaluationContext, Double> costFunction) {
         this.constraint = constraint;
-        this.boundMaskVariables = boundMaskVariables;
-        this.freeMaskVariables = freeMaskVariables;
+        this.costFunction = costFunction;
+        this.boundMaskVariables = new LinkedHashSet<>(boundMaskVariables);
+        this.freeMaskVariables = new LinkedHashSet<>(freeMaskVariables);
         this.sameWithDifferentBindings = sameWithDifferentBindings;
         this.resultRequestor = resultRequestor;
         this.runtimeContext = context.getRuntimeContext();
         this.queryAnalyzer = context.getQueryAnalyzer();
         this.resultProviderAccess = context.getResultProviderAccess();
 
-        // Calculate cost of the constraint based on its type
-        this.cost = costFunction.apply(this);
+        this.cost = null; // cost will be computed lazily (esp. important for pattern calls)
     }
     
     @Override
@@ -102,6 +104,10 @@ public class PConstraintInfo implements IConstraintEvaluationContext {
     }
 
     public double getCost() {
+        if (cost == null) {
+            // Calculate cost of the constraint based on its type
+            cost = costFunction.apply(this);
+        }
         return cost;
     }
 

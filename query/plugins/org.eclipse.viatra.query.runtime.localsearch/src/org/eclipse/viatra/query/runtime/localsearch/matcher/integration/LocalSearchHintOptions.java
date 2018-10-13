@@ -55,7 +55,11 @@ public final class LocalSearchHintOptions {
             hintOption("CALL_DELEGATION_STRATEGY", ICallDelegationStrategy.FULL_BACKEND_ADHESION);
     
     /**
-     * A provider of expected adornments {@link IAdornmentProvider}
+     * A provider of expected adornments {@link IAdornmentProvider}. 
+     * 
+     * The safe default is {@link AllValidAdornments}; 
+     * however, the generic backend variant may safely use {@link LazyPlanningAdornments} instead. 
+     * 
      * @since 1.5
      */
     public static final QueryHintOption<IAdornmentProvider> ADORNMENT_PROVIDER = 
