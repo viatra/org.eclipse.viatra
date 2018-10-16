@@ -48,9 +48,9 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.HasMoreHostedApplications2QuerySpecification
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
 
 @RunWith(Parameterized)
 class BasicCpsTest extends AbstractQueryComparisonTest {
@@ -265,7 +265,7 @@ class BasicCpsTest extends AbstractQueryComparisonTest {
     @Test
     def void testHasMoreHostedApplications2_generic() {
         new EMFPatternLanguageStandaloneSetup().createStandaloneInjector
-        val IQuerySpecification spec = PatternParser.parser.parse('''
+        val IQuerySpecification spec = PatternParserBuilder.instance().parse('''
             package org.eclipse.viatra.query.runtime.cps.tests.queries
             
             import "http://org.eclipse.viatra/model/cps"

@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import java.util.HashSet
+import java.util.Optional
 import java.util.Set
 import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EAttribute
@@ -24,18 +25,24 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
-import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
+import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider
+import org.eclipse.viatra.query.patternlanguage.emf.types.AbstractTypeSystem
+import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey
+import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.RelationType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Type
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
-import org.eclipse.viatra.query.patternlanguage.emf.types.AbstractTypeSystem
 import org.eclipse.viatra.query.runtime.emf.EMFQueryMetaContext
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
@@ -47,18 +54,11 @@ import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.diagnostics.Severity
 
 import static com.google.common.base.Preconditions.checkArgument
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
-import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey
-import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider
-import java.util.Optional
-import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
-import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 
 /** 
  * @author Zoltan Ujhelyi
  */
-public class EMFTypeSystem extends AbstractTypeSystem {
+class EMFTypeSystem extends AbstractTypeSystem {
     static final String NON_EMF_TYPE_ENCOUNTERED = "EMF Type System only supports EMF Types but %s found."
 
     /**
@@ -66,7 +66,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
      * If the IInputKey instance does not represent an EClassifier, null is returned 
      * @since 2.0
      */
-    public static def EClassifier extractClassifierFromInputKey(IInputKey key) {
+    static def EClassifier extractClassifierFromInputKey(IInputKey key) {
         switch (key) {
             EClassTransitiveInstancesKey:
                 key.emfKey
@@ -82,7 +82,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
      * If the IInputKey instance does not represent an EClassifier, null is returned 
      * @since 2.0
      */
-    public static def EClassifier extractClassifierFromType(Type typeDeclaration) {
+    static def EClassifier extractClassifierFromType(Type typeDeclaration) {
         switch (typeDeclaration) {
             ClassType:
                 typeDeclaration.classname

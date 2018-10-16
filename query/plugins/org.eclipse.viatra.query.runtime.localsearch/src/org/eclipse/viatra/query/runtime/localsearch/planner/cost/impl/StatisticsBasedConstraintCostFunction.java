@@ -214,23 +214,21 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
                 costEstimate = min(costEstimate, 0.9);
             } // TODO use bucket size estimation in the runtime context
             costEstimate = min(costEstimate, 
-                edgeUpper.flatMap((edges) -> 
-                nodeLower.get(from).map((fromNodes) ->
+                edgeUpper.flatMap(edges -> 
+                nodeLower.get(from).map(fromNodes ->
                     // amortize edges over start nodes
                     (fromNodes == 0) ? 0.0 : (((double) edges) / fromNodes)
             )));
             if (navigatesThroughFunctionalDependencyInverse(input, constraint)) {
-                costEstimate = min(costEstimate, 
-                        nodeUpper.get(to).flatMap((toNodes) -> 
-                        nodeLower.get(from).map((fromNodes) ->
+                costEstimate = min(costEstimate, nodeUpper.get(to).flatMap(toNodes -> 
+                        nodeLower.get(from).map(fromNodes ->
                         // due to a reverse functional dependency, the destination count is an upper bound for the edge count
                         (fromNodes == 0) ? 0.0 : ((double) toNodes) / fromNodes
                     )));
             }
             if (! edgeUpper.isPresent()) {
-                costEstimate = min(costEstimate, 
-                        nodeUpper.get(to).flatMap((toNodes) -> 
-                        nodeLower.get(from).map((fromNodes) ->
+                costEstimate = min(costEstimate, nodeUpper.get(to).flatMap(toNodes -> 
+                        nodeLower.get(from).map(fromNodes ->
                         // If count is 0, no such element exists in the model, so there will be no branching
                         // TODO rethink, why dstNodeCount / srcNodeCount instead of dstNodeCount? 
                         // The universally valid bound would be something like sparseEdgeEstimate = dstNodeCount + 1.0
@@ -283,7 +281,7 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             return 0.9;
         } else {
             return projectionSize(input, constraint.getSupplierKey(), TupleMask.identity(1), Accuracy.APPROXIMATION)
-                    .map((count) -> 1.0 + count).orElse(DEFAULT_COST);
+                    .map(count -> 1.0 + count).orElse(DEFAULT_COST);
         }
     }
 

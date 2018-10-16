@@ -119,7 +119,7 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
         this.selection = selection;
     }
 
-    private IFile createVgqlFile(String containerName, String fileName, String packageName, IProgressMonitor monitor) throws IOException, CoreException {
+    private IFile createVgqlFile(String containerName, String fileName, String packageName, IProgressMonitor monitor) throws CoreException {
         final SubMonitor subMonitor = SubMonitor.convert(monitor, 7);
         IResource containerResource = root.findMember(new Path(containerName));
 

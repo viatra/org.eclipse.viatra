@@ -284,8 +284,8 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
     }
 
     protected void createCheck(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
-        int sourcePosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(0));
-        int targetPosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(1));
+        int sourcePosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(0));
+        int targetPosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(1));
         
         //The second parameter is NOT bound during execution!
         CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));
@@ -297,8 +297,8 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
      * @since 2.0
      */
     protected void createCheck(BinaryReflexiveTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
-        int sourcePosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(0));
-        int targetPosition = variableMapping.get((PVariable) binaryTransitiveClosure.getVariablesTuple().get(1));
+        int sourcePosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(0));
+        int targetPosition = variableMapping.get(binaryTransitiveClosure.getVariablesTuple().get(1));
         
         //The second parameter is NOT bound during execution!
         CallInformation information = CallInformation.create(binaryTransitiveClosure, variableMapping, Stream.of(sourcePosition).collect(Collectors.toSet()));

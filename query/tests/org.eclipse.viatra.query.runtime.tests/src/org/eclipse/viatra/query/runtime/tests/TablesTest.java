@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.lang.model.type.UnionType;
 
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -258,8 +257,7 @@ public class TablesTest {
         ITableWriterGeneric writer = writerProvider.apply(table);
         
         for (int opIndex = 0; opIndex < operations.length; ++opIndex) {
-            @SuppressWarnings("unchecked")
-            Step op = (Step)operations[opIndex];
+            Step op = operations[opIndex];
 
             stepPrefix = String.format("%s[%d]", seqPrefix, opIndex);
             

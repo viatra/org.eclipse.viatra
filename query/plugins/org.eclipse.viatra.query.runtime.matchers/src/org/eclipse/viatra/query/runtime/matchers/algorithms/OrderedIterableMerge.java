@@ -21,6 +21,10 @@ import java.util.NoSuchElementException;
  */
 public class OrderedIterableMerge {
     
+    private OrderedIterableMerge() {
+        // Hidden utility class constructor
+    }
+    
     /**
      * Lazily merges two iterables, each ordered according to a given comparator. 
      * Retains order in the result, and also eliminates any duplicates that appear in both arguments.

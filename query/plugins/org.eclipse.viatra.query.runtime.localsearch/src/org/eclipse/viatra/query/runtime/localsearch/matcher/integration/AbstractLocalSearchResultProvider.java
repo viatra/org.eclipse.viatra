@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -444,7 +443,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         for (Integer candidateForRemoval : new ArrayList<>(freeParameterIndices)) {
             List<Integer> others = Stream.concat(
                     otherDeterminingIndices.stream(), 
-                    freeParameterIndices.stream().filter((index) -> index != candidateForRemoval)
+                    freeParameterIndices.stream().filter(index -> index != candidateForRemoval)
             ).collect(Collectors.toList());
             Set<Integer> othersClosure = FunctionalDependencyHelper.closureOf(others, functionalDependencies);
             if (othersClosure.contains(candidateForRemoval)) { 
@@ -460,8 +459,8 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         for (int i = 0; (i < parameters.size()); i++) {
             final IInputKey type = parameters.get(i).getDeclaredUnaryType();
             if (freeParameterIndices.contains(i) && type != null) {
-                result = result.flatMap((accumulator) ->
-                runtimeContext.estimateCardinality(type, TupleMask.identity(1), requiredAccuracy).map((multiplier) ->
+                result = result.flatMap(accumulator ->
+                runtimeContext.estimateCardinality(type, TupleMask.identity(1), requiredAccuracy).map(multiplier ->
                     Math.min(accumulator * multiplier, ESTIMATE_CEILING /* avoid overflow */)
                 ));                    
             }

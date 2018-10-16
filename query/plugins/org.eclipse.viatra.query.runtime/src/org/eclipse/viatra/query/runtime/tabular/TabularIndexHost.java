@@ -18,10 +18,8 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.scopes.IStorageBackend;
 import org.eclipse.viatra.query.runtime.matchers.scopes.TabularRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.IIndexTable;
-import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableContext;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableWriterBinary;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableWriterUnary;
-import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableWriterUnary.Table;
 
 /**
  * Simple tabular index host. 

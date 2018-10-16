@@ -61,7 +61,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         super(target);
         frames = new IStackFrame[0];
         modelProvider = new TransformationModelProvider(agent);
-        this.transformationClass = Objects.requireNonNull(transformationClass, "Transformation Class must not be null.");;
+        this.transformationClass = Objects.requireNonNull(transformationClass, "Transformation Class must not be null.");
         this.agent = agent;
         //Register breakpoint listener
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);        

@@ -95,9 +95,9 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
             } else { // objectValues
                 switch(toBuckets) {
                 case MULTISETS:
-                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromLongs.ToMultisets.OfObjects();
+                    return new EclipseCollectionsMultiLookup.FromLongs.ToMultisets.OfObjects();
                 case SETS:
-                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromLongs.ToSets.OfObjects();
+                    return new EclipseCollectionsMultiLookup.FromLongs.ToSets.OfObjects();
                 default:
                     throw new IllegalArgumentException(toBuckets.toString());
                 }
@@ -106,18 +106,18 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
             if (longValues) { // V == java.lang.Long
                 switch(toBuckets) {
                 case MULTISETS:
-                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToMultisets.OfLongs();
+                    return new EclipseCollectionsMultiLookup.FromObjects.ToMultisets.OfLongs();
                 case SETS:
-                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToSets.OfLongs();
+                    return new EclipseCollectionsMultiLookup.FromObjects.ToSets.OfLongs();
                 default:
                     throw new IllegalArgumentException(toBuckets.toString());
                 }
             } else { // objectValues
                 switch(toBuckets) {
                 case MULTISETS:
-                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToMultisets.OfObjects();
+                    return new EclipseCollectionsMultiLookup.FromObjects.ToMultisets.OfObjects();
                 case SETS:
-                    return (IMultiLookup<K, V>) new EclipseCollectionsMultiLookup.FromObjects.ToSets.OfObjects();
+                    return new EclipseCollectionsMultiLookup.FromObjects.ToSets.OfObjects();
                 default:
                     throw new IllegalArgumentException(toBuckets.toString());
                 }

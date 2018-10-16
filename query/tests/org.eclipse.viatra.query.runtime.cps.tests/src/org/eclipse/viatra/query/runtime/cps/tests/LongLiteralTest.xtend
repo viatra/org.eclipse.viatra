@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import com.google.inject.Injector
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
 
 /**
  * This test reproduces bug 520878. As the bug only affects the generated code, this test executes the same patterns with {@link GenericQuerySpecification}
@@ -82,7 +82,7 @@ class LongLiteralTest {
         val hint = backendType.hints
         val modelProvider = new PatternBasedMatchSetModelProvider(hint)
         
-        val patterns = PatternParser.parser.withInjector(injector).parse('''
+        val patterns = PatternParserBuilder.instance().withInjector(injector).parse('''
 			package test
 			import "http://org.eclipse.viatra/model/cps"        
 			

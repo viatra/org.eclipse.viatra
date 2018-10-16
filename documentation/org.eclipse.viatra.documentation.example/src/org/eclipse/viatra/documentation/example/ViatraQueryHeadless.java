@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.viatra.documentation.example.queries.HostIpAddress;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;

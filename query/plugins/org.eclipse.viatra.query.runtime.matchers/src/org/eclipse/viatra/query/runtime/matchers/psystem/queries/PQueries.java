@@ -64,7 +64,6 @@ public final class PQueries {
     /**
      * Enumerates directly referred extensional relations (without duplicates) for the given formulation of a query.
      * @param enumerablesOnly only enumerable type constraints are considered
-     * @return 
      * @since 2.0
      */
     public static Stream<IInputKey> directlyRequiredTypesOfDisjunction(PDisjunction disjunctBodies, boolean enumerablesOnly) {

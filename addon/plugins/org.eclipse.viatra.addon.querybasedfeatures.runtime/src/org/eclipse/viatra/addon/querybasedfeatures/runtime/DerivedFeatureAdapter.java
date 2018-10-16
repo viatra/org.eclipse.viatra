@@ -259,10 +259,6 @@ public class DerivedFeatureAdapter extends AdapterImpl {
             return dependantAdapter;
         }
 
-        public EStructuralFeature getDependantFeature() {
-            return dependantFeature;
-        }
-
         public EStructuralFeature getNavigationFeature() {
             return navigationFeature;
         }

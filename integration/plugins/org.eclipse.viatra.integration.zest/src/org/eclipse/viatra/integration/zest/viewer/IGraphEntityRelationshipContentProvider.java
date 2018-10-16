@@ -35,7 +35,6 @@ public interface IGraphEntityRelationshipContentProvider extends IContentProvide
      *            A model object representing the source of an edge.
      * @param target
      *            A model object representing the target of an edge.
-     * @return 
      */
     public Object[] getEdges(Object source, Object target);
     

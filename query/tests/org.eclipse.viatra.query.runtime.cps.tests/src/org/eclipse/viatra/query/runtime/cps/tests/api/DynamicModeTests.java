@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser;
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -68,7 +68,7 @@ public class DynamicModeTests {
     }
     
     private IQuerySpecification<?> initializeQuerySpecification() throws AssertionError {
-        final PatternParsingResults results = PatternParser.parser().withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector())
+        final PatternParsingResults results = PatternParserBuilder.instance().withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector())
                 .parse("import \"http://www.example.org/model\"\n" + 
                         "\n" + 
                         "pattern BwithC(b:B,c:C){\n" + 

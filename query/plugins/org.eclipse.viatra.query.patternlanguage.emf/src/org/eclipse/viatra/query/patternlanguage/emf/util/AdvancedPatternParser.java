@@ -57,6 +57,7 @@ import com.google.common.collect.Multimap;
 @SuppressWarnings("restriction")
 public class AdvancedPatternParser extends BasePatternParser {
 
+    private static final String UNINITIALIZED_RESOURCESET_MESSAGE = "Resource set was not initialized for the parser.";
     private final Map<URI, String> uriTextMap;
     private final Map<Resource, PatternSetValidationDiagnostics> diagnosticsMap;
     private final Multimap<URI, Pattern> dependencyCache;
@@ -206,8 +207,6 @@ public class AdvancedPatternParser extends BasePatternParser {
 
     /**
      * Returns a collection of {@link URI}s that have been previously registered.
-     * 
-     * @return
      */
     public Collection<URI> getRegisteredURIs() {
         return Collections.unmodifiableCollection(uriTextMap.keySet());
@@ -248,7 +247,7 @@ public class AdvancedPatternParser extends BasePatternParser {
 
     protected AdvancedPatternParserSnapshot updatePatterns(Map<URI, String> input, Map<?, ?> options,
             ResourceSet resourceSet) {
-        Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
+        Preconditions.checkState(resourceSet != null, UNINITIALIZED_RESOURCESET_MESSAGE);
         Set<URI> uris = new HashMap<URI, String>(input).keySet();
         uris.removeAll(uriTextMap.keySet());
         Preconditions.checkState(uris.isEmpty(), "The following URIs have not been initialized yet: " + uris);
@@ -276,7 +275,7 @@ public class AdvancedPatternParser extends BasePatternParser {
 
     protected AdvancedPatternParserSnapshot addPatterns(Map<URI, String> input, Map<?, ?> options,
             ResourceSet resourceSet) {
-        Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
+        Preconditions.checkState(resourceSet != null, UNINITIALIZED_RESOURCESET_MESSAGE);
         Set<URI> uris = new HashMap<URI, String>(uriTextMap).keySet();
         uris.retainAll(input.keySet());
         Preconditions.checkState(uris.isEmpty(), "The following URIs are already in use: " + uris);
@@ -304,7 +303,7 @@ public class AdvancedPatternParser extends BasePatternParser {
     protected AdvancedPatternParserSnapshot removePatterns(Map<URI, String> input, Map<?, ?> options,
             ResourceSet resourceSet) {
         // Check preconditions
-        Preconditions.checkState(resourceSet != null, "Resource set was not initialized for the parser.");
+        Preconditions.checkState(resourceSet != null, UNINITIALIZED_RESOURCESET_MESSAGE);
         Set<URI> uris = new HashMap<URI, String>(input).keySet();
         uris.removeAll(uriTextMap.keySet());
         Preconditions.checkState(uris.isEmpty(), "The following URIs have not been initialized yet: " + uris);

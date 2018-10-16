@@ -276,7 +276,6 @@ public class PlanState {
     /**
      * Contains only those variables that are added by the newest extend 
      * (or the initially bound ones if no extend yet)
-     * @return
      */
     public Collection<PVariable> getDeltaVariables() {
         return deltaVariables;

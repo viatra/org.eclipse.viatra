@@ -33,7 +33,6 @@ public interface IGraphEdgeContentProvider extends IContentProvider, INestedGrap
      *
      * @param node
      *            A model object representing a graph edge.
-     * @return 
      */
     public Object[] getEdges();
     

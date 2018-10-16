@@ -25,6 +25,10 @@ import org.eclipse.viatra.query.runtime.matchers.util.Accuracy;
  */
 public class StatisticsHelper {
     
+    private StatisticsHelper() {
+        // Hidden utility class constructor
+    }
+    
     public static Optional<Double> estimateAverageBucketSize(TupleMask groupMask, Accuracy requiredAccuracy, 
             BiFunction<TupleMask, Accuracy, Optional<Long>> estimateCardinality) 
     {
@@ -37,8 +41,8 @@ public class StatisticsHelper {
         Optional<Long> totalCountEstimate  = estimateCardinality.apply(identityMask, numeratorAccuracy);
         Optional<Long> bucketCountEstimate = estimateCardinality.apply(groupMask,    denominatorAccuracy);
 
-        return totalCountEstimate.flatMap((matchCount) -> 
-            bucketCountEstimate.map((bucketCount) -> 
+        return totalCountEstimate.flatMap(matchCount -> 
+            bucketCountEstimate.map(bucketCount -> 
                 bucketCount == 0L ? 0L : ((double) matchCount) / bucketCount
         ));
     }

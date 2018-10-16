@@ -62,7 +62,7 @@ public final class FormatParser {
     private static void parseParameter(String name, Object value, FormatSpecification specification) {
         String key = parameterMapping.get(name);
         if (value instanceof String) {
-            specification.getProperties().put(key, (String)value);
+            specification.getProperties().put(key, value);
         } else if (value instanceof Integer) {
             specification.getProperties().put(key, Integer.toString((Integer)value));
         }

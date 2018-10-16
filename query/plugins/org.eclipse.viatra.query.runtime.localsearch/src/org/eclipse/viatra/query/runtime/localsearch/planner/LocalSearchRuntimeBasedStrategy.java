@@ -122,7 +122,7 @@ public class LocalSearchRuntimeBasedStrategy {
             } else { // EXTEND
                 allPotentialExtendInfos.add(op);
                 for (PVariable variable : op.getBoundVariables()) {
-                    extendOpsByBoundVariables.computeIfAbsent(variable, (v) -> new ArrayList<>()).add(op);
+                    extendOpsByBoundVariables.computeIfAbsent(variable, v -> new ArrayList<>()).add(op);
                 }
             }
         }
@@ -130,7 +130,7 @@ public class LocalSearchRuntimeBasedStrategy {
         Collections.sort(allPotentialCheckInfos, infoComparator);  // costs are eagerly needed for check ops          
         for (PConstraintInfo op : allPotentialCheckInfos) {
             for (PVariable variable : op.getBoundVariables()) {
-                checkOpsByVariables.computeIfAbsent(variable, (v) -> new ArrayList<>()).add(op);
+                checkOpsByVariables.computeIfAbsent(variable, v -> new ArrayList<>()).add(op);
             }
         }
         // costs are not needed for extend ops until they are first applied (TODO make cost computaiton on demand) 

@@ -491,7 +491,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
                     return estimate;
                 } else return Optional.empty();
                 
-            } else if (!isSourceSelected && isTargetSelected) { // count targets
+            } else if (!isSourceSelected /*&& isTargetSelected*/) { // count targets
                 if (isIndexed(key, IndexingService.INSTANCES)) { // we have instances, therefore feature end counts
                     return Optional.of((long)(baseIndex.getValuesOfFeature(feature).size()));
                 } else if (metaContext.isFeatureMultiplicityOneTo(feature) && 

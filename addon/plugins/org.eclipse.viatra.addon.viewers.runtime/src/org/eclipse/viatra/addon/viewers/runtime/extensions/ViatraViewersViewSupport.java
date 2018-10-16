@@ -197,7 +197,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
                 if (n instanceof ResourceSet) {
                     continue; // we cannot extract a resource from a resourceset reliably
                 } else if (n instanceof Resource) {
-                    return new EMFScope(((Resource) n));
+                    return new EMFScope(n);
                 } else {
                     EObject eO = (EObject) n;
                     return new EMFScope(eO.eResource());

@@ -11,10 +11,8 @@
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
 import java.util.Optional;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.StatisticsHelper;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -111,8 +109,7 @@ public interface IQueryResultProvider {
      * @since 2.1
      */
     public default Optional<Double> estimateAverageBucketSize(TupleMask groupMask, Accuracy requiredAccuracy) {
-        return StatisticsHelper.estimateAverageBucketSize(groupMask, requiredAccuracy, 
-                (mask, accuracy) -> this.estimateCardinality(mask, accuracy));
+        return StatisticsHelper.estimateAverageBucketSize(groupMask, requiredAccuracy, this::estimateCardinality);
     }
    
     /**
