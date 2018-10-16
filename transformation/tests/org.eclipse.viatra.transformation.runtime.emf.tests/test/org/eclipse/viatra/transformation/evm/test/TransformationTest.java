@@ -43,4 +43,14 @@ public class TransformationTest {
         Assert.assertEquals(1, new BatchTransformationWithFilter(resource).countMatches(instance));
         
     }
+    
+    @Test
+    public void javaBasedTransformationTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", true), true);
+        HostInstance instance = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0");
+        
+        Assert.assertEquals(1, new BatchTransformationWithFilterJava(resource).callCastTypeRule(instance));
+        Assert.assertEquals(1, new BatchTransformationWithFilterJava(resource).callTypeInferredRule(instance));
+    }
 }

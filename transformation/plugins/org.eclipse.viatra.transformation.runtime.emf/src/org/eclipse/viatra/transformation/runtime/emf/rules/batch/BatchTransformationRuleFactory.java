@@ -26,6 +26,15 @@ public class BatchTransformationRuleFactory {
         private String fName = "";
         private EventFilter<Match> fFilter;
         
+        public BatchTransformationRuleBuilder() {}
+        
+        /**
+         * @since 2.1
+         */
+        public BatchTransformationRuleBuilder(IQuerySpecification<Matcher> precondition) {
+            fPrecondition = precondition;
+        }
+        
         /**
          * Sets the user-understandable name of the rule. Should be unique if set.
          */
@@ -85,4 +94,10 @@ public class BatchTransformationRuleFactory {
         return new BatchTransformationRuleBuilder<>();
     }
 
+    /**
+     * @since 2.1
+     */
+    public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRuleBuilder<Match, Matcher> createRule(IQuerySpecification<Matcher> precondition) {
+        return new BatchTransformationRuleBuilder<>(precondition);
+    }
 }
