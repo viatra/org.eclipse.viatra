@@ -14,6 +14,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TransformationTest {
@@ -32,4 +34,13 @@ public class TransformationTest {
         new BatchTransformationWithConflictingRuleInstances(resource).executeOneByOne();
     }
     
+    @Test
+    public void matchParameterFilterTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", true), true);
+        HostInstance instance = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0");
+        
+        Assert.assertEquals(1, new BatchTransformationWithFilter(resource).countMatches(instance));
+        
+    }
 }

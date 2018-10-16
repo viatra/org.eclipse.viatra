@@ -46,7 +46,7 @@ public class MatchParameterFilter implements EventFilter<IPatternMatch> {
 
     @Override
     public boolean isProcessable(final IPatternMatch eventAtom) {
-        return eventAtom.parameterNames().stream()
+        return !eventAtom.parameterNames().stream()
                 .anyMatch(it -> (filterMap.containsKey(it) && (!Objects.equals(filterMap.get(it), eventAtom.get(it)))));
     }
 
