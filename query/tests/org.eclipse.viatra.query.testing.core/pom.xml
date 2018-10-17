@@ -7,7 +7,7 @@
         <artifactId>org.eclipse.viatra.parent.all</artifactId>
         <groupId>org.eclipse.viatra</groupId>
         <version>2.1.0-SNAPSHOT</version>
-        <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.core/pom.xml</relativePath>
     </parent>
     <artifactId>org.eclipse.viatra.query.testing.core</artifactId>
     <packaging>eclipse-plugin</packaging>
