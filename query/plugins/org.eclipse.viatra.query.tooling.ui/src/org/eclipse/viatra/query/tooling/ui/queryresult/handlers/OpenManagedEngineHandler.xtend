@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.tooling.ui.queryresult.util.ViatraQueryEngineLab
 import org.eclipse.ui.dialogs.ISelectionStatusValidator
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
-import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 
 /** 
  * @author Abel Hegedus
@@ -56,9 +56,9 @@ class OpenManagedEngineHandler extends AbstractHandler {
         engineSelectionDialog.validator = new ISelectionStatusValidator() {
             override validate(Object[] selection) {
                 if (selection.size == 1 && selection.filter(AdvancedViatraQueryEngine).size == 1){
-                    return new Status(IStatus.OK, ViatraQueryToolingBrowserPlugin.PLUGIN_ID, 0, "", null)
+                    return new Status(IStatus.OK, ViatraQueryGUIPlugin.PLUGIN_ID, 0, "", null)
                 } else {
-                    return new Status(IStatus.ERROR, ViatraQueryToolingBrowserPlugin.PLUGIN_ID, 0, "", null)
+                    return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, 0, "", null)
                 }
             }
         }

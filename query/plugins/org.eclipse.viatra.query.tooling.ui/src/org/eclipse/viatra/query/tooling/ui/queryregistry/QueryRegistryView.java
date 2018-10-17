@@ -43,7 +43,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin;
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory;
 import org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler;
@@ -189,8 +189,8 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
                 updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
             } catch (InterruptedException e) {
                 String logMessage = "Error while resetting Query Registry: " + e.getMessage();
-                ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
-                        ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), logMessage, e));
+                ViatraQueryGUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
+                        ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, e));
                 // Maintaining interrupted state
                 Thread.currentThread().interrupt();
             }

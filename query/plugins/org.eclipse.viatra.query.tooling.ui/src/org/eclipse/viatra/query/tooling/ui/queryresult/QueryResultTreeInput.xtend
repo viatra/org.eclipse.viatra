@@ -35,7 +35,6 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChan
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
 import org.eclipse.viatra.query.runtime.registry.IRegistryView
 import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView
-import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.IPatternBasedSpecificationProvider
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification
@@ -53,6 +52,7 @@ import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 
 /**
  * @author Abel Hegedus
@@ -273,8 +273,8 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         ]
         if(knownErrorEntries.put(entry.sourceIdentifier, entryFQN)){
             val logMessage = String.format("Query Explorer has encountered an error during evaluation of query %s: %s", entryFQN, ex.message)
-            ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(
-                    IStatus.ERROR, ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
+            ViatraQueryGUIPlugin.getDefault().getLog().log(new Status(
+                    IStatus.ERROR, ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
         }
         return treeMatcher
     }

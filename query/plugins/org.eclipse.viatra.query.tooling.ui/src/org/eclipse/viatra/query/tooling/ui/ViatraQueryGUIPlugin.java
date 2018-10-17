@@ -49,6 +49,14 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
      * @since 1.4
      */
     public static final String ICON_VIATRA = "viatra";
+    /**
+     * @since 2.1
+     */
+    public static final String ICON_BASE_OPTIONS = "base_options";
+    /**
+     * @since 2.1
+     */
+    public static final String ICON_ENGINE_OPTIONS = "engine_options";
 
     // The shared instance
     private static ViatraQueryGUIPlugin plugin;
@@ -90,6 +98,8 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
         reg.put(ICON_VQL, imageDescriptorFromPlugin(PLUGIN_ID, "icons/logo2.png"));
         reg.put(ICON_VIATRA, imageDescriptorFromPlugin(PLUGIN_ID, "icons/rsz_viatra_logo.png"));
         reg.put(ICON_PROJECT, imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/obj16/prj_obj.png"));
+        reg.put(ICON_BASE_OPTIONS, imageDescriptorFromPlugin(PLUGIN_ID, "icons/base_options.png"));
+        reg.put(ICON_ENGINE_OPTIONS, imageDescriptorFromPlugin(PLUGIN_ID, "icons/engine_options.png"));
     }
 
     public void logException(String message, Throwable exception) {

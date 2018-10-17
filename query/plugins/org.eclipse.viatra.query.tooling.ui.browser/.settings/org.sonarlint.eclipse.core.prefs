@@ -1,6 +1,0 @@
-autoEnabled=true
-eclipse.preferences.version=1
-extraProperties=
-moduleKey=org.eclipse.viatra\:org.eclipse.viatra.query.tooling.ui.browser
-projectKey=org.eclipse.viatra\:org.eclipse.viatra.parent.all
-serverId=build

@@ -60,8 +60,8 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.EMFModelConnector;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnectorListener;
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
-import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory;
@@ -410,8 +410,8 @@ public class QueryResultView extends ViewPart {
             contentLoaderJob.join();
         } catch (InterruptedException e) {
             String msg = "Error while stopping loading queries: " + e.getMessage();
-            ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
-                    ViatraQueryToolingBrowserPlugin.getDefault().getBundle().getSymbolicName(), msg, e));
+            ViatraQueryGUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
+                    ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), msg, e));
             
          // Maintaining interrupted state
             Thread.currentThread().interrupt();

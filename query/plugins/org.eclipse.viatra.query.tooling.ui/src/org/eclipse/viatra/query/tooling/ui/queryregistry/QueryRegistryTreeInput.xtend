@@ -19,11 +19,10 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChan
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
 import org.eclipse.viatra.query.runtime.registry.IRegistryView
 import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView
-import org.eclipse.viatra.query.runtime.ui.ViatraQueryRuntimeUIPlugin
-import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 
 /** 
  * @author Abel Hegedus
@@ -177,8 +176,8 @@ class QueryRegistryTreeEntry {
                 return true
             } catch (Exception ex) {
                 val logMessage = String.format("Query Registry has encountered an error during loading of query %s: %s", entry.fullyQualifiedName, ex.message)
-                ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(
-                        IStatus.ERROR, ViatraQueryRuntimeUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
+                ViatraQueryGUIPlugin.getDefault().getLog().log(new Status(
+                        IStatus.ERROR, ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
             }
         }
         return false
