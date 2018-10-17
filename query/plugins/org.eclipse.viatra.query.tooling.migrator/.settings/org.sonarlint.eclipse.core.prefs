@@ -1,6 +1,0 @@
-autoEnabled=true
-eclipse.preferences.version=1
-extraProperties=
-moduleKey=org.eclipse.viatra\:org.eclipse.viatra.query.tooling.migrator
-projectKey=org.eclipse.viatra\:org.eclipse.viatra.parent.all
-serverId=build

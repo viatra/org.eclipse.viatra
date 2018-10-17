@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.migrator.properties;
+package org.eclipse.viatra.query.tooling.ui.migrator.properties;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.expressions.PropertyTester;
@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
+import org.eclipse.viatra.query.tooling.ui.migrator.MigratorConstants;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 
 /**

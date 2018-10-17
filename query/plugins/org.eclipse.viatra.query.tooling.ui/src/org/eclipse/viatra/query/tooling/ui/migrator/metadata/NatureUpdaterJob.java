@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.migrator.metadata;
+package org.eclipse.viatra.query.tooling.ui.migrator.metadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +28,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
+import org.eclipse.viatra.query.tooling.ui.migrator.MigratorConstants;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 import org.eclipse.xtext.xbase.lib.Pair;

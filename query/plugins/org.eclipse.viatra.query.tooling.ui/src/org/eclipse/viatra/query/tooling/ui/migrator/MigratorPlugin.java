@@ -8,7 +8,7 @@
  * Contributors:
  *   Balazs Grill - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.migrator;
+package org.eclipse.viatra.query.tooling.ui.migrator;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi, Balazs Grill - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.migrator;
+package org.eclipse.viatra.query.tooling.ui.migrator;
 
 import com.google.common.collect.ImmutableList;
 

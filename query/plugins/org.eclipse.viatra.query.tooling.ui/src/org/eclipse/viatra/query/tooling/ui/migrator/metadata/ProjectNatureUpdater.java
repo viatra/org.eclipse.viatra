@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.migrator.metadata;
+package org.eclipse.viatra.query.tooling.ui.migrator.metadata;
 
 import javax.inject.Inject;
 
@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra.migrator.MigratorConstants;
+import org.eclipse.viatra.query.tooling.ui.migrator.MigratorConstants;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 
 /**
