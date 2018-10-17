@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.EMFModelConnector;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 /**

@@ -31,5 +31,6 @@ This is a breaking change as transformations using both priority '0' and '1' mig
 
 To make behaviour more predictable, the default configuration of the Local Search query engine no longer allows hybrid pattern matching in conjuction with the incremental query backend across pattern calls, i.e. if the caller pattern is evaluated with LS, so will the callee pattern during the same matcher invocation. To enable hybrid matching, where the local search backend may request results of called patterns from the incremental backend (in case the callee is declared `incremental pattern`), use configurations that explicitly enable this, such as `LocalSearchHints.getDefaultGenericHybrid()`. 
 
- 
+ === Query Runtime UI Project introduced
 
+ To support reusing model connectors without tooling dependencies, the IModelConnector interface and all its uses have been moved to a new `org.eclipse.viatra.query.runtime.ui` plugin, and it has been renamed accordingly. All adapters provided by VIATRA were updated to provide the new interface, the few existing users should request instances of `org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector` instead. The new implementation behaves in exactly the same way than before.

@@ -7,7 +7,7 @@
             adaptableType="org.eclipse.graphiti.ui.editor.DiagramEditor"
             class="org.eclipse.viatra.integration.graphiti.ModelConnectorAdapterFactoryForGraphiti">
          <adapter
-               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
+               type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
          </adapter>
       </factory>
    </extension>

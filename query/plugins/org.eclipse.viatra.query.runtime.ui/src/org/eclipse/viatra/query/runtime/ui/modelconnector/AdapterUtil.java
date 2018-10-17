@@ -8,7 +8,7 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
+package org.eclipse.viatra.query.runtime.ui.modelconnector;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -16,8 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
+import org.eclipse.viatra.query.runtime.ui.ViatraQueryRuntimeUIPlugin;
 
 /**
  * A simple util class for the adapter calls. Returns typesafe objects and checks for errors as well. It will load the
@@ -25,7 +24,7 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
  */
 public class AdapterUtil {
 
-    private static ILog logger = ViatraQueryGUIPlugin.getDefault().getLog();
+    private static ILog logger = ViatraQueryRuntimeUIPlugin.getDefault().getLog();
 
     /**
      * @param editorPart
@@ -44,7 +43,7 @@ public class AdapterUtil {
             if (adaptedObject != null) {
                 return (IModelConnector) adaptedObject;
             } else {
-                logger.log(new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "EditorPart " + editorPart.getTitle()
+                logger.log(new Status(IStatus.ERROR, ViatraQueryRuntimeUIPlugin.PLUGIN_ID, "EditorPart " + editorPart.getTitle()
                         + " (type: " + editorPart.getClass().getSimpleName()
                         + ") cannot provide a ModelConnector object for the QueryExplorer."));
             }

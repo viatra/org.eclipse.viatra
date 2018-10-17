@@ -9,16 +9,17 @@
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *   Andras Okros - reworked to use new IModelConnector interface
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.util;
+package org.eclipse.viatra.query.runtime.ui.modelconnector.internal;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 
 /**
  * The PartListener is used to observe {@link IEditorPart} close actions.
  */
-public class ModelEditorPartListener extends BasePartListener {
+public class ModelEditorPartListener implements IPartListener {
 
     private final IModelConnector modelConnector;
     
@@ -34,6 +35,26 @@ public class ModelEditorPartListener extends BasePartListener {
                 modelConnector.unloadModel();
             }
         }
+    }
+
+    @Override
+    public void partActivated(IWorkbenchPart part) {
+        // empty method
+    }
+
+    @Override
+    public void partBroughtToTop(IWorkbenchPart part) {
+        // empty method
+    }
+
+    @Override
+    public void partDeactivated(IWorkbenchPart part) {
+        // empty method
+    }
+
+    @Override
+    public void partOpened(IWorkbenchPart part) {
+        // empty method
     }
 
 }

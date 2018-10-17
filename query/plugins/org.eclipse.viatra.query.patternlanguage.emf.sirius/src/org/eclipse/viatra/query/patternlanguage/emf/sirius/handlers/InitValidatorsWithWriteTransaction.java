@@ -37,8 +37,8 @@ import org.eclipse.viatra.addon.validation.runtime.ValidationUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.sirius.util.VGQLViolationListener;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.AdapterUtil;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.AdapterUtil;
 
 public class InitValidatorsWithWriteTransaction extends AbstractHandler {
 

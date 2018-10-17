@@ -14,15 +14,16 @@ import org.eclipse.jface.viewers.ColumnLabelProvider
 import org.eclipse.swt.graphics.Image
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
+import org.eclipse.viatra.query.runtime.ui.ViatraQueryRuntimeUIPlugin
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 
 /**
  * @author Abel Hegedus
  */
 package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     
-    val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry()
+    val imageRegistry = ViatraQueryRuntimeUIPlugin.getDefault().getImageRegistry()
     AdapterFactoryLabelProvider adapterFactoryLabelProvider
     static val String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
     static val String LABEL_ANNOTATION = "Label";

@@ -12,7 +12,7 @@ package org.eclipse.viatra.integration.graphiti;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 
 /**
  * Adapter factory for the Graphiti model connector.

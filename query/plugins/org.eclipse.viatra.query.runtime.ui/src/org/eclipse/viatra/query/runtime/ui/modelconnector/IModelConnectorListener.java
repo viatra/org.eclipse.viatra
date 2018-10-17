@@ -8,9 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.util;
-
-import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
+package org.eclipse.viatra.query.runtime.ui.modelconnector;
 
 /**
  * This interface is used to notify model connector users about

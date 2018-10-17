@@ -10,17 +10,18 @@
  *   Tamas Szabo - initial API and implementation
  *   Andras Okros - second version implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
+package org.eclipse.viatra.query.runtime.ui.modelconnector;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -41,13 +42,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.ModelEditorPartListener;
-import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
+import org.eclipse.viatra.query.runtime.ui.ViatraQueryRuntimeUIPlugin;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.internal.ModelEditorPartListener;
 
 /**
  * Model connector implementation for the default EMF generated model editors.
@@ -68,7 +64,7 @@ public class EMFModelConnector implements IModelConnector {
 
     public EMFModelConnector(IEditorPart editorPart) {
         super();
-        this.logger = ViatraQueryGUIPlugin.getDefault().getLog();
+        this.logger = ViatraQueryRuntimeUIPlugin.getDefault().getLog();
         this.editorPart = editorPart;
         this.listeners = new HashSet<>();
     }
@@ -141,7 +137,7 @@ public class EMFModelConnector implements IModelConnector {
                     m.invoke(editorPart, preparedSelection.toList());
                 }
             } catch (Exception e) {
-                logger.log(new Status(IStatus.INFO, ViatraQueryGUIPlugin.PLUGIN_ID, "Error while setting selection. If this is not an EMF Tree editor, consider providing a specialized ModelConnector implementation.", e));
+                logger.log(new Status(IStatus.INFO, ViatraQueryRuntimeUIPlugin.PLUGIN_ID, "Error while setting selection. If this is not an EMF Tree editor, consider providing a specialized ModelConnector implementation.", e));
             }
         }
     }
@@ -196,8 +192,9 @@ public class EMFModelConnector implements IModelConnector {
     
     protected Collection<EObject> getSelectedEObjects(ISelection selection) {
         if (selection instanceof IStructuredSelection) {
-            Iterator<EObject> selectionIterator = Iterators.filter((((IStructuredSelection) selection).iterator()), EObject.class);
-            return Lists.newArrayList(selectionIterator);
+            return Arrays.stream(((IStructuredSelection) selection).toArray())
+                    .filter(EObject.class::isInstance)
+                    .map(EObject.class::cast).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }

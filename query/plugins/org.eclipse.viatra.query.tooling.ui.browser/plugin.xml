@@ -62,7 +62,7 @@
             commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel">
          <enabledWhen>
            <reference
-                 definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
+                 definitionId="org.eclipse.viatra.query.runtime.ui.activedomaineditor">
            </reference>
          </enabledWhen>
          <activeWhen>

@@ -15,9 +15,9 @@ import org.eclipse.core.commands.ExecutionException
 import org.eclipse.ui.IEditorPart
 import org.eclipse.ui.handlers.HandlerUtil
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.AdapterUtil
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector
+import org.eclipse.viatra.query.runtime.ui.modelconnector.AdapterUtil
+import org.eclipse.viatra.query.runtime.ui.modelconnector.EMFModelConnector
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 

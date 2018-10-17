@@ -8,27 +8,20 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
-
-import java.util.Objects;
+package org.eclipse.viatra.query.runtime.ui.modelconnector.internal;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.MultiPageEditorPart;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.xtext.ui.resource.IResourceSetProvider;
-
-import com.google.inject.Inject;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.EMFModelConnector;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 
 /**
  * Adapter factory for the default EMF generated model editors and our own VQL editor.
  */
 public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactory {
-
-    @Inject IResourceSetProvider resourceSetProvider;
 
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -36,15 +29,11 @@ public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactor
             IEditorPart editorPart = (IEditorPart) adaptableObject;
             Object selectedPage = ((MultiPageEditorPart) editorPart).getSelectedPage();
             if (selectedPage instanceof IEditorPart) {
-                Platform.getAdapterManager().loadAdapter((IEditorPart)selectedPage, adapterType.getName());
-                return Platform.getAdapterManager().getAdapter((IEditorPart)selectedPage, adapterType);
+                return Platform.getAdapterManager().loadAdapter(selectedPage, adapterType.getName());
             }
         } if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
             IEditorPart editorPart = (IEditorPart) adaptableObject;
-            IWorkbenchPartSite site = editorPart.getSite();
-            if (site != null && Objects.equals("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage", site.getId())) {
-                return new VQLEditorModelConnector(editorPart, resourceSetProvider);
-            } else if (editorPart instanceof IEditingDomainProvider) {
+            if (editorPart instanceof IEditingDomainProvider) {
                 return new EMFModelConnector(editorPart);
             } else {
                 return null;

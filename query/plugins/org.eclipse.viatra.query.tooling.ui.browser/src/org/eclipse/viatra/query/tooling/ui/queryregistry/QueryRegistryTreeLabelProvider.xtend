@@ -12,14 +12,15 @@ package org.eclipse.viatra.query.tooling.ui.queryregistry
 import org.eclipse.jface.viewers.ColumnLabelProvider
 import org.eclipse.swt.graphics.Image
 import org.eclipse.viatra.query.runtime.registry.ExtensionBasedQuerySpecificationLoader
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
+import org.eclipse.viatra.query.runtime.ui.ViatraQueryRuntimeUIPlugin
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.resources.IProject
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 
 class QueryRegistryTreeLabelProvider extends ColumnLabelProvider {
     
-    val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry();
+    val imageRegistry = ViatraQueryRuntimeUIPlugin.getDefault().getImageRegistry();
     
     override Image getImage(Object element) {
         return element.imageInternal;

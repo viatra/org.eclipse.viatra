@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.EMFModelConnector;
 
 /**
  * Model connector implementation for the GMF editors.

@@ -18,8 +18,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.addon.validation.runtime.ui.ValidationInitUtil;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.AdapterUtil;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.AdapterUtil;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 
 public class InitValidatorsForEditorHandler extends AbstractHandler {
 

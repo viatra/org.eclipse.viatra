@@ -182,18 +182,6 @@
          </with>
       </definition>
       <definition
-            id="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
-         <with
-               variable="activeEditor">
-            <instanceof
-                  value="org.eclipse.ui.IEditorPart">
-            </instanceof>
-            <adapt
-                  type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
-            </adapt>
-         </with>
-      </definition>
-      <definition
             id="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
          <with
                variable="activeEditorId">
@@ -263,23 +251,6 @@
                id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
          </keywordReference>
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.ui.IEditorPart"
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
-         <adapter
-               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.ui.part.MultiPageEditorPart"
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
-         <adapter
-               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
-         </adapter>
-      </factory>
    </extension>
    <extension
          id="org.eclipse.viatra.query.tooling.ui.projectbuilder"

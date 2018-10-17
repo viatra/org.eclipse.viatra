@@ -19,8 +19,9 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
+import org.eclipse.viatra.query.runtime.ui.ViatraQueryRuntimeUIPlugin
 import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 
 /**
  * @author Abel Hegedus
@@ -28,7 +29,7 @@ import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlug
  */
 class ViatraQueryEngineLabelProvider extends LabelProvider {
 
-    val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry()
+    val imageRegistry = ViatraQueryRuntimeUIPlugin.getDefault().getImageRegistry()
     val browserImageRegistry = ViatraQueryToolingBrowserPlugin.getDefault().getImageRegistry()
     AdapterFactoryLabelProvider adapterFactoryLabelProvider
     

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.viatra.query.runtime.ui.activedomaineditor">
+         <with
+               variable="activeEditor">
+            <instanceof
+                  value="org.eclipse.ui.IEditorPart">
+            </instanceof>
+            <adapt
+                  type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
+            </adapt>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.loadmodel"
+            name="Load model">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.showlocation"
+            name="Show location">
+      </command>
+      <category
+            description="Commands related to VIATRA"
+            id="org.eclipse.viatra.query.tooling.category"
+            name="VIATRA">
+      </category>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.showlocation_patternreg"
+            name="Show location">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ui.IEditorPart"
+            class="org.eclipse.viatra.query.runtime.ui.modelconnector.internal.ModelConnectorAdapterFactoryForEMFEditors">
+         <adapter
+               type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ui.part.MultiPageEditorPart"
+            class="org.eclipse.viatra.query.runtime.ui.modelconnector.internal.ModelConnectorAdapterFactoryForEMFEditors">
+         <adapter
+               type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
+         </adapter>
+      </factory>
+   </extension>
+</plugin>

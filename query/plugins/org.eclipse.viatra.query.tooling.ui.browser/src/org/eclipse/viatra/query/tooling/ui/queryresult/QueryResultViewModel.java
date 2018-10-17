@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.BackendRequirement;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
+import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
 
 /**

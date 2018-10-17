@@ -8,7 +8,7 @@
  * Contributors:
  *   Andras Okros - second version implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer;
+package org.eclipse.viatra.query.runtime.ui.modelconnector;
 
 import java.util.Collection;
 

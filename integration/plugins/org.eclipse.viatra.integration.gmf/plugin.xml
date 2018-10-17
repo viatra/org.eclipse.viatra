@@ -7,21 +7,21 @@
             adaptableType="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor"
             class="org.eclipse.viatra.integration.gmf.ModelConnectorAdapterFactoryForGMFEditors">
          <adapter
-               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
+               type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
          </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart"
             class="org.eclipse.viatra.integration.gmf.ModelConnectorAdapterFactoryForGMFEditors">
          <adapter
-               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
+               type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
          </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.papyrus.editor.PapyrusMultiDiagramEditor"
             class="org.eclipse.viatra.integration.gmf.ModelConnectorAdapterFactoryForGMFEditors">
          <adapter
-               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
+               type="org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector">
          </adapter>
       </factory>
    </extension>
