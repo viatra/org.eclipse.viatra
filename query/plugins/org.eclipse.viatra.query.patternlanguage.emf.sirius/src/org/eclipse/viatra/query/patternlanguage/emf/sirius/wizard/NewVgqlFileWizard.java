@@ -47,9 +47,9 @@ import org.eclipse.sirius.ui.business.internal.commands.ChangeViewpointSelection
 import org.eclipse.sirius.viewpoint.DRepresentation;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.PatternPackage;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlFactory;
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 
 /**
  * A wizard implementation used to create new eiq files.
@@ -106,7 +106,7 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
             return false;
         } catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();
-            ViatraQueryGUIPlugin.getDefault().logException(
+            EMFPatternLanguageUIPlugin.getInstance().logException(
                     "Cannot create Query Definition file: " + realException.getMessage(), realException);
             MessageDialog.openError(getShell(), "Error", realException.getMessage());
             return false;

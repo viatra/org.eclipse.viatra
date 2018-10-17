@@ -25,19 +25,35 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8
  com.google.inject;bundle-version="3.0.0",
  org.eclipse.jdt.debug.ui,
  org.eclipse.viatra.documentation.help;bundle-version="[2.1.0,2.2.0)",
- org.eclipse.viatra.query.patternlanguage.emf.ide;bundle-version="[2.1.0,2.2.0)"
+ org.eclipse.viatra.query.patternlanguage.emf.ide;bundle-version="[2.1.0,2.2.0)",
+ org.eclipse.viatra.query.tooling.generator.model;bundle-version="[2.1.0,2.2.0)",
+ org.eclipse.ui.views.properties.tabbed,
+ org.eclipse.viatra.query.runtime.ui;bundle-version="[2.1.0,2.2.0)",
+ org.eclipse.viatra.transformation.evm;bundle-version="[2.1.0,2.2.0)",
+ org.eclipse.jdt.ui,
+ org.eclipse.viatra.query.runtime.localsearch;bundle-version="[2.1.0,2.2.0)",
+ org.eclipse.viatra.query.runtime.rete;bundle-version="[2.1.0,2.2.0)",
+ org.eclipse.core.databinding,
+ org.eclipse.jface.databinding,
+ org.eclipse.core.databinding.property,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.expressions
 Import-Package: com.google.inject.multibindings,
  org.apache.log4j;version="1.2.15",
  org.apache.log4j.spi;version="1.2.15"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui;
-  uses:="com.google.inject",
- org.eclipse.viatra.query.patternlanguage.emf.ui.builder;
-  uses:="com.google.common.base",
+Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui;uses:="com.google.inject",
+ org.eclipse.viatra.query.patternlanguage.emf.ui.builder;uses:="com.google.common.base",
  org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist,
  org.eclipse.viatra.query.patternlanguage.emf.ui.internal;uses:="com.google.inject",
- org.eclipse.viatra.query.patternlanguage.emf.ui.types;
-  uses:="com.google.common.base",
- org.eclipse.viatra.query.patternlanguage.emf.ui.util
+ org.eclipse.viatra.query.patternlanguage.emf.ui.types;uses:="com.google.common.base",
+ org.eclipse.viatra.query.patternlanguage.emf.ui.util,
+ org.eclipse.viatra.query.tooling.ui.queryexplorer,
+ org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters,
+ org.eclipse.viatra.query.tooling.ui.queryexplorer.preference,
+ org.eclipse.viatra.query.tooling.ui.queryexplorer.util,
+ org.eclipse.viatra.query.tooling.ui.queryregistry.index;x-friends:="org.eclipse.viatra.query.patternlanguage.emf.sirius",
+ org.eclipse.viatra.query.tooling.ui.queryresult;x-friends:="org.eclipse.viatra.query.patternlanguage.emf.sirius",
+ org.eclipse.viatra.query.tooling.ui.util
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin
 Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.emf.ui

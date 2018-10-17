@@ -33,6 +33,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFea
 import org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -50,7 +51,6 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SingleParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferenceConstants;
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 
@@ -207,7 +207,7 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
             nextParentsToCollect.add(rightParent);
         } else if (recipe instanceof MultiParentNodeRecipe) {
             boolean isProductionRecipe = recipe instanceof ProductionRecipe;
-            boolean traverseSubpatternCallMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
+            boolean traverseSubpatternCallMode = EMFPatternLanguageUIPlugin.getInstance().getPreferenceStore()
                     .getBoolean(ReteVisualizationPreferenceConstants.DISPLAY_CALLED_NETWORKS_MODE);
             boolean traverseProductionRecipe = isRootRecipe || traverseSubpatternCallMode;
             if (!isProductionRecipe || traverseProductionRecipe) {

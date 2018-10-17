@@ -55,7 +55,7 @@
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"
             class="org.eclipse.viatra.query.testing.ui.wizards.SnapshotModelWizard"
-            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.patternlanguage.emf.ui/icons/logo2.png"
             id="org.eclipse.viatra.query.testing.snapshot.presentation.SnapshotModelWizardID"
             name="Query Snapshot">
          <description>

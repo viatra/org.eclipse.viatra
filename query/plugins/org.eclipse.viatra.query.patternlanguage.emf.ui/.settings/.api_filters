@@ -426,4 +426,84 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/queryexplorer/AbstractBackendSelectionControl.java" type="org.eclipse.viatra.query.tooling.ui.queryexplorer.AbstractBackendSelectionControl">
+        <filter comment="Moved in from tooling project" id="1108344834">
+            <message_arguments>
+                <message_argument value="1.3"/>
+                <message_argument value="2.1"/>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.queryexplorer.AbstractBackendSelectionControl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/queryexplorer/adapters/VQLEditorModelConnector.java" type="org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.VQLEditorModelConnector">
+        <filter comment="Moved in from tooling project" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.VQLEditorModelConnector"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/queryexplorer/preference/PatternInitializationPreferencePage.java" type="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PatternInitializationPreferencePage">
+        <filter comment="Moved from tooling project" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PatternInitializationPreferencePage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/queryexplorer/preference/PreferenceConstants.java" type="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants">
+        <filter comment="Moved from tooling project" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/queryexplorer/preference/RuntimePreferencesInterpreter.java" type="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter">
+        <filter comment="Moved from other plugin" id="1108344834">
+            <message_arguments>
+                <message_argument value="2.0"/>
+                <message_argument value="2.1"/>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/queryexplorer/util/CommandConstants.java" type="org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants">
+        <filter comment="Moved in from tooling project" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/util/CommandInvokingDoubleClickListener.java" type="org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener">
+        <filter comment="Moved in from tooling project" id="1108344834">
+            <message_arguments>
+                <message_argument value="1.4"/>
+                <message_argument value="2.1"/>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/util/IFilteredMatcherCollection.java" type="org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection">
+        <filter comment="Moved in from tooling project" id="1108344834">
+            <message_arguments>
+                <message_argument value="1.4"/>
+                <message_argument value="2.1"/>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/util/IFilteredMatcherContent.java" type="org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent">
+        <filter comment="Moved in from tooling project" id="1108344834">
+            <message_arguments>
+                <message_argument value="1.4"/>
+                <message_argument value="2.1"/>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/ui/util/IModelConnectorListener.java" type="org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener">
+        <filter comment="Moved in from tooling project" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

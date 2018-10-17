@@ -13,7 +13,7 @@
             category="org.eclipse.viatra.query.tooling.ui.category"
             class="org.eclipse.viatra.query.patternlanguage.emf.ui.ReusablePatternLanguageExecutableExtensionFactory:org.eclipse.viatra.query.patternlanguage.emf.sirius.wizard.NewProjectWizard"
             finalPerspective="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
-            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.patternlanguage.emf.ui/icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.newproject"
             name="Graphical Query Project"
             preferredPerspectives="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
@@ -23,7 +23,7 @@
               category="org.eclipse.viatra.query.tooling.ui.category"
               class="org.eclipse.viatra.query.patternlanguage.emf.sirius.wizard.NewVgqlFileWizard"
               finalPerspective="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
-              icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+              icon="platform:/plugin/org.eclipse.viatra.query.patternlanguage.emf.ui/icons/logo2.png"
               id="org.eclipse.viatra.query.patternlanguage.emf.sirius.newvgqlwizard"
               name="Graphical Query Definition"
               project="false">

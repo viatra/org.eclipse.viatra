@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 
 /**
  * @author Abel Hegedus
@@ -37,7 +37,7 @@ public class ReteVisualizationPreferencePage extends PreferencePage implements I
 
     @Override
     protected Control createContents(Composite parent) {
-        final IPreferenceStore store = ViatraQueryGUIPlugin.getDefault().getPreferenceStore();
+        final IPreferenceStore store = EMFPatternLanguageUIPlugin.getInstance().getPreferenceStore();
         Composite control = new Composite(parent, SWT.NONE);
         
         Label traverseSubPatternCallDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
@@ -49,7 +49,7 @@ public class ReteVisualizationPreferencePage extends PreferencePage implements I
         traverseSubPatternCallDescriptionLabel.setLayoutData(layoutData);
         final BooleanFieldEditor traverseSubpatternCallModeEditor = new BooleanFieldEditor(ReteVisualizationPreferenceConstants.DISPLAY_CALLED_NETWORKS_MODE,
                 "&Display networks for called patterns", control);
-        traverseSubpatternCallModeEditor.setPreferenceStore(ViatraQueryGUIPlugin.getDefault().getPreferenceStore());
+        traverseSubpatternCallModeEditor.setPreferenceStore(EMFPatternLanguageUIPlugin.getInstance().getPreferenceStore());
         traverseSubpatternCallModeEditor.load();
         traverseSubpatternCallModeEditor.setPropertyChangeListener(event -> store.setValue(ReteVisualizationPreferenceConstants.DISPLAY_CALLED_NETWORKS_MODE, traverseSubpatternCallModeEditor.getBooleanValue()));
         
