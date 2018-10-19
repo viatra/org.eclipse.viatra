@@ -122,27 +122,10 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     }
 
     @Override
-    public void add(EObject container, EStructuralFeature feature, Object element) throws ModelManipulationException {
-        addTo(container, feature, element);
-    }
-
-    @Override
     public void addTo(EObject container, EStructuralFeature feature, Object element) throws ModelManipulationException {
         addTo(container, feature, Collections.singleton(element));
     }
     
-    @Override
-    public void add(EObject container, EStructuralFeature feature, Object element, int index)
-            throws ModelManipulationException {
-        addTo(container, feature, element, index);
-    }
-
-    @Override
-    public void add(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
-            throws ModelManipulationException {
-        addTo(container, feature, elements);
-    }
-
     @Override
     public void addTo(EObject container, EStructuralFeature feature, Object element, int index)
             throws ModelManipulationException {

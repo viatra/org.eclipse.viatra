@@ -11,8 +11,10 @@
 
 package org.eclipse.viatra.query.runtime.tabular;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -154,6 +156,13 @@ public class EcoreIndexHost extends TabularIndexHost {
 	}
 
 
+	
+    public Set<Entry<EClassifier, ITableWriterUnary.Table<Object>>> getAllCurrentTablesDirectInstances() {
+        return Collections.unmodifiableSet(tableDirectInstances.entrySet());
+    }
+    public Set<Entry<EStructuralFeature, ITableWriterBinary.Table<Object, Object>>> getAllCurrentTablesFeatures() {
+        return Collections.unmodifiableSet(tableFeatures.entrySet());
+    }
 
 	
 }

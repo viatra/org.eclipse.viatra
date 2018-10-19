@@ -1,5 +1,189 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.transformation.runtime.emf" version="2">
+    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/AbstractModelManipulations.java" type="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractModelManipulations">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractModelManipulations"/>
+                <message_argument value="add(EObject, EStructuralFeature, Collection&lt;? extends Object&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractModelManipulations"/>
+                <message_argument value="add(EObject, EStructuralFeature, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractModelManipulations"/>
+                <message_argument value="add(EObject, EStructuralFeature, Object, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/IModelManipulations.java">
+        <filter id="0"/>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/IModelManipulations.java" type="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations">
+        <filter id="403984517">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IEcoreManipulations"/>
+                <message_argument value="create(RootContainer, EClass)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="addAllTo(EObject, EStructuralFeature, Collection&lt;? extends Object&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="moveAllTo(Collection&lt;EObject&gt;, EObject, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404004911">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IEcoreManipulations"/>
+                <message_argument value="addAllTo(ModelObject, EStructuralFeature, Collection&lt;? extends Object&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404004911">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IEcoreManipulations"/>
+                <message_argument value="moveAllTo(Collection&lt;ModelObject&gt;, ModelObject, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="add(EObject, EStructuralFeature, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="add(EObject, EStructuralFeature, Object, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="addTo(EObject, EStructuralFeature, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="addTo(EObject, EStructuralFeature, Object, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="changeIndex(EObject, EStructuralFeature, int, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="create(Resource, EClass)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="createChild(EObject, EReference, EClass)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="moveTo(EObject, EObject, EReference)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="moveTo(EObject, EObject, EReference, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="moveTo(EObject, Resource)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="moveTo(EObject, Resource, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="remove(EObject)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="remove(EObject, EStructuralFeature)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="remove(EObject, EStructuralFeature, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="remove(EObject, EStructuralFeature, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
+                <message_argument value="set(EObject, EStructuralFeature, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/IndexHostManipulations.java" type="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IndexHostManipulations">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="Table&lt;Source, Target&gt;"/>
+                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
+                <message_argument value="addInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="Table&lt;Source, Target&gt;"/>
+                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
+                <message_argument value="removeInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="Table&lt;Value&gt;"/>
+                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
+                <message_argument value="addInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="Table&lt;Value&gt;"/>
+                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
+                <message_argument value="removeInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/transformation/runtime/emf/transformation/batch/BatchTransformation.java" type="org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation$BatchTransformationBuilder">
         <filter comment="Adapter support is experimental" id="643846161">
             <message_arguments>
