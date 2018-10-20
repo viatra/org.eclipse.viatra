@@ -32,7 +32,6 @@ public class EMFPatternLanguageEditorCallback extends NatureAddingEditorCallback
 
     @Override
     public void afterCreatePartControl(XtextEditor editor) {
-        super.afterCreatePartControl(editor);
         try {
             IResource resource = editor.getResource();
             if (resource != null && resource.getProject().isAccessible() && !resource.getProject().isHidden()
