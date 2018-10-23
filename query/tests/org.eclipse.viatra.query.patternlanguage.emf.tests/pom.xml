@@ -60,9 +60,9 @@
 					</dependencies>
 					<repositories>
 						<repository>
-							<id>indigo</id>
+							<id>simrel</id>
 							<layout>p2</layout>
-							<url>http://download.eclipse.org/releases/mars</url>
+							<url>${simrel.repository.url}</url>
 						</repository>
 					</repositories>
 				</configuration>

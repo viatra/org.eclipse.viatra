@@ -56,7 +56,14 @@
                 <artifactId>tycho-eclipserun-plugin</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
-                    <appArgLine>-data ${emf.workspace.location} -application org.eclipse.emf.codegen.ecore.Generator -projects ${project.basedir} -model ${project.basedir}/model/notation.genmodel ${project.basedir}</appArgLine>
+                    <applicationsArgs>
+                        <applicationsArg>-data ${emf.workspace.location}</applicationsArg>
+                        <applicationsArg>-application org.eclipse.emf.codegen.ecore.Generator</applicationsArg>
+                        <applicationsArg>-projects ${project.basedir}</applicationsArg>
+                        <applicationsArg> -model</applicationsArg>
+                        <applicationsArg>${project.basedir}/model/notation.genmodel</applicationsArg>
+                        <applicationsArg>${project.basedir}</applicationsArg>
+                    </applicationsArgs>
                     <dependencies>
                         <dependency>
                             <artifactId>org.eclipse.emf.codegen.ecore</artifactId>
@@ -65,9 +72,9 @@
                     </dependencies>
                     <repositories>
                         <repository>
-                            <id>indigo</id>
+                            <id>simrel</id>
                             <layout>p2</layout>
-                            <url>http://download.eclipse.org/releases/mars</url>
+                            <url>${simrel.repository.url}</url>
                         </repository>
                     </repositories>
                 </configuration>

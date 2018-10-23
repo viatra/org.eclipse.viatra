@@ -36,7 +36,6 @@
 
         <!-- Integration -->
         <module>../../integration/plugins/org.eclipse.viatra.integration.graphiti</module>
-        <module>../../integration/plugins/org.eclipse.viatra.integration.zest</module>
         <module>../../integration/features/org.eclipse.viatra.integration.graphiti.feature</module>
 
     </modules>

@@ -51,13 +51,23 @@
                         <artifactId>tycho-eclipserun-plugin</artifactId>
                         <version>${tycho.version}</version>
                         <configuration>
-                            <!-- IMPORTANT: do not split the appArgLine -->
-                            <appArgLine>-application org.eclipse.ant.core.antRunner -buildfile ${project.basedir}/packaging-p2composite.ant p2.composite.add -Dsoftware.download.area=${viatra.download.area} -Dupdates.dir=${viatra.updates.dir} -Dsite.label="VIATRA" -Dproject.build.directory=${project.build.directory} -DunqualifiedVersion=${unqualifiedVersion} -DbuildQualifier=${buildQualifier} -Dbuild.type=${BUILD_TYPE}</appArgLine>
+                            <applicationsArgs>
+                                <applicationsArg>-application org.eclipse.ant.core.antRunner</applicationsArg>
+                                <applicationsArg>-buildfile ${project.basedir}/packaging-p2composite.ant</applicationsArg>
+                                <applicationsArg>p2.composite.add</applicationsArg>
+                                <applicationsArg>-Dsoftware.download.area=${viatra.download.area}</applicationsArg>
+                                <applicationsArg>-Dupdates.dir=${viatra.updates.dir}</applicationsArg>
+                                <applicationsArg>-Dsite.label="VIATRA"</applicationsArg>
+                                <applicationsArg>-Dproject.build.directory=${project.build.directory}</applicationsArg>
+                                <applicationsArg>-DunqualifiedVersion=${unqualifiedVersion}</applicationsArg>
+                                <applicationsArg>-DbuildQualifier=${buildQualifier}</applicationsArg>
+                                <applicationsArg>-Dbuild.type=${BUILD_TYPE}</applicationsArg>
+                            </applicationsArgs>
                             <repositories>
                                 <repository>
-                                    <id>luna</id>
+                                    <id>simrel</id>
                                     <layout>p2</layout>
-                                    <url>http://download.eclipse.org/releases/luna</url>
+                                    <url>${simrel.repository.url}</url>
                                 </repository>
                             </repositories>
                             <dependencies>
@@ -116,13 +126,23 @@
                         <artifactId>tycho-eclipserun-plugin</artifactId>
                         <version>${tycho.version}</version>
                         <configuration>
-                            <!-- IMPORTANT: do not split the appArgLine -->
-                            <appArgLine>-application org.eclipse.ant.core.antRunner -buildfile ${project.basedir}/packaging-p2composite.ant p2.composite.add -Dsoftware.download.area=${viatra.download.area} -Dupdates.dir=${viatra.updates.dir} -Dsite.label="VIATRA" -Dproject.build.directory=${project.build.directory} -DunqualifiedVersion=${unqualifiedVersion} -DbuildQualifier=${buildQualifier} -Dbuild.type=${BUILD_TYPE}</appArgLine>
+                            <applicationsArgs>
+                                <applicationsArg>-application org.eclipse.ant.core.antRunner</applicationsArg>
+                                <applicationsArg>-buildfile ${project.basedir}/packaging-p2composite.ant</applicationsArg>
+                                <applicationsArg>p2.composite.add</applicationsArg>
+                                <applicationsArg>-Dsoftware.download.area=${viatra.download.area}</applicationsArg>
+                                <applicationsArg>-Dupdates.dir=${viatra.updates.dir}</applicationsArg>
+                                <applicationsArg>-Dsite.label="VIATRA"</applicationsArg>
+                                <applicationsArg>-Dproject.build.directory=${project.build.directory}</applicationsArg>
+                                <applicationsArg>-DunqualifiedVersion=${unqualifiedVersion}</applicationsArg>
+                                <applicationsArg>-DbuildQualifier=${buildQualifier}</applicationsArg>
+                                <applicationsArg>-Dbuild.type=${BUILD_TYPE}</applicationsArg>
+                            </applicationsArgs>
                             <repositories>
                                 <repository>
-                                    <id>luna</id>
+                                    <id>simrel</id>
                                     <layout>p2</layout>
-                                    <url>http://download.eclipse.org/releases/luna</url>
+                                    <url>${simrel.repository.url}</url>
                                 </repository>
                             </repositories>
                             <dependencies>
@@ -181,13 +201,23 @@
                         <artifactId>tycho-eclipserun-plugin</artifactId>
                         <version>${tycho.version}</version>
                         <configuration>
-                            <!-- IMPORTANT: do not split the appArgLine -->
-                            <appArgLine>-application org.eclipse.ant.core.antRunner -buildfile ${project.basedir}/packaging-p2composite.ant p2.composite.add -Dsoftware.download.area=${viatra.download.area} -Dupdates.dir=${viatra.updates.dir} -Dsite.label="VIATRA" -Dproject.build.directory=${project.build.directory} -DunqualifiedVersion=${unqualifiedVersion} -DbuildQualifier=${buildQualifier} -Dbuild.type=${BUILD_TYPE}</appArgLine>
+                            <applicationsArgs>
+                                <applicationsArg>-application org.eclipse.ant.core.antRunner</applicationsArg>
+                                <applicationsArg>-buildfile ${project.basedir}/packaging-p2composite.ant</applicationsArg>
+                                <applicationsArg>p2.composite.add</applicationsArg>
+                                <applicationsArg>-Dsoftware.download.area=${viatra.download.area}</applicationsArg>
+                                <applicationsArg>-Dupdates.dir=${viatra.updates.dir}</applicationsArg>
+                                <applicationsArg>-Dsite.label="VIATRA"</applicationsArg>
+                                <applicationsArg>-Dproject.build.directory=${project.build.directory}</applicationsArg>
+                                <applicationsArg>-DunqualifiedVersion=${unqualifiedVersion}</applicationsArg>
+                                <applicationsArg>-DbuildQualifier=${buildQualifier}</applicationsArg>
+                                <applicationsArg>-Dbuild.type=${BUILD_TYPE}</applicationsArg>
+                            </applicationsArgs>
                             <repositories>
                                 <repository>
-                                    <id>luna</id>
+                                    <id>simrel</id>
                                     <layout>p2</layout>
-                                    <url>http://download.eclipse.org/releases/luna</url>
+                                    <url>${simrel.repository.url}</url>
                                 </repository>
                             </repositories>
                             <dependencies>

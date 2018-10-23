@@ -60,6 +60,7 @@
 		<!-- Integration -->
 		<module>../../integration/plugins/org.eclipse.viatra.integration.gmf</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.uml</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.zest</module>
 		<module>../../integration/tests/org.eclipse.viatra.integration.uml.test</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.gmf.feature</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.uml.feature</module>
