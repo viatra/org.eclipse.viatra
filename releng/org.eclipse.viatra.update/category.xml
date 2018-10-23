@@ -9,9 +9,6 @@
    <feature url="features/org.eclipse.viatra.integration.graphiti.feature.source_0.21.0.qualifier.jar" id="org.eclipse.viatra.integration.graphiti.feature.source" version="0.21.0.qualifier">
       <category name="org.eclipse.viatra.extensions"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.integration.modisco.feature.source_0.21.0.qualifier.jar" id="org.eclipse.viatra.integration.modisco.feature.source" version="0.21.0.qualifier">
-      <category name="org.eclipse.viatra.extensions"/>
-   </feature>
    <feature url="features/org.eclipse.viatra.integration.uml.feature.source_2.1.0.qualifier.jar" id="org.eclipse.viatra.integration.uml.feature.source" version="2.1.0.qualifier">
       <category name="org.eclipse.viatra.extensions"/>
    </feature>

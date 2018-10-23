@@ -43,20 +43,12 @@
       <repository location="http://download.eclipse.org/collections/9.2.0/repository"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.emf.facet.sdk.feature.feature.group" version="1.0.1.201508190910"/>
-      <repository location="http://archive.eclipse.org/facet/updates/release/1.0.1/"/>
-    </location>
-    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
       <repository location="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.uml2.sdk.feature.group" version="5.0.2.v20150202-0947"/>
       <repository location="http://download.eclipse.org/modeling/mdt/uml2/updates/5.0/R201502020947//"/>
-    </location>
-    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.modisco.infrastructure.feature.feature.group" version="0.13.0.201505191058"/>
-      <repository location="http://archive.eclipse.org/modeling/mdt/modisco/updates/release/0.13.0/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.jdt.feature.group" version="3.11.2.v20160212-1500"/>

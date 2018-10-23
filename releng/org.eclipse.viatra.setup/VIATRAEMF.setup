@@ -273,9 +273,6 @@
           name="${scope.project.label}"
           activeRepositoryList="${eclipse.target.platform}">
         <requirement
-            name="org.eclipse.modisco.infrastructure.feature.feature.group"
-            versionRange="[0.13.0,2.0.0)"/>
-        <requirement
             name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
         <requirement
             name="org.eclipse.gmf.runtime.sdk.feature.group"/>
@@ -301,8 +298,6 @@
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20170307180635/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
         <repositoryList
             name="Oxygen">
@@ -312,8 +307,6 @@
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
         <repositoryList
             name="Photon">
@@ -323,19 +316,15 @@
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
         <repositoryList
             name="2018-09">
           <repository
-              url="http://download.eclipse.org/releases/photon"/>
+              url="http://download.eclipse.org/releases/2018-09"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -650,6 +639,50 @@
         </setupTask>
         <description></description>
       </setupTask>
+      <setupTask
+          xsi:type="setup.targlets:TargletTask"
+          successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
+        <targlet
+            name="${scope.project.label}"
+            activeRepositoryList="${eclipse.target.platform}">
+          <requirement
+              name="org.eclipse.modisco.infrastructure.feature.feature.group"
+              versionRange="[0.13.0,2.0.0)"/>
+          <repositoryList
+              name="Mars">
+            <repository
+                url="http://download.eclipse.org/releases/mars"/>
+          </repositoryList>
+          <repositoryList
+              name="Neon">
+            <repository
+                url="http://download.eclipse.org/releases/neon"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+          <repositoryList
+              name="Oxygen">
+            <repository
+                url="http://download.eclipse.org/releases/oxygen"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+          <repositoryList
+              name="Photon">
+            <repository
+                url="http://download.eclipse.org/releases/photon"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+          <repositoryList
+              name="2018-09">
+            <repository
+                url="http://download.eclipse.org/releases/2018-09"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+        </targlet>
+      </setupTask>
     </stream>
     <stream
         name="2.0-maintenance">
@@ -694,6 +727,50 @@
             launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
           <description></description>
         </setupTask>
+      </setupTask>
+      <setupTask
+          xsi:type="setup.targlets:TargletTask"
+          successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
+        <targlet
+            name="${scope.project.label}"
+            activeRepositoryList="${eclipse.target.platform}">
+          <requirement
+              name="org.eclipse.modisco.infrastructure.feature.feature.group"
+              versionRange="[0.13.0,2.0.0)"/>
+          <repositoryList
+              name="Mars">
+            <repository
+                url="http://download.eclipse.org/releases/mars"/>
+          </repositoryList>
+          <repositoryList
+              name="Neon">
+            <repository
+                url="http://download.eclipse.org/releases/neon"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+          <repositoryList
+              name="Oxygen">
+            <repository
+                url="http://download.eclipse.org/releases/oxygen"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+          <repositoryList
+              name="Photon">
+            <repository
+                url="http://download.eclipse.org/releases/photon"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+          <repositoryList
+              name="2018-09">
+            <repository
+                url="http://download.eclipse.org/releases/2018-09"/>
+            <repository
+                url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          </repositoryList>
+        </targlet>
       </setupTask>
     </stream>
     <description>Viatra query and transformation framework</description>
