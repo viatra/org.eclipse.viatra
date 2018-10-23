@@ -326,6 +326,15 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
         </repositoryList>
+        <repositoryList
+            name="2018-12">
+          <repository
+              url="http://download.eclipse.org/releases/2018-12"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
       </targlet>
     </setupTask>
     <setupTask
@@ -601,7 +610,12 @@
           <repositoryList
               name="2018-09">
             <repository
-                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/photon"/>
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2018-12">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
           </repositoryList>
         </targlet>
       </setupTask>
@@ -1174,6 +1188,13 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="2018-12">
+          <repository
+              url="http://download.eclipse.org/releases/2018-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1218,6 +1239,13 @@
             name="2018-09">
           <repository
               url="http://download.eclipse.org/releases/2018-09"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.3.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2018-12">
+          <repository
+              url="http://download.eclipse.org/releases/2018-12"/>
           <repository
               url="http://download.eclipse.org/efxclipse/updates-released/3.3.0/site"/>
         </repositoryList>
