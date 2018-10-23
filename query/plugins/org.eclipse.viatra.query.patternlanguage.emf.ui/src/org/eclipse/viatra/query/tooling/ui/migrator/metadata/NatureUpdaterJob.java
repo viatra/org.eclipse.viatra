@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
  *
  */
 @SuppressWarnings("restriction")
-class NatureUpdaterJob extends Job {
+public class NatureUpdaterJob extends Job {
 
     private final IProject project;
     private final EclipseOutputConfigurationProvider outputConfigurationProvider;

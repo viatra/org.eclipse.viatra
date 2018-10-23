@@ -69,6 +69,7 @@ class JavaProjectMigrator extends JavaProjectMigratorData{
         val project = javaProject.project
         if (ProjectGenerationHelper.isOpenPDEProject(project)){
             ProjectGenerationHelper.replaceBundleDependencies(project, bundleRenames, bundleVersions, m.newChild(1))
+            ProjectGenerationHelper.ensureBundleDependenciesAndPackageImports(project, ProjectGenerationHelper.DEFAULT_VIATRA_BUNDLE_REQUIREMENTS, ProjectGenerationHelper.DEFAULT_VIATRA_IMPORT_PACKAGES, m.newChild(1));
         }
         
         /*
