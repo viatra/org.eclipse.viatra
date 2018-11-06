@@ -256,6 +256,9 @@ public class CompilerHelper {
 
     /**
      * Creates a recipe for a production node and the corresponding trace.
+     * <p> PRE: in case this is a recursion cutoff point (see {@link RecursionCutoffPoint}) 
+     *  and bodyFinalTraces will be filled later, 
+     *  the object yielded now by bodyFinalTraces.values() must return up-to-date results later 
      * @since 1.6
      */
     public static CompiledQuery makeQueryTrace(PQuery query, Map<PBody, RecipeTraceInfo> bodyFinalTraces,

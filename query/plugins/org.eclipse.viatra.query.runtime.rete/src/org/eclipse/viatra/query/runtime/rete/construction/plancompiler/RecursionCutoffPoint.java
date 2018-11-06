@@ -36,7 +36,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
  *
  */
 public class RecursionCutoffPoint {
-    final RecipeTraceInfo.ParentTraceList futureTraceList;
     final Map<PBody, RecipeTraceInfo> futureTraceMap;
     final CompiledQuery compiledQuery;
     final ProductionRecipe recipe;
@@ -45,8 +44,7 @@ public class RecursionCutoffPoint {
     public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context) {
         super();
         this.hint = hint;
-        this.futureTraceList = new RecipeTraceInfo.ParentTraceList();
-        this.futureTraceMap = new HashMap<>();
+        this.futureTraceMap = new HashMap<>(); // IMPORTANT: the identity of futureTraceMap.values() will not change
         this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceMap, Collections.<ReteNodeRecipe>emptySet(), hint, context);
         this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
         if (!compiledQuery.getParentRecipeTraces().isEmpty()) {
@@ -70,7 +68,6 @@ public class RecursionCutoffPoint {
      * The query composition that has been cut off will be connected now.
      */
     public void mend(CompiledQuery finalCompiledForm) {
-        futureTraceList.addAll(finalCompiledForm.getParentRecipeTraces());
         futureTraceMap.putAll(finalCompiledForm.getParentRecipeTracesPerBody());
         recipe.getParents().addAll(((ProductionRecipe)finalCompiledForm.getRecipe()).getParents());
     }

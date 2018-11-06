@@ -19,9 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
@@ -894,7 +894,7 @@ public class ReteRecipeCompiler {
     private PlanningTrace referQuery(PQuery query, SubPlan plan, Tuple actualParametersTuple) {
         RecipeTraceInfo referredQueryTrace = originalTraceOfReferredQuery(query);            
         return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(actualParametersTuple),
-                referredQueryTrace.getRecipe(), referredQueryTrace.getParentRecipeTraces());
+                referredQueryTrace.getRecipe(), referredQueryTrace.getParentRecipeTracesForCloning());
     }
 
     private RecipeTraceInfo originalTraceOfReferredQuery(PQuery query) {
