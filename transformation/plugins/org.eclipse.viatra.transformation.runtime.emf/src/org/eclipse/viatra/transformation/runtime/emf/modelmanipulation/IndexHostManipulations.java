@@ -178,6 +178,7 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
             Tuple targetBinding = Tuples.staticArityFlatTupleOf(value);
             Iterable<? extends Object> oldContainers = 
                     candidate.getValue().enumerateValues(BIND_TARGET, targetBinding);
+            // there is either 0 or 1 containing edges of this candidate type
             for (Object oldContainer : oldContainers) {
                 candidate.getValue().write(Direction.DELETE, oldContainer, value);
 
