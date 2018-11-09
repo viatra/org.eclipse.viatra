@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A read-only view on a memory containing a positive or negative number of equal() copies for some values.
@@ -166,6 +168,14 @@ public interface IMemoryView<T> extends Iterable<T> {
      */
     public static <T> IMemoryView<T> fromMap(Map<T, Integer> wrapped) {
         return new MapBackedMemoryView<>(wrapped);
+    }
+    
+    /**
+     * @return a stream of values, iterable once
+     * @since 2.1
+     */
+    public default Stream<T> asStream() {
+        return StreamSupport.stream(spliterator(), false);
     }
     
     /**

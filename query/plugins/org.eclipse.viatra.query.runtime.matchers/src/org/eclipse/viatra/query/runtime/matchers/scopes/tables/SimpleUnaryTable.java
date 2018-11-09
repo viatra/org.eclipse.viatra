@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
-import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
@@ -108,16 +108,16 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
 
     
     @Override
-    public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
+    public Stream<? extends Tuple> streamTuples(TupleMask seedMask, ITuple seed) {
         if (seedMask.getSize() == 0) { // unseeded
-            return () -> values.distinctValues().stream().map(Tuples::staticArityFlatTupleOf).iterator();
+            return values.distinctValues().stream().map(Tuples::staticArityFlatTupleOf);
         } else {
             @SuppressWarnings("unchecked")
             Value value = (Value) seed.get(0);
             if (values.containsNonZero(value))
-                return Collections.singleton(Tuples.staticArityFlatTupleOf(value));
+                return Stream.of(Tuples.staticArityFlatTupleOf(value));
             else
-                return Collections.emptySet();
+                return Stream.empty();
         }
     }
 
@@ -127,13 +127,16 @@ public class SimpleUnaryTable<Value> extends AbstractIndexTable implements ITabl
             return values;
         } else {
             throw new IllegalArgumentException(seedMask.toString());
-            // @SuppressWarnings("unchecked")
-            // Value value = (Value) seed.get(0);
-            // if (values.contains(value))
-            // return Collections.singleton(value);
-            // else
-            // return Collections.emptySet();
         }
     }
+    @Override
+    public Stream<? extends Object> streamValues(TupleMask seedMask, ITuple seed) {
+        if (seedMask.getSize() == 0) { // unseeded
+            return values.asStream();
+        } else {
+            throw new IllegalArgumentException(seedMask.toString());
+        }
+    }
+    
 
 }

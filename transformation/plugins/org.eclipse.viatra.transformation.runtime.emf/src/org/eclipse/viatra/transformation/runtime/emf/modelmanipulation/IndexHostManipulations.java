@@ -18,29 +18,33 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra.query.runtime.matchers.scopes.tables.IIndexTable;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableWriterBinary;
 import org.eclipse.viatra.query.runtime.matchers.scopes.tables.ITableWriterUnary;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.tabular.EcoreIndexHost;
 
 /**
- * Manipulates an {@link EcoreIndexHost}.
+ * Manipulates and reads an {@link EcoreIndexHost}.
  * 
  * <p> The ModelObject type parameter may be specialized to any surrogate key type in use, such as {@link String} or {@link Long}.
  * 
  * <p> Implementors must provide their respective facility for creating and deleting objects (surrogate keys), 
- * therefore the methods {@link #create(Void, EClass)} and {@link #createChild(Object, EReference, EClass)} are not implemented.
+ * therefore the methods {@link #doCreate(Void, EClass)} and {@link #doCreate(Object, EReference, EClass)} are not implemented.
  * To implement, use helpers {@link #registerInstance(EClassifier, Object, ITableWriterUnary.Table)} and {@link #addInternal(Object, EStructuralFeature, Object, ITableWriterBinary.Table, ITableWriterUnary.Table)},
  * as well as {@link #initializeNewlyCreatedObject(Object, EClass)}.
  * 
@@ -55,18 +59,146 @@ import org.eclipse.viatra.query.runtime.tabular.EcoreIndexHost;
  * @author Gabor Bergmann
  * @since 2.1
  */
-public abstract class IndexHostManipulations<ModelObject> implements IEcoreManipulations<Void, ModelObject> {
-    
+public abstract class IndexHostManipulations<ModelObject> 
+    extends AbstractEcoreManipulations<Void, ModelObject> 
+    implements IEcoreReadOperations<Void, ModelObject> 
+{
+    private static final String UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE = 
+            "The type of container %s does neither define or inherit an EStructuralFeature %s.";
+    private static final String FEATURE_TYPE_MISMATCH = 
+            "The type of EStructuralFeature %s is incompatible with %s.";
+
     EcoreIndexHost host;
     protected static final TupleMask BIND_SOURCE = TupleMask.selectSingle(0, 2);
     protected static final TupleMask BIND_TARGET = TupleMask.selectSingle(1, 2);
-
+    
     public IndexHostManipulations(EcoreIndexHost host) {
         super();
         this.host = host;
     }
-
     
+    @Override
+    public EClass eClass(ModelObject element) throws ModelManipulationException {
+        return findExactType(element);
+    }
+    
+    /**
+     * Implementors may override this with a more efficient lookup.
+     */
+    protected EClass findExactType(ModelObject element) throws ModelManipulationException {
+        Tuple boundElement = Tuples.staticArityFlatTupleOf(element);
+        for (EClass eClass : getAllClassTypes()) {
+            boolean found = host.getTableDirectInstances(eClass).containsTuple(boundElement);
+            if (found) return eClass;
+        }
+        throw new ModelManipulationException("Model object not found as direct instance of any known type + " + element);
+    }
+    protected boolean isAssignableFrom(EClass superClass, ModelObject element) {
+        if (isEObjectClass(superClass)) return true;
+        Tuple boundElement = Tuples.staticArityFlatTupleOf(element);
+        for (EClass eClass : getAllClassTypesThatExtend(superClass)) {
+            boolean found = host.getTableDirectInstances(eClass).containsTuple(boundElement);
+            if (found) return true;
+        }
+        return false;
+    }
+    protected boolean isAssignableFrom(EClassifier classifier, Object element) {
+        if (classifier instanceof EDataType) {
+            EDataType dataType = (EDataType) classifier;
+            return dataType.isInstance(element);
+        } else if (classifier instanceof EClass) {
+            return isAssignableFrom((EClass)classifier, (ModelObject)element);
+        } else {
+            throw new IllegalArgumentException(classifier.toString());
+        }
+    }
+    
+    
+    protected Iterable<EClass> getAllClassTypes() {
+        if (allClassTypes == null) {
+            allClassTypes = host.getAllCurrentTablesDirectInstances().stream()
+                    .filter((entry) -> entry.getKey() instanceof EClass)
+                    .map((entry) -> (EClass) entry.getKey())
+                    .collect(Collectors.toList());
+        }
+        return allClassTypes;
+    }
+    private List<EClass> allClassTypes = null;
+    
+    /**
+     * PRE: superClass is not EObject
+     */
+    protected List<EClass> getAllClassTypesThatExtend(EClass superClass) {
+        return allSubtypes.computeIfAbsent(superClass, this::computeSubtypes);
+    }
+    private Map<EClass, List<EClass>> allSubtypes = new HashMap<>();
+    protected List<EClass> computeSubtypes(EClass superClass) {
+        List<EClass> result = new ArrayList<>();
+        for (EClass eClass : getAllClassTypes()) {
+            if (superClass.isSuperTypeOf(eClass))
+                result.add(eClass);
+        }
+        return result;
+    }
+    
+    @Override
+    public int count(ModelObject container, EStructuralFeature feature) throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        IIndexTable table = host.getTableFeatureSlots(feature);
+        return table.countTuples(BIND_SOURCE, Tuples.staticArityFlatTupleOf(container));
+    }
+    
+    @Override
+    public Stream<? extends Object> stream(ModelObject container, EStructuralFeature feature)
+            throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        IIndexTable table = host.getTableFeatureSlots(feature);
+        return table.streamValues(BIND_SOURCE, Tuples.staticArityFlatTupleOf(container));
+    }
+    
+    @Override
+    public boolean isSetTo(ModelObject container, EStructuralFeature feature, Object value)
+            throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        Preconditions.checkArgument(isAssignableFrom(feature.getEType(), value),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), value);
+        IIndexTable table = host.getTableFeatureSlots(feature);
+        return table.containsTuple(Tuples.staticArityFlatTupleOf(container, value));
+    }
+    
+    @Override
+    public ModelObject create(Void res, EClass clazz) throws ModelManipulationException {
+         return doCreate(res, clazz);
+    }
+    
+    protected abstract ModelObject doCreate(Void res, EClass clazz) throws ModelManipulationException;
+
+    @Override
+    public ModelObject createChild(ModelObject container, EReference reference, EClass clazz)
+            throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(reference.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, reference.getName());
+        Preconditions.checkArgument(reference.getEReferenceType().isSuperTypeOf(clazz) 
+                || isEObjectClass(reference.getEReferenceType()),
+                FEATURE_TYPE_MISMATCH,
+                reference.getName(), clazz.getName());
+        Preconditions.checkArgument(reference.isContainment(),
+                "Created elements must be inserted directly into the containment hierarchy.");
+        Preconditions.checkArgument(!clazz.isAbstract(), "Cannot instantiate abstract EClass %s.", clazz.getName());
+
+        return doCreate(container, reference, clazz);
+    }
+    
+    protected abstract ModelObject doCreate(ModelObject container, EReference reference, EClass clazz) throws ModelManipulationException;
+
     /**
      * Removes a model element from the model. 
      * 
@@ -89,35 +221,12 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
 
     protected void deleteWithOutgoingInternal(ModelObject element, EClass eClass) throws ModelManipulationException {
         for (EStructuralFeature candidate : getAllPossibleFeatures(eClass)) {
-            remove(element, candidate);
+            removeAllOfInternal(element, candidate);
         }
         
         unregisterInstance(eClass, element, null);
     }
 
-    
-    /**
-     * Implementors may override this with a more efficient lookup.
-     */
-    protected EClass findExactType(ModelObject element) throws ModelManipulationException {
-        Tuple boundElement = Tuples.staticArityFlatTupleOf(element);
-        for (EClass eClass : getAllClassTypes()) {
-            boolean found = host.getTableDirectInstances(eClass).containsTuple(boundElement);
-            if (found) return eClass;
-        }
-        throw new ModelManipulationException("Model object not found as direct instance of any known type + " + element);
-    }
-
-    protected Iterable<EClass> getAllClassTypes() {
-        if (allClassTypes == null) {
-            allClassTypes = host.getAllCurrentTablesDirectInstances().stream()
-                    .filter((entry) -> entry.getKey() instanceof EClass)
-                    .map((entry) -> (EClass) entry.getKey())
-                    .collect(Collectors.toList());
-        }
-        return allClassTypes;
-    }
-    private List<EClass> allClassTypes = null;
     
 
     /**
@@ -315,7 +424,7 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
     protected Initializer<ModelObject> makeInitializer(Map<EAttribute, Object> defaultValues) {
         return (modelObject) -> {
             for (Entry<EAttribute, Object> entry : defaultValues.entrySet()) {
-                set(modelObject, entry.getKey(), entry.getValue());
+                setInternal(modelObject, entry.getKey(), entry.getValue());
             }
         };
     }
@@ -386,6 +495,16 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
     @Override
     public void addTo(ModelObject container, EStructuralFeature feature, Object element)
             throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        Preconditions.checkArgument(isAssignableFrom(feature.getEType(), element),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), element);
+        Preconditions.checkArgument(feature.isMany(),
+                "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
+        Preconditions.checkArgument(!(feature instanceof EReference && ((EReference) feature).isContainment()),
+                "Adding existing elements into the containment reference %s is not supported.", feature.getName());
         addInternal(container, feature, element, null, null);
     }
 
@@ -397,16 +516,43 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
     }
 
     @Override
-    public void addAllTo(ModelObject container, EStructuralFeature reference, Collection<? extends Object> elements)
+    public void addAllTo(ModelObject container, EStructuralFeature feature, Collection<? extends Object> elements)
             throws ModelManipulationException {
-        ITableWriterBinary.Table<Object, Object> table = host.getTableFeatureSlots(reference);
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        for (Object element: elements) {
+            Preconditions.checkArgument(isAssignableFrom(feature.getEType(), element),
+                    FEATURE_TYPE_MISMATCH,
+                    feature.getName(), element);            
+        }
+        Preconditions.checkArgument(feature.isMany(),
+                "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
+        Preconditions.checkArgument(!(feature instanceof EReference && ((EReference) feature).isContainment()),
+                "Adding existing elements into the containment reference %s is not supported.", feature.getName());
+        
+        ITableWriterBinary.Table<Object, Object> table = host.getTableFeatureSlots(feature);
         for (Object element : elements) {
-            addInternal(container, reference, element, table, null);
+            addInternal(container, feature, element, table, null);
         }
     }
 
     @Override
     public void set(ModelObject container, EStructuralFeature feature, Object value) throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        Preconditions.checkArgument(isAssignableFrom(feature.getEType(), value),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), value);
+        Preconditions.checkArgument(!feature.isMany(), "The EStructuralFeature %s must have an upper bound of 1.",
+                feature.getName());
+
+        setInternal(container, feature, value);
+    }
+
+    protected void setInternal(ModelObject container, EStructuralFeature feature, Object value)
+            throws ModelManipulationException {
         ITableWriterBinary.Table<Object, Object> table = host.getTableFeatureSlots(feature);
         
         // remove previous value (if any)
@@ -438,7 +584,15 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
     @Override
     public void remove(ModelObject container, EStructuralFeature feature, Object element)
             throws ModelManipulationException {
-        removeInternal(container, feature, element, null, null);
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+       Preconditions.checkArgument(isAssignableFrom(feature.getEType(), element),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), element);
+        Preconditions.checkArgument(feature.isMany(),
+                "Remove only works on EStructuralFeatures with 'many' multiplicity.");
+       removeInternal(container, feature, element, null, null);
     }
 
     @Override
@@ -448,6 +602,16 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
 
     @Override
     public void remove(ModelObject container, EStructuralFeature feature) throws ModelManipulationException {
+        Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                container, feature.getName());
+        Preconditions.checkArgument(feature.isMany(), "Remove only works on references with 'many' multiplicity.");
+
+        removeAllOfInternal(container, feature);
+    }
+
+    protected void removeAllOfInternal(ModelObject container, EStructuralFeature feature)
+            throws ModelManipulationException {
         ITableWriterBinary.Table<Object, Object> table = host.getTableFeatureSlots(feature);
         ITableWriterUnary.Table<Object> tableDirectInstances = 
                 (feature instanceof EAttribute) ? 
@@ -488,6 +652,21 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
 
     @Override
     public void moveTo(ModelObject what, ModelObject newContainer, EReference reference)
+            throws ModelManipulationException 
+    {
+        Preconditions.checkArgument(isAssignableFrom(reference.getEContainingClass(), newContainer),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                newContainer, reference.getName());
+        Preconditions.checkArgument(isAssignableFrom(reference.getEReferenceType(), what),
+                FEATURE_TYPE_MISMATCH,
+                reference.getName(), what);
+        Preconditions.checkArgument(reference.isContainment(),
+                "Elements must be moved into the containment hierarchy.");
+      
+        moveInternal(what, newContainer, reference);
+    }
+
+    protected void moveInternal(ModelObject what, ModelObject newContainer, EReference reference)
             throws ModelManipulationException {
         removeFromCurrentContainer(what);
         addInternal(newContainer, reference, what, null, null);
@@ -497,14 +676,29 @@ public abstract class IndexHostManipulations<ModelObject> implements IEcoreManip
     public void moveTo(ModelObject what, ModelObject newContainer, EReference reference, int index)
             throws ModelManipulationException {
         // position ignored
-        removeFromCurrentContainer(what);
-        addInternal(newContainer, reference, what, null, null);
+        moveTo(what, newContainer, reference);
     }
 
     @Override
     public void moveAllTo(Collection<ModelObject> what, ModelObject newContainer, EReference reference)
             throws ModelManipulationException 
     {
+        Preconditions.checkArgument(isAssignableFrom(reference.getEContainingClass(), newContainer),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                newContainer, reference.getName());
+        Preconditions.checkArgument(reference.isContainment(),
+                "Elements must be moved into the containment hierarchy.");
+        for (Object element : what) {
+            Preconditions.checkArgument(isAssignableFrom(reference.getEReferenceType(), element),
+                    FEATURE_TYPE_MISMATCH,
+                    reference.getName(), element);
+        }
+        
+        moveAllInternal(what, newContainer, reference);
+    }
+
+    protected void moveAllInternal(Collection<ModelObject> what, ModelObject newContainer, EReference reference)
+            throws ModelManipulationException {
         ITableWriterBinary.Table<Object, Object> table = host.getTableFeatureSlots(reference);
         for (Object element : what) {
             removeFromCurrentContainer((ModelObject) element);

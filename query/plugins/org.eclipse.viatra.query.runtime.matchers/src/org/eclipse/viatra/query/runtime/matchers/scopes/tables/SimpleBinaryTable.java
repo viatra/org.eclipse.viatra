@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -184,32 +185,26 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
     }
 
     @Override
-    public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
+    public Stream<? extends Tuple> streamTuples(TupleMask seedMask, ITuple seed) {
         switch (seedMask.getSize()) {
         case 0: // unseeded
             // TODO we currently assume V2H map exists
-            return () -> StreamSupport.stream(getAllDistinctValues().spliterator(), false)
+            return StreamSupport.stream(getAllDistinctValues().spliterator(), false)
                     .flatMap(value -> valueToHolderMap.lookup(value).distinctValues().stream()
-                            .map(source -> Tuples.staticArityFlatTupleOf(source, value)))
-                    .iterator();
+                    .map(source -> Tuples.staticArityFlatTupleOf(source, value)));
 
         case 1: // lookup by source or target
             int seedIndex = seedMask.indices[0];
             if (seedIndex == 0) { // lookup by source
-                return () -> {
-                    @SuppressWarnings("unchecked")
-                    Source source = (Source) seed.get(0);
-                    return getDistinctValuesOfHolder(source).stream()
-                            .map(target -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
-                };
+                @SuppressWarnings("unchecked")
+                Source source = (Source) seed.get(0);
+                return getDistinctValuesOfHolder(source).stream()
+                        .map(target -> Tuples.staticArityFlatTupleOf(source, target));
             } else if (seedIndex == 1) { // lookup by target
-                return () -> {
-                    @SuppressWarnings("unchecked")
-                    Target target = (Target) seed.get(0);
-                    return getDistinctHoldersOfValue(target).stream()
-                            .map(source -> Tuples.staticArityFlatTupleOf(source, target)).iterator();
-                };
-
+                @SuppressWarnings("unchecked")
+                Target target = (Target) seed.get(0);
+                return getDistinctHoldersOfValue(target).stream()
+                            .map(source -> Tuples.staticArityFlatTupleOf(source, target));
             } else
                 throw new IllegalArgumentException(seedMask.toString());
         case 2: // containment check
@@ -220,9 +215,9 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
             Target target = (Target) seedMask.getValue(seed, 1);
 
             if (containsRow(source, target))
-                return Collections.singleton(Tuples.staticArityFlatTupleOf(source, target));
+                return Stream.of(Tuples.staticArityFlatTupleOf(source, target));
             else
-                return Collections.emptySet();
+                return Stream.empty();
         default:
             throw new IllegalArgumentException(seedMask.toString());
         }
@@ -239,6 +234,20 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
             return getDistinctValuesOfHolder((Source) seed.get(0));
         } else if (seedIndex == 1) { // lookup by target
             return getDistinctHoldersOfValue((Target) seed.get(0));
+        } else
+            throw new IllegalArgumentException(seedMask.toString());
+
+    }
+    @Override
+    public Stream<? extends Object> streamValues(TupleMask seedMask, ITuple seed) {
+        if (seedMask.getSize() != 1)
+            throw new IllegalArgumentException(seedMask.toString());
+
+        int seedIndex = seedMask.indices[0];
+        if (seedIndex == 0) { // lookup by source
+            return getDistinctValuesOfHolder((Source) seed.get(0)).stream();
+        } else if (seedIndex == 1) { // lookup by target
+            return getDistinctHoldersOfValue((Target) seed.get(0)).stream();
         } else
             throw new IllegalArgumentException(seedMask.toString());
 

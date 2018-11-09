@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
@@ -59,6 +61,8 @@ public interface IIndexTable {
     /**
      * Returns the tuples, optionally seeded with the given tuple.
      * 
+     * <p> Consider using the more idiomatic {@link #streamTuples(TupleMask, ITuple)} instead.
+     * 
      * @param seedMask
      *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
      *            bound to a fixed value; must not be null. <strong>Note</strong>: any given index must occur at most
@@ -69,7 +73,56 @@ public interface IIndexTable {
      *            projectedParameterSeed.equals(parameterSeedMask.transform(row)) should hold. Must not be null.
      * @return the tuples in the table for the given key and seed
      */
-    public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed);
+    @SuppressWarnings("unchecked")
+    public default Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
+        return () -> {
+            return (Iterator<Tuple>) (streamTuples(seedMask, seed).iterator());
+        };
+    }
+
+    /**
+     * Returns the tuples, optionally seeded with the given tuple.
+     * 
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value; must not be null. <strong>Note</strong>: any given index must occur at most
+     *            once in seedMask.
+     * @param seed
+     *            the tuple of fixed values restricting the row set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered row tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(row)) should hold. Must not be null.
+     * @return the tuples in the table for the given key and seed
+     * @since 2.1
+     */
+    public Stream<? extends Tuple> streamTuples(TupleMask seedMask, ITuple seed);
+
+    /**
+     * Simpler form of {@link #enumerateTuples(TupleMask, ITuple)} in the case where all values of the tuples are bound
+     * by the seed except for one.
+     * 
+     * <p>
+     * Selects the tuples in the table, optionally seeded with the given tuple, and then returns the single value from
+     * each tuple which is not bound by the seed mask.
+     * 
+     * <p> Consider using the more idiomatic {@link #streamValues(TupleMask, ITuple)} instead.
+     * 
+     * @param seedMask
+     *            a mask that extracts those parameters of the input key (from the entire parameter list) that should be
+     *            bound to a fixed value; must not be null. <strong>Note</strong>: any given index must occur at most
+     *            once in seedMask, and seedMask must include all parameters in any arbitrary order except one.
+     * @param seed
+     *            the tuple of fixed values restricting the row set to be considered, in the same order as given in
+     *            parameterSeedMask, so that for each considered row tuple,
+     *            projectedParameterSeed.equals(parameterSeedMask.transform(row)) should hold. Must not be null.
+     * @return the objects in the table for the given key and seed
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    public default Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed) {
+        return () -> {
+            return (Iterator<Object>) (streamValues(seedMask, seed).iterator());
+        };        
+    }
 
     /**
      * Simpler form of {@link #enumerateTuples(TupleMask, ITuple)} in the case where all values of the tuples are bound
@@ -89,8 +142,9 @@ public interface IIndexTable {
      *            projectedParameterSeed.equals(parameterSeedMask.transform(row)) should hold. Must not be null.
      * @return the objects in the table for the given key and seed
      * 
+     * @since 2.1
      */
-    public Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed);
+    public Stream<? extends Object> streamValues(TupleMask seedMask, ITuple seed);
 
     /**
      * Simpler form of {@link #enumerateTuples(TupleMask, ITuple)} in the case where all values of the tuples are bound

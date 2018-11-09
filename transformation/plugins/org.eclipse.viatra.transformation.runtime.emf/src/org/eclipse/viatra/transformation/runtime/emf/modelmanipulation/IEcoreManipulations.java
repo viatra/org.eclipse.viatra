@@ -27,11 +27,15 @@ import org.eclipse.emf.ecore.resource.Resource;
  * @param <RootContainer> the type of root containers in which model elements may reside (e.g. a {@link Resource})
  * @param <ModelObject> the type representing a model element; can be simply an {@link EObject} or a surrogate key 
  *  
+ * @noimplement This interface is not intended to be implemented by clients. 
+ *  
  * @author Gabor Bergmann
  * @since 2.1
  */
 public interface IEcoreManipulations<RootContainer, ModelObject> {
     
+
+
     // ************************************* CREATE **************************************
     /**
      * Creates a model object and puts it as the root of the selected root container.

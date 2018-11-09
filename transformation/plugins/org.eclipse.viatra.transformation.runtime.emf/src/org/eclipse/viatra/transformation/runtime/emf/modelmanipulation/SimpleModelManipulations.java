@@ -12,6 +12,7 @@ package org.eclipse.viatra.transformation.runtime.emf.modelmanipulation;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -29,6 +30,23 @@ public class SimpleModelManipulations extends AbstractModelManipulations {
         super(engine);
     }
 
+    
+    @Override
+    protected int doCount(EObject container, EStructuralFeature feature) {
+        return getSlotValuesInternal(container, feature).size();
+    }
+    
+    @Override
+    protected Stream<? extends Object> doStream(EObject container, EStructuralFeature feature) {
+        return getSlotValuesInternal(container, feature).stream();
+    }
+
+    
+    @Override
+    protected boolean doIsSetTo(EObject container, EStructuralFeature feature, Object value) {
+        return getSlotValuesInternal(container, feature).contains(value);
+    }
+    
     @Override
     protected EObject doCreate(Resource res, EClass clazz) throws ModelManipulationException {
         EObject obj = EcoreUtil.create(clazz);

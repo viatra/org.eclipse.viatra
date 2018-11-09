@@ -11,7 +11,11 @@
 package org.eclipse.viatra.transformation.runtime.emf.modelmanipulation;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
+import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.WrappedException;
@@ -33,6 +37,52 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 public class ModelManipulationWithEditingDomain extends AbstractModelManipulations {
 
     EditingDomain domain;
+    
+    private abstract class ReadCommand extends AbstractCommand {
+        Collection<Object> result = Collections.emptySet();
+
+        @Override
+        public void redo() {
+            execute();
+        }
+        
+        @Override
+        public void undo() {
+            // NO-OP
+        }
+        
+        @Override
+        public Collection<?> getResult() {
+            return result;
+        }
+
+    }
+    private class ReadSlotCommand extends ReadCommand {
+        EObject container; 
+        EStructuralFeature feature;
+        Function<Collection<Object>, Object> extractResult;
+        
+        
+        protected ReadSlotCommand(EObject container, EStructuralFeature feature, Function<Collection<Object>, Object> extractResult) {
+            super();
+            this.container = container;
+            this.feature = feature;
+            this.extractResult = extractResult;
+        }
+        
+        @Override
+        public Collection<?> getAffectedObjects() {
+            return Collections.singleton(container);
+        }
+
+        @Override
+        public void execute() {
+            Collection<Object> slotValues = getSlotValuesInternal(container, feature);
+            Object resultValue = extractResult.apply(slotValues);
+            result = Collections.singleton(resultValue);
+        }
+        
+    }
 
     private class MoveEObjectCommand extends AddCommand {
 
@@ -144,7 +194,26 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
         super(engine);
         this.domain = domain;
     }
-
+    
+    @Override
+    protected int doCount(EObject container, EStructuralFeature feature) throws ModelManipulationException {
+        Command command = new ReadSlotCommand(container, feature, (slotValues) -> slotValues.size());
+        executeCommand(command);
+        return (Integer) command.getResult().iterator().next();
+    }
+    @Override
+    protected Stream<? extends Object> doStream(EObject container, EStructuralFeature feature) throws ModelManipulationException {
+        Command command = new ReadSlotCommand(container, feature, (slotValues) -> slotValues.stream());
+        executeCommand(command);
+        return (Stream<? extends Object>) command.getResult().iterator().next();
+    }
+    @Override
+    protected boolean doIsSetTo(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException {
+        Command command = new ReadSlotCommand(container, feature, (slotValues) -> slotValues.contains(value));
+        executeCommand(command);
+        return (Boolean) command.getResult().iterator().next();
+    }
+    
     @Override
     protected EObject doCreate(Resource res, EClass clazz) throws ModelManipulationException {
         EObject obj = EcoreUtil.create(clazz);

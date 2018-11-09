@@ -175,4 +175,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/util/IMemoryView.java" type="org.eclipse.viatra.query.runtime.matchers.util.IMemoryView">
+        <filter comment="cannot cause name clash, as named asStream() instead of stream()" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.util.IMemoryView"/>
+                <message_argument value="asStream()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

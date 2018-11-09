@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
@@ -106,27 +105,23 @@ public class DisjointUnionTable extends AbstractIndexTable {
     }
     
     @Override
-    public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
-        return () -> {
-            Stream<Tuple> stream = Stream.empty();
-            for (IIndexTable child : childTables) {
-                Iterable<Tuple> childResult = child.enumerateTuples(seedMask, seed);
-                stream = Stream.concat(stream, StreamSupport.stream(childResult.spliterator(), false));
-            }
-            return stream.iterator();
-        };
+    public Stream<? extends Tuple> streamTuples(TupleMask seedMask, ITuple seed) {
+        Stream<? extends Tuple> stream = Stream.empty();
+        for (IIndexTable child : childTables) {
+            Stream<? extends Tuple> childStream = child.streamTuples(seedMask, seed);
+            stream = Stream.concat(stream, childStream);
+        }
+        return stream;
     }
 
     @Override
-    public Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed) {
-        return () -> {
-            Stream<Object> stream = Stream.empty();
-            for (IIndexTable child : childTables) {
-                Iterable<? extends Object> childResult = child.enumerateValues(seedMask, seed);
-                stream = Stream.concat(stream, StreamSupport.stream(childResult.spliterator(), false));
-            }
-            return stream.iterator();
-        };
+    public Stream<? extends Object> streamValues(TupleMask seedMask, ITuple seed) {
+        Stream<? extends Object> stream = Stream.empty();
+        for (IIndexTable child : childTables) {
+            Stream<? extends Object> childStream = child.streamValues(seedMask, seed);
+            stream = Stream.concat(stream, childStream);
+        }
+        return stream;
     }
 
     @Override

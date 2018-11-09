@@ -12,6 +12,7 @@ package org.eclipse.viatra.transformation.runtime.emf.modelmanipulation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -29,11 +30,17 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  * subclasses should override the do* methods.
  * 
  * @author Zoltan Ujhelyi
- * 
+ * @since 2.1
+ * @noextend API may be extended in the future.
  */
-public abstract class AbstractModelManipulations implements IModelManipulations {
+public abstract class AbstractModelManipulations extends AbstractEcoreManipulations<Resource, EObject> 
+    implements IModelManipulations, IModelReadOperations
+{
 
-    private static final String UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE = "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.";
+    private static final String UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE = 
+            "The container of EClass %s does neither define or inherit an EStructuralFeature %s.";
+    private static final String FEATURE_TYPE_MISMATCH = 
+            "The type of EStructuralFeature %s is incompatible with %s.";
     protected final ViatraQueryEngine engine;
     private NavigationHelper baseEMFIndex;
 
@@ -101,6 +108,70 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 
     protected abstract void doChangeIndex(EObject container, EStructuralFeature feature, int oldIndex, int newIndex)
             throws ModelManipulationException;
+    
+    /**
+     * @since 2.1
+     */
+    protected abstract int doCount(EObject container, EStructuralFeature feature) throws ModelManipulationException;
+    /**
+     * @since 2.1
+     */
+    protected abstract Stream<? extends Object> doStream(EObject container, EStructuralFeature feature) throws ModelManipulationException;
+    /**
+     * @since 2.1
+     */
+    protected abstract boolean doIsSetTo(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException;
+
+    
+    /**
+     * @since 2.1
+     */
+    @Override
+    public EClass eClass(EObject element) throws ModelManipulationException {
+        return element.eClass();
+    }
+    
+    /**
+     * @since 2.1
+     */
+    @Override
+    public int count(EObject container, EStructuralFeature feature) throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                containerClass.getName(), feature.getName());
+        return doCount(container, feature);
+    }
+    
+    /**
+     * @since 2.1
+     */
+    @Override
+    public Stream<? extends Object> stream(EObject container, EStructuralFeature feature) throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                containerClass.getName(), feature.getName());
+        return doStream(container, feature);
+    }
+    
+    /**
+     * @since 2.1
+     */
+    @Override
+    public boolean isSetTo(EObject container, EStructuralFeature feature, Object value)
+            throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.getEType().isInstance(value),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), value);
+       return doIsSetTo(container, feature, value);
+    }
+
+
 
     @Override
     public EObject create(Resource res, EClass clazz) throws ModelManipulationException {
@@ -111,9 +182,13 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public EObject createChild(EObject container, EReference reference, EClass clazz)
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(!(containerClass.getEAllReferences().contains(container)),
-                "The container of EClass %s does neither define or inherit an EReference %s.", containerClass.getName(),
-                reference.getName());
+        Preconditions.checkArgument(reference.getEContainingClass().isSuperTypeOf(containerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                containerClass.getName(), reference.getName());
+        Preconditions.checkArgument(reference.getEReferenceType().isSuperTypeOf(clazz) 
+                || isEObjectClass(reference.getEReferenceType()),
+                FEATURE_TYPE_MISMATCH,
+                reference.getName(), clazz.getName());
         Preconditions.checkArgument(reference.isContainment(),
                 "Created elements must be inserted directly into the containment hierarchy.");
         Preconditions.checkArgument(!clazz.isAbstract(), "Cannot instantiate abstract EClass %s.", clazz.getName());
@@ -130,9 +205,12 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public void addTo(EObject container, EStructuralFeature feature, Object element, int index)
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.getEType().isInstance(element),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), element);
         Preconditions.checkArgument(feature.isMany(),
                 "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
         Preconditions.checkArgument(!(feature instanceof EReference && ((EReference) feature).isContainment()),
@@ -144,9 +222,14 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public void addTo(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
+        for (Object element: elements) {
+            Preconditions.checkArgument(feature.getEType().isInstance(element),
+                    FEATURE_TYPE_MISMATCH,
+                    feature.getName(), element);            
+        }
         Preconditions.checkArgument(feature.isMany(),
                 "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
         Preconditions.checkArgument(!(feature instanceof EReference && ((EReference) feature).isContainment()),
@@ -157,9 +240,12 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     @Override
     public void set(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.getEType().isInstance(value),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), value);
         Preconditions.checkArgument(!feature.isMany(), "The EStructuralFeature %s must have an upper bound of 1.",
                 feature.getName());
         doSet(container, feature, value);
@@ -174,9 +260,12 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     public void remove(EObject container, EStructuralFeature feature, Object element)
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.getEType().isInstance(element),
+                FEATURE_TYPE_MISMATCH,
+                feature.getName(), element);
         Preconditions.checkArgument(feature.isMany(),
                 "Remove only works on EStructuralFeatures with 'many' multiplicity.");
         doRemove(container, feature, element);
@@ -185,7 +274,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     @Override
     public void remove(EObject container, EStructuralFeature feature, int index) throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(), "Remove only works on features with 'many' multiplicity.");
@@ -195,7 +284,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     @Override
     public void remove(EObject container, EStructuralFeature feature) throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
         Preconditions.checkArgument(feature.isMany(), "Remove only works on references with 'many' multiplicity.");
@@ -214,24 +303,74 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 
     @Override
     public void moveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException {
+        EClass newContainerClass = newContainer.eClass();
+        Preconditions.checkArgument(reference.getEContainingClass().isSuperTypeOf(newContainerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                newContainerClass, reference.getName());
+        Preconditions.checkArgument(reference.getEReferenceType().isInstance(what),
+                FEATURE_TYPE_MISMATCH,
+                reference.getName(), what);
+        Preconditions.checkArgument(reference.isContainment(),
+                "Elements must be moved into the containment hierarchy.");
         doMoveTo(what, newContainer, reference);
     }
 
     @Override
     public void moveTo(EObject what, EObject newContainer, EReference reference, int index)
             throws ModelManipulationException {
+        EClass newContainerClass = newContainer.eClass();
+        Preconditions.checkArgument(reference.getEContainingClass().isSuperTypeOf(newContainerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                newContainerClass, reference.getName());
+        Preconditions.checkArgument(reference.getEReferenceType().isInstance(what),
+                FEATURE_TYPE_MISMATCH,
+                reference.getName(), what);
+        Preconditions.checkArgument(reference.isMany(), "Positioning only works on features with 'many' multiplicity.");
+        Preconditions.checkArgument(reference.isContainment(),
+                "Elements must be moved into the containment hierarchy.");
+        
         doMoveTo(what, newContainer, reference, index);
     }
 
     @Override
     public void moveTo(Collection<EObject> what, EObject newContainer, EReference reference)
             throws ModelManipulationException {
+        EClass newContainerClass = newContainer.eClass();
+        Preconditions.checkArgument(reference.getEContainingClass().isSuperTypeOf(newContainerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                newContainerClass, reference.getName());
+        for (EObject element: what) {
+            Preconditions.checkArgument(reference.getEReferenceType().isInstance(element),
+                    FEATURE_TYPE_MISMATCH,
+                    reference.getName(), element);            
+        }
+        Preconditions.checkArgument(reference.isContainment(),
+                "Elements must be moved into the containment hierarchy.");
         doMoveTo(what, newContainer, reference);
     }
 
     @Override
     public void changeIndex(EObject container, EStructuralFeature feature, int oldIndex, int newIndex)
             throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
+                UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
+                containerClass, feature.getName());
+        Preconditions.checkArgument(feature.isMany(), "Positioning only works on features with 'many' multiplicity.");
         doChangeIndex(container, feature, oldIndex, newIndex);
     }
+    
+    
+    /**
+     * @since 2.1
+     */
+    protected static Collection<Object> getSlotValuesInternal(EObject container, EStructuralFeature feature) {
+        Object slot = container.eGet(feature);
+        if (feature.isMany()) {
+            return (Collection<Object>) slot;
+        } else {
+            return (slot == null)? Collections.emptySet() : Collections.singleton(slot);
+        }
+    }
+
 }

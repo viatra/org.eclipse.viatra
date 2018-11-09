@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.scopes.tables;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
@@ -127,14 +128,18 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
         return getIndexMemory(seedMask).getOrEmpty(seed);
     }
+    @Override
+    public Stream<? extends Tuple> streamTuples(TupleMask seedMask, ITuple seed) {
+        return getIndexMemory(seedMask).getOrEmpty(seed).stream();
+    }
 
     @Override
-    public Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed) {
+    public Stream<? extends Object> streamValues(TupleMask seedMask, ITuple seed) {
         // we assume there is a single omitted index in the mask
         int queriedColumn = seedMask.getFirstOmittedIndex().getAsInt();
 
-        return () -> getIndexMemory(seedMask).getOrEmpty(seed).stream()
-                .map(row2 -> row2.get(queriedColumn)).iterator();
+        return getIndexMemory(seedMask).getOrEmpty(seed).stream()
+                .map(row2 -> row2.get(queriedColumn));
     }
 
 }
