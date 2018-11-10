@@ -25,20 +25,29 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
  */
 public class RecipeTraceInfo implements TraceInfo {
     public ReteNodeRecipe getRecipe() {return recipe;}
-    public List<RecipeTraceInfo> getParentRecipeTraces() {return Collections.unmodifiableList(parentRecipeTraces);}
+    /**
+     * For cloning in case of recursion cut-off points, use {@link #getParentRecipeTracesForCloning()} instead.
+     * @return an unmodifiable view on parent traces, to be constructed before this node (or alongside, in case of recursion)
+     */
+    public List<RecipeTraceInfo> getParentRecipeTraces() {return Collections.unmodifiableList(new ArrayList<>(parentRecipeTraces));}
+    /**
+     * Directly return the underlying collection so that changes to it will be transparent. Use only for recursion-tolerant cloning.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    public Collection<? extends RecipeTraceInfo> getParentRecipeTracesForCloning() {return parentRecipeTraces;}
     @Override 
     public Node getNode() {return node;}
     
     private Node node;
     ReteNodeRecipe recipe;
     ReteNodeRecipe shadowedRecipe;
-    ParentTraceList parentRecipeTraces;
+    Collection<? extends RecipeTraceInfo> parentRecipeTraces;
     
     
     public RecipeTraceInfo(ReteNodeRecipe recipe, Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
         super();
         this.recipe = recipe;
-        this.parentRecipeTraces = ParentTraceList.from(parentRecipeTraces); //Collections.unmodifiableList(new ArrayList<RecipeTraceInfo>(parentRecipeTraces));
+        this.parentRecipeTraces = parentRecipeTraces; //ParentTraceList.from(parentRecipeTraces); 
     }
     public RecipeTraceInfo(ReteNodeRecipe recipe, RecipeTraceInfo... parentRecipeTraces) {
         this(recipe, Arrays.asList(parentRecipeTraces));
@@ -55,21 +64,6 @@ public class RecipeTraceInfo implements TraceInfo {
     @Override 
     public void assignNode(Node node) {this.node = node;}
     
-    public static class ParentTraceList extends ArrayList<RecipeTraceInfo> {
-        private static final long serialVersionUID = 8530268272318311419L;
-        
-        public static ParentTraceList from(Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
-            if (parentRecipeTraces instanceof ParentTraceList) {
-                // We do not copy, merely refer. this way, modifications flow through if recursion is resolved later
-                return (ParentTraceList) parentRecipeTraces;
-            } else {
-                ParentTraceList result = new ParentTraceList();
-                result.addAll(parentRecipeTraces);
-                return result;
-            }
-        }
-    }
-
     /**
      * @param knownRecipe a known recipe that is equivalent to the current recipe
      */

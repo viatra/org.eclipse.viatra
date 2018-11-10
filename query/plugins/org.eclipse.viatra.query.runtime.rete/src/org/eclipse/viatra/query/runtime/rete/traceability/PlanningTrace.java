@@ -54,6 +54,7 @@ public class PlanningTrace extends RecipeTraceInfo implements PatternTraceInfo {
         return subPlan;
     }
 
+    @Override
     public String getPatternName() {
         return subPlan.getBody().getPattern().getFullyQualifiedName();
     }
@@ -75,7 +76,7 @@ public class PlanningTrace extends RecipeTraceInfo implements PatternTraceInfo {
         return new CompiledSubPlan(newSubPlan, 
                 getVariablesTuple(), 
                 getRecipe(), 
-                getParentRecipeTraces());
+                getParentRecipeTracesForCloning());
     }
 
 }
