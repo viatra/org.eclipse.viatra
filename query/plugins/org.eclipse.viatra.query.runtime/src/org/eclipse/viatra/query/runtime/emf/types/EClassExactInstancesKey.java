@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.runtime.emf.types;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
-import org.eclipse.viatra.query.runtime.emf.types.BaseEMFTypeKey;
 
 /**
  * Instance tuples are of form (x), where x is an eObject instance of the given eClass, but <b>not</b> one of its subclasses, <b>within the scope</b>.

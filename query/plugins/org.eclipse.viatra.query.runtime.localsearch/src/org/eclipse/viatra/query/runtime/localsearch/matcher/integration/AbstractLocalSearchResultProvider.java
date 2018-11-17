@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -443,7 +444,7 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
         for (Integer candidateForRemoval : new ArrayList<>(freeParameterIndices)) {
             List<Integer> others = Stream.concat(
                     otherDeterminingIndices.stream(), 
-                    freeParameterIndices.stream().filter(index -> index != candidateForRemoval)
+                    freeParameterIndices.stream().filter(index -> !Objects.equals(index, candidateForRemoval))
             ).collect(Collectors.toList());
             Set<Integer> othersClosure = FunctionalDependencyHelper.closureOf(others, functionalDependencies);
             if (othersClosure.contains(candidateForRemoval)) { 

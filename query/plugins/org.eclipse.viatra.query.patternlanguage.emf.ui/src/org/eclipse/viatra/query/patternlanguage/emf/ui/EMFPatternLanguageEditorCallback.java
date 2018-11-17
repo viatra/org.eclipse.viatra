@@ -42,23 +42,25 @@ public class EMFPatternLanguageEditorCallback extends NatureAddingEditorCallback
     public void afterCreatePartControl(XtextEditor editor) {
         try {
             IResource resource = editor.getResource();
-            final IProject project = resource.getProject();
-            if (resource != null && project.isAccessible() && !project.isHidden()
-                    && !project.hasNature(ViatraQueryNature.NATURE_ID)) {
-                String question = (PDE.hasPluginNature(project))
-                        ? String.format("Do you want to convert project %s to a VIATRA Query Project?",
-                                project.getName())
-                        : String.format("Do you want to convert project %s to a VIATRA Query Project? (Note: dependencies to VIATRA Query runtime will have to be set up manually.)",
-                                project.getName());
+            if (resource != null) {
+                final IProject project = resource.getProject();
+                if (project.isAccessible() && !project.isHidden() && !project.hasNature(ViatraQueryNature.NATURE_ID)) {
+                    String question = (PDE.hasPluginNature(project))
+                            ? String.format("Do you want to convert project %s to a VIATRA Query Project?",
+                                    project.getName())
+                            : String.format(
+                                    "Do you want to convert project %s to a VIATRA Query Project? (Note: dependencies to VIATRA Query runtime will have to be set up manually.)",
+                                    project.getName());
 
-                // TODO Xtext 2.14 has a new API called DontAskAgainDialogs - we should update to that after minimum
-                // Xtext requirement in increased to at least 2.14
-               if (MessageDialog.openQuestion(editor.getShell(), "Invalid VIATRA Query Project", question)) {
-                   final NatureUpdaterJob job = new NatureUpdaterJob(project, outputConfigurationProvider);
-                   job.schedule();
-                   final JavaProjectMigrator migrator = new JavaProjectMigrator(project);
-                   migrator.migrate(new NullProgressMonitor());
-               }
+                    // TODO Xtext 2.14 has a new API called DontAskAgainDialogs - we should update to that after minimum
+                    // Xtext requirement in increased to at least 2.14
+                    if (MessageDialog.openQuestion(editor.getShell(), "Invalid VIATRA Query Project", question)) {
+                        final NatureUpdaterJob job = new NatureUpdaterJob(project, outputConfigurationProvider);
+                        job.schedule();
+                        final JavaProjectMigrator migrator = new JavaProjectMigrator(project);
+                        migrator.migrate(new NullProgressMonitor());
+                    }
+                }
             }
         } catch (CoreException e) {
             logger.error("Error checking project nature", e);

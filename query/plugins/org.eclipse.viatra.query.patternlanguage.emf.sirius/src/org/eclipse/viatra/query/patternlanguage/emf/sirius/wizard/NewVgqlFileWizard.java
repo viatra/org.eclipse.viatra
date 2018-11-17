@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.patternlanguage.emf.sirius.wizard;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Objects;

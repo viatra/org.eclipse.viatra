@@ -29,11 +29,9 @@ public class ModelEditorPartListener implements IPartListener {
 
     @Override
     public void partClosed(IWorkbenchPart part) {
-        if (part instanceof IEditorPart) {
-            // also check if the closed editor belongs to our model connector
-            if (part.equals(this.modelConnector.getOwner())) {
-                modelConnector.unloadModel();
-            }
+        // Only unload if the closed editor belongs to our model connector
+        if (part instanceof IEditorPart && part.equals(this.modelConnector.getOwner())) {
+            modelConnector.unloadModel();
         }
     }
 
