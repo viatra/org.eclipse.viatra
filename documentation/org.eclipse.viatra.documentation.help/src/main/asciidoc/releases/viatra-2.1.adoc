@@ -34,3 +34,7 @@ To make behaviour more predictable, the default configuration of the Local Searc
  === Query Runtime UI Project introduced
 
  To support reusing model connectors without tooling dependencies, the IModelConnector interface and all its uses have been moved to a new `org.eclipse.viatra.query.runtime.ui` plugin, and it has been renamed accordingly. All adapters provided by VIATRA were updated to provide the new interface, the few existing users should request instances of `org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector` instead. The new implementation behaves in exactly the same way than before.
+ 
+ === Facet Editor Integration Removed
+ 
+ VIATRA included for a few years a component to make sure our IDE features such as the Query Results view work well with the Facet Editor, originally provided by the EMF Facet project than later the MoDisco project. Given these editors are only used sparingly, and MoDisco leaves the simultaneous release, we have decided not to support this editor anymore. 
