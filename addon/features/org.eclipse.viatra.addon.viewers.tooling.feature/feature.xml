@@ -24,21 +24,9 @@
    </url>
 
    <includes
-         id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-         version="2.1.0.qualifier"
-         name="VIATRA Viewers Runtime - GEF4 Zest Support"/>
-
-   <includes
          id="org.eclipse.viatra.addon.viewers.runtime.feature"
          version="2.1.0.qualifier"
          name="VIATRA Viewers Runtime"/>
-
-   <plugin
-         id="org.eclipse.viatra.addon.viewers.tooling.ui.zest"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.eclipse.viatra.addon.viewers.tooling.ui"

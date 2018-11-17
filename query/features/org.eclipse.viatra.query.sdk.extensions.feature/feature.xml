@@ -26,6 +26,10 @@
    <includes
          id="org.eclipse.viatra.transformation.debug.feature"
          version="0.0.0"/>
+   <includes
+         id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
+         version="2.1.0.qualifier"
+         name="VIATRA Viewers Runtime - GEF4 Zest Support"/>
 
    <requires>
       <import feature="org.eclipse.viatra.query.sdk.feature" version="2.1.0" match="equivalent"/>
@@ -58,4 +62,10 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.eclipse.viatra.addon.viewers.tooling.ui.zest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 </feature>
