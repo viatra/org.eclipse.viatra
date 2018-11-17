@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint.Bac
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter;
+import org.eclipse.viatra.query.tooling.ui.preferences.RuntimePreferencesInterpreter;
 
 /**
  * @author Abel Hegedus

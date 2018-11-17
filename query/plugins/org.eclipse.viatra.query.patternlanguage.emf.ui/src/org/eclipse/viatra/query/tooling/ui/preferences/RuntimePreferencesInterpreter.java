@@ -8,7 +8,7 @@
  * Contributors:
  *   Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.preference;
+package org.eclipse.viatra.query.tooling.ui.preferences;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -9,7 +9,7 @@
  *   Tamas Szabo, Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.preference;
+package org.eclipse.viatra.query.tooling.ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;

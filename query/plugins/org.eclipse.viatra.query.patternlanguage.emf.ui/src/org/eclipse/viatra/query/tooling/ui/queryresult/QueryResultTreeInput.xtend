@@ -49,7 +49,7 @@ import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.RuntimePreferencesInterpreter
+import org.eclipse.viatra.query.tooling.ui.preferences.RuntimePreferencesInterpreter
 import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin
 
 /**

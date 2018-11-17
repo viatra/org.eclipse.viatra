@@ -61,7 +61,7 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.EMFModelConnector;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnector;
 import org.eclipse.viatra.query.runtime.ui.modelconnector.IModelConnectorListener;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
+import org.eclipse.viatra.query.tooling.ui.CommandConstants;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory;

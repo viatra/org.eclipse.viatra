@@ -817,9 +817,9 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.viatra.query.tooling.ui.viatra"
-            class="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PatternInitializationPreferencePage"
+            class="org.eclipse.viatra.query.tooling.ui.preferences.PatternInitializationPreferencePage"
             id="org.eclipse.viatra.query.tooling.ui.queryexplorer"
-            name="Query Explorer">
+            name="Query Evaluation">
          <keywordReference
                id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
          </keywordReference>

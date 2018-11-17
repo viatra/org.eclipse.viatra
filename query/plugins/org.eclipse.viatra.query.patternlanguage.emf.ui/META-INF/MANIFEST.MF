@@ -48,10 +48,7 @@ Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui;uses:="com.googl
  org.eclipse.viatra.query.patternlanguage.emf.ui.internal;uses:="com.google.inject",
  org.eclipse.viatra.query.patternlanguage.emf.ui.types;uses:="com.google.common.base",
  org.eclipse.viatra.query.patternlanguage.emf.ui.util,
- org.eclipse.viatra.query.tooling.ui.queryexplorer,
- org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters,
- org.eclipse.viatra.query.tooling.ui.queryexplorer.preference,
- org.eclipse.viatra.query.tooling.ui.queryexplorer.util,
+ org.eclipse.viatra.query.tooling.ui.preferences,
  org.eclipse.viatra.query.tooling.ui.queryregistry.index;x-friends:="org.eclipse.viatra.query.patternlanguage.emf.sirius",
  org.eclipse.viatra.query.tooling.ui.queryresult;x-friends:="org.eclipse.viatra.query.patternlanguage.emf.sirius",
  org.eclipse.viatra.query.tooling.ui.util

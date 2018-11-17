@@ -8,7 +8,7 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
+package org.eclipse.viatra.query.tooling.ui.adapters;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.notify.Notifier;

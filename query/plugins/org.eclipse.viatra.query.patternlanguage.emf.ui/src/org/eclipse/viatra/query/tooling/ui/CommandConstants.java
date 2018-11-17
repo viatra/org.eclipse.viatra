@@ -8,7 +8,7 @@
  * Contributors:
  *    Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.queryexplorer.util;
+package org.eclipse.viatra.query.tooling.ui;
 
 /**
  * @author Abel Hegedus
