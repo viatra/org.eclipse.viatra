@@ -37,6 +37,10 @@ public class EventDrivenTransformationRuleFactory {
         private boolean isDeleteJobAdded = false;
         private ActivationLifeCycle lifeCycle = null;
         
+        /**
+         * @deprecated Use {@link #EventDrivenTransformationRuleFactory(IQuerySpecification)} instead
+         */
+        @Deprecated
         public EventDrivenTransformationRuleBuilder() {}
         
         /**
@@ -51,6 +55,10 @@ public class EventDrivenTransformationRuleFactory {
             return this;
         }
 
+        /**
+         * @deprecated Use {@link #EventDrivenTransformationRuleFactory(IQuerySpecification)} constructor instead
+         */
+        @Deprecated
         public EventDrivenTransformationRuleBuilder<Match, Matcher> precondition(
                 IQuerySpecification<Matcher> precondition) {
             this.precondition = precondition;
@@ -114,6 +122,10 @@ public class EventDrivenTransformationRuleFactory {
         }
     }
 
+    /**
+     * @deprecated Use {@link #createRule(IQuerySpecification)} instead
+     */
+    @Deprecated
     public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRuleBuilder<Match, Matcher> createRule() {
         return new EventDrivenTransformationRuleBuilder<Match, Matcher>();
     }

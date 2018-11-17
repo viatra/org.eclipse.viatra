@@ -40,6 +40,8 @@ public class BatchTransformationWithFilterJava {
             .action(m -> counter++)
             .build();
     
+    @SuppressWarnings("deprecation")
+    /* This factory ensures the deprecated methods are also tested */
     private BatchTransformationRule<HostInstanceMatch, HostInstanceMatcher> castTypedRule = factory
             .<HostInstanceMatch, HostInstanceMatcher>createRule()
             .name("CounterRule")

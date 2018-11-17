@@ -108,7 +108,7 @@ val hostRule = createRule.precondition(HostInstance.instance).action[/*Action pa
 [[bmt-hostrule]]
 [source,java]
 ----
-val hostRule = createRule.precondition(HostInstance.instance).action[
+val hostRule = createRule(HostInstance.instance).action[
     val cpsHostInstance = it.hostInstance
     val nodeIp = cpsHostInstance.nodeIp
     println('''Mapping host with IP: «nodeIp»''')
@@ -128,12 +128,14 @@ val hostRule = createRule.precondition(HostInstance.instance).action[
 ].build
 ----
 
+NOTE: Before version 2.1 the `createRule` method was parameterless and the query specification had to be provided in the `precondition` method. This was changed as the old API required some unexpected type casts when writing transformations in plain Java (instead of Xtend or Kotlin). This approach is still available in VIATRA 2.1, but it is marked as deprecated.
+
 * The rule which creates `DeploymentApplication` elements for `ApplicationInstance` objects, looks similar. It has to find the `DeploymentHost` created from the `HostInstance` to which the source `ApplicationInstance` is allocated, so it assumes the `hostRule` has already fired:
 +
 [[bmt-apprule]]
 [source,java]
 ----
-val applicationRule = createRule.precondition(ApplicationInstance.instance).action[
+val applicationRule = createRule(ApplicationInstance.instance).action[
     val cpsApplicationInstance = it.appInstance
     val appId = cpsApplicationInstance.identifier
     println('''Mapping application with ID: «appId»''')

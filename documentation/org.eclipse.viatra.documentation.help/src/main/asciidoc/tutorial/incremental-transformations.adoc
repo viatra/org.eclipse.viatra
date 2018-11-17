@@ -97,8 +97,10 @@ new(CPSToDeployment cps2dep, ViatraQueryEngine engine) {
 [[emt-rule-structure]]
 [source,java]
 ----
-val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
+val hostRule = createRule(HostInstanceMatcher.querySpecification)
 ----
+
+NOTE: Before version 2.1 the `createRule` method was parameterless and the query specification had to be provided in the `precondition` method. This was changed as the old API required some unexpected type casts when writing transformations in plain Java (instead of Xtend or Kotlin). This approach is still available in VIATRA 2.1, but it is marked as deprecated.
 
 * Add action for each kind of changes in the pattern to update trace and output models:
 ** upon creation of a HostInstance
@@ -174,7 +176,7 @@ val hostRule = createRule.precondition(HostInstanceMatcher.querySpecification)
 [[emt-applicationrule]]
 [source,java]
 ----
-val applicationRule = createRule.precondition(ApplicationInstanceMatcher.querySpecification)
+val applicationRule = createRule(ApplicationInstanceMatcher.querySpecification)
 .action(CRUDActivationStateEnum.CREATED) [
     /* Find associated DeploymentHost for the HostInstance this application is allocated to */
     val depHost = engine.cps2depTrace.getAllValuesOfdepElement(null, null, appInstance.allocatedTo).filter(

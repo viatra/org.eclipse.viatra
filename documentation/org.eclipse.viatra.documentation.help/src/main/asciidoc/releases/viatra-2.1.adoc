@@ -27,6 +27,12 @@ The default rule priority in InvertedDisappearancePriorityConflictResolver was c
 
 This is a breaking change as transformations using both priority '0' and '1' might change their internal behavior. To avoid this, it is recommended not to use priority '0' at all with this conflict resolver.
 
+=== Updated transformation rule creation
+
+Before version 2.1 the `createRule` methods of the classes BatchTransformationRuleFactory and EventDrivenTransformationRuleFactory were parameterless and the query specification was provided in the `precondition` method. This worked fine when using JVM-based languages with advanced type inference, such as Xtend or Kotlin for writing transformation, but when transformations were created in Java, it became cumbersome, as some type casting was required to initialize the rules properly.
+
+To fix this, new `createRule` methods were created that expect the query specification input as parameters, thus replacing both the old `createRule` and `precondition` methods. To consolidate this API, the old calls are marked as deprecated, but are still available in VIATRA 2.1.
+
 === Changed hybridization behaviour in the Local Search Query Backend
 
 To make behaviour more predictable, the default configuration of the Local Search query engine no longer allows hybrid pattern matching in conjuction with the incremental query backend across pattern calls, i.e. if the caller pattern is evaluated with LS, so will the callee pattern during the same matcher invocation. To enable hybrid matching, where the local search backend may request results of called patterns from the incremental backend (in case the callee is declared `incremental pattern`), use configurations that explicitly enable this, such as `LocalSearchHints.getDefaultGenericHybrid()`. 
