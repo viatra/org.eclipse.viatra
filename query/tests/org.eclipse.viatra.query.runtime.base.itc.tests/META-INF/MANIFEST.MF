@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Base - Transitive Closure Tests
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime.base.itc.tests
-Bundle-Version: 2.0.2.qualifier
+Bundle-Version: 2.0.3.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.base;version="15.0.0",

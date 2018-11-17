@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.integration.modisco.feature"
       label="EMF Facet Support for VIATRA (Incubation)"
-      version="0.20.2.qualifier"
+      version="0.20.3.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -24,7 +24,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.0.2" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.0.3" match="equivalent"/>
       <import feature="org.eclipse.modisco.infrastructure.feature"/>
    </requires>
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query IDE - User Interface
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.ui;singleton:=true
-Bundle-Version: 2.0.2.qualifier
+Bundle-Version: 2.0.3.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.ui,

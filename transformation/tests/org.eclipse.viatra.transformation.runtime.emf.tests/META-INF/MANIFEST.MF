@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA EVM tests
 Bundle-SymbolicName: org.eclipse.viatra.transformation.runtime.emf.tests
-Bundle-Version: 2.0.2.qualifier
+Bundle-Version: 2.0.3.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.xtext.xbase.lib,
  org.eclipse.viatra.transformation.runtime.emf;bundle-version="[2.0.0,2.1.0)",
