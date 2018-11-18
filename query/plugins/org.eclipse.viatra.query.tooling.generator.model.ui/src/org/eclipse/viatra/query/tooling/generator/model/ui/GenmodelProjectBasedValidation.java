@@ -39,7 +39,7 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
         if (res != null && projectProvider != null) {
             IProject project = projectProvider.getJavaProject(res.getResourceSet()).getProject();
             final GenModel genmodel = ref.getGenmodel();
-            if (genmodel != null) {
+            if (genmodel != null && ProjectGenerationHelper.isOpenPDEProject(project)) {
                 checkExistingDependency(ref, project, genmodel);
             }
         }
