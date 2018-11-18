@@ -25,7 +25,7 @@ VQLImportSection:
     importDeclarations+=XImportDeclaration)*;
 
 PackageImport:
-    'import' 'epackage'? ePackage=[ecore::EPackage|STRING] ';'? ('as' alias=ID)?;
+    'import' 'epackage'? ePackage=[ecore::EPackage|STRING] ('as' alias=ID)? ';'?;
 
 PatternImport:
     'import' 'pattern'? pattern=[Pattern|QualifiedName] ';'?;
