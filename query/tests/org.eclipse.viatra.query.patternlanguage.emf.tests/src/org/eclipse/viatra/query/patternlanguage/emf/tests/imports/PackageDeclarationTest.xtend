@@ -72,6 +72,34 @@ class PackageDeclarationTest {
         val packageName = model.packageName
         assertEquals(packageName, "hu.bme.mit.school");
     }
+    @Test
+    def packageAlias() {
+        val model = parseHelper.parse('
+            package hu.bme.mit.school;
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage" as pl
+
+            pattern resolutionTest(Name) = {
+                pl::Pattern(Name);
+            }
+        ')
+        model.assertNoErrors
+        val packageName = model.packageName
+        assertEquals(packageName, "hu.bme.mit.school");
+    }
+    @Test
+    def packageAliasWithSemicolon() {
+        val model = parseHelper.parse('
+            package hu.bme.mit.school;
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage" as pl;
+
+            pattern resolutionTest(Name) = {
+                pl::Pattern(Name);
+            }
+        ')
+        model.assertNoErrors
+        val packageName = model.packageName
+        assertEquals(packageName, "hu.bme.mit.school");
+    }
     
     @Test
     def capitalizedPackageName() {
