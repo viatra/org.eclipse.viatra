@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.ui.modelconnector;
 
+import java.util.Optional;
+
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -29,7 +31,7 @@ public class AdapterUtil {
     /**
      * @param editorPart
      *            which can be loaded into the system
-     * @return a {@link ResourceSet} instance which is used by the given editorpart
+     * @return a {@link ResourceSet} instance which is used by the given editorpart, or null if no such connector is available
      */
     public static IModelConnector getModelConnectorFromIEditorPart(IEditorPart editorPart) {
         if (editorPart != null) {
@@ -45,10 +47,29 @@ public class AdapterUtil {
             } else {
                 logger.log(new Status(IStatus.ERROR, ViatraQueryRuntimeUIPlugin.PLUGIN_ID, "EditorPart " + editorPart.getTitle()
                         + " (type: " + editorPart.getClass().getSimpleName()
-                        + ") cannot provide a ModelConnector object for the QueryExplorer."));
+                        + ") cannot provide a ModelConnector object."));
             }
         }
         return null;
+    }
+    
+    /**
+     * @param editorPart
+     *            which can be loaded into the system
+     * @return a {@link ResourceSet} instance which is used by the given editorpart
+     * @since 2.1
+     */
+    public static Optional<IModelConnector> getModelConnectorFromIEditorPartChecked(IEditorPart editorPart) {
+        if (editorPart != null) {
+            Object adaptedObject = editorPart.getAdapter(IModelConnector.class);
+            if (adaptedObject != null) {
+                return Optional.of((IModelConnector) adaptedObject);
+            }
+            
+            return Optional.ofNullable((IModelConnector) Platform.getAdapterManager().loadAdapter(editorPart,
+                    IModelConnector.class.getName()));
+        }
+        return Optional.empty();
     }
 
 }

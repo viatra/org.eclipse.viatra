@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.validation.runtime.ui.handlers;
 
+import java.util.Optional;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.addon.validation.runtime.ui.ValidationInitUtil;
@@ -26,10 +29,17 @@ public class InitValidatorsForEditorHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-        IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
-        ResourceSet resourceSet = (ResourceSet) modelConnector.getNotifier(IModelConnectorTypeEnum.RESOURCESET);
-        if (resourceSet != null) {
-            ValidationInitUtil.initializeAdapters(editorPart, resourceSet);
+        
+        final Optional<IModelConnector> optionalConnector = AdapterUtil.getModelConnectorFromIEditorPartChecked(editorPart);
+        if (optionalConnector.isPresent()) {
+            ResourceSet resourceSet = (ResourceSet) optionalConnector.get().getNotifier(IModelConnectorTypeEnum.RESOURCESET);
+            if (resourceSet != null) {
+                ValidationInitUtil.initializeAdapters(editorPart, resourceSet);
+            }
+        } else {
+            
+            MessageDialog.openError(HandlerUtil.getActiveWorkbenchWindowChecked(event).getShell(), "No Model Connector",
+                    String.format("No model connector registered for editor %s", editorPart.getTitle()));
         }
         return null;
     }
