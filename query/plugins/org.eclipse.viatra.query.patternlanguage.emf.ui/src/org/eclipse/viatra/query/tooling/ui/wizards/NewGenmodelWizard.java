@@ -30,6 +30,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.operations.CompositeWorkspaceModifyOperation;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.operations.CreateGenmodelOperation;
@@ -82,8 +83,8 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
         WorkspaceModifyOperation projectOp = new EnsureProjectDependencies(project, genmodelDependencies);
         WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(project, genmodelPage.getSelectedGenmodels(),
                 genmodelProvider, resourceSetProvider);
-        op = new CompositeWorkspaceModifyOperation(new WorkspaceModifyOperation[] { projectOp, genmodelOp },
-                "Creating generator model");
+        WorkspaceModifyOperation[] operations = (ProjectGenerationHelper.isOpenPDEProject(project)) ? new WorkspaceModifyOperation[] { projectOp, genmodelOp } : new WorkspaceModifyOperation[] {genmodelOp};
+        op = new CompositeWorkspaceModifyOperation(operations,"Creating generator model");
 
         try {
             getContainer().run(true, true, op);
