@@ -47,6 +47,12 @@
                                     </excludes>
                                 </fileset>
                                 <fileset>
+                                    <directory>src-gen</directory>
+                                    <excludes>
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
+                                </fileset>
+                                <fileset>
                                     <directory>xtend-gen</directory>
                                     <excludes>
                                         <exclude>.gitignore</exclude>
@@ -93,7 +99,35 @@
 						<phase>generate-sources</phase>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
+			<plugin>
+                <groupId>org.eclipse.viatra</groupId>
+                <artifactId>viatra-maven-plugin</artifactId>
+                <version>${viatra.main.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>src-gen</outputDirectory>
+                    <useProjectDependencies>true</useProjectDependencies>
+                    <metamodels>
+                        <metamodel>
+                            <genmodelUri>model/GraphicalPatternLanguage.genmodel</genmodelUri>
+                        </metamodel>
+                    </metamodels>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.viatra</groupId>
+                        <artifactId>viatra-query-language-extensions</artifactId>
+                        <version>${viatra.main.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>		
             <plugin>
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>xtend-maven-plugin</artifactId>

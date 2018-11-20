@@ -1,7 +1,7 @@
 /**
-Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel.queries/src/org/eclipse/viatra/query/patternlanguage/metamodel/queries/ValidationQueries.vql
+Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/ValidationQueries.vql
 */
-package org.eclipse.viatra.query.patternlanguage.metamodel.queries;
+package org.eclipse.viatra.query.patternlanguage.metamodel;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,37 +16,33 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
-import org.eclipse.viatra.query.patternlanguage.metamodel.queries.DeclaredTypeLessSpecific;
+import org.eclipse.viatra.query.patternlanguage.metamodel.UndefinedOrMultipleDeclarationParameterType;
 
-public class DeclaredTypeLessSpecificConstraint0 implements IConstraintSpecification {
+public class UndefinedOrMultipleDeclarationParameterTypeConstraint0 implements IConstraintSpecification {
 
-    private DeclaredTypeLessSpecific querySpecification;
+    private UndefinedOrMultipleDeclarationParameterType querySpecification;
 
-    public DeclaredTypeLessSpecificConstraint0() {
-        querySpecification = DeclaredTypeLessSpecific.instance();
+    public UndefinedOrMultipleDeclarationParameterTypeConstraint0() {
+        querySpecification = UndefinedOrMultipleDeclarationParameterType.instance();
     }
 
     @Override
     public String getMessageFormat() {
-        return "Declared type $declaredEClass.name$ is less specific then the type $eClass.name$ inferred from bodies.";
+        return "Parameters must have exactly one type declaration.";
     }
 
 
     @Override
     public Map<String,Object> getKeyObjects(IPatternMatch signature) {
         Map<String,Object> map = new HashMap<>();
-        map.put("paramref",signature.get("paramref"));
-        map.put("declaredEClass",signature.get("declaredEClass"));
-        map.put("eClass",signature.get("eClass"));
+        map.put("parameter",signature.get("parameter"));
         return map;
     }
 
     @Override
     public List<String> getKeyNames() {
         List<String> keyNames = Arrays.asList(
-            "paramref",
-            "declaredEClass",
-            "eClass"
+            "parameter"
         );
         return keyNames;
     }
@@ -72,7 +68,7 @@ public class DeclaredTypeLessSpecificConstraint0 implements IConstraintSpecifica
 
     @Override
     public Severity getSeverity() {
-        return Severity.WARNING;
+        return Severity.ERROR;
     }
 
     @Override

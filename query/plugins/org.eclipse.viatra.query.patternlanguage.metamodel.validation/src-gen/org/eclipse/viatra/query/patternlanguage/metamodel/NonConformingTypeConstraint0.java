@@ -1,7 +1,7 @@
 /**
-Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel.queries/src/org/eclipse/viatra/query/patternlanguage/metamodel/queries/ValidationQueries.vql
+Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/ValidationQueries.vql
 */
-package org.eclipse.viatra.query.patternlanguage.metamodel.queries;
+package org.eclipse.viatra.query.patternlanguage.metamodel;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,33 +16,37 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
-import org.eclipse.viatra.query.patternlanguage.metamodel.queries.UndefinedOrMultipleDeclarationParameterType;
+import org.eclipse.viatra.query.patternlanguage.metamodel.NonConformingType;
 
-public class UndefinedOrMultipleDeclarationParameterTypeConstraint0 implements IConstraintSpecification {
+public class NonConformingTypeConstraint0 implements IConstraintSpecification {
 
-    private UndefinedOrMultipleDeclarationParameterType querySpecification;
+    private NonConformingType querySpecification;
 
-    public UndefinedOrMultipleDeclarationParameterTypeConstraint0() {
-        querySpecification = UndefinedOrMultipleDeclarationParameterType.instance();
+    public NonConformingTypeConstraint0() {
+        querySpecification = NonConformingType.instance();
     }
 
     @Override
     public String getMessageFormat() {
-        return "Parameters must have exactly one type declaration.";
+        return "Variable type $type1Name$ does not conform to type $type2Name$.";
     }
 
 
     @Override
     public Map<String,Object> getKeyObjects(IPatternMatch signature) {
         Map<String,Object> map = new HashMap<>();
-        map.put("parameter",signature.get("parameter"));
+        map.put("paramref",signature.get("paramref"));
+        map.put("type1Name",signature.get("type1Name"));
+        map.put("type2Name",signature.get("type2Name"));
         return map;
     }
 
     @Override
     public List<String> getKeyNames() {
         List<String> keyNames = Arrays.asList(
-            "parameter"
+            "paramref",
+            "type1Name",
+            "type2Name"
         );
         return keyNames;
     }
@@ -63,6 +67,7 @@ public class UndefinedOrMultipleDeclarationParameterTypeConstraint0 implements I
     @Override
     public Set<List<String>> getSymmetricKeyNames() {
         Set<List<String>> symmetricKeyNamesSet = new HashSet<>();
+        symmetricKeyNamesSet.add(Arrays.asList("type1Name","type2Name"));
         return symmetricKeyNamesSet;
     }
 

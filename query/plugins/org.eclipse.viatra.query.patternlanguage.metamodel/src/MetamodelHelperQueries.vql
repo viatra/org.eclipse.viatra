@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * Copyright (c) 2010-2018, Mocsai Krisztain, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,7 +9,7 @@
  *   Mocsai Krisztian - initial API and implementation
  *******************************************************************************/
  
- package org.eclipse.viatra.query.patternlanguage.metamodel.queries
+ package org.eclipse.viatra.query.patternlanguage.metamodel
 
 import
 "http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage"
@@ -69,11 +69,9 @@ pattern commonDescendant(eClass1 : EClassifier, eClass2 : EClassifier) {
 }
 
 pattern superclassOrSelf(subClass : EClass, superClass : EClass) {
-    find superclass(subClass, superClass);
-} or {
-    subClass == superClass;
+    EClass.eSuperTypes*(subClass, superClass);
 }
 
 pattern superclass(subClass : EClass, superClass : EClass) {
-    EClass.eSuperTypes +(subClass, superClass);
+    EClass.eSuperTypes*(subClass, superClass);
 }

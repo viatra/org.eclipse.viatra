@@ -1,7 +1,7 @@
 /**
-Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel.queries/src/org/eclipse/viatra/query/patternlanguage/metamodel/queries/ValidationQueries.vql
+Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/ValidationQueries.vql
 */
-package org.eclipse.viatra.query.patternlanguage.metamodel.queries;
+package org.eclipse.viatra.query.patternlanguage.metamodel;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,33 +16,37 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
-import org.eclipse.viatra.query.patternlanguage.metamodel.queries.UndefinedPathExpressionType;
+import org.eclipse.viatra.query.patternlanguage.metamodel.InferredTypeLessSpecific;
 
-public class UndefinedPathExpressionTypeConstraint0 implements IConstraintSpecification {
+public class InferredTypeLessSpecificConstraint0 implements IConstraintSpecification {
 
-    private UndefinedPathExpressionType querySpecification;
+    private InferredTypeLessSpecific querySpecification;
 
-    public UndefinedPathExpressionTypeConstraint0() {
-        querySpecification = UndefinedPathExpressionType.instance();
+    public InferredTypeLessSpecificConstraint0() {
+        querySpecification = InferredTypeLessSpecific.instance();
     }
 
     @Override
     public String getMessageFormat() {
-        return "Missing type declaration.";
+        return "Type $eClass.name$ inferred from bodies is less specific then the declared type $declaredEClass.name$.";
     }
 
 
     @Override
     public Map<String,Object> getKeyObjects(IPatternMatch signature) {
         Map<String,Object> map = new HashMap<>();
-        map.put("pathExp",signature.get("pathExp"));
+        map.put("paramref",signature.get("paramref"));
+        map.put("declaredEClass",signature.get("declaredEClass"));
+        map.put("eClass",signature.get("eClass"));
         return map;
     }
 
     @Override
     public List<String> getKeyNames() {
         List<String> keyNames = Arrays.asList(
-            "pathExp"
+            "paramref",
+            "declaredEClass",
+            "eClass"
         );
         return keyNames;
     }
@@ -68,7 +72,7 @@ public class UndefinedPathExpressionTypeConstraint0 implements IConstraintSpecif
 
     @Override
     public Severity getSeverity() {
-        return Severity.ERROR;
+        return Severity.WARNING;
     }
 
     @Override

@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.0"?><!--
  /*******************************************************************************
   * Copyright (c) 2010-2018, Zoltan Ujhelyi, IncQuery Labs Ltd.
   * All rights reserved. This program and the accompanying materials
@@ -11,16 +8,30 @@
   *
   * This file was generated from GraphicalPatternLanguage.genmodel
   *******************************************************************************/
--->
-
-<plugin>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated GraphicalPatternLanguage -->
-      <package
-            uri="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage"
-            class="org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage"
-            genModel="model/GraphicalPatternLanguage.genmodel"/>
-   </extension>
-
+--><plugin>
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <!-- @generated GraphicalPatternLanguage -->
+    <package class="org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage" genModel="model/GraphicalPatternLanguage.genmodel" uri="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage"/>
+  </extension>
+  <extension id="org.eclipse.viatra.query.patternlanguage.metamodel.MetamodelHelperQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.patternlanguage.metamodel.MetamodelHelperQueries" id="org.eclipse.viatra.query.patternlanguage.metamodel.MetamodelHelperQueries">
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.variableEClassifier"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.variableJavaClassRef"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.variableType"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.parameterRefDeclaredTypeInferredType"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.parameterRefDeclaredTypeInferredSimpleType"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.commonDescendant"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.superclassOrSelf"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.superclass"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.patternlanguage.metamodel.ValidationQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.patternlanguage.metamodel.ValidationQueries" id="org.eclipse.viatra.query.patternlanguage.metamodel.ValidationQueries">
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.undefinedOrMultipleDeclarationParameterType"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.undefinedPathExpressionType"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.nonConformingType"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.declaredTypeLessSpecific"/>
+      <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.inferredTypeLessSpecific"/>
+    </group>
+  </extension>
 </plugin>

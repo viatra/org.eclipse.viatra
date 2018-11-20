@@ -1,7 +1,7 @@
 /**
-Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel.queries/src/org/eclipse/viatra/query/patternlanguage/metamodel/queries/ValidationQueries.vql
+Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/ValidationQueries.vql
 */
-package org.eclipse.viatra.query.patternlanguage.metamodel.queries;
+package org.eclipse.viatra.query.patternlanguage.metamodel;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,37 +16,33 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
-import org.eclipse.viatra.query.patternlanguage.metamodel.queries.NonConformingType;
+import org.eclipse.viatra.query.patternlanguage.metamodel.UndefinedPathExpressionType;
 
-public class NonConformingTypeConstraint0 implements IConstraintSpecification {
+public class UndefinedPathExpressionTypeConstraint0 implements IConstraintSpecification {
 
-    private NonConformingType querySpecification;
+    private UndefinedPathExpressionType querySpecification;
 
-    public NonConformingTypeConstraint0() {
-        querySpecification = NonConformingType.instance();
+    public UndefinedPathExpressionTypeConstraint0() {
+        querySpecification = UndefinedPathExpressionType.instance();
     }
 
     @Override
     public String getMessageFormat() {
-        return "Variable type $type1Name$ does not conform to type $type2Name$.";
+        return "Missing type declaration.";
     }
 
 
     @Override
     public Map<String,Object> getKeyObjects(IPatternMatch signature) {
         Map<String,Object> map = new HashMap<>();
-        map.put("paramref",signature.get("paramref"));
-        map.put("type1Name",signature.get("type1Name"));
-        map.put("type2Name",signature.get("type2Name"));
+        map.put("pathExp",signature.get("pathExp"));
         return map;
     }
 
     @Override
     public List<String> getKeyNames() {
         List<String> keyNames = Arrays.asList(
-            "paramref",
-            "type1Name",
-            "type2Name"
+            "pathExp"
         );
         return keyNames;
     }
@@ -67,7 +63,6 @@ public class NonConformingTypeConstraint0 implements IConstraintSpecification {
     @Override
     public Set<List<String>> getSymmetricKeyNames() {
         Set<List<String>> symmetricKeyNamesSet = new HashSet<>();
-        symmetricKeyNamesSet.add(Arrays.asList("type1Name","type2Name"));
         return symmetricKeyNamesSet;
     }
 

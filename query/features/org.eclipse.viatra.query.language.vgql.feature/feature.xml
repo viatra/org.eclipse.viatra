@@ -55,14 +55,7 @@ this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.query.patternlanguage.metamodel.queries"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra.query.patternlanguage.metamodel.queries.validation"
+         id="org.eclipse.viatra.query.patternlanguage.metamodel.validation"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -9,7 +9,7 @@
  *   Mocsai Krisztian - initial API and implementation
  *******************************************************************************/
  
- package org.eclipse.viatra.query.patternlanguage.metamodel.queries
+ package org.eclipse.viatra.query.patternlanguage.metamodel
 
 import
 "http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage"

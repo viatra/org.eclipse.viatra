@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.viatra.query.patternlanguage.metamodel.validation
+Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.metamodel.validation;singleton:=true
+Bundle-Version: 0.21.0.qualifier
+Require-Bundle: org.eclipse.viatra.query.patternlanguage.metamodel,
+ org.eclipse.viatra.query.runtime,
+ org.eclipse.viatra.addon.validation.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

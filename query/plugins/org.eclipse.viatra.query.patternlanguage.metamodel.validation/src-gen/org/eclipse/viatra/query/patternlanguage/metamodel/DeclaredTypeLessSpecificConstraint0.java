@@ -1,7 +1,7 @@
 /**
-Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel.queries/src/org/eclipse/viatra/query/patternlanguage/metamodel/queries/ValidationQueries.vql
+Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/ValidationQueries.vql
 */
-package org.eclipse.viatra.query.patternlanguage.metamodel.queries;
+package org.eclipse.viatra.query.patternlanguage.metamodel;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,19 +16,19 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
-import org.eclipse.viatra.query.patternlanguage.metamodel.queries.InferredTypeLessSpecific;
+import org.eclipse.viatra.query.patternlanguage.metamodel.DeclaredTypeLessSpecific;
 
-public class InferredTypeLessSpecificConstraint0 implements IConstraintSpecification {
+public class DeclaredTypeLessSpecificConstraint0 implements IConstraintSpecification {
 
-    private InferredTypeLessSpecific querySpecification;
+    private DeclaredTypeLessSpecific querySpecification;
 
-    public InferredTypeLessSpecificConstraint0() {
-        querySpecification = InferredTypeLessSpecific.instance();
+    public DeclaredTypeLessSpecificConstraint0() {
+        querySpecification = DeclaredTypeLessSpecific.instance();
     }
 
     @Override
     public String getMessageFormat() {
-        return "Type $eClass.name$ inferred from bodies is less specific then the declared type $declaredEClass.name$.";
+        return "Declared type $declaredEClass.name$ is less specific then the type $eClass.name$ inferred from bodies.";
     }
 
 
