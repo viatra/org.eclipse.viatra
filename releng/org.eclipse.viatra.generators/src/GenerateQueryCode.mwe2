@@ -16,6 +16,7 @@ Workflow {
         registerGeneratedEPackage = "org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"
         registerGeneratedEPackage = "org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemPackage"
         registerGeneratedEPackage = "org.eclipse.uml2.uml.UMLPackage"
+        registerGeneratedEPackage = "org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage"
     }
  
     component = DirectoryCleaner {

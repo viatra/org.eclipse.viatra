@@ -368,6 +368,13 @@
         <description></description>
       </setupTask>
       <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.pregen"
+          successor="viatra.xtext.pregen"
+          launcher="org.eclipse.viatra.setup/GeneratePatternLanguageSiriusMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.xtext.pregen"
           onlyNewProjects="true"
@@ -382,14 +389,20 @@
       <setupTask
           xsi:type="launching:LaunchTask"
           predecessor="viatra.xtext.postgen"
-          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.7"
+          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.8"
           launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
         <description></description>
       </setupTask>
       <setupTask
           xsi:type="launching:LaunchTask"
-          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.6"
+          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.7"
           launcher="org.eclipse.viatra.setup/GeneratePatternLanguageTestMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.7"
+          launcher="org.eclipse.viatra.setup/GeneratePatternLanguageSiriusQueries.mwe2.launch">
         <description></description>
       </setupTask>
       <setupTask
