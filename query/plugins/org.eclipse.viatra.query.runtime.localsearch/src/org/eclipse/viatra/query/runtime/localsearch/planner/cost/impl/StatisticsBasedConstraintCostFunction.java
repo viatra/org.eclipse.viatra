@@ -66,11 +66,11 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
     /**
      * @since 2.1
      */
-    public static final double INVERSE_NAVIGATION_PENALTY_DEFAULT =      1.0;
+    public static final double INVERSE_NAVIGATION_PENALTY_DEFAULT = 0.10;
     /**
      * @since 2.1
      */
-    public static final double INVERSE_NAVIGATION_PENALTY_GENERIC =  0.01;
+    public static final double INVERSE_NAVIGATION_PENALTY_GENERIC = 0.01;
     
     
     private final double inverseNavigationPenalty;
@@ -198,8 +198,8 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
             
         } else {
             
-            Optional<Long> srcLower  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(0, 2),   Accuracy.BEST_LOWER_BOUND);
-            Optional<Long> dstLower  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(1, 2),   Accuracy.BEST_LOWER_BOUND);
+            Optional<Long> srcLower  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(0, 2),   Accuracy.APPROXIMATION);
+            Optional<Long> dstLower  = projectionSize(input,   supplierKey,    TupleMask.selectSingle(1, 2),   Accuracy.APPROXIMATION);
             
             List<Optional<Long>> nodeLower = Arrays.asList(srcLower, dstLower);
             List<Optional<Long>> nodeUpper = Arrays.asList(srcUpper, dstUpper);
