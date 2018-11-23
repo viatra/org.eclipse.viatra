@@ -667,7 +667,7 @@
                   <groups name="EPackage Import Group" domainClass="vgql::PatternPackage" semanticCandidateExpression="var:self">
                     <controls xsi:type="properties:SelectDescription" name="metamodel_import" label="Import Metamodel" labelExpression="Metamodel" valueExpression="feature:packageImports" candidatesExpression="aql:self.getAllKnownMetamodels()" candidateDisplayExpression="aql:candidate.getPackageName()">
                       <initialOperation>
-                        <firstModelOperations xsi:type="tool_1:SetValue" featureName="packageImports" valueExpression="aql:newValue.loadEPackageDeclaration()"/>
+                        <firstModelOperations xsi:type="tool_1:SetValue" featureName="packageImports" valueExpression="aql:newValue.loadEPackageDeclaration(self)"/>
                       </initialOperation>
                     </controls>
                   </groups>

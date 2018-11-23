@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.patternlanguage.emf.sirius.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -22,10 +23,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -72,6 +79,7 @@ import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.StringLiteral;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.Type;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlFactory;
 import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage;
+import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 
@@ -415,10 +423,30 @@ public class VGQLEditorUtil {
         return result;
     }
 
-    public static EPackage loadEPackageDeclaration(IEObjectDescription description) {
-        return (EPackage) description.getEObjectOrProxy();
+    public static EPackage loadEPackageDeclaration(IEObjectDescription description, EObject context) {
+        final IMetamodelProvider metamodelProvider = getEMFPatternLanguageInjector()
+                .getInstance(IMetamodelProvider.class);
+        final IWorkspace workspace = getEMFPatternLanguageInjector().getInstance(IWorkspace.class);
+        final EPackage ePackage = (EPackage) description.getEObjectOrProxy();
+        
+        try {
+            final URI resourceUri = context.eResource().getURI();
+            if (resourceUri.isPlatformResource()) {
+                final IFile file = workspace.getRoot().getFile(new Path(resourceUri.toPlatformString(true)));
+                final ResourceSet set = context.eResource().getResourceSet();
+                String requiredPluginId = metamodelProvider.getModelPluginId(ePackage, set);
+                if (file.exists() && !file.isReadOnly() && requiredPluginId != null) {
+                    ProjectGenerationHelper.ensureBundleDependencies(file.getProject(), Arrays.asList(requiredPluginId));
+                }
+            }
+        } catch (Exception e) {
+            // If the required dependency cannot be set, simply log the results but continue further
+            SiriusVQLGraphicalEditorPlugin.logError(e);
+        }
+        
+        return ePackage;
     }
-
+    
     public static String getPackageName(IEObjectDescription description) {
         return description.getName().toString();
     }

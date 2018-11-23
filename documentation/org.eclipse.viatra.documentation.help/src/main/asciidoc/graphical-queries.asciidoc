@@ -48,7 +48,7 @@ Before editing, the required ecore metamodels are to be added to the diagram in 
 . Add an Ecore Metamodel
 image:tools/vgql_add_metamodel.png[height=300]
 
-WARNING: In the first prototype, in addition to adding the declaration, required plug-in dependencies are to be added manually to the project, otherwise the generated vql files will be erroneous. In the meantime, if necessary, the generated vql files have a quick fix to add this dependency to the project.
+NOTE: The editor tries to add the required plug-in dependencies automatically to the project. In rare case this may fail, causing the generated vql files will be erroneous. In such cases the generated vql files have a quick fix to add this dependency to the project.
 
 . Metamodel dependency
 image:tools/dependency_quick_fix.png[height=300]
