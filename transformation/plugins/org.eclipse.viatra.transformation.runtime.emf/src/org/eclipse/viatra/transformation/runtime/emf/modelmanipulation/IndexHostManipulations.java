@@ -117,8 +117,8 @@ public abstract class IndexHostManipulations<ModelObject>
     protected Iterable<EClass> getAllClassTypes() {
         if (allClassTypes == null) {
             allClassTypes = host.getAllCurrentTablesDirectInstances().stream()
-                    .filter((entry) -> entry.getKey() instanceof EClass)
-                    .map((entry) -> (EClass) entry.getKey())
+                    .filter(entry -> entry.getKey() instanceof EClass)
+                    .map(entry -> (EClass) entry.getKey())
                     .collect(Collectors.toList());
         }
         return allClassTypes;
@@ -208,7 +208,6 @@ public abstract class IndexHostManipulations<ModelObject>
      *  <li> as well as recursively remove any contained objects and assigned features.
      * </ul> 
      *  
-     * @return the exact type
      * @param element the model element to delete from the model
      * @throws ModelManipulationException 
      */
@@ -298,16 +297,16 @@ public abstract class IndexHostManipulations<ModelObject>
     }
 
     protected Iterable<Entry<EStructuralFeature, ITableWriterBinary.Table<Object, Object>>> getAllRefsPossiblyContaining(EClass eClass) {
-        return allPossibleContainers.computeIfAbsent(eClass, (type) -> host.getAllCurrentTablesFeatures().stream()
-                .filter((entry) -> FeatureKind.CONTAINMENT_REF == FeatureKind.of(entry.getKey()) &&
+        return allPossibleContainers.computeIfAbsent(eClass, type -> host.getAllCurrentTablesFeatures().stream()
+                .filter(entry -> FeatureKind.CONTAINMENT_REF == FeatureKind.of(entry.getKey()) &&
                         ((EReference)entry.getKey()).getEReferenceType().isSuperTypeOf(eClass))
                 .collect(Collectors.toList()));
     }
     private Map<EClass, List<Entry<EStructuralFeature, ITableWriterBinary.Table<Object, Object>>>> allPossibleContainers = new HashMap<>();
 
     protected Iterable<Entry<EStructuralFeature, ITableWriterBinary.Table<Object, Object>>> getAllCrossrefsPossiblyIncoming(EClass eClass) {
-        return allPossibleCrossRefs.computeIfAbsent(eClass, (type) -> host.getAllCurrentTablesFeatures().stream()
-                .filter((entry) -> FeatureKind.CROSS_REF == FeatureKind.of(entry.getKey()) &&
+        return allPossibleCrossRefs.computeIfAbsent(eClass, type -> host.getAllCurrentTablesFeatures().stream()
+                .filter(entry -> FeatureKind.CROSS_REF == FeatureKind.of(entry.getKey()) &&
                         ((EReference)entry.getKey()).getEReferenceType().isSuperTypeOf(eClass))
                 .collect(Collectors.toList()));
     }
@@ -422,7 +421,7 @@ public abstract class IndexHostManipulations<ModelObject>
      * Constructs an initializer that sets attributes of the model object to the given default values.
      */
     protected Initializer<ModelObject> makeInitializer(Map<EAttribute, Object> defaultValues) {
-        return (modelObject) -> {
+        return modelObject -> {
             for (Entry<EAttribute, Object> entry : defaultValues.entrySet()) {
                 setInternal(modelObject, entry.getKey(), entry.getValue());
             }
