@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 /**
  * Model manipulation interface for conventional EMF instance models.
  *
- * @noimplement API may be extended in the future.
+ * @noextend API may be extended in the future.
  * @author Gabor Bergmann
  * @since 2.1
  */

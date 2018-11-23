@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.transformation.runtime.emf" version="2">
-    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/AbstractEcoreManipulations.java" type="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractEcoreManipulations">
-        <filter id="576725006">
-            <message_arguments>
-                <message_argument value="IEcoreManipulations&lt;RootContainer, ModelObject&gt;"/>
-                <message_argument value="AbstractEcoreManipulations&lt;RootContainer, ModelObject&gt;"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/AbstractModelManipulations.java" type="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractModelManipulations">
         <filter id="338792546">
             <message_arguments>
@@ -129,36 +121,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations"/>
                 <message_argument value="set(EObject, EStructuralFeature, Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/modelmanipulation/IndexHostManipulations.java" type="org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IndexHostManipulations">
-        <filter id="643846161">
-            <message_arguments>
-                <message_argument value="Table&lt;Source, Target&gt;"/>
-                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
-                <message_argument value="addInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
-            </message_arguments>
-        </filter>
-        <filter id="643846161">
-            <message_arguments>
-                <message_argument value="Table&lt;Source, Target&gt;"/>
-                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
-                <message_argument value="removeInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
-            </message_arguments>
-        </filter>
-        <filter id="643846161">
-            <message_arguments>
-                <message_argument value="Table&lt;Value&gt;"/>
-                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
-                <message_argument value="addInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
-            </message_arguments>
-        </filter>
-        <filter id="643846161">
-            <message_arguments>
-                <message_argument value="Table&lt;Value&gt;"/>
-                <message_argument value="IndexHostManipulations&lt;ModelObject&gt;"/>
-                <message_argument value="removeInternal(ModelObject, EStructuralFeature, Object, ITableWriterBinaryTable&lt;Object,Object&gt;, ITableWriterUnaryTable&lt;Object&gt;)"/>
             </message_arguments>
         </filter>
     </resource>

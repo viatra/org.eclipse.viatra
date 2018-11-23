@@ -8,7 +8,7 @@
  * Contributors:
  *   Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.transformation.runtime.emf.modelmanipulation;
+package org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.tabular;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +37,9 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.tabular.EcoreIndexHost;
+import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.AbstractEcoreManipulations;
+import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IEcoreReadOperations;
+import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.ModelManipulationException;
 
 /**
  * Manipulates and reads an {@link EcoreIndexHost}.
