@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  *
  * @author Bergmann Gábor
  * @since 0.9
+ * @noextend This interface is not intended to be extended by users of the VIATRA framework, and should only be used by the query engine
  */
 public interface IQueryBackend {
 	

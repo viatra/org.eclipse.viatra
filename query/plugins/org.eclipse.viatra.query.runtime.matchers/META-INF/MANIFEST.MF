@@ -34,7 +34,7 @@ Export-Package: org.eclipse.viatra.query.runtime.matchers,
  org.eclipse.viatra.query.runtime.matchers.psystem.queries,
  org.eclipse.viatra.query.runtime.matchers.psystem.rewriters,
  org.eclipse.viatra.query.runtime.matchers.scopes;x-friends:="org.eclipse.viatra.query.runtime,org.eclipse.viatra.query.runtime.tests",
- org.eclipse.viatra.query.runtime.matchers.scopes.tables;x-friends:="org.eclipse.viatra.query.runtime,org.eclipse.viatra.query.runtime.tests",
+ org.eclipse.viatra.query.runtime.matchers.scopes.tables;x-friends:="org.eclipse.viatra.query.runtime,org.eclipse.viatra.query.runtime.tests,org.eclipse.viatra.transformation.runtime.emf",
  org.eclipse.viatra.query.runtime.matchers.tuple,
  org.eclipse.viatra.query.runtime.matchers.util
 Bundle-ClassPath: .

@@ -145,7 +145,7 @@ public interface IMemoryView<T> extends Iterable<T> {
     }
     
     /**
-     * @return process contained values with their multiplicities
+     * Process contained values with their multiplicities
      */
     default void forEachEntryWithMultiplicities(BiConsumer<T, Integer> entryConsumer) {
         for (T value : distinctValues()) {

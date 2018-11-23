@@ -101,7 +101,7 @@ public interface IQueryRuntimeContext {
      * (e.g. for an identity mask, this means the full relation size). The estimate must meet the required accuracy.
      * 
      * <p> Must accept any input key, even non-enumerables or those not recognized by this runtime context. 
-     * If there is insufficient information to provide an answer up to the required precision, {@link Optional<Long>#empty()} is returned.  
+     * If there is insufficient information to provide an answer up to the required precision, {@link Optional#empty()} is returned.  
      * 
      * <p> PRE: {@link TupleMask#isNonrepeating()} must hold for the group mask.
      * 
@@ -118,7 +118,7 @@ public interface IQueryRuntimeContext {
      * The estimate must meet the required accuracy.
      * 
      * <p> Must accept any input key, even non-enumerables or those not recognized by this runtime context. 
-     * If there is insufficient information to provide an answer up to the required precision, {@link Optional<Double>#empty()} may be returned.
+     * If there is insufficient information to provide an answer up to the required precision, {@link Optional#empty()} may be returned.
      * 
      * <p> For an empty relation, zero is acceptable as an exact answer.
      * 

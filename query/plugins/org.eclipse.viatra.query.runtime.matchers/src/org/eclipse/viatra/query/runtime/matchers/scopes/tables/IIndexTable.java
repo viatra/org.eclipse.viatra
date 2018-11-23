@@ -182,7 +182,7 @@ public interface IIndexTable {
      * Gives an estimate of the number of different groups the tuples of the table are projected into by the given mask
      * (e.g. for an identity mask, this means the full relation size). The estimate must meet the required accuracy.
      * 
-     * <p> Derived tables may return {@link Optional<Long>#empty()} if it would be costly to provide an answer up to the required precision.
+     * <p> Derived tables may return {@link Optional#empty()} if it would be costly to provide an answer up to the required precision.
      * Direct storage tables are expected to always be able to give an exact count.  
      *  
      * <p> PRE: {@link TupleMask#isNonrepeating()} must hold for the group mask.

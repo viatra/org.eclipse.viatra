@@ -64,7 +64,7 @@ public class DoubleAverageOperator implements IMultisetAggregationOperator<Doubl
     public Double getAggregate(AverageAccumulator<Double> result) {
         return (result.count == 0)
                 ? null
-                : ((double)result.value)/result.count;
+                : result.value/result.count;
     }
 
     @Override

@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.matchers" version="2">
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/DoubleAverageOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.DoubleAverageOperator">
+        <filter comment="Internal implementation of the experimental aggregator API" id="576725006">
+            <message_arguments>
+                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
+                <message_argument value="DoubleAverageOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/DoubleSumOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.DoubleSumOperator">
         <filter id="576720909">
             <message_arguments>
                 <message_argument value="AbstractMemorylessAggregationOperator&lt;Domain, AggregateResult&gt;"/>
                 <message_argument value="DoubleSumOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/ExtremumOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.ExtremumOperator">
+        <filter comment="Internal implementation of the experimental aggregator API" id="576725006">
+            <message_arguments>
+                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
+                <message_argument value="ExtremumOperator&lt;T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/IntegerAverageOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.IntegerAverageOperator">
+        <filter comment="Internal implementation of the experimental aggregator API" id="576725006">
+            <message_arguments>
+                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
+                <message_argument value="IntegerAverageOperator"/>
             </message_arguments>
         </filter>
     </resource>
@@ -16,11 +40,34 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/LongAverageOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.LongAverageOperator">
+        <filter comment="Internal implementation of the experimental aggregator API" id="576725006">
+            <message_arguments>
+                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
+                <message_argument value="LongAverageOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/LongSumOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.LongSumOperator">
         <filter id="576720909">
             <message_arguments>
                 <message_argument value="AbstractMemorylessAggregationOperator&lt;Domain, AggregateResult&gt;"/>
                 <message_argument value="LongSumOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/avg.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.avg">
+        <filter comment="Internal implementation of the experimental aggregator API" id="576725006">
+            <message_arguments>
+                <message_argument value="IAggregatorFactory"/>
+                <message_argument value="avg"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal implementation of the experimental aggregator API" id="643842064">
+            <message_arguments>
+                <message_argument value="BoundAggregator"/>
+                <message_argument value="avg"/>
+                <message_argument value="getAggregatorLogic(Class&lt;?&gt;)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -145,25 +192,6 @@
             <message_arguments>
                 <message_argument value="PQuery"/>
                 <message_argument value="BasePQuery"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/queries/PQueries.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries">
-        <filter comment="Modified return value" id="1141899266">
-            <message_arguments>
-                <message_argument value="1.4"/>
-                <message_argument value="2.0"/>
-                <message_argument value="parameterDirectionPredicate(PParameterDirection)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Modified return value" id="1143996420">
-            <message_arguments>
-                <message_argument value="directlyReferencedQueriesFunction()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Modified return value" id="1143996420">
-            <message_arguments>
-                <message_argument value="queryStatusPredicate(PQuery.PQueryStatus)"/>
             </message_arguments>
         </filter>
     </resource>
