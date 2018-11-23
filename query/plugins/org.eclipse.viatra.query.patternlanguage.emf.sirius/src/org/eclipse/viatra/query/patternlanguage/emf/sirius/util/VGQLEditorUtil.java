@@ -306,7 +306,7 @@ public class VGQLEditorUtil {
         }
 
         XtextEmbeddedEditor embeddedEditor = new XtextEmbeddedEditor((IGraphicalEditPart) editPart, target, targetView,
-                getEMFPatternLanguageInjector());
+                getEMFPatternLanguageInjector(), editor);
         embeddedEditor.showEditor();
     }
 

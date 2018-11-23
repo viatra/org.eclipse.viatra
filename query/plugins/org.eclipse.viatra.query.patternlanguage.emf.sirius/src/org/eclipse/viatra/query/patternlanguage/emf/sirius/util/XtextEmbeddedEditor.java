@@ -27,6 +27,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.sirius.business.api.session.SessionManager;
 import org.eclipse.sirius.diagram.DDiagramElement;
 import org.eclipse.swt.SWT;
@@ -41,6 +42,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer;
 import org.eclipse.viatra.query.patternlanguage.emf.sirius.SiriusVQLGraphicalEditorPlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
@@ -130,9 +133,14 @@ public class XtextEmbeddedEditor {
 	private DDiagramElement originalSemanticElementView;
 
 	private XtextResource virtualXtextResource;
+
+    private final IEditorPart editor;
+
+    private ISelectionProvider oldSelectionProvider;
 	
 	public XtextEmbeddedEditor(IGraphicalEditPart editPart,
-			InterpretableExpression targetSemanticElement, DDiagramElement targetView, Injector xtextInjector) {
+			InterpretableExpression targetSemanticElement, DDiagramElement targetView, Injector xtextInjector, IEditorPart editor) {
+        this.editor = editor;
         this.hostEditPart = Objects.requireNonNull(editPart);
 		this.semanticElement = Objects.requireNonNull(targetSemanticElement);
 		this.originalSemanticElementView = Objects.requireNonNull(targetView);
@@ -147,6 +155,8 @@ public class XtextEmbeddedEditor {
             // Create virtual Xtext resource for the embedded editor
             this.virtualXtextResource = createVirtualXtextResource(semanticElement);
             createXtextEditor();
+            oldSelectionProvider = editor.getSite().getSelectionProvider();
+            editor.getSite().setSelectionProvider(xtextEmbeddedEditor.getViewer());
         } catch (Exception e) {
             SiriusVQLGraphicalEditorPlugin.logError(e);
         } finally {
@@ -160,7 +170,8 @@ public class XtextEmbeddedEditor {
 	 * Close this editor and update the underlying model
 	 */
 	public void closeEditor(boolean updateModel) {
-		if (xtextPartialEditor != null) {
+		try {
+	    if (xtextPartialEditor != null) {
 			if (updateModel) {
 			    final TransactionalEditingDomain ed = SessionManager.INSTANCE.getSession(semanticElement).getTransactionalEditingDomain();
 			    final Command command = SetCommand.create(ed, semanticElement, VgqlPackage.Literals.INTERPRETABLE_EXPRESSION__EXPRESSION, xtextPartialEditor.getEditablePart());
@@ -183,6 +194,10 @@ public class XtextEmbeddedEditor {
 			}
 			xtextPartialEditor = null;
 			virtualXtextResource = null;
+		}
+		} finally {
+		    editor.getSite().setSelectionProvider(oldSelectionProvider);
+		    oldSelectionProvider = null;
 		}
 	}
 
@@ -275,7 +290,7 @@ public class XtextEmbeddedEditor {
         // To avoid that, line breaks are added manually.
         xtextPartialEditor = xtextEmbeddedEditor.createPartialEditor(getPrefixText(semanticElement) + "\n",
                 getEditableText(semanticElement), "\n" + getPostfixText(semanticElement), false);
-
+        
 		addKeyVerifyListener();
 		setEditorBounds();
 		
