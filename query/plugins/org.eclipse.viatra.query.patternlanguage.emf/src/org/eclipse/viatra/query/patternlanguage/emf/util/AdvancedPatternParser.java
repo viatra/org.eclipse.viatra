@@ -268,7 +268,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         Map<URI, PatternParsingResults> updatedResults = parseBatch(input, options, resourceSet);
         updatedResults.keySet().forEach(key -> builder.updatedPatternResults(key, updatedResults.get(key)));
 
-        reParsePatternImpact(options, resourceSet, builder, impact);
+        reparsePatternImpact(options, resourceSet, builder, impact);
 
         return builder.build();
     }
@@ -295,7 +295,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         Map<URI, PatternParsingResults> addedResults = parseBatch(input, options, resourceSet);
         addedResults.keySet().forEach(key -> builder.addedPatternResults(key, addedResults.get(key)));
 
-        reParsePatternImpact(options, resourceSet, builder, impact);
+        reparsePatternImpact(options, resourceSet, builder, impact);
 
         return builder.build();
     }
@@ -329,21 +329,20 @@ public class AdvancedPatternParser extends BasePatternParser {
             }
 
         });
-        reParsePatternImpact(options, resourceSet, builder, impact);
+        reparsePatternImpact(options, resourceSet, builder, impact);
 
         return builder.build();
     }
 
-    private void reParsePatternImpact(Map<?, ?> options, ResourceSet resourceSet,
+    private void reparsePatternImpact(Map<?, ?> options, ResourceSet resourceSet,
             AdvancedPatternParserSnapshot.Builder builder, Set<Pattern> impact) {
         if (!impact.isEmpty()) {
             Set<Resource> resources = impact.stream().map(Pattern::eResource).collect(Collectors.toSet());
 
             resourceSet.getResources().removeAll(resources);
 
-            Map<URI, String> textReprMap = new HashMap<URI, String>();
-
-            resources.stream().filter(Resource.class::isInstance).forEach(res -> textReprMap.put(res.getURI(), uriTextMap.get(res.getURI())));
+            Map<URI, String> textReprMap = resources.stream()
+                    .collect(Collectors.toMap(Resource::getURI, res -> uriTextMap.get(res.getURI()), (a, b) -> b));
 
             Map<URI, PatternParsingResults> results = parseBatch(textReprMap, options, resourceSet);
             results.keySet().forEach(key -> builder.impactedPatternResults(key, results.get(key)));
@@ -357,16 +356,16 @@ public class AdvancedPatternParser extends BasePatternParser {
     protected Map<URI, PatternParsingResults> parseBatch(Map<URI, String> input, Map<?, ?> options,
             ResourceSet resourceSet) {
         List<Resource> resources = new ArrayList<>();
-        Map<URI, PatternParsingResults> results = new HashMap<>();
-
-        input.keySet().forEach(uri -> {
-            String text = input.get(uri);
+        input.entrySet().forEach(entry -> {
+            URI uri = entry.getKey();
+            String text = entry.getValue();
             Resource resource = resource(getAsStream(text), uri, options, resourceSet);
             uriTextMap.put(uri, text);
             resources.add(resource);
         });
-
-        resources.forEach(resource -> {
+        
+        // Before validation the Xtext index needs to be updated with this content
+        for (Resource resource : resources) {
             ResourceDescriptionsData resourceDescriptionsData = ResourceDescriptionsData.ResourceSetAdapter
                     .findResourceDescriptionsData(resourceSet);
             if (resourceDescriptionsData == null) {
@@ -376,14 +375,16 @@ public class AdvancedPatternParser extends BasePatternParser {
             }
 
             addDeltaToIndex(resource.getURI(), resource, resourceDescriptionsData);
-        });
-
-        resources.forEach(res -> {
+        };
+        
+        // Validate all resources and collect all the patterns and diagnostics
+        Map<URI, PatternParsingResults> results = new HashMap<>();
+        for (Resource resource : resources) {
             List<Pattern> patterns = new ArrayList<>();
-            PatternSetValidationDiagnostics diagnostics = validator.validate(res);
-            diagnosticsMap.put(res, diagnostics);
+            PatternSetValidationDiagnostics diagnostics = validator.validate(resource);
+            diagnosticsMap.put(resource, diagnostics);
 
-            for (EObject eObject : res.getContents()) {
+            for (EObject eObject : resource.getContents()) {
                 if (eObject instanceof PatternModel) {
                     for (Pattern pattern : ((PatternModel) eObject).getPatterns()) {
                         patterns.add(pattern);
@@ -391,9 +392,9 @@ public class AdvancedPatternParser extends BasePatternParser {
                 }
             }
 
-            results.put(res.getURI(),
+            results.put(resource.getURI(),
                     new PatternParsingResults(patterns, diagnostics, getOrCreateSpecificationBuilder()));
-        });
+        };
 
         return results;
     }
@@ -410,11 +411,15 @@ public class AdvancedPatternParser extends BasePatternParser {
             if (res instanceof BatchLinkableResource) {
                 PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(res);
                 if (diagnostics != null) {
-                    Set<Pattern> resourcePatterns = res.getContents().stream().filter(PatternModel.class::isInstance)
-                            .map(pm -> ((PatternModel) pm).getPatterns().stream()).flatMap(Function.identity())
+                    Set<Pattern> resourcePatterns = res.getContents().stream()
+                            .filter(PatternModel.class::isInstance)
+                            .map(PatternModel.class::cast)
+                            .map(pm -> pm.getPatterns().stream())
+                            .flatMap(Function.identity())
                             .collect(Collectors.toSet());
                     erroneousPatterns.addAll(resourcePatterns.stream()
-                            .filter(pattern -> !getErrors(pattern, diagnostics).isEmpty()).collect(Collectors.toSet()));
+                                .filter(pattern -> !getErrors(pattern, diagnostics).isEmpty()).collect(Collectors.toSet())
+                            );
                 }
             }
         });

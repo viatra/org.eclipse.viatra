@@ -283,6 +283,10 @@ NOTE: To use this API, the code from the `org.eclipse.viatra.query.patternlangua
 include::../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/ViatraQueryHeadless.java[tag=patternParser]
 ----
 
+NOTE: In VIATRA 2.1 the pattern parser API was updated to support more advanced cases, like updating previously loaded patterns (see below for details). In previous versions, the pattern parser could be initialized by calling `PatternParser.parser().parse(...)`, but this call is deprecated in VIATRA version 2.1.
+
+The pattern parser can be initialized in two modes: a _basic mode_ (initialized with calling either the `parse` or `build` methods of the `PatternParserBuilder` class does not supports updating query definitions after being loaded; while in _advanced mode_ (initialized with the `buildAdvanced` method of `PatterParserBuilder`) previously loaded specifications can be updated, and the resulting query specifications are updated (and revalidated) as necessary. Given the more complex infrastructure required for _advanced mode_, it is recommended to rely on the _basic mode_ unless reparsing pattern is truly necessary, such as when integrating VIATRA in an environment where the user may specify custom queries with complex dependencies between them. 
+
 == VIATRA Query Base
 
 VIATRA Query provides a light-weight indexer library called Base that aims to provide several useful (some would even argue critical) features for querying EMF models: 
