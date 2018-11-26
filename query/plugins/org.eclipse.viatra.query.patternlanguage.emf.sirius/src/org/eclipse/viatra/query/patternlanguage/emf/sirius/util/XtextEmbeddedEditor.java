@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer;
 import org.eclipse.viatra.query.patternlanguage.emf.sirius.SiriusVQLGraphicalEditorPlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;

@@ -37,6 +37,8 @@ public abstract class AbstractModelManipulations extends AbstractEcoreManipulati
     implements IModelManipulations, IModelReadOperations
 {
 
+    private static final String INVALID_MULTIPLICITY_FOR_POSITIONING_MESSAGE = "Positioning only works on features with 'many' multiplicity.";
+    private static final String NOT_IN_CONTAINMENT_HIERARCHY_MESSAGE = "Elements must be moved into the containment hierarchy.";
     private static final String UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE = 
             "The container of EClass %s does neither define or inherit an EStructuralFeature %s.";
     private static final String FEATURE_TYPE_MISMATCH = 
@@ -311,7 +313,7 @@ public abstract class AbstractModelManipulations extends AbstractEcoreManipulati
                 FEATURE_TYPE_MISMATCH,
                 reference.getName(), what);
         Preconditions.checkArgument(reference.isContainment(),
-                "Elements must be moved into the containment hierarchy.");
+                NOT_IN_CONTAINMENT_HIERARCHY_MESSAGE);
         doMoveTo(what, newContainer, reference);
     }
 
@@ -325,9 +327,9 @@ public abstract class AbstractModelManipulations extends AbstractEcoreManipulati
         Preconditions.checkArgument(reference.getEReferenceType().isInstance(what),
                 FEATURE_TYPE_MISMATCH,
                 reference.getName(), what);
-        Preconditions.checkArgument(reference.isMany(), "Positioning only works on features with 'many' multiplicity.");
+        Preconditions.checkArgument(reference.isMany(), INVALID_MULTIPLICITY_FOR_POSITIONING_MESSAGE);
         Preconditions.checkArgument(reference.isContainment(),
-                "Elements must be moved into the containment hierarchy.");
+                NOT_IN_CONTAINMENT_HIERARCHY_MESSAGE);
         
         doMoveTo(what, newContainer, reference, index);
     }
@@ -345,7 +347,7 @@ public abstract class AbstractModelManipulations extends AbstractEcoreManipulati
                     reference.getName(), element);            
         }
         Preconditions.checkArgument(reference.isContainment(),
-                "Elements must be moved into the containment hierarchy.");
+                NOT_IN_CONTAINMENT_HIERARCHY_MESSAGE);
         doMoveTo(what, newContainer, reference);
     }
 
@@ -356,7 +358,7 @@ public abstract class AbstractModelManipulations extends AbstractEcoreManipulati
         Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass, feature.getName());
-        Preconditions.checkArgument(feature.isMany(), "Positioning only works on features with 'many' multiplicity.");
+        Preconditions.checkArgument(feature.isMany(), INVALID_MULTIPLICITY_FOR_POSITIONING_MESSAGE);
         doChangeIndex(container, feature, oldIndex, newIndex);
     }
     

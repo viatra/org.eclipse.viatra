@@ -75,9 +75,7 @@ public interface IIndexTable {
      */
     @SuppressWarnings("unchecked")
     public default Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
-        return () -> {
-            return (Iterator<Tuple>) (streamTuples(seedMask, seed).iterator());
-        };
+        return () -> (Iterator<Tuple>) (streamTuples(seedMask, seed).iterator());
     }
 
     /**
@@ -119,9 +117,7 @@ public interface IIndexTable {
      */
     @SuppressWarnings("unchecked")
     public default Iterable<? extends Object> enumerateValues(TupleMask seedMask, ITuple seed) {
-        return () -> {
-            return (Iterator<Object>) (streamValues(seedMask, seed).iterator());
-        };        
+        return () -> (Iterator<Object>) (streamValues(seedMask, seed).iterator());
     }
 
     /**

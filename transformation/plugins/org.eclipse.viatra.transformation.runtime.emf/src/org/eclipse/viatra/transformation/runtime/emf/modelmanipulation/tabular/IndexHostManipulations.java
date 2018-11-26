@@ -574,9 +574,8 @@ public abstract class IndexHostManipulations<ModelObject>
         }
         
         // remove from old containment, if this is a containment feature
-        if (feature instanceof EReference) {
-            if (((EReference) feature).isContainer())
-                removeFromCurrentContainer((ModelObject)value);
+        if (feature instanceof EReference && ((EReference) feature).isContainer()) {
+            removeFromCurrentContainer((ModelObject)value);
         }
         
         addInternal(container, feature, value, table, null);
@@ -702,8 +701,8 @@ public abstract class IndexHostManipulations<ModelObject>
     protected void moveAllInternal(Collection<ModelObject> what, ModelObject newContainer, EReference reference)
             throws ModelManipulationException {
         ITableWriterBinary.Table<Object, Object> table = host.getTableFeatureSlots(reference);
-        for (Object element : what) {
-            removeFromCurrentContainer((ModelObject) element);
+        for (ModelObject element : what) {
+            removeFromCurrentContainer(element);
             addInternal(newContainer, reference, element, table, null);
         }
     }

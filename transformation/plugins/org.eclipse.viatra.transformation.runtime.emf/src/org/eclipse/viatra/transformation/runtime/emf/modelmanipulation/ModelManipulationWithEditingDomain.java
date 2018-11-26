@@ -197,19 +197,19 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
     
     @Override
     protected int doCount(EObject container, EStructuralFeature feature) throws ModelManipulationException {
-        Command command = new ReadSlotCommand(container, feature, (slotValues) -> slotValues.size());
+        Command command = new ReadSlotCommand(container, feature, Collection::size);
         executeCommand(command);
         return (Integer) command.getResult().iterator().next();
     }
     @Override
     protected Stream<? extends Object> doStream(EObject container, EStructuralFeature feature) throws ModelManipulationException {
-        Command command = new ReadSlotCommand(container, feature, (slotValues) -> slotValues.stream());
+        Command command = new ReadSlotCommand(container, feature, Collection::stream);
         executeCommand(command);
         return (Stream<? extends Object>) command.getResult().iterator().next();
     }
     @Override
     protected boolean doIsSetTo(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException {
-        Command command = new ReadSlotCommand(container, feature, (slotValues) -> slotValues.contains(value));
+        Command command = new ReadSlotCommand(container, feature, slotValues -> slotValues.contains(value));
         executeCommand(command);
         return (Boolean) command.getResult().iterator().next();
     }
