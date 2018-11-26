@@ -34,13 +34,15 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.sirius.business.api.componentization.ViewpointRegistry;
-import org.eclipse.sirius.business.api.dialect.DialectManager;
 import org.eclipse.sirius.business.api.dialect.command.CreateRepresentationCommand;
 import org.eclipse.sirius.business.api.modelingproject.ModelingProject;
 import org.eclipse.sirius.business.api.session.Session;
 import org.eclipse.sirius.business.api.session.SessionManager;
 import org.eclipse.sirius.tools.api.command.semantic.AddSemanticResourceCommand;
 import org.eclipse.sirius.ui.business.api.dialect.DialectUIManager;
+import org.eclipse.sirius.ui.business.api.session.EditingSessionEvent;
+import org.eclipse.sirius.ui.business.api.session.IEditingSession;
+import org.eclipse.sirius.ui.business.api.session.SessionUIManager;
 import org.eclipse.sirius.ui.business.api.viewpoint.ViewpointSelectionCallback;
 import org.eclipse.sirius.ui.business.internal.commands.ChangeViewpointSelectionCommand;
 import org.eclipse.sirius.viewpoint.DRepresentation;
@@ -156,11 +158,15 @@ public class NewVgqlFileWizard extends Wizard implements INewWizard {
                     .filter(rep -> Objects.equals("dd_vql_model_diagram", rep.getName()))
                     .findFirst()
                     .ifPresent(repDescriptor -> {
-                        new CreateRepresentationCommand(session, repDescriptor, pkg, fileName, subMonitor.split(1)).execute();
-                        final DRepresentation representation = DialectManager.INSTANCE.getRepresentations(repDescriptor, session).iterator().next();
+                        final CreateRepresentationCommand createRepresentationCommand = new CreateRepresentationCommand(session, repDescriptor, pkg, fileName, subMonitor.split(1));
+                            
+                        final IEditingSession editingSession = SessionUIManager.INSTANCE.getUISession(session);
+                        editingSession.notify(EditingSessionEvent.REPRESENTATION_ABOUT_TO_BE_CREATED_BEFORE_OPENING);
+                        session.getTransactionalEditingDomain().getCommandStack().execute(createRepresentationCommand);
+                        editingSession.notify(EditingSessionEvent.REPRESENTATION_CREATED_BEFORE_OPENING);
+                        final DRepresentation representation = createRepresentationCommand.getCreatedRepresentation();
                         
                         DialectUIManager.INSTANCE.openEditor(session, representation, subMonitor.split(1));
-                        SessionManager.INSTANCE.notifyRepresentationCreated(session);
                         
                     });
             }
