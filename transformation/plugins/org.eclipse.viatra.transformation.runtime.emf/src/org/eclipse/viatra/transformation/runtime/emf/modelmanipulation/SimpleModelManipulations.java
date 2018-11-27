@@ -82,7 +82,11 @@ public class SimpleModelManipulations extends AbstractModelManipulations {
 
     @Override
     protected void doSet(EObject container, EStructuralFeature feature, Object value) {
-        container.eSet(feature, value);
+        if (value == null) {
+            container.eUnset(feature);
+        } else {
+            container.eSet(feature, value);
+        }
     }
 
     @Override

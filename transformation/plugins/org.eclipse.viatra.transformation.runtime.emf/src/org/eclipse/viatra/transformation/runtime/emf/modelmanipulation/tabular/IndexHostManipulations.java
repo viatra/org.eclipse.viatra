@@ -544,7 +544,7 @@ public abstract class IndexHostManipulations<ModelObject>
         Preconditions.checkArgument(isAssignableFrom(feature.getEContainingClass(), container),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 container, feature.getName());
-        Preconditions.checkArgument(isAssignableFrom(feature.getEType(), value),
+        Preconditions.checkArgument(null == value || isAssignableFrom(feature.getEType(), value),
                 FEATURE_TYPE_MISMATCH,
                 feature.getName(), value);
         Preconditions.checkArgument(!feature.isMany(), "The EStructuralFeature %s must have an upper bound of 1.",
@@ -573,12 +573,15 @@ public abstract class IndexHostManipulations<ModelObject>
             }
         }
         
-        // remove from old containment, if this is a containment feature
-        if (feature instanceof EReference && ((EReference) feature).isContainer()) {
-            removeFromCurrentContainer((ModelObject)value);
+        if (value != null) { // this is a true 'set' to a new value, not an 'unset'
+            // remove from old containment, if this is a containment feature
+            if (feature instanceof EReference && ((EReference) feature).isContainer()) {
+                removeFromCurrentContainer((ModelObject)value);
+            }
+            
+            addInternal(container, feature, value, table, null);             
         }
         
-        addInternal(container, feature, value, table, null);
     }
 
 

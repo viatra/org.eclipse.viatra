@@ -245,7 +245,7 @@ public abstract class AbstractModelManipulations extends AbstractEcoreManipulati
         Preconditions.checkArgument(feature.getEContainingClass().isSuperTypeOf(containerClass),
                 UNDEFINED_ESTRUCTURAL_FEATURE_FOR_CONTAINER_MESSAGE,
                 containerClass.getName(), feature.getName());
-        Preconditions.checkArgument(feature.getEType().isInstance(value),
+        Preconditions.checkArgument(null == value || feature.getEType().isInstance(value),
                 FEATURE_TYPE_MISMATCH,
                 feature.getName(), value);
         Preconditions.checkArgument(!feature.isMany(), "The EStructuralFeature %s must have an upper bound of 1.",

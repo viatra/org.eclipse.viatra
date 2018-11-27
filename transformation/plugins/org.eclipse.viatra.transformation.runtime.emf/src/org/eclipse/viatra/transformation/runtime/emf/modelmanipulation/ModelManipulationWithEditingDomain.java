@@ -253,7 +253,8 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
     @Override
     protected void doSet(EObject container, EStructuralFeature feature, Object value)
             throws ModelManipulationException {
-        Command setCommand = SetCommand.create(domain, container, feature, value);
+        Command setCommand = SetCommand.create(domain, container, feature, 
+                value != null ? value : SetCommand.UNSET_VALUE );
         executeCommand(setCommand);
     }
 

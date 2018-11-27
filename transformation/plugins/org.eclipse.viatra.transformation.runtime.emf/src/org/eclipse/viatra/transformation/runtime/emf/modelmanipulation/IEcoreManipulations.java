@@ -105,8 +105,13 @@ public interface IEcoreManipulations<RootContainer, ModelObject> {
 
     // *************************************** SET ***************************************
     /**
-     * Sets an element to a selected 'single'-valued EStructuralFeature.
-     * TODO restrict to non-containment?
+     * Sets a 'single'-valued EStructuralFeature of a given container model element to the given value.
+     * <p> The previous value of the feature, if any, is removed. 
+     * If the provided new value is null, then the invocation acts as 'unset', and no new value is stored.
+     * 
+     * @param value the new value to be set, or null
+     * 
+     * <p> TODO restrict to non-containment?
      */
     void set(ModelObject container, EStructuralFeature feature, Object value) throws ModelManipulationException;
 
