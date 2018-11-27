@@ -375,7 +375,7 @@ public class AdvancedPatternParser extends BasePatternParser {
             }
 
             addDeltaToIndex(resource.getURI(), resource, resourceDescriptionsData);
-        };
+        }
         
         // Validate all resources and collect all the patterns and diagnostics
         Map<URI, PatternParsingResults> results = new HashMap<>();
@@ -394,7 +394,7 @@ public class AdvancedPatternParser extends BasePatternParser {
 
             results.put(resource.getURI(),
                     new PatternParsingResults(patterns, diagnostics, getOrCreateSpecificationBuilder()));
-        };
+        }
 
         return results;
     }
