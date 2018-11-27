@@ -54,6 +54,15 @@ public interface PQueryHeader {
     public Integer getPositionOfParameter(String parameterName);
 
     /**
+     * Returns a parameter by name if exists
+     * @since 2.1
+     */
+    default Optional<PParameter> getParameter(String parameterName) {
+        return Optional.ofNullable(getPositionOfParameter(parameterName))
+            .map(getParameters()::get);
+    }
+    
+    /**
      * Returns the list of annotations specified for this query
      * 
      * @return a non-null, but possibly empty list of annotations

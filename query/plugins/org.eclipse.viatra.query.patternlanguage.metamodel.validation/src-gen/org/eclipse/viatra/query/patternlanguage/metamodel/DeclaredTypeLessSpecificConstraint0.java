@@ -1,5 +1,5 @@
 /**
-Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/ValidationQueries.vql
+Generated from platform:/resource/org.eclipse.viatra.query.patternlanguage.metamodel/src/org/eclipse/viatra/query/patternlanguage/metamodel/ValidationQueries.vql
 */
 package org.eclipse.viatra.query.patternlanguage.metamodel;
 

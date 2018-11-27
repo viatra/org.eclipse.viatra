@@ -13,10 +13,13 @@ package org.eclipse.viatra.query.patternlanguage.emf.sirius;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.sirius.business.api.componentization.ViewpointRegistry;
 import org.eclipse.sirius.viewpoint.description.Viewpoint;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra.query.patternlanguage.emf.sirius.validation.EValidatorAdapter;
+import org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.osgi.framework.BundleContext;
 
@@ -42,7 +45,11 @@ public class SiriusVQLGraphicalEditorPlugin extends AbstractUIPlugin {
       
       INSTANCE = this;
 	  viewpoints = new HashSet<Viewpoint>();
-	  viewpoints.addAll(ViewpointRegistry.getInstance().registerFromPlugin(PLUGIN_ID + "/description/vqleditor.odesign"));	  
+	  viewpoints.addAll(ViewpointRegistry.getInstance().registerFromPlugin(PLUGIN_ID + "/description/vqleditor.odesign"));
+	  
+	  EValidator.Registry.INSTANCE.put(
+	            VgqlPackage.eINSTANCE,
+	            new EValidatorAdapter());
     }
 
     @Override

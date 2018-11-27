@@ -75,5 +75,35 @@
         </activeWhen>
      </handler>
   </extension>
-   
+     <extension
+        point="org.eclipse.emf.validation.constraintProviders">
+     <constraintProvider
+           cache="false"
+           class="org.eclipse.viatra.query.patternlanguage.emf.sirius.validation.VQLConstraintProvider"
+           mode="Batch">
+        <package
+              namespaceUri="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage">
+        </package>
+     </constraintProvider>
+     <category
+           id="org.eclipse.viatra.query.patternlanguage.emf.sirius.validation"
+           name="VGQL Validation Rules">
+     </category>
+  </extension>
+     <extension
+           point="org.eclipse.emf.validation.constraintBindings">
+        <binding
+              category="org.eclipse.viatra.query.patternlanguage.emf.sirius.validation"
+              context="org.eclipse.viatra.query.patternlanguage.emf.sirius.validation.context">
+        </binding>
+        <clientContext
+              default="false"
+              id="org.eclipse.viatra.query.patternlanguage.emf.sirius.validation.context">
+           <enablement>
+              <instanceof
+                    value="org.eclipse.emf.ecore.EObject">
+              </instanceof>
+           </enablement>
+        </clientContext>
+     </extension>
 </plugin>
