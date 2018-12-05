@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.base.itc.graphimpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -33,9 +34,9 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
     private IMultiLookup<V, V> outgoingEdges;
     // target -> source -> count
     private IMultiLookup<V, V> incomingEdges;
-    
+
     private Set<V> nodes;
-    
+
     private List<IGraphObserver<V>> observers;
 
     public Graph() {
@@ -48,7 +49,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
     public void insertEdge(V source, V target) {
         outgoingEdges.addPair(source, target);
         incomingEdges.addPair(target, source);
-        
+
         for (IGraphObserver<V> go : observers) {
             go.edgeInserted(source, target);
         }
@@ -56,6 +57,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 
     /**
      * No-op if trying to delete edge that does not exist
+     * 
      * @since 2.0
      * @see #deleteEdgeIfExists(Object, Object)
      */
@@ -65,9 +67,10 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             deleteEdgeThatExists(source, target);
         }
     }
-    
+
     /**
-     * @throws IllegalStateException if trying to delete edge that does not exist
+     * @throws IllegalStateException
+     *             if trying to delete edge that does not exist
      * @since 2.0
      * @see #deleteEdgeIfExists(Object, Object)
      */
@@ -78,11 +81,11 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             go.edgeDeleted(source, target);
         }
     }
-    
+
     /**
-     * @deprecated use explicitly {@link #deleteEdgeThatExists(Object, Object)} 
-     * or {@link #deleteEdgeIfExists(Object, Object)} instead. 
-     * To preserve backwards compatibility, this method delegates to the latter.
+     * @deprecated use explicitly {@link #deleteEdgeThatExists(Object, Object)} or
+     *             {@link #deleteEdgeIfExists(Object, Object)} instead. To preserve backwards compatibility, this method
+     *             delegates to the latter.
      * 
      */
     @Deprecated
@@ -90,19 +93,44 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         deleteEdgeIfExists(source, target);
     }
 
-    
-    
-
+    /**
+     * Insert the given node into the graph.
+     */
     public void insertNode(V node) {
         if (nodes.add(node)) {
             for (IGraphObserver<V> go : observers) {
                 go.nodeInserted(node);
-            }            
+            }
         }
     }
 
+    /**
+     * Deletes the given node AND all of the edges going in and out from the node. 
+     */
     public void deleteNode(V node) {
         if (nodes.remove(node)) {
+            IMemoryView<V> incomingView = incomingEdges.lookup(node);
+            if (incomingView != null) {
+                Map<V, Integer> incoming = CollectionsFactory.createMap(incomingView.asMap());
+
+                for (Entry<V, Integer> entry : incoming.entrySet()) {
+                    for (int i = 0; i < entry.getValue(); i++) {
+                        deleteEdgeThatExists(entry.getKey(), node);
+                    }
+                }
+            }
+
+            IMemoryView<V> outgoingView = outgoingEdges.lookup(node);
+            if (outgoingView != null) {
+                Map<V, Integer> outgoing = CollectionsFactory.createMap(outgoingView.asMap());
+
+                for (Entry<V, Integer> entry : outgoing.entrySet()) {
+                    for (int i = 0; i < entry.getValue(); i++) {
+                        deleteEdgeThatExists(node, entry.getKey());
+                    }
+                }
+            }
+
             for (IGraphObserver<V> go : observers) {
                 go.nodeDeleted(node);
             }
@@ -148,7 +176,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             sb.append(" ");
         }
         sb.append(" edges = ");
-        for (V source: outgoingEdges.distinctKeys()) {
+        for (V source : outgoingEdges.distinctKeys()) {
             IMemoryView<V> targets = outgoingEdges.lookup(source);
             for (V target : targets.distinctValues()) {
                 int count = targets.getCount(target);
@@ -215,7 +243,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             builder.append(";\n");
         }
 
-        for (V source: outgoingEdges.distinctKeys()) {
+        for (V source : outgoingEdges.distinctKeys()) {
             IMemoryView<V> targets = outgoingEdges.lookup(source);
             String sourcePresentation = nameMapper == null ? source.toString() : nameMapper.apply(source);
             for (V target : targets.distinctValues()) {
