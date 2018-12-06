@@ -14,6 +14,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.ApplicationInstance;
+import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.ApplicationType;
+import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemFactory;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,5 +55,25 @@ public class TransformationTest {
         
         Assert.assertEquals(1, new BatchTransformationWithFilterJava(resource).callCastTypeRule(instance));
         Assert.assertEquals(1, new BatchTransformationWithFilterJava(resource).callTypeInferredRule(instance));
+    }
+    
+    @Test
+    public void invertedDisappearancePriorityConflictResolverTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.createResource(URI.createURI("__dummy.cyberphysicalsystem", true));
+        
+        ApplicationType type = CyberPhysicalSystemFactory.eINSTANCE.createApplicationType();
+        type.setIdentifier("at");
+        
+        ApplicationInstance instance = CyberPhysicalSystemFactory.eINSTANCE.createApplicationInstance();
+        instance.setIdentifier("ai");
+        type.getInstances().add(instance);
+        
+        resource.getContents().add(type);
+        
+        final EventDrivenTransformationWithPrioritizedRules transformation = new EventDrivenTransformationWithPrioritizedRules(resource);
+        String result = transformation.execute();
+        
+        Assert.assertEquals("atai", result);
     }
 }

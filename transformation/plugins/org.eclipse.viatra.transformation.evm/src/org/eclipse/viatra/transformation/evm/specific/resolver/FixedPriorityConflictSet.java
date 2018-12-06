@@ -54,7 +54,6 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
         Preconditions.checkArgument(priorities != null, "Priority map cannot be null!");
         priorityMap = new HashMap<>(priorities);
         this.priorityBuckets = new TreeMap<>(); 
-        priorities.values().forEach(key -> priorityBuckets.computeIfAbsent(key, k -> new HashSet<>()));
     }
     
     /**
