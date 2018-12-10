@@ -142,6 +142,30 @@ Local variables with a single reference, such as *quantified* parameters, should
 
 == Advanced Language Features
 
+=== Import aliasing 
+
+When writing queries over multiple metamodels, sometimes there are multiple EClass instances with the same name, but in different EPackages. To handle such cases, VQL supports import aliasing: it is possible to extend an import declaration with an alias that can later be used to differentiate between the sources.
+
+  * The syntax to define the import is as follows: `import "http://my.own.ePackage.nsUri/1.0" as alias`
+  * The alias can be used as a prefix for any EMF type reference, such as `alias::TypeName`
+
+NOTE: If no alias is used to specify the used metamodel, the import declarations provided later shadow the previous ones.
+
+As an example on how to use this feature effectively, consider the following example, where both the `custom` and the `http://www.eclipse.org/uml2/5.0.0/UML` EPackage instances define an `EClass NamedElement`:
+
+[source,vql]
+----
+import "custom" as custom
+import "http://www.eclipse.org/uml2/5.0.0/UML" as uml
+
+pattern importAliases(x : NamedElement) { // From UML metamodel, selected by order or imports
+  uml::NamedElement(x); // From UML metamodel, selected explicitly
+  custom::NamedElement(x); // Selected from the custom metamodel
+}
+----
+
+NOTE: If aliasing is used for referencing the types, only the selected metamodel will be considered. For example, if the custom metamodel would not define an `EClassifier NamedElement`, the `custom::NamedElement` type reference will not be resolved, regardless of the `EClassifier NamedElement` defined in the UML metamodel.
+
 === Working with EMaps in VIATRA Query
 
 The eclipse.org EMF wiki gives a proper FAQ about the various modeling related issues, including the usage of EMaps in your metamodel. With VIATRA Query you can even write your own queries to extract the key-value pairs from your instance model.
