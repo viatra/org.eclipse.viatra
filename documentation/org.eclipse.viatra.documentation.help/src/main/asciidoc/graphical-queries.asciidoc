@@ -39,8 +39,6 @@ image:tools/new_vgql_file.png[height=300]
 
 After the wizard finishes, a new diagram is opened for the created file, where the pattern definitions can be edited using the usual tools.
 
-NOTE: There is a known bug with regards to the wizard: creating the second vgql file does not create an additional diagram, but opens the diagram for the first file. Second and later diagrams can be created using the `aird editor` provided by Sirius.
-
 === Creating the First Pattern
 
 Before editing, the required ecore metamodels are to be added to the diagram in the Properties view.
@@ -58,6 +56,10 @@ Our first pattern will be used to enumerate all members of the EClass `HostInsta
 . First pattern
 image:tools/vgql_first_pattern.png[height=300]
 
+In order to ensure the created patterns are well-formed VIATRA queries, the queries can be validated using the default Sirius-based validators: select `Validate Diagram` from the pop-up menu of the diagram.
+
+NOTE: In case of errors in the specification, the generated VQL files will be erroneous. In such cases it is recommended to re-validate the diagram and look at the provided error reports to fix the issues.
+
 === Evaluating Query Results
 
 When everything works, an error-free `vql` file is generated from the graphical patterns automatically. At this point, the patterns can be loaded to the `Query Results` view using the standard components.
@@ -69,4 +71,4 @@ NOTE: This integration assumes that the `vql` file is generated, so it requires 
 
 == Missing Feature and Known Issues
 
-In the early prototype available in VIATRA 2.1.0 2 there are a few known issues that are planned to be addressed before the final VIATRA 2.1 is released in December 2012. These issues are maintained in link:https://bugs.eclipse.org/bugs/buglist.cgi?list_id=17930299&product=Viatra&query_format=advanced&status_whiteboard=vgql-editor&status_whiteboard_type=allwordssubstr[Bugzilla].
+The graphical pattern editor in VIATRA 2.1.0 is considered experimental, and there are a few known issues that are planned to be addressed after the the final VIATRA 2.1 is released in December 2012. These issues are maintained in link:https://bugs.eclipse.org/bugs/buglist.cgi?list_id=17930299&product=Viatra&query_format=advanced&status_whiteboard=vgql-editor&status_whiteboard_type=allwordssubstr[Bugzilla].

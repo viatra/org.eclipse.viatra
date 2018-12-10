@@ -130,7 +130,7 @@ For a pattern body to be well-formed, the following rules are to be fulfilled:
 * Parameters of negative pattern calls and aggregators has to expressed by *quantified variable reference* referring to a variable not used anywhere else, or it *must* have an *enumerable* reference in the body.
 * All local variables without quantified references must have one or more *enumerable* references.
 
-Local variables with a single reference, such as *quantified* parameters, should be prefixed with an `_` (underscore) character to mark this. Furthermore, if you only use a variable once, it is OK not to name it at aéé; just use a single underscore instead of the variable reference. In fact, each occurrence of this anonymous variable will be treated as a separate, single-use variable that is distinguished from any other anonymous variable. (This should look self-evident to those who are familiar with Prolog.) Examples:
+Local variables with a single reference, such as *quantified* parameters, should be prefixed with an `_` (underscore) character to mark this. Furthermore, if you only use a variable once, it is OK not to name it at all; just use a single underscore instead of the variable reference. In fact, each occurrence of this anonymous variable will be treated as a separate, single-use variable that is distinguished from any other anonymous variable. (This should look self-evident to those who are familiar with Prolog.) Examples:
 
   * `find hasChild(person, _);` means that we are looking for parents
   * `neg find hasChild(_, _);` means that currently there are no parent-child relationships in the model at all.
