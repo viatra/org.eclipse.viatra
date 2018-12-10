@@ -166,6 +166,32 @@ pattern importAliases(x : NamedElement) { // From UML metamodel, selected by ord
 
 NOTE: If aliasing is used for referencing the types, only the selected metamodel will be considered. For example, if the custom metamodel would not define an `EClassifier NamedElement`, the `custom::NamedElement` type reference will not be resolved, regardless of the `EClassifier NamedElement` defined in the UML metamodel.
 
+=== Java type and EDataType references
+
+Type constraints with Java types and EDataTypes behave differently in two major aspects:
+
+  1. EDataTypes only contain values that are explicitly present in the model. For example, an `EString` type usually includes all names and identifiers from a model, but does not include any computed string (with the exception if the calculated string is also present in the instance models). On the other hand, a `java String` includes both the names and identifiers and all the possible computed values as well.
+  2. The match set of EDataType constraints is enumerable, while the set of instances of Java types is not. This is important for both performance optimization and well-formedness of the pattern; and the difference can be explained by the fact that all instances present in the model can be practically enumerated (e.g. by consulting all EObjects in the model that have an EString-typed EAttribute), but the instances of a Java type cannot (e.g. one cannot enumerate all java Strings, as there are virtually infinitely many).
+
+The following example illustrates the difference between the various cases: when returning the number of `EClass` instances in the model, the `EDataType EInt` is inappropriate, as any non-negative integer can be result, but the model might not contain those. By explicitly using `java Integer` as type, any valid count can be returned.
+
+[source,vql]
+----
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+// Incorrect
+pattern numberOfClasses1(n : EInt) { // imports EInt EDataType from Ecore
+  n == count EClass(_c);
+}
+
+// Correct
+pattern numberOfClasses3(n : java Integer) { // Explicitly declares Java Integer
+  n == count EClass(_c);
+}
+----
+
+NOTE: When in doubt, rely on java types instead of EDataType constraints. Use EDataTypes only if it is really required for the end result to be present in the instance models.
+
 === Working with EMaps in VIATRA Query
 
 The eclipse.org EMF wiki gives a proper FAQ about the various modeling related issues, including the usage of EMaps in your metamodel. With VIATRA Query you can even write your own queries to extract the key-value pairs from your instance model.
