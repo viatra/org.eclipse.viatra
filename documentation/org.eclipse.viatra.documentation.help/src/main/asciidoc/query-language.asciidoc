@@ -158,7 +158,7 @@ As an example on how to use this feature effectively, consider the following exa
 import "custom" as custom
 import "http://www.eclipse.org/uml2/5.0.0/UML" as uml
 
-pattern importAliases(x : NamedElement) { // From UML metamodel, selected by order of imports
+pattern importAliases(x : NamedElement) { // From UML metamodel, selected by order of  imports
   uml::NamedElement(x); // From UML metamodel, selected explicitly
   custom::NamedElement(x); // Selected from the custom metamodel
 }
