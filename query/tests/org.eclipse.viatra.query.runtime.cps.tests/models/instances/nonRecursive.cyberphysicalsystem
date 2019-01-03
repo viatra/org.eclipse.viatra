@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ASCII"?>
+<cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps" identifier="testModel6504822858552">
+  <appTypes identifier="AT1">
+    <instances identifier="A1" priority="1"/>
+    <instances identifier="A2" dependOn="A1" priority="2"/>
+    <instances identifier="A3" dependOn="A1" priority="3"/>
+  </appTypes>
+  <appTypes identifier="AT2">
+    <instances identifier="A4" dependOn="A1" priority="4"/>
+    <instances identifier="A5" dependOn="A4" priority="5"/>
+    <instances identifier="A6" dependOn="A2 A5 A3" priority="6"/>
+  </appTypes>
+</cps:CyberPhysicalSystem>

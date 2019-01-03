@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.bfs.BFS;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCC;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCCResult;
+import org.eclipse.viatra.query.runtime.base.itc.alg.util.CollectionHelper;
 import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalWrapper;
@@ -121,7 +122,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                 Set<V> successorRoots = counting.getAllReachableTargets(targetRoot);
 
                 // 1. intersection of source and target roots, these will be in the merged SCC
-                Set<V> isectRoots = CollectionHelper.intersectionMutable(predecessorRoots, successorRoots);
+                Set<V> isectRoots = CollectionHelper.intersection(predecessorRoots, successorRoots);
                 isectRoots.add(sourceRoot);
                 isectRoots.add(targetRoot);
 
@@ -425,7 +426,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         if (!isReachable(source, target)) {
             return null;
         } else {
-            Set<V> sccsInSubGraph = CollectionHelper.intersectionMutable(counting.getAllReachableTargets(source),
+            Set<V> sccsInSubGraph = CollectionHelper.intersection(counting.getAllReachableTargets(source),
                     counting.getAllReachableSources(target));
             sccsInSubGraph.add(sccs.find(source));
             sccsInSubGraph.add(sccs.find(target));

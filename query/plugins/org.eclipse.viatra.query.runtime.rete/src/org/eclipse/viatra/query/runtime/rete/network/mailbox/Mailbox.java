@@ -12,11 +12,12 @@ package org.eclipse.viatra.query.runtime.rete.network.mailbox;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
-import org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.IGroupable;
-import org.eclipse.viatra.query.runtime.rete.network.MessageKind;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
+import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * A mailbox is associated with every {@link Receiver}. Messages can be sent to a {@link Receiver} by posting them into
@@ -37,16 +38,15 @@ public interface Mailbox extends Clearable, IGroupable {
      *            the update element
      * @return the effect of the message posting
      */
-    public void postMessage(Direction direction, Tuple update);
+    public void postMessage(final Direction direction, final Tuple update, final DifferentialTimestamp timestamp);
 
     /**
-     * Delivers all messages of the given kind from this mailbox. The kind can also be null. In this case, there no
+     * Delivers all messages according to the given selector from this mailbox. The selector can also be null. In this case, no
      * special separation is expected between the messages.
      * 
-     * @param kind
-     *            the message kind
+     * @param selector the message selector
      */
-    public void deliverAll(MessageKind kind);
+    public void deliverAll(final MessageSelector selector);
 
     /**
      * Returns the {@link Receiver} of this mailbox.

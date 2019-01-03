@@ -12,10 +12,12 @@
 package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * Simply propagates everything. Might be used to join or fork.
@@ -24,19 +26,24 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  */
 public class TransparentNode extends SingleInputNode {
 
-    public TransparentNode(ReteContainer reteContainer) {
+    public TransparentNode(final ReteContainer reteContainer) {
         super(reteContainer);
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement) {
-        propagateUpdate(direction, updateElement);
+    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp) {
+        propagateUpdate(direction, updateElement, timestamp);
 
     }
 
     @Override
-    public void pullInto(Collection<Tuple> collector) {
-        propagatePullInto(collector);
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        propagatePullInto(collector, flush);
     }
 
+    @Override
+    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        propagatePullIntoWithTimestamp(collector, flush);
+    }
+    
 }

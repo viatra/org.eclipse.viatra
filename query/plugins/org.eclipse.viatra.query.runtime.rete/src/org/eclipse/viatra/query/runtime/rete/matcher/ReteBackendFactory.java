@@ -24,41 +24,44 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     /**
      * EXPERIMENTAL
      */
-    private static final int reteThreads = 0;
-    
+    protected static final int reteThreads = 0;
+
     /**
      * @since 2.0
      */
     public static final ReteBackendFactory INSTANCE = new ReteBackendFactory();
-    
+
     /**
      * @deprecated Use the static {@link #INSTANCE} field instead
      */
     @Deprecated
-    public ReteBackendFactory() {}
-    
+    public ReteBackendFactory() {
+    }
+
     /**
      * @since 1.5
      */
     @Override
-    public IQueryBackend create(IQueryBackendContext context) 
-    {
+    public IQueryBackend create(IQueryBackendContext context) {
+        return create(context, false, false);
+    }
+
+    /**
+     * @since 2.2
+     */
+    public IQueryBackend create(IQueryBackendContext context, boolean deleteAndRederiveEvaluation,
+            boolean differentialDataFlowEvaluation) {
         ReteEngine engine;
-        engine = new ReteEngine(context, reteThreads);
+        engine = new ReteEngine(context, reteThreads, deleteAndRederiveEvaluation, differentialDataFlowEvaluation);
         IQueryBackendHintProvider hintConfiguration = engine.getHintConfiguration();
-        ReteRecipeCompiler compiler = 
-                new ReteRecipeCompiler(
-                        Options.builderMethod.layoutStrategy(context, hintConfiguration), 
-                        context.getLogger(),
-                        context.getRuntimeContext().getMetaContext(),
-                        context.getQueryCacheContext(),
-                        hintConfiguration,
-                        context.getQueryAnalyzer());
-        //EPMBuilder builder = new EPMBuilder(buildable, context);
+        ReteRecipeCompiler compiler = new ReteRecipeCompiler(
+                Options.builderMethod.layoutStrategy(context, hintConfiguration), context.getLogger(),
+                context.getRuntimeContext().getMetaContext(), context.getQueryCacheContext(), hintConfiguration,
+                context.getQueryAnalyzer(), deleteAndRederiveEvaluation, differentialDataFlowEvaluation);
         engine.setCompiler(compiler);
         return engine;
     }
-    
+
     @Override
     public Class<? extends IQueryBackend> getBackendClass() {
         return ReteEngine.class;
@@ -95,5 +98,5 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     public boolean isCaching() {
         return true;
     }
-    
+
 }

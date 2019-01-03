@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.transformation.evm" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="2.2.0"/>
+                <message_argument value="2.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/transformation/evm/api/event/EventFilter.java" type="org.eclipse.viatra.transformation.evm.api.event.EventFilter">
         <filter comment="Planned compatibility break" id="403984517">
             <message_arguments>

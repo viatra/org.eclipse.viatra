@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.memories;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -29,7 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
  * @author Gabor Bergmann
  * @since 2.0
  */
-public final class UnaryMaskedTupleMemory extends MaskedTupleMemory {
+public final class UnaryMaskedTupleMemory<Timestamp extends Comparable<Timestamp>> extends MaskedTupleMemory<Timestamp> {
 
     protected IMultiLookup<Object, Tuple> columnToTuples;
     protected final int keyPosition;
@@ -41,7 +42,7 @@ public final class UnaryMaskedTupleMemory extends MaskedTupleMemory {
      * @param bucketType the kind of tuple collection maintained for each indexer bucket
      * @since 2.0
      */
-    UnaryMaskedTupleMemory(TupleMask mask, MemoryType bucketType, Object owner) {
+    public UnaryMaskedTupleMemory(TupleMask mask, MemoryType bucketType, Object owner) {
         super(mask, owner);
         if (1 != mask.getSize()) throw new IllegalArgumentException(mask.toString());
         
@@ -97,6 +98,11 @@ public final class UnaryMaskedTupleMemory extends MaskedTupleMemory {
         Object key = signature.get(0);
         IMemoryView<Tuple> bucket = columnToTuples.lookup(key);
         return bucket == null ? null : bucket.distinctValues();
+    }
+    
+    @Override
+    public Map<Tuple, Timestamp> getWithTimestamp(ITuple signature) {
+        throw new UnsupportedOperationException("Default memories do not support timestamp-based lookup!");
     }
 
     @Override

@@ -41,6 +41,7 @@ public class GroupBasedMessageIndexer implements MessageIndexer {
 		}
 	}
 
+	@Override
 	public int getCount(final Tuple update) {
 		final Tuple group = this.groupMask.transform(update);
 		final Integer count = getTuplesByGroup(group).get(update);
@@ -55,14 +56,17 @@ public class GroupBasedMessageIndexer implements MessageIndexer {
 		return Collections.unmodifiableSet(this.indexer.keySet());
 	}
 
+	@Override
 	public void insert(final Tuple update) {
 		update(update, 1);
 	}
 
+	@Override
 	public void delete(final Tuple update) {
 		update(update, -1);
 	}
 
+	@Override
 	public void update(final Tuple update, final int delta) {
 		final Tuple group = this.groupMask.transform(update);
 		DefaultMessageIndexer valueIndexer = this.indexer.get(group);
@@ -80,6 +84,7 @@ public class GroupBasedMessageIndexer implements MessageIndexer {
 		}
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return this.indexer.isEmpty();
 	}

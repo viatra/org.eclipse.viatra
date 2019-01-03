@@ -38,7 +38,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMemory;
 public class DefaultIndexTable extends AbstractIndexTable implements ITableWriterGeneric {
 
     protected IMemory<Tuple> rows = CollectionsFactory.createMultiset(); // TODO use SetMemory if unique
-    protected Map<TupleMask, MaskedTupleMemory> indexMemories = CollectionsFactory.createMap();
+    protected Map<TupleMask, MaskedTupleMemory<?>> indexMemories = CollectionsFactory.createMap();
     private boolean unique;
 
     /**
@@ -61,7 +61,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
                 logError(msg);
             }
             if (changed) {
-                for (MaskedTupleMemory indexMemory : indexMemories.values()) {
+                for (MaskedTupleMemory<?> indexMemory : indexMemories.values()) {
                     indexMemory.add(row);
                 }
                 if (emitNotifications) {
@@ -77,7 +77,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
                 logError(msg);
             }
             if (changed) {
-                for (MaskedTupleMemory indexMemory : indexMemories.values()) {
+                for (MaskedTupleMemory<?> indexMemory : indexMemories.values()) {
                     indexMemory.remove(row);
                 }
                 if (emitNotifications) {
@@ -92,9 +92,9 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
         return rows.distinctValues().contains(seed);
     }
 
-    private MaskedTupleMemory getIndexMemory(TupleMask seedMask) {
+    private MaskedTupleMemory<?> getIndexMemory(TupleMask seedMask) {
         return indexMemories.computeIfAbsent(seedMask, mask -> {
-            MaskedTupleMemory memory = MaskedTupleMemory.create(seedMask, MemoryType.SETS, DefaultIndexTable.this);
+            MaskedTupleMemory<?> memory = MaskedTupleMemory.create(seedMask, MemoryType.SETS, DefaultIndexTable.this);
             for (Tuple tuple : rows.distinctValues()) {
                 memory.add(tuple);
             }
@@ -128,6 +128,7 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
     public Iterable<Tuple> enumerateTuples(TupleMask seedMask, ITuple seed) {
         return getIndexMemory(seedMask).getOrEmpty(seed);
     }
+    
     @Override
     public Stream<? extends Tuple> streamTuples(TupleMask seedMask, ITuple seed) {
         return getIndexMemory(seedMask).getOrEmpty(seed).stream();
@@ -137,7 +138,6 @@ public class DefaultIndexTable extends AbstractIndexTable implements ITableWrite
     public Stream<? extends Object> streamValues(TupleMask seedMask, ITuple seed) {
         // we assume there is a single omitted index in the mask
         int queriedColumn = seedMask.getFirstOmittedIndex().getAsInt();
-
         return getIndexMemory(seedMask).getOrEmpty(seed).stream()
                 .map(row2 -> row2.get(queriedColumn));
     }

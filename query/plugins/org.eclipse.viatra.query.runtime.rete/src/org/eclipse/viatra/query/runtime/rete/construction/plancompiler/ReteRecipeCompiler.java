@@ -123,11 +123,28 @@ public class ReteRecipeCompiler {
     private final Logger logger;
 
     /**
+     * @since 2.2
+     */
+    protected final boolean deleteAndRederiveEvaluation;
+    /**
+     * @since 2.2
+     */
+    protected final boolean differentialDataFlowEvaluation;
+    
+    /**
      * @since 1.5
      */
     public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, Logger logger, IQueryMetaContext metaContext,
             IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider, QueryAnalyzer queryAnalyzer) {
+        this(plannerStrategy, logger, metaContext, queryCacheContext, hintProvider, queryAnalyzer, false, false);
+    }
+    
+    public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, Logger logger, IQueryMetaContext metaContext,
+            IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider, QueryAnalyzer queryAnalyzer, 
+            boolean deleteAndRederiveEvaluation, boolean differentialDataFlowEvaluation) {
         super();
+        this.deleteAndRederiveEvaluation = deleteAndRederiveEvaluation;
+        this.differentialDataFlowEvaluation = differentialDataFlowEvaluation;
         this.plannerStrategy = plannerStrategy;
         this.logger = logger;
         this.metaContext = metaContext;
@@ -186,7 +203,7 @@ public class ReteRecipeCompiler {
 
             boolean reentrant = !compilationInProgress.add(query);
             if (reentrant) { // oops, recursion into body in progress
-                RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext);
+                RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext, deleteAndRederiveEvaluation);
                 recursionCutoffPoints.put(query, cutoffPoint);
                 return cutoffPoint.getCompiledQuery();
             } else { // not reentrant, therefore no recursion, do the compilation
@@ -284,7 +301,7 @@ public class ReteRecipeCompiler {
         }
 
         CompiledQuery compiled = CompilerHelper.makeQueryTrace(query, bodyFinalTraces, bodyFinalRecipes,
-                getHints(query), metaContext);
+                getHints(query), metaContext, deleteAndRederiveEvaluation);
 
         return compiled;
     }
@@ -553,11 +570,13 @@ public class ReteRecipeCompiler {
 
         int columnIndex = constraint.getAggregatedColumn();
         IPosetComparator posetComparator = null;
-        boolean deleteRederiveEvaluation = ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(plan));
         Mask groupMask = CompilerHelper.toRecipeMask(callGroupMask);
 
-        columnAggregatorRecipe.setDeleteRederiveEvaluation(deleteRederiveEvaluation);
-        if (deleteRederiveEvaluation) {
+        // temporary solution to support the deprecated option for now
+        boolean deleteAndRederiveEvaluationDep = this.deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(plan));
+       
+        columnAggregatorRecipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
+        if (deleteAndRederiveEvaluationDep) {
             List<PParameter> parameters = constraint.getReferredQuery().getParameters();
             IInputKey key = parameters.get(columnIndex).getDeclaredUnaryType();
             if (key != null && metaContext.isPosetKey(key)) {
@@ -745,10 +764,11 @@ public class ReteRecipeCompiler {
             UniquenessEnforcerRecipe recipe = FACTORY.createUniquenessEnforcerRecipe();
             recipe.getParents().add(trimmerRecipe);
 
-            boolean deleteRederiveEvaluation = ReteHintOptions.deleteRederiveEvaluation
-                    .getValueOrDefault(getHints(parentPlan));
-            recipe.setDeleteRederiveEvaluation(deleteRederiveEvaluation);
-            if (deleteRederiveEvaluation) {
+            // temporary solution to support the deprecated option for now
+            boolean deleteAndRederiveEvaluationDep = this.deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(parentPlan));
+            
+            recipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
+            if (deleteAndRederiveEvaluationDep) {
                 PosetTriplet triplet = CompilerHelper.computePosetInfo(targetVariables, parentPlan.getBody(), metaContext);
 
                 if (triplet.comparator != null) {

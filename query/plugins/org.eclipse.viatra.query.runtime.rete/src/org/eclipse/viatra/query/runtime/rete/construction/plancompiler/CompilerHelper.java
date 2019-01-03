@@ -262,12 +262,13 @@ public class CompilerHelper {
      * @since 1.6
      */
     public static CompiledQuery makeQueryTrace(PQuery query, Map<PBody, RecipeTraceInfo> bodyFinalTraces,
-            Collection<ReteNodeRecipe> bodyFinalRecipes, QueryEvaluationHint hint, IQueryMetaContext context) {
+            Collection<ReteNodeRecipe> bodyFinalRecipes, QueryEvaluationHint hint, IQueryMetaContext context, boolean deleteAndRederiveEvaluation) {
         ProductionRecipe recipe = ReteRecipeCompiler.FACTORY.createProductionRecipe();
 
-        boolean deleteRederiveEvaluation = ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(hint);
-
-        if (deleteRederiveEvaluation) {
+        // temporary solution to support the deprecated option for now
+        boolean deleteAndRederiveEvaluationDep = deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(hint);
+        
+        if (deleteAndRederiveEvaluationDep) {
             PosetTriplet triplet = computePosetInfo(query.getParameters(), context);
             if (triplet.comparator != null) {
                 MonotonicityInfo info = FACTORY.createMonotonicityInfo();
@@ -278,7 +279,7 @@ public class CompilerHelper {
             }
         }
 
-        recipe.setDeleteRederiveEvaluation(deleteRederiveEvaluation);
+        recipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
         recipe.setPattern(query);
         recipe.setPatternFQN(query.getFullyQualifiedName());
         recipe.setTraceInfo(recipe.getPatternFQN());

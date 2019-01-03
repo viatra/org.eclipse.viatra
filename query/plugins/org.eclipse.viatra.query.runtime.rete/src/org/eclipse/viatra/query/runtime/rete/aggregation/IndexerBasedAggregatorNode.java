@@ -28,11 +28,14 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
  * A special node depending on a projection indexer to aggregate tuple groups with the same projection. Only propagates
  * the aggregates of non-empty groups. Use the outer indexers to circumvent.
+ * <p>
+ * This node cannot be used in recursive differential dataflow evaluation. 
  * 
  * @author Gabor Bergmann
  * @since 1.4
@@ -56,6 +59,14 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         mainAggregates = CollectionsFactory.createMap();
     }
     
+    @Override
+    public void networkStructureChanged() {
+        if (this.reteContainer.isDifferentialDataFlowEvaluation() && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
+            throw new IllegalStateException(this.toString() + " cannot be used in recursive differential dataflow evaluation!");
+        }
+        super.networkStructureChanged();
+    }
+    
     /**
      * @param projection
      *            the projection indexer whose tuple groups should be aggregated
@@ -69,7 +80,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         }
         projection.attachListener(new DefaultIndexerListener(this) {
             @Override
-            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change, DifferentialTimestamp timestamp) {
                 aggregateUpdate(direction, updateElement, signature, change);
             }
         });
@@ -98,7 +109,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     public Indexer getAggregatorOuterIndexer() {
         if (aggregatorOuterIndexer == null) {
             aggregatorOuterIndexer = new AggregatorOuterIndexer();
-            communicationTracker.registerDependency(this, aggregatorOuterIndexer);
+            this.getCommunicationTracker().registerDependency(this, aggregatorOuterIndexer);
             // reteContainer.connectAndSynchronize(this, aggregatorOuterIndexer);
         }
         return aggregatorOuterIndexer;
@@ -111,16 +122,24 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         if (aggregatorOuterIdentityIndexers[resultPositionInSignature] == null) {
             aggregatorOuterIdentityIndexers[resultPositionInSignature] = new AggregatorOuterIdentityIndexer(
                     resultPositionInSignature);
-            communicationTracker.registerDependency(this, aggregatorOuterIdentityIndexers[resultPositionInSignature]);
+            this.getCommunicationTracker().registerDependency(this, aggregatorOuterIdentityIndexers[resultPositionInSignature]);
             // reteContainer.connectAndSynchronize(this, aggregatorOuterIdentityIndexers[resultPositionInSignature]);
         }
         return aggregatorOuterIdentityIndexers[resultPositionInSignature];
     }
 
     @Override
-    public void pullInto(Collection<Tuple> collector) {
-        for (Entry<Tuple, Object> aggregateEntry : mainAggregates.entrySet()) {
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        for (final Entry<Tuple, Object> aggregateEntry : mainAggregates.entrySet()) {
             collector.add(packResult(aggregateEntry.getKey(), aggregateEntry.getValue()));
+        }
+    }
+    
+    @Override
+    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        // use all zero timestamps because this node cannot be used in recursive groups anyway
+        for (final Entry<Tuple, Object> aggregateEntry : mainAggregates.entrySet()) {
+            collector.put(packResult(aggregateEntry.getKey(), aggregateEntry.getValue()), DifferentialTimestamp.ZERO);
         }
     }
 
@@ -145,9 +164,9 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         Tuple oldTuple = packResult(signature, safeOldAggregate);
         Tuple newTuple = packResult(signature, newAggregate == null ? aggregateGroup(signature, null) : newAggregate);
         if (oldAggregate != null)
-            propagateUpdate(Direction.REVOKE, oldTuple); // direct outputs lack non-empty groups
+            propagateUpdate(Direction.REVOKE, oldTuple, DifferentialTimestamp.ZERO); // direct outputs lack non-empty groups
         if (newAggregate != null)
-            propagateUpdate(Direction.INSERT, newTuple); // direct outputs lack non-empty groups
+            propagateUpdate(Direction.INSERT, newTuple, DifferentialTimestamp.ZERO); // direct outputs lack non-empty groups
         if (aggregatorOuterIndexer != null)
             aggregatorOuterIndexer.propagate(signature, oldTuple, newTuple);
         if (aggregatorOuterIdentityIndexers != null)
@@ -155,14 +174,6 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
                 if (aggregatorOuterIdentityIndexer != null)
                     aggregatorOuterIdentityIndexer.propagate(signature, oldTuple, newTuple);
     }
-
-    // protected void propagate(Direction direction, Tuple packResult, Tuple signature) {
-    // propagateUpdate(direction, packResult);
-    // if (aggregatorOuterIndexer!=null) aggregatorOuterIndexer.propagate(direction, packResult, signature);
-    // if (aggregatorOuterIdentityIndexers!=null)
-    // for (AggregatorOuterIdentityIndexer aggregatorOuterIdentityIndexer : aggregatorOuterIdentityIndexers)
-    // aggregatorOuterIdentityIndexer.propagate(direction, packResult, signature);
-    // }
 
     private Object getAggregate(Tuple signature) {
         Object aggregate = mainAggregates.get(signature);
@@ -183,17 +194,10 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
      * @author Gabor Bergmann
      */
     class AggregatorOuterIndexer extends StandardIndexer {
-        // private Map<Tuple,Tuple> localAggregates;
 
         public AggregatorOuterIndexer() {
             super(me.reteContainer, TupleMask.omit(sourceWidth, sourceWidth + 1));
             this.parent = me;
-            // this.localAggregates = new HashMap<Tuple, Tuple>();
-            //
-            // for (Tuple signature: projection.getSignatures()) {
-            // localAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
-            // }
-
         }
 
         @Override
@@ -202,29 +206,9 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         }
 
         public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple) {
-            propagate(Direction.INSERT, newTuple, signature, false);
-            propagate(Direction.REVOKE, oldTuple, signature, false);
+            propagate(Direction.INSERT, newTuple, signature, false, DifferentialTimestamp.ZERO);
+            propagate(Direction.REVOKE, oldTuple, signature, false, DifferentialTimestamp.ZERO);
         }
-
-        // @Override
-        // public void update(Direction direction, Tuple updateElement) {
-        // Tuple signature = mask.transform(updateElement);
-        // Tuple neutral = aggregateAndPack(signature, null);
-        // if (direction == Direction.INSERT) {
-        // propagate(Direction.INSERT, updateElement, signature, false);
-        // propagate(Direction.REVOKE, neutral, signature, false);
-        // localAggregates.put(signature, updateElement);
-        // } else {
-        // localAggregates.remove(signature);
-        // propagate(Direction.INSERT, neutral, signature, false);
-        // propagate(Direction.REVOKE, updateElement, signature, false);
-        // }
-        // }
-
-        // private Object getLocalAggregate(Tuple signature) {
-        // Tuple resultTuple = localAggregates.get(signature);
-        // return resultTuple == null? aggregateGroup(signature, null) : resultTuple.get(sourceWidth);
-        // }
 
         @Override
         public Node getActiveNode() {
@@ -270,20 +254,9 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         }
 
         public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple) {
-            propagate(Direction.INSERT, reorder(newTuple), signature, true);
-            propagate(Direction.REVOKE, reorder(oldTuple), signature, true);
+            propagate(Direction.INSERT, reorder(newTuple), signature, true, DifferentialTimestamp.ZERO);
+            propagate(Direction.REVOKE, reorder(oldTuple), signature, true, DifferentialTimestamp.ZERO);
         }
-
-        // @Override
-        // public void update(Direction direction, Tuple signatureWithResult) {
-        // Tuple prunedSignature = pruneResult.transform(signatureWithResult);
-        // if (direction == Direction.INSERT)
-        // localAggregates.put(prunedSignature, signatureWithResult);
-        // else
-        // localAggregates.remove(prunedSignature);
-        // Tuple transformed = reorder(signatureWithResult);
-        // propagate(direction, transformed, transformed, true);
-        // }
 
         private Tuple reorder(Tuple signatureWithResult) {
             Tuple transformed;
@@ -293,11 +266,6 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
                 transformed = reorderMask.transform(signatureWithResult);
             return transformed;
         }
-
-        // private Object getLocalAggregate(Tuple signature) {
-        // Tuple resultTuple = localAggregates.get(signature);
-        // return resultTuple == null? aggregateGroup(signature, null) : resultTuple.get(resultPositionInSignature);
-        // }
 
         @Override
         public Node getActiveNode() {

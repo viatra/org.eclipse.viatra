@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerH
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.OnetimeIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedConnectCommand;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputRecipe;
@@ -259,11 +260,9 @@ public class NodeProvisioner {
         final Address<? extends Node> supplierAddress = getOrCreateNodeByRecipe(supplierTrace);
         Supplier supplier = (Supplier) reteContainer.resolveLocal(supplierAddress);
 
-        reteContainer.flushUpdates();
         OnetimeIndexer result = new OnetimeIndexer(reteContainer, mask);
-        reteContainer.sendConstructionUpdates(result, Direction.INSERT, reteContainer.pullContents(supplier));
-        reteContainer.flushUpdates();
-
+        reteContainer.getDelayedCommandQueue().add(new DelayedConnectCommand(supplier, result, reteContainer));
+        
         return result;
     }
 

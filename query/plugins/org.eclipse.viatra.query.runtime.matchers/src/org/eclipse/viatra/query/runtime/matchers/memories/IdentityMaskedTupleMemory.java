@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryT
  * @author Gabor Bergmann
  * @since 2.0
  */
-public final class IdentityMaskedTupleMemory extends AbstractSetBackedMaskedTupleMemory {
+public final class IdentityMaskedTupleMemory<Timestamp extends Comparable<Timestamp>> extends AbstractTrivialMemory<Timestamp> {
 
     /**
      * @param mask

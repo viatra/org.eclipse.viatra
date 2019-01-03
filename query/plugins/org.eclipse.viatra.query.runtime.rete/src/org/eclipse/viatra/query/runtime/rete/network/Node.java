@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -55,5 +56,9 @@ public interface Node {
      * accepts traceability info propagated to this node
      */
     void acceptPropagatedTraceInfo(TraceInfo traceInfo);
+    
+    default CommunicationTracker getCommunicationTracker() {
+        return getContainer().getCommunicationTracker();
+    }
 
 }

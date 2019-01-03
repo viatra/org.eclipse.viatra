@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.boundary;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
@@ -27,19 +28,24 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 
 /**
  * An input node representing an enumerable extensional input relation and receiving external updates.
  * 
- * <p> Contains those tuples that are in the extensional relation identified by the input key, and also conform to the global seed (if any).
+ * <p>
+ * Contains those tuples that are in the extensional relation identified by the input key, and also conform to the
+ * global seed (if any).
  * 
  * @author Bergmann Gabor
  *
  */
-public class ExternalInputEnumeratorNode extends StandardNode implements Disconnectable, Receiver, IQueryRuntimeContextListener {
+public class ExternalInputEnumeratorNode extends StandardNode
+        implements Disconnectable, Receiver, IQueryRuntimeContextListener {
 
     private IQueryRuntimeContext context = null;
     private IInputKey inputKey;
@@ -63,42 +69,44 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
     }
-    
+
     /**
-     * Instantiates the {@link Mailbox} of this receiver.
-     * Subclasses may override this method to provide their own mailbox implementation.
+     * Instantiates the {@link Mailbox} of this receiver. Subclasses may override this method to provide their own
+     * mailbox implementation.
      * 
      * @return the mailbox
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        return new AdaptiveMailbox(this, this.reteContainer);
+        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
+            return new DifferentialMailbox(this, this.reteContainer);
+        } else {
+            return new ShapeshifterMailbox(this, this.reteContainer);
+        }
     }
-    
+
     @Override
     public Mailbox getMailbox() {
-        return mailbox;
+        return this.mailbox;
     }
-    
+
     public void connectThroughContext(ReteEngine engine, IInputKey inputKey, Tuple globalSeed) {
         this.inputKey = inputKey;
-        this.globalSeed = globalSeed; 
+        this.globalSeed = globalSeed;
         setTag(inputKey);
-        
+
         final IQueryRuntimeContext context = engine.getRuntimeContext();
         if (!context.getMetaContext().isEnumerable(inputKey))
-            throw new IllegalArgumentException(
-                    this.getClass().getSimpleName() + 
-                    " only applicable for enumerable input keys; received instead " + 
-                    inputKey);
-        
+            throw new IllegalArgumentException(this.getClass().getSimpleName()
+                    + " only applicable for enumerable input keys; received instead " + inputKey);
+
         this.context = context;
         this.parallelExecutionEnabled = engine.isParallelExecutionEnabled();
-        
+
         engine.addDisconnectable(this);
-        context.addUpdateListener(inputKey, globalSeed, this);		
+        context.addUpdateListener(inputKey, globalSeed, this);
     }
-    
+
     @Override
     public void disconnect() {
         if (context != null) { // if connected
@@ -106,22 +114,43 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
             context = null;
         }
     }
-    
-    @Override
-    public void pullInto(Collection<Tuple> collector) {
+
+    /**
+     * @since 2.2
+     */
+    protected Iterable<Tuple> getTuplesInternal() {
+        Iterable<Tuple> tuples = null;
+        
         if (context != null) { // if connected
-            
-            Iterable<Tuple> tuples;
             if (globalSeed == null) {
-                tuples = context.enumerateTuples(inputKey, TupleMask.empty(inputKey.getArity()), Tuples.staticArityFlatTupleOf());
+                tuples = context.enumerateTuples(inputKey, TupleMask.empty(inputKey.getArity()),
+                        Tuples.staticArityFlatTupleOf());
             } else {
-                TupleMask mask = TupleMask.fromNonNullIndices(globalSeed);
+                final TupleMask mask = TupleMask.fromNonNullIndices(globalSeed);
                 tuples = context.enumerateTuples(inputKey, mask, mask.transform(globalSeed));
             }
-            
-            for (Tuple tuple : tuples) {
+        }
+        
+        return tuples;
+    }
+
+    @Override
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        final Iterable<Tuple> tuples = getTuplesInternal();
+        if (tuples != null) {
+            for (final Tuple tuple : tuples) {
                 collector.add(tuple);
-            }
+            }            
+        }
+    }
+
+    @Override
+    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        final Iterable<Tuple> tuples = getTuplesInternal();
+        if (tuples != null) {
+            for (final Tuple tuple : tuples) {
+                collector.put(tuple, DifferentialTimestamp.ZERO);
+            }            
         }
     }
 
@@ -130,16 +159,17 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
     public void update(IInputKey key, Tuple update, boolean isInsertion) {
         if (parallelExecutionEnabled) {
             // send back to myself as an official external update, and then propagate it transparently
-            network.sendExternalUpdate(myAddress, direction(isInsertion), update);			
+            network.sendExternalUpdate(myAddress, direction(isInsertion), update);
         } else {
             if (qBackendContext.areUpdatesDelayed()) {
                 // post the update into the mailbox of the node
-                mailbox.postMessage(direction(isInsertion), update);                
+                mailbox.postMessage(direction(isInsertion), update, DifferentialTimestamp.ZERO);
             } else {
                 // just propagate the input
-                update(direction(isInsertion), update);                
+                update(direction(isInsertion), update, DifferentialTimestamp.ZERO);
             }
-            // if the the update method is called from within a delayed execution, the following invocation will be a no-op
+            // if the the update method is called from within a delayed execution, 
+            // the following invocation will be a no-op
             network.waitForReteTermination();
         }
     }
@@ -147,11 +177,11 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
     private static Direction direction(boolean isInsertion) {
         return isInsertion ? Direction.INSERT : Direction.REVOKE;
     }
-    
+
     /* Self-addressed from network */
     @Override
-    public void update(Direction direction, Tuple updateElement) {
-        propagateUpdate(direction, updateElement);
+    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+        propagateUpdate(direction, updateElement, timestamp);
     }
 
     @Override

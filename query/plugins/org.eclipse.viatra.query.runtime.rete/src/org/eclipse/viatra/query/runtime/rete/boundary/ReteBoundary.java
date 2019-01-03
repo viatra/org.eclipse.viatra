@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
-import org.eclipse.viatra.query.runtime.rete.network.Production;
+import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -366,9 +366,9 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      * @throws ViatraQueryRuntimeException
      */
-    public synchronized Address<? extends Production> accessProductionNode(PQuery query) {
+    public synchronized Address<? extends ProductionNode> accessProductionNode(PQuery query) {
         final RecipeTraceInfo productionTrace = accessProductionTrace(query);
-        return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
+        return (Address<? extends ProductionNode>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
     }
 
 //    /**

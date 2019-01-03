@@ -48,6 +48,15 @@ public class ReteEngine implements IQueryBackend {
     protected Network reteNet;
     protected final int reteThreads;
     protected ReteBoundary boundary;
+    
+    /**
+     * @since 2.2
+     */
+    protected final boolean deleteAndRederiveEvaluation;
+    /**
+     * @since 2.2
+     */
+    protected final boolean differentialDataFlowEvaluation;
 
     private IQueryBackendContext context;
     private Logger logger;
@@ -81,16 +90,22 @@ public class ReteEngine implements IQueryBackend {
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
     public ReteEngine(IQueryBackendContext context, int reteThreads) {
+        this(context, reteThreads, false, false);
+    }
+    
+    /**
+     * @since 2.2
+     */
+    public ReteEngine(IQueryBackendContext context, int reteThreads, boolean deleteAndRederiveEvaluation, boolean differentialDataFlowEvaluation) {
         super();
         this.context = context;
         this.logger = context.getLogger();
         this.runtimeContext = context.getRuntimeContext();
         this.reteThreads = reteThreads;
         this.parallelExecutionEnabled = reteThreads > 0;
-        // this.framework = new WeakReference<IFramework>(context.getFramework());
-
+        this.deleteAndRederiveEvaluation = deleteAndRederiveEvaluation;
+        this.differentialDataFlowEvaluation = differentialDataFlowEvaluation;
         initEngine();
-
         this.compiler = null;
     }
     
@@ -99,6 +114,20 @@ public class ReteEngine implements IQueryBackend {
      */
     public IQueryBackendContext getBackendContext() {
         return context;
+    }
+    
+    /**
+     * @since 2.2
+     */
+    public boolean isDeleteAndRederiveEvaluation() {
+        return this.deleteAndRederiveEvaluation;
+    }
+    
+    /**
+     * @since 2.2
+     */
+    public boolean isDifferentialDataFlowEvaluation() {
+        return this.differentialDataFlowEvaluation;
     }
 
     /**
@@ -211,6 +240,8 @@ public class ReteEngine implements IQueryBackend {
             });
             matcher = matchers.get(query);
         }
+        
+        executeDelayedCommands();
 
         return matcher;
     }
@@ -244,7 +275,7 @@ public class ReteEngine implements IQueryBackend {
                     reteNet.getStructuralChangeLock().lock();
                 try {
                     try {
-                        runtimeContext.coalesceTraversals(payload);
+                        runtimeContext.coalesceTraversals(() -> { payload.call(); this.executeDelayedCommands(); return null;});
                     } catch (InvocationTargetException ex) {
                         final Throwable cause = ex.getCause();
                         if (cause instanceof RetePatternBuildException)
@@ -344,6 +375,8 @@ public class ReteEngine implements IQueryBackend {
 //                context.modelReadUnLock();
 //            }
         }
+        
+        executeDelayedCommands();
 
         return result;
     }
@@ -370,6 +403,15 @@ public class ReteEngine implements IQueryBackend {
     // return matcher;
     // }
 
+    /**
+     * @since 2.2
+     */
+    public void executeDelayedCommands() {
+        for (final ReteContainer container : this.reteNet.getContainers()) {
+            container.executeDelayedCommands();
+        }
+    }
+    
     /**
      * Waits until the pattern matcher is in a steady state and output can be retrieved.
      */

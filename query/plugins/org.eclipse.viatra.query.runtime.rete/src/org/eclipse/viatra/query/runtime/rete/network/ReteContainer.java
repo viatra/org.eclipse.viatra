@@ -14,7 +14,9 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +28,14 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialCommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.def.DefaultCommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedCommand;
+import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedConnectCommand;
+import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedDisconnectCommand;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
@@ -35,6 +44,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * @author Gabor Bergmann
  *
  *         Mutexes: externalMessageLock - enlisting messages into and retrieving from the external message queue
+ * @since 2.2
  */
 public final class ReteContainer {
 
@@ -60,6 +70,10 @@ public final class ReteContainer {
     protected final CommunicationTracker tracker;
 
     protected final IQueryBackendContext backendContext;
+    
+    protected Set<DelayedCommand> delayedCommandQueue;
+    protected Set<DelayedCommand> delayedCommandBuffer;
+    protected boolean executingDelayedCommands;
 
     /**
      * @param threaded
@@ -69,7 +83,17 @@ public final class ReteContainer {
         super();
         this.network = network;
         this.backendContext = network.getEngine().getBackendContext();
-        this.tracker = new CommunicationTracker();
+        
+        this.delayedCommandQueue = new LinkedHashSet<DelayedCommand>();
+        this.delayedCommandBuffer = new LinkedHashSet<DelayedCommand>();
+        this.executingDelayedCommands = false;
+        
+        if (this.isDifferentialDataFlowEvaluation()) {
+            this.tracker = new DifferentialCommunicationTracker();
+        } else {
+            this.tracker = new DefaultCommunicationTracker();
+        }
+        
         this.nodesById = CollectionsFactory.createMap();
         this.clearables = new LinkedList<Clearable>();
         this.logger = network.getEngine().getLogger();
@@ -88,12 +112,19 @@ public final class ReteContainer {
             this.consumerThread.start();
         }
     }
+    
+    /**
+     * @since 2.2
+     */
+    public boolean isDifferentialDataFlowEvaluation() {
+        return this.network.getEngine().isDifferentialDataFlowEvaluation();
+    }
 
     /**
      * @since 1.6
-     * @return the communication graph of the nodes, incl. messgae scheduling
+     * @return the communication graph of the nodes, incl. message scheduling
      */
-    public CommunicationTracker getTracker() {
+    public CommunicationTracker getCommunicationTracker() {
         return tracker;
     }
 
@@ -186,80 +217,59 @@ public final class ReteContainer {
         receiver.removeParent(supplier);
         tracker.unregisterDependency(supplier, receiver);
     }
+    
+    /**
+     * @since 2.2
+     */
+    public boolean isExecutingDelayedCommands() {
+        return this.executingDelayedCommands;
+    }
+    
+    /**
+     * @since 2.2
+     */
+    public Set<DelayedCommand> getDelayedCommandQueue() {
+        if (this.executingDelayedCommands) {
+            return this.delayedCommandBuffer;
+        } else {
+            return this.delayedCommandQueue;
+        }
+    }
 
     /**
      * Connects a receiver to a remote supplier, and synchronises it to the current contents of the supplier
      */
     public void connectAndSynchronize(Supplier supplier, Receiver receiver) {
-        flushUpdates(); // first, all pending updates should be flushed into the
-                        // supplier BEFORE connecting
         supplier.appendChild(receiver);
         receiver.appendParent(supplier);
         tracker.registerDependency(supplier, receiver);
-
-        Collection<Tuple> pulled = pullContents(supplier);
-        sendConstructionUpdates(receiver, Direction.INSERT, pulled);
-
-        flushUpdates(); // deliver the positive updates
+        getDelayedCommandQueue().add(new DelayedConnectCommand(supplier, receiver, this));
     }
 
     /**
      * Disconnects a receiver from a supplier
      */
     public void disconnectAndDesynchronize(Supplier supplier, Receiver receiver) {
-        flushUpdates(); // first, all pending updates should be flushed into the
-                        // supplier BEFORE disconnecting
-
+        final boolean wasInSameSCC = this.isDifferentialDataFlowEvaluation() && this.tracker.areInSameGroup(supplier, receiver);
         supplier.removeChild(receiver);
         receiver.removeParent(supplier);
         tracker.unregisterDependency(supplier, receiver);
-
-        Collection<Tuple> pulled = pullContents(supplier);
-        sendConstructionUpdates(receiver, Direction.REVOKE, pulled);
-
-        flushUpdates(); // deliver the negative updates
+        getDelayedCommandQueue().add(new DelayedDisconnectCommand(supplier, receiver, this, wasInSameSCC));
     }
-
+    
     /**
-     * Sends an update message to the receiver node, indicating a newly found or lost partial matching. They are
-     * inserted into the queue atomically. Delivery is either synchronous or asynchronous. Designed to be called during
-     * network construction.
-     * 
-     * NOTE: unused in 1.7
+     * @since 2.2
      */
-    public void sendConstructionUpdate(Receiver receiver, Direction direction, Tuple updateElement) {
-        if (consumerThread == null) {
-            sendUpdateInternal(receiver, direction, updateElement);
-        } else {
-            network.sendConstructionUpdate(makeAddress(receiver), direction, updateElement);
+    public void executeDelayedCommands() {
+        flushUpdates();
+        this.executingDelayedCommands = true;
+        for (final DelayedCommand command : this.delayedCommandQueue) {
+            command.run();
         }
-    }
-
-    /**
-     * Sends several update messages atomically to the receiver node, indicating a newly found or lost partial matching.
-     * They are inserted into the queue atomically. Delivery is either synchronous or asynchronous. Designed to be
-     * called during network construction.
-     */
-    public void sendConstructionUpdates(Receiver receiver, Direction direction, Collection<Tuple> updateElements) {
-        if (consumerThread == null) {
-          Mailbox mailbox = receiver.getMailbox();
-          for (Tuple updateElement : updateElements) {
-              mailbox.postMessage(direction, updateElement);              
-          }
-        } else {
-            network.sendConstructionUpdates(makeAddress(receiver), direction, updateElements);
-        }
-    }
-
-    /**
-     * Sends an update message to the receiver node by placing the message into its mailbox. NOT to be called from user
-     * threads.
-     * 
-     * NOTE: unused in 1.7
-     */
-    public void sendUpdateInternal(Receiver receiver, Direction direction, Tuple updateElement) {
-        Mailbox mailbox = receiver.getMailbox();
-        mailbox.postMessage(direction, updateElement);
+        this.delayedCommandQueue = this.delayedCommandBuffer;
+        this.delayedCommandBuffer = new LinkedHashSet<DelayedCommand>();
+        this.executingDelayedCommands = false;
+        flushUpdates();
     }
 
     /**
@@ -372,24 +382,55 @@ public final class ReteContainer {
         // }
         // }
     }
-
+    
     /**
      * Retrieves a safe copy of the contents of a supplier.
+     * @since 2.2
      */
-    public Collection<Tuple> pullContents(Supplier supplier) {
-        flushUpdates();
-        Collection<Tuple> collector = new LinkedList<Tuple>();
-        supplier.pullInto(collector);
+    public Collection<Tuple> pullContents(final Supplier supplier, final boolean flush) {
+        if (flush) {            
+            flushUpdates();
+        }
+        final Collection<Tuple> collector = new LinkedList<Tuple>();
+        supplier.pullInto(collector, flush);
+        return collector;
+    }
+    
+    /**
+     * @since 2.2
+     */
+    public Map<Tuple, DifferentialTimestamp> pullContentsWithTimestamp(final Supplier supplier, final boolean flush) {
+        if (flush) {            
+            flushUpdates();
+        }
+        final Map<Tuple, DifferentialTimestamp> collector = CollectionsFactory.createMap();
+        supplier.pullIntoWithTimestamp(collector, flush);
         return collector;
     }
 
     /**
      * Retrieves the contents of a SingleInputNode's parentage.
+     * @since 2.2
      */
-    public Collection<Tuple> pullPropagatedContents(SingleInputNode supplier) {
-        flushUpdates();
-        Collection<Tuple> collector = new LinkedList<Tuple>();
-        supplier.propagatePullInto(collector);
+    public Collection<Tuple> pullPropagatedContents(final SingleInputNode supplier, final boolean flush) {
+        if (flush) {            
+            flushUpdates();
+        }
+        final Collection<Tuple> collector = new LinkedList<Tuple>();
+        supplier.propagatePullInto(collector, flush);
+        return collector;
+    }
+    
+    /**
+     * Retrieves the timestamp-aware contents of a SingleInputNode's parentage.
+     * @since 2.2
+     */
+    public Map<Tuple, DifferentialTimestamp> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier, final boolean flush) {
+        if (flush) {            
+            flushUpdates();
+        }
+        final Map<Tuple, DifferentialTimestamp> collector = new HashMap<Tuple, DifferentialTimestamp>();
+        supplier.propagatePullIntoWithTimestamp(collector, flush);
         return collector;
     }
 
@@ -399,18 +440,19 @@ public final class ReteContainer {
      *
      * @param supplier
      *            the address of the supplier to be pulled.
+     * @since 2.2
      */
-    public Collection<Tuple> remotePull(Address<? extends Supplier> supplier) {
+    public Collection<Tuple> remotePull(Address<? extends Supplier> supplier, boolean flush) {
         if (!isLocal(supplier))
-            return supplier.getContainer().remotePull(supplier);
-        return pullContents(resolveLocal(supplier));
+            return supplier.getContainer().remotePull(supplier, flush);
+        return pullContents(resolveLocal(supplier), flush);
     }
 
     /**
      * Proxies for the getPosMapping() of Production nodes. Retrieves the posmapping of a remote or local Production to
      * a remote or local caller.
      */
-    public Map<String, Integer> remotePosMapping(Address<? extends Production> production) {
+    public Map<String, Integer> remotePosMapping(Address<? extends ProductionNode> production) {
         if (!isLocal(production))
             return production.getContainer().remotePosMapping(production);
         return resolveLocal(production).getPosMapping();
@@ -469,7 +511,8 @@ public final class ReteContainer {
             }
 
             // now we have a message to deliver
-            message.receiver.update(message.direction, message.updateElement);
+            // NOTE: this method is not compatible with differential dataflow
+            message.receiver.update(message.direction, message.updateElement, DifferentialTimestamp.ZERO);
         }
     }
 
@@ -520,8 +563,6 @@ public final class ReteContainer {
                     group.deliverMessages();
                 }
             }
-            
-            
         }
     }
 

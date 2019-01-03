@@ -13,12 +13,14 @@ package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * A generic Indexer capable of indexing along any valid TupleMask. Does not keep track of parents, because will not
@@ -34,15 +36,20 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     }
 
     @Override
-    protected void update(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-        propagate(direction, updateElement, signature, change);
+    protected void update(Direction direction, Tuple updateElement, Tuple signature, boolean change, DifferentialTimestamp timestamp) {
+        propagate(direction, updateElement, signature, change, timestamp);
     }
 
     @Override
     public Collection<Tuple> get(Tuple signature) {
         return memory.get(signature);
     }
-
+    
+    @Override
+    public Map<Tuple, DifferentialTimestamp> getWithTimestamp(Tuple signature) {
+        return memory.getWithTimestamp(signature);
+    }
+    
     @Override
     public Iterator<Tuple> iterator() {
         return memory.iterator();
@@ -60,7 +67,6 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     public int getBucketCount() {
         return memory.getKeysetSize();
     }
-    
     
     @Override
     public Receiver getActiveNode() {

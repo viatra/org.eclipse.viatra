@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * A specialized projection indexer that can be memory-less (relying on an external source of information).
@@ -54,7 +55,7 @@ public abstract class SpecializedProjectionIndexer extends StandardIndexer imple
     }
     
     @Override
-    protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+    protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change, DifferentialTimestamp timestamp) {
         throw new UnsupportedOperationException();
     }
     
@@ -79,7 +80,7 @@ public abstract class SpecializedProjectionIndexer extends StandardIndexer imple
     /**
      * @since 1.7
      */
-    public abstract void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement);
+    public abstract void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement, DifferentialTimestamp timestamp);
         
     /** 
      * Infrastructure to share subscriptions between specialized indexers of the same parent node.
@@ -100,8 +101,8 @@ public abstract class SpecializedProjectionIndexer extends StandardIndexer imple
         /**
          * Call this from parent node.
          */
-        public void propagate(Direction direction, Tuple updateElement) {
-            indexer.propagateToListener(listener, direction, updateElement);
+        public void propagate(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+            indexer.propagateToListener(listener, direction, updateElement, timestamp);
         }
 
         @Override

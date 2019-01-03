@@ -115,7 +115,7 @@ class ConnectionFactory {
         // special synch
         if (freshNode instanceof TransitiveClosureNode) {
             Collection<Tuple> tuples = new ArrayList<Tuple>();
-            parentSupplier.pullInto(tuples);
+            parentSupplier.pullInto(tuples, true);
             ((TransitiveClosureNode) freshNode).reinitializeWith(tuples);
             reteContainer.connect(parentSupplier, freshNode); 
         } else { // default case

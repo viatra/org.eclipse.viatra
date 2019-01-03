@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 /**
@@ -38,7 +39,15 @@ public final class CollectionsFactory
     public static <K, V> Map<K, V> createMap(Map<K, V> initial) {
         return FRAMEWORK.createMap(initial);
     }
-
+    
+    /**
+     * Instantiates a new tree map. 
+     * @since 2.2
+     */
+    public static <K, V> TreeMap<K, V> createTreeMap() {
+        return FRAMEWORK.createTreeMap();
+    }
+    
     /**
      * Instantiates a new empty set.
      * @since 1.7
@@ -157,6 +166,10 @@ public final class CollectionsFactory
         
         public abstract <K,V> Map<K,V> createMap();
         public abstract <K,V> Map<K,V> createMap(Map<K,V> initial);
+        /**
+         * @since 2.2
+         */
+        public abstract <K, V> TreeMap<K, V> createTreeMap();
         public abstract <E> Set<E> createSet();
         public abstract <E> Set<E> createSet(Collection<E> initial);
         public abstract <T> IMultiset<T> createMultiset();

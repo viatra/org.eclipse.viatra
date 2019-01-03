@@ -58,12 +58,6 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.stateIdentifier"/>
     </group>
   </extension>
-  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.Dred" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.Dred" id="org.eclipse.viatra.query.runtime.cps.tests.queries.Dred">
-      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.dependOn"/>
-      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.allDependencies"/>
-    </group>
-  </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.ErrorHandling" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.ErrorHandling" id="org.eclipse.viatra.query.runtime.cps.tests.queries.ErrorHandling">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.evalDivisionByZero"/>
@@ -125,6 +119,12 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiableEmbedded"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiableEmbedded2"/>
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.notApplicationInstanceIdentifiableEmbedded3"/>
+    </group>
+  </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.Reachability" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.Reachability" id="org.eclipse.viatra.query.runtime.cps.tests.queries.Reachability">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.dependOn"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.allDependencies"/>
     </group>
   </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.RecursiveQueries" point="org.eclipse.viatra.query.runtime.queryspecification">

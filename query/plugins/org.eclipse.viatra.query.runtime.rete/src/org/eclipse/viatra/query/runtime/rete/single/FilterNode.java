@@ -12,23 +12,24 @@
 package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * This node implements a simple filter. A stateless abstract check() predicate determines whether a matching is allowed
  * to pass.
- * 
- * 
  * 
  * @author Gabor Bergmann
  * 
  */
 public abstract class FilterNode extends SingleInputNode {
 
-    public FilterNode(ReteContainer reteContainer) {
+    public FilterNode(final ReteContainer reteContainer) {
         super(reteContainer);
     }
 
@@ -39,20 +40,31 @@ public abstract class FilterNode extends SingleInputNode {
      *            the matching to be checked.
      * @return true if and only if the parameter matching is allowed to pass through this node.
      */
-    public abstract boolean check(Tuple ps);
+    public abstract boolean check(final Tuple ps);
 
     @Override
-    public void pullInto(Collection<Tuple> collector) {
-        for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
-            if (check(ps))
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        for (final Tuple ps : this.reteContainer.pullPropagatedContents(this, flush)) {
+            if (check(ps)) {
                 collector.add(ps);
+            }
+        }
+    }
+    
+    @Override
+    public void pullIntoWithTimestamp(Map<Tuple, DifferentialTimestamp> collector, boolean flush) {
+        for (final Entry<Tuple, DifferentialTimestamp> entry : this.reteContainer.pullPropagatedContentsWithTimestamp(this, flush).entrySet()) {
+            if (check(entry.getKey())) {
+                collector.put(entry.getKey(), entry.getValue());
+            }
         }
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement) {
-        if (check(updateElement))
-            propagateUpdate(direction, updateElement);
+    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp) {
+        if (check(updateElement)) {
+            propagateUpdate(direction, updateElement, timestamp);
+        }
     }
 
 }

@@ -52,7 +52,7 @@ class ReteCoverage {
     }
     
     private def CoverageState computeCoverage(Node node){
-        if (node instanceof Supplier){
+        if (node instanceof Supplier){        	
             return if (node.pulledContents.isEmpty) CoverageState::NOT_COVERED else CoverageState::COVERED;
         }
         return CoverageState::NOT_REPRESENTED_UNKNOWN_REASON

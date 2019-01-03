@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * Defines an abstract trivial indexer that projects the contents of some stateful node to the empty tuple, and can
@@ -38,15 +39,16 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
 
     protected abstract Collection<Tuple> getTuples();
 
-    static Tuple nullSignature = Tuples.staticArityFlatTupleOf();
-    static Collection<Tuple> nullSingleton = Collections.singleton(nullSignature);
-    static Collection<Tuple> emptySet = Collections.emptySet();
+    protected static final Tuple nullSignature = Tuples.staticArityFlatTupleOf();
+    protected static final Collection<Tuple> nullSingleton = Collections.singleton(nullSignature);
+    protected static final Collection<Tuple> emptySet = Collections.emptySet();
 
-    public NullIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, 
-            Node activeNode, List<ListenerSubscription> sharedSubscriptionList) {
+    public NullIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, Node activeNode,
+            List<ListenerSubscription> sharedSubscriptionList) {
         super(reteContainer, TupleMask.linear(0, tupleWidth), parent, activeNode, sharedSubscriptionList);
     }
 
+    @Override
     public Collection<Tuple> get(Tuple signature) {
         if (nullSignature.equals(signature))
             return isEmpty() ? null : getTuples();
@@ -54,13 +56,11 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
             return null;
     }
 
+    @Override
     public Collection<Tuple> getSignatures() {
         return isEmpty() ? emptySet : nullSingleton;
     }
 
-    /**
-     * @return
-     */
     protected boolean isEmpty() {
         return getTuples().isEmpty();
     }
@@ -69,20 +69,22 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
         return getTuples().size() == 1;
     }
 
+    @Override
     public Iterator<Tuple> iterator() {
         return getTuples().iterator();
     }
-    
+
     @Override
     public int getBucketCount() {
         return getTuples().isEmpty() ? 0 : 1;
     }
 
     @Override
-    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement) {
+    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement,
+            DifferentialTimestamp timestamp) {
         boolean radical = (direction == Direction.REVOKE && isEmpty())
                 || (direction == Direction.INSERT && isSingleElement());
-        listener.notifyIndexerUpdate(direction, updateElement, nullSignature, radical);
+        listener.notifyIndexerUpdate(direction, updateElement, nullSignature, radical, timestamp);
     }
 
 }

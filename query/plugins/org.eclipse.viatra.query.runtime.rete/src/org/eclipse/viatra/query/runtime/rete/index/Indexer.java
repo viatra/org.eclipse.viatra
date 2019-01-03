@@ -12,11 +12,13 @@
 package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * A node that indexes incoming Tuples by their signatures as specified by a TupleMask. Notifies listeners about such
@@ -43,6 +45,13 @@ public interface Indexer extends Node {
      *         modify!
      */
     public Collection<Tuple> get(Tuple signature);
+    
+    /**
+     * @since 2.2
+     */
+    default public Map<Tuple, DifferentialTimestamp> getWithTimestamp(Tuple signature) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * This indexer will be updated whenever a Rete update is sent to the active node (or an equivalent time slot

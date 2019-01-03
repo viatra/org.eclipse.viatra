@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -21,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
@@ -30,29 +32,43 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
  * @author Gabor Bergmann
  * 
  */
-public abstract class StandardNode extends BaseNode implements Supplier {
-    protected List<Receiver> children = CollectionsFactory.createObserverList();
-    private List<Mailbox> childMailboxes = CollectionsFactory.createObserverList();
+public abstract class StandardNode extends BaseNode implements Supplier, NetworkStructureChangeSensitiveNode {
+    protected final List<Receiver> children = CollectionsFactory.createObserverList();
+    /**
+     * @since 2.2
+     */
+    protected final Map<Receiver, Mailbox> childMailboxes = CollectionsFactory.createMap();
 
     public StandardNode(ReteContainer reteContainer) {
         super(reteContainer);
     }
     
-    protected void propagateUpdate(Direction direction, Tuple updateElement) {
-        for (Mailbox childMailbox : childMailboxes)
-            childMailbox.postMessage(direction, updateElement);            
+    /**
+     * @since 2.2
+     */
+    protected void propagateUpdate(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+        for (Mailbox childMailbox : childMailboxes.values())
+            childMailbox.postMessage(direction, updateElement, timestamp);            
     }
 
     @Override
     public void appendChild(Receiver receiver) {
         children.add(receiver);
-        childMailboxes.add(receiver.getMailbox());
+        childMailboxes.put(receiver, this.getCommunicationTracker().proxifyMailbox(this, receiver.getMailbox()));
     }
 
     @Override
     public void removeChild(Receiver receiver) {
         children.remove(receiver);
-        childMailboxes.remove(receiver.getMailbox());
+        childMailboxes.remove(receiver);
+    }
+    
+    @Override
+    public void networkStructureChanged() {
+        childMailboxes.clear();
+        for (Receiver receiver : children) {
+            childMailboxes.put(receiver, this.getCommunicationTracker().proxifyMailbox(this, receiver.getMailbox()));
+        }
     }
 
     @Override
@@ -60,10 +76,17 @@ public abstract class StandardNode extends BaseNode implements Supplier {
         return children;
     }
     
+    /**
+     * @since 2.2
+     */
+    public Collection<Mailbox> getChildMailboxes() {
+        return this.childMailboxes.values();
+    }
+    
     @Override
-    public Set<Tuple> getPulledContents() {
+    public Set<Tuple> getPulledContents(boolean flush) {
         HashSet<Tuple> results = new HashSet<Tuple>();
-        pullInto(results);
+        pullInto(results, flush);
         return results;
     }
 

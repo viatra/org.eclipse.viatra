@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * Defines an abstract trivial indexer that identically projects the contents of some stateful node, and can therefore
@@ -42,21 +43,19 @@ public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
         super(reteContainer, TupleMask.identity(tupleWidth), parent, activeNode, sharedSubscriptionList);
     }
 
+    @Override
     public Collection<Tuple> get(Tuple signature) {
         if (contains(signature)) {
             return Collections.singleton(signature);
         } else
             return null;
     }
-
-    /**
-     * @param signature
-     * @return
-     */
+    
     protected boolean contains(Tuple signature) {
         return getTuples().contains(signature);
     }
 
+    @Override
     public Collection<Tuple> getSignatures() {
         return getTuples();
     }
@@ -65,14 +64,15 @@ public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
     public int getBucketCount() {
         return getTuples().size();
     }
-
+    
+    @Override
     public Iterator<Tuple> iterator() {
         return getTuples().iterator();
     }
-
+    
     @Override
-    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement) {
-        listener.notifyIndexerUpdate(direction, updateElement, updateElement, true);
+    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+        listener.notifyIndexerUpdate(direction, updateElement, updateElement, true, timestamp);
     }
 
 }

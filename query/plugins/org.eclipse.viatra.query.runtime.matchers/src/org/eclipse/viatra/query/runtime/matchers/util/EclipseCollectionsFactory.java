@@ -15,12 +15,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 import org.eclipse.collections.impl.factory.Sets;
-import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.ICollectionsFramework;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
 
 /**
  * @author Gabor Bergmann
@@ -39,6 +40,12 @@ public class EclipseCollectionsFactory implements ICollectionsFramework {
         MutableMap<K, V> result = Maps.mutable.ofInitialCapacity(initial.size());
         result.putAll(initial);
         return result;
+    }
+    
+    @Override
+    public <K, V> TreeMap<K, V> createTreeMap() {
+        // eclipse collections is doing the same
+        return new TreeMap<>();
     }
 
     @Override

@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.util;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
+import org.eclipse.viatra.query.runtime.rete.matcher.DRedReteBackendFactory;
 
 /**
  * Provides key objects (of type {@link QueryHintOption}) for {@link QueryEvaluationHint}s.
@@ -39,7 +40,9 @@ public final class ReteHintOptions {
      *  
      * <p> As DRED may diminish the performance of incremental maintenance, it is not enabled by default.
      * @since 1.6
+     * @deprecated Use {@link DRedReteBackendFactory} instead of setting this option to true. 
      */
+    @Deprecated
     public static final QueryHintOption<Boolean> deleteRederiveEvaluation = 
             hintOption("deleteRederiveEvaluation", false);
     

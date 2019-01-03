@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network;
 
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
+
 /**
  * @author Gabor Bergmann
  * @since 1.7

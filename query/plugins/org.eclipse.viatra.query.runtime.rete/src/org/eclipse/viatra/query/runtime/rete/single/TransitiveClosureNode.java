@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.Tuple;
@@ -20,26 +21,30 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
-// TODO egyelore (i,j) elek, majd helyette mask megoldas
-// TODO bemeneti index
 /**
- * This class represents a transitive closure node in the rete net.
+ * This class represents a transitive closure node in the Rete net.
+ * <p>
+ * This node must not be used in recursive {@link CommunicationGroup}s.
  * 
  * @author Gabor Bergmann
  * 
  */
-public class TransitiveClosureNode extends SingleInputNode implements Clearable, ITcObserver<Object> {
+public class TransitiveClosureNode extends SingleInputNode
+        implements Clearable, ITcObserver<Object>, NetworkStructureChangeSensitiveNode {
 
     private Graph<Object> graphDataSource;
     private ITcDataSource<Object> transitiveClosureAlgorithm;
 
     /**
-     * Create a new transitive closure rete node. 
+     * Create a new transitive closure rete node.
      * 
-     * Client may optionally call {@link #reinitializeWith(Collection)} before using the node, 
-     * instead of inserting the initial set of tuples one by one.
+     * Client may optionally call {@link #reinitializeWith(Collection)} before using the node, instead of inserting the
+     * initial set of tuples one by one.
      * 
      * @param reteContainer
      *            the rete container of the node
@@ -51,32 +56,52 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
         transitiveClosureAlgorithm.attachObserver(this);
         reteContainer.registerClearable(this);
     }
-    
+
+    @Override
+    public void networkStructureChanged() {
+        if (this.reteContainer.isDifferentialDataFlowEvaluation() && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
+            throw new IllegalStateException(this.toString() + " cannot be used in recursive differential dataflow evaluation!");
+        }
+        super.networkStructureChanged();
+    }
+
     /**
      * Initializes the graph data source with the given collection of tuples.
+     * 
      * @param tuples
      *            the initial collection of tuples
      */
     public void reinitializeWith(Collection<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple> tuples) {
         clear();
-        
+
         for (org.eclipse.viatra.query.runtime.matchers.tuple.Tuple t : tuples) {
             graphDataSource.insertNode(t.get(0));
             graphDataSource.insertNode(t.get(1));
             graphDataSource.insertEdge(t.get(0), t.get(1));
         }
-        transitiveClosureAlgorithm.attachObserver(this);    	
+        transitiveClosureAlgorithm.attachObserver(this);
     }
 
     @Override
-    public void pullInto(Collection<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple> collector) {
-        for (Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
+    public void pullInto(final Collection<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple> collector, final boolean flush) {
+        for (final Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
             collector.add(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()));
         }
     }
 
     @Override
-    public void update(Direction direction, org.eclipse.viatra.query.runtime.matchers.tuple.Tuple updateElement) {
+    public void pullIntoWithTimestamp(
+            final Map<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple, DifferentialTimestamp> collector,
+            final boolean flush) {
+        // use all zero timestamps because this node cannot be used in recursive groups anyway
+        for (final Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
+            collector.put(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()), DifferentialTimestamp.ZERO);
+        }
+    }
+
+    @Override
+    public void update(Direction direction, org.eclipse.viatra.query.runtime.matchers.tuple.Tuple updateElement,
+            DifferentialTimestamp timestamp) {
         if (updateElement.getSize() == 2) {
             Object source = updateElement.get(0);
             Object target = updateElement.get(1);
@@ -109,17 +134,13 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
     @Override
     public void tupleInserted(Object source, Object target) {
         org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
-        propagateUpdate(Direction.INSERT, tuple);
+        propagateUpdate(Direction.INSERT, tuple, DifferentialTimestamp.ZERO);
     }
 
     @Override
     public void tupleDeleted(Object source, Object target) {
         org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
-        propagateUpdate(Direction.REVOKE, tuple);
+        propagateUpdate(Direction.REVOKE, tuple, DifferentialTimestamp.ZERO);
     }
 
-    @Override
-    protected void propagateUpdate(Direction direction, org.eclipse.viatra.query.runtime.matchers.tuple.Tuple updateElement) {
-        super.propagateUpdate(direction, updateElement);
-    }
 }

@@ -13,14 +13,18 @@ package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.Tunnel;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptiveMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -50,12 +54,21 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        return new AdaptiveMailbox(this, this.reteContainer);
+        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
+            return new DifferentialMailbox(this, this.reteContainer);
+        } else {            
+            return new ShapeshifterMailbox(this, this.reteContainer);
+        }
+    }
+    
+    @Override
+    public CommunicationTracker getCommunicationTracker() {
+        return this.reteContainer.getCommunicationTracker();
     }
     
     @Override
     public Mailbox getMailbox() {
-        return mailbox;
+        return this.mailbox;
     }
 
     @Override
@@ -80,9 +93,19 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
     /**
      * To be called by derived classes and ReteContainer.
      */
-    public void propagatePullInto(Collection<Tuple> collector) {
-        if (parent != null)
-            parent.pullInto(collector);
+    public void propagatePullInto(final Collection<Tuple> collector, final boolean flush) {
+        if (parent != null) {
+            parent.pullInto(collector, flush);
+        }
+    }
+    
+    /**
+     * To be called by derived classes and ReteContainer.
+     */
+    public void propagatePullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        if (parent != null) {
+            parent.pullIntoWithTimestamp(collector, flush);
+        }
     }
 
     @Override

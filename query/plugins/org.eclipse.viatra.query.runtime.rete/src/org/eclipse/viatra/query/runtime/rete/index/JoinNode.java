@@ -12,11 +12,13 @@
 package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * @author Gabor Bergmann
@@ -24,74 +26,155 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  */
 public class JoinNode extends DualInputNode {
 
-    public JoinNode(ReteContainer reteContainer,
-            TupleMask complementerSecondaryMask) {
+    public JoinNode(final ReteContainer reteContainer, final TupleMask complementerSecondaryMask) {
         super(reteContainer, complementerSecondaryMask);
+        this.logic = createLogic();
     }
 
     @Override
-    public Tuple calibrate(Tuple primary, Tuple secondary) {
+    public Tuple calibrate(final Tuple primary, final Tuple secondary) {
         return unify(primary, secondary);
     }
 
-    // public static Tuple calibrate(Tuple primary, Tuple secondary,
-    // TupleMask complementerSecondaryMask) {
-    // return complementerSecondaryMask.combine(primary, secondary,
-    // Options.enableInheritance, true);
-    // }
+    private final NetworkStructureChangeSensitiveLogic DEFAULT = new NetworkStructureChangeSensitiveLogic() {
 
-    @Override
-    public void notifyUpdate(Side side, Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-        Collection<Tuple> opposites = retrieveOpposites(side, signature);
-
-        if (opposites != null) {
-            for (Tuple opposite : opposites) {
-                propagateUpdate(direction, unify(side, updateElement, opposite));
-            }
+        @Override
+        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+            throw new UnsupportedOperationException();
         }
 
-        // compensate for coincidence of slots
-        if (coincidence) {
-            if (opposites != null) {
-                for (Tuple opposite : opposites) {
-                    if (opposite.equals(updateElement))
-                        continue; // INSERT: already joined with itself
-                    propagateUpdate(direction, unify(opposite, updateElement));
+        @Override
+        public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+            if (primarySlot == null || secondarySlot == null) {
+                return;
+            }
+
+            if (flush) {
+                reteContainer.flushUpdates();
+            }
+
+            for (final Tuple signature : primarySlot.getSignatures()) {
+                // primaries can not be null due to the contract of IterableIndex.getSignatures()
+                final Collection<Tuple> primaries = primarySlot.get(signature);
+                final Collection<Tuple> opposites = secondarySlot.get(signature);
+                if (opposites != null) {
+                    for (final Tuple primary : primaries) {
+                        for (final Tuple opposite : opposites) {
+                            collector.add(unify(primary, opposite));
+                        }
+                    }
                 }
             }
-            if (direction == Direction.REVOKE) // missed joining with itself
-                propagateUpdate(direction, unify(updateElement, updateElement));
-            //
-            // switch(direction) {
-            // case INSERT:
-            // opposites = new ArrayList<Tuple>(opposites);
-            // opposites.remove(updateElement);
-            // break;
-            // case REVOKE:
-            // opposites = (opposites == null) ? new ArrayList<Tuple>() : new ArrayList<Tuple>(opposites);
-            // opposites.add(updateElement);
-            // break;
-            // }
-            //
         }
+
+        @Override
+        public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
+                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+            // in the default case, all timestamps must be zero
+            assert timestamp == DifferentialTimestamp.ZERO;
+
+            final Collection<Tuple> opposites = retrieveOpposites(side, signature);
+
+            if (!coincidence) {
+                if (opposites != null) {
+                    for (final Tuple opposite : opposites) {
+                        propagateUpdate(direction, unify(side, updateElement, opposite), timestamp);
+                    }
+                }
+            } else {
+                // compensate for coincidence of slots - this is the case when an Indexer is joined with itself
+                if (opposites != null) {
+                    for (final Tuple opposite : opposites) {
+                        if (opposite.equals(updateElement)) {
+                            // handle self-joins of a single tuple separately
+                            continue;
+                        }
+                        propagateUpdate(direction, unify(opposite, updateElement), timestamp);
+                        propagateUpdate(direction, unify(updateElement, opposite), timestamp);
+                    }
+                }
+
+                // handle self-joins here
+                propagateUpdate(direction, unify(updateElement, updateElement), timestamp);
+            }
+        }
+    };
+
+    private final NetworkStructureChangeSensitiveLogic RECURSIVE_TIMELY = new NetworkStructureChangeSensitiveLogic() {
+
+        @Override
+        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+            if (primarySlot == null || secondarySlot == null) {
+                return;
+            }
+
+            if (flush) {
+                reteContainer.flushUpdates();
+            }
+
+            for (final Tuple signature : primarySlot.getSignatures()) {
+                // primaries can not be null due to the contract of IterableIndex.getSignatures()
+                final Map<Tuple, DifferentialTimestamp> primaries = getWithTimestamp(signature, primarySlot);
+                final Map<Tuple, DifferentialTimestamp> opposites = getWithTimestamp(signature, secondarySlot);
+                if (opposites != null) {
+                    for (final Tuple primary : primaries.keySet()) {
+                        final DifferentialTimestamp primaryTimestamp = primaries.get(primary);
+                        for (final Tuple opposite : opposites.keySet()) {
+                            collector.put(unify(primary, opposite), primaryTimestamp.max(opposites.get(opposite)));
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+            JoinNode.this.DEFAULT.pullInto(collector, flush);
+        }
+
+        @Override
+        public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
+                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+            final Indexer oppositeIndexer = getSlot(side.opposite());
+            final Map<Tuple, DifferentialTimestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
+
+            if (!coincidence) {
+                if (opposites != null) {
+                    for (final Tuple opposite : opposites.keySet()) {
+                        propagateUpdate(direction, unify(side, updateElement, opposite),
+                                timestamp.max(opposites.get(opposite)));
+                    }
+                }
+            } else {
+                // compensate for coincidence of slots - this is the case when an Indexer is joined with itself
+                if (opposites != null) {
+                    for (final Tuple opposite : opposites.keySet()) {
+                        if (opposite.equals(updateElement)) {
+                            // handle self-joins of a single tuple separately
+                            continue;
+                        }
+                        final DifferentialTimestamp oppositeTimestamp = opposites.get(opposite);
+                        propagateUpdate(direction, unify(opposite, updateElement),
+                                timestamp.max(oppositeTimestamp));
+                        propagateUpdate(direction, unify(updateElement, opposite),
+                                timestamp.max(oppositeTimestamp));
+                    }
+                }
+
+                // handle self-join here
+                propagateUpdate(direction, unify(updateElement, updateElement), timestamp);
+            }
+        }
+    };
+
+    @Override
+    protected NetworkStructureChangeSensitiveLogic createDefaultLogic() {
+        return this.DEFAULT;
     }
 
     @Override
-    public void pullInto(Collection<Tuple> collector) {
-        if (primarySlot == null || secondarySlot == null) return;
-        reteContainer.flushUpdates();
-
-        for (Tuple signature : primarySlot.getSignatures()) {
-            Collection<Tuple> primaries = primarySlot.get(signature); // not null due to the contract of
-                                                                      // IterableIndex.getSignatures()
-            Collection<Tuple> opposites = secondarySlot.get(signature);
-            if (opposites != null)
-                for (Tuple ps : primaries)
-                    for (Tuple opposite : opposites) {
-                        collector.add(unify(ps, opposite));
-                    }
-        }
-
+    protected NetworkStructureChangeSensitiveLogic createRecursiveTimelyLogic() {
+        return this.RECURSIVE_TIMELY;
     }
 
 }

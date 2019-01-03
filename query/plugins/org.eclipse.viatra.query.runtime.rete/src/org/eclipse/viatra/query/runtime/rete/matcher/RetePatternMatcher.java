@@ -31,7 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
-import org.eclipse.viatra.query.runtime.rete.network.Production;
+import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.CallbackNode;
@@ -46,7 +46,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     protected ReteEngine engine;
     protected IQueryRuntimeContext context;
-    protected Production productionNode;
+    protected ProductionNode productionNode;
     protected RecipeTraceInfo productionNodeTrace;
     protected Map<String, Integer> posMapping;
     protected Map<Object, Receiver> taggedChildren = CollectionsFactory.createMap();
@@ -67,15 +67,15 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
                 .getOrCreateNodeByRecipe(productionNodeTrace);
         if (!reteContainer.isLocal(productionAddress))
             throw new IllegalArgumentException("@pre: Production must be local to the head container");
-        this.productionNode = (Production) reteContainer.resolveLocal(productionAddress);
+        this.productionNode = (ProductionNode) reteContainer.resolveLocal(productionAddress);
         this.posMapping = this.productionNode.getPosMapping();
-        this.reteContainer.getTracker().registerDependency(this.productionNode, this);
+        this.reteContainer.getCommunicationTracker().registerDependency(this.productionNode, this);
     }
 
     /**
      * @since 1.6
      */
-    public Production getProductionNode() {
+    public ProductionNode getProductionNode() {
         return productionNode;
     }
 

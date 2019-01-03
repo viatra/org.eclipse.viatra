@@ -40,12 +40,12 @@ public class RecursionCutoffPoint {
     final CompiledQuery compiledQuery;
     final ProductionRecipe recipe;
     final QueryEvaluationHint hint;
-
-    public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context) {
+    
+    public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context, boolean deleteAndRederiveEvaluation) {
         super();
         this.hint = hint;
         this.futureTraceMap = new HashMap<>(); // IMPORTANT: the identity of futureTraceMap.values() will not change
-        this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceMap, Collections.<ReteNodeRecipe>emptySet(), hint, context);
+        this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceMap, Collections.<ReteNodeRecipe>emptySet(), hint, context, deleteAndRederiveEvaluation);
         this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
         if (!compiledQuery.getParentRecipeTraces().isEmpty()) {
             throw new IllegalArgumentException(String.format("Recursion cut-off point of query %s has trace parents: %s", 
@@ -58,6 +58,8 @@ public class RecursionCutoffPoint {
                     prettyPrintParentRecipeTraces(compiledQuery.getParentRecipeTraces())));
         }
     }
+    
+    
     
     private String prettyPrintParentRecipeTraces(List<RecipeTraceInfo> trace) {
         return trace.stream().map(Object::toString).collect(Collectors.joining(", "));

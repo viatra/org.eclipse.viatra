@@ -21,6 +21,12 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 public interface IMultiLookup<Key, Value> {
     
     /**
+     * Returns true if this collection is empty, false otherwise.
+     * @since 2.2
+     */
+    boolean isEmpty();
+    
+    /**
      * Returns a (read-only) bucket of values associated with the given key.
      * Clients must not modify the returned bucket.
      * @param key a key for which associated values are sought

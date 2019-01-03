@@ -12,11 +12,13 @@
 package org.eclipse.viatra.query.runtime.rete.misc;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * Node that always contains a single constant Tuple
@@ -35,8 +37,14 @@ public class ConstantNode extends StandardNode {
         this.constant = reteContainer.getNetwork().getEngine().getRuntimeContext().wrapTuple(constant);
     }
 
-    public void pullInto(Collection<Tuple> collector) {
+    @Override
+    public void pullInto(Collection<Tuple> collector, boolean flush) {
         collector.add(constant);
+    }
+    
+    @Override
+    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        collector.put(constant, DifferentialTimestamp.ZERO);
     }
 
 }

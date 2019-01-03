@@ -12,13 +12,19 @@
 package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp.AllZeroMap;
+import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedConnectCommand;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
 
@@ -27,7 +33,12 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * 
  * @author Gabor Bergmann
  */
-public abstract class DualInputNode extends StandardNode /* implements Pullable */{
+public abstract class DualInputNode extends StandardNode implements NetworkStructureChangeSensitiveNode {
+
+    /**
+     * @since 2.2
+     */
+    protected NetworkStructureChangeSensitiveLogic logic;
 
     public IterableIndexer getPrimarySlot() {
         return primarySlot;
@@ -81,131 +92,114 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
     /**
      * @param reteContainer
      */
-    public DualInputNode(ReteContainer reteContainer, TupleMask complementerSecondaryMask) {
+    public DualInputNode(final ReteContainer reteContainer, final TupleMask complementerSecondaryMask) {
         super(reteContainer);
         this.complementerSecondaryMask = complementerSecondaryMask;
-        //connectToIndexers(primarySlot, secondarySlot);
     }
 
     /**
      * Should be called only once, when node is initialized
      */
-    public void connectToIndexers(IterableIndexer primarySlot, Indexer secondarySlot) {
+    public void connectToIndexers(final IterableIndexer primarySlot, final Indexer secondarySlot) {
         this.primarySlot = primarySlot;
         this.secondarySlot = secondarySlot;
-        
-        reteContainer.getTracker().registerDependency(primarySlot, this);
-        reteContainer.getTracker().registerDependency(secondarySlot, this);
-  
-        // beta nodes are stateless, no need to synch contents to children...
-        // ...unless in a weird corner case of recursive queries, when there are already receivers attached
-        // so we prepare contents to be synced NOW
-        Collection<Tuple> contentsToSync = 
-                getReceivers().isEmpty()? null 
-                        : reteContainer.pullContents(this);       
-        
+
+        reteContainer.getCommunicationTracker().registerDependency(primarySlot, this);
+        reteContainer.getCommunicationTracker().registerDependency(secondarySlot, this);
+
         // attach listeners
         // if there is syncing, do this after the flush done for pulling, but before syncing updates
-        coincidence = primarySlot.equals(secondarySlot); 
-        final DualInputNode me = this;
+        coincidence = primarySlot.equals(secondarySlot);
+
         if (!coincidence) { // regular case
             primarySlot.attachListener(new DefaultIndexerListener(this) {
-                public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature,
-                        boolean change) {
-                    notifyUpdate(Side.PRIMARY, direction, updateElement, signature, change);
+                @Override
+                public void notifyIndexerUpdate(final Direction direction, final Tuple updateElement,
+                        final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                    DualInputNode.this.logic.notifyUpdate(Side.PRIMARY, direction, updateElement, signature, change,
+                            timestamp);
                 }
 
                 @Override
                 public String toString() {
-                    return "primary@" + me;
+                    return "primary@" + DualInputNode.this;
                 }
             });
             secondarySlot.attachListener(new DefaultIndexerListener(this) {
-                public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature,
-                        boolean change) {
-                    notifyUpdate(Side.SECONDARY, direction, updateElement, signature, change);
+                public void notifyIndexerUpdate(final Direction direction, final Tuple updateElement,
+                        final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                    DualInputNode.this.logic.notifyUpdate(Side.SECONDARY, direction, updateElement, signature, change,
+                            timestamp);
                 }
 
                 @Override
                 public String toString() {
-                    return "secondary@" + me;
+                    return "secondary@" + DualInputNode.this;
                 }
             });
-        } else { // if the two slots are the same, updates have to be handéed carefully
+        } else { // if the two slots are the same, updates have to be handled carefully
             primarySlot.attachListener(new DefaultIndexerListener(this) {
-                public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature,
-                        boolean change) {
-                    notifyUpdate(Side.BOTH, direction, updateElement, signature, change);
+                public void notifyIndexerUpdate(final Direction direction, final Tuple updateElement,
+                        final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                    DualInputNode.this.logic.notifyUpdate(Side.BOTH, direction, updateElement, signature, change,
+                            timestamp);
                 }
 
                 @Override
                 public String toString() {
-                    return "both@" + me;
+                    return "both@" + DualInputNode.this;
                 }
             });
         }
-        
-        // synch contents to receivers now... if any
-        if (contentsToSync != null) {
-            for (Receiver receiver : getReceivers()) {			
-                reteContainer.sendConstructionUpdates(receiver, Direction.INSERT, contentsToSync);
-            }
-            reteContainer.flushUpdates();
+
+        for (final Receiver receiver : getReceivers()) {
+            this.reteContainer.getDelayedCommandQueue()
+                    .add(new DelayedConnectCommand(this, receiver, this.reteContainer));
         }
-
-       }
-
-    // public Indexer createPrimarySlot(TupleMask mask)
-    // {
-    // return accessSlot(mask, Side.PRIMARY);
-    // }
-    //
-    // public Indexer createSecondarySlot(TupleMask mask)
-    // {
-    // return accessSlot(mask, Side.SECONDARY);
-    // }
-    //
-    // public Indexer accessSlot(TupleMask mask, Side side)
-    // {
-    // Indexer slot = slots.get(side);
-    // if (slot == null)
-    // {
-    // slot = new Indexer(network, mask);
-    // slot.attachListener(this, side);
-    // slots.put(side, slot);
-    // }
-    // return slot;
-    // }
+    }
 
     /**
-     * Helper: retrieves all stored substitutions from the opposite side memory. The results are copied into a new
-     * collection; this step has a performance penalty, but avoids ConcurrentModificaton Exceptions when loops are
-     * present.
-     * 
+     * Helper: retrieves all stored substitutions from the opposite side memory.
+     *
      * @return the collection of opposite substitutions if any, or null if none
      */
-    protected Collection<Tuple> retrieveOpposites(Side side, Tuple signature) {
-        Collection<Tuple> opposites = getSlot(side.opposite()).get(signature);
-        return opposites;
-        // if (opposites!=null) return new LinkedList<Tuple>(opposites);
-        // else return null;
+    protected Collection<Tuple> retrieveOpposites(final Side side, final Tuple signature) {
+        return getSlot(side.opposite()).get(signature);
+    }
+
+    /**
+     * @since 2.2
+     */
+    protected NetworkStructureChangeSensitiveLogic createLogic() {
+        if (this.reteContainer.isDifferentialDataFlowEvaluation()
+                && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
+            return createRecursiveTimelyLogic();
+        } else {
+            return createDefaultLogic();
+        }
     }
 
     /**
      * Helper: unifies a left and right partial matching.
      */
-    protected Tuple unify(Tuple left, Tuple right) {
-        // if (complementerSecondaryMask == null)
-        // return secondarySlot.getMask().combine(left, right,
-        // Options.enableInheritance, false);
-        // else
+    protected Tuple unify(final Tuple left, final Tuple right) {
         return complementerSecondaryMask.combine(left, right, Options.enableInheritance, true);
+    }
+    
+    @Override
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        this.logic.pullInto(collector, flush);
+    }
+    
+    @Override
+    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        this.logic.pullIntoWithTimestamp(collector, flush);
     }
 
     /**
-     * Helper: unifies the a substitution from the specifies side with another substitution from the other side.
+     * Helper: unifies a substitution from the specified side with another substitution from the other side.
      */
-    protected Tuple unify(Side side, Tuple ps, Tuple opposite) {
+    protected Tuple unify(final Side side, final Tuple ps, final Tuple opposite) {
         switch (side) {
         case PRIMARY:
             return unify(ps, opposite);
@@ -219,54 +213,102 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
     }
 
     /**
-     * Abstract handler for update event.
-     * 
-     * @param side
-     *            The side on which the event occured.
-     * @param direction
-     *            The direction of the update.
-     * @param updateElement
-     *            The partial matching that is inserted.
-     * @param signature
-     *            Masked signature of updateElement.
-     * @param change
-     *            Indicates whether this is/was the first/last instance of this signature in this slot.
+     * Simulates the behavior of the node for calibration purposes only.
      */
-    public abstract void notifyUpdate(Side side, Direction direction, Tuple updateElement, Tuple signature,
-            boolean change);
-
-    /**
-     * Simulates the behaviour of the node for calibration purposes only.
-     */
-    public abstract Tuple calibrate(Tuple primary, Tuple secondary);
+    public abstract Tuple calibrate(final Tuple primary, final Tuple secondary);
 
     /**
      * @param complementerSecondaryMask
      *            the complementerSecondaryMask to set
      */
-    public void setComplementerSecondaryMask(TupleMask complementerSecondaryMask) {
+    public void setComplementerSecondaryMask(final TupleMask complementerSecondaryMask) {
         this.complementerSecondaryMask = complementerSecondaryMask;
     }
 
     /**
      * Retrieves the slot corresponding to the specified side.
      */
-    protected Indexer getSlot(Side side) {
-        if (side == Side.SECONDARY)
+    protected Indexer getSlot(final Side side) {
+        if (side == Side.SECONDARY) {
             return secondarySlot;
-        else
+        } else {
             return primarySlot;
+        }
     }
-    
+
     @Override
-    public void assignTraceInfo(TraceInfo traceInfo) {
+    public void assignTraceInfo(final TraceInfo traceInfo) {
         super.assignTraceInfo(traceInfo);
         if (traceInfo.propagateToIndexerParent()) {
-            if (primarySlot != null)
+            if (primarySlot != null) {
                 primarySlot.acceptPropagatedTraceInfo(traceInfo);
-            if (secondarySlot != null)
+            }
+            if (secondarySlot != null) {
                 secondarySlot.acceptPropagatedTraceInfo(traceInfo);
+            }
         }
+    }
+
+    @Override
+    public void networkStructureChanged() {
+        this.logic = createLogic();
+    }
+
+    /**
+     * @since 2.2
+     */
+    protected abstract NetworkStructureChangeSensitiveLogic createRecursiveTimelyLogic();
+
+    /**
+     * @since 2.2
+     */
+    protected abstract NetworkStructureChangeSensitiveLogic createDefaultLogic();
+
+    /**
+     * @since 2.2
+     */
+    protected Map<Tuple, DifferentialTimestamp> getWithTimestamp(final Tuple signature, final Indexer indexer) {
+        if (this.reteContainer.getCommunicationTracker().areInSameGroup(indexer, this)) {
+            // already timestamp-aware because it is in a recursive group
+            return indexer.getWithTimestamp(signature);
+        } else {
+            // the indexer is in a different group, treat all of its tuples as they would have timestamp 0
+            final Collection<Tuple> tuples = indexer.get(signature);
+            if (tuples == null) {
+                return null;
+            } else {
+                return new AllZeroMap<Tuple>((Set<Tuple>) tuples);
+            }
+        }
+    }
+
+    /**
+     * @since 2.2
+     */
+    protected static abstract class NetworkStructureChangeSensitiveLogic {
+
+        /**
+         * Abstract handler for update event.
+         * 
+         * @param side
+         *            The side on which the event occurred.
+         * @param direction
+         *            The direction of the update.
+         * @param updateElement
+         *            The partial matching that is inserted.
+         * @param signature
+         *            Masked signature of updateElement.
+         * @param change
+         *            Indicates whether this is/was the first/last instance of this signature in this slot.
+         */
+        public abstract void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
+                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp);
+
+        public abstract void pullInto(final Collection<Tuple> collector, final boolean flush);
+
+        public abstract void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector,
+                final boolean flush);
+
     }
 
 }

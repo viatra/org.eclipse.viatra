@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryT
  * @author Gabor Bergmann
  * @since 2.0
  */
-public final class NullaryMaskedTupleMemory extends AbstractSetBackedMaskedTupleMemory {
+public final class NullaryMaskedTupleMemory<Timestamp extends Comparable<Timestamp>> extends AbstractTrivialMemory<Timestamp> {
 
     protected static final Set<Tuple> UNIT_RELATION = 
             Collections.singleton(Tuples.staticArityFlatTupleOf());
@@ -69,8 +69,7 @@ public final class NullaryMaskedTupleMemory extends AbstractSetBackedMaskedTuple
 
     @Override
     public boolean remove(Tuple tuple) {
-        tuples.removeOne(tuple);    
-        return tuples.isEmpty();
+        return remove(tuple, null);
     }
 
     @Override
@@ -82,9 +81,7 @@ public final class NullaryMaskedTupleMemory extends AbstractSetBackedMaskedTuple
 
     @Override
     public boolean add(Tuple tuple) {
-        boolean wasEmpty = tuples.isEmpty();
-        tuples.addOne(tuple);
-        return wasEmpty;
+        return add(tuple, null);
     }
 
 }

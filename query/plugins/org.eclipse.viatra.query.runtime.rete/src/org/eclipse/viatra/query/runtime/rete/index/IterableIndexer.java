@@ -32,4 +32,5 @@ public interface IterableIndexer extends Indexer, Iterable<Tuple> {
      * @since 2.0
      */
     public int getBucketCount();
+    
 }

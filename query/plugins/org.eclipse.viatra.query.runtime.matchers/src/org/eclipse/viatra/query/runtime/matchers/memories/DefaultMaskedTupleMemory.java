@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.memories;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -26,13 +27,15 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranula
 /**
  * @author Gabor Bergmann
  * 
- * Default implementation that covers all cases.
+ *         Default implementation that covers all cases.
  * 
  * @since 2.0
  */
-public final class DefaultMaskedTupleMemory extends MaskedTupleMemory {
+public final class DefaultMaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
+        extends MaskedTupleMemory<Timestamp> {
     /**
      * Maps a signature tuple to the bucket of tuples with the given signature.
+     * 
      * @since 2.0
      */
     protected IMultiLookup<Tuple, Tuple> signatureToTuples;
@@ -40,14 +43,15 @@ public final class DefaultMaskedTupleMemory extends MaskedTupleMemory {
     /**
      * @param mask
      *            The mask used to index the matchings
-     * @param owner the object "owning" this memory
-     * @param bucketType the kind of tuple collection maintained for each indexer bucket
+     * @param owner
+     *            the object "owning" this memory
+     * @param bucketType
+     *            the kind of tuple collection maintained for each indexer bucket
      * @since 2.0
      */
-    DefaultMaskedTupleMemory(TupleMask mask, MemoryType bucketType, Object owner) {
+    public DefaultMaskedTupleMemory(TupleMask mask, MemoryType bucketType, Object owner) {
         super(mask, owner);
-        signatureToTuples = CollectionsFactory.<Tuple, Tuple>createMultiLookup(
-                Object.class, bucketType, Object.class);
+        signatureToTuples = CollectionsFactory.<Tuple, Tuple> createMultiLookup(Object.class, bucketType, Object.class);
     }
 
     @Override
@@ -63,7 +67,7 @@ public final class DefaultMaskedTupleMemory extends MaskedTupleMemory {
         } catch (IllegalStateException ex) { // ignore worthless internal exception details
             throw raiseDuplicateInsertion(tuple);
         }
-    
+
     }
 
     @Override
@@ -79,6 +83,11 @@ public final class DefaultMaskedTupleMemory extends MaskedTupleMemory {
         } catch (IllegalStateException ex) { // ignore worthless internal exception details
             throw raiseDuplicateDeletion(tuple);
         }
+    }
+    
+    @Override
+    public Map<Tuple, Timestamp> getWithTimestamp(ITuple signature) {
+        throw new UnsupportedOperationException("Default memories do not support timestamp-based lookup!");
     }
 
     @Override
@@ -110,11 +119,10 @@ public final class DefaultMaskedTupleMemory extends MaskedTupleMemory {
         }
         return i;
     }
-    
+
     @Override
     public int getKeysetSize() {
         return signatureToTuples.countKeys();
     }
 
-    
 }

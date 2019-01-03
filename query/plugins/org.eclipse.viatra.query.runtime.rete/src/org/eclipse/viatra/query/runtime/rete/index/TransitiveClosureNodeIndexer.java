@@ -89,10 +89,12 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public Collection<Tuple> getSignatures() {
         return asTupleCollection(tcAlg.getTcRelation());
     }
-
+    
+    @Override
     public Iterator<Tuple> iterator() {
         return asTupleCollection(tcAlg.getTcRelation()).iterator();
     }
@@ -107,7 +109,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
     }
 
     public void propagate(Direction direction, Tuple updateElement, boolean change) {
-        propagate(direction, updateElement, new MaskedTuple(updateElement, mask), change);
+        propagate(direction, updateElement, new MaskedTuple(updateElement, mask), change, null);
     }
 
     @Override

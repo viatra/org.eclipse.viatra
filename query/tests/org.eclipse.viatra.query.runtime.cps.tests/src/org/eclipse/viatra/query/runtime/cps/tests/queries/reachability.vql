@@ -1,0 +1,17 @@
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://org.eclipse.viatra/model/cps"
+ 
+pattern dependOn(dependant : ApplicationInstance, dependee : ApplicationInstance) {
+	ApplicationInstance.dependOn(dependant, dependee);
+}
+
+@Label(label = "$dependant$ <- $dependee$")
+pattern allDependencies(dependant : ApplicationInstance, dependee : ApplicationInstance) {
+	find dependOn(dependant, dependee);
+} or {
+	find dependOn(dependant, intermediate);
+	find allDependencies(intermediate, dependee);
+	dependant != dependee;
+}

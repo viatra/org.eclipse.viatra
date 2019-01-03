@@ -12,27 +12,39 @@
 package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 public abstract class TransformerNode extends SingleInputNode {
 
-    public TransformerNode(ReteContainer reteContainer) {
+    public TransformerNode(final ReteContainer reteContainer) {
         super(reteContainer);
     }
 
-    protected abstract Tuple transform(Tuple input);
+    protected abstract Tuple transform(final Tuple input);
 
-    public void pullInto(Collection<Tuple> collector) {
-        for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
+    @Override
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        for (Tuple ps : reteContainer.pullPropagatedContents(this, flush)) {
             collector.add(transform(ps));
         }
     }
+    
+    @Override
+    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        for (final Entry<Tuple, DifferentialTimestamp> entry : reteContainer.pullPropagatedContentsWithTimestamp(this, flush).entrySet()) {
+            collector.put(transform(entry.getKey()), entry.getValue());
+        }
+    }
 
-    public void update(Direction direction, Tuple updateElement) {
-        propagateUpdate(direction, transform(updateElement));
+    @Override
+    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp) {
+        propagateUpdate(direction, transform(updateElement), timestamp);
     }
 
 }

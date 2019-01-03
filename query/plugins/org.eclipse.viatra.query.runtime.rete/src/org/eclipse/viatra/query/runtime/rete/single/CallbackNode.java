@@ -15,6 +15,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.misc.SimpleReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * @author Bergmann Gabor
@@ -31,7 +32,7 @@ public class CallbackNode extends SimpleReceiver {
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement) {
+    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
         updateable.update(updateElement, direction == Direction.INSERT);
     }
 

@@ -20,7 +20,7 @@ import java.util.Collection
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.Assert
-import org.eclipse.viatra.query.runtime.cps.tests.queries.Dred
+import org.eclipse.viatra.query.runtime.cps.tests.queries.Reachability
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.B_second
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
@@ -35,7 +35,7 @@ class SimpleNameTests {
     @Parameters(name="{index} : {0}")
     static def Collection<Object[]> data() {
         return #[
-            #[AllDependenciesQuerySpecification.instance, "allDependencies", Dred.instance],
+            #[AllDependenciesQuerySpecification.instance, "allDependencies", Reachability.instance],
             #[SecondPatternQuerySpecification.instance, "secondPattern", B_second.instance]
         ]
     }

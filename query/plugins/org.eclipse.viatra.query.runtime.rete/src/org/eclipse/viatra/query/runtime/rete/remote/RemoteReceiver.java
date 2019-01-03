@@ -14,11 +14,13 @@ package org.eclipse.viatra.query.runtime.rete.remote;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
 /**
@@ -40,15 +42,21 @@ public class RemoteReceiver extends SingleInputNode {
         targets.add(target);
     }
 
-    public void pullInto(Collection<Tuple> collector) {
-        propagatePullInto(collector);
+    @Override
+    public void pullInto(Collection<Tuple> collector, boolean flush) {
+        propagatePullInto(collector, flush);
+    }
+    
+    @Override
+    public void pullIntoWithTimestamp(Map<Tuple, DifferentialTimestamp> collector, boolean flush) {
+        throw new UnsupportedOperationException();
     }
 
-    public Collection<Tuple> remotePull() {
-        return reteContainer.pullContents(this);
+    public Collection<Tuple> remotePull(boolean flush) {
+        return reteContainer.pullContents(this, flush);
     }
 
-    public void update(Direction direction, Tuple updateElement) {
+    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
         for (Address<? extends Receiver> ad : targets)
             reteContainer.sendUpdateToRemoteAddress(ad, direction, updateElement);
     }

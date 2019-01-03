@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.Collection;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
@@ -27,7 +28,7 @@ public interface Receiver extends Node {
     /**
      * updates the receiver with a newly found or lost partial matching
      */
-    public void update(Direction direction, Tuple updateElement);
+    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp);
 
     /**
      * Returns the {@link Mailbox} of this receiver.
@@ -38,18 +39,18 @@ public interface Receiver extends Node {
     public Mailbox getMailbox();
         
     /**
-     * appends a parent that will continously send insert and revoke updates to this supplier
+     * appends a parent that will continuously send insert and revoke updates to this supplier
      */
-    void appendParent(Supplier supplier);
+    void appendParent(final Supplier supplier);
 
     /**
      * removes a parent
      */
-    void removeParent(Supplier supplier);
+    void removeParent(final Supplier supplier);
 
     /**
      * access active parent
      */
     Collection<Supplier> getParents();
-
+    
 }

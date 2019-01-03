@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network.mailbox;
 
-import org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
 
 /**
  * An adaptable mailbox can be wrapped by another mailbox to act in behalf of that. The significance of the adaptation
  * is that the adaptee will notify the {@link CommunicationTracker} about updates by promoting the adapter itself.
- * Adaptable mailboxes are used by the {@link AdaptiveMailbox}.
+ * Adaptable mailboxes are used by the {@link ShapeshifterMailbox}.
  * 
  * @author Tamas Szabo
  * @since 2.0

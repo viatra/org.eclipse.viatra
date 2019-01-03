@@ -18,29 +18,34 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
+import org.eclipse.viatra.query.runtime.rete.matcher.DRedReteBackendFactory;
+import org.eclipse.viatra.query.runtime.rete.matcher.DifferentialReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 
 public enum BackendType {
-    Rete, LocalSearch,
-    LocalSearch_Generic,
-    LocalSearch_Flat,
-    LocalSearch_NoBase;
-    
+    Rete, Rete_DRed, Rete_Differential, LocalSearch, LocalSearch_Generic, LocalSearch_Flat, LocalSearch_NoBase;
+
     public IQueryBackendFactory getNewBackendInstance() {
-        switch(this) {
-            case Rete: return ReteBackendFactory.INSTANCE;
-            case LocalSearch_Flat:
-            case LocalSearch_NoBase:
-            case LocalSearch: 
-                return LocalSearchEMFBackendFactory.INSTANCE;
-            case LocalSearch_Generic:
-                return LocalSearchGenericBackendFactory.INSTANCE;
-            default: return null;
+        switch (this) {
+        case Rete:
+            return ReteBackendFactory.INSTANCE;
+        case Rete_DRed:
+            return DRedReteBackendFactory.INSTANCE;
+        case Rete_Differential:
+            return DifferentialReteBackendFactory.INSTANCE;
+        case LocalSearch_Flat:
+        case LocalSearch_NoBase:
+        case LocalSearch:
+            return LocalSearchEMFBackendFactory.INSTANCE;
+        case LocalSearch_Generic:
+            return LocalSearchGenericBackendFactory.INSTANCE;
+        default:
+            return null;
         }
     }
-    
-    public QueryEvaluationHint getHints(){
-        switch(this){
+
+    public QueryEvaluationHint getHints() {
+        switch (this) {
         case LocalSearch:
             return LocalSearchHints.getDefault().build();
         case LocalSearch_Flat:
@@ -50,7 +55,8 @@ public enum BackendType {
         case LocalSearch_Generic:
             return LocalSearchHints.getDefaultGeneric().build();
         default:
-            return new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object>emptyMap(), getNewBackendInstance());
+            return new QueryEvaluationHint(Collections.<QueryHintOption<?>, Object> emptyMap(),
+                    getNewBackendInstance());
         }
     }
 }

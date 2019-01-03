@@ -11,15 +11,11 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.graphimpl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
 
-import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCC;
-import org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc.SCCResult;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphObserver;
@@ -188,89 +184,4 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
         return sb.toString();
     }
 
-    private static final String[] colors = new String[] { "yellow", "blue", "red", "green", "gray", "cyan" };
-
-    /**
-     * @since 2.0
-     */
-    public String generateDot(boolean colorSCCs, Function<V, String> nameMapper, Function<V, String> colorMapper) {
-        Map<V, String> colorMap = new HashMap<V, String>();
-
-        if (colorSCCs) {
-            SCCResult<V> result = SCC.computeSCC(this);
-            Set<Set<V>> sccs = result.getSccs();
-
-            int i = 0;
-            for (Set<V> scc : sccs) {
-                if (scc.size() > 1) {
-                    for (V node : scc) {
-                        String color = colorMap.get(node);
-                        if (color == null) {
-                            colorMap.put(node, colors[i % colors.length]);
-                        } else {
-                            colorMap.put(node, colorMap.get(node) + ":" + colors[i % colors.length]);
-                        }
-                    }
-                    i++;
-                }
-            }
-
-            // if a node has no color yet, then make it white
-            for (V node : getAllNodes()) {
-                if (!colorMap.containsKey(node)) {
-                    colorMap.put(node, "white");
-                }
-            }
-        } else {
-            for (V node : getAllNodes()) {
-                colorMap.put(node, "white");
-            }
-        }
-
-        if (colorMapper != null) {
-            for (V node : getAllNodes()) {
-                colorMap.put(node, colorMapper.apply(node));
-            }
-        }
-
-        StringBuilder builder = new StringBuilder();
-        builder.append("digraph g {\n");
-
-        for (V node : getAllNodes()) {
-            String nodePresentation = nameMapper == null ? node.toString() : nameMapper.apply(node);
-            builder.append("\"" + nodePresentation + "\"");
-            builder.append("[style=filled,fillcolor=" + colorMap.get(node) + "]");
-            builder.append(";\n");
-        }
-
-        for (V source : outgoingEdges.distinctKeys()) {
-            IMemoryView<V> targets = outgoingEdges.lookup(source);
-            String sourcePresentation = nameMapper == null ? source.toString() : nameMapper.apply(source);
-            for (V target : targets.distinctValues()) {
-                int count = targets.getCount(target);
-                String targetPresentation = nameMapper == null ? target.toString() : nameMapper.apply(target);
-                for (int i = 0; i < count; i++) {
-                    builder.append("\"" + sourcePresentation + "\" -> \"" + targetPresentation + "\";\n");
-                }
-            }
-        }
-
-        builder.append("}");
-        return builder.toString();
-    }
-
-    /**
-     * @since 1.6
-     */
-    public String generateDot() {
-        return generateDot(false, null, null);
-    }
-
-    public Integer[] deleteRandomEdge() {
-        return null;
-    }
-
-    public Integer[] insertRandomEdge() {
-        return null;
-    }
 }

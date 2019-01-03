@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * A monitoring object that connects to the rete network as a receiver to reflect changes since an arbitrary state
@@ -86,7 +87,7 @@ public abstract class DeltaMonitor<MatchType> extends SimpleReceiver implements 
     public abstract MatchType statelessConvert(Tuple tuple);
 
     @Override
-    public void update(Direction direction, Tuple updateElement) {
+    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
         if (statelessFilter(updateElement)) {
             MatchType match = statelessConvert(updateElement);
             if (direction == Direction.INSERT) {
