@@ -177,8 +177,6 @@
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
-        <repository
-            url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
       </repositoryList>
       <repositoryList
           name="Oxygen">
@@ -188,8 +186,6 @@
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
-        <repository
-            url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
       </repositoryList>
       <repositoryList
           name="Photon">
@@ -199,8 +195,6 @@
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
-        <repository
-            url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
       </repositoryList>
       <repositoryList
           name="2018-09">
@@ -210,8 +204,15 @@
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+      </repositoryList>
+      <repositoryList
+          name="2018-12">
         <repository
-            url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+            url="http://download.eclipse.org/releases/2018-12"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
       </repositoryList>
     </targlet>
   </setupTask>
@@ -1151,7 +1152,7 @@
       <repository
           url="http://download.itemis.com/updates/releases"/>
       <repository
-          url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
+          url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
       <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
     </setupTask>
     <setupTask
@@ -1260,7 +1261,7 @@
           <repository
               url="http://download.eclipse.org/releases/2018-12"/>
           <repository
-              url="http://download.eclipse.org/efxclipse/updates-released/3.3.0/site"/>
+              url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
         </repositoryList>
       </targlet>
       <targlet
@@ -1437,6 +1438,13 @@
               url="http://download.eclipse.org/viatra/dependency/collections-71"/>
         </repositoryList>
       </targlet>
+      <targlet
+          name="Modisco">
+        <repositoryList>
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
     <setupTask
         xsi:type="jdt:JRETask"
@@ -1605,6 +1613,13 @@
             name="">
           <repository
               url="http://download.eclipse.org/viatra/examples/cps/2.0.0.201801280453"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Modisco">
+        <repositoryList>
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
         </repositoryList>
       </targlet>
     </setupTask>
