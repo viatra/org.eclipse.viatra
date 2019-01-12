@@ -76,7 +76,7 @@
 		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
 	</parent>
 	<properties>
-		<target.classifier>mars</target.classifier>
+		<target.classifier>oxygen</target.classifier>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.jacoco.reportPaths>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPaths>

@@ -11,9 +11,6 @@
     </parent>
     <artifactId>org.eclipse.viatra.query.language.vgql.feature</artifactId>
     <packaging>eclipse-feature</packaging>
-    <properties>
-        <target.classifier>oxygen</target.classifier>
-    </properties>
     <build>
         <plugins>
             <plugin>

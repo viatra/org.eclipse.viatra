@@ -29,16 +29,6 @@
                             <artifacts>
                                 <!-- note: file names must be ${classifier}.target -->
                                 <artifact>
-                                    <file>mars.target</file>
-                                    <type>target</type>
-                                    <classifier>mars</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>neon.target</file>
-                                    <type>target</type>
-                                    <classifier>neon</classifier>
-                                </artifact>
-                                <artifact>
                                     <file>oxygen.target</file>
                                     <type>target</type>
                                     <classifier>oxygen</classifier>
