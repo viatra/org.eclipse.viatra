@@ -131,14 +131,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/backend/IQueryBackend.java" type="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend">
-        <filter comment="interface used internally only" id="403804204">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend"/>
-                <message_argument value="getFactory()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/context/AbstractQueryMetaContext.java" type="org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryMetaContext">
         <filter comment="Internal API implementation" id="576725006">
             <message_arguments>
@@ -160,14 +152,6 @@
             <message_arguments>
                 <message_argument value="PQuery"/>
                 <message_argument value="InitializablePQuery"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/PConstraint.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint">
-        <filter id="403804204">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint"/>
-                <message_argument value="getBody()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -200,14 +184,6 @@
             <message_arguments>
                 <message_argument value="IPTraceableTraceProvider"/>
                 <message_argument value="IRewriterTraceCollector"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/util/IMemoryView.java" type="org.eclipse.viatra.query.runtime.matchers.util.IMemoryView">
-        <filter comment="cannot cause name clash, as named asStream() instead of stream()" id="404000815">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.util.IMemoryView"/>
-                <message_argument value="asStream()"/>
             </message_arguments>
         </filter>
     </resource>

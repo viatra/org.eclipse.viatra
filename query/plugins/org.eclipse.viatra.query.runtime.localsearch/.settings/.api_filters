@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.localsearch" version="2">
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/ISearchContext.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext">
-        <filter id="405901410">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext"/>
-                <message_argument value="getMatcher(MatcherReference)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/ISearchContext.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext$SearchContext">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext.SearchContext"/>
-                <message_argument value="SearchContext(IQueryBackendContext, QueryEvaluationHint, ICache)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext.SearchContext"/>
-                <message_argument value="getMatcher(MatcherReference)"/>
-            </message_arguments>
-        </filter>
         <filter comment="Internal API implementation" id="576725006">
             <message_arguments>
                 <message_argument value="ISearchContext"/>
@@ -65,95 +45,11 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/IPlanProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider">
-        <filter id="403804204">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider"/>
-                <message_argument value="getPlan(IQueryBackendContext, IOperationCompiler, ResultProviderRequestor, LocalSearchHints, MatcherReference)"/>
-            </message_arguments>
-        </filter>
-        <filter id="405901410">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider"/>
-                <message_argument value="getPlan(IQueryBackendContext, IOperationCompiler, LocalSearchHints, MatcherReference)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/SearchPlanForBody.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanForBody">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanForBody"/>
-                <message_argument value="SearchPlanForBody(PBody, Map&lt;PVariable,Integer&gt;, SubPlan, List&lt;ISearchOperation&gt;, Collection&lt;MatcherReference&gt;)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/plan/SimplePlanProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.plan.SimplePlanProvider"/>
-                <message_argument value="getPlan(IQueryBackendContext, IOperationCompiler, LocalSearchHints, MatcherReference)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/LocalSearchPlanner.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner"/>
-                <message_argument value="LocalSearchPlanner(IQueryBackendContext, IOperationCompiler, Logger, LocalSearchHints)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/LocalSearchRuntimeBasedStrategy.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy"/>
-                <message_argument value="extractClassifierLiteral(String)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy"/>
-                <message_argument value="plan(PBody, Set&lt;PVariable&gt;, IQueryBackendContext, LocalSearchHints)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PConstraintInfo.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="PConstraintInfo(PConstraint, Set&lt;PVariable&gt;, Set&lt;PVariable&gt;, Set&lt;PConstraintInfo&gt;, IQueryBackendContext, Function&lt;IConstraintEvaluationContext,Double&gt;)"/>
-            </message_arguments>
-        </filter>
         <filter comment="Internal API implementation" id="576725006">
             <message_arguments>
                 <message_argument value="IConstraintEvaluationContext"/>
                 <message_argument value="PConstraintInfo"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PlanState.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
-                <message_argument value="PlanState(PBody, List&lt;PConstraintInfo&gt;, Set&lt;PVariable&gt;)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
-                <message_argument value="getFutureChecks()"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
-                <message_argument value="getFutureExtends()"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
-                <message_argument value="updateOperations(List&lt;PConstraintInfo&gt;, List&lt;PConstraintInfo&gt;)"/>
             </message_arguments>
         </filter>
     </resource>

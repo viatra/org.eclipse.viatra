@@ -9,12 +9,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/traceability/RecipeTraceInfo.java" type="org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo">
-        <filter id="338886760">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo.ParentTraceList"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.1.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>
