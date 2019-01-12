@@ -133,7 +133,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Photon"
+      defaultValue="2018-12"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -243,6 +243,32 @@
       xsi:type="setup:VariableTask"
       name="viatra.git.branch"
       value="master"/>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask">
+    <workingSet
+        name="VIATRA Releng"
+        id="">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:OrPredicate">
+          <operand
+              xsi:type="predicates:LocationPredicate"
+              pattern=".*/releng/.*"/>
+          <operand
+              xsi:type="predicates:LocationPredicate"
+              pattern=".*/setup/.*"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.FeatureNature"/>
+        </operand>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
+      </predicate>
+    </workingSet>
+    <description>The dynamic working sets for ${scope.project.label}</description>
+  </setupTask>
   <project name="core"
       label="VIATRA Core">
     <setupTask
@@ -801,6 +827,123 @@
         </targlet>
       </setupTask>
     </stream>
+    <stream
+        name="2.1-maintenance">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="Generate query code">
+        <setupTask
+            xsi:type="projects:ProjectsBuildTask"
+            id="viatra.query.prequerygen"
+            onlyNewProjects="true"
+            refresh="true"/>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateRetevisQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateTransformationViewsQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateUMLIntegrationQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateViewersRuntimeQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            predecessor="viatra.query.prequerygen"
+            filter=""
+            launcher="org.eclipse.viatra.setup/GenerateCPSFrameworkQueries.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            predecessor="viatra.query.prequerygen"
+            launcher="org.eclipse.viatra.setup/GenerateRCPTTQueries.mwe2.launch">
+          <description></description>
+        </setupTask>
+      </setupTask>
+      <setupTask
+          xsi:type="setup.p2:P2Task">
+        <requirement
+            name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
+        <repository
+            url="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
+      </setupTask>
+      <setupTask
+          xsi:type="setup.targlets:TargletTask"
+          successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
+        <targlet
+            name="Sirius"
+            activeRepositoryList="${eclipse.target.platform}">
+          <requirement
+              name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.diagram.elk.feature.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.specifier.ide.ui.feature.group"/>
+          <requirement
+              name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
+          <repositoryList
+              name="Neon">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.0/neon"/>
+          </repositoryList>
+          <repositoryList
+              name="Oxygen">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.1/oxygen"/>
+          </repositoryList>
+          <repositoryList
+              name="Photon">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2018-09">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2018-12">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+          </repositoryList>
+        </targlet>
+      </setupTask>
+    </stream>
     <description>Viatra query and transformation framework</description>
   </project>
   <project name="tooling"
@@ -849,6 +992,13 @@
           name="viatra.hudson.ci.build.job.name"
           value="viatra-maintenance-2.0"/>
     </stream>
+    <stream
+        name="2.1-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="viatra.hudson.ci.build.job.name"
+          value="viatra-master"/>
+    </stream>
     <description>Installs the development environment of VIATRA into the host instance</description>
   </project>
   <project name="dse"
@@ -889,6 +1039,8 @@
         name="1.7-maintenance"/>
     <stream
         name="2.0-maintenance"/>
+    <stream
+        name="2.1-maintenance"/>
     <description>Design space exploration for VIATRA</description>
   </project>
   <project name="cep"
@@ -1100,6 +1252,25 @@
             name="viatra-master-maven"/>
       </setupTask>
     </stream>
+    <stream
+        name="2.1-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="2.2"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-2.1-maintenance"/>
+        <buildPlan
+            name="viatra-master-gerrit"/>
+        <buildPlan
+            name="viatra-2.1-maintenance-maven"/>
+      </setupTask>
+    </stream>
   </project>
   <project href="https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/plain/cps/releng/org.eclipse.viatra.examples.cps.setup/CPSExample.setup#/"/>
   <stream name="master">
@@ -1108,32 +1279,6 @@
         option="-Doomph.redirection.viatra.setup"
         value="=https://git.eclipse.org/c/viatra/org.eclipse.viatra.git/plain/releng/org.eclipse.viatra.setup/VIATRAEMF.setup->${git.clone.viatra.location|uri}/releng/org.eclipse.viatra.setup/VIATRAEMF.setup"
         vm="true"/>
-    <setupTask
-        xsi:type="setup.workingsets:WorkingSetTask">
-      <workingSet
-          name="VIATRA Releng"
-          id="">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:OrPredicate">
-            <operand
-                xsi:type="predicates:LocationPredicate"
-                pattern=".*/releng/.*"/>
-            <operand
-                xsi:type="predicates:LocationPredicate"
-                pattern=".*/setup/.*"/>
-            <operand
-                xsi:type="predicates:NaturePredicate"
-                nature="org.eclipse.pde.FeatureNature"/>
-          </operand>
-          <operand
-              xsi:type="predicates:RepositoryPredicate"
-              project="org.eclipse.viatra.setup"/>
-        </predicate>
-      </workingSet>
-      <description>The dynamic working sets for ${scope.project.label}</description>
-    </setupTask>
     <setupTask
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
@@ -1293,32 +1438,6 @@
   <stream name="1.7-maintenance"
       label="">
     <setupTask
-        xsi:type="setup.workingsets:WorkingSetTask">
-      <workingSet
-          name="VIATRA Releng"
-          id="">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:OrPredicate">
-            <operand
-                xsi:type="predicates:LocationPredicate"
-                pattern=".*/releng/.*"/>
-            <operand
-                xsi:type="predicates:LocationPredicate"
-                pattern=".*/setup/.*"/>
-            <operand
-                xsi:type="predicates:NaturePredicate"
-                nature="org.eclipse.pde.FeatureNature"/>
-          </operand>
-          <operand
-              xsi:type="predicates:RepositoryPredicate"
-              project="org.eclipse.viatra.setup"/>
-        </predicate>
-      </workingSet>
-      <description>The dynamic working sets for ${scope.project.label}</description>
-    </setupTask>
-    <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
@@ -1464,32 +1583,6 @@
   </stream>
   <stream name="2.0-maintenance">
     <setupTask
-        xsi:type="setup.workingsets:WorkingSetTask">
-      <workingSet
-          name="VIATRA Releng"
-          id="">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:OrPredicate">
-            <operand
-                xsi:type="predicates:LocationPredicate"
-                pattern=".*/releng/.*"/>
-            <operand
-                xsi:type="predicates:LocationPredicate"
-                pattern=".*/setup/.*"/>
-            <operand
-                xsi:type="predicates:NaturePredicate"
-                nature="org.eclipse.pde.FeatureNature"/>
-          </operand>
-          <operand
-              xsi:type="predicates:RepositoryPredicate"
-              project="org.eclipse.viatra.setup"/>
-        </predicate>
-      </workingSet>
-      <description>The dynamic working sets for ${scope.project.label}</description>
-    </setupTask>
-    <setupTask
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
         version="2.0"
@@ -1627,6 +1720,167 @@
         xsi:type="setup:VariableTask"
         name="viatra.git.branch"
         value="2.0-maintenance"/>
+  </stream>
+  <stream name="2.1-maintenance">
+    <setupTask
+        xsi:type="pde:APIBaselineTask"
+        name="viatraBaseline"
+        version="2.1"
+        location="${installation.location}/api/v2.1/"
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.1.0.zip"/>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.9.0,3.0.0)"/>
+      <requirement
+          name="de.itemis.xtext.antlr.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.fx.ide.pde.feature.feature.group"/>
+      <repository
+          url="http://download.itemis.com/updates/releases"/>
+      <repository
+          url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
+      <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
+        targetName="">
+      <targlet
+          name="Xtext"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="de.itemis.xtext.antlr.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.12.0,3.0.0)"/>
+        <repositoryList
+            name="Mars">
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0"/>
+        </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/releases/oxygen"/>
+        </repositoryList>
+        <repositoryList
+            name="Photon">
+          <repository
+              url="http://download.eclipse.org/releases/photon"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2018-09">
+          <repository
+              url="http://download.eclipse.org/releases/2018-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2018-12">
+          <repository
+              url="http://download.eclipse.org/releases/2018-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="GEF5"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="org.eclipse.fx.runtime.min.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.gef.zest.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.gef.graph.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.gef.layout.sdk.feature.group"/>
+        <repositoryList
+            name="Mars">
+          <repository
+              url="http://download.eclipse.org/releases/mars"/>
+          <repository
+              url="http://download.eclipse.org/tools/gef/updates/releases/5.0.0_gef-master_4403"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/tools/gef/updates/releases/5.0.0_gef-master_4403"/>
+          <repository
+              url="http://download.eclipse.org/releases/neon"/>
+        </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="Photon">
+          <repository
+              url="http://download.eclipse.org/releases/photon"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.1.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2018-09">
+          <repository
+              url="http://download.eclipse.org/releases/2018-09"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.3.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2018-12">
+          <repository
+              url="http://download.eclipse.org/releases/2018-12"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Eclipse Collections"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.collections.feature.source.feature.group"
+            versionRange="[9.2.0,10.0.0)"/>
+        <repositoryList
+            name="9.2.0">
+          <repository
+              url="http://download.eclipse.org/collections/9.2.0/repository"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="CPS metamodels"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.viatra.examples.cps.metamodel.feature.feature.group"
+            filter=""/>
+        <repositoryList
+            name="">
+          <repository
+              url="http://download.eclipse.org/viatra/examples/cps/2.0.0.201801280453"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="2.1-maintenance"/>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
