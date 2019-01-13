@@ -20,7 +20,7 @@
 	</modules>
 	
 	<properties>
-   	    <rcptt.version>2.1.0</rcptt.version>
+   	    <rcptt.version>2.2.0</rcptt.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
