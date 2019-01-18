@@ -69,4 +69,4 @@ NOTE: This integration assumes that the `vql` file is generated, so it requires 
 
 == Missing Feature and Known Issues
 
-The graphical pattern editor in VIATRA 2.1.0 is considered experimental, and there are a few known issues that are planned to be addressed after the the final VIATRA 2.1 is released in December 2018. These issues are maintained in link:https://bugs.eclipse.org/bugs/buglist.cgi?list_id=17930299&product=Viatra&query_format=advanced&status_whiteboard=vgql-editor&status_whiteboard_type=allwordssubstr[Bugzilla].
+The graphical pattern editor in VIATRA 2.1.0 is considered experimental, and there are a few known issues that are planned to be addressed after in a later release. These issues are maintained in link:https://bugs.eclipse.org/bugs/buglist.cgi?list_id=17930299&product=Viatra&query_format=advanced&status_whiteboard=vgql-editor&status_whiteboard_type=allwordssubstr[Bugzilla].
