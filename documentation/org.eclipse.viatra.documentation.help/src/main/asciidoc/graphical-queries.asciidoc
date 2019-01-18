@@ -5,13 +5,11 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 = Graphical Query Editor
 
-This section introduces the graphical query editor targeted for VIATRA 2.1 (to be released with Eclipse 2018-12). The goal of this editor is to support creating model queries in a graphical syntax, while maintaining compatibility with the existing infrastructure of VIATRA, including both the runtime and query development environment.
-
-NOTE: The section is based on the version available at the early September 2018. Given the experimental nature of the editor, the functionality can be changed as necessary, especially until version 2.1 is released in December 2018.
+This section introduces the graphical query editor included in VIATRA 2.1 (released with Eclipse 2018-12). The goal of this editor is to support creating model queries in a graphical syntax, while maintaining compatibility with the existing infrastructure of VIATRA, including both the runtime and query development environment.
 
 == Requirements and Installation
 
-The current version of the editor is based on Sirius 6.0 (and thus transitively requires Eclipse Oxygen as well). Furthermore, it requires a current version of VIATRA 2.1 IDE installed as well (more precisely, the 2.1.0.M2 is the recommended starting point). To download that version, use the following p2 repository: `http://download.eclipse.org/viatra/updates/milestone/latest`
+The current version of the editor is based on Sirius 6.0 (and thus transitively requires Eclipse Oxygen as well). Furthermore, it requires a current version of VIATRA 2.1 IDE installed as well. To download that version, use the following p2 repository: `http://download.eclipse.org/viatra/updates/release/latest`
 
 image:tools/vgql_install.png[height=300]
 
