@@ -5,7 +5,8 @@
       <!-- @generated snapshot -->
       <package
             uri="http://www.eclipse.org/viatra/query/snapshot"
-            class="org.eclipse.viatra.query.testing.snapshot.SnapshotPackage"/>
+            class="org.eclipse.viatra.query.testing.snapshot.SnapshotPackage"
+            genModel="model/snapshot.genmodel"/>
    </extension>
 
 </plugin>

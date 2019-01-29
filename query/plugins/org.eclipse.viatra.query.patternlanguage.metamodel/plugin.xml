@@ -9,10 +9,13 @@
   * This file was generated from GraphicalPatternLanguage.genmodel
   *******************************************************************************/
 --><plugin>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <!-- @generated GraphicalPatternLanguage -->
-    <package class="org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage" genModel="model/GraphicalPatternLanguage.genmodel" uri="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage"/>
-  </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated GraphicalPatternLanguage -->
+      <package
+            uri="http://www.eclipse.org/viatra/query/patternlanguage/emf/GraphPatternLanguage"
+            class="org.eclipse.viatra.query.patternlanguage.metamodel.vgql.VgqlPackage"
+            genModel="model/GraphicalPatternLanguage.genmodel"/>
+   </extension>
   <extension id="org.eclipse.viatra.query.patternlanguage.metamodel.MetamodelHelperQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.patternlanguage.metamodel.MetamodelHelperQueries" id="org.eclipse.viatra.query.patternlanguage.metamodel.MetamodelHelperQueries">
       <query-specification fqn="org.eclipse.viatra.query.patternlanguage.metamodel.variableEClassifier"/>

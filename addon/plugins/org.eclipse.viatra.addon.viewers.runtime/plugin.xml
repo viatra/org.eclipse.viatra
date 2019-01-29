@@ -3,7 +3,8 @@
       <!-- @generated notation -->
       <package
             uri="http://www.eclipse.org/viatra/addon/viewers/notation/1.0"
-            class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"/>
+            class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"
+            genModel="model/notation.genmodel"/>
    </extension>
   <extension id="org.eclipse.viatra.addon.viewers.runtime.model.patterns.ViewersTraceabilityQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.addon.viewers.runtime.model.patterns.ViewersTraceabilityQueries" id="org.eclipse.viatra.addon.viewers.runtime.model.patterns.ViewersTraceabilityQueries">

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.language.vgql.feature"
       label="VIATRA Graphical Query Editor (Incubation)"
-      version="0.21.0.qualifier"
+      version="0.21.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -27,10 +27,10 @@ this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.1.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.1.1" match="equivalent"/>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
-      <import feature="org.eclipse.viatra.integration.gmf.feature" version="2.1.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.integration.gmf.feature" version="2.1.1" match="equivalent"/>
    </requires>
 
    <plugin

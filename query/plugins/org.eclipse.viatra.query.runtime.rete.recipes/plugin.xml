@@ -10,7 +10,8 @@
       <!-- @generated rete-recipes -->
       <package
             uri="http://www.eclipse.org/viatra/query/rete/recipes"
-            class="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+            class="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"
+            genModel="model/rete-recipes.genmodel"/>
    </extension>
 
 </plugin>
