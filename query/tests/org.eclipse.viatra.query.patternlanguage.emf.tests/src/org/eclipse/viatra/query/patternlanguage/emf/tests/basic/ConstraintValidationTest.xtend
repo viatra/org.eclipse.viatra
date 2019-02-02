@@ -167,4 +167,18 @@ class ConstraintValidationTest extends AbstractValidatorTest {
         ')
         tester.validate(model).assertWarning(IssueCodes::FEATURE_NOT_REPRESENTABLE)
     }
+    @Test
+     def incorrectTypeConstraint(){
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern IntAndClassPattern(X : EClass) {
+              EClass(X,_);
+            }
+        ')
+        tester.validate(model).assertError(IssueCodes::OTHER_ISSUE)
+    }
+    
+    
 }

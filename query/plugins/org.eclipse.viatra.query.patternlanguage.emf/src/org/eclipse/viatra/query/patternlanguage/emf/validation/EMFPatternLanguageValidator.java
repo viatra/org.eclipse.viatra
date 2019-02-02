@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.lang.model.SourceVersion;
 
@@ -45,6 +46,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
 import org.eclipse.viatra.query.patternlanguage.emf.types.BottomTypeKey;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
@@ -75,7 +77,13 @@ import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveIn
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.nodemodel.BidiTreeIterable;
+import org.eclipse.xtext.nodemodel.BidiTreeIterator;
+import org.eclipse.xtext.nodemodel.ILeafNode;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
@@ -159,6 +167,9 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
     
     @Inject
     private EMFPatternLanguageJvmModelInferrerUtil inferrerUtil;
+    
+    @Inject
+    private EMFPatternLanguageGrammarAccess grammarAccess;
 
     private static class CustomMethodWrapper extends MethodWrapper{
 
@@ -910,6 +921,21 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
         }
     }
 
+    @Check
+    public void checkFeatures(PathExpressionConstraint constraint) {
+        // A type constraint must have a single parameter; if a second one is added, the parser decides it should be a
+        // path expression instead without any edge type set.
+        if (constraint.getEdgeTypes().isEmpty()) {
+            final Keyword keyword = grammarAccess.getPathExpressionConstraintAccess().getFullStopKeyword_1_0();
+            // Heuristic: if the '.' keyword is added, assume a path expression constraint started; if not, a type constraint
+            if (StreamSupport.stream(NodeModelUtils.getNode(constraint).getLeafNodes().spliterator(), false)
+                    .map(ILeafNode::getGrammarElement)
+                    .noneMatch(ge -> ge == keyword)) {
+                error("Inconsistent type constraint: type constraint should have a single parameter.", null, IssueCodes.OTHER_ISSUE);
+            }
+        }
+    }
+    
     @Override
     public void warning(String message, EObject source, EStructuralFeature feature, String code, String... issueData) {
         super.warning(message, source, feature, code, issueData);
