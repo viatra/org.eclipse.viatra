@@ -185,15 +185,6 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
         return new CustomMethodWrapper(instanceToUse, method, logger);
     }
     
-    @Override
-    protected List<EPackage> getEPackages() {
-        // PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the
-        // validation process
-        List<EPackage> result = super.getEPackages();
-        result.add(PatternLanguagePackage.eINSTANCE);
-        return result;
-    }
-
     @Check
     public void checkDuplicatePackageImports(PatternModel patternModel) {
         List<PackageImport> importPackages = PatternLanguageHelper.getAllPackageImports(patternModel);
