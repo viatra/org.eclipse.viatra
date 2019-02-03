@@ -214,6 +214,15 @@
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
       </repositoryList>
+      <repositoryList
+          name="2019-03">
+        <repository
+            url="http://download.eclipse.org/releases/2019-03"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+      </repositoryList>
     </targlet>
   </setupTask>
   <setupTask
@@ -357,6 +366,15 @@
             name="2018-12">
           <repository
               url="http://download.eclipse.org/releases/2018-12"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-03">
+          <repository
+              url="http://download.eclipse.org/releases/2019-03"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
@@ -649,6 +667,13 @@
           </repositoryList>
           <repositoryList
               name="2018-12">
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2019-03">
+            <repository
+                url="http://download.eclipse.org/releases/2019-03"/>
             <repository
                 url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
           </repositoryList>
@@ -1341,6 +1366,13 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="2019-03">
+          <repository
+              url="http://download.eclipse.org/releases/2019-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1381,6 +1413,13 @@
           <repository
               url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
         </repositoryList>
+        <repositoryList
+            name="2019-03">
+          <repository
+              url="http://download.eclipse.org/releases/2019-03"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="Eclipse Collections"
@@ -1406,6 +1445,26 @@
               url="http://download.eclipse.org/viatra/examples/cps/2.0.0.201801280453"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Eclipse Preferences">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="org.eclipse.jdt.core">
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.codegen.targetPlatform"
+            value="1.8"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.compliance"
+            value="1.8"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.source"
+            value="1.8"/>
+      </setupTask>
     </setupTask>
   </stream>
   <stream name="1.7-maintenance"
@@ -1553,6 +1612,26 @@
         xsi:type="setup:VariableTask"
         name="viatra.git.branch"
         value="1.7-maintenance"/>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Eclipse Preferences">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="org.eclipse.jdt.core">
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.codegen.targetPlatform"
+            value="1.7"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.compliance"
+            value="1.7"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.source"
+            value="1.7"/>
+      </setupTask>
+    </setupTask>
   </stream>
   <stream name="2.0-maintenance">
     <setupTask
@@ -1693,6 +1772,26 @@
         xsi:type="setup:VariableTask"
         name="viatra.git.branch"
         value="2.0-maintenance"/>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Eclipse Preferences">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="org.eclipse.jdt.core">
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.codegen.targetPlatform"
+            value="1.8"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.compliance"
+            value="1.8"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.source"
+            value="1.8"/>
+      </setupTask>
+    </setupTask>
   </stream>
   <stream name="2.1-maintenance">
     <setupTask
@@ -1854,6 +1953,26 @@
         xsi:type="setup:VariableTask"
         name="viatra.git.branch"
         value="2.1-maintenance"/>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Eclipse Preferences">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="org.eclipse.jdt.core">
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.codegen.targetPlatform"
+            value="1.8"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.compliance"
+            value="1.8"/>
+        <setupTask
+            xsi:type="setup:PreferenceTask"
+            key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.source"
+            value="1.8"/>
+      </setupTask>
+    </setupTask>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
