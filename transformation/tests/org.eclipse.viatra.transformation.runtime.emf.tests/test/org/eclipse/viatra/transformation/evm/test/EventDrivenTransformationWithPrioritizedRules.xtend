@@ -28,7 +28,6 @@ class EventDrivenTransformationWithPrioritizedRules {
 
     extension EventDrivenTransformationRuleFactory = new EventDrivenTransformationRuleFactory
 
-    val ViatraQueryEngine engine
     val EventDrivenTransformationRule<?, ?> atRule
     val EventDrivenTransformationRule<?, ?> aiRule
     val EventDrivenTransformationRule<?, ?> hiRule
@@ -36,20 +35,18 @@ class EventDrivenTransformationWithPrioritizedRules {
     val result = new StringBuilder
 
     new(Resource resource) {
-        val scope = new EMFScope(resource)
-        engine = ViatraQueryEngine.on(scope);
-
-        ApplicationTypesMatcher.on(engine).forEachMatch[println(AT)]
+        this(ViatraQueryEngine.on(new EMFScope(resource)))
+    }
+    
+    new(ViatraQueryEngine engine) {
         atRule = createRule(ApplicationTypesMatcher.querySpecification).action(
             CRUDActivationStateEnum.CREATED) [
             result.append(AT.identifier)
         ].build
-        ApplicationInstancesMatcher.on(engine).forEachMatch[println(AI)]
         aiRule = createRule(ApplicationInstancesMatcher.querySpecification).action(
             CRUDActivationStateEnum.CREATED) [
             result.append(AI.identifier)
         ].build
-        HostInstancesMatcher.on(engine).forEachMatch[println(hi)]
         hiRule = createRule(HostInstancesMatcher.querySpecification).action(
             CRUDActivationStateEnum.CREATED) [
             result.append(hi.identifier)
