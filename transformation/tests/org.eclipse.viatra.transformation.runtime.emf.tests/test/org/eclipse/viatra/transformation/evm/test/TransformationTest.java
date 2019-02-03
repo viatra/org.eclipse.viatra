@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.test;
 
+import org.apache.log4j.Level;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -18,6 +19,11 @@ import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.ApplicationInstance;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.ApplicationType;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemFactory;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.query.testing.core.TestingSeverityAggregatorLogAppender;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -75,5 +81,41 @@ public class TransformationTest {
         String result = transformation.execute();
         
         Assert.assertEquals("atai", result);
+    }
+    
+    @Test
+    public void inOrderTransformationDisposalTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        rs.createResource(URI.createURI("__dummy.cyberphysicalsystem", true));
+
+        AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs));
+        final TestingSeverityAggregatorLogAppender logAppender = new TestingSeverityAggregatorLogAppender();
+        ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine.class).addAppender(logAppender);
+        
+        
+        final EventDrivenTransformationWithPrioritizedRules transformation = new EventDrivenTransformationWithPrioritizedRules(
+                engine);
+
+        transformation.dispose();
+        engine.dispose();
+        
+        Assert.assertFalse("Unexpected engine log error", logAppender.getSeverity().isGreaterOrEqual(Level.ERROR));
+    }
+    
+    @Test
+    public void outOfOrderTransformationDisposalTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        rs.createResource(URI.createURI("__dummy.cyberphysicalsystem", true));
+
+        AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs));
+        final TestingSeverityAggregatorLogAppender logAppender = new TestingSeverityAggregatorLogAppender();
+        ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine.class).addAppender(logAppender);
+
+        final EventDrivenTransformationWithPrioritizedRules transformation = new EventDrivenTransformationWithPrioritizedRules(
+                engine);
+
+        engine.dispose();
+        transformation.dispose();
+        Assert.assertFalse("Unexpected engine log error", logAppender.getSeverity().isGreaterOrEqual(Level.ERROR));
     }
 }

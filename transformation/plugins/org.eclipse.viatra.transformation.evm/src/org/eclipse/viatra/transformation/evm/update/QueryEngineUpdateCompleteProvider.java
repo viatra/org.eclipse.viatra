@@ -46,7 +46,10 @@ public class QueryEngineUpdateCompleteProvider extends UpdateCompleteProvider {
     @Override
     protected void lastListenerRemoved() {
         super.lastListenerRemoved();
-        engine.removeModelUpdateListener(modelUpdateListener);
+        // Engine dispose already removes all model update listeners, no reason to do it again
+        if (!engine.isDisposed()) {
+            engine.removeModelUpdateListener(modelUpdateListener);
+        }
     }
     
     /**
