@@ -648,13 +648,13 @@
   </ownedViewpoints>
   <extensions xsi:type="properties:ViewExtensionDescription" name="Properties">
     <categories name="Default">
-      <pages name="Default" label="Variable" labelExpression="Page" domainClass="vgql::Variable" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.1" filterGroupsFromExtendedPageExpression="aql:true">
+      <pages name="Default" label="Variable" labelExpression="VGQL" domainClass="vgql::Variable" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.1" filterGroupsFromExtendedPageExpression="aql:true">
         <extends href="platform:/plugin/org.eclipse.sirius.properties.defaultrules/model/properties.odesign#//@extensions.0/@categories.0/@pages.0"/>
       </pages>
-      <pages name="Default" label="Pattern Package" labelExpression="Page" domainClass="vgql::PatternPackage" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.0" filterGroupsFromExtendedPageExpression="aql:true">
+      <pages name="Default" label="Pattern Package" labelExpression="VGQL" domainClass="vgql::PatternPackage" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.0" filterGroupsFromExtendedPageExpression="aql:true">
         <extends href="platform:/plugin/org.eclipse.sirius.properties.defaultrules/model/properties.odesign#//@extensions.0/@categories.0/@pages.0"/>
       </pages>
-      <pages name="Default" label="Path Expression" labelExpression="Page" domainClass="vgql::PathExpressionConstraint" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.2" filterGroupsFromExtendedPageExpression="aql:true">
+      <pages name="Default" label="Path Expression" labelExpression="VGQL" domainClass="vgql::PathExpressionConstraint" semanticCandidateExpression="var:self" groups="//@extensions.0/@categories.0/@groups.2" filterGroupsFromExtendedPageExpression="aql:true">
         <extends href="platform:/plugin/org.eclipse.sirius.properties.defaultrules/model/properties.odesign#//@extensions.0/@categories.0/@pages.0"/>
       </pages>
       <groups name="Pattern Package" domainClass="vgql::PatternPackage">
