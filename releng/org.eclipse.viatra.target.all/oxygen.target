@@ -19,10 +19,6 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
-<repository location="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.9.1.201705291011"/>
 <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="2.9.1.201705291011"/>
 <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.1"/>
@@ -54,6 +50,7 @@
 <repository location="http://download.eclipse.org/eclipse/updates/4.7/R-4.7.3a-201803300640"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.13.0.v20170609-0928" />
 <unit id="org.eclipse.emf.transaction.sdk.feature.group" version="1.11.0.201706061339"/>
 <unit id="org.eclipse.gmf.runtime.notation.sdk.feature.group" version="1.11.0.201706061354"/>
 <unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="1.11.0.201706061437"/>
