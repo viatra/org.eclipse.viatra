@@ -27,7 +27,6 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.testing.core.TestingSeverityAggregatorLogAppender;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMatchEventFilter;
-import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -87,6 +86,33 @@ public class TransformationTest {
         
         Assert.assertEquals(0, transformationWrapper.countMatchesOverriddenEmptyFilter(filter1.and(transformationWrapper.getFilteredRule().getFilter())));
         Assert.assertEquals(1, transformationWrapper.countMatchesOverriddenEmptyFilter(filter1.and(transformationWrapper.getUnfilteredRule().getFilter())));
+    }
+    
+    @Test
+    public void transformationFiringStatusTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", true), true);
+        HostInstance instance0 = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0");
+        HostInstance instance1 = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst1");
+        
+        final EventFilter<HostInstanceMatch> filter0 = ViatraQueryMatchEventFilter.createFilter(HostInstanceMatch.newMatch(instance0)); 
+        final EventFilter<HostInstanceMatch> filter1 = ViatraQueryMatchEventFilter.createFilter(HostInstanceMatch.newMatch(instance1)); 
+        
+        final BatchTransformationWithFiringStatus transformationWrapper = new BatchTransformationWithFiringStatus(resource, filter0);
+        Assert.assertTrue(transformationWrapper.canTransformationExecute());
+        Assert.assertTrue(transformationWrapper.canFireFiltered());
+        Assert.assertTrue(transformationWrapper.canFireUnfiltered());
+        Assert.assertFalse(transformationWrapper.canFireFiltered(filter1.and(transformationWrapper.getFilteredRule().getFilter())));
+        
+        transformationWrapper.fireFiltered();
+        Assert.assertTrue(transformationWrapper.canTransformationExecute());
+        Assert.assertFalse(transformationWrapper.canFireFiltered());
+        Assert.assertTrue(transformationWrapper.canFireUnfiltered());
+        
+        transformationWrapper.fireUnfiltered();
+        Assert.assertFalse(transformationWrapper.canTransformationExecute());
+        Assert.assertFalse(transformationWrapper.canFireFiltered());
+        Assert.assertFalse(transformationWrapper.canFireUnfiltered());
     }
     
     @Test
