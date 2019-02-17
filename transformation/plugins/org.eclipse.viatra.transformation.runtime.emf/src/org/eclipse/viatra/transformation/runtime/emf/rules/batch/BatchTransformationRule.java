@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.Job;
+import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
@@ -72,7 +73,7 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
 
     private final Consumer<MATCH> action;
 
-    private final EventFilter<MATCH> filter;
+    private final EventFilter<? super MATCH> filter;
 
     protected BatchTransformationRule() {
         this("", null, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, null);
@@ -92,7 +93,7 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
      * @since 2.0
      */
     public BatchTransformationRule(final String rulename, final IQuerySpecification<MATCHER> matcher,
-            final ActivationLifeCycle lifecycle, final Consumer<MATCH> action, final EventFilter<MATCH> filter) {
+            final ActivationLifeCycle lifecycle, final Consumer<MATCH> action, final EventFilter<? super MATCH> filter) {
         this.ruleName = rulename;
         this.precondition = matcher;
         this.action = action;
@@ -146,5 +147,23 @@ public class BatchTransformationRule<MATCH extends IPatternMatch, MATCHER extend
     @Override
     public EventFilter<? super MATCH> getFilter() {
         return filter;
+    }
+    
+    /**
+     * Registers the current transformation rule over a rule engine
+     * 
+     * @since 2.2
+     */
+    public boolean registerRule(RuleEngine engine) {
+        return engine.addRule(getRuleSpecification(), filter);
+    }
+    
+    /**
+     * Removes the current transformation rule from a rule engine
+     * 
+     * @since 2.2
+     */
+    public boolean unregisterRule(RuleEngine engine) {
+        return engine.removeRule(getRuleSpecification(), filter);
     }
 }

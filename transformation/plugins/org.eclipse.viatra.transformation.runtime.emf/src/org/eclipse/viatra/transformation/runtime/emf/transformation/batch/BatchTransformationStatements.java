@@ -14,13 +14,9 @@ package org.eclipse.viatra.transformation.runtime.emf.transformation.batch;
 import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.ConflictSetIterator;
@@ -67,20 +63,20 @@ public class BatchTransformationStatements {
     /**
      * Executes the selected rule with the selected filter as long as there are possible matches of its preconditions
      * and the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts only one of
-     * the conflicting matches will cause an execution.
+     * the conflicting matches will be fired.
      * @since 2.0
      */
     public <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
             final Predicate<Match> breakCondition) {
         executor.startExecution(FIRE_UNTIL_TRANSACTION_CONDITION_RULE_NAME + rule.getName());
-        fireUntil(rule.getRuleSpecification(), breakCondition, rule.getRuleSpecification().createEmptyFilter());
+        fireUntil(rule.getRuleSpecification(), breakCondition, rule.getFilter());
         executor.endExecution(FIRE_UNTIL_TRANSACTION_CONDITION_RULE_NAME + rule.getName());
     }
 
     /**
      * Executes the selected rule with the selected filter as long as there are possible matches of its precondition and
      * the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts only one of the
-     * conflicting matches will cause an execution.
+     * conflicting matches will be fired.
      * @since 2.0
      */
     @SafeVarargs
@@ -94,7 +90,7 @@ public class BatchTransformationStatements {
     /**
      * Executes the selected rule with the selected filter as long as there are possible matches of its precondition and
      * the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts only one of the
-     * conflicting matches will cause an execution.
+     * conflicting matches will be fired.
      * @since 2.0
      */
     public <Match extends IPatternMatch> void fireUntil(final BatchTransformationRule<Match, ?> rule,
@@ -107,22 +103,21 @@ public class BatchTransformationStatements {
     /**
      * Executes the selected rules with the selected filter as long as there are possible matches of any of their
      * preconditions and the break condition is not fulfilled. The matches are executed one-by-one, in case of conflicts
-     * only one of the conflicting matches will cause an execution.
+     * only one of the conflicting matches will be fired.
      * @since 2.0
      */
     public void fireUntil(final BatchTransformationRuleGroup rules, final Predicate<IPatternMatch> breakCondition) {
         executor.startExecution(FIRE_UNTIL_TRANSACTION_CONDITION_RULE_GROUP);
         registerRules(rules);
         final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(rules.getFilteredRuleMap());
-        fireUntil(conflictSet, breakCondition);
+        this.executor.execute(new ConflictSetIterator(conflictSet, breakCondition));
         conflictSet.dispose();
         executor.endExecution(FIRE_UNTIL_TRANSACTION_CONDITION_RULE_GROUP);
     }
 
     /**
      * Executes the selected rule with the selected filter as long as there are possible matches of its precondition.
-     * The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will cause an
-     * execution.
+     * The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will be fired.
      */
     public <Match extends IPatternMatch> void fireWhilePossible(final BatchTransformationRule<Match, ?> rule) {
         executor.startExecution(FIRE_WHILE_POSSIBLE_TRANSACTION_RULE_NAME + rule.getName());
@@ -132,8 +127,7 @@ public class BatchTransformationStatements {
 
     /**
      * Executes the selected rule with the selected filter as long as there are possible matches of its preconditions.
-     * The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will cause an
-     * execution.
+     * The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will be fired.
      */
     public <Match extends IPatternMatch> void fireWhilePossible(final BatchTransformationRule<Match, ?> rule,
             final EventFilter<? super Match> filter) {
@@ -145,7 +139,7 @@ public class BatchTransformationStatements {
     /**
      * Executes the selected rules with the selected filter as long as there are possible matches of any of their
      * preconditions. The matches are executed one-by-one, in case of conflicts only one of the conflicting matches will
-     * cause an execution.
+     * be fired.
      */
     public void fireWhilePossible(final BatchTransformationRuleGroup rules) {
         executor.startExecution(FIRE_WHILE_POSSIBLE_TRANSACTION_RULE_GROUP);
@@ -158,7 +152,7 @@ public class BatchTransformationStatements {
      */
     public <Match extends IPatternMatch> void fireAllCurrent(final BatchTransformationRule<Match, ?> rule) {
         executor.startExecution(FIRE_ALL_CURRENT_TRANSACTION_RULE_NAME + rule.getName());
-        fireAllCurrent(rule.getRuleSpecification(), rule.getRuleSpecification().createEmptyFilter());
+        fireAllCurrent(rule.getRuleSpecification(), rule.getFilter());
         executor.endExecution(FIRE_ALL_CURRENT_TRANSACTION_RULE_NAME + rule.getName());
     }
 
@@ -184,24 +178,37 @@ public class BatchTransformationStatements {
         executor.endExecution(FIRE_ALL_CURRENT_TRANSACTION_FILTER_RULE_NAME + rule.getName());
     }
 
+    /**
+     * @deprecated Added to the API as an error, should have been internal helper method.
+     */
+    @Deprecated
     public <Match extends IPatternMatch> boolean registerRule(final RuleSpecification<Match> ruleSpecification) {
         return registerRule(ruleSpecification, ruleSpecification.createEmptyFilter());
     }
 
+    /**
+     * @deprecated This method was added to the API as an error, should not be available for transformation developers.
+     */
+    @Deprecated
     public <Match extends IPatternMatch> boolean registerRule(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        return registerRuleInternal(ruleSpecification, filter);
+    }
+    
+    private <Match extends IPatternMatch> boolean registerRuleInternal(final RuleSpecification<Match> ruleSpecification,
             final EventFilter<? super Match> filter) {
         return ruleEngine.addRule(ruleSpecification, filter);
     }
-
-    @SuppressWarnings("unchecked")
+    
+    /**
+     * @deprecated This method was added to the API as an error, should not be available for transformation developers.
+     */
+    @Deprecated
     public void registerRules(final BatchTransformationRuleGroup rules) {
-        Set<IQuerySpecification<?>> preconditions = rules.stream().filter(Objects::nonNull)
-                .map(BatchTransformationRule::getPrecondition).collect(Collectors.toSet());
-        GenericQueryGroup.of(preconditions).prepare(this.queryEngine);
-
-        rules.stream().filter(Objects::nonNull).forEach(
-                it -> ruleEngine.addRule(it.getRuleSpecification(), ((EventFilter<IPatternMatch>) it.getFilter())));
+        rules.prepareQueryEngine(this.queryEngine);
+        rules.stream().filter(Objects::nonNull).forEach(it -> it.registerRule(ruleEngine));
     }
+
 
     /**
      * Returns the number of current activations of the rule.
@@ -209,7 +216,7 @@ public class BatchTransformationStatements {
      * @since 1.5
      */
     public <Match extends IPatternMatch> int countAllCurrent(final BatchTransformationRule<Match, ?> rule) {
-        return countAllCurrent(rule.getRuleSpecification(), rule.getRuleSpecification().createEmptyFilter());
+        return countAllCurrent(rule.getRuleSpecification(), rule.getFilter());
     }
 
     /**
@@ -233,24 +240,38 @@ public class BatchTransformationStatements {
         return countAllCurrent(rule.getRuleSpecification(), filter);
     }
 
+    /**
+     * @deprecated This method was added to the API as an error, should not be available for transformation developers.
+     */
+    @Deprecated
     public <Match extends IPatternMatch> boolean disposeRule(final RuleSpecification<Match> ruleSpecification) {
-        return disposeRule(ruleSpecification, ruleSpecification.createEmptyFilter());
-    }
-
-    public <Match extends IPatternMatch> boolean disposeRule(final RuleSpecification<Match> ruleSpecification,
-            final EventFilter<? super Match> filter) {
-        return ruleEngine.removeRule(ruleSpecification, filter);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void disposeRules(final BatchTransformationRuleGroup rules) {
-        rules.stream().filter(Objects::nonNull).forEach(it -> 
-            ruleEngine.removeRule(it.getRuleSpecification(), ((EventFilter<IPatternMatch>) it.getFilter()))
-        );
+        return disposeRuleInternal(ruleSpecification, ruleSpecification.createEmptyFilter());
     }
 
     /**
-     * Selects and fires an activation of the selected rule with no corresponding filter.
+     * @deprecated This method was added to the API as an error, should not be available for transformation developers.
+     */
+    @Deprecated
+    public <Match extends IPatternMatch> boolean disposeRule(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        return this.disposeRuleInternal(ruleSpecification, filter);
+    }
+    
+    private <Match extends IPatternMatch> boolean disposeRuleInternal(final RuleSpecification<Match> ruleSpecification,
+            final EventFilter<? super Match> filter) {
+        return ruleEngine.removeRule(ruleSpecification, filter);
+    }
+    
+    /**
+     * @deprecated This method was added to the API as an error, should not be available for transformation developers.
+     */
+    @Deprecated
+    public void disposeRules(final BatchTransformationRuleGroup rules) {
+        rules.stream().filter(Objects::nonNull).forEach(it -> it.unregisterRule(ruleEngine));
+    }
+
+    /**
+     * Selects and fires an activation of the selected rule with the default filter of the rule.
      * </p>
      * 
      * <p>
@@ -258,7 +279,7 @@ public class BatchTransformationStatements {
      */
     public <Match extends IPatternMatch> void fireOne(final BatchTransformationRule<Match, ?> rule) {
         executor.startExecution(FIRE_ONE_TRANSACTION_RULE_NAME + rule.getName());
-        fireOne(rule.getRuleSpecification(), rule.getRuleSpecification().createEmptyFilter());
+        fireOne(rule.getRuleSpecification(), rule.getFilter());
         executor.endExecution(FIRE_ONE_TRANSACTION_RULE_NAME + rule.getName());
     }
 
@@ -294,48 +315,44 @@ public class BatchTransformationStatements {
 
     private <Match extends IPatternMatch> boolean fireOne(final RuleSpecification<Match> ruleSpecification,
             final EventFilter<? super Match> filter) {
-        registerRule(ruleSpecification, filter);
+        registerRuleInternal(ruleSpecification, filter);
         final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
         conflictSet.getConflictingActivations().stream().findFirst()
                 .ifPresent(head -> executor.execute(Collections.<Activation<?>>singleton(head).iterator()));
         conflictSet.dispose();
-        return disposeRule(ruleSpecification, filter);
+        return disposeRuleInternal(ruleSpecification, filter);
     }
 
     private <Match extends IPatternMatch> boolean fireAllCurrent(final RuleSpecification<Match> ruleSpecification,
             final EventFilter<? super Match> filter) {
-        registerRule(ruleSpecification, filter);
+        registerRuleInternal(ruleSpecification, filter);
         
         final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
         executor.execute(conflictSet.getConflictingActivations().iterator());
         
         conflictSet.dispose();
-        return disposeRule(ruleSpecification, filter);
+        return disposeRuleInternal(ruleSpecification, filter);
     }
 
     private <Match extends IPatternMatch> int countAllCurrent(final RuleSpecification<Match> ruleSpecification,
             final EventFilter<? super Match> filter) {
-        registerRule(ruleSpecification, filter);
+        registerRuleInternal(ruleSpecification, filter);
         final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
         int count = conflictSet.getConflictingActivations().size();
         conflictSet.dispose();
         
-        disposeRule(ruleSpecification, filter);
+        disposeRuleInternal(ruleSpecification, filter);
         return count;
     }
 
     private <Match extends IPatternMatch> boolean fireUntil(final RuleSpecification<Match> ruleSpecification,
             final Predicate<Match> breakCondition, final EventFilter<? super Match> filter) {
-        registerRule(ruleSpecification, filter);
+        registerRuleInternal(ruleSpecification, filter);
         final ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter);
         this.executor.execute(
                 new ConflictSetIterator(ruleEngine.createScopedConflictSet(ruleSpecification, filter), breakCondition));
         conflictSet.dispose();
-        return disposeRule(ruleSpecification, filter);
+        return disposeRuleInternal(ruleSpecification, filter);
     }
 
-    private <Match extends IPatternMatch> void fireUntil(final ScopedConflictSet conflictSet,
-            final Predicate<Match> breakCondition) {
-        this.executor.execute(new ConflictSetIterator(conflictSet, breakCondition));
-    }
 }

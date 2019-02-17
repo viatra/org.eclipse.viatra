@@ -31,11 +31,20 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 public class MatchParameterFilter implements EventFilter<IPatternMatch> {
     private Map<String, Object> filterMap;
 
+    /**
+     * @since 2.2
+     */
+    public MatchParameterFilter(String name, Object parameter) {
+        this.filterMap = new HashMap<>();
+        filterMap.put(name, parameter);
+    }
+    
     public MatchParameterFilter(final Map<String, Object> filterMap) {
         this.filterMap = new HashMap<>();
         this.filterMap.putAll(filterMap);
     }
 
+    
     /**
      * @since 2.0
      */

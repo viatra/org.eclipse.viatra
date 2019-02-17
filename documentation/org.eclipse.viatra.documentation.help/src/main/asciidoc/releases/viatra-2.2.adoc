@@ -1,0 +1,24 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-22]]
+
+= VIATRA 2.2 (To be released on 19th June 2019)
+
+== New and Noteworthy
+
+=== Batch Transformation API Refresh
+
+
+
+== Migrating to VIATRA 2.2
+
+=== Batch Transformation API
+
+Prior to version 2.2, the filter settings of batch transformation rules were ignored, and only filters defined in statements were taken into account. In version 2.2, filters are handled the following way:
+
+1. If neither the transformation rule nor the statement define a filter, all matches of the pattern are considered.
+2. If either the transformation rule or the statement define a filter (but not both), the filter is used.
+3. If both the transformation rule and the statement defines a filter, the filter defined by the statement overrides the default filter.
+
+This behavior might change the behavior of existing transformations when transformation rule filters were defined but filterless statements were used: in such case, the default rule filters will be applied. In such cases, the unnecessary default filters should be removed; or if necessary, a new filter could be used to override the default filter where the rule was activate.

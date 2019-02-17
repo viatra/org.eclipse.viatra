@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
@@ -54,5 +56,14 @@ public class TransformationRuleGroup<Rule extends ITransformationRule<?, ?>> ext
             map.computeIfAbsent(spec, sp -> new HashSet<>()).add(filter);
         }
         return map;
+    }
+    
+    /**
+     * Ensures all rules are initialized on a given VIATRA Query engine
+     * @since 2.2
+     */
+    public void prepareQueryEngine(ViatraQueryEngine engine) {
+        GenericQueryGroup.of(stream().filter(Objects::nonNull)
+                .map(ITransformationRule::getPrecondition)).prepare(engine);
     }
 }

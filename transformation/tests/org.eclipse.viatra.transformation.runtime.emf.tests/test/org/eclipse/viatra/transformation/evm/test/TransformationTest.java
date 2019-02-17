@@ -21,9 +21,13 @@ import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.CyberPhysicalSystemFa
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.cps.tests.queries.HostInstanceMatch;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.testing.core.TestingSeverityAggregatorLogAppender;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMatchEventFilter;
+import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,7 +54,39 @@ public class TransformationTest {
         HostInstance instance = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0");
         
         Assert.assertEquals(1, new BatchTransformationWithFilter(resource).countMatches(instance));
+    }
+    
+    @Test
+    public void matchParameterDefaultFilterTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", true), true);
+        HostInstance instance0 = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0");
+        HostInstance instance1 = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst1");
         
+        final EventFilter<HostInstanceMatch> filter0 = ViatraQueryMatchEventFilter.createFilter(HostInstanceMatch.newMatch(instance0)); 
+        final EventFilter<HostInstanceMatch> filter1 = ViatraQueryMatchEventFilter.createFilter(HostInstanceMatch.newMatch(instance1));
+        
+        final BatchTransformationWithDefaultFilter transformationWrapper = new BatchTransformationWithDefaultFilter(resource, filter0);
+        Assert.assertEquals(10, transformationWrapper.countMatchesNoFilter());
+        Assert.assertEquals(1, transformationWrapper.countMatchesDefaultFilter());
+        Assert.assertEquals(1, transformationWrapper.countMatchesOverriddenDefaultFilter(filter1));
+        Assert.assertEquals(1, transformationWrapper.countMatchesOverriddenEmptyFilter(filter1));
+    }
+    
+    @Test
+    public void matchParameterDefaultFilterExtensionTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", true), true);
+        HostInstance instance0 = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0");
+        HostInstance instance1 = (HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst1");
+        
+        final EventFilter<HostInstanceMatch> filter0 = ViatraQueryMatchEventFilter.createFilter(HostInstanceMatch.newMatch(instance0)); 
+        final EventFilter<HostInstanceMatch> filter1 = ViatraQueryMatchEventFilter.createFilter(HostInstanceMatch.newMatch(instance1)); 
+        
+        final BatchTransformationWithDefaultFilter transformationWrapper = new BatchTransformationWithDefaultFilter(resource, filter0);
+        
+        Assert.assertEquals(0, transformationWrapper.countMatchesOverriddenEmptyFilter(filter1.and(transformationWrapper.getFilteredRule().getFilter())));
+        Assert.assertEquals(1, transformationWrapper.countMatchesOverriddenEmptyFilter(filter1.and(transformationWrapper.getUnfilteredRule().getFilter())));
     }
     
     @Test
