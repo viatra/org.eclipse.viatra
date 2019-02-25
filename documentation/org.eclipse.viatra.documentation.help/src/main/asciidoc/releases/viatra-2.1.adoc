@@ -3,7 +3,7 @@ ifndef::rootdir[:rootdir: .]
 ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-21]]
 
-= VIATRA 2.1 (To be released on 19th December 2018)
+= VIATRA 2.1
 
 == New and Noteworthy
 
