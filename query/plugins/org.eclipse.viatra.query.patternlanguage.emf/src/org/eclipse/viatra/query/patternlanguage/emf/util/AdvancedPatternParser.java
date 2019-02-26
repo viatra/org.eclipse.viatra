@@ -81,26 +81,28 @@ public class AdvancedPatternParser extends BasePatternParser {
             AdvancedPatternParsingResultsBuilder builder) {
         Set<URI> uris = results.getUriMap().keySet();
 
-        uris.forEach(uri -> results.getRemovedPatterns(uri).forEach(pattern -> {
-            builder.addRemovedSpecification(uri, getOrCreateQuerySpecification(pattern, results));
-            removeFromImpactCache(pattern);
-        }));
-        uris.forEach(uri -> getOrCreateSpecificationBuilder().forgetURI(uri));
+        for (URI uri : uris) {
+            for (Pattern pattern : results.getRemovedPatterns(uri)) {
+                builder.addRemovedSpecification(uri, getOrCreateQuerySpecification(pattern, results));
+                removeFromImpactCache(pattern);
+            }
+        }
+        uris.forEach(getOrCreateSpecificationBuilder()::forgetURI);
 
-        uris.forEach(uri -> {
-            results.getAddedPatterns(uri).forEach(pattern -> {
+        for (URI uri : uris) {
+            for (Pattern pattern : results.getAddedPatterns(uri)) {
                 builder.addAddedSpecification(uri, getOrCreateQuerySpecification(pattern, results));
                 updateImpactCache(pattern);
-            });
-            results.getUpdatedPatterns(uri).forEach(pattern -> {
+            }
+            for (Pattern pattern : results.getUpdatedPatterns(uri)) {
                 builder.addUpdatedSpecification(uri, getOrCreateQuerySpecification(pattern, results));
                 updateImpactCache(pattern);
-            });
-            results.getImpactedPatterns(uri).forEach(pattern -> {
+            }
+            for (Pattern pattern : results.getImpactedPatterns(uri)) {
                 builder.addImpactedSpecification(uri, getOrCreateQuerySpecification(pattern, results));
                 updateImpactCache(pattern);
-            });
-        });
+            }
+        }
     }
 
     private void removeFromImpactCache(Pattern pattern) {
@@ -311,24 +313,25 @@ public class AdvancedPatternParser extends BasePatternParser {
                 .on(getOrCreateSpecificationBuilder());
         Set<Pattern> impact = calculateImpact(input.keySet(), resourceSet);
 
-        input.keySet().forEach(uri -> {
-            Resource resource = resourceSet.getResource(uri, false);
-            if (resource != null) {
-                if (resource instanceof BatchLinkableResource) {
-                    List<Pattern> patterns = resource.getContents().stream().filter(PatternModel.class::isInstance)
-                            .map(pm -> ((PatternModel) pm).getPatterns().stream()).flatMap(Function.identity())
-                            .collect(Collectors.toList());
-                    PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(resource);
+        input.keySet()
+            .stream()
+            .map(uri -> resourceSet.getResource(uri, false))
+            .filter(Objects::nonNull)
+            .forEach(resource -> {
+                    if (resource instanceof BatchLinkableResource) {
+                        List<Pattern> patterns = resource.getContents().stream().filter(PatternModel.class::isInstance)
+                                .map(pm -> ((PatternModel) pm).getPatterns().stream()).flatMap(Function.identity())
+                                .collect(Collectors.toList());
+                        PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(resource);
 
-                    builder.removedPatternResults(resource.getURI(),
-                            new PatternParsingResults(patterns, diagnostics, getOrCreateSpecificationBuilder()));
+                        builder.removedPatternResults(resource.getURI(),
+                                new PatternParsingResults(patterns, diagnostics, getOrCreateSpecificationBuilder()));
 
-                }
-                removeResource(resourceSet, resource);
-                diagnosticsMap.remove(resource);
-            }
+                    }
+                    removeResource(resourceSet, resource);
+                    diagnosticsMap.remove(resource);
 
-        });
+                });
         reparsePatternImpact(options, resourceSet, builder, impact);
 
         return builder.build();
