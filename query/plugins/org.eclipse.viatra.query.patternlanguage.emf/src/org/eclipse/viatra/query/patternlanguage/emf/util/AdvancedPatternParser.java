@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,7 +30,10 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
+import org.eclipse.viatra.query.patternlanguage.emf.util.AdvancedPatternParsingResults;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AdvancedPatternParsingResults.AdvancedPatternParsingResultsBuilder;
+import org.eclipse.viatra.query.patternlanguage.emf.util.BasePatternParser;
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
@@ -114,7 +118,9 @@ public class AdvancedPatternParser extends BasePatternParser {
     private void updateImpactCache(Pattern pattern) {
         dependencyCache.keySet().forEach(uri -> dependencyCache.remove(uri, pattern));
         Set<URI> referredUris = PatternLanguageHelper.getReferencedPatternsTransitive(pattern).stream()
-                .map(p -> p.eResource().getURI()).collect(Collectors.toSet());
+                .map(p -> p.eResource().getURI())
+                .filter(uri -> !Objects.equals(uri, pattern.eResource().getURI()))
+                .collect(Collectors.toSet());
         referredUris.forEach(u -> dependencyCache.put(u, pattern));
     }
 
@@ -257,7 +263,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         AdvancedPatternParserSnapshot.Builder builder = AdvancedPatternParserSnapshot.Builder
                 .on(getOrCreateSpecificationBuilder());
         Set<Pattern> impact = calculateImpact(input.keySet(), resourceSet);
-        impact.addAll(getErroneousPatterns(resourceSet));
+        impact.addAll(getErroneousPatterns(resourceSet, input.keySet()));
 
         input.keySet().forEach(uriToUse -> {
             Resource resource = resourceSet.getResource(uriToUse, false);
@@ -284,7 +290,7 @@ public class AdvancedPatternParser extends BasePatternParser {
 
         AdvancedPatternParserSnapshot.Builder builder = AdvancedPatternParserSnapshot.Builder
                 .on(getOrCreateSpecificationBuilder());
-        Set<Pattern> impact = getErroneousPatterns(resourceSet);
+        Set<Pattern> impact = getErroneousPatterns(resourceSet, Collections.emptySet());
 
         input.keySet().forEach(uriToUse -> {
             Resource resource = resourceSet.getResource(uriToUse, false);
@@ -409,9 +415,16 @@ public class AdvancedPatternParser extends BasePatternParser {
     }
 
     protected Set<Pattern> getErroneousPatterns(ResourceSet resourceSet) {
+        return getErroneousPatterns(resourceSet, Collections.emptySet());
+    }
+    
+    /**
+     * @since 2.2
+     */
+    protected Set<Pattern> getErroneousPatterns(ResourceSet resourceSet, Set<URI> urisToIgnore) {
         Set<Pattern> erroneousPatterns = new HashSet<Pattern>();
         new ArrayList<Resource>(resourceSet.getResources()).forEach(res -> {
-            if (res instanceof BatchLinkableResource) {
+            if (res instanceof BatchLinkableResource && !urisToIgnore.contains(res.getURI())) {
                 PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(res);
                 if (diagnostics != null) {
                     Set<Pattern> resourcePatterns = res.getContents().stream()
