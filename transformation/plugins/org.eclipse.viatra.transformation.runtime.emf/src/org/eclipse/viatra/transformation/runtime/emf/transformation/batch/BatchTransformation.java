@@ -162,7 +162,19 @@ public class BatchTransformation {
             rules.add(rule);
         }
     }
-
+    
+    /**
+     * Returns a transformation rule group with all rules of the transformation
+     * </p>
+     * <b>Note</b>: Each call of this method results in a separate rule group that contains the <i>current</i> set of
+     * transformation rules in the transformation, it can get stale if the rule set added to this transformation has changed.
+     * 
+     * @since 2.2
+     */
+    public BatchTransformationRuleGroup getTransformationRuleGroup() {
+        return new BatchTransformationRuleGroup(rules.toArray(new BatchTransformationRule[rules.size()]));
+    }
+    
     public RuleEngine getRuleEngine() {
         return ruleEngine;
     }

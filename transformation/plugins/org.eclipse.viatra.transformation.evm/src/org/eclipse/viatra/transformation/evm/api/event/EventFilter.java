@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api.event;
 
+import java.util.Objects;
+import java.util.function.Predicate;
+
 /**
  * Interface for filters. Decides whether an event atom should be processed by EVM. The filters are also used as keys
  * for rule instances, so it is important to make sure to make filters comparable using
@@ -18,7 +21,44 @@ package org.eclipse.viatra.transformation.evm.api.event;
  * @author Abel Hegedus
  *
  */
-public interface EventFilter<EventAtom> {
+public interface EventFilter<EventAtom> extends Predicate<EventAtom> {
 
     boolean isProcessable(EventAtom eventAtom);
+
+    /**
+     * @since 2.2
+     */
+    @Override
+    default boolean test(EventAtom eventAtom) {
+        return isProcessable(eventAtom);
+    }
+
+    /**
+     * Overridden for type safety
+     * @since 2.2
+     */
+    @Override
+    default EventFilter<EventAtom> and(Predicate<? super EventAtom> other) {
+        Objects.requireNonNull(other);
+        return (t) -> test(t) && other.test(t);
+    }
+
+    /**
+     * Overridden for type safety
+     * @since 2.2
+     */
+    @Override
+    default EventFilter<EventAtom> negate() {
+        return (t) -> !test(t);
+    }
+
+    /**
+     * Overridden for type safety
+     * @since 2.2
+     */
+    @Override
+    default EventFilter<EventAtom> or(Predicate<? super EventAtom> other) {
+        Objects.requireNonNull(other);
+        return (t) -> test(t) || other.test(t);
+    }
 }

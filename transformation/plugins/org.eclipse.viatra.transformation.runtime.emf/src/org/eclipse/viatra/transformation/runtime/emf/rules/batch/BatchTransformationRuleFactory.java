@@ -24,7 +24,7 @@ public class BatchTransformationRuleFactory {
         private IQuerySpecification<Matcher> fPrecondition;
         private Consumer<Match> fAction;
         private String fName = "";
-        private EventFilter<Match> fFilter;
+        private EventFilter<? super Match> fFilter;
         
         /**
          * @deprecated Use {@link #BatchTransformationRuleFactory(IQuerySpecification)} instead
@@ -70,7 +70,7 @@ public class BatchTransformationRuleFactory {
          * Sets the event filter of the rule.
          * @since 1.3
          */
-        public BatchTransformationRuleBuilder<Match, Matcher> filter(EventFilter<Match> filter) {
+        public BatchTransformationRuleBuilder<Match, Matcher> filter(EventFilter<? super Match> filter) {
             this.fFilter = filter;
             return this;
         }
