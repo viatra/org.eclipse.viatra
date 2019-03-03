@@ -14,6 +14,7 @@ import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -22,6 +23,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
@@ -33,10 +35,16 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.CrossReference;
@@ -56,13 +64,18 @@ import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal.IReplacementTextApplier;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor.Delegate;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.ui.editor.model.XtextDocument;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
 
 import com.google.common.base.Function;
@@ -96,6 +109,11 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     private IJvmTypeProvider.Factory jvmTypeProviderFactory;
     @Inject
     private ITypesProposalProvider typeProposalProvider;
+    
+    @Inject
+    private EMFTypeInferrer typeInferrer;
+    @Inject
+    private EMFTypeSystem typeSystem;
 
     @Override
     public void createProposals(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
@@ -460,6 +478,36 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         typeProposalProvider.createSubTypeProposals(interfaceToImplement, this, context,
                 PatternLanguagePackage.Literals.AGGREGATED_VALUE__AGGREGATOR, TypeMatchFilters.canInstantiate(),
                 acceptor);
+    }
+
+    /**
+     * @since 2.2
+     */
+    public void complete_Parameter(Pattern model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        final Set<String> existingParameterNames = model.getParameters().stream()
+                .map(Variable::getName)
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isEmpty() && !Objects.equals("null", s))
+                .collect(Collectors.toSet());
+        model.getBodies().stream().flatMap(b -> b.getVariables().stream())
+                .filter(v -> !PatternLanguageHelper.isNamedSingleUse(v) && !PatternLanguageHelper.isUnnamedSingleUseVariable(v))
+                .filter(v -> !existingParameterNames.contains(v.getName()))
+                .map(v -> new Pair<>(v, typeInferrer.getType(v)))
+                .distinct()
+                .forEach(p -> {
+                    String name = p.getKey().getName();
+                    IInputKey typeKey = p.getValue();
+                    // TODO insert Java type functionality missing; to add that instead of string manipulation we should
+                    // directly edit the model to avoid issues like bug
+                    // https://bugs.eclipse.org/bugs/show_bug.cgi?id=517254 
+                    if (typeKey instanceof EClassTransitiveInstancesKey) {
+                        EClassTransitiveInstancesKey type = (EClassTransitiveInstancesKey) typeKey;
+                        acceptor.accept(createCompletionProposal(String.format("%s : %s", name, type.getEmfKey().getName()), context));
+                    } else {
+                        acceptor.accept(createCompletionProposal(name, context));
+                   }});
+        super.complete_Parameter(model, ruleCall, context, acceptor);
     }
     
 }

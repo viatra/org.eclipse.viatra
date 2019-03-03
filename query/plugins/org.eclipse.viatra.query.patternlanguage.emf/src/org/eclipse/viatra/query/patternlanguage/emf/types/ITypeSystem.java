@@ -47,6 +47,34 @@ public interface ITypeSystem {
     IInputKey extractTypeDescriptor(Type type);
 
     /**
+     * Returns a new Type instance that represents the same type as the parameter input key. Each call of this method
+     * will return a new instance, and the returned type is not contained in any other EMF object, making the return
+     * type safe to include in VQL models.
+     *
+     * Not all concrete IInputKey instances are supported by this method; in case of unsupported type an
+     * {@link IllegalArgumentException} will be thrown.
+     *
+     * @since 2.2
+     */
+    default Type convertToVQLType(EObject context, IInputKey key) {
+        return convertToVQLType(context, key, false);
+    }
+    
+    /**
+     * Returns a new Type instance that represents the same type as the parameter input key. Each call of this method
+     * will return a new instance, and the returned type is not contained in any other EMF object, making the return
+     * type safe to include in VQL models.
+     *
+     * Not all concrete IInputKey instances are supported by this method; in case of unsupported type an
+     * {@link IllegalArgumentException} will be thrown.
+     *
+     * @param avoidDataType If set to true, data type are returned as Java types
+     *
+     * @since 2.2
+     */
+    Type convertToVQLType(EObject context, IInputKey key, boolean avoidDataType);
+    
+    /**
      * Extracts the model-specific column type of the given index from a RelationType declaration
      * 
      * @param type

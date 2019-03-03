@@ -7,6 +7,13 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == New and Noteworthy
 
+=== Editor enhancements
+
+To ease the modification previously created patterns, the editor makes it easier to convert existing local variables to parameters easily by appropriate content assist and quick fix-based enhancements.
+
+image::releases/22_add_parameter.png[Quick Fix for Single-use Variables Support Adding a Parameter]
+image::releases/20_ca_parameter.png[Content Assist Offers Existing Variables for Parameters]
+
 === Batch Transformation API Refresh
 
 The batch transformation API was updated to provide better support for that are controlled by data dependencies. The control flow for these transformations is usually trivial - the rules are executed one by one until there are no more matches left. This behavior is very similar to event-driven transformation with the main difference that these transformations are not executed on changes in the underlying model but triggered manually.   

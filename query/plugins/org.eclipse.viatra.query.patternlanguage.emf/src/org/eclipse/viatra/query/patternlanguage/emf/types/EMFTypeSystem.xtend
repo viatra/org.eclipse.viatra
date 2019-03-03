@@ -36,6 +36,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.RelationType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Type
@@ -48,7 +49,10 @@ import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider
 import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.diagnostics.Severity
@@ -98,6 +102,7 @@ class EMFTypeSystem extends AbstractTypeSystem {
     @Inject Primitives primitives
     @Inject TypeReferences typeReferences
     @Inject IClassLoaderProvider classLoaderProvider 
+    @Inject IJvmTypeProvider.Factory typeProviderFactory;
 
     @Inject new(Logger logger) {
         super(EMFQueryMetaContext.DEFAULT)
@@ -116,6 +121,44 @@ class EMFTypeSystem extends AbstractTypeSystem {
         }
         // Never executed
         throw new UnsupportedOperationException()
+    }
+
+    override Type convertToVQLType(EObject context, IInputKey key, boolean avoidDataTypes) {
+        val factory = PatternLanguageFactory.eINSTANCE
+        switch(key) {
+            EClassTransitiveInstancesKey: {
+                val type = factory.createClassType
+                type.classname = key.emfKey
+                type
+            }
+            EDataTypeInSlotsKey: {
+                if (avoidDataTypes) {
+                    val type = factory.createClassType
+                    type.classname = key.emfKey
+                    type 
+                } else {
+                val type = factory.createJavaType
+                val jvmType = typeProviderFactory.findOrCreateTypeProvider(context.eResource().getResourceSet()).findTypeByName(key.emfKey.instanceClassName);
+                                
+                type.classRef = jvmType as JvmDeclaredType
+                type
+                    
+                }
+            }
+            EStructuralFeatureInstancesKey: {
+                val type = factory.createReferenceType
+                type.refname = key.emfKey
+                type
+            }
+            JavaTransitiveInstancesKey: {
+                val type = factory.createJavaType
+                val jvmType = typeProviderFactory.findOrCreateTypeProvider(context.eResource().getResourceSet()).findTypeByName(key.wrappedKey);
+                                
+                type.classRef = jvmType as JvmDeclaredType
+                type
+            }
+            default: throw new IllegalArgumentException(String.format("Cannot create VQL representation for type %s", key))
+        }
     }
 
     def IInputKey classifierToInputKey(EClassifier classifier) {

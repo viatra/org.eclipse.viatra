@@ -11,6 +11,8 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.quickfix;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -19,14 +21,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Parameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguageFactory;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Type;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
@@ -79,6 +91,10 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
 
     @Inject
     private IJvmTypeProvider.Factory typeProviderFactory;
+    @Inject
+    private EMFTypeInferrer typeInferrer;
+    @Inject
+    private EMFTypeSystem typeSystem;
     
     @Fix(IssueCodes.IDENTIFIER_AS_KEYWORD)
     public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
@@ -115,10 +131,7 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
                         });
             } else {
                 acceptor.accept(issue, "Insert EMF type '" + data + "'",
-                        "Declares the inferred type " + data + " for the variable. \n\n"
-                                + "Warning! When not matching the entire ResourceSet, \n"
-                                + "this might slightly change the results of the pattern; \n"
-                                + "look at the documentation of Query Scopes for details.",
+                        "Declares the inferred type " + data + " for the variable. \n\n",
                         null, new IModification() {
 
                             @Override
@@ -192,6 +205,48 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
                 new AddDependency(issue));
     }
     
+    @Fix(IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE)
+    public void handleSingleUseVariables(final Issue issue, IssueResolutionAcceptor acceptor) {
+        acceptor.accept(issue, "Prefix Variable", "Adds a _ prefix to the variable to mark it as single-use", null, new IModification() {
+
+            @Override
+            public void apply(IModificationContext context) throws BadLocationException {
+                IXtextDocument document = context.getXtextDocument();
+                document.replace(issue.getOffset(), 0, "_");
+            }
+        });
+        
+        acceptor.accept(issue, "Add as parameter", "Adds the local variable as a parameter", null,
+                new ISemanticModification() {
+
+                    @Override
+                    public void apply(EObject element, IModificationContext context) throws Exception {
+                        VariableReference varRef = (VariableReference) element;
+                        Pattern containingPattern = EcoreUtil2.getContainerOfType(varRef, Pattern.class);
+                      
+                        final Parameter parameter = PatternLanguageFactory.eINSTANCE.createParameter();
+                        containingPattern.getParameters().add(parameter);
+                        parameter.setName(varRef.getVar());
+                        final Type type = typeSystem.convertToVQLType(varRef, typeInferrer.getType(varRef));
+                        parameter.setType(type);
+                        
+                        for (PatternBody body : containingPattern.getBodies()) {
+                            final ParameterRef reference = PatternLanguageFactory.eINSTANCE.createParameterRef();
+                            reference.setName(varRef.getVar());
+                            reference.setReferredParam(parameter);
+                            final Optional<Variable> variable = body.getVariables().stream()
+                                    .filter(v -> Objects.equals(v.getName(), varRef.getVar())).findFirst();
+                            if (variable.isPresent()) {
+                                EcoreUtil.replace(variable.get(), reference);
+                            } else {
+                                body.getVariables().add(reference);
+                            }
+                        }
+                    }
+
+                });
+    }
+    
     @Fix(IssueCodes.AGGREGATED_FEATURE_CHAIN)
     public void explainAggregatedChain(final Issue issue, IssueResolutionAcceptor acceptor) {
         explainWithHelp(issue, acceptor, AGGREGATED_CHAIN_CONTEXT);
@@ -221,4 +276,5 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         acceptor.accept(issue, "Explain message", "", null,
                 (IModification) context -> PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID));
     }
+    
 }
