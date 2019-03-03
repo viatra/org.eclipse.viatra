@@ -321,165 +321,165 @@ class EMFTypeSystem extends AbstractTypeSystem {
                     "Cannot resolve corresponding Java type for variable %s. Are the required bundle dependencies set?",
                     contextName), EMFPatternLanguageJvmModelInferrer.INVALID_TYPEREF_CODE, Severity.WARNING,
                     IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
-            }
-            return typeReference;
         }
-
-        /**
-         * @since 1.3
-         */
-        override minimizeTypeInformation(Set<IInputKey> types, boolean mergeWithSupertypes) {
-            if(types.size == 1) return types
-            val eJavaTypes = minimizeJavaTypeList(types.filter(JavaTransitiveInstancesKey).filterNull)
-            val eDataTypes = minimizeEDataTypeList(types.filter(EDataTypeInSlotsKey).filterNull).filter[
-                val javaType = new JavaTransitiveInstancesKey(it.emfKey.instanceClass.wrapperClassForType)
-                !eJavaTypes.exists[it == javaType]
-            ]
-            val eClassTypes = minimizeEClassKeyList(types.filter(EClassTransitiveInstancesKey).filterNull,
-                mergeWithSupertypes)
-            return Iterables.concat(eClassTypes, Iterables.<IInputKey>concat(eDataTypes, eJavaTypes)).toSet
-        }
-
-        def private Iterable<EClassTransitiveInstancesKey> minimizeEClassKeyList(Iterable<EClassTransitiveInstancesKey> types,
-            boolean mergeWithSupertypes) {
-            val emfTypes = <EClass>newHashSet(types.map[emfKey])
-            return emfTypes.minimizeEClassList(mergeWithSupertypes).map[new EClassTransitiveInstancesKey(it)]
-        }
-
-        def private Iterable<EClass> minimizeEClassList(Iterable<EClass> types, boolean mergeWithSupertypes) {
-            val nonTopTypes = types.filter["EObject" != name || EPackage.nsURI != EcorePackage.eNS_URI]
-
-            val emfTypes = <EClass>newHashSet(nonTopTypes)
-            nonTopTypes.forEach [ key |
-                emfTypes.removeAll(key.EAllSuperTypes)
-            ]
-            if (mergeWithSupertypes && emfTypes.size > 1) {
-                val compatibleTypes = emfTypes.map [ key |
-                    emfTypes.map [ current |
-                        val type = EcoreUtil2.getCompatibleType(key, current, null)
-                        if(type instanceof EClass) type else current
-                    ]
-                ].flatten
-                
-                val filteredTypes = compatibleTypes.filter[!EcoreUtil2.getAllSuperTypes(it).exists[supertype|compatibleTypes.exists[it == supertype]]].toSet
-                if (filteredTypes.size > 1) {
-                    // Short circuit: all EClasses extend EObject
-                    return newHashSet(EcorePackage.Literals.EOBJECT)
-                } else {
-                    return filteredTypes
-                }
-            }
-            return emfTypes
-        }
-
-        def private Iterable<EDataTypeInSlotsKey> minimizeEDataTypeList(Iterable<EDataTypeInSlotsKey> types) {
-            val emfTypes = <EDataType>newHashSet(types.map[emfKey].filter[!instanceClassName.nullOrEmpty])
-            val result = emfTypes.clone as HashSet<EDataType>
-            val it = emfTypes.iterator
-            while (it.hasNext) {
-                val dataType = it.next
-                result.removeAll(emfTypes.filter [
-                    it.instanceClassName == dataType.instanceClassName
-                ].drop(1))
-            }
-
-            return result.map[new EDataTypeInSlotsKey(it)]
-        }
-
-        def private Iterable<JavaTransitiveInstancesKey> minimizeJavaTypeList(Iterable<JavaTransitiveInstancesKey> types) {
-            val nonTopTypes = types.filter[instanceClass !== null && instanceClass != Object].map[instanceClass].
-                filterNull
-            val javaTypes = <Class<?>>newHashSet(nonTopTypes)
-            nonTopTypes.forEach [ key |
-                javaTypes.removeAll(javaTypes.filter [
-                    it != key && key.isAssignableFrom(it)
-                ])
-            ]
-            return javaTypes.map[new JavaTransitiveInstancesKey(it)]
-        }
-
-        /**
-         * @since 1.3
-         */
-        override Set<IInputKey> addTypeInformation(Set<IInputKey> types, IInputKey newType) {
-            return minimizeTypeInformation(ImmutableSet.<IInputKey>builder().addAll(types).add(newType).build(), false)
-        }
-
-        /**
-         * @since 1.3
-         */
-        override Set<IInputKey> addTypeInformation(Set<IInputKey> types, Set<IInputKey> newTypes) {
-            return minimizeTypeInformation(ImmutableSet.<IInputKey>builder().addAll(types).addAll(newTypes).build(),
-                false)
-        }
-
-        /**
-         * @since 1.3
-         * @return True if the given classifiers has a common subtype in the selected EPackages.
-         */
-        def boolean hasCommonSubtype(Set<IInputKey> typeKeys, Iterable<EPackage> ePackages) {
-            val knownTypes = ePackages.map[allEClassifiers].flatten
-            if (typeKeys.forall[it instanceof EClassTransitiveInstancesKey]) {
-                val classifiers = typeKeys.map[(it as EClassTransitiveInstancesKey).emfKey].toSet
-                knownTypes.exists[it.EAllSuperTypes.containsAll(classifiers)]
-            } else {
-                return false;
-            }
-        }
-
-        private static def Set<EClass> getAllEClassifiers(EPackage ePackage) {
-            return newHashSet(ePackage.EClassifiers.filter(EClass))
-        }
-
-        override typeString(IInputKey type) {
-            switch(type) {
-                case type === null : "«null»"
-                case type instanceof EClassTransitiveInstancesKey && !(type as EClassTransitiveInstancesKey).emfKey.eIsProxy: 
-                    '''«(type as EClassTransitiveInstancesKey).emfKey.EPackage.nsURI»::«(type as EClassTransitiveInstancesKey).emfKey.name»''' 
-                EClassTransitiveInstancesKey : '''«type.emfKey.toString»''' 
-                EDataTypeInSlotsKey : '''«type.emfKey.EPackage.nsURI»::«type.emfKey.name»'''
-                default: super.typeString(type)
-            }
-        }
-        
-        /**
-         * @since 1.3
-         */
-        override getCompatibleSupertypes(Set<IInputKey> types) {
-            if (types.forall[it instanceof EClassTransitiveInstancesKey]) {
-                getCompatibleEClasses(types.filter(typeof(EClassTransitiveInstancesKey)))
-            } else if (types.forall[it instanceof JavaTransitiveInstancesKey]) {
-                // TODO Do we want to have a similar implementation for Java types as well?
-                return types
-            } else {
-                // There is no combined supertype, return original set
-                return types
-            }
-        }
-        
-        private def Set<IInputKey> getCompatibleEClasses(Iterable<EClassTransitiveInstancesKey> types) {
-            val candidates = types.map[EcoreUtil2.getCompatibleTypesOf(it.emfKey)]
-            val iterator = candidates.iterator
-            if (iterator.hasNext) {
-                val Set<EClass> compatibleTypes = newHashSet(iterator.next)
-                while(iterator.hasNext) {
-                    compatibleTypes.retainAll(iterator.next)
-                }
-                return compatibleTypes.map[new EClassTransitiveInstancesKey(it) as IInputKey].toSet
-            }
-            return #{}
-        }
-        
-        override isValidType(Type type) {
-            if (type instanceof ClassType) {
-                val classifier = type.classname
-                return classifier !== null && !classifier.eIsProxy
-            } else if (type instanceof ReferenceType) {
-                val feature = type.refname
-                return feature !== null && !feature.eIsProxy
-            }
-            super.isValidType(type)
-        }
-        
+        return typeReference;
     }
+
+    /**
+     * @since 1.3
+     */
+    override minimizeTypeInformation(Set<IInputKey> types, boolean mergeWithSupertypes) {
+        if(types.size == 1) return types
+        val eJavaTypes = minimizeJavaTypeList(types.filter(JavaTransitiveInstancesKey).filterNull)
+        val eDataTypes = minimizeEDataTypeList(types.filter(EDataTypeInSlotsKey).filterNull).filter[
+            val javaType = new JavaTransitiveInstancesKey(it.emfKey.instanceClass.wrapperClassForType)
+            !eJavaTypes.exists[it == javaType]
+        ]
+        val eClassTypes = minimizeEClassKeyList(types.filter(EClassTransitiveInstancesKey).filterNull,
+            mergeWithSupertypes)
+        return Iterables.concat(eClassTypes, Iterables.<IInputKey>concat(eDataTypes, eJavaTypes)).toSet
+    }
+
+    def private Iterable<EClassTransitiveInstancesKey> minimizeEClassKeyList(Iterable<EClassTransitiveInstancesKey> types,
+        boolean mergeWithSupertypes) {
+        val emfTypes = <EClass>newHashSet(types.map[emfKey])
+        return emfTypes.minimizeEClassList(mergeWithSupertypes).map[new EClassTransitiveInstancesKey(it)]
+    }
+
+    def private Iterable<EClass> minimizeEClassList(Iterable<EClass> types, boolean mergeWithSupertypes) {
+        val nonTopTypes = types.filter["EObject" != name || EPackage.nsURI != EcorePackage.eNS_URI]
+
+        val emfTypes = <EClass>newHashSet(nonTopTypes)
+        nonTopTypes.forEach [ key |
+            emfTypes.removeAll(key.EAllSuperTypes)
+        ]
+        if (mergeWithSupertypes && emfTypes.size > 1) {
+            val compatibleTypes = emfTypes.map [ key |
+                emfTypes.map [ current |
+                    val type = EcoreUtil2.getCompatibleType(key, current, null)
+                    if(type instanceof EClass) type else current
+                ]
+            ].flatten
+            
+            val filteredTypes = compatibleTypes.filter[!EcoreUtil2.getAllSuperTypes(it).exists[supertype|compatibleTypes.exists[it == supertype]]].toSet
+            if (filteredTypes.size > 1) {
+                // Short circuit: all EClasses extend EObject
+                return newHashSet(EcorePackage.Literals.EOBJECT)
+            } else {
+                return filteredTypes
+            }
+        }
+        return emfTypes
+    }
+
+    def private Iterable<EDataTypeInSlotsKey> minimizeEDataTypeList(Iterable<EDataTypeInSlotsKey> types) {
+        val emfTypes = <EDataType>newHashSet(types.map[emfKey].filter[!instanceClassName.nullOrEmpty])
+        val result = emfTypes.clone as HashSet<EDataType>
+        val it = emfTypes.iterator
+        while (it.hasNext) {
+            val dataType = it.next
+            result.removeAll(emfTypes.filter [
+                it.instanceClassName == dataType.instanceClassName
+            ].drop(1))
+        }
+
+        return result.map[new EDataTypeInSlotsKey(it)]
+    }
+
+    def private Iterable<JavaTransitiveInstancesKey> minimizeJavaTypeList(Iterable<JavaTransitiveInstancesKey> types) {
+        val nonTopTypes = types.filter[instanceClass !== null && instanceClass != Object].map[instanceClass].
+            filterNull
+        val javaTypes = <Class<?>>newHashSet(nonTopTypes)
+        nonTopTypes.forEach [ key |
+            javaTypes.removeAll(javaTypes.filter [
+                it != key && key.isAssignableFrom(it)
+            ])
+        ]
+        return javaTypes.map[new JavaTransitiveInstancesKey(it)]
+    }
+
+    /**
+     * @since 1.3
+     */
+    override Set<IInputKey> addTypeInformation(Set<IInputKey> types, IInputKey newType) {
+        return minimizeTypeInformation(ImmutableSet.<IInputKey>builder().addAll(types).add(newType).build(), false)
+    }
+
+    /**
+     * @since 1.3
+     */
+    override Set<IInputKey> addTypeInformation(Set<IInputKey> types, Set<IInputKey> newTypes) {
+        return minimizeTypeInformation(ImmutableSet.<IInputKey>builder().addAll(types).addAll(newTypes).build(),
+            false)
+    }
+
+    /**
+     * @since 1.3
+     * @return True if the given classifiers has a common subtype in the selected EPackages.
+     */
+    def boolean hasCommonSubtype(Set<IInputKey> typeKeys, Iterable<EPackage> ePackages) {
+        val knownTypes = ePackages.map[allEClassifiers].flatten
+        if (typeKeys.forall[it instanceof EClassTransitiveInstancesKey]) {
+            val classifiers = typeKeys.map[(it as EClassTransitiveInstancesKey).emfKey].toSet
+            knownTypes.exists[it.EAllSuperTypes.containsAll(classifiers)]
+        } else {
+            return false;
+        }
+    }
+
+    private static def Set<EClass> getAllEClassifiers(EPackage ePackage) {
+        return newHashSet(ePackage.EClassifiers.filter(EClass))
+    }
+
+    override typeString(IInputKey type) {
+        switch(type) {
+            case type === null : "«null»"
+            case type instanceof EClassTransitiveInstancesKey && !(type as EClassTransitiveInstancesKey).emfKey.eIsProxy: 
+                '''«(type as EClassTransitiveInstancesKey).emfKey.EPackage.nsURI»::«(type as EClassTransitiveInstancesKey).emfKey.name»''' 
+            EClassTransitiveInstancesKey : '''«type.emfKey.toString»''' 
+            EDataTypeInSlotsKey : '''«type.emfKey.EPackage.nsURI»::«type.emfKey.name»'''
+            default: super.typeString(type)
+        }
+    }
+    
+    /**
+     * @since 1.3
+     */
+    override getCompatibleSupertypes(Set<IInputKey> types) {
+        if (types.forall[it instanceof EClassTransitiveInstancesKey]) {
+            getCompatibleEClasses(types.filter(typeof(EClassTransitiveInstancesKey)))
+        } else if (types.forall[it instanceof JavaTransitiveInstancesKey]) {
+            // TODO Do we want to have a similar implementation for Java types as well?
+            return types
+        } else {
+            // There is no combined supertype, return original set
+            return types
+        }
+    }
+    
+    private def Set<IInputKey> getCompatibleEClasses(Iterable<EClassTransitiveInstancesKey> types) {
+        val candidates = types.map[EcoreUtil2.getCompatibleTypesOf(it.emfKey)]
+        val iterator = candidates.iterator
+        if (iterator.hasNext) {
+            val Set<EClass> compatibleTypes = newHashSet(iterator.next)
+            while(iterator.hasNext) {
+                compatibleTypes.retainAll(iterator.next)
+            }
+            return compatibleTypes.map[new EClassTransitiveInstancesKey(it) as IInputKey].toSet
+        }
+        return #{}
+    }
+    
+    override isValidType(Type type) {
+        if (type instanceof ClassType) {
+            val classifier = type.classname
+            return classifier !== null && !classifier.eIsProxy
+        } else if (type instanceof ReferenceType) {
+            val feature = type.refname
+            return feature !== null && !feature.eIsProxy
+        }
+        super.isValidType(type)
+    }
+    
+}
     
