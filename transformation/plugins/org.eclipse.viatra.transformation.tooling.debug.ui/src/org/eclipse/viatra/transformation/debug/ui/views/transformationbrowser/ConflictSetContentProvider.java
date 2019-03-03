@@ -29,6 +29,7 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
         this.view = view;
     }
     
+    @Override
     public void inputChanged(Viewer v, Object oldInput, Object newInput) {
         //do nothing
     }

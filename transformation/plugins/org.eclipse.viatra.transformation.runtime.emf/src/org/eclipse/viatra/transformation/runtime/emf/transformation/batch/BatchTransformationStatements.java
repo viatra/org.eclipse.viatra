@@ -300,7 +300,7 @@ public class BatchTransformationStatements {
      * 
      * @since 2.2
      */
-    public <Match extends IPatternMatch> boolean hasCurrent(final BatchTransformationRuleGroup rules) {
+    public boolean hasCurrent(final BatchTransformationRuleGroup rules) {
         return rules.stream().anyMatch(this::hasCurrent);
     }
     
@@ -309,7 +309,7 @@ public class BatchTransformationStatements {
      * 
      * @since 2.2
      */
-    public <Match extends IPatternMatch> boolean hasCurrent() {
+    public boolean hasCurrent() {
         return transformation.getTransformationRuleGroup().stream().anyMatch(this::hasCurrent);
     }
     

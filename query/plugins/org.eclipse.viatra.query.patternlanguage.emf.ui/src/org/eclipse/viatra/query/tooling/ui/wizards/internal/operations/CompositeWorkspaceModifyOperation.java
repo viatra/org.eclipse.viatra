@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CompositeWorkspaceModifyOperation extends WorkspaceModifyOperation {
@@ -32,9 +32,10 @@ public class CompositeWorkspaceModifyOperation extends WorkspaceModifyOperation 
     @Override
     protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException,
             InterruptedException {
-        monitor.beginTask(description, 10 * operations.length);
+        final SubMonitor subMonitor = SubMonitor.convert(monitor, operations.length);
+        subMonitor.setTaskName(description);
         for (WorkspaceModifyOperation op : operations) {
-            op.run(new SubProgressMonitor(monitor, 10));
+            op.run(subMonitor.split(1));
         }
         monitor.done();
     }

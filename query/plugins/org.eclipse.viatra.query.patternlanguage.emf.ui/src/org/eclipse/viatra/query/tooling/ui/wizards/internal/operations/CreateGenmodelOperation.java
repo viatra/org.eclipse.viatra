@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -50,17 +50,20 @@ public class CreateGenmodelOperation extends WorkspaceModifyOperation {
     @Override
     protected void execute(IProgressMonitor monitor) throws CoreException {
         try {
+            SubMonitor subMonitor = SubMonitor.convert(monitor, "Initializing vgqen model", 10);
             ViatraQueryGeneratorModel generatorModel = genmodelProvider.getGeneratorModel(project,
                     resourceSetProvider.get(project));
             EList<GeneratorModelReference> genmodelRefs = generatorModel.getGenmodels();
+            final SubMonitor progress = subMonitor.split(9);
             for (GenModel ecoreGenmodel : genmodels) {
                 GeneratorModelReference ref = GeneratorModelFactory.eINSTANCE.createGeneratorModelReference();
                 ref.setGenmodel(ecoreGenmodel);
                 genmodelRefs.add(ref);
+                progress.worked(1);
             }
             if (genmodelRefs.isEmpty()) {
                 IFile file = project.getFile(ViatraQueryNature.VQGENMODEL);
-                file.create(new StringInputStream(""), false, new SubProgressMonitor(monitor, 1));
+                file.create(new StringInputStream(""), false, subMonitor.split(1));
             } else {
                 genmodelProvider.saveGeneratorModel(project, generatorModel);
             }

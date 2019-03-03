@@ -40,7 +40,7 @@ public interface EventFilter<EventAtom> extends Predicate<EventAtom> {
     @Override
     default EventFilter<EventAtom> and(Predicate<? super EventAtom> other) {
         Objects.requireNonNull(other);
-        return (t) -> test(t) && other.test(t);
+        return t -> test(t) && other.test(t);
     }
 
     /**
@@ -49,7 +49,7 @@ public interface EventFilter<EventAtom> extends Predicate<EventAtom> {
      */
     @Override
     default EventFilter<EventAtom> negate() {
-        return (t) -> !test(t);
+        return t -> !test(t);
     }
 
     /**
@@ -59,6 +59,6 @@ public interface EventFilter<EventAtom> extends Predicate<EventAtom> {
     @Override
     default EventFilter<EventAtom> or(Predicate<? super EventAtom> other) {
         Objects.requireNonNull(other);
-        return (t) -> test(t) || other.test(t);
+        return t -> test(t) || other.test(t);
     }
 }

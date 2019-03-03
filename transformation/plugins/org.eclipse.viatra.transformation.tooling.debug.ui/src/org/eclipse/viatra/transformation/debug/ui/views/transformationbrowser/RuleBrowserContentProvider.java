@@ -26,6 +26,7 @@ public class RuleBrowserContentProvider implements ITreeContentProvider {
         this.view = view;
     }
     
+    @Override
     public void inputChanged(Viewer v, Object oldInput, Object newInput) {
     }
 
