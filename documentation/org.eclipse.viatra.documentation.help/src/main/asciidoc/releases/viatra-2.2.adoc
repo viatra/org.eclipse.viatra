@@ -7,7 +7,17 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == New and Noteworthy
 
-=== Editor enhancements
+=== Query Editor Enhancements
+
+VIATRA 2.2 introduces a set of code minings to provide extra inline information about the developed patterns. Currently, two information sources are enabled:
+ 
+ * Inferred parameter types are displayed if missing.
+ * In case of pattern calls the names of the called parameters is also displayed, helping    
+
+Code minings are only available if Eclipse Photon or newer is used; however, for version 2.2, we consider code minings experimental: in future versions we might update when minings are presented, both for performance and usability concerns. Because of this reason, code minings are by default turned off; in case of interest they can be turned on using an appropriate preference setting.
+
+image::releases/22_codemining_prefs.png[Preference Page to Enable Code Mining]
+image::releases/22_codemining.png[Code Mining in Action]
 
 To ease the modification previously created patterns, the editor makes it easier to convert existing local variables to parameters easily by appropriate content assist and quick fix-based enhancements.
 

@@ -41,7 +41,8 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8
  org.eclipse.core.expressions
 Import-Package: com.google.inject.multibindings,
  org.apache.log4j;version="1.2.15",
- org.apache.log4j.spi;version="1.2.15"
+ org.apache.log4j.spi;version="1.2.15",
+ org.eclipse.xtext.ui.codemining;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.viatra.query.patternlanguage.emf.ui;uses:="com.google.inject",
  org.eclipse.viatra.query.patternlanguage.emf.ui.builder;uses:="com.google.common.base",

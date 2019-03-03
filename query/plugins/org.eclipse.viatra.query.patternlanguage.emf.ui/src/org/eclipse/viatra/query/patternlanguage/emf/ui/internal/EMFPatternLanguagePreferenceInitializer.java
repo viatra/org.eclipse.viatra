@@ -1,0 +1,30 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2019, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.patternlanguage.emf.ui.internal;
+
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguagePreferenceConstants;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
+
+/**
+ * @since 2.2
+ *
+ */
+public class EMFPatternLanguagePreferenceInitializer extends AbstractPreferenceInitializer {
+
+    @Override
+    public void initializeDefaultPreferences() {
+        IPreferenceStore store = EMFPatternLanguageUIPlugin.getInstance().getPreferenceStore();
+        store.setDefault(EMFPatternLanguagePreferenceConstants.P_ENABLE_VQL_CODEMINING, false);
+    }
+
+}

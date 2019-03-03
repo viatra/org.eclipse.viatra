@@ -209,6 +209,16 @@
             </activeWhen>
         </handler>
     </extension>   
+    
+        <extension point="org.eclipse.core.contenttype.contentTypes">
+        <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="vql"
+            id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.contenttype"
+            name="VQL File"
+            priority="normal">
+        </content-type>
+    </extension>
 
 <!-- adding resource factories -->
 
@@ -587,6 +597,25 @@
             type="text">
     </fileTypes>
   </extension>
+  
+    <!-- code mining -->
+    <extension point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+        <codeMiningProvider
+            class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.jface.text.codemining.ICodeMiningProvider"
+            id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.CodeMiningProvider"
+            label="VQL Codemining">
+            <enabledWhen>
+                <with variable="editorInput">
+                    <adapt type="org.eclipse.core.resources.IFile">
+                        <test
+                            property="org.eclipse.core.resources.contentTypeId"
+                            value="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.contenttype">
+                        </test>
+                    </adapt>
+                </with>
+            </enabledWhen>
+        </codeMiningProvider>
+    </extension>
 
  <extension
          point="org.eclipse.ui.newWizards">
@@ -1567,5 +1596,23 @@
             properties="outdated"
             type="org.eclipse.core.resources.IProject">
       </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguagePreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage"
+            class="org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguageEditorPreferencePage"
+            id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.compiler.preferencePage"
+            name="Editor">
+         <keywordReference
+               id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
+         </keywordReference>
+      </page>
    </extension>
 </plugin>

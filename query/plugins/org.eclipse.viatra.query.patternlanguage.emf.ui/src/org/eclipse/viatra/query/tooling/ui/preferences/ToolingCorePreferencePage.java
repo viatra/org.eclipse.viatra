@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguagePreferenceConstants;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
 import org.eclipse.viatra.query.tooling.core.preferences.ToolingCorePreferenceConstants;
 
@@ -63,6 +64,12 @@ public class ToolingCorePreferencePage
      */
     public void createFieldEditors() {
         Composite parent = getFieldEditorParent();
+        addField(
+                new BooleanFieldEditor(
+                        EMFPatternLanguagePreferenceConstants.P_ENABLE_VQL_CODEMINING,
+                        "&[Experimental] Enable &Code Mining in Query Editor",
+                        parent));
+        
         Label traverseSubPatternCallDescriptionLabel = new Label(parent, SWT.NONE | SWT.WRAP);
         traverseSubPatternCallDescriptionLabel.setText(DISABLE_TARGET_PLATFORM_UPDATE_DESCRIPTION);
         GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
@@ -75,7 +82,7 @@ public class ToolingCorePreferencePage
             new BooleanFieldEditor(
                 ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE,
                 "&[Experimental] Disable automatic update of target platform metamodels",
-                getFieldEditorParent()));
+                parent));
     }
 
     public void init(IWorkbench workbench) {
