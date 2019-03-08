@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.internal;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IProjectHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
@@ -56,6 +58,10 @@ public class DuplicationChecker {
     }
 
     public Set<IEObjectDescription> findDuplicates(Pattern pattern) {
+        if (PatternLanguageHelper.getFullyQualifiedName(pattern) == null) {
+            // If the fqn of the pattern is null, the pattern definition is so broken it makes no sense to check for duplicates 
+            return Collections.emptySet();
+        }
         QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
         return findShadowingClasses(pattern, fullyQualifiedName, PatternLanguagePackage.Literals.PATTERN);
     }
