@@ -63,14 +63,17 @@ public final class PatternParsingResults {
         if (resource == null) {
             return new ArrayList<>();
         }
-        final ResourceSet rs = resource.getResourceSet();
+        final ResourceSet rs = resource.getResourceSet();   
         if (rs == null) {
             return new ArrayList<>();
         }
         
-        return diag.getAllErrors().stream().filter(issue -> 
-            EcoreUtil.isAncestor(pattern, rs.getEObject(issue.getUriToProblem(), false))
-        ).collect(Collectors.toList());
+        return diag.getAllErrors().stream()
+                // getUriToProblem returns null if an uncaught exception (that is not an NPE) is thrown by a validator
+                // such errors should not be considered pattern-specific, thus they are ignored here
+                .filter(issue -> issue.getUriToProblem() != null) 
+                .filter(issue -> EcoreUtil.isAncestor(pattern, rs.getEObject(issue.getUriToProblem(), false)))
+                .collect(Collectors.toList());
     }
     
     public boolean validationOK() {

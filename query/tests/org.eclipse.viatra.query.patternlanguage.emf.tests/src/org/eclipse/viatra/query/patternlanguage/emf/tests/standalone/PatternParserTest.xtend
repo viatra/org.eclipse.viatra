@@ -18,6 +18,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
 
 class PatternParserTest {
     
@@ -183,5 +184,23 @@ class PatternParserTest {
         val uri = URI.createURI("__synthetic_custom")
         parser.parse(pattern, uri)
         parser.parse(pattern, uri)
+    }
+    
+    @Test()
+    def void completelyBogusSyntaxTest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            @Constraint{
+                
+            }
+            pattern test(class : EClass){
+                EClass(class);
+            }
+        '''
+        val parser = new PatternParserBuilder().build
+        val uri = URI.createURI("__synthetic_custom")
+        val specificationList = parser.parse(pattern, uri).querySpecifications.map[fullyQualifiedName].toList
+        assertArrayEquals(#{null, "test"}, specificationList.toArray)
     }
 }
