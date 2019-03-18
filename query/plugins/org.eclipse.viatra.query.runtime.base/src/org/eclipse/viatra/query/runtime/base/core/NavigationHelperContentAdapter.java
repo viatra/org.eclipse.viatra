@@ -1,13 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010-2012, Tamas Szabo, Gabor Bergmann, Istvan Rath and Daniel Varro
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *   Tamas Szabo, Gabor Bergmann - initial API and implementation
- *   IBM - original implementation of EContentAdapter.java
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Note: this file contains methods copied from EContentAdapter.java of the EMF project
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.core;
 

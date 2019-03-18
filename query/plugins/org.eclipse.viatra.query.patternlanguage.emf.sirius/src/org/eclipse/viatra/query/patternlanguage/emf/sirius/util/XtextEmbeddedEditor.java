@@ -1,13 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2009 itemis AG (http://www.itemis.eu) and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2009 Adam Lengyel, Zoltan Ujhelyi, IncQuery Labs Ltd, itemis AG (http://www.itemis.eu) and others.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
  * 
- * Contributors:
- *   Jan Koehnlein - initial API and implementation in the Xtext project
- *   Adam Lengyel, Zoltan Ujhelyi - adaptation for requirements in VIATRA
+ * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
 package org.eclipse.viatra.query.patternlanguage.emf.sirius.util;

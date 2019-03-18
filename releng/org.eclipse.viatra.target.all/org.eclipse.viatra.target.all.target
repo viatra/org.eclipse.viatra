@@ -26,8 +26,8 @@
 <repository location="http://download.eclipse.org/modeling/mdt/uml2/updates/5.0/R201502020947/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/cbi/updates/license"/>
+<unit id="org.eclipse.license.feature.group" version="2.0.1.v20180423-1114"/>
+<repository location="http://download.eclipse.org/cbi/updates/license/2.0.1.v20180423-1114"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.0.0.201711130301"/>

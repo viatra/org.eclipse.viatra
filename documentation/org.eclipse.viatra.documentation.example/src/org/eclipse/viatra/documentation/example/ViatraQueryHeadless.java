@@ -1,14 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004-2011 Abel Hegedus, Istvan Rath and Daniel Varro, Zoltan Ujhelyi, IncQuery Labs Ltd.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Abel Hegedus - initial API and implementation
- *    Istvan Rath - refactorings to accommodate to generic/patternspecific API differences
- *    Zoltan Ujhelyi - created a new example for various API features based on the old headless example for VIATRA 2.0
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 package org.eclipse.viatra.documentation.example;
 

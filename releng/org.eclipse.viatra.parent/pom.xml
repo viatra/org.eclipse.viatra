@@ -567,11 +567,11 @@
 						<version>3.0</version>
 						<configuration>
 							<inlineHeader>
-								All rights reserved. This program and the accompanying materials
-								are made available under the terms of the Eclipse Public License
-								v1.0
-								which accompanies this distribution, and is available at
-								http://www.eclipse.org/legal/epl-v10.html
+								This program and the accompanying materials are made available under the
+								terms of the Eclipse Public License v. 2.0 which is available at
+								http://www.eclipse.org/legal/epl-v20.html.
+								
+								SPDX-License-Identifier: EPL-2.0
 							</inlineHeader>
 							<useDefaultExcludes>true</useDefaultExcludes>
 							<failIfMissing>true</failIfMissing>
@@ -584,9 +584,6 @@
 							<excludes>
 								<exclude>**/src/site/**</exclude>
 								<exclude>**/target/**</exclude>
-								<exclude>**/src-gen/**</exclude>
-								<exclude>**/xtend-gen/**</exclude>
-								<exclude>**/emf-gen/**</exclude>
 							</excludes>
 							<mapping>
 								<xtend>JAVADOC_STYLE</xtend>

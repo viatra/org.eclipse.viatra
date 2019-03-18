@@ -1,13 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004-2011 Abel Hegedus and Daniel Varro
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    pvmellor - original code (http://wiki.eclipse.org/EMF/Recipes#Recipe:_Derived_Attribute_Notifier)
- *    Abel Hegedus - initial API and implementation
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 

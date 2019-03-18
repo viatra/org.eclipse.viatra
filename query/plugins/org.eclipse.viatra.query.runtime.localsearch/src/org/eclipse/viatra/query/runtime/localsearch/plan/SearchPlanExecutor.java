@@ -1,13 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Akos Horvath, Gergely Varro and Daniel Varro
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Akos Horvath, Gergely Varro - initial API and implementation from the VIATRA2 project
- *    Zoltan Ujhelyi - adaptation to VIATRA Query based engine
+ * Copyright (c) 2004-2008 Akos Horvath, Gergely Varro Zoltan Ujhelyi and Daniel Varro
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
  package org.eclipse.viatra.query.runtime.localsearch.plan;

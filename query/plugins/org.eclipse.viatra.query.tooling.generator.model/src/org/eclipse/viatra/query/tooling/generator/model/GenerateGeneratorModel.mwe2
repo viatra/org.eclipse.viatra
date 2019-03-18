@@ -1,12 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *   Zoltan Ujhelyi - initial API and implementation
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 module org.eclipse.viatra.query.tooling.generator.model.GeneratorModel
 
@@ -46,6 +44,16 @@ Workflow {
             //pathTestProject = "../../tests/${projectName}.tests"
             projectNameRt = projectName
             projectNameUi = "${projectName}.ui"
+            fileHeader = "/*******************************************************************************
+ * Copyright (c) 2010-2018, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * This file was generated from EMFPatternLanguage.xtext
+ *******************************************************************************/"
             language = {
                 uri = grammarURI
                 fileExtensions = file.extensions

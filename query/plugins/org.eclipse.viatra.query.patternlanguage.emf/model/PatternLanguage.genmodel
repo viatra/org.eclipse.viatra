@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.query.patternlanguage.emf/emf-gen"
-    editDirectory="" editorDirectory="" modelPluginID="org.eclipse.viatra.query.patternlanguage.emf"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2010-2018, Zoltan Ujhelyi, Istvan Rath, Daniel Varro, IncQuery Labs Ltd.&#xA;This program and the accompanying materials are made available under the&#xA;terms of the Eclipse Public License v. 2.0 which is available at&#xA;http://www.eclipse.org/legal/epl-v20.html.&#xA; * &#xA;SPDX-License-Identifier: EPL-2.0"
+    modelDirectory="/org.eclipse.viatra.query.patternlanguage.emf/emf-gen" editDirectory=""
+    editorDirectory="" modelPluginID="org.eclipse.viatra.query.patternlanguage.emf"
     forceOverwrite="true" modelName="PatternLanguage" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     testsDirectory="" importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0"
     copyrightFields="false" editPluginID="org.eclipse.viatra.query.patternlanguage.emf.edit"
@@ -180,6 +181,7 @@
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//NumberValue">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference PatternLanguage.ecore#//NumberValue/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute PatternLanguage.ecore#//NumberValue/negative"/>
       <genOperations ecoreOperation="PatternLanguage.ecore#//NumberValue/toString" />
     </genClasses>
     <genClasses ecoreClass="PatternLanguage.ecore#//BoolValue">

@@ -1,13 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2010-2018, Marton Bur, Zoltan Ujhelyi, Akos Horvath, Istvan Rath and Daniel Varro and IncQuery Labs Ltd.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *   Marton Bur - initial API and implementation
- *   Zoltan Ujhelyi - restructuring of debugger
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement;
 
