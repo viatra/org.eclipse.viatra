@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.viatra.query.patternlanguage.emf" version="2">
+<component id="org.eclipse.viatra.query.patternlanguage.emf.ui" version="2">
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternLanguageJvmModelAssociator">
-        <filter comment="Internal API update" id="305324134">
+        <filter comment="Internal API update" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.PatternLanguageJvmModelAssociator"/>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf_2.2.0"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.ui_2.1.0"/>
             </message_arguments>
         </filter>
     </resource>

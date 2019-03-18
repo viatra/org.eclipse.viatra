@@ -9,6 +9,6 @@ Require-Bundle: org.junit,
  org.eclipse.xtext.xbase.lib;bundle-version="[2.16.0,3.0.0)",
  org.eclipse.xtend.lib;bundle-version="[2.16.0,3.0.0)",
  org.eclipse.xtend.lib.macro;bundle-version="[2.16.0,3.0.0)",
- org.eclipse.viatra.examples.cps.model;bundle-version="[2.0.0,2.2.0)"
+ org.eclipse.viatra.examples.cps.model;bundle-version="[2.0.0,2.3.0)"
 Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.metamodel.vql.generator.test
 
