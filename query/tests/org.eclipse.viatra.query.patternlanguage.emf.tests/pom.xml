@@ -43,7 +43,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho.version}</version>
 				<configuration>
 					<applicationsArgs>
 					  <args>-data ${emf.workspace.location}</args>
@@ -78,7 +77,6 @@
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
-				<version>${xtend.compiler.version}</version>
 				<executions>
 					<execution>
 						<goals>

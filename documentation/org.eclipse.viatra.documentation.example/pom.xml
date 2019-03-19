@@ -30,7 +30,6 @@
             <plugin>
                 <groupId>org.eclipse.viatra</groupId>
                 <artifactId>viatra-maven-plugin</artifactId>
-                <version>${viatra.main.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>

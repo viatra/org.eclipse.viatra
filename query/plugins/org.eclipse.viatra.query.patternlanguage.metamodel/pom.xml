@@ -19,7 +19,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.5</version>
 				<executions>
 					<execution>
 						<phase>clean</phase>
@@ -66,7 +65,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho.version}</version>
 				<configuration>
                      <applicationsArgs>
                         <applicationsArg>-data ${project.basedir}/..</applicationsArg>
@@ -103,7 +101,6 @@
 			<plugin>
                 <groupId>org.eclipse.viatra</groupId>
                 <artifactId>viatra-maven-plugin</artifactId>
-                <version>${viatra.main.version}</version>
                 <executions>
                     <execution>
                         <goals>

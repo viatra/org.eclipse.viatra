@@ -23,7 +23,6 @@
            <plugin>
                <groupId>org.eclipse.tycho</groupId>
                <artifactId>tycho-versions-plugin</artifactId>
-               <version>${tycho.version}</version>
                <configuration>
                  <artifacts>${project.artifactId}</artifacts>
                  <properties>viatra.incubation.version</properties>

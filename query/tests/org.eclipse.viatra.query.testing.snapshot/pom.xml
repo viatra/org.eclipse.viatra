@@ -19,7 +19,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.5</version>
 				<executions>
 					<execution>
 						<phase>clean</phase>
@@ -48,7 +47,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho.version}</version>
 				<configuration>
                     <applicationsArgs>
                         <applicationsArg>-data ${emf.workspace.location}</applicationsArg>
