@@ -310,7 +310,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
             if (grammarElement instanceof TerminalRule) {
                 val rule = grammarElement
                 if (rule.name == grammar.WSRule.name) {
-                return node.nextSibling.extractComment(defaultComment)
+                    return node.previousSibling.extractComment(defaultComment)
                 } else if (rule.name == grammar.getML_COMMENTRule.name) {
                     val multiLineCommentText = node.text.escape
                     return multiLineCommentText
