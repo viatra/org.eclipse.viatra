@@ -11,7 +11,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests
 
 import org.junit.Ignore
 
-@Ignore
+@Ignore("If this case is not here, Xtext generates an example test file with inconsistent contents.")
 class EMFPatternLanguageParsingTest {
 	
 }
