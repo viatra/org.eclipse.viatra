@@ -31,8 +31,6 @@
 		<!-- Maven deploy related properties -->
 		<viatra.deploy.release>https://repo.eclipse.org/content/repositories/viatra2-releases/</viatra.deploy.release>
 		<viatra.deploy.snapshot>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</viatra.deploy.snapshot>
-
-		<license.aggregate>true</license.aggregate>
 	</properties>
 	<build>
 		<plugins>
