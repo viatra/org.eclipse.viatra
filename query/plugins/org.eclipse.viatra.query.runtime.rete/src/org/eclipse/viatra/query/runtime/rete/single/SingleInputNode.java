@@ -19,10 +19,10 @@ import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.Tunnel;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -53,9 +53,9 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
      */
     protected Mailbox instantiateMailbox() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialMailbox(this, this.reteContainer);
+            return new TimelyMailbox(this, this.reteContainer);
         } else {            
-            return new ShapeshifterMailbox(this, this.reteContainer);
+            return new BehaviorChangingMailbox(this, this.reteContainer);
         }
     }
     
@@ -100,7 +100,7 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
     /**
      * To be called by derived classes and ReteContainer.
      */
-    public void propagatePullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void propagatePullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         if (parent != null) {
             parent.pullIntoWithTimestamp(collector, flush);
         }

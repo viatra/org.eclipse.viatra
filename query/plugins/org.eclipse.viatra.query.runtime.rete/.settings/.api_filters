@@ -16,22 +16,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer">
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer">
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.network.CommunicationGroup">
         <filter id="305324134">
             <message_arguments>
@@ -104,22 +88,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode">
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode">
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/ColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode">
         <filter comment="This is internal API. Change was introduced by DDF. " id="338792546">
             <message_arguments>
@@ -180,14 +148,14 @@
             <message_arguments>
                 <message_argument value="1.6"/>
                 <message_argument value="2.2"/>
-                <message_argument value="propagate(Tuple, AggregateResult, AggregateResult, DifferentialTimestamp)"/>
+                <message_argument value="propagate(Tuple, AggregateResult, AggregateResult, Timestamp)"/>
             </message_arguments>
         </filter>
         <filter id="1141899266">
             <message_arguments>
                 <message_argument value="1.6"/>
                 <message_argument value="2.2"/>
-                <message_argument value="updateDefault(Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="updateDefault(Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -288,18 +256,14 @@
                 <message_argument value="update(Direction, Tuple)"/>
             </message_arguments>
         </filter>
-        <filter id="1143996420">
-            <message_arguments>
-                <message_argument value="createDefaultLogic()"/>
-            </message_arguments>
-        </filter>
-        <filter id="1143996420">
-            <message_arguments>
-                <message_argument value="createRecursiveTimelyLogic()"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/index/DualInputNode.java" type="org.eclipse.viatra.query.runtime.rete.index.DualInputNode">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode"/>
+                <message_argument value="indexerGroupCache"/>
+            </message_arguments>
+        </filter>
         <filter id="336658481">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode"/>
@@ -309,13 +273,13 @@
         <filter id="336695337">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode"/>
-                <message_argument value="createDefaultLogic()"/>
+                <message_argument value="createTimelessLogic()"/>
             </message_arguments>
         </filter>
         <filter id="336695337">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode"/>
-                <message_argument value="createRecursiveTimelyLogic()"/>
+                <message_argument value="createTimelyLogic()"/>
             </message_arguments>
         </filter>
         <filter id="338792546">
@@ -367,7 +331,7 @@
         <filter id="403804204">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerListener"/>
-                <message_argument value="notifyIndexerUpdate(Direction, Tuple, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="notifyIndexerUpdate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
             </message_arguments>
         </filter>
         <filter id="405901410">
@@ -378,7 +342,7 @@
         </filter>
         <filter id="1211105284">
             <message_arguments>
-                <message_argument value="notifyIndexerUpdate(Direction, Tuple, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="notifyIndexerUpdate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -392,7 +356,7 @@
         <filter id="336695337">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory"/>
-                <message_argument value="update(Direction, Tuple, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="update(Direction, Tuple, Tuple, boolean, Timestamp)"/>
             </message_arguments>
         </filter>
         <filter id="338792546">
@@ -415,7 +379,7 @@
         </filter>
         <filter id="1143996420">
             <message_arguments>
-                <message_argument value="update(Direction, Tuple, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="update(Direction, Tuple, Tuple, boolean, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -459,7 +423,7 @@
         <filter id="336695337">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer"/>
-                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
         <filter id="338792546">
@@ -478,7 +442,7 @@
             <message_arguments>
                 <message_argument value="1.7"/>
                 <message_argument value="2.2"/>
-                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -491,7 +455,7 @@
         </filter>
         <filter id="1143996420">
             <message_arguments>
-                <message_argument value="propagate(Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="propagate(Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -527,7 +491,7 @@
         </filter>
         <filter id="1143996420">
             <message_arguments>
-                <message_argument value="propagate(Direction, Tuple, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="propagate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
             </message_arguments>
         </filter>
         <filter id="1143996420">
@@ -678,7 +642,7 @@
         <filter id="403804204">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver"/>
-                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean)"/>
             </message_arguments>
         </filter>
         <filter id="405901410">
@@ -695,7 +659,7 @@
         </filter>
         <filter id="1211105284">
             <message_arguments>
-                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean, DifferentialTimestamp)"/>
+                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -715,7 +679,7 @@
         </filter>
         <filter id="1211105284">
             <message_arguments>
-                <message_argument value="update(Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -806,13 +770,21 @@
         <filter id="403804204">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Supplier"/>
-                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,DifferentialTimestamp&gt;, boolean)"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
             </message_arguments>
         </filter>
         <filter id="405901410">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Supplier"/>
                 <message_argument value="pullInto(Collection&lt;Tuple&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/Tunnel.java" type="org.eclipse.viatra.query.runtime.rete.network.Tunnel">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="Receiver"/>
+                <message_argument value="Tunnel"/>
             </message_arguments>
         </filter>
     </resource>
@@ -834,24 +806,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/communication/def/RecursiveCommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.communication.def.RecursiveCommunicationGroup">
-        <filter id="1108344834">
-            <message_arguments>
-                <message_argument value="1.6"/>
-                <message_argument value="2.2"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.def.RecursiveCommunicationGroup"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/communication/def/SingletonCommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.communication.def.SingletonCommunicationGroup">
-        <filter id="1108344834">
-            <message_arguments>
-                <message_argument value="1.6"/>
-                <message_argument value="2.2"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.def.SingletonCommunicationGroup"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/mailbox/Mailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox">
         <filter id="403804204">
             <message_arguments>
@@ -862,7 +816,7 @@
         <filter id="403804204">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox"/>
-                <message_argument value="postMessage(Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="postMessage(Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
         <filter id="405901410">
@@ -896,7 +850,7 @@
         </filter>
         <filter id="1211105284">
             <message_arguments>
-                <message_argument value="postMessage(Direction, Tuple, DifferentialTimestamp)"/>
+                <message_argument value="postMessage(Direction, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -944,6 +898,25 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.single.CallbackNode"/>
                 <message_argument value="update(Direction, Tuple)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/DefaultProductionNode.java" type="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode">
+        <filter id="337682486">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode"/>
+            </message_arguments>
+        </filter>
+        <filter id="388100214">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode"/>
+                <message_argument value="posMapping"/>
+            </message_arguments>
+        </filter>
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="UniquenessEnforcerNode"/>
+                <message_argument value="DefaultProductionNode"/>
             </message_arguments>
         </filter>
     </resource>
@@ -1009,7 +982,15 @@
         </filter>
         <filter id="1143996420">
             <message_arguments>
-                <message_argument value="propagatePullIntoWithTimestamp(Map&lt;Tuple,DifferentialTimestamp&gt;, boolean)"/>
+                <message_argument value="propagatePullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TimelyProductionNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TimelyProductionNode">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="TimelyUniquenessEnforcerNode"/>
+                <message_argument value="TimelyProductionNode"/>
             </message_arguments>
         </filter>
     </resource>
@@ -1058,6 +1039,56 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransparentNode"/>
                 <message_argument value="update(Direction, Tuple)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/UniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="getCurrentGroup()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="getIdentityIndexer()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="getMemory()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="getNullIndexer()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="pullInto(Collection&lt;Tuple&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="setCurrentGroup(CommunicationGroup)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="update(Direction, Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="update(Direction, Tuple, boolean)"/>
             </message_arguments>
         </filter>
     </resource>

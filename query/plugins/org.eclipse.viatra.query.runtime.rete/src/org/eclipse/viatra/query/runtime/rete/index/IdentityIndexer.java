@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * Defines an abstract trivial indexer that identically projects the contents of some stateful node, and can therefore
@@ -69,7 +69,7 @@ public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
     }
     
     @Override
-    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement, Timestamp timestamp) {
         listener.notifyIndexerUpdate(direction, updateElement, updateElement, true, timestamp);
     }
 

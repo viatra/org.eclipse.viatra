@@ -56,17 +56,17 @@ import org.eclipse.viatra.query.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TransparentRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.UniquenessEnforcerRecipe;
+import org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode;
 import org.eclipse.viatra.query.runtime.rete.single.DiscriminatorBucketNode;
 import org.eclipse.viatra.query.runtime.rete.single.DiscriminatorDispatcherNode;
 import org.eclipse.viatra.query.runtime.rete.single.EqualityFilterNode;
 import org.eclipse.viatra.query.runtime.rete.single.InequalityFilterNode;
+import org.eclipse.viatra.query.runtime.rete.single.TimelyProductionNode;
+import org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra.query.runtime.rete.single.TransparentNode;
 import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
-import org.eclipse.viatra.query.runtime.rete.single.ddf.DifferentialProductionNode;
-import org.eclipse.viatra.query.runtime.rete.single.ddf.DifferentialUniquenessEnforcerNode;
-import org.eclipse.viatra.query.runtime.rete.single.def.DefaultProductionNode;
-import org.eclipse.viatra.query.runtime.rete.single.def.DefaultUniquenessEnforcerNode;
+import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -235,7 +235,7 @@ class NodeFactory {
 
     private Supplier instantiateNode(ReteContainer reteContainer, ProductionRecipe recipe) {
         if (reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialProductionNode(reteContainer, toStringIndexMap(recipe.getMappedIndices()));
+            return new TimelyProductionNode(reteContainer, toStringIndexMap(recipe.getMappedIndices()));
         } else if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
             TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
             TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
@@ -250,15 +250,15 @@ class NodeFactory {
 
     private Supplier instantiateNode(ReteContainer reteContainer, UniquenessEnforcerRecipe recipe) {
         if (reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialUniquenessEnforcerNode(reteContainer, recipe.getArity());   
+            return new TimelyUniquenessEnforcerNode(reteContainer, recipe.getArity());   
         } else if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
             TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
             TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
             IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo().getPosetComparator();
-            return new DefaultUniquenessEnforcerNode(reteContainer, recipe.getArity(), recipe.isDeleteRederiveEvaluation(),
+            return new UniquenessEnforcerNode(reteContainer, recipe.getArity(), recipe.isDeleteRederiveEvaluation(),
                     coreMask, posetMask, posetComparator);
         } else {
-            return new DefaultUniquenessEnforcerNode(reteContainer, recipe.getArity(), recipe.isDeleteRederiveEvaluation());
+            return new UniquenessEnforcerNode(reteContainer, recipe.getArity(), recipe.isDeleteRederiveEvaluation());
         }
     }
 

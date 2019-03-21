@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * Propagates all substitutions arriving at the PRIMARY slot if and only if (a matching substitution on the SECONDARY is
@@ -57,10 +57,10 @@ public class ExistenceNode extends DualInputNode {
         super.networkStructureChanged();
     }
 
-    private final NetworkStructureChangeSensitiveLogic DEFAULT = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
             throw new UnsupportedOperationException();
         }
 
@@ -85,9 +85,9 @@ public class ExistenceNode extends DualInputNode {
 
         @Override
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
-                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                final Tuple signature, final boolean change, final Timestamp timestamp) {
             // in the default case, all timestamps must be zero
-            assert timestamp == DifferentialTimestamp.ZERO;
+            assert timestamp == Timestamp.ZERO;
 
             switch (side) {
             case PRIMARY:
@@ -117,10 +117,10 @@ public class ExistenceNode extends DualInputNode {
         }
     };
 
-    private final NetworkStructureChangeSensitiveLogic RECURSIVE_TIMELY = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
             if (primarySlot == null || secondarySlot == null) {
                 return;
             }
@@ -130,8 +130,8 @@ public class ExistenceNode extends DualInputNode {
 
             for (final Tuple signature : primarySlot.getSignatures()) {
                 // primaries can not be null due to the contract of IterableIndex.getSignatures()
-                final Map<Tuple, DifferentialTimestamp> primaries = getWithTimestamp(signature, primarySlot);
-                final Map<Tuple, DifferentialTimestamp> opposites = getWithTimestamp(signature, secondarySlot);
+                final Map<Tuple, Timestamp> primaries = getWithTimestamp(signature, primarySlot);
+                final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, secondarySlot);
                 if ((opposites != null) ^ negative) {
                     for (final Tuple primary : primaries.keySet()) {
                         collector.put(primary, primaries.get(primary));
@@ -142,14 +142,14 @@ public class ExistenceNode extends DualInputNode {
 
         @Override
         public void pullInto(final Collection<Tuple> collector, final boolean flush) {
-            ExistenceNode.this.DEFAULT.pullInto(collector, flush);
+            ExistenceNode.this.TIMELESS.pullInto(collector, flush);
         }
 
         @Override
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
-                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                final Tuple signature, final boolean change, final Timestamp timestamp) {
             final Indexer oppositeIndexer = getSlot(side.opposite());
-            final Map<Tuple, DifferentialTimestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
+            final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
 
             switch (side) {
             case PRIMARY:
@@ -180,13 +180,13 @@ public class ExistenceNode extends DualInputNode {
     };
 
     @Override
-    protected NetworkStructureChangeSensitiveLogic createDefaultLogic() {
-        return this.DEFAULT;
+    protected NetworkStructureChangeSensitiveLogic createTimelessLogic() {
+        return this.TIMELESS;
     }
 
     @Override
-    protected NetworkStructureChangeSensitiveLogic createRecursiveTimelyLogic() {
-        return this.RECURSIVE_TIMELY;
+    protected NetworkStructureChangeSensitiveLogic createTimelyLogic() {
+        return this.TIMELY;
     }
 
 }

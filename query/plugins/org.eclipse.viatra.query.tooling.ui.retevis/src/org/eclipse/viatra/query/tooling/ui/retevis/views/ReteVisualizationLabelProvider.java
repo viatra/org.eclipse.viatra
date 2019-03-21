@@ -23,7 +23,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.Mask;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
-import org.eclipse.viatra.query.runtime.rete.single.def.DefaultUniquenessEnforcerNode;
+import org.eclipse.viatra.query.runtime.rete.single.AbstractUniquenessEnforcerNode;
 
 public class ReteVisualizationLabelProvider extends ZestLabelProvider {
 
@@ -53,8 +53,8 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider {
                 if (node instanceof ExternalInputEnumeratorNode) {
                     ExternalInputEnumeratorNode input = (ExternalInputEnumeratorNode) node;
                     text.append(formatSize(input.getPulledContents().size()));
-                } else if (node instanceof DefaultUniquenessEnforcerNode) {
-                    DefaultUniquenessEnforcerNode uniquenessEnforcerNode = (DefaultUniquenessEnforcerNode) node;
+                } else if (node instanceof AbstractUniquenessEnforcerNode) {
+                    AbstractUniquenessEnforcerNode uniquenessEnforcerNode = (AbstractUniquenessEnforcerNode) node;
                     text.append(formatSize(uniquenessEnforcerNode.getMemory().size()));
                 } else if (node instanceof IndexerWithMemory) {
                     IndexerWithMemory indexerWithMemory = (IndexerWithMemory) node;

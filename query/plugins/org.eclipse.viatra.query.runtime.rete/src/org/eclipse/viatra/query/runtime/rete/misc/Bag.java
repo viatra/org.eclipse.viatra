@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * @author Gabor Bergmann
@@ -33,7 +33,7 @@ public class Bag extends SimpleReceiver {
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
         if (direction == Direction.INSERT)
             contents.add(updateElement);
         else

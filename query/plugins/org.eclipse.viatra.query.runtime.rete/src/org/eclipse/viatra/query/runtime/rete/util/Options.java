@@ -14,7 +14,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.rete.construction.basiclinear.BasicLinearLayout;
 import org.eclipse.viatra.query.runtime.rete.construction.quasitree.QuasiTreeLayout;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialCommunicationGroup;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyCommunicationGroup;
 
 /**
  * Feature switches.
@@ -61,7 +61,7 @@ public class Options {
     public static final boolean MONITOR_VIOLATION_OF_RETE_NODEGROUP_TOPOLOGICAL_SORTING = false;
     
     /**
-     * Enable for internal debugging of message delivery in {@link DifferentialCommunicationGroup}s;
+     * Enable for internal debugging of message delivery in {@link TimelyCommunicationGroup}s;
      * catches cases when there is a violation of increasing timestamps during message delivery within a group.  
      * @since 2.2
      */

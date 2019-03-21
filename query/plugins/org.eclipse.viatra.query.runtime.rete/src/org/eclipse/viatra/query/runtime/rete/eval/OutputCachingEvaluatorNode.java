@@ -12,14 +12,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.Pair;
-import org.eclipse.viatra.query.runtime.matchers.util.TimestampAwareMemory;
+import org.eclipse.viatra.query.runtime.matchers.util.TimelyMemory;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * An evaluator node that caches the evaluation result. This node is also capable of caching the timestamps associated
@@ -38,13 +39,13 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
     Map<Tuple, Tuple> outputCache;
 
     /**
-     * Maps input tuples to the associated timestamp. It is wrong to map evaluation result to timestamps because the
+     * Maps input tuples to the associated timestamps. It is wrong to map evaluation result to timestamps because the
      * different input tuples may yield the same evaluation result. This field is null as long as this node is in a
      * non-recursive group.
      * 
      * @since 2.2
      */
-    TimestampAwareMemory<DifferentialTimestamp> timestampMemory;
+    TimelyMemory<Timestamp> timestampMemory;
 
     /**
      * @since 1.5
@@ -69,7 +70,7 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
             this.timestampMemory.clear();
         }
     }
-    
+
     /**
      * @since 2.2
      */
@@ -77,26 +78,26 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
         if (this.reteContainer.isDifferentialDataFlowEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
             if (this.timestampMemory == null) {
-                this.timestampMemory = new TimestampAwareMemory<DifferentialTimestamp>();
+                this.timestampMemory = new TimelyMemory<Timestamp>();
             }
             return createRecursiveTimelyLogic();
         } else {
             return createDefaultLogic();
         }
     }
-    
+
     /**
      * @since 2.2
      */
     protected NetworkStructureChangeSensitiveLogic createDefaultLogic() {
-        return this.DEFAULT;
+        return this.TIMELESS;
     }
 
     /**
      * @since 2.2
      */
     protected NetworkStructureChangeSensitiveLogic createRecursiveTimelyLogic() {
-        return this.RECURSIVE_TIMELY;
+        return this.TIMELY;
     }
 
     @Override
@@ -105,12 +106,12 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         this.logic.pullIntoWithTimestamp(collector, flush);
     }
 
     @Override
-    public void update(final Direction direction, final Tuple input, final DifferentialTimestamp timestamp) {
+    public void update(final Direction direction, final Tuple input, final Timestamp timestamp) {
         this.logic.update(direction, input, timestamp);
     }
 
@@ -119,20 +120,18 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
      */
     protected static abstract class NetworkStructureChangeSensitiveLogic {
 
-        public abstract void update(final Direction direction, final Tuple input,
-                final DifferentialTimestamp timestamp);
+        public abstract void update(final Direction direction, final Tuple input, final Timestamp timestamp);
 
         public abstract void pullInto(final Collection<Tuple> collector, final boolean flush);
 
-        public abstract void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector,
-                final boolean flush);
+        public abstract void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush);
 
     }
 
-    private final NetworkStructureChangeSensitiveLogic DEFAULT = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
             throw new UnsupportedOperationException();
         }
 
@@ -144,7 +143,7 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
         }
 
         @Override
-        public void update(final Direction direction, final Tuple input, final DifferentialTimestamp timestamp) {
+        public void update(final Direction direction, final Tuple input, final Timestamp timestamp) {
             if (direction == Direction.INSERT) {
                 final Tuple output = core.performEvaluation(input);
                 if (output != null) {
@@ -165,53 +164,65 @@ public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements
         }
     };
 
-    private final NetworkStructureChangeSensitiveLogic RECURSIVE_TIMELY = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
-            for (final Entry<Tuple, DifferentialTimestamp> entry : timestampMemory.asMap().entrySet()) {
-                // we need to report the smallest timestamp per output
-                // it can happen though that we get the same result from different inputs
+        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+            for (final Entry<Tuple, Timestamp> entry : timestampMemory.asMap().entrySet()) {
                 final Tuple input = entry.getKey();
                 final Tuple output = outputCache.get(input);
-                final DifferentialTimestamp inputTimestamp = entry.getValue();
-                final DifferentialTimestamp storedTimestamp = collector.get(output);
-                if (storedTimestamp == null || inputTimestamp.compareTo(storedTimestamp) < 0) {
-                    collector.put(output, inputTimestamp);
+                if (output != NORESULT) {
+                    final Timestamp timestamp = entry.getValue();
+                    collector.put(output, timestamp);
                 }
             }
         }
 
         @Override
         public void pullInto(final Collection<Tuple> collector, final boolean flush) {
-            DEFAULT.pullInto(collector, flush);
+            TIMELESS.pullInto(collector, flush);
         }
 
         @Override
-        public void update(final Direction direction, final Tuple input, final DifferentialTimestamp timestamp) {
+        public void update(final Direction direction, final Tuple input, final Timestamp timestamp) {
             if (direction == Direction.INSERT) {
                 Tuple output = outputCache.get(input);
                 if (output == null) {
                     output = core.performEvaluation(input);
-                }
-                if (output != null) {
-                    timestampMemory.put(input, timestamp);
+                    if (output == null) {
+                        // the evaluation result is really null
+                        output = NORESULT;
+                    }
                     outputCache.put(input, output);
+                }
+
+                timestampMemory.put(input, timestamp);
+
+                if (output != NORESULT) {
                     propagateUpdate(direction, output, timestamp);
                 }
             } else {
-                final Tuple result = outputCache.get(input);
-                if (result != null) {
-                    // may be null if no result was yielded
-                    final Pair<DifferentialTimestamp, DifferentialTimestamp> pair = timestampMemory.remove(input,
-                            timestamp);
-                    if (pair.second == null) {
-                        outputCache.remove(input);
-                    }
-                    propagateUpdate(direction, result, timestamp);
+                final Tuple output = outputCache.get(input);
+                final TimestampReplacement<Timestamp> pair = timestampMemory.remove(input, timestamp);
+                if (pair.newValue == null) {
+                    outputCache.remove(input);
+                }
+                if (output != NORESULT) {
+                    propagateUpdate(direction, output, timestamp);
                 }
             }
         }
     };
+
+    /**
+     * This field is used to represent the "null" evaluation result. This is an optimization used in the timely case
+     * where the same tuple may be inserted multiple times with different timestamps. This way, we can also cache if
+     * something evaluated to null, thus avoiding the need to re-run a potentially expensive evaluation.
+     */
+    private static final Tuple NORESULT = Tuples.staticArityFlatTupleOf(NoResult.INSTANCE);
+
+    private enum NoResult {
+        INSTANCE
+    }
 
 }

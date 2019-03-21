@@ -28,9 +28,9 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialCommunicationTracker;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
-import org.eclipse.viatra.query.runtime.rete.network.communication.def.DefaultCommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timeless.TimelessCommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyCommunicationTracker;
 import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedCommand;
 import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedConnectCommand;
 import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedDisconnectCommand;
@@ -87,9 +87,9 @@ public final class ReteContainer {
         this.executingDelayedCommands = false;
         
         if (this.isDifferentialDataFlowEvaluation()) {
-            this.tracker = new DifferentialCommunicationTracker();
+            this.tracker = new TimelyCommunicationTracker();
         } else {
-            this.tracker = new DefaultCommunicationTracker();
+            this.tracker = new TimelessCommunicationTracker();
         }
         
         this.nodesById = CollectionsFactory.createMap();
@@ -397,11 +397,11 @@ public final class ReteContainer {
     /**
      * @since 2.2
      */
-    public Map<Tuple, DifferentialTimestamp> pullContentsWithTimestamp(final Supplier supplier, final boolean flush) {
+    public Map<Tuple, Timestamp> pullContentsWithTimestamp(final Supplier supplier, final boolean flush) {
         if (flush) {            
             flushUpdates();
         }
-        final Map<Tuple, DifferentialTimestamp> collector = CollectionsFactory.createMap();
+        final Map<Tuple, Timestamp> collector = CollectionsFactory.createMap();
         supplier.pullIntoWithTimestamp(collector, flush);
         return collector;
     }
@@ -423,11 +423,11 @@ public final class ReteContainer {
      * Retrieves the timestamp-aware contents of a SingleInputNode's parentage.
      * @since 2.2
      */
-    public Map<Tuple, DifferentialTimestamp> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier, final boolean flush) {
+    public Map<Tuple, Timestamp> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier, final boolean flush) {
         if (flush) {            
             flushUpdates();
         }
-        final Map<Tuple, DifferentialTimestamp> collector = new HashMap<Tuple, DifferentialTimestamp>();
+        final Map<Tuple, Timestamp> collector = new HashMap<Tuple, Timestamp>();
         supplier.propagatePullIntoWithTimestamp(collector, flush);
         return collector;
     }
@@ -510,7 +510,7 @@ public final class ReteContainer {
 
             // now we have a message to deliver
             // NOTE: this method is not compatible with differential dataflow
-            message.receiver.update(message.direction, message.updateElement, DifferentialTimestamp.ZERO);
+            message.receiver.update(message.direction, message.updateElement, Timestamp.ZERO);
         }
     }
 

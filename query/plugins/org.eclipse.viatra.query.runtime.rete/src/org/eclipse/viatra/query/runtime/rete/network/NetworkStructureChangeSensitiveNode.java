@@ -11,21 +11,19 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
 
 /**
- * {@link Node}s implementing this interface are sensitive to changes in the 
- * dependency graph maintained by the {@link CommunicationTracker}.
- * The {@link CommunicationTracker} notifies these nodes whenever the 
- * SCC of this node is affected by changes to the dependency graph. 
- * Depending on whether this node is contained in a recursive group or not, 
- * it may behave differently, and the {@link NetworkStructureChangeSensitiveNode#networkStructureChanged()} method 
- * can be used to perform changes in behavior.
+ * {@link Node}s implementing this interface are sensitive to changes in the dependency graph maintained by the
+ * {@link CommunicationTracker}. The {@link CommunicationTracker} notifies these nodes whenever the SCC of this node is
+ * affected by changes to the dependency graph. Depending on whether this node is contained in a recursive group or not,
+ * it may behave differently, and the {@link NetworkStructureChangeSensitiveNode#networkStructureChanged()} method can
+ * be used to perform changes in behavior.
  * 
  * @author Tamas Szabo
  * @since 2.2
  */
 public interface NetworkStructureChangeSensitiveNode extends Node {
-    
+
     /**
-     * At the time of the invocation, the dependency graph has already been updated.  
+     * At the time of the invocation, the dependency graph has already been updated.
      */
     public void networkStructureChanged();
 

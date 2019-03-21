@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -78,7 +78,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         }
         projection.attachListener(new DefaultIndexerListener(this) {
             @Override
-            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change, DifferentialTimestamp timestamp) {
+            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change, Timestamp timestamp) {
                 aggregateUpdate(direction, updateElement, signature, change);
             }
         });
@@ -134,10 +134,10 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     }
     
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         // use all zero timestamps because this node cannot be used in recursive groups anyway
         for (final Entry<Tuple, Object> aggregateEntry : mainAggregates.entrySet()) {
-            collector.put(packResult(aggregateEntry.getKey(), aggregateEntry.getValue()), DifferentialTimestamp.ZERO);
+            collector.put(packResult(aggregateEntry.getKey(), aggregateEntry.getValue()), Timestamp.ZERO);
         }
     }
 
@@ -162,9 +162,9 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         Tuple oldTuple = packResult(signature, safeOldAggregate);
         Tuple newTuple = packResult(signature, newAggregate == null ? aggregateGroup(signature, null) : newAggregate);
         if (oldAggregate != null)
-            propagateUpdate(Direction.REVOKE, oldTuple, DifferentialTimestamp.ZERO); // direct outputs lack non-empty groups
+            propagateUpdate(Direction.REVOKE, oldTuple, Timestamp.ZERO); // direct outputs lack non-empty groups
         if (newAggregate != null)
-            propagateUpdate(Direction.INSERT, newTuple, DifferentialTimestamp.ZERO); // direct outputs lack non-empty groups
+            propagateUpdate(Direction.INSERT, newTuple, Timestamp.ZERO); // direct outputs lack non-empty groups
         if (aggregatorOuterIndexer != null)
             aggregatorOuterIndexer.propagate(signature, oldTuple, newTuple);
         if (aggregatorOuterIdentityIndexers != null)
@@ -204,8 +204,8 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         }
 
         public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple) {
-            propagate(Direction.INSERT, newTuple, signature, false, DifferentialTimestamp.ZERO);
-            propagate(Direction.REVOKE, oldTuple, signature, false, DifferentialTimestamp.ZERO);
+            propagate(Direction.INSERT, newTuple, signature, false, Timestamp.ZERO);
+            propagate(Direction.REVOKE, oldTuple, signature, false, Timestamp.ZERO);
         }
 
         @Override
@@ -252,8 +252,8 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         }
 
         public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple) {
-            propagate(Direction.INSERT, reorder(newTuple), signature, true, DifferentialTimestamp.ZERO);
-            propagate(Direction.REVOKE, reorder(oldTuple), signature, true, DifferentialTimestamp.ZERO);
+            propagate(Direction.INSERT, reorder(newTuple), signature, true, Timestamp.ZERO);
+            propagate(Direction.REVOKE, reorder(oldTuple), signature, true, Timestamp.ZERO);
         }
 
         private Tuple reorder(Tuple signatureWithResult) {

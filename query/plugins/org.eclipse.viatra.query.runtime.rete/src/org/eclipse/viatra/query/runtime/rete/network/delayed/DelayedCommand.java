@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
@@ -51,14 +51,14 @@ public abstract class DelayedCommand implements Runnable {
         final Mailbox mailbox = tracker.proxifyMailbox(this.supplier, this.receiver.getMailbox());
 
         if (this.isTimestampAware()) {
-            final Map<Tuple, DifferentialTimestamp> contents = this.container.pullContentsWithTimestamp(this.supplier, false);
-            for (final Entry<Tuple, DifferentialTimestamp> entry : contents.entrySet()) {
+            final Map<Tuple, Timestamp> contents = this.container.pullContentsWithTimestamp(this.supplier, false);
+            for (final Entry<Tuple, Timestamp> entry : contents.entrySet()) {
                 mailbox.postMessage(this.direction, entry.getKey(), entry.getValue());
             }
         } else {
             final Collection<Tuple> contents = this.container.pullContents(this.supplier, false);
             for (final Tuple tuple : contents) {
-                mailbox.postMessage(this.direction, tuple, DifferentialTimestamp.ZERO);
+                mailbox.postMessage(this.direction, tuple, Timestamp.ZERO);
             }
         }
     }

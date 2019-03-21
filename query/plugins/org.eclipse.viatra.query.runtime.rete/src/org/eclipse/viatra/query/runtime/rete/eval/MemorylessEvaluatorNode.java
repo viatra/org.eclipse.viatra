@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * @author Bergmann Gabor
@@ -45,10 +45,10 @@ public class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
     }
 
     @Override
-    public void pullIntoWithTimestamp(Map<Tuple, DifferentialTimestamp> collector, boolean flush) {
-        final Map<Tuple, DifferentialTimestamp> parentTuples = new HashMap<Tuple, DifferentialTimestamp>();
+    public void pullIntoWithTimestamp(Map<Tuple, Timestamp> collector, boolean flush) {
+        final Map<Tuple, Timestamp> parentTuples = new HashMap<Tuple, Timestamp>();
         propagatePullIntoWithTimestamp(parentTuples, flush);
-        for (final Entry<Tuple, DifferentialTimestamp> entry : parentTuples.entrySet()) {
+        for (final Entry<Tuple, Timestamp> entry : parentTuples.entrySet()) {
             final Tuple evaluated = core.performEvaluation(entry.getKey());
             if (evaluated != null) {
                 collector.put(evaluated, entry.getValue());
@@ -57,7 +57,7 @@ public class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
     }
 
     @Override
-    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp) {
+    public void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp) {
         final Tuple evaluated = core.performEvaluation(updateElement);
         if (evaluated != null) {
             propagateUpdate(direction, evaluated, timestamp);

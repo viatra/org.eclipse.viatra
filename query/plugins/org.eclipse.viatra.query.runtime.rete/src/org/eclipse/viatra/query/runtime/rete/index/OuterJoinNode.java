@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * Performs a left outer join.
@@ -51,10 +51,10 @@ public class OuterJoinNode extends DualInputNode {
         return unify(ps, defaults);
     }
 
-    private final NetworkStructureChangeSensitiveLogic DEFAULT = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
             throw new UnsupportedOperationException();
         }
 
@@ -87,7 +87,7 @@ public class OuterJoinNode extends DualInputNode {
 
         @Override
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
-                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                final Tuple signature, final boolean change, final Timestamp timestamp) {
             final Collection<Tuple> opposites = retrieveOpposites(side, signature);
             switch (side) {
             case PRIMARY:
@@ -125,10 +125,10 @@ public class OuterJoinNode extends DualInputNode {
         }
     };
 
-    private final NetworkStructureChangeSensitiveLogic RECURSIVE_TIMELY = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
             if (primarySlot == null || secondarySlot == null) {
                 return;
             }
@@ -138,11 +138,11 @@ public class OuterJoinNode extends DualInputNode {
 
             for (final Tuple signature : primarySlot.getSignatures()) {
                 // primaries can not be null due to the contract of IterableIndex.getSignatures()
-                final Map<Tuple, DifferentialTimestamp> primaries = getWithTimestamp(signature, primarySlot);
-                final Map<Tuple, DifferentialTimestamp> opposites = getWithTimestamp(signature, secondarySlot);
+                final Map<Tuple, Timestamp> primaries = getWithTimestamp(signature, primarySlot);
+                final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, secondarySlot);
                 if (opposites != null) {
                     for (final Tuple primary : primaries.keySet()) {
-                        final DifferentialTimestamp primaryTimestamp = primaries.get(primary);
+                        final Timestamp primaryTimestamp = primaries.get(primary);
                         for (final Tuple opposite : opposites.keySet()) {
                             collector.put(unify(primary, opposite),
                                     primaryTimestamp.max(opposites.get(opposite)));
@@ -158,14 +158,14 @@ public class OuterJoinNode extends DualInputNode {
 
         @Override
         public void pullInto(final Collection<Tuple> collector, final boolean flush) {
-            OuterJoinNode.this.DEFAULT.pullInto(collector, flush);
+            OuterJoinNode.this.TIMELESS.pullInto(collector, flush);
         }
 
         @Override
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
-                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                final Tuple signature, final boolean change, final Timestamp timestamp) {
             final Indexer oppositeIndexer = getSlot(side.opposite());
-            final Map<Tuple, DifferentialTimestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
+            final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
 
             switch (side) {
             case PRIMARY:
@@ -180,7 +180,7 @@ public class OuterJoinNode extends DualInputNode {
             case SECONDARY:
                 if (opposites != null) {
                     for (final Tuple opposite : opposites.keySet()) {
-                        final DifferentialTimestamp oppositeTimestamp = opposites.get(opposite);
+                        final Timestamp oppositeTimestamp = opposites.get(opposite);
                         propagateUpdate(direction, unify(opposite, updateElement), timestamp.max(oppositeTimestamp));
                         if (change) {
                             propagateUpdate(direction.opposite(), unifyWithDefaults(opposite), oppositeTimestamp);
@@ -190,7 +190,7 @@ public class OuterJoinNode extends DualInputNode {
                 break;
             case BOTH:
                 for (final Tuple opposite : opposites.keySet()) {
-                    final DifferentialTimestamp oppositeTimestamp = opposites.get(opposite);
+                    final Timestamp oppositeTimestamp = opposites.get(opposite);
                     propagateUpdate(direction, unify(updateElement, opposite), timestamp.max(oppositeTimestamp));
                     if (updateElement.equals(opposite)) {
                         continue;
@@ -206,13 +206,13 @@ public class OuterJoinNode extends DualInputNode {
     };
 
     @Override
-    protected NetworkStructureChangeSensitiveLogic createDefaultLogic() {
-        return this.DEFAULT;
+    protected NetworkStructureChangeSensitiveLogic createTimelessLogic() {
+        return this.TIMELESS;
     }
 
     @Override
-    protected NetworkStructureChangeSensitiveLogic createRecursiveTimelyLogic() {
-        return this.RECURSIVE_TIMELY;
+    protected NetworkStructureChangeSensitiveLogic createTimelyLogic() {
+        return this.TIMELY;
     }
 
 }

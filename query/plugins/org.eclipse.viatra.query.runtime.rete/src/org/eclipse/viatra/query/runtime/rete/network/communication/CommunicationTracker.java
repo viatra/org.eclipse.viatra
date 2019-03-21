@@ -30,13 +30,17 @@ import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.IndexerListener;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.IGroupable;
+import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.FallThroughMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyIndexerListenerProxy;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyMailboxProxy;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.FallThroughCapableMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
 
@@ -130,8 +134,8 @@ public abstract class CommunicationTracker {
         for (final Node node : dependencyGraph.getAllNodes()) {
             // set fall-through flags of default mailboxes
             precomputeFallThroughFlag(node);
-            // set split flag of adaptive mailboxes
-            processNode(node);
+            // perform further tracker-specific post-processing
+            postProcessNode(node);
         }
 
         // reconstruct new queue contents based on new group map
@@ -173,7 +177,7 @@ public abstract class CommunicationTracker {
         CommunicationGroup group = groupMap.get(node);
         if (node instanceof Receiver) {
             IGroupable mailbox = ((Receiver) node).getMailbox();
-            if (mailbox instanceof FallThroughMailbox) {
+            if (mailbox instanceof FallThroughCapableMailbox) {
                 Set<Node> directParents = dependencyGraph.getSourceNodes(node).distinctValues();
                 // decide between using quick&cheap fall-through, or allowing for update cancellation
                 boolean fallThrough =
@@ -230,7 +234,7 @@ public abstract class CommunicationTracker {
                     }
                 }
                 // overwrite fallthrough flag with newly computed value
-                ((FallThroughMailbox) mailbox).setFallThrough(fallThrough);
+                ((FallThroughCapableMailbox) mailbox).setFallThrough(fallThrough);
             }
         }
     }
@@ -315,8 +319,8 @@ public abstract class CommunicationTracker {
         if (sourceIndex <= targetIndex) {
             // indices obey current topological ordering
             refreshFallThroughFlag(target);
-            processNode(source);
-            processNode(target);
+            postProcessNode(source);
+            postProcessNode(target);
         } else if (sourceIndex > targetIndex && !hadOutgoingEdges) {
             // indices violate current topological ordering, but we can simply bump the target index
             final boolean wasEnqueued = targetGroup.isEnqueued;
@@ -329,8 +333,8 @@ public abstract class CommunicationTracker {
             }
 
             refreshFallThroughFlag(target);
-            processNode(source);
-            processNode(target);
+            postProcessNode(source);
+            postProcessNode(target);
         } else {
             // needs a full re-computation because of more complex change
             precomputeGroups();
@@ -392,16 +396,33 @@ public abstract class CommunicationTracker {
     private void refreshFallThroughFlag(final Node target) {
         precomputeFallThroughFlag(target);
         if (target instanceof DualInputNode) {
-            for (Node indirectTarget : dependencyGraph.getTargetNodes(target).distinctValues()) {
+            for (final Node indirectTarget : dependencyGraph.getTargetNodes(target).distinctValues()) {
                 precomputeFallThroughFlag(indirectTarget);
             }
         }
     }
 
-    protected abstract void processNode(final Node node);
+    /**
+     * This hook allows concrete tracker implementations to perform tracker-specific post processing on nodes (cf.
+     * {@link NetworkStructureChangeSensitiveNode} and {@link BehaviorChangingMailbox}). At the time of the invocation,
+     * the network topology has already been updated.
+     */
+    protected abstract void postProcessNode(final Node node);
 
+    /**
+     * Creates a proxy for the given {@link Mailbox} for the given requester {@link Node}. The proxy creation is
+     * {@link CommunicationTracker}-specific and depends on the identity of the requester. This method is primarily used
+     * to create {@link TimelyMailboxProxy}s depending on the network topology. There is no guarantee that the same
+     * proxy instance is returned when this method is called multiple times with the same arguments.
+     */
     public abstract Mailbox proxifyMailbox(final Node requester, final Mailbox original);
 
+    /**
+     * Creates a proxy for the given {@link IndexerListener} for the given requester {@link Node}. The proxy creation is
+     * {@link CommunicationTracker}-specific and depends on the identity of the requester. This method is primarily used
+     * to create {@link TimelyIndexerListenerProxy}s depending on the network topology. There is no guarantee that the
+     * same proxy instance is returned when this method is called multiple times with the same arguments.
+     */
     public abstract IndexerListener proxifyIndexerListener(final Node requester, final IndexerListener original);
 
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * Simply propagates everything. Might be used to join or fork.
@@ -29,7 +29,7 @@ public class TransparentNode extends SingleInputNode {
     }
 
     @Override
-    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp) {
+    public void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp) {
         propagateUpdate(direction, updateElement, timestamp);
 
     }
@@ -40,7 +40,7 @@ public class TransparentNode extends SingleInputNode {
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         propagatePullIntoWithTimestamp(collector, flush);
     }
     

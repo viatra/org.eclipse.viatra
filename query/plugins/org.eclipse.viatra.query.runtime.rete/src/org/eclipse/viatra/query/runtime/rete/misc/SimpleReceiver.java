@@ -16,8 +16,8 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -50,9 +50,9 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
      */
     protected Mailbox instantiateMailbox() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialMailbox(this, this.reteContainer);
+            return new TimelyMailbox(this, this.reteContainer);
         } else {
-            return new ShapeshifterMailbox(this, this.reteContainer);
+            return new BehaviorChangingMailbox(this, this.reteContainer);
         }
     }
     

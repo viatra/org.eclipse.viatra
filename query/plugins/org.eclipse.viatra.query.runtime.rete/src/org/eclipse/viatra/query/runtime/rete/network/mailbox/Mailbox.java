@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.rete.network.IGroupable;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * A mailbox is associated with every {@link Receiver}. Messages can be sent to a {@link Receiver} by posting them into
@@ -36,7 +36,7 @@ public interface Mailbox extends Clearable, IGroupable {
      *            the update element
      * @return the effect of the message posting
      */
-    public void postMessage(final Direction direction, final Tuple update, final DifferentialTimestamp timestamp);
+    public void postMessage(final Direction direction, final Tuple update, final Timestamp timestamp);
 
     /**
      * Delivers all messages according to the given selector from this mailbox. The selector can also be null. In this case, no

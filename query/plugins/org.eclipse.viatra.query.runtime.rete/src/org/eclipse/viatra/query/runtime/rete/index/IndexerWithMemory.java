@@ -11,22 +11,21 @@ package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
+import org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
-import org.eclipse.viatra.query.runtime.matchers.util.Pair;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 
 /**
  * @author Gabor Bergmann
@@ -35,7 +34,7 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMai
 public abstract class IndexerWithMemory extends StandardIndexer
         implements Receiver, NetworkStructureChangeSensitiveNode {
 
-    protected MaskedTupleMemory<DifferentialTimestamp> memory;
+    protected MaskedTupleMemory<Timestamp> memory;
 
     /**
      * @since 2.2
@@ -64,18 +63,13 @@ public abstract class IndexerWithMemory extends StandardIndexer
     @Override
     public void networkStructureChanged() {
         super.networkStructureChanged();
-        final boolean wasTimestampAware = this.memory.isTimestampAware();
+        final boolean wasTimestampAware = this.memory.isTimely();
         final boolean isTimestampAware = this.reteContainer.isDifferentialDataFlowEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this);
         if (wasTimestampAware != isTimestampAware) {
-            final MaskedTupleMemory<DifferentialTimestamp> newMemory = MaskedTupleMemory.create(mask, MemoryType.SETS,
-                    this, isTimestampAware);
-            newMemory.initializeWith(this.memory, new Function<Void, DifferentialTimestamp>() {
-                @Override
-                public DifferentialTimestamp apply(final Void in) {
-                    return DifferentialTimestamp.ZERO;
-                }
-            });
+            final MaskedTupleMemory<Timestamp> newMemory = MaskedTupleMemory.create(mask, MemoryType.SETS, this,
+                    isTimestampAware);
+            newMemory.initializeWith(this.memory, Timestamp.ZERO);
             memory.clear();
             memory = newMemory;
         }
@@ -91,9 +85,9 @@ public abstract class IndexerWithMemory extends StandardIndexer
      */
     protected Mailbox instantiateMailbox() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialMailbox(this, this.reteContainer);
+            return new TimelyMailbox(this, this.reteContainer);
         } else {
-            return new ShapeshifterMailbox(this, this.reteContainer);
+            return new BehaviorChangingMailbox(this, this.reteContainer);
         }
     }
 
@@ -105,12 +99,12 @@ public abstract class IndexerWithMemory extends StandardIndexer
     /**
      * @since 2.0
      */
-    public MaskedTupleMemory<DifferentialTimestamp> getMemory() {
+    public MaskedTupleMemory<Timestamp> getMemory() {
         return memory;
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
         this.logic.update(direction, updateElement, timestamp);
     }
 
@@ -118,7 +112,7 @@ public abstract class IndexerWithMemory extends StandardIndexer
      * Refined version of update
      */
     protected abstract void update(Direction direction, Tuple updateElement, Tuple signature, boolean change,
-            DifferentialTimestamp timestamp);
+            Timestamp timestamp);
 
     @Override
     public void appendParent(Supplier supplier) {
@@ -150,8 +144,7 @@ public abstract class IndexerWithMemory extends StandardIndexer
      */
     protected static abstract class NetworkStructureChangeSensitiveLogic {
 
-        public abstract void update(final Direction direction, final Tuple updateElement,
-                final DifferentialTimestamp timestamp);
+        public abstract void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp);
 
     }
 
@@ -161,62 +154,62 @@ public abstract class IndexerWithMemory extends StandardIndexer
     protected NetworkStructureChangeSensitiveLogic createLogic() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
-            return createTimestampAwareLogic();
+            return createTimelyLogic();
         } else {
-            return createDefaultLogic();
+            return createTimelessLogic();
         }
     }
 
     /**
      * @since 2.2
      */
-    protected NetworkStructureChangeSensitiveLogic createDefaultLogic() {
-        return this.DEFAULT;
+    protected NetworkStructureChangeSensitiveLogic createTimelessLogic() {
+        return this.TIMELESS;
     }
 
     /**
      * @since 2.2
      */
-    protected NetworkStructureChangeSensitiveLogic createTimestampAwareLogic() {
-        return this.TIMESTAMP_AWARE;
+    protected NetworkStructureChangeSensitiveLogic createTimelyLogic() {
+        return this.TIMELY;
     }
 
-    private final NetworkStructureChangeSensitiveLogic TIMESTAMP_AWARE = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+        public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
             final Tuple signature = mask.transform(updateElement);
             if (direction == Direction.INSERT) {
-                final Pair<DifferentialTimestamp, DifferentialTimestamp> pair = IndexerWithMemory.this.memory
-                        .addWithTimestamp(updateElement, signature, timestamp);
-                if (pair.first == null) {
+                final TimestampReplacement<Timestamp> pair = IndexerWithMemory.this.memory.addWithTimestamp(updateElement,
+                        signature, timestamp);
+                if (pair.oldValue == null) {
                     // first time we see this tuple
                     IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, timestamp);
-                } else if (pair.second.compareTo(pair.first) < 0) {
+                } else if (pair.newValue.compareTo(pair.oldValue) < 0) {
                     // we have a new least timestamp
-                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.first);
-                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, pair.second);
+                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.oldValue);
+                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, pair.newValue);
                 }
             } else {
-                final Pair<DifferentialTimestamp, DifferentialTimestamp> pair = IndexerWithMemory.this.memory
-                        .removeWithTimestamp(updateElement, signature, timestamp);
-                if (pair.second == null) {
+                final TimestampReplacement<Timestamp> pair = IndexerWithMemory.this.memory.removeWithTimestamp(updateElement,
+                        signature, timestamp);
+                if (pair.newValue == null) {
                     // we lost the tuple
-                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.first);
-                } else if (pair.second.compareTo(pair.first) > 0) {
+                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.oldValue);
+                } else if (pair.newValue.compareTo(pair.oldValue) > 0) {
                     // we have a new least timestamp
-                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.first);
-                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, pair.second);
+                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.oldValue);
+                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, pair.newValue);
                 }
             }
         }
 
     };
 
-    private final NetworkStructureChangeSensitiveLogic DEFAULT = new NetworkStructureChangeSensitiveLogic() {
+    private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+        public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
             final Tuple signature = mask.transform(updateElement);
             final boolean change = (direction == Direction.INSERT) ? memory.add(updateElement, signature)
                     : memory.remove(updateElement, signature);

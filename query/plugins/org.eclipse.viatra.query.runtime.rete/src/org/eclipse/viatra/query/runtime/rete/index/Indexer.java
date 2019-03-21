@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * A node that indexes incoming Tuples by their signatures as specified by a TupleMask. Notifies listeners about such
@@ -47,7 +47,7 @@ public interface Indexer extends Node {
     /**
      * @since 2.2
      */
-    default public Map<Tuple, DifferentialTimestamp> getWithTimestamp(Tuple signature) {
+    default public Map<Tuple, Timestamp> getWithTimestamp(Tuple signature) {
         throw new UnsupportedOperationException();
     }
 

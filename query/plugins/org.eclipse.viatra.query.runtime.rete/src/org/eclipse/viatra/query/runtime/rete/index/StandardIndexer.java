@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensi
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -44,7 +44,7 @@ public abstract class StandardIndexer extends BaseNode implements Indexer, Netwo
         this.proxyListeners = CollectionsFactory.createObserverList();
     }
 
-    protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change, DifferentialTimestamp timestamp) {
+    protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change, Timestamp timestamp) {
         for (IndexerListener listener : proxyListeners) {
             listener.notifyIndexerUpdate(direction, updateElement, signature, change, timestamp);
         }
@@ -78,8 +78,8 @@ public abstract class StandardIndexer extends BaseNode implements Indexer, Netwo
     public void detachListener(IndexerListener listener) {
         // obtain the proxy before unregistering the dependency because that may change SCCs
         final IndexerListener proxy = this.getCommunicationTracker().proxifyIndexerListener(this, listener);
-        assert this.originalListeners.remove(listener);
-        assert this.proxyListeners.remove(proxy);
+        this.originalListeners.remove(listener);
+        this.proxyListeners.remove(proxy);
         this.getCommunicationTracker().unregisterDependency(this, listener.getOwner());
     }
     

@@ -32,11 +32,11 @@ import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.PosetAwareMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.PosetAwareMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
 /**
@@ -182,11 +182,11 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     @Override
     protected Mailbox instantiateMailbox() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialMailbox(this, this.reteContainer);
+            return new TimelyMailbox(this, this.reteContainer);
         } else if (groupMask != null && columnMask != null && posetComparator != null) {
             return new PosetAwareMailbox(this, this.reteContainer);
         } else {
-            return new ShapeshifterMailbox(this, this.reteContainer);
+            return new BehaviorChangingMailbox(this, this.reteContainer);
         }
     }
 
@@ -212,7 +212,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     }
     
     @Override
-    public void pullIntoWithTimestamp(Map<Tuple, DifferentialTimestamp> collector, boolean flush) {
+    public void pullIntoWithTimestamp(Map<Tuple, Timestamp> collector, boolean flush) {
         // DIRECT CHILDREN NOT SUPPORTED
         throw new UnsupportedOperationException();
     }
@@ -260,23 +260,23 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     }
 
     @Override
-    public void updateWithPosetInfo(Direction direction, Tuple update, boolean monotone, DifferentialTimestamp timestamp) {
+    public void updateWithPosetInfo(Direction direction, Tuple update, boolean monotone) {
         if (this.deleteRederiveEvaluation) {
             updateWithDeleteAndRederive(direction, update, monotone);
         } else {
-            updateDefault(direction, update, timestamp);
+            updateDefault(direction, update, Timestamp.ZERO);
         }
     }
 
     @Override
-    public void update(Direction direction, Tuple update, DifferentialTimestamp timestamp) {
-        updateWithPosetInfo(direction, update, false, timestamp);
+    public void update(Direction direction, Tuple update, Timestamp timestamp) {
+        updateWithPosetInfo(direction, update, false);
     }
 
     /**
      * @since 1.6
      */
-    protected void updateDefault(Direction direction, Tuple update, DifferentialTimestamp timestamp) {
+    protected void updateDefault(Direction direction, Tuple update, Timestamp timestamp) {
         final Tuple key = groupMask.transform(update);
         final Tuple value = columnMask.transform(update);
         @SuppressWarnings("unchecked")
@@ -385,7 +385,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
      * @since 1.6
      */
     @SuppressWarnings("unchecked")
-    public void propagate(Tuple group, AggregateResult oldValue, AggregateResult newValue, DifferentialTimestamp timestamp) {
+    public void propagate(Tuple group, AggregateResult oldValue, AggregateResult newValue, Timestamp timestamp) {
         if (!Objects.equals(oldValue, newValue)) {
             Tuple oldResultTuple = tupleFromAggregateResult(group, oldValue);
             Tuple newResultTuple = tupleFromAggregateResult(group, newValue);
@@ -495,7 +495,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
             return aggregateTuple == null ? null : Collections.singleton(aggregateTuple);
         }
 
-        public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple, DifferentialTimestamp timestamp) {
+        public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple, Timestamp timestamp) {
             if (oldTuple != null)
                 propagate(Direction.REVOKE, oldTuple, signature, true, timestamp);
             if (newTuple != null)
@@ -544,7 +544,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
                 return null;
         }
 
-        public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple, DifferentialTimestamp timestamp) {
+        public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple, Timestamp timestamp) {
             if (oldTuple != null)
                 propagate(Direction.REVOKE, reorder(oldTuple), signature, true, timestamp);
             if (newTuple != null)

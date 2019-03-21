@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -20,7 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
@@ -35,37 +34,47 @@ public abstract class StandardNode extends BaseNode implements Supplier, Network
     /**
      * @since 2.2
      */
-    protected final Map<Receiver, Mailbox> childMailboxes = CollectionsFactory.createMap();
+    protected final List<Mailbox> childMailboxes = CollectionsFactory.createObserverList();
 
-    public StandardNode(ReteContainer reteContainer) {
+    public StandardNode(final ReteContainer reteContainer) {
         super(reteContainer);
     }
-    
+
     /**
      * @since 2.2
      */
-    protected void propagateUpdate(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
-        for (Mailbox childMailbox : childMailboxes.values())
-            childMailbox.postMessage(direction, updateElement, timestamp);            
+    protected void propagateUpdate(final Direction direction, final Tuple updateElement,
+            final Timestamp timestamp) {
+        for (final Mailbox childMailbox : childMailboxes) {
+            childMailbox.postMessage(direction, updateElement, timestamp);
+        }
     }
 
     @Override
-    public void appendChild(Receiver receiver) {
+    public void appendChild(final Receiver receiver) {
         children.add(receiver);
-        childMailboxes.put(receiver, this.getCommunicationTracker().proxifyMailbox(this, receiver.getMailbox()));
+        childMailboxes.add(this.getCommunicationTracker().proxifyMailbox(this, receiver.getMailbox()));
     }
 
     @Override
-    public void removeChild(Receiver receiver) {
+    public void removeChild(final Receiver receiver) {
         children.remove(receiver);
-        childMailboxes.remove(receiver);
+        Mailbox mailboxToRemove = null;
+        for (final Mailbox mailbox : childMailboxes) {
+            if (mailbox.getReceiver() == receiver) {
+                mailboxToRemove = mailbox;
+                break;
+            }
+        }
+        assert mailboxToRemove != null;
+        childMailboxes.remove(mailboxToRemove);
     }
-    
+
     @Override
     public void networkStructureChanged() {
         childMailboxes.clear();
-        for (Receiver receiver : children) {
-            childMailboxes.put(receiver, this.getCommunicationTracker().proxifyMailbox(this, receiver.getMailbox()));
+        for (final Receiver receiver : children) {
+            childMailboxes.add(this.getCommunicationTracker().proxifyMailbox(this, receiver.getMailbox()));
         }
     }
 
@@ -73,33 +82,35 @@ public abstract class StandardNode extends BaseNode implements Supplier, Network
     public Collection<Receiver> getReceivers() {
         return children;
     }
-    
+
     /**
      * @since 2.2
      */
     public Collection<Mailbox> getChildMailboxes() {
-        return this.childMailboxes.values();
+        return this.childMailboxes;
     }
-    
+
     @Override
-    public Set<Tuple> getPulledContents(boolean flush) {
-        HashSet<Tuple> results = new HashSet<Tuple>();
+    public Set<Tuple> getPulledContents(final boolean flush) {
+        final HashSet<Tuple> results = new HashSet<Tuple>();
         pullInto(results, flush);
         return results;
     }
 
     @Override
-    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
+    public ProjectionIndexer constructIndex(final TupleMask mask, final TraceInfo... traces) {
         final GenericProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);
-        for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+        for (final TraceInfo traceInfo : traces) {
+            indexer.assignTraceInfo(traceInfo);
+        }
         reteContainer.connectAndSynchronize(this, indexer);
         return indexer;
     }
-    
+
     /**
      * @since 1.6
      */
-    protected void issueError(String message, Exception ex) {
+    protected void issueError(final String message, final Exception ex) {
         if (ex == null) {
             this.reteContainer.getNetwork().getEngine().getLogger().error(message);
         } else {

@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * This node implements a simple filter. A stateless abstract check() predicate determines whether a matching is allowed
@@ -50,8 +50,8 @@ public abstract class FilterNode extends SingleInputNode {
     }
     
     @Override
-    public void pullIntoWithTimestamp(Map<Tuple, DifferentialTimestamp> collector, boolean flush) {
-        for (final Entry<Tuple, DifferentialTimestamp> entry : this.reteContainer.pullPropagatedContentsWithTimestamp(this, flush).entrySet()) {
+    public void pullIntoWithTimestamp(Map<Tuple, Timestamp> collector, boolean flush) {
+        for (final Entry<Tuple, Timestamp> entry : this.reteContainer.pullPropagatedContentsWithTimestamp(this, flush).entrySet()) {
             if (check(entry.getKey())) {
                 collector.put(entry.getKey(), entry.getValue());
             }
@@ -59,7 +59,7 @@ public abstract class FilterNode extends SingleInputNode {
     }
 
     @Override
-    public void update(final Direction direction, final Tuple updateElement, final DifferentialTimestamp timestamp) {
+    public void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp) {
         if (check(updateElement)) {
             propagateUpdate(direction, updateElement, timestamp);
         }

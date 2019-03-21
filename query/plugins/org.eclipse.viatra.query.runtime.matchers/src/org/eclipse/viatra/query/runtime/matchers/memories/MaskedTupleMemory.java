@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.matchers.memories.timely.TimelyDefaultMaskedTupleMemory;
 import org.eclipse.viatra.query.runtime.matchers.memories.timely.TimelyIdentityMaskedTupleMemory;
@@ -23,22 +22,24 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
-import org.eclipse.viatra.query.runtime.matchers.util.Pair;
 
 /**
- *         Indexes a collection of Tuples by their signature (i.e. footprint, projection) obtained according to a mask.
- *         May belong to an "owner" (for documentation / traceability purposes).
- *         
- *         <p> TODO experiment with memory-saving alternatives, 
- *          e.g. if the mask has width 1, 
- *          {@link #signatureToTuples} can be keyed by the unary values instead of tuples.
- *         
+ * Indexes a collection of Tuples by their signature (i.e. footprint, projection) obtained according to a mask.
+ * May belong to an "owner" (for documentation / traceability purposes).
+ * <p>
+ * There are timeless and timely versions of the different memories. Timely versions associate timestamps with the stored tuples. 
+ * A tuple with the same timestamp can be inserted multiple times to the timely memories. These memories can efficiently answer queries about the 
+ * least timestamp associated with a tuple, and they can also enumerate all timestamps associated with given tuple(s).  
  *         
  * @noextend This class is not intended to be subclassed by clients.
  * @author Gabor Bergmann
  * @author Tamas Szabo
  * @since 2.0
  */
+// NetworkStructureChangeSensitiveNodes have memories of type MaskedTupleMemory and they interact with that 
+// both in the timeless and the timely behavior. This is the reason why timely and timeless versions of 
+// the same methods exist on this class instead of in separate subclasses. If this would not be the case, 
+// NetworkStructureChangeSensitiveNodes would need to cast all the time depending on the mode of behavior. 
 public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>> implements Clearable  {
     
     /**
@@ -56,7 +57,7 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
      */
     public static<T extends Comparable<T>> MaskedTupleMemory<T> create(TupleMask mask, MemoryType bucketType, Object owner, boolean isTimely) {
         if (isTimely) {
-            if (!(bucketType == MemoryType.SETS)) {
+            if (bucketType != MemoryType.SETS) {
                 throw new IllegalArgumentException("Timely memories only support SETS as the bucket type!");
             }
             if (mask.isIdentity()) {
@@ -83,23 +84,20 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
     
     /**
      * Initializes the contents of this memory based on the contents of another memory. 
-     * The value provider is used to provide default timestamp values for timestamp-aware memories. 
+     * The default value is associated with each tuple in the timely memories. 
      * 
      * @since 2.2
      */
-    public void initializeWith(final MaskedTupleMemory<Timestamp> other, final Function<Void, Timestamp> valueProvider) {
-        // For performance reasons, there is no subclass of MaskedTupleMemory that would define the timestamp-aware methods. 
-        // There are several Nodes in Rete which need to work together both with timestamp-aware and non-timestamp-aware memories.
-        // They would all need to cast if we would have an intermediate subclass. 
-        throw new UnsupportedOperationException("This is only supported by timestamp-aware memory implementations!");
+    public void initializeWith(final MaskedTupleMemory<Timestamp> other, final Timestamp defaultValue) { 
+        throw new UnsupportedOperationException("This is only supported by timely memory implementations!");
     }
        
     /**
-     * Returns true of this memory is timestamp-aware, false otherwise. 
+     * Returns true of this memory is timely, false otherwise. 
      * 
      * @since 2.2
      */
-    public boolean isTimestampAware() {
+    public boolean isTimely() {
         return false;
     }
     
@@ -199,25 +197,24 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
      * @return true if this was the the last occurrence of the signature (according to the mask)
      */
     public boolean remove(Tuple tuple, Tuple signature) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by standard memory implementations!");
+        throw new UnsupportedOperationException("This is only supported by timeless memory implementations!");
     }
     
     /**
-     * Removes a tuple occurrence from the memory with the given signature and timestamp. 
+     * Removes a tuple occurrence from the memory with the given signature and timestamp. This operation is only allowed 
+     * if the tuple has been already inserted to the memory with the same timestamp before. 
      * 
      * @param tuple the tuple to be removed from the memory
      * @param signature precomputed footprint of the tuple according to the mask
      * @param timestamp the timestamp associated with the tuple
      * 
-     * @return A pair of timestamps where the first one represents the old least timestamp (before the removal)
-     * and the second one represents the new least timestamp (after the removal) associated with the tuple. 
-     * The first value can never be null, the second value may be null if the tuple is not present in the memory anymore.
+     * @return A timestamp replacement where the old value represents the old least timestamp (before the removal)
+     * and the new value represents the new least timestamp (after the removal) associated with the tuple. 
+     * The old value can never be null, the new value may be null if the tuple is not present in the memory anymore.
      * @since 2.2
      */
-    public Pair<Timestamp, Timestamp> removeWithTimestamp(Tuple tuple, Tuple signature, Timestamp timestamp) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by timestamp-aware memory implementations!");
+    public TimestampReplacement<Timestamp> removeWithTimestamp(Tuple tuple, Tuple signature, Timestamp timestamp) {
+        throw new UnsupportedOperationException("This is only supported by timely memory implementations!");
     }
 
     /**
@@ -228,24 +225,23 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
      * @return true if this was the the last occurrence of the signature (according to the mask)
      */
     public boolean remove(Tuple tuple) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by standard memory implementations!");
+        throw new UnsupportedOperationException("This is only supported by timeless memory implementations!");
     }
 
     /**
-     * Removes a tuple occurrence from the memory with the given timestamp. 
+     * Removes a tuple occurrence from the memory with the given timestamp. This operation is only allowed 
+     * if the tuple has been already inserted to the memory with the same timestamp before. 
      * 
      * @param tuple the tuple to be removed from the memory
      * @param timestamp the timestamp associated with the tuple
      * 
-     * @return A pair of timestamps where the first one represents the old least timestamp (before the removal)
-     * and the second one represents the new least timestamp (after the removal) associated with the tuple. 
-     * The first value can never be null, the second value may be null if the tuple is not present in the memory anymore.   
+     * @return A timestamp replacement where the old value represents the old least timestamp (before the removal)
+     * and the new value represents the new least timestamp (after the removal) associated with the tuple. 
+     * The old value can never be null, the new value may be null if the tuple is not present in the memory anymore.   
      * @since 2.2
      */
-    public Pair<Timestamp, Timestamp> removeWithTimestamp(Tuple tuple, Timestamp timestamp) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by timestamp-aware memory implementations!");
+    public TimestampReplacement<Timestamp> removeWithTimestamp(Tuple tuple, Timestamp timestamp) {
+        throw new UnsupportedOperationException("This is only supported by timely memory implementations!");
     }
     
     /**
@@ -257,25 +253,23 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
      * @return true if new signature encountered (according to the mask)
      */
     public boolean add(Tuple tuple, Tuple signature) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by standard memory implementations!");
+        throw new UnsupportedOperationException("This is only supported by timeless memory implementations!");
     }
 
     /**
-     * Adds a tuple occurrence to the memory with the given signature and timestamp.  
+     * Adds a tuple occurrence to the memory with the given signature and timestamp.
      * 
      * @param tuple the tuple to be added to the memory
      * @param signature precomputed footprint of the tuple according to the mask
      * @param timestamp the timestamp associated with the tuple
      * 
-     * @return A pair of timestamps where the first one represents the old least timestamp (before the addition)
-     * and the second one represents the new least timestamp (after the addition) associated with the tuple. 
-     * The first may be null if the tuple was not yet present in the memory, the second value can never be null.    
+     * @return A timestamp replacement where the old value represents the old least timestamp (before the addition)
+     * and the new value represents the new least timestamp (after the addition) associated with the tuple. 
+     * The old value may be null if the tuple was not present in the memory before, the new value can never be null.   
      * @since 2.2
      */
-    public Pair<Timestamp, Timestamp> addWithTimestamp(Tuple tuple, Tuple signature, Timestamp timestamp) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by timestamp-aware memory implementations!");
+    public TimestampReplacement<Timestamp> addWithTimestamp(Tuple tuple, Tuple signature, Timestamp timestamp) {
+        throw new UnsupportedOperationException("This is only supported by timely memory implementations!");
     }
     
     /**
@@ -286,24 +280,22 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
      * @return true if new signature encountered (according to the mask)
      */
     public boolean add(Tuple tuple) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by standard memory implementations!");
+        throw new UnsupportedOperationException("This is only supported by timeless memory implementations!");
     }
     
     /**
-     * Adds a tuple occurrence to the memory with the given timestamp.  
+     * Adds a tuple occurrence to the memory with the given timestamp. 
      * 
      * @param tuple the tuple to be added to the memory
      * @param timestamp the timestamp associated with the tuple
      * 
-     * @return A pair of timestamps where the first one represents the old least timestamp (before the addition)
-     * and the second one represents the new least timestamp (after the addition) associated with the tuple. 
-     * The first may be null if the tuple was not yet present in the memory, the second value can never be null.    
+     * @return A timestamp replacement where the old value represents the old least timestamp (before the addition)
+     * and the new value represents the new least timestamp (after the addition) associated with the tuple. 
+     * The old value may be null if the tuple was not present in the memory before, the new value can never be null.    
      * @since 2.2
      */
-    public Pair<Timestamp, Timestamp> addWithTimestamp(Tuple tuple, Timestamp timestamp) {
-        // See comment in MaskedTupleMemory.initializeWith(...)
-        throw new UnsupportedOperationException("This is only supported by timestamp-aware memory implementations!");
+    public TimestampReplacement<Timestamp> addWithTimestamp(Tuple tuple, Timestamp timestamp) {
+        throw new UnsupportedOperationException("This is only supported by timely memory implementations!");
     }
 
     protected MaskedTupleMemory(TupleMask mask, Object owner) {

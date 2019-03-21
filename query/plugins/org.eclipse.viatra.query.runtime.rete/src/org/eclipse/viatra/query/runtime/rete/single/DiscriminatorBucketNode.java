@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * A bucket holds a filtered set of tuples of its parent {@link DiscriminatorDispatcherNode}. 
@@ -48,14 +48,14 @@ public class DiscriminatorBucketNode extends SingleInputNode {
     }
     
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         if (parent != null) {
             getDispatcher().pullIntoWithTimestampFiltered(collector, bucketKey, flush);
         }
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
         propagateUpdate(direction, updateElement, timestamp);
     }
 

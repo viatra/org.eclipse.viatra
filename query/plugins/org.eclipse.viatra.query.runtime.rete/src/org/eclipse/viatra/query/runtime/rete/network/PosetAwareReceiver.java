@@ -11,7 +11,6 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
 
 /**
  * @author Tamas Szabo
@@ -33,6 +32,6 @@ public interface PosetAwareReceiver extends Receiver {
      * @param update the update tuple 
      * @param monotone true if the update is monotone, false otherwise
      */
-    public void updateWithPosetInfo(Direction direction, Tuple update, boolean monotone, final DifferentialTimestamp timestamp);
+    public void updateWithPosetInfo(Direction direction, Tuple update, boolean monotone);
     
 }

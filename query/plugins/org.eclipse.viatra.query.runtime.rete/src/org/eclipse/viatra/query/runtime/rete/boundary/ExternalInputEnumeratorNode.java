@@ -26,10 +26,10 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.ddf.DifferentialMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.def.ShapeshifterMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 
 /**
@@ -77,9 +77,9 @@ public class ExternalInputEnumeratorNode extends StandardNode
      */
     protected Mailbox instantiateMailbox() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new DifferentialMailbox(this, this.reteContainer);
+            return new TimelyMailbox(this, this.reteContainer);
         } else {
-            return new ShapeshifterMailbox(this, this.reteContainer);
+            return new BehaviorChangingMailbox(this, this.reteContainer);
         }
     }
 
@@ -143,11 +143,11 @@ public class ExternalInputEnumeratorNode extends StandardNode
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         final Iterable<Tuple> tuples = getTuplesInternal();
         if (tuples != null) {
             for (final Tuple tuple : tuples) {
-                collector.put(tuple, DifferentialTimestamp.ZERO);
+                collector.put(tuple, Timestamp.ZERO);
             }            
         }
     }
@@ -161,10 +161,10 @@ public class ExternalInputEnumeratorNode extends StandardNode
         } else {
             if (qBackendContext.areUpdatesDelayed()) {
                 // post the update into the mailbox of the node
-                mailbox.postMessage(direction(isInsertion), update, DifferentialTimestamp.ZERO);
+                mailbox.postMessage(direction(isInsertion), update, Timestamp.ZERO);
             } else {
                 // just propagate the input
-                update(direction(isInsertion), update, DifferentialTimestamp.ZERO);
+                update(direction(isInsertion), update, Timestamp.ZERO);
             }
             // if the the update method is called from within a delayed execution, 
             // the following invocation will be a no-op
@@ -178,7 +178,7 @@ public class ExternalInputEnumeratorNode extends StandardNode
 
     /* Self-addressed from network */
     @Override
-    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
         propagateUpdate(direction, updateElement, timestamp);
     }
 

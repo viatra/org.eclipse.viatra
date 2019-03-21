@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
 /**
@@ -41,12 +41,12 @@ public class RemoteSupplier extends SingleInputNode {
     }
 
     @Override
-    public void pullIntoWithTimestamp(Map<Tuple, DifferentialTimestamp> collector, boolean flush) {
+    public void pullIntoWithTimestamp(Map<Tuple, Timestamp> collector, boolean flush) {
         throw new UnsupportedOperationException();
     }
     
     @Override
-    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
         propagateUpdate(direction, updateElement, timestamp);
     }
 

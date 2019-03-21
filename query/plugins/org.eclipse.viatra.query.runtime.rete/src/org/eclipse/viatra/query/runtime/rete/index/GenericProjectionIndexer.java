@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * A generic Indexer capable of indexing along any valid TupleMask. Does not keep track of parents, because will not
@@ -34,7 +34,7 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     }
 
     @Override
-    protected void update(Direction direction, Tuple updateElement, Tuple signature, boolean change, DifferentialTimestamp timestamp) {
+    protected void update(Direction direction, Tuple updateElement, Tuple signature, boolean change, Timestamp timestamp) {
         propagate(direction, updateElement, signature, change, timestamp);
     }
 
@@ -44,7 +44,7 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     }
     
     @Override
-    public Map<Tuple, DifferentialTimestamp> getWithTimestamp(Tuple signature) {
+    public Map<Tuple, Timestamp> getWithTimestamp(Tuple signature) {
         return memory.getWithTimestamp(signature);
     }
     

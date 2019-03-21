@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * This class represents a transitive closure node in the Rete net.
@@ -89,17 +89,17 @@ public class TransitiveClosureNode extends SingleInputNode
 
     @Override
     public void pullIntoWithTimestamp(
-            final Map<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple, DifferentialTimestamp> collector,
+            final Map<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple, Timestamp> collector,
             final boolean flush) {
         // use all zero timestamps because this node cannot be used in recursive groups anyway
         for (final Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
-            collector.put(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()), DifferentialTimestamp.ZERO);
+            collector.put(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()), Timestamp.ZERO);
         }
     }
 
     @Override
     public void update(Direction direction, org.eclipse.viatra.query.runtime.matchers.tuple.Tuple updateElement,
-            DifferentialTimestamp timestamp) {
+            Timestamp timestamp) {
         if (updateElement.getSize() == 2) {
             Object source = updateElement.get(0);
             Object target = updateElement.get(1);
@@ -132,13 +132,13 @@ public class TransitiveClosureNode extends SingleInputNode
     @Override
     public void tupleInserted(Object source, Object target) {
         org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
-        propagateUpdate(Direction.INSERT, tuple, DifferentialTimestamp.ZERO);
+        propagateUpdate(Direction.INSERT, tuple, Timestamp.ZERO);
     }
 
     @Override
     public void tupleDeleted(Object source, Object target) {
         org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
-        propagateUpdate(Direction.REVOKE, tuple, DifferentialTimestamp.ZERO);
+        propagateUpdate(Direction.REVOKE, tuple, Timestamp.ZERO);
     }
 
 }

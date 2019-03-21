@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
@@ -48,7 +48,7 @@ public class DiscriminatorDispatcherNode extends SingleInputNode implements Netw
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement, DifferentialTimestamp timestamp) {
+    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
         Object dispatchKey = updateElement.get(discriminationColumnIndex);
         Mailbox bucketMailBox = bucketMailboxes.get(dispatchKey);
         if (bucketMailBox != null) {
@@ -66,7 +66,7 @@ public class DiscriminatorDispatcherNode extends SingleInputNode implements Netw
     }
     
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         propagatePullIntoWithTimestamp(collector, flush);
     }
 
@@ -86,10 +86,10 @@ public class DiscriminatorDispatcherNode extends SingleInputNode implements Netw
     /**
      * @since 2.2
      */
-    public void pullIntoWithTimestampFiltered(final Map<Tuple, DifferentialTimestamp> collector, final Object bucketKey, final boolean flush) {
-        final Map<Tuple, DifferentialTimestamp> unfiltered = new HashMap<Tuple, DifferentialTimestamp>();
+    public void pullIntoWithTimestampFiltered(final Map<Tuple, Timestamp> collector, final Object bucketKey, final boolean flush) {
+        final Map<Tuple, Timestamp> unfiltered = new HashMap<Tuple, Timestamp>();
         propagatePullIntoWithTimestamp(unfiltered, flush);
-        for (final Entry<Tuple, DifferentialTimestamp> entry : unfiltered.entrySet()) {
+        for (final Entry<Tuple, Timestamp> entry : unfiltered.entrySet()) {
             if (bucketKey.equals(entry.getKey().get(discriminationColumnIndex))) {
                 collector.put(entry.getKey(), entry.getValue());
             }

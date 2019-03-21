@@ -85,7 +85,7 @@ public final class DefaultMaskedTupleMemory<Timestamp extends Comparable<Timesta
     
     @Override
     public Map<Tuple, Timestamp> getWithTimestamp(ITuple signature) {
-        throw new UnsupportedOperationException("Default memories do not support timestamp-based lookup!");
+        throw new UnsupportedOperationException("Timeless memories do not support timestamp-based lookup!");
     }
 
     @Override

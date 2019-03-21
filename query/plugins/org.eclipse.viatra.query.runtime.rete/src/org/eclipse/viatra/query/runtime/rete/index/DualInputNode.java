@@ -15,13 +15,14 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp;
-import org.eclipse.viatra.query.runtime.rete.network.communication.ddf.DifferentialTimestamp.AllZeroMap;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp.AllZeroMap;
 import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedConnectCommand;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
@@ -93,10 +94,12 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     public DualInputNode(final ReteContainer reteContainer, final TupleMask complementerSecondaryMask) {
         super(reteContainer);
         this.complementerSecondaryMask = complementerSecondaryMask;
+        this.indexerGroupCache = CollectionsFactory.createMap();
+        this.refreshIndexerGroupCache();
     }
 
     /**
-     * Should be called only once, when node is initialized
+     * Should be called only once, when node is initialized.
      */
     public void connectToIndexers(final IterableIndexer primarySlot, final Indexer secondarySlot) {
         this.primarySlot = primarySlot;
@@ -113,7 +116,7 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
             primarySlot.attachListener(new DefaultIndexerListener(this) {
                 @Override
                 public void notifyIndexerUpdate(final Direction direction, final Tuple updateElement,
-                        final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                        final Tuple signature, final boolean change, final Timestamp timestamp) {
                     DualInputNode.this.logic.notifyUpdate(Side.PRIMARY, direction, updateElement, signature, change,
                             timestamp);
                 }
@@ -125,7 +128,7 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
             });
             secondarySlot.attachListener(new DefaultIndexerListener(this) {
                 public void notifyIndexerUpdate(final Direction direction, final Tuple updateElement,
-                        final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                        final Tuple signature, final boolean change, final Timestamp timestamp) {
                     DualInputNode.this.logic.notifyUpdate(Side.SECONDARY, direction, updateElement, signature, change,
                             timestamp);
                 }
@@ -138,7 +141,7 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
         } else { // if the two slots are the same, updates have to be handled carefully
             primarySlot.attachListener(new DefaultIndexerListener(this) {
                 public void notifyIndexerUpdate(final Direction direction, final Tuple updateElement,
-                        final Tuple signature, final boolean change, final DifferentialTimestamp timestamp) {
+                        final Tuple signature, final boolean change, final Timestamp timestamp) {
                     DualInputNode.this.logic.notifyUpdate(Side.BOTH, direction, updateElement, signature, change,
                             timestamp);
                 }
@@ -154,6 +157,10 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
             this.reteContainer.getDelayedCommandQueue()
                     .add(new DelayedConnectCommand(this, receiver, this.reteContainer));
         }
+        
+        // Given that connectToIndexers registers new dependencies, the networkStructureChanged() method will be called
+        // by the CommunicationTracker, and the implementation of that method in turn will call refreshIndexerGroupCache() anyway.
+        this.refreshIndexerGroupCache();
     }
 
     /**
@@ -171,9 +178,9 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     protected NetworkStructureChangeSensitiveLogic createLogic() {
         if (this.reteContainer.isDifferentialDataFlowEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
-            return createRecursiveTimelyLogic();
+            return createTimelyLogic();
         } else {
-            return createDefaultLogic();
+            return createTimelessLogic();
         }
     }
 
@@ -183,14 +190,14 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     protected Tuple unify(final Tuple left, final Tuple right) {
         return complementerSecondaryMask.combine(left, right, Options.enableInheritance, true);
     }
-    
+
     @Override
     public void pullInto(final Collection<Tuple> collector, final boolean flush) {
         this.logic.pullInto(collector, flush);
     }
-    
+
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector, final boolean flush) {
+    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
         this.logic.pullIntoWithTimestamp(collector, flush);
     }
 
@@ -250,24 +257,48 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     @Override
     public void networkStructureChanged() {
         this.logic = createLogic();
+        this.refreshIndexerGroupCache();
     }
 
     /**
      * @since 2.2
      */
-    protected abstract NetworkStructureChangeSensitiveLogic createRecursiveTimelyLogic();
+    protected abstract NetworkStructureChangeSensitiveLogic createTimelyLogic();
 
     /**
      * @since 2.2
      */
-    protected abstract NetworkStructureChangeSensitiveLogic createDefaultLogic();
+    protected abstract NetworkStructureChangeSensitiveLogic createTimelessLogic();
+
+    /**
+     * This map caches the result of a CommunicationTracker.areInSameGroup(indexer, this) call. It does that for both
+     * the primary and secondary slots. This way we can avoid the lookup in the getWithTimestamp call for each tuple.
+     * The cache needs to be maintained when the network structure changes.
+     * @since 2.2
+     */
+    protected Map<Indexer, Boolean> indexerGroupCache;
 
     /**
      * @since 2.2
      */
-    protected Map<Tuple, DifferentialTimestamp> getWithTimestamp(final Tuple signature, final Indexer indexer) {
-        if (this.reteContainer.getCommunicationTracker().areInSameGroup(indexer, this)) {
-            // already timestamp-aware because it is in a recursive group
+    protected void refreshIndexerGroupCache() {
+        this.indexerGroupCache.clear();
+        if (this.primarySlot != null) {
+            this.indexerGroupCache.put(this.primarySlot,
+                    this.reteContainer.getCommunicationTracker().areInSameGroup(this.primarySlot, this));
+        }
+        if (this.secondarySlot != null) {
+            this.indexerGroupCache.put(this.secondarySlot,
+                    this.reteContainer.getCommunicationTracker().areInSameGroup(this.secondarySlot, this));
+        }
+    }
+
+    /**
+     * @since 2.2
+     */
+    protected Map<Tuple, Timestamp> getWithTimestamp(final Tuple signature, final Indexer indexer) {
+        if (this.indexerGroupCache.get(indexer)) {
+            // recursive timely case
             return indexer.getWithTimestamp(signature);
         } else {
             // the indexer is in a different group, treat all of its tuples as they would have timestamp 0
@@ -300,12 +331,11 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
          *            Indicates whether this is/was the first/last instance of this signature in this slot.
          */
         public abstract void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
-                final Tuple signature, final boolean change, final DifferentialTimestamp timestamp);
+                final Tuple signature, final boolean change, final Timestamp timestamp);
 
         public abstract void pullInto(final Collection<Tuple> collector, final boolean flush);
 
-        public abstract void pullIntoWithTimestamp(final Map<Tuple, DifferentialTimestamp> collector,
-                final boolean flush);
+        public abstract void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush);
 
     }
 

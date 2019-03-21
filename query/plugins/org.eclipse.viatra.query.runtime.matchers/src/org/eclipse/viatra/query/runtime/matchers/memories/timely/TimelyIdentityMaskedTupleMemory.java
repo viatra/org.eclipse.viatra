@@ -12,13 +12,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.matchers.util.Pair;
 
 public final class TimelyIdentityMaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
-        extends AbstractTimelyTrivialMemory<Timestamp> {
+        extends AbstractTimelyTrivialMaskedMemory<Timestamp> {
 
     public TimelyIdentityMaskedTupleMemory(final TupleMask mask, final Object owner) {
         super(mask, owner);
@@ -56,7 +56,7 @@ public final class TimelyIdentityMaskedTupleMemory<Timestamp extends Comparable<
     }
 
     @Override
-    public Pair<Timestamp, Timestamp> removeWithTimestamp(final Tuple tuple, final Tuple signature,
+    public TimestampReplacement<Timestamp> removeWithTimestamp(final Tuple tuple, final Tuple signature,
             final Timestamp timestamp) {
         try {
             return this.memory.remove(tuple, timestamp);
@@ -66,7 +66,7 @@ public final class TimelyIdentityMaskedTupleMemory<Timestamp extends Comparable<
     }
 
     @Override
-    public Pair<Timestamp, Timestamp> addWithTimestamp(final Tuple tuple, final Tuple signature,
+    public TimestampReplacement<Timestamp> addWithTimestamp(final Tuple tuple, final Tuple signature,
             final Timestamp timestamp) {
         return this.memory.put(tuple, timestamp);
     }
