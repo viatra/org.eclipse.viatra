@@ -53,7 +53,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     Pair::of("iteration", QueryBasedFeatureKind::ITERATION)
   )
   
-  private SettingDelegateBasedGenerator delegateBasedGenerator = new SettingDelegateBasedGenerator(this)
+  SettingDelegateBasedGenerator delegateBasedGenerator = new SettingDelegateBasedGenerator(this)
   
   override getAdditionalBinIncludes() {
     return newArrayList()

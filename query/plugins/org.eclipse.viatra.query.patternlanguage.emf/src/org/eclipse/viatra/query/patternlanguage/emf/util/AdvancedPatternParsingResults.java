@@ -52,8 +52,6 @@ public class AdvancedPatternParsingResults {
 
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been added to the cache.
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getAddedSpecifications() {
         return Collections.unmodifiableCollection(addedSpecifications);
@@ -62,8 +60,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been added to the cache, which
      * originate from the same {@link URI}
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getAddedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(addedSpecifications);
@@ -74,8 +70,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated via a direct 'update'
      * operation.
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getUpdatedSpecifications() {
         return Collections.unmodifiableCollection(updatedSpecifications);
@@ -84,8 +78,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated via a direct 'update'
      * operation, and originate from the same {@link URI}.
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getUpdatedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(updatedSpecifications);
@@ -96,8 +88,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been removed from the cache via a
      * direct 'remove' operation.
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getRemovedSpecifications() {
         return Collections.unmodifiableCollection(removedSpecifications);
@@ -106,8 +96,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been removed from the cache via a
      * direct 'remove' operation, and originate from the same {@link URI}
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getRemovedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(removedSpecifications);
@@ -118,8 +106,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated as a side effect of an
      * 'update', 'add' or 'remove' operation.
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getImpactedSpecifications() {
         return Collections.unmodifiableCollection(impactedSpecifications);
@@ -128,8 +114,6 @@ public class AdvancedPatternParsingResults {
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated as a side effect of an
      * 'update', 'add' or 'remove' operation, and originate from the same {@link URI}.
-     * 
-     * @return
      */
     public Collection<IQuerySpecification> getImpactedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(impactedSpecifications);

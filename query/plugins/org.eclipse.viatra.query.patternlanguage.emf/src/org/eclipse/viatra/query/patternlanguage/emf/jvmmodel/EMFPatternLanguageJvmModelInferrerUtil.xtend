@@ -73,10 +73,10 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     @Inject EMFPatternLanguageGrammarAccess grammar
     @Inject org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback feedback
     
-    private static final String MATCH_POSTFIX = "Match"
-    private static final String MATCHER_POSTFIX = "Matcher"
-    private static final String PROCESSOR_POSTFIX = "Processor"
-    private static final String SPECIFICATION_POSTFIX = "QuerySpecification"
+    static val String MATCH_POSTFIX = "Match"
+    static val String MATCHER_POSTFIX = "Matcher"
+    static val String PROCESSOR_POSTFIX = "Processor"
+    static val String SPECIFICATION_POSTFIX = "QuerySpecification"
     
     /**
      * This method returns the pattern name.
@@ -530,7 +530,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
      * 
      * <p> the "safe" classifier lookup is used if the result is used for initializing a PParameter
      */
-    public def StringConcatenationClient serializeInputKey(IInputKey key, boolean forParameter) {
+    def StringConcatenationClient serializeInputKey(IInputKey key, boolean forParameter) {
         return new StringConcatenationClient() {
             override protected appendTo(TargetStringConcatenation target) {
                 target.appendInputKey(key, forParameter)
@@ -542,7 +542,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
      * Calculates the name of the variable that stores a PParameter for a pattern
      * @since 1.4
      */
-    public def String getPParameterName(String parameterName) '''parameter_«parameterName»'''
+    def String getPParameterName(String parameterName) '''parameter_«parameterName»'''
     
     /**
      * Output code is intended for generated query specification classes, 
@@ -550,7 +550,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
      * 
      * <p> the "safe" classifier lookup is used if the result is used for initializing a PParameter
      */
-    public def appendInputKey(TargetStringConcatenation target, IInputKey key, boolean forParameter) {
+    def appendInputKey(TargetStringConcatenation target, IInputKey key, boolean forParameter) {
         switch key {
             EStructuralFeatureInstancesKey : {
                 val literal = key.emfKey

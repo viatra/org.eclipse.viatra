@@ -85,7 +85,7 @@ public class VQLConstraintProvider extends AbstractConstraintProvider {
                 .map(param -> ((BaseEMFTypeKey<?>)param.getDeclaredUnaryType()).getEmfKey())
                 .filter(EClass.class::isInstance)
                 .map(EClass.class::cast)
-                .get();
+                .orElseThrow(IllegalArgumentException::new);
         
         IConstraintDescriptor desc = new AbstractConstraintDescriptor() {
             

@@ -37,17 +37,14 @@ import org.eclipse.emf.ecore.EObject
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
-    private static final String JVM_MODEL_INFERRER_PREFIX = "org.eclipse.viatra.query.patternlanguage.emf.inferrer"
-    public static final String INVALID_PATTERN_MODEL_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.patternmodel";
-    public static final String INVALID_TYPEREF_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.typeref";
-    public static final String SPECIFICATION_BUILDER_CODE = JVM_MODEL_INFERRER_PREFIX + ".specification.builder";
+    static val String JVM_MODEL_INFERRER_PREFIX = "org.eclipse.viatra.query.patternlanguage.emf.inferrer"
+    public static val String INVALID_PATTERN_MODEL_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.patternmodel"
+    public static val String INVALID_TYPEREF_CODE = JVM_MODEL_INFERRER_PREFIX + ".invalid.typeref"
+    public static val String SPECIFICATION_BUILDER_CODE = JVM_MODEL_INFERRER_PREFIX + ".specification.builder"
 
-    @Inject
-    private Logger logger;
-    @Inject
-    private IErrorFeedback errorFeedback;
-    @Inject
-    private IGeneratorConfigProvider generatorConfigProvider
+    @Inject Logger logger
+    @Inject IErrorFeedback errorFeedback
+    @Inject IGeneratorConfigProvider generatorConfigProvider
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */

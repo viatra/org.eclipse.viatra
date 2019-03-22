@@ -34,9 +34,9 @@ class PatternMatchProcessorClassInferrer {
     @Inject extension EMFJvmTypesBuilder
     @Inject extension EMFPatternLanguageJvmModelInferrerUtil
     @Inject extension JavadocInferrer
-    @Inject private IErrorFeedback feedback
-    @Extension private JvmTypeReferenceBuilder builder
-    @Extension private JvmAnnotationReferenceBuilder annBuilder
+    @Inject IErrorFeedback feedback
+    @Extension JvmTypeReferenceBuilder builder
+    @Extension JvmAnnotationReferenceBuilder annBuilder
 
     /**
      * Infers the {@link Consumer} implementation class from a {@link Pattern}.

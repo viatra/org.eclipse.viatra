@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -71,7 +70,7 @@ public class EMFPatternLanguageCodeMiningProvider extends AbstractXtextCodeMinin
     
     @Override
 	protected void createCodeMinings(IDocument document, XtextResource resource, CancelIndicator indicator,
-		IAcceptor<? super ICodeMining> acceptor) throws BadLocationException {
+		IAcceptor<? super ICodeMining> acceptor) {
         if (!isMiningEnabled) {
             return;
         }
@@ -91,8 +90,7 @@ public class EMFPatternLanguageCodeMiningProvider extends AbstractXtextCodeMinin
 		}
 	}
     
-    protected void createCodeMinings(PatternCall call,
-            IAcceptor<? super ICodeMining> acceptor) throws BadLocationException {
+    protected void createCodeMinings(PatternCall call, IAcceptor<? super ICodeMining> acceptor) {
         final RuleCall paramCall1 = grammar.getPatternCallAccess().getParametersValueReferenceParserRuleCall_4_0_0();
         final RuleCall paramCall2 = grammar.getPatternCallAccess().getParametersValueReferenceParserRuleCall_4_1_1_0();
         
@@ -114,8 +112,7 @@ public class EMFPatternLanguageCodeMiningProvider extends AbstractXtextCodeMinin
         }
     }
     
-    protected void createCodeMinings(Parameter parameter,
-            IAcceptor<? super ICodeMining> acceptor) throws BadLocationException {
+    protected void createCodeMinings(Parameter parameter, IAcceptor<? super ICodeMining> acceptor) {
         final RuleCall nameCall = grammar.getParameterAccess().getNameIDTerminalRuleCall_1_0();
         if (parameter.getType() == null) {
             final IInputKey inferredType = typeInferrer.getInferredType(parameter);

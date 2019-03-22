@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
@@ -89,6 +90,11 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
 
     String text(EClassifierConstraint constraint) {
         String typename = ((ClassType) constraint.getType()).getClassname().getName();
+        return String.format("%s (%s)", typename, constraint.getVar().getVar());
+    }
+    
+    String text(TypeCheckConstraint constraint) {
+        String typename = ((JavaType) constraint.getType()).getTypename();
         return String.format("%s (%s)", typename, constraint.getVar().getVar());
     }
 

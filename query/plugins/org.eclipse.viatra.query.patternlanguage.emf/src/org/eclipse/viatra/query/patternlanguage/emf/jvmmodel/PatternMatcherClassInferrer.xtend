@@ -48,9 +48,9 @@ class PatternMatcherClassInferrer {
     @Inject extension EMFJvmTypesBuilder
     @Inject extension EMFPatternLanguageJvmModelInferrerUtil
     @Inject extension JavadocInferrer
-    @Extension private JvmTypeReferenceBuilder builder
-    @Extension private JvmAnnotationReferenceBuilder annBuilder
-    @Inject private IErrorFeedback feedback
+    extension JvmTypeReferenceBuilder builder
+    extension JvmAnnotationReferenceBuilder annBuilder
+    @Inject IErrorFeedback feedback
 
     def inferMatcherClassElements(JvmGenericType matcherClass, Pattern pattern, JvmDeclaredType specificationClass,
         JvmDeclaredType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder,

@@ -138,7 +138,7 @@ public class EMFPatternJvmModelAssociator extends JvmModelAssociator {
                     varName = String.format("_<%d>", unnamedCounter);
                     unnamedCounter++;
                 } else if (PatternLanguageHelper.isAggregateReference(varRef)) {
-                    varName = PatternLanguageHelper.AGGREGATE_VARIABLE_PREFIX + varName;
+                    varName = String.format("%s%s", PatternLanguageHelper.AGGREGATE_VARIABLE_PREFIX, varName);
                 }
                 variableNames.add(varName);
                 

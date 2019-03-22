@@ -42,9 +42,9 @@ class PatternMatchClassInferrer {
     @Inject extension IQualifiedNameProvider
     @Inject extension EMFPatternLanguageJvmModelInferrerUtil
     @Inject TypeReferences typeReference
-    @Inject private IErrorFeedback feedback
-    @Extension private JvmTypeReferenceBuilder builder
-    @Extension private JvmAnnotationReferenceBuilder annBuilder
+    @Inject IErrorFeedback feedback
+    @Extension JvmTypeReferenceBuilder builder
+    @Extension JvmAnnotationReferenceBuilder annBuilder
     @Inject extension IJvmModelAssociator associator
     @Inject extension JavadocInferrer
 
