@@ -5,21 +5,19 @@ Element-Name: VIATRA CPS Workspace
 Element-Type: context
 Element-Version: 2.0
 Id: _E-YjgPBEEeWlEbYJ7IoFCQ
-Runtime-Version: 2.0.2.201511100828
-Save-Time: 4/11/16 2:39 PM
+Runtime-Version: 2.3.0.201806262310
+Save-Time: 3/22/19, 8:45 PM
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
 Content-Type: text/plain
 Entry-Name: .description
 
 Copyright (c) 2010-2016, Tamas Borbas, IncQuery Labs Ltd.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Eclipse Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/epl-v10.html
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v. 2.0 which is available at
+http://www.eclipse.org/legal/epl-v20.html.
 
-Contributors:
-  Tamas Borbas - Testing VIATRA GUI
+SPDX-License-Identifier: EPL-2.0
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa--
 ------=_contents/org.eclipse.viatra.examples.cps.instances/.project-3e764c88-faca-3de7-a6b8-b784cc705139
 Content-Type: q7/binary
@@ -55,12 +53,12 @@ Y29udGVudFVUBQABAAAAAFBLBQYAAAAAAQABAD8AAADdAgAAAAA=
 Content-Type: q7/binary
 Entry-Name: .q7.content
 
-UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAAIAAkALmNvbnRlbnRVVAUAAQAAAACVkctOwzAQRfdI/IPl
-fW1gA4oSqhIFKUhI5SFKV8h1p6lL/JA9NOnf47ZJygIJsfN4zr1zR5OOW12TLfigrMnoJbugBIy0S2Wq
-jH7hanRDx7fnZ6n1FQNZKxeAeekQmcSWNdZ/BickJLP+lVuD0CJptUoG36u9b5xkQhL/M7pGdAnnTdMw
-qysWzfn7Y9kjf8wa5D2zlx84Hjk+cJQYoSP9Vk5enyckn76Q2amnlhn9KEbzTTW9KwqY1cVi/nBd2vv8
-icaFCUnlfhODhyKWztsNSAyd68+QWyXQCwat0K6GwKQLTJmAwkgItDOIFisVu52edX6U/95fgrZM7hbg
-3XoXlBR12AUEPfAp7xMd4/JT3pT/91xR9A1QSwcIolg/VxcBAAALAgAAUEsBAhQAFAAICAgAAAAhAKJY
-P1cXAQAACwIAAAgACQAAAAAAAAAAAAAAAAAAAC5jb250ZW50VVQFAAEAAAAAUEsFBgAAAAABAAEAPwAA
-AFYBAAAAAA==
+UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAAIAAkALmNvbnRlbnRVVAUAAQAAAACVkUtPwzAQhO/9FZbv
+tYELKEpalSpIQUIqD9H2hFx3m7rED9lLk/57nJIEDkiI29rzzexYTqeNrsgRfFDWZPSSXVACRtqtMmVG
+P3A3vqHTySi1vmQgK+UCMC8dIpPYsNr69+CEhGTZT3NrEBokjVbJEHvVxsZFJiTxPqN7RJdwXtc1s7pk
+MZyvHooe+WPXYO+Z1n7meOT4wFFihI70azF7eZqR+eKZLL81tc3oWz5eH8rFbZ7Dsso36/vrwt7NH+lk
+REgq24cYbOd4ct4eQGLoMn9WPCqBXjBohHYVBCZdYMoEFEZCoF/+mLBTUezsrIuj/Fd5C9oyedqAd/tT
+UFJU4RQQdI+nvK9zbsqHqin/7z9NRp9QSwcIFJqoIxQBAAACAgAAUEsBAhQAFAAICAgAAAAhABSaqCMU
+AQAAAgIAAAgACQAAAAAAAAAAAAAAAAAAAC5jb250ZW50VVQFAAEAAAAAUEsFBgAAAAABAAEAPwAAAFMB
+AAAAAA==
 ------=_.q7.content-3d2e0690-ce48-3609-83e0-c704d49f1eaf--
