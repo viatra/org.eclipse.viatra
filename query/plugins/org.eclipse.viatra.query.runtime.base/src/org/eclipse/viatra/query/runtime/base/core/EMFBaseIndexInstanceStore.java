@@ -341,10 +341,10 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         if (!set.add(value)) {
             String msg = String.format("Notification received to index %s as a %s, but it already exists in the index. This indicates some errors in underlying model representation.", value, keyClass);
             logNotificationHandlingError(msg);
+        } else {
+            isDirty = true;
+            navigationHelper.notifyInstanceListeners(keyClass, value, true);
         }
-
-        isDirty = true;
-        navigationHelper.notifyInstanceListeners(keyClass, value, true);
     }
 
     public void removeFromInstanceSet(final Object keyClass, final EObject value) {
@@ -353,15 +353,18 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             if(!set.remove(value)) {
                 String msg = String.format("Notification received to remove %s as a %s, but it is missing from the index. This indicates some errors in underlying model representation.", value, keyClass);
                 logNotificationHandlingError(msg);
+            } else {
+                if (set.isEmpty()) {
+                    instanceMap.remove(keyClass);
+                }
+                isDirty = true;
+                navigationHelper.notifyInstanceListeners(keyClass, value, false);
             }
-
-            if (set.isEmpty()) {
-                instanceMap.remove(keyClass);
-            }
+        } else {
+            String msg = String.format("Notification received to remove %s as a %s, but it is missing from the index. This indicates some errors in underlying model representation.", value, keyClass);
+            logNotificationHandlingError(msg);
         }
 
-        isDirty = true;
-        navigationHelper.notifyInstanceListeners(keyClass, value, false);
     }
 
     // END ********* InstanceSet *********
