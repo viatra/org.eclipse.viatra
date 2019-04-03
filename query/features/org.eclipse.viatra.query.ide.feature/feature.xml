@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.ide.feature"
       label="VIATRA Query IDE Feature"
-      version="2.1.1.qualifier"
+      version="2.1.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
