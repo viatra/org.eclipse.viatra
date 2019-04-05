@@ -214,6 +214,12 @@ class NodeFactory {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Supplier instantiateNode(ReteContainer reteContainer, SingleColumnAggregatorRecipe recipe) {
+//        if (reteContainer.isDifferentialDataFlowEvaluation()) {
+//            TupleMask coreMask = toMask(recipe.getGroupByMask());
+//            int aggregatedColumn = recipe.getAggregableIndex();
+//            IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
+//            return new TimelyColumnAggregatorNode(reteContainer, operator, coreMask, aggregatedColumn);
+//        } else 
         if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
             TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
             TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());

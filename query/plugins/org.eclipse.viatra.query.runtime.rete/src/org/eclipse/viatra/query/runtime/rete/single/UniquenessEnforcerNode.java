@@ -106,6 +106,8 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
         this.coreMask = coreMask;
         this.posetMask = posetMask;
         this.posetComparator = posetComparator;
+        this.mailbox = instantiateMailbox();
+        reteContainer.registerClearable(this.mailbox);
     }
 
     @Override

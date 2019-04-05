@@ -28,17 +28,22 @@ public class DotGenerator {
     private static final String[] colors = new String[] { "yellow", "blue", "red", "green", "gray", "cyan" };
 
     private DotGenerator() {
-        
+
     }
-    
+
     /**
      * Generates the dot representation for the given graph.
      * 
-     * @param graph the graph
-     * @param colorSCCs specifies if the strongly connected components with size greater than shall be colored 
-     * @param nameFunction use this function to provide custom names to nodes, null if the default toString shall be used
-     * @param colorFunction use this function to provide custom color to nodes, null if the default white color shall be used
-     * @param edgeFunction use this function to provide custom edge labels, null if no edge label shall be printed
+     * @param graph
+     *            the graph
+     * @param colorSCCs
+     *            specifies if the strongly connected components with size greater than shall be colored
+     * @param nameFunction
+     *            use this function to provide custom names to nodes, null if the default toString shall be used
+     * @param colorFunction
+     *            use this function to provide custom color to nodes, null if the default white color shall be used
+     * @param edgeFunction
+     *            use this function to provide custom edge labels, null if no edge label shall be printed
      * @return the dot representation as a string
      */
     public static <V> String generateDot(final Graph<V> graph, final boolean colorSCCs,
@@ -95,7 +100,7 @@ public class DotGenerator {
 
         for (final V source : graph.getAllNodes()) {
             final IMemoryView<V> targets = graph.getTargetNodes(source);
-            if (!targets.isEmpty()) {                
+            if (!targets.isEmpty()) {
                 final String sourcePresentation = nameFunction == null ? source.toString() : nameFunction.apply(source);
                 for (final V target : targets.distinctValues()) {
                     String edgeLabel = null;
@@ -105,9 +110,10 @@ public class DotGenerator {
                             edgeLabel = v1.apply(target);
                         }
                     }
-                    
+
                     final int count = targets.getCount(target);
-                    final String targetPresentation = nameFunction == null ? target.toString() : nameFunction.apply(target);
+                    final String targetPresentation = nameFunction == null ? target.toString()
+                            : nameFunction.apply(target);
                     for (int i = 0; i < count; i++) {
                         builder.append("\"" + sourcePresentation + "\" -> \"" + targetPresentation + "\"");
                         if (edgeLabel != null) {
@@ -124,14 +130,30 @@ public class DotGenerator {
     }
 
     /**
-     * Generates the dot representation for the given graph.
-     * No special pretty printing customization will be applied. 
-     *  
-     * @param graph the graph
+     * Generates the dot representation for the given graph. No special pretty printing customization will be applied.
+     * 
+     * @param graph
+     *            the graph
      * @return the dot representation as a string
      */
-    public static<V> String generateDot(final Graph<V> graph) {
+    public static <V> String generateDot(final Graph<V> graph) {
         return generateDot(graph, false, null, null, null);
+    }
+
+    /**
+     * Returns a simple name shortener function that can be used in the graphviz visualization to help with readability.
+     * 
+     * @param maxLength the maximum length of the text that is kept from the toString of the objects in the graph
+     * @return the shrunk toString value
+     */
+    public static<V> Function<V, String> getNameShortener(final int maxLength) {
+        return new Function<V, String>() {
+            @Override
+            public String apply(final V obj) {
+                final String value = obj.toString();
+                return value.substring(0, Math.min(value.length(), maxLength));
+            }
+        };
     }
 
 }

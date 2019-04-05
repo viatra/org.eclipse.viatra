@@ -68,7 +68,7 @@ public final class ReteContainer {
     protected final CommunicationTracker tracker;
 
     protected final IQueryBackendContext backendContext;
-    
+
     protected Set<DelayedCommand> delayedCommandQueue;
     protected Set<DelayedCommand> delayedCommandBuffer;
     protected boolean executingDelayedCommands;
@@ -81,17 +81,17 @@ public final class ReteContainer {
         super();
         this.network = network;
         this.backendContext = network.getEngine().getBackendContext();
-        
+
         this.delayedCommandQueue = new LinkedHashSet<DelayedCommand>();
         this.delayedCommandBuffer = new LinkedHashSet<DelayedCommand>();
         this.executingDelayedCommands = false;
-        
+
         if (this.isDifferentialDataFlowEvaluation()) {
             this.tracker = new TimelyCommunicationTracker();
         } else {
             this.tracker = new TimelessCommunicationTracker();
         }
-        
+
         this.nodesById = CollectionsFactory.createMap();
         this.clearables = new LinkedList<Clearable>();
         this.logger = network.getEngine().getLogger();
@@ -110,7 +110,7 @@ public final class ReteContainer {
             this.consumerThread.start();
         }
     }
-    
+
     /**
      * @since 2.2
      */
@@ -215,14 +215,14 @@ public final class ReteContainer {
         receiver.removeParent(supplier);
         tracker.unregisterDependency(supplier, receiver);
     }
-    
+
     /**
      * @since 2.2
      */
     public boolean isExecutingDelayedCommands() {
         return this.executingDelayedCommands;
     }
-    
+
     /**
      * @since 2.2
      */
@@ -235,7 +235,7 @@ public final class ReteContainer {
     }
 
     /**
-     * Connects a receiver to a remote supplier, and synchronises it to the current contents of the supplier
+     * Connects a receiver to a remote supplier, and synchronizes it to the current contents of the supplier
      */
     public void connectAndSynchronize(Supplier supplier, Receiver receiver) {
         supplier.appendChild(receiver);
@@ -248,26 +248,29 @@ public final class ReteContainer {
      * Disconnects a receiver from a supplier
      */
     public void disconnectAndDesynchronize(Supplier supplier, Receiver receiver) {
-        final boolean wasInSameSCC = this.isDifferentialDataFlowEvaluation() && this.tracker.areInSameGroup(supplier, receiver);
+        final boolean wasInSameSCC = this.isDifferentialDataFlowEvaluation()
+                && this.tracker.areInSameGroup(supplier, receiver);
         supplier.removeChild(receiver);
         receiver.removeParent(supplier);
         tracker.unregisterDependency(supplier, receiver);
         getDelayedCommandQueue().add(new DelayedDisconnectCommand(supplier, receiver, this, wasInSameSCC));
     }
-    
+
     /**
      * @since 2.2
      */
     public void executeDelayedCommands() {
-        flushUpdates();
-        this.executingDelayedCommands = true;
-        for (final DelayedCommand command : this.delayedCommandQueue) {
-            command.run();
+        if (!this.delayedCommandQueue.isEmpty()) {
+            flushUpdates();
+            this.executingDelayedCommands = true;
+            for (final DelayedCommand command : this.delayedCommandQueue) {
+                command.run();
+            }
+            this.delayedCommandQueue = this.delayedCommandBuffer;
+            this.delayedCommandBuffer = new LinkedHashSet<DelayedCommand>();
+            flushUpdates();
+            this.executingDelayedCommands = false;
         }
-        this.delayedCommandQueue = this.delayedCommandBuffer;
-        this.delayedCommandBuffer = new LinkedHashSet<DelayedCommand>();
-        this.executingDelayedCommands = false;
-        flushUpdates();
     }
 
     /**
@@ -283,10 +286,6 @@ public final class ReteContainer {
         UpdateMessage message = new UpdateMessage(receiver, direction, updateElement);
         synchronized (externalMessageLock) {
             externalMessageQueue.add(message);
-            // messageQueue.add(new UpdateMessage(resolveLocal(address),
-            // direction, updateElement));
-            // this.sendUpdateInternal(resolveLocal(address), direction,
-            // updateElement);
             timestamp = clock;
             externalMessageLock.notifyAll();
         }
@@ -380,25 +379,26 @@ public final class ReteContainer {
         // }
         // }
     }
-    
+
     /**
      * Retrieves a safe copy of the contents of a supplier.
+     * 
      * @since 2.2
      */
-    public Collection<Tuple> pullContents(final Supplier supplier, final boolean flush) {
-        if (flush) {            
+    public Set<Tuple> pullContents(final Supplier supplier, final boolean flush) {
+        if (flush) {
             flushUpdates();
         }
-        final Collection<Tuple> collector = new LinkedList<Tuple>();
+        final Set<Tuple> collector = new LinkedHashSet<Tuple>();
         supplier.pullInto(collector, flush);
         return collector;
     }
-    
+
     /**
      * @since 2.2
      */
     public Map<Tuple, Timestamp> pullContentsWithTimestamp(final Supplier supplier, final boolean flush) {
-        if (flush) {            
+        if (flush) {
             flushUpdates();
         }
         final Map<Tuple, Timestamp> collector = CollectionsFactory.createMap();
@@ -408,23 +408,26 @@ public final class ReteContainer {
 
     /**
      * Retrieves the contents of a SingleInputNode's parentage.
+     * 
      * @since 2.2
      */
     public Collection<Tuple> pullPropagatedContents(final SingleInputNode supplier, final boolean flush) {
-        if (flush) {            
+        if (flush) {
             flushUpdates();
         }
         final Collection<Tuple> collector = new LinkedList<Tuple>();
         supplier.propagatePullInto(collector, flush);
         return collector;
     }
-    
+
     /**
      * Retrieves the timestamp-aware contents of a SingleInputNode's parentage.
+     * 
      * @since 2.2
      */
-    public Map<Tuple, Timestamp> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier, final boolean flush) {
-        if (flush) {            
+    public Map<Tuple, Timestamp> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier,
+            final boolean flush) {
+        if (flush) {
             flushUpdates();
         }
         final Map<Tuple, Timestamp> collector = new HashMap<Tuple, Timestamp>();
@@ -474,16 +477,16 @@ public final class ReteContainer {
                                                      // queue is locked for
                                                      // precise clocking of
                                                      // termination point!
-                if (!externalMessageQueue.isEmpty()) { // if external queue
-                                                       // is non-empty,
-                                                       // retrieve the next
-                                                       // message instantly
-                    message = takeExternalMessage();
-                } else { // if external queue is found empty (and this is
-                         // the first time in a row)
-                    incrementedClock = ++clock; // local termination point
-                    // synchronized(clock){incrementedClock = ++clock;}
-                }
+                    if (!externalMessageQueue.isEmpty()) { // if external queue
+                                                           // is non-empty,
+                                                           // retrieve the next
+                                                           // message instantly
+                        message = takeExternalMessage();
+                    } else { // if external queue is found empty (and this is
+                             // the first time in a row)
+                        incrementedClock = ++clock; // local termination point
+                        // synchronized(clock){incrementedClock = ++clock;}
+                    }
                 }
 
             if (message == null) // both queues were empty
@@ -517,44 +520,43 @@ public final class ReteContainer {
     /**
      * @since 1.6
      */
-    public static final Function<Node, String> NAME_MAPPER = input -> input.toString().substring(0, Math.min(30, input.toString().length()));
+    public static final Function<Node, String> NAME_MAPPER = input -> input.toString().substring(0,
+            Math.min(30, input.toString().length()));
 
-    
     /**
      * Sends out all pending messages to their receivers. The delivery is governed by the communication tracker.
+     * 
      * @since 1.6
      */
     public void deliverMessagesSingleThreaded() {
         if (!backendContext.areUpdatesDelayed()) {
-            if (Options.MONITOR_VIOLATION_OF_RETE_NODEGROUP_TOPOLOGICAL_SORTING) { 
+            if (Options.MONITOR_VIOLATION_OF_RETE_NODEGROUP_TOPOLOGICAL_SORTING) {
                 // known unreachable; enable for debugging only
-                
+
                 CommunicationGroup lastGroup = null;
                 Set<CommunicationGroup> seenInThisCycle = new HashSet<>();
-                
+
                 while (!tracker.isEmpty()) {
                     final CommunicationGroup group = tracker.getAndRemoveFirstGroup();
-                    
+
                     /**
-                     * The current group does not violate the communication schema iff
-                     * (1) it was not seen before
-                     * OR
-                     * (2) the last one that was seen is exactly the same as the current one 
-                     *     this can happen if the group was added back because of in-group message passing
+                     * The current group does not violate the communication schema iff (1) it was not seen before OR (2)
+                     * the last one that was seen is exactly the same as the current one this can happen if the group
+                     * was added back because of in-group message passing
                      */
                     boolean okGroup = (group == lastGroup) || seenInThisCycle.add(group);
-                    
+
                     if (!okGroup) {
                         logger.error(
                                 "[INTERNAL ERROR] Violation of communication schema! The communication component with representative "
                                         + group.getRepresentative() + " has already been processed!");
                     }
-                    
+
                     group.deliverMessages();
-                    
+
                     lastGroup = group;
                 }
-                
+
             } else {
                 while (!tracker.isEmpty()) {
                     final CommunicationGroup group = tracker.getAndRemoveFirstGroup();

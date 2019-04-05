@@ -42,7 +42,8 @@ public abstract class AbstractUniquenessEnforcerNode extends StandardNode implem
     protected ProjectionIndexer memoryNullIndexer;
     protected ProjectionIndexer memoryIdentityIndexer;
     protected final int tupleWidth;
-    protected final Mailbox mailbox;
+    // MUST BE INSTANTIATED IN THE CONCRETE SUBCLASSES AFTER ALL FIELDS ARE SET 
+    protected Mailbox mailbox;
     protected final TupleMask nullMask;
     protected final TupleMask identityMask;
     protected final List<ListenerSubscription> specializedListeners;
@@ -54,8 +55,6 @@ public abstract class AbstractUniquenessEnforcerNode extends StandardNode implem
         this.tupleWidth = tupleWidth;
         this.nullMask = TupleMask.linear(0, tupleWidth);
         this.identityMask = TupleMask.identity(tupleWidth);
-        this.mailbox = instantiateMailbox();
-        reteContainer.registerClearable(this.mailbox);
     }
 
     protected abstract Mailbox instantiateMailbox();

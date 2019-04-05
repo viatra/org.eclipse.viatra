@@ -56,8 +56,7 @@ public class TimelyCommunicationGroup extends CommunicationGroup {
         while (!this.mailboxQueue.isEmpty()) {
             // care must be taken here how we iterate over the mailboxes
             // it is not okay to loop over the mailboxes at once because a mailbox may disappear from the collection as
-            // a result of
-            // delivering messages from another mailboxes under the same timestamp
+            // a result of delivering messages from another mailboxes under the same timestamp
             // because of this, it is crucial that we pick the mailboxes one by one
             final Entry<MessageSelector, Set<Mailbox>> entry = this.mailboxQueue.firstEntry();
             final MessageSelector timestamp = entry.getKey();
@@ -84,7 +83,7 @@ public class TimelyCommunicationGroup extends CommunicationGroup {
     }
 
     @Override
-    public void notifyHasMessage(final Mailbox mailbox, final MessageSelector kind) {
+    public void notifyHasMessage(final Mailbox mailbox, MessageSelector kind) {
         if (kind instanceof Timestamp) {
             final Timestamp timestamp = (Timestamp) kind;
             if (Options.MONITOR_VIOLATION_OF_DIFFERENTIAL_DATAFLOW_TIMESTAMPS) {

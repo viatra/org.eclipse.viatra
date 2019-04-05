@@ -21,7 +21,6 @@ import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 
 /**
@@ -40,14 +39,12 @@ public class TimelyUniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
         super(reteContainer, tupleWidth);
         this.memory = new TimelyMemory<Timestamp>();
         reteContainer.registerClearable(this.memory);
+        this.mailbox = instantiateMailbox();
+        reteContainer.registerClearable(this.mailbox);
     }
 
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new TimelyMailbox(this, this.reteContainer);
-        } else {
-            return new BehaviorChangingMailbox(this, this.reteContainer);
-        }
+        return new TimelyMailbox(this, this.reteContainer);
     }
     
     @Override

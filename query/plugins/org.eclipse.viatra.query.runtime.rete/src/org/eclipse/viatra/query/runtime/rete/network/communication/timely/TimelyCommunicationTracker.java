@@ -89,7 +89,7 @@ public class TimelyCommunicationTracker extends CommunicationTracker {
     /**
      * This static field is used for debug purposes in the DotGenerator.
      */
-    public static final Function<Node, Function<Node, String>> EDGE_MAPPER = new Function<Node, Function<Node, String>>() {
+    public static final Function<Node, Function<Node, String>> EDGE_LABEL_FUNCTION = new Function<Node, Function<Node, String>>() {
 
         @Override
         public Function<Node, String> apply(final Node source) {
