@@ -6,7 +6,6 @@ Bundle-Version: 2.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-Localization: plugin
 Export-Package: org.eclipse.viatra.addon.viewers.runtime,
   org.eclipse.viatra.addon.viewers.runtime.extensions,
   org.eclipse.viatra.addon.viewers.runtime.extensions.jface,

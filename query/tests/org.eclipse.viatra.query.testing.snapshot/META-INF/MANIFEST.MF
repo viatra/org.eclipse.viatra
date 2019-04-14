@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.viatra.query.testing.snapshot;singleton:=true
 Bundle-Version: 2.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-Localization: plugin
 Export-Package: org.eclipse.viatra.query.testing.snapshot,
  org.eclipse.viatra.query.testing.snapshot.impl,
  org.eclipse.viatra.query.testing.snapshot.util
