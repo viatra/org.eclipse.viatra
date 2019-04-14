@@ -22,7 +22,9 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 /**
  * A EVM filter that uses a parameter-value map that can be used for multiple patterns and rules.
  * 
- * Use ParameterFilterFactory to create easily manage the mapping and create unmodifiable copies to be added to rules.
+ * Use ParameterFilterFactory to create easily manage the mapping and create unmodifiable copies to be added to rules.</p>
+ * 
+ * <b>Note</b> When using the filter, parameter keys that does not match any parameter of a pattern match are ignored.
  * 
  * @author Abel Hegedus
  */

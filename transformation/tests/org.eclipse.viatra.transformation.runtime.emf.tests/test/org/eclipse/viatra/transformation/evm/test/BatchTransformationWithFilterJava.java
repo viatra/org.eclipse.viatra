@@ -9,6 +9,7 @@
 package org.eclipse.viatra.transformation.evm.test;
 
 import java.util.Collections;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -22,6 +23,7 @@ import org.eclipse.viatra.query.runtime.cps.tests.queries.HostInstanceMatcher;
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.HostInstanceQuerySpecification;
 import org.eclipse.viatra.examples.cps.cyberPhysicalSystem.HostInstance;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
+import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterPredicateFilter;
 
 public class BatchTransformationWithFilterJava {
 
@@ -62,9 +64,23 @@ public class BatchTransformationWithFilterJava {
       return counter;
     }
     
+    public int callTypeInferredWithPredicateFilterRule(Set<HostInstance> instances) {
+        counter = 0;
+        final MatchParameterPredicateFilter filter = new MatchParameterPredicateFilter("host", instances::contains);
+        statements.fireAllCurrent(typeInferredRule, filter);
+        return counter;
+    }
+    
     public int callCastTypeRule(HostInstance instance) {
         counter = 0;
         final MatchParameterFilter filter = new MatchParameterFilter(Collections.singletonMap("host", instance));
+        statements.fireAllCurrent(castTypedRule, filter);
+        return counter;
+    }
+    
+    public int callCastTypeWithPredicateFilterRule(Set<HostInstance> instances) {
+        counter = 0;
+        final MatchParameterPredicateFilter filter = new MatchParameterPredicateFilter("host", instances::contains);
         statements.fireAllCurrent(castTypedRule, filter);
         return counter;
     }

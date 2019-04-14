@@ -8,6 +8,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Level;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -121,6 +124,18 @@ public class TransformationTest {
         
         Assert.assertEquals(1, new BatchTransformationWithFilterJava(resource).callCastTypeRule(instance));
         Assert.assertEquals(1, new BatchTransformationWithFilterJava(resource).callTypeInferredRule(instance));
+    }
+    
+    @Test
+    public void setBasedFilterTest() {
+        ResourceSet rs = new ResourceSetImpl();
+        Resource resource = rs.getResource(URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/demo.cyberphysicalsystem", true), true);
+        Set<HostInstance> instances = new HashSet<>();
+        instances.add((HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst0"));
+        instances.add((HostInstance) resource.getEObject("simple.cps.host.FirstHostClass0.inst1"));
+        
+        Assert.assertEquals(2, new BatchTransformationWithFilterJava(resource).callCastTypeWithPredicateFilterRule(instances));
+        Assert.assertEquals(2, new BatchTransformationWithFilterJava(resource).callTypeInferredWithPredicateFilterRule(instances));
     }
     
     @Test
