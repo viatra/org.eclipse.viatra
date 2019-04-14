@@ -33,27 +33,27 @@ import com.google.common.collect.Multimap;
 public class AdvancedPatternParsingResults {
 
     private Multimap<URI, IQuerySpecification> uriMap;
-    private final Set<IQuerySpecification> addedSpecifications;
-    private final Set<IQuerySpecification> updatedSpecifications;
-    private final Set<IQuerySpecification> removedSpecifications;
-    private final Set<IQuerySpecification> impactedSpecifications;
+    private final Set<IQuerySpecification<?>> addedSpecifications;
+    private final Set<IQuerySpecification<?>> updatedSpecifications;
+    private final Set<IQuerySpecification<?>> removedSpecifications;
+    private final Set<IQuerySpecification<?>> impactedSpecifications;
 
     protected AdvancedPatternParsingResults() {
-        this.addedSpecifications = new HashSet<IQuerySpecification>();
-        this.updatedSpecifications = new HashSet<IQuerySpecification>();
-        this.removedSpecifications = new HashSet<IQuerySpecification>();
-        this.impactedSpecifications = new HashSet<IQuerySpecification>();
+        this.addedSpecifications = new HashSet<>();
+        this.updatedSpecifications = new HashSet<>();
+        this.removedSpecifications = new HashSet<>();
+        this.impactedSpecifications = new HashSet<>();
         this.uriMap = ArrayListMultimap.create();
     }
 
-    public Multimap<URI, IQuerySpecification> getUriMap() {
+    public Multimap<URI, IQuerySpecification<?>> getUriMap() {
         return ArrayListMultimap.create(uriMap);
     }
 
     /**
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been added to the cache.
      */
-    public Collection<IQuerySpecification> getAddedSpecifications() {
+    public Collection<IQuerySpecification<?>> getAddedSpecifications() {
         return Collections.unmodifiableCollection(addedSpecifications);
     }
 
@@ -62,7 +62,7 @@ public class AdvancedPatternParsingResults {
      * originate from the same {@link URI}
      */
     public Collection<IQuerySpecification> getAddedSpecifications(URI uri) {
-        Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(addedSpecifications);
+        Set<IQuerySpecification<?>> temp = new HashSet<IQuerySpecification<?>>(addedSpecifications);
         temp.retainAll(uriMap.get(uri));
         return Collections.unmodifiableCollection(temp);
     }
@@ -71,7 +71,7 @@ public class AdvancedPatternParsingResults {
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated via a direct 'update'
      * operation.
      */
-    public Collection<IQuerySpecification> getUpdatedSpecifications() {
+    public Collection<IQuerySpecification<?>> getUpdatedSpecifications() {
         return Collections.unmodifiableCollection(updatedSpecifications);
     }
 
@@ -79,7 +79,7 @@ public class AdvancedPatternParsingResults {
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated via a direct 'update'
      * operation, and originate from the same {@link URI}.
      */
-    public Collection<IQuerySpecification> getUpdatedSpecifications(URI uri) {
+    public Collection<IQuerySpecification<?>> getUpdatedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(updatedSpecifications);
         temp.retainAll(uriMap.get(uri));
         return Collections.unmodifiableCollection(temp);
@@ -89,7 +89,7 @@ public class AdvancedPatternParsingResults {
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been removed from the cache via a
      * direct 'remove' operation.
      */
-    public Collection<IQuerySpecification> getRemovedSpecifications() {
+    public Collection<IQuerySpecification<?>> getRemovedSpecifications() {
         return Collections.unmodifiableCollection(removedSpecifications);
     }
 
@@ -97,7 +97,7 @@ public class AdvancedPatternParsingResults {
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been removed from the cache via a
      * direct 'remove' operation, and originate from the same {@link URI}
      */
-    public Collection<IQuerySpecification> getRemovedSpecifications(URI uri) {
+    public Collection<IQuerySpecification<?>> getRemovedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(removedSpecifications);
         temp.retainAll(uriMap.get(uri));
         return Collections.unmodifiableCollection(temp);
@@ -107,7 +107,7 @@ public class AdvancedPatternParsingResults {
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated as a side effect of an
      * 'update', 'add' or 'remove' operation.
      */
-    public Collection<IQuerySpecification> getImpactedSpecifications() {
+    public Collection<IQuerySpecification<?>> getImpactedSpecifications() {
         return Collections.unmodifiableCollection(impactedSpecifications);
     }
 
@@ -115,13 +115,13 @@ public class AdvancedPatternParsingResults {
      * Returns a {@link Collection} of {@link IQuerySpecification} objects that have been updated as a side effect of an
      * 'update', 'add' or 'remove' operation, and originate from the same {@link URI}.
      */
-    public Collection<IQuerySpecification> getImpactedSpecifications(URI uri) {
+    public Collection<IQuerySpecification<?>> getImpactedSpecifications(URI uri) {
         Set<IQuerySpecification> temp = new HashSet<IQuerySpecification>(impactedSpecifications);
         temp.retainAll(uriMap.get(uri));
         return Collections.unmodifiableCollection(temp);
     }
 
-    public Collection<IQuerySpecification> getErroneousSpecifications() {
+    public Collection<IQuerySpecification<?>> getErroneousSpecifications() {
         return Lists
                 .newArrayList(Iterables.concat(addedSpecifications, updatedSpecifications, removedSpecifications,
                         impactedSpecifications))
@@ -131,72 +131,72 @@ public class AdvancedPatternParsingResults {
 
     public static class AdvancedPatternParsingResultsBuilder {
         private final Multimap<URI, IQuerySpecification> uriMap = ArrayListMultimap.create();
-        private final Set<IQuerySpecification> addedSpecifications = new HashSet<IQuerySpecification>();
-        private final Set<IQuerySpecification> updatedSpecifications = new HashSet<IQuerySpecification>();
-        private final Set<IQuerySpecification> removedSpecifications = new HashSet<IQuerySpecification>();
-        private final Set<IQuerySpecification> impactedSpecifications = new HashSet<IQuerySpecification>();
-        private final Set<IQuerySpecification> unaffectedSpecifications = new HashSet<IQuerySpecification>();
+        private final Set<IQuerySpecification<?>> addedSpecifications = new HashSet<>();
+        private final Set<IQuerySpecification<?>> updatedSpecifications = new HashSet<>();
+        private final Set<IQuerySpecification<?>> removedSpecifications = new HashSet<>();
+        private final Set<IQuerySpecification<?>> impactedSpecifications = new HashSet<>();
+        private final Set<IQuerySpecification<?>> unaffectedSpecifications = new HashSet<>();
 
-        public AdvancedPatternParsingResultsBuilder addAddedSpecification(URI uri, IQuerySpecification spec) {
+        public AdvancedPatternParsingResultsBuilder addAddedSpecification(URI uri, IQuerySpecification<?> spec) {
             addedSpecifications.add(spec);
             uriMap.put(uri, spec);
             return this;
         }
 
         public AdvancedPatternParsingResultsBuilder addAddedSpecifications(URI uri,
-                Collection<IQuerySpecification> specs) {
+                Collection<IQuerySpecification<?>> specs) {
             addedSpecifications.addAll(specs);
             uriMap.putAll(uri, specs);
             return this;
         }
 
-        public AdvancedPatternParsingResultsBuilder addRemovedSpecification(URI uri, IQuerySpecification spec) {
+        public AdvancedPatternParsingResultsBuilder addRemovedSpecification(URI uri, IQuerySpecification<?> spec) {
             removedSpecifications.add(spec);
             uriMap.put(uri, spec);
             return this;
         }
 
         public AdvancedPatternParsingResultsBuilder addRemovedSpecifications(URI uri,
-                Collection<IQuerySpecification> specs) {
+                Collection<IQuerySpecification<?>> specs) {
             removedSpecifications.addAll(specs);
             uriMap.putAll(uri, specs);
             return this;
         }
 
-        public AdvancedPatternParsingResultsBuilder addUpdatedSpecification(URI uri, IQuerySpecification spec) {
+        public AdvancedPatternParsingResultsBuilder addUpdatedSpecification(URI uri, IQuerySpecification<?> spec) {
             updatedSpecifications.add(spec);
             uriMap.put(uri, spec);
             return this;
         }
 
         public AdvancedPatternParsingResultsBuilder addUpdatedSpecifications(URI uri,
-                Collection<IQuerySpecification> specs) {
+                Collection<IQuerySpecification<?>> specs) {
             updatedSpecifications.addAll(specs);
             uriMap.putAll(uri, specs);
             return this;
         }
 
-        public AdvancedPatternParsingResultsBuilder addImpactedSpecification(URI uri, IQuerySpecification spec) {
+        public AdvancedPatternParsingResultsBuilder addImpactedSpecification(URI uri, IQuerySpecification<?> spec) {
             impactedSpecifications.add(spec);
             uriMap.put(uri, spec);
             return this;
         }
 
         public AdvancedPatternParsingResultsBuilder addImpactedSpecifications(URI uri,
-                Collection<IQuerySpecification> specs) {
+                Collection<IQuerySpecification<?>> specs) {
             impactedSpecifications.addAll(specs);
             uriMap.putAll(uri, specs);
             return this;
         }
 
-        public AdvancedPatternParsingResultsBuilder addUnaffectedSpecification(URI uri, IQuerySpecification spec) {
+        public AdvancedPatternParsingResultsBuilder addUnaffectedSpecification(URI uri, IQuerySpecification<?> spec) {
             unaffectedSpecifications.add(spec);
             uriMap.put(uri, spec);
             return this;
         }
 
         public AdvancedPatternParsingResultsBuilder addUnaffectedSpecifications(URI uri,
-                Collection<IQuerySpecification> specs) {
+                Collection<IQuerySpecification<?>> specs) {
             unaffectedSpecifications.addAll(specs);
             uriMap.putAll(uri, specs);
             return this;
