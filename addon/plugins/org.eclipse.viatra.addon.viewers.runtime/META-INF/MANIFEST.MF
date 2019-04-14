@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.runtime;singleton:=true
 Bundle-Version: 2.1.2.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.addon.viewers.runtime,
   org.eclipse.viatra.addon.viewers.runtime.extensions,
   org.eclipse.viatra.addon.viewers.runtime.extensions.jface,

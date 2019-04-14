@@ -1,11 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: VIATRA Query Snapshot Model
 Bundle-SymbolicName: org.eclipse.viatra.query.testing.snapshot;singleton:=true
 Bundle-Version: 2.1.2.qualifier
 Bundle-ClassPath: .
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.testing.snapshot,
  org.eclipse.viatra.query.testing.snapshot.impl,
  org.eclipse.viatra.query.testing.snapshot.util

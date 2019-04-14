@@ -1,11 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: VIATRA View Model Transformation
 Bundle-SymbolicName: org.eclipse.viatra.transformation.views;singleton:=true
 Bundle-Version: 2.1.2.qualifier
 Bundle-ClassPath: .
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.transformation.views.core,
  org.eclipse.viatra.transformation.views.core.util,
  org.eclipse.viatra.transformation.views.traceability,
