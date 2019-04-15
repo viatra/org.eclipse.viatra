@@ -493,6 +493,44 @@ class AdvancedPatternParserTest {
             
     }
     
+    /* Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=546423 */
+    @Test
+    def void multipatternFileDeleteTest() {
+        val input = new HashMap<URI, String>
+
+        val String textInput = '''
+            package multidelete
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern a(c : EClass) {
+                find b(c);
+            }
+            
+            pattern b(c : EClass) {
+                EClass.name(c, _);
+            }
+        '''
+
+        
+        val uri = URI.createURI('''__synthetic_pattern1''').resolve(URI.createFileURI(System.getProperty("user.dir")))
+        input.put(uri, textInput)
+
+        val parser = PatternParserBuilder.instance.buildAdvanced
+
+        val results = parser.addSpecifications(input);
+        assertEquals(
+            2, results.getAddedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+         
+        val afterDeleteResults = parser.removeSpecifications(input)
+        
+        assertEquals(
+            0, afterDeleteResults.getUpdatedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(
+            0, afterDeleteResults.getImpactedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+            
+    }
+    
     @Test()
     def void completelyBogusSyntaxTest(){
         val String pattern = '''

@@ -108,10 +108,10 @@ public class AdvancedPatternParser extends BasePatternParser {
     }
 
     private void removeFromImpactCache(Pattern pattern) {
-        Set<URI> referredUris = PatternLanguageHelper.getReferencedPatternsTransitive(pattern).stream()
+        PatternLanguageHelper.getReferencedPatternsTransitive(pattern).stream()
+                .filter(p -> p.eResource() != null)
                 .map(p -> p.eResource().getURI())
-                .collect(Collectors.toSet());
-        referredUris.forEach(u -> dependencyCache.remove(u, pattern));
+                .forEach(u -> dependencyCache.remove(u, pattern));
     }
 
     private void updateImpactCache(Pattern pattern) {
