@@ -11,12 +11,13 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.standalone
 import org.eclipse.emf.common.util.URI
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
+import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
-import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
+import org.eclipse.xtext.diagnostics.Severity
 
 class PatternParserTest {
     
@@ -198,7 +199,9 @@ class PatternParserTest {
         '''
         val parser = new PatternParserBuilder().build
         val uri = URI.createURI("__synthetic_custom")
-        val specificationList = parser.parse(pattern, uri).querySpecifications.map[fullyQualifiedName].toList
+        val results = parser.parse(pattern, uri)
+        assertFalse(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+        val specificationList = results.querySpecifications.map[fullyQualifiedName].toList
         assertArrayEquals(#{"", "test"}, specificationList.toArray)
     }
 }

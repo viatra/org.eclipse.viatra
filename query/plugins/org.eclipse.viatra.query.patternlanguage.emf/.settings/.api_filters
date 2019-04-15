@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/emf/util/AdvancedPatternParser.java" type="org.eclipse.viatra.query.patternlanguage.emf.util.AdvancedPatternParser">
+        <filter comment="A different idea of error reporting is used, based on URIs instead of patterns and the old version is almost impossible to migrate" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.util.AdvancedPatternParser"/>
+                <message_argument value="getErroneousPatterns(ResourceSet)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

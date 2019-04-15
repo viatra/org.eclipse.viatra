@@ -17,6 +17,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
+import java.util.Collections
 
 class AdvancedPatternParserTest {
 
@@ -490,5 +491,28 @@ class AdvancedPatternParserTest {
         assertTrue(
             reAddResults.getImpactedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size === 2)
             
+    }
+    
+    @Test()
+    def void completelyBogusSyntaxTest(){
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            @Constraint{
+                
+            }
+            pattern test(class : EClass){
+                EClass(class);
+            }
+        '''
+        val parser = new PatternParserBuilder().buildAdvanced
+        val uri = URI.createURI("__synthetic_custom")
+        val input = newHashMap(uri -> pattern)
+        val results = parser.addSpecifications(input)
+        
+        assertFalse(parser.getErrors(uri).isEmpty)
+        val specificationList = results.addedSpecifications.map[fullyQualifiedName].toList
+        Collections.sort(specificationList)
+        assertArrayEquals(#{"", "test"}, specificationList.toArray)
     }
 }

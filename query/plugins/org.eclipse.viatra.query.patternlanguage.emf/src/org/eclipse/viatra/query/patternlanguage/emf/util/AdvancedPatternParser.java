@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.util.AdvancedPatternParsingResults.AdvancedPatternParsingResultsBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
+import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternValidationStatus;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -37,6 +39,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsData;
+import org.eclipse.xtext.util.UriUtil;
 import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.xbase.resource.BatchLinkableResource;
 
@@ -58,13 +61,13 @@ public class AdvancedPatternParser extends BasePatternParser {
 
     private static final String UNINITIALIZED_RESOURCESET_MESSAGE = "Resource set was not initialized for the parser.";
     private final Map<URI, String> uriTextMap;
-    private final Map<Resource, PatternSetValidationDiagnostics> diagnosticsMap;
-    private final Multimap<URI, Pattern> dependencyCache;
+    private final Map<URI, PatternSetValidationDiagnostics> diagnosticsMap;
+    private final Multimap<URI, URI> dependencyCache;
 
     protected AdvancedPatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs) {
         super(librarySpecifications, libraryURIs);
-        uriTextMap = new HashMap<URI, String>();
-        diagnosticsMap = new HashMap<Resource, PatternSetValidationDiagnostics>();
+        uriTextMap = new HashMap<>();
+        diagnosticsMap = new HashMap<>();
         dependencyCache = HashMultimap.create();
     }
 
@@ -106,17 +109,19 @@ public class AdvancedPatternParser extends BasePatternParser {
 
     private void removeFromImpactCache(Pattern pattern) {
         Set<URI> referredUris = PatternLanguageHelper.getReferencedPatternsTransitive(pattern).stream()
-                .map(p -> p.eResource().getURI()).collect(Collectors.toSet());
+                .map(p -> p.eResource().getURI())
+                .collect(Collectors.toSet());
         referredUris.forEach(u -> dependencyCache.remove(u, pattern));
     }
 
     private void updateImpactCache(Pattern pattern) {
         dependencyCache.keySet().forEach(uri -> dependencyCache.remove(uri, pattern));
+        URI patternResourceURI = pattern.eResource().getURI();
         Set<URI> referredUris = PatternLanguageHelper.getReferencedPatternsTransitive(pattern).stream()
                 .map(p -> p.eResource().getURI())
-                .filter(uri -> !Objects.equals(uri, pattern.eResource().getURI()))
+                .filter(uri -> !Objects.equals(uri, patternResourceURI))
                 .collect(Collectors.toSet());
-        referredUris.forEach(u -> dependencyCache.put(u, pattern));
+        referredUris.forEach(u -> dependencyCache.put(u, patternResourceURI));
     }
 
     protected AdvancedPatternParsingResults updateSpecifications(Map<URI, String> input, Map<?, ?> options,
@@ -217,25 +222,34 @@ public class AdvancedPatternParser extends BasePatternParser {
 
     public void reset() {
         if(builder!=null) {
-            uriTextMap.keySet().forEach(uri -> builder.forgetURI(uri));
+            builder = null;
         }
+        final List<Resource> resourceList = uriTextMap.keySet().stream()
+                .map(uri -> resourceSet.getResource(uri, false))
+                .filter(Objects::nonNull)
+                .filter(resource -> resource.isLoaded())
+                .collect(Collectors.toList());
+        Resource[] resourcesToRemove = resourceList.toArray(new Resource[resourceList.size()]);
+        removeResource(resourceSet, resourcesToRemove);
         uriTextMap.clear();
         diagnosticsMap.clear();
         dependencyCache.clear();
     }
-
-    private void removeResource(ResourceSet resourceSet, Resource resource) {
+    
+    private void removeResource(ResourceSet resourceSet, Resource... resources) {
         ResourceDescriptionsData resourceDescriptionsData = ResourceDescriptionsData.ResourceSetAdapter
                 .findResourceDescriptionsData(resourceSet);
         if (resourceDescriptionsData != null) {
-            resource.getContents().clear();
-
-            IResourceDescription description = manager.getResourceDescription(resource);
-            Delta delta = manager.createDelta(resourceDescriptionsData.getResourceDescription(resource.getURI()),
-                    description);
-            resourceDescriptionsData.register(delta);
-            resourceSet.getResources().remove(resource);
-            uriTextMap.remove(resource.getURI());
+            for (Resource resource : resources) {
+                resource.getContents().clear();
+    
+                IResourceDescription description = manager.getResourceDescription(resource);
+                Delta delta = manager.createDelta(resourceDescriptionsData.getResourceDescription(resource.getURI()),
+                        description);
+                resourceDescriptionsData.register(delta);
+                resourceSet.getResources().remove(resource);
+                uriTextMap.remove(resource.getURI());
+            }
         }
     }
 
@@ -257,14 +271,14 @@ public class AdvancedPatternParser extends BasePatternParser {
 
         AdvancedPatternParserSnapshot.Builder builder = AdvancedPatternParserSnapshot.Builder
                 .on(getOrCreateSpecificationBuilder());
-        Set<Pattern> impact = calculateImpact(input.keySet(), resourceSet);
-        impact.addAll(getErroneousPatterns(resourceSet, input.keySet()));
+        Set<URI> impact = calculateImpact(input.keySet());
+        impact.addAll(getErroneousPatternResources(resourceSet, input.keySet()));
 
         input.keySet().forEach(uriToUse -> {
             Resource resource = resourceSet.getResource(uriToUse, false);
             if (resource != null) {
                 removeResource(resourceSet, resource);
-                diagnosticsMap.remove(resource);
+                diagnosticsMap.remove(resource.getURI());
             }
         });
 
@@ -285,13 +299,13 @@ public class AdvancedPatternParser extends BasePatternParser {
 
         AdvancedPatternParserSnapshot.Builder builder = AdvancedPatternParserSnapshot.Builder
                 .on(getOrCreateSpecificationBuilder());
-        Set<Pattern> impact = getErroneousPatterns(resourceSet, Collections.emptySet());
+        Set<URI> impact = getErroneousPatternResources(resourceSet, Collections.emptySet());
 
         input.keySet().forEach(uriToUse -> {
             Resource resource = resourceSet.getResource(uriToUse, false);
             if (resource != null) {
                 removeResource(resourceSet, resource);
-                diagnosticsMap.remove(resource);
+                diagnosticsMap.remove(resource.getURI());
             }
         });
 
@@ -312,7 +326,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         Preconditions.checkState(uris.isEmpty(), "The following URIs have not been initialized yet: " + uris);
         AdvancedPatternParserSnapshot.Builder builder = AdvancedPatternParserSnapshot.Builder
                 .on(getOrCreateSpecificationBuilder());
-        Set<Pattern> impact = calculateImpact(input.keySet(), resourceSet);
+        Set<URI> impact = calculateImpact(input.keySet());
 
         input.keySet()
             .stream()
@@ -323,14 +337,14 @@ public class AdvancedPatternParser extends BasePatternParser {
                         List<Pattern> patterns = resource.getContents().stream().filter(PatternModel.class::isInstance)
                                 .map(pm -> ((PatternModel) pm).getPatterns().stream()).flatMap(Function.identity())
                                 .collect(Collectors.toList());
-                        PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(resource);
+						PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(resource.getURI());
 
                         builder.removedPatternResults(resource.getURI(),
                                 new PatternParsingResults(patterns, diagnostics, getOrCreateSpecificationBuilder()));
 
                     }
                     removeResource(resourceSet, resource);
-                    diagnosticsMap.remove(resource);
+					diagnosticsMap.remove(resource.getURI());
 
                 });
         reparsePatternImpact(options, resourceSet, builder, impact);
@@ -339,13 +353,14 @@ public class AdvancedPatternParser extends BasePatternParser {
     }
 
     private void reparsePatternImpact(Map<?, ?> options, ResourceSet resourceSet,
-            AdvancedPatternParserSnapshot.Builder builder, Set<Pattern> impact) {
+            AdvancedPatternParserSnapshot.Builder builder, Set<URI> impact) {
         if (!impact.isEmpty()) {
-            Set<Resource> resources = impact.stream().map(Pattern::eResource).collect(Collectors.toSet());
+            Set<Resource> resources = impact.stream().map(uri -> resourceSet.getResource(uri, true)).collect(Collectors.toSet());
 
             resourceSet.getResources().removeAll(resources);
 
             Map<URI, String> textReprMap = resources.stream()
+            		.filter(res -> uriTextMap.containsKey(res.getURI()))
                     .collect(Collectors.toMap(Resource::getURI, res -> uriTextMap.get(res.getURI()), (a, b) -> b));
 
             Map<URI, PatternParsingResults> results = parseBatch(textReprMap, options, resourceSet);
@@ -353,8 +368,21 @@ public class AdvancedPatternParser extends BasePatternParser {
         }
     }
 
-    protected Set<Pattern> calculateImpact(Set<URI> input, ResourceSet resourceSet) {
-        return input.stream().map(dependencyCache::get).flatMap(Collection::stream).collect(Collectors.toSet());
+    /**
+     * @deprecated use {@link #calculateImpact(Set)} instead, the resource set parameter is unnecessary
+     */
+    @Deprecated
+    protected Set<URI> calculateImpact(Set<URI> input, ResourceSet rs) {
+        return calculateImpact(input);
+    }
+    /**
+     * @since 2.2
+     */
+    protected Set<URI> calculateImpact(Set<URI> input) {
+        return input.stream()
+                .map(dependencyCache::get)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     protected Map<URI, PatternParsingResults> parseBatch(Map<URI, String> input, Map<?, ?> options,
@@ -386,7 +414,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         for (Resource resource : resources) {
             List<Pattern> patterns = new ArrayList<>();
             PatternSetValidationDiagnostics diagnostics = validator.validate(resource);
-            diagnosticsMap.put(resource, diagnostics);
+            diagnosticsMap.put(resource.getURI(), diagnostics);
 
             for (EObject eObject : resource.getContents()) {
                 if (eObject instanceof PatternModel) {
@@ -409,49 +437,33 @@ public class AdvancedPatternParser extends BasePatternParser {
         index.register(delta);
     }
 
-    protected Set<Pattern> getErroneousPatterns(ResourceSet resourceSet) {
-        return getErroneousPatterns(resourceSet, Collections.emptySet());
-    }
-    
     /**
      * @since 2.2
      */
-    protected Set<Pattern> getErroneousPatterns(ResourceSet resourceSet, Set<URI> urisToIgnore) {
-        Set<Pattern> erroneousPatterns = new HashSet<Pattern>();
-        new ArrayList<Resource>(resourceSet.getResources()).forEach(res -> {
-            if (res instanceof BatchLinkableResource && !urisToIgnore.contains(res.getURI())) {
-                PatternSetValidationDiagnostics diagnostics = diagnosticsMap.get(res);
-                if (diagnostics != null) {
-                    Set<Pattern> resourcePatterns = res.getContents().stream()
-                            .filter(PatternModel.class::isInstance)
-                            .map(PatternModel.class::cast)
-                            .map(pm -> pm.getPatterns().stream())
-                            .flatMap(Function.identity())
-                            .collect(Collectors.toSet());
-                    erroneousPatterns.addAll(resourcePatterns.stream()
-                                .filter(pattern -> !getErrors(pattern, diagnostics).isEmpty()).collect(Collectors.toSet())
-                            );
-                }
-            }
-        });
-        Set<URI> uris = erroneousPatterns.stream().map(pattern -> pattern.eResource().getURI())
-                .collect(Collectors.toSet());
-        erroneousPatterns.addAll(calculateImpact(uris, resourceSet));
-        return erroneousPatterns;
+    protected Set<URI> getErroneousPatternResources(ResourceSet resourceSet, Set<URI> urisToIgnore) {
+        Set<URI> uris = new ArrayList<>(resourceSet.getResources()).stream()
+        		.filter(BatchLinkableResource.class::isInstance)
+        		.filter(res -> !urisToIgnore.contains(res.getURI()))
+				.filter(res -> res.getContents().stream().anyMatch(PatternModel.class::isInstance))
+				.filter(res -> !diagnosticsMap.containsKey(res.getURI()) || diagnosticsMap.get(res.getURI()).getStatus() == PatternValidationStatus.ERROR)
+				.map(res -> res.getURI())
+				.collect(Collectors.toSet());
+        uris.addAll(calculateImpact(uris));
+        return uris;
     }
 
-    private List<Issue> getErrors(Pattern pattern, PatternSetValidationDiagnostics diag) {
-        final Resource resource = pattern.eResource();
-        if (resource == null) {
-            return new ArrayList<>();
-        }
-        final ResourceSet rs = resource.getResourceSet();
-        if (rs == null) {
-            return new ArrayList<>();
-        }
-        return diag.getAllErrors().stream()
-                .filter(issue -> EcoreUtil.isAncestor(pattern, rs.getEObject(issue.getUriToProblem(), false)))
-                .collect(Collectors.toList());
+    /**
+     * @since 2.2
+     */
+    public Set<Issue> getErrors(URI uri) {
+    	return Optional.ofNullable(diagnosticsMap.get(uri))
+    			.map(t -> t.getAllErrors().stream()
+    					.filter(issue -> issue.getUriToProblem() != null )
+    					// Model inference errors are not problematic during interpretative pattern matching
+    					.filter(issue -> !Objects.equals(issue.getCode(), IErrorFeedback.JVMINFERENCE_ERROR_TYPE))
+    					.filter(issue -> Objects.equals(uri, issue.getUriToProblem().trimFragment()))
+    					.collect(Collectors.toSet()))
+    			.orElse(Collections.emptySet());
     }
 
     public static class AdvancedPatternParserSnapshot {
@@ -554,6 +566,14 @@ public class AdvancedPatternParser extends BasePatternParser {
                     .collect(Collectors.toList());
         }
 
+        /**
+         * @since 2.2
+         */
+        public List<Issue> getErrors(URI uri) {
+			return diag.getAllErrors().stream().filter(issue -> UriUtil.isPrefixOf(uri, issue.getUriToProblem()))
+					.collect(Collectors.toList());
+        }
+        
         public List<Issue> getErrors(Pattern pattern) {
             Preconditions.checkArgument(getAllPatterns().contains(pattern),
                     "The referenced pattern %s is not parsed by the builder.", pattern.getName());
