@@ -531,6 +531,52 @@ class AdvancedPatternParserTest {
             
     }
     
+    /* Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=546422 */
+    @Test
+    def void multiFileDeleteTest() {
+        val input = new HashMap<URI, String>
+
+        val String inputA = '''
+            package multidelete
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern a(c : EClass) {
+                find b(c);
+            }
+        '''
+        
+        val String inputB = '''
+            package multidelete
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+                EClass.name(c, _);
+            }
+        '''
+
+        
+        val uriA = URI.createURI('''__synthetic_patternA''').resolve(URI.createFileURI(System.getProperty("user.dir")))
+        val uriB = URI.createURI('''__synthetic_patternB''').resolve(URI.createFileURI(System.getProperty("user.dir")))
+        input.put(uriA, inputA)
+        input.put(uriB, inputB)
+
+        val parser = PatternParserBuilder.instance.buildAdvanced
+
+        val results = parser.addSpecifications(input);
+        assertEquals(
+            2, results.getAddedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+         
+        val afterDeleteResults = parser.removeSpecifications(input)
+        
+        assertEquals(
+            0, afterDeleteResults.getUpdatedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(
+            0, afterDeleteResults.getImpactedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+            
+    }
+    
     @Test()
     def void completelyBogusSyntaxTest(){
         val String pattern = '''

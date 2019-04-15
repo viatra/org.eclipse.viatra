@@ -382,6 +382,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         return input.stream()
                 .map(dependencyCache::get)
                 .flatMap(Collection::stream)
+                .filter(uri -> !input.contains(uri))
                 .collect(Collectors.toSet());
     }
 
