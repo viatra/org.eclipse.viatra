@@ -43,7 +43,8 @@ public class EMFPatternLanguageQualifiedNameProvider extends XbaseQualifiedNameP
             }
         } if (obj instanceof Pattern) {
             Pattern pattern = (Pattern) obj;
-            return nameConverter.toQualifiedName(PatternLanguageHelper.getFullyQualifiedName(pattern));
+            final String fullyQualifiedName = PatternLanguageHelper.getFullyQualifiedName(pattern);
+            return fullyQualifiedName.isEmpty() ? null : nameConverter.toQualifiedName(fullyQualifiedName);
         } else if (obj instanceof PatternBody) {
             PatternBody patternBody = (PatternBody) obj;
             Pattern pattern = (Pattern) patternBody.eContainer();

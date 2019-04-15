@@ -199,6 +199,6 @@ class PatternParserTest {
         val parser = new PatternParserBuilder().build
         val uri = URI.createURI("__synthetic_custom")
         val specificationList = parser.parse(pattern, uri).querySpecifications.map[fullyQualifiedName].toList
-        assertArrayEquals(#{null, "test"}, specificationList.toArray)
+        assertArrayEquals(#{"", "test"}, specificationList.toArray)
     }
 }

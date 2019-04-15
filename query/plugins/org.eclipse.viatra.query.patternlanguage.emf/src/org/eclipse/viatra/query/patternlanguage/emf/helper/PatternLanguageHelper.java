@@ -119,7 +119,7 @@ public final class PatternLanguageHelper {
      * Returns the name of the pattern, qualified by package name.
      */
     public static String getFullyQualifiedName(Pattern pattern) {
-        if (pattern == null) {
+        if (pattern == null || pattern.getName() == null) {
             return "";
         }
         String packageName = getPackageName(pattern);
