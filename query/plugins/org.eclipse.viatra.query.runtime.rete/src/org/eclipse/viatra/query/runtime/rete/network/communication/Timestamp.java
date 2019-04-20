@@ -13,16 +13,23 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timelines;
+
 /**
- * A timestamp associated with update messages in differential dataflow evaluation. 
+ * A timestamp associated with update messages in timely evaluation.
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public class Timestamp implements Comparable<Timestamp>, MessageSelector {
 
     protected final int value;
     public static final Timestamp ZERO = new Timestamp(0);
+    /**
+     * @since 2.4
+     */
+    public static final Timeline<Timestamp> INSERT_AT_ZERO_TIMELINE = Timelines.createFrom(Timestamp.ZERO);
 
     public Timestamp(final int value) {
         this.value = value;
@@ -39,6 +46,17 @@ public class Timestamp implements Comparable<Timestamp>, MessageSelector {
             return that;
         }
     }
+    
+    /**
+     * @since 2.4
+     */
+    public Timestamp min(final Timestamp that) {
+        if (this.value <= that.value) {
+            return this;
+        } else {
+            return that;
+        }
+    }
 
     @Override
     public int compareTo(final Timestamp that) {
@@ -47,7 +65,7 @@ public class Timestamp implements Comparable<Timestamp>, MessageSelector {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || obj.getClass() != this.getClass()) {
+        if (obj == null || !(obj instanceof Timestamp)) {
             return false;
         } else {
             return this.value == ((Timestamp) obj).value;
@@ -63,14 +81,14 @@ public class Timestamp implements Comparable<Timestamp>, MessageSelector {
     public String toString() {
         return Integer.toString(this.value);
     }
-
+    
     /**
-     * A {@link Map} implementation that associates the zero timestamp with every key.
-     * There is no suppor for {@link Map#entrySet()} due to performance reasons.   
+     * A {@link Map} implementation that associates the zero timestamp with every key. There is no suppor for
+     * {@link Map#entrySet()} due to performance reasons.
      * 
      * @author Tamas Szabo
      */
-    public static final class AllZeroMap<T> extends AbstractMap<T, Timestamp> {
+    public static final class AllZeroMap<T> extends AbstractMap<T, Timeline<Timestamp>> {
 
         private final Collection<T> wrapped;
 
@@ -79,15 +97,18 @@ public class Timestamp implements Comparable<Timestamp>, MessageSelector {
         }
 
         @Override
-        public Set<Entry<T, Timestamp>> entrySet() {
+        public Set<Entry<T, Timeline<Timestamp>>> entrySet() {
             throw new UnsupportedOperationException("Use the combination of keySet() and get()!");
         }
 
+        /**
+         * @since 2.4
+         */
         @Override
-        public Timestamp get(final Object key) {
-            return Timestamp.ZERO;
+        public Timeline<Timestamp> get(final Object key) {
+            return INSERT_AT_ZERO_TIMELINE;
         }
-        
+
         @Override
         public Set<T> keySet() {
             return (Set<T>) this.wrapped;

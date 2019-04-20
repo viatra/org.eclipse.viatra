@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
@@ -39,11 +40,11 @@ public class RecursionCutoffPoint {
     final ProductionRecipe recipe;
     final QueryEvaluationHint hint;
     
-    public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context, boolean deleteAndRederiveEvaluation) {
+    public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint, IQueryMetaContext context, boolean deleteAndRederiveEvaluation, TimelyConfiguration timelyEvaluation) {
         super();
         this.hint = hint;
         this.futureTraceMap = new HashMap<>(); // IMPORTANT: the identity of futureTraceMap.values() will not change
-        this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceMap, Collections.<ReteNodeRecipe>emptySet(), hint, context, deleteAndRederiveEvaluation);
+        this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceMap, Collections.<ReteNodeRecipe>emptySet(), hint, context, deleteAndRederiveEvaluation, timelyEvaluation);
         this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
         if (!compiledQuery.getParentRecipeTraces().isEmpty()) {
             throw new IllegalArgumentException(String.format("Recursion cut-off point of query %s has trace parents: %s", 

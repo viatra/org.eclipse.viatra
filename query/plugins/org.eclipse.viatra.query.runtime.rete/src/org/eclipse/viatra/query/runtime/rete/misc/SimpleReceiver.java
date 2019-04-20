@@ -49,7 +49,7 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
+        if (this.reteContainer.isTimelyEvaluation()) {
             return new TimelyMailbox(this, this.reteContainer);
         } else {
             return new BehaviorChangingMailbox(this, this.reteContainer);

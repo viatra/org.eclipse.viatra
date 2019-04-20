@@ -9,21 +9,22 @@
 package org.eclipse.viatra.query.runtime.rete.network.communication.timely;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.rete.index.IndexerListener;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
- * A differential proxy for another {@link IndexerListener}, which performs some preprocessing 
+ * A timely proxy for another {@link IndexerListener}, which performs some preprocessing 
  * on the differential timestamps before passing it on to the real recipient. 
  * <p>
  * These proxies are used on edges leading into {@link ProductionNode}s. Because {@link ProductionNode}s 
  * never ask back the indexer for its contents, there is no need to also apply the proxy on that direction. 
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public class TimelyIndexerListenerProxy implements IndexerListener {
 
@@ -32,8 +33,13 @@ public class TimelyIndexerListenerProxy implements IndexerListener {
 
     public TimelyIndexerListenerProxy(final IndexerListener wrapped,
             final TimestampTransformation preprocessor) {
+        Preconditions.checkArgument(!(wrapped instanceof TimelyIndexerListenerProxy), "Proxy in a proxy is not allowed!");
         this.wrapped = wrapped;
         this.preprocessor = preprocessor;
+    }
+    
+    public IndexerListener getWrappedIndexerListener() {
+        return wrapped;
     }
 
     @Override

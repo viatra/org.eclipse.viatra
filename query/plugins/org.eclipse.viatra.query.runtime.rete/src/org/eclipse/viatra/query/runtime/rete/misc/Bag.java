@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 

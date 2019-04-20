@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.matchers.util.IMemory;
 
 /**
@@ -35,7 +36,7 @@ abstract class AbstractTrivialMaskedMemory<Timestamp extends Comparable<Timestam
     }
     
     @Override
-    public Map<Tuple, Timestamp> getWithTimestamp(ITuple signature) {
+    public Map<Tuple, Timeline<Timestamp>> getWithTimeline(ITuple signature) {
         throw new UnsupportedOperationException("Timeless memories do not support timestamp-based lookup!");
     }
 

@@ -13,7 +13,8 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -48,7 +49,7 @@ public class DiscriminatorBucketNode extends SingleInputNode {
     }
     
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         if (parent != null) {
             getDispatcher().pullIntoWithTimestampFiltered(collector, bucketKey, flush);
         }

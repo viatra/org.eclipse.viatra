@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network.delayed;
 
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -21,7 +21,7 @@ public class DelayedConnectCommand extends DelayedCommand {
 
     @Override
     protected boolean isTimestampAware() {
-        return this.container.isDifferentialDataFlowEvaluation() && this.container.getCommunicationTracker().areInSameGroup(this.supplier, this.receiver);
+        return this.container.isTimelyEvaluation() && this.container.getCommunicationTracker().areInSameGroup(this.supplier, this.receiver);
     }
 
 }

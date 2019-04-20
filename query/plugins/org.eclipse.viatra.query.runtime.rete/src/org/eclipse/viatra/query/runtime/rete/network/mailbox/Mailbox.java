@@ -10,7 +10,7 @@ package org.eclipse.viatra.query.runtime.rete.network.mailbox;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.IGroupable;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
@@ -34,7 +34,7 @@ public interface Mailbox extends Clearable, IGroupable {
      *            the direction of the update
      * @param update
      *            the update element
-     * @return the effect of the message posting
+     * @since 2.4
      */
     public void postMessage(final Direction direction, final Tuple update, final Timestamp timestamp);
 

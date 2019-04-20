@@ -13,7 +13,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
@@ -40,7 +41,7 @@ public class TransparentNode extends SingleInputNode {
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         propagatePullIntoWithTimestamp(collector, flush);
     }
     

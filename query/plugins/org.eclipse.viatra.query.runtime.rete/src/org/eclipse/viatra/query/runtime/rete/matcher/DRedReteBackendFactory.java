@@ -24,7 +24,7 @@ public class DRedReteBackendFactory extends ReteBackendFactory {
 
     @Override
     public IQueryBackend create(IQueryBackendContext context) {
-        return create(context, true, false);
+        return create(context, true, null);
     }
 
     @Override

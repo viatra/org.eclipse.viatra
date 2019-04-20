@@ -16,26 +16,24 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetA
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timeless.RecursiveCommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.PosetAwareMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 
 /**
- * Groups incoming tuples by the given mask, and aggregates values at a specific index in each group.
- * 
+ * Timeless implementation of the column aggregator node.
  * <p>
- * Direct children are not supported, use via outer join indexers instead.
- *
- * <p>
- * 
- * This node cannot be used in recursive differential dataflow evaluation.
+ * The node is capable of operating in the delete and re-derive mode. In this mode, it is also possible to equip the
+ * node with an {@link IPosetComparator} to identify monotone changes; thus, ensuring that a fix-point can be reached
+ * during the evaluation.
  * 
  * @author Gabor Bergmann
  * @author Tamas Szabo
@@ -68,7 +66,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
     /**
      * @since 1.7
      */
-    protected CommunicationGroup currentGroup = null;
+    protected CommunicationGroup currentGroup;
 
     /**
      * Creates a new column aggregator node.
@@ -126,9 +124,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
 
     @Override
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new TimelyMailbox(this, this.reteContainer);
-        } else if (groupMask != null && columnMask != null && posetComparator != null) {
+        if (groupMask != null && columnMask != null && posetComparator != null) {
             return new PosetAwareMailbox(this, this.reteContainer);
         } else {
             return new BehaviorChangingMailbox(this, this.reteContainer);
@@ -159,10 +155,10 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
         memory.put(group, accumulator);
         // unregister the node if there is nothing left to be re-derived
         if (this.rederivableMemory.isEmpty()) {
-            currentGroup.removeRederivable(this);
+            ((RecursiveCommunicationGroup) currentGroup).removeRederivable(this);
         }
         final AggregateResult value = operator.getAggregate(accumulator);
-        propagate(group, NEUTRAL, value, Timestamp.ZERO);
+        propagateAggregateResultUpdate(group, NEUTRAL, value, Timestamp.ZERO);
     }
 
     @Override
@@ -180,7 +176,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
     }
 
     /**
-     * @since 1.6
+     * @since 2.4
      */
     protected void updateDefault(final Direction direction, final Tuple update, final Timestamp timestamp) {
         final Tuple key = groupMask.transform(update);
@@ -196,11 +192,11 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
         storeIfNotNeutral(key, newMainAccumulator, memory);
         final AggregateResult newValue = operator.getAggregate(newMainAccumulator);
 
-        propagate(key, oldValue, newValue, timestamp);
+        propagateAggregateResultUpdate(key, oldValue, newValue, timestamp);
     }
 
     /**
-     * @since 1.6
+     * @since 2.4
      */
     protected void updateWithDeleteAndRederive(final Direction direction, final Tuple update, final boolean monotone) {
         final Tuple group = groupMask.transform(update);
@@ -222,7 +218,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
                     // this can happen if the accumulator became neutral in response to the INSERT
-                    currentGroup.removeRederivable(this);
+                    ((RecursiveCommunicationGroup) currentGroup).removeRederivable(this);
                 }
             } else {
                 // the group is in the main memory
@@ -236,7 +232,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
                         isInsertion);
                 storeIfNotNeutral(group, newMainAccumulator, memory);
                 final AggregateResult newValue = operator.getAggregate(newMainAccumulator);
-                propagate(group, oldValue, newValue, Timestamp.ZERO);
+                propagateAggregateResultUpdate(group, oldValue, newValue, Timestamp.ZERO);
             }
         } else {
             // DELETE
@@ -254,7 +250,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
                     if (rederivableMemory.isEmpty()) {
                         // there is nothing left to be re-derived
                         // this can happen if the accumulator became neutral in response to the DELETE
-                        currentGroup.removeRederivable(this);
+                        ((RecursiveCommunicationGroup) currentGroup).removeRederivable(this);
                     }
                 } catch (final NullPointerException ex) {
                     issueError("[INTERNAL ERROR] Deleting a domain element in " + update
@@ -275,14 +271,14 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
 
                 if (monotone) {
                     storeIfNotNeutral(group, newMainAccumulator, memory);
-                    propagate(group, oldValue, newValue, Timestamp.ZERO);
+                    propagateAggregateResultUpdate(group, oldValue, newValue, Timestamp.ZERO);
                 } else {
                     final boolean wasEmpty = rederivableMemory.isEmpty();
                     if (storeIfNotNeutral(group, newMainAccumulator, rederivableMemory) && wasEmpty) {
-                        currentGroup.addRederivable(this);
+                        ((RecursiveCommunicationGroup) currentGroup).addRederivable(this);
                     }
                     memory.remove(group);
-                    propagate(group, oldValue, NEUTRAL, Timestamp.ZERO);
+                    propagateAggregateResultUpdate(group, oldValue, NEUTRAL, Timestamp.ZERO);
                 }
             }
         }
@@ -312,16 +308,26 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult>
     }
 
     @Override
-    public Tuple getAggregateTuple(final Tuple key) {
-        final Accumulator accumulator = getMainAccumulator(key);
-        final AggregateResult aggregateResult = operator.getAggregate(accumulator);
-        return tupleFromAggregateResult(key, aggregateResult);
+    public Tuple getAggregateTuple(final Tuple group) {
+        final Accumulator accumulator = getMainAccumulator(group);
+        final AggregateResult result = operator.getAggregate(accumulator);
+        return tupleFromAggregateResult(group, result);
     }
 
     @Override
-    public AggregateResult getAggregateResult(final Tuple key) {
-        final Accumulator accumulator = getMainAccumulator(key);
+    public AggregateResult getAggregateResult(final Tuple group) {
+        final Accumulator accumulator = getMainAccumulator(group);
         return operator.getAggregate(accumulator);
+    }
+
+    @Override
+    public Map<AggregateResult, Timeline<Timestamp>> getAggregateResultTimeline(Tuple key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<Tuple, Timeline<Timestamp>> getAggregateTupleTimeline(Tuple key) {
+        throw new UnsupportedOperationException();
     }
 
     /**

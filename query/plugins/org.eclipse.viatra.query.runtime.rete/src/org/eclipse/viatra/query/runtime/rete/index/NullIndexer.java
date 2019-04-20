@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -80,7 +80,7 @@ public abstract class NullIndexer extends SpecializedProjectionIndexer {
     @Override
     public void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement,
             Timestamp timestamp) {
-        boolean radical = (direction == Direction.REVOKE && isEmpty())
+        boolean radical = (direction == Direction.DELETE && isEmpty())
                 || (direction == Direction.INSERT && isSingleElement());
         listener.notifyIndexerUpdate(direction, updateElement, nullSignature, radical, timestamp);
     }

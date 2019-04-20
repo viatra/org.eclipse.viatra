@@ -55,7 +55,7 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider {
                     text.append(formatSize(input.getPulledContents().size()));
                 } else if (node instanceof AbstractUniquenessEnforcerNode) {
                     AbstractUniquenessEnforcerNode uniquenessEnforcerNode = (AbstractUniquenessEnforcerNode) node;
-                    text.append(formatSize(uniquenessEnforcerNode.getMemory().size()));
+                    text.append(formatSize(uniquenessEnforcerNode.getTuples().size()));
                 } else if (node instanceof IndexerWithMemory) {
                     IndexerWithMemory indexerWithMemory = (IndexerWithMemory) node;
                     MaskedTupleMemory memory = indexerWithMemory.getMemory();

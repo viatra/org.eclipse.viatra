@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
 
@@ -106,6 +106,9 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
         return retSet;
     }
 
+    /**
+     * @since 2.4
+     */
     public void propagate(Direction direction, Tuple updateElement, boolean change) {
         propagate(direction, updateElement, new MaskedTuple(updateElement, mask), change, null);
     }

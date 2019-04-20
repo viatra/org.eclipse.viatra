@@ -36,7 +36,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra.query.runtime.rete.util.Options;
 import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 
 /**
@@ -175,8 +174,9 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             }
             // are there any variables that will not be needed anymore and are worth trimming?
             // (check only if there are unenforced enumerables, so that there are still upcoming joins)
-            if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
-                    !plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
+//            if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
+//                    !plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
+            if (true) {
                 final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(
                         planFactory, plan, true, queryAnalyzer);
                 plan = trimmed;

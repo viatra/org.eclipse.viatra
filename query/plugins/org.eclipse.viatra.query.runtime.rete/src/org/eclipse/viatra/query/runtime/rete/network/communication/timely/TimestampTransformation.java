@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
  * This is used on edges leading in and out from {@link Node}s in recursive {@link TimelyCommunicationGroup}s. 
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public enum TimestampTransformation {
 

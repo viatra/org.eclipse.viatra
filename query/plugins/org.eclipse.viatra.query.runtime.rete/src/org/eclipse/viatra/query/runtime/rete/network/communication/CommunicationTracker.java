@@ -8,12 +8,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network.communication;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -29,12 +27,12 @@ import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.IndexerListener;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.IGroupable;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
-import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyIndexerListenerProxy;
 import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyMailboxProxy;
@@ -142,23 +140,21 @@ public abstract class CommunicationTracker {
         if (!groupQueue.isEmpty()) {
             final Set<CommunicationGroup> oldActiveGroups = new HashSet<CommunicationGroup>(groupQueue);
             groupQueue.clear();
+            reconstructQueueContents(oldActiveGroups);
+        }
 
-            for (final CommunicationGroup oldGroup : oldActiveGroups) {
-                for (final Entry<MessageSelector, Collection<Mailbox>> entry : oldGroup.getMailboxes().entrySet()) {
-                    for (final Mailbox mailbox : entry.getValue()) {
-                        final CommunicationGroup newGroup = this.groupMap.get(mailbox.getReceiver());
-                        newGroup.notifyHasMessage(mailbox, entry.getKey());
-                    }
-                }
-
-                for (final RederivableNode node : oldGroup.getRederivables()) {
-                    final CommunicationGroup newGroup = this.groupMap.get(node);
-                    newGroup.addRederivable(node);
-                }
-                oldGroup.isEnqueued = false;
-            }
+        // post process the groups
+        for (final CommunicationGroup group : groupMap.values()) {
+            postProcessGroup(group);
         }
     }
+
+    /**
+     * This method is responsible for reconstructing the active queue contents after the network structure has changed.
+     * It it defined as abstract because the reconstruction logic is specific to each {@link CommunicationTracker}.
+     * @since 2.4
+     */
+    protected abstract void reconstructQueueContents(final Set<CommunicationGroup> oldActiveGroups);
 
     private void addToGroup(final Node node, final CommunicationGroup group) {
         groupMap.put(node, group);
@@ -280,7 +276,8 @@ public abstract class CommunicationTracker {
 
     /**
      * Registers the dependency that the target {@link Node} depends on the source {@link Node}. In other words, source
-     * may send messages to target in the RETE network.
+     * may send messages to target in the RETE network. If the dependency edge is already present, this method call is a
+     * noop.
      *
      * @param source
      *            the source node
@@ -292,52 +289,61 @@ public abstract class CommunicationTracker {
         dependencyGraph.insertNode(source);
         dependencyGraph.insertNode(target);
 
-        // query all these information before the actual edge insertion
-        // because SCCs may be unified during the process
-        final Node sourceRepresentative = sccInformationProvider.getRepresentative(source);
-        final Node targetRepresentative = sccInformationProvider.getRepresentative(target);
-        final boolean hadOutgoingEdges = sccInformationProvider.hasOutgoingEdges(targetRepresentative);
+        if (!this.dependencyGraph.getTargetNodes(source).containsNonZero(target)) {
 
-        // insert the edge
-        dependencyGraph.insertEdge(source, target);
+            // query all these information before the actual edge insertion
+            // because SCCs may be unified during the process
+            final Node sourceRepresentative = sccInformationProvider.getRepresentative(source);
+            final Node targetRepresentative = sccInformationProvider.getRepresentative(target);
+            final boolean targetHadOutgoingEdges = sccInformationProvider.hasOutgoingEdges(targetRepresentative);
 
-        // create groups if they do not yet exist
-        CommunicationGroup sourceGroup = groupMap.get(sourceRepresentative);
-        if (sourceGroup == null) {
-            // create on-demand with the next smaller group id
-            sourceGroup = createAndStoreGroup(sourceRepresentative, --minGroupId);
-        }
-        final int sourceIndex = sourceGroup.identifier;
+            // insert the edge
+            dependencyGraph.insertEdge(source, target);
 
-        CommunicationGroup targetGroup = groupMap.get(targetRepresentative);
-        if (targetGroup == null) {
-            // create on-demand with the next larger group id
-            targetGroup = createAndStoreGroup(targetRepresentative, ++maxGroupId);
-        }
-        final int targetIndex = targetGroup.identifier;
-
-        if (sourceIndex <= targetIndex) {
-            // indices obey current topological ordering
-            refreshFallThroughFlag(target);
-            postProcessNode(source);
-            postProcessNode(target);
-        } else if (sourceIndex > targetIndex && !hadOutgoingEdges) {
-            // indices violate current topological ordering, but we can simply bump the target index
-            final boolean wasEnqueued = targetGroup.isEnqueued;
-            if (wasEnqueued) {
-                groupQueue.remove(targetGroup);
+            // create groups if they do not yet exist
+            CommunicationGroup sourceGroup = groupMap.get(sourceRepresentative);
+            if (sourceGroup == null) {
+                // create on-demand with the next smaller group id
+                sourceGroup = createAndStoreGroup(sourceRepresentative, --minGroupId);
             }
-            targetGroup.identifier = ++maxGroupId;
-            if (wasEnqueued) {
-                groupQueue.add(targetGroup);
-            }
+            final int sourceIndex = sourceGroup.identifier;
 
-            refreshFallThroughFlag(target);
-            postProcessNode(source);
-            postProcessNode(target);
-        } else {
-            // needs a full re-computation because of more complex change
-            precomputeGroups();
+            CommunicationGroup targetGroup = groupMap.get(targetRepresentative);
+            if (targetGroup == null) {
+                // create on-demand with the next larger group id
+                targetGroup = createAndStoreGroup(targetRepresentative, ++maxGroupId);
+            }
+            final int targetIndex = targetGroup.identifier;
+
+            if (sourceIndex <= targetIndex) {
+                // indices obey current topological ordering
+                refreshFallThroughFlag(target);
+                postProcessNode(source);
+                postProcessNode(target);
+                postProcessGroup(sourceGroup);
+                if (sourceGroup != targetGroup) {
+                    postProcessGroup(targetGroup);
+                }
+            } else if (sourceIndex > targetIndex && !targetHadOutgoingEdges) {
+                // indices violate current topological ordering, but we can simply bump the target index
+                final boolean wasEnqueued = targetGroup.isEnqueued;
+                if (wasEnqueued) {
+                    groupQueue.remove(targetGroup);
+                }
+                targetGroup.identifier = ++maxGroupId;
+                if (wasEnqueued) {
+                    groupQueue.add(targetGroup);
+                }
+
+                refreshFallThroughFlag(target);
+                postProcessNode(source);
+                postProcessNode(target);
+                postProcessGroup(sourceGroup);
+                postProcessGroup(targetGroup);
+            } else {
+                // needs a full re-computation because of more complex change
+                precomputeGroups();
+            }
         }
     }
 
@@ -384,6 +390,8 @@ public abstract class CommunicationTracker {
         if (sourceRepresentative.equals(targetRepresentative)) {
             // this deletion could not have affected the split flags
             refreshFallThroughFlag(target);
+            postProcessNode(source);
+            postProcessNode(target);
         } else {
             // preComputeGroups takes care of the split flag maintenance
             precomputeGroups();
@@ -403,11 +411,37 @@ public abstract class CommunicationTracker {
     }
 
     /**
+     * Returns true if the given source-target edge in the communication network acts as a recursion cut point. 
+     * The current implementation considers edges leading into {@link ProductionNode}s as cut point iff
+     * both source and target belong to the same group. 
+     * 
+     * @param source the source node
+     * @param target the target node
+     * @return true if the edge is a cut point, false otherwise
+     * @since 2.4
+     */
+    protected boolean isRecursionCutPoint(final Node source, final Node target) {
+        final Node effectiveSource = source instanceof SpecializedProjectionIndexer
+                ? ((SpecializedProjectionIndexer) source).getActiveNode()
+                : source;
+        final CommunicationGroup sourceGroup = this.getGroup(effectiveSource);
+        final CommunicationGroup targetGroup = this.getGroup(target);
+        return sourceGroup != null && sourceGroup == targetGroup && target instanceof ProductionNode;
+    }
+
+    /**
      * This hook allows concrete tracker implementations to perform tracker-specific post processing on nodes (cf.
      * {@link NetworkStructureChangeSensitiveNode} and {@link BehaviorChangingMailbox}). At the time of the invocation,
      * the network topology has already been updated.
      */
     protected abstract void postProcessNode(final Node node);
+
+    /**
+     * This hook allows concrete tracker implementations to perform tracker-specific post processing on groups. At the
+     * time of the invocation, the network topology has already been updated.
+     * @since 2.4
+     */
+    protected abstract void postProcessGroup(final CommunicationGroup group);
 
     /**
      * Creates a proxy for the given {@link Mailbox} for the given requester {@link Node}. The proxy creation is

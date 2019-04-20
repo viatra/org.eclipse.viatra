@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
@@ -31,14 +32,14 @@ public interface Supplier extends Node {
      * Pulls the contents of this object in this particular moment into a target collection. 
      * 
      * @param flush if true, flushing of messages is allowed during the pull, otherwise flushing is not allowed
-     * @since 2.2
+     * @since 2.3
      */
     public void pullInto(Collection<Tuple> collector, boolean flush);
     
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush);
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush);
     
     /**
      * Returns the contents of this object in this particular moment. 
@@ -48,7 +49,7 @@ public interface Supplier extends Node {
      * 
      *  <p> Intended mainly for debug purposes; therefore flushing is performed only if explicitly requested
      *  During runtime, flushing may be preferred; see {@link ReteContainer#pullContents(Supplier)}
-     * @since 2.2
+     * @since 2.3
      */
     public Set<Tuple> getPulledContents(boolean flush);
     

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -52,7 +53,7 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
+        if (this.reteContainer.isTimelyEvaluation()) {
             return new TimelyMailbox(this, this.reteContainer);
         } else {            
             return new BehaviorChangingMailbox(this, this.reteContainer);
@@ -100,9 +101,9 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
     /**
      * To be called by derived classes and ReteContainer.
      */
-    public void propagatePullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public void propagatePullIntoWithTimestamp(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         if (parent != null) {
-            parent.pullIntoWithTimestamp(collector, flush);
+            parent.pullIntoWithTimeline(collector, flush);
         }
     }
 

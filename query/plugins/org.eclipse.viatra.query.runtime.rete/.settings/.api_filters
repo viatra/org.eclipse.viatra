@@ -1,6 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.rete" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement">
+        <filter comment="internal API change" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.OuterJoinNode">
+        <filter comment="internal API change" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.OuterJoinNode"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.matcher.DifferentialReteBackendFactory">
+        <filter comment="internal API change" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.matcher.DifferentialReteBackendFactory"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.network.Direction">
+        <filter comment="internal API change" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Direction"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete_2.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/AbstractColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode"/>
+                <message_argument value="getAggregateResultTimeline(Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode"/>
+                <message_argument value="getAggregateTupleTimeline(Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode"/>
+                <message_argument value="propagate(Tuple, AggregateResult, AggregateResult, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
         <filter id="643850349">
             <message_arguments>
                 <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
@@ -16,27 +72,463 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/ColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode">
-        <filter comment="Use of aggregator api" id="643850349">
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/AbstractColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode$AggregatorOuterIdentityIndexer">
+        <filter comment="internal API change" id="338792546">
             <message_arguments>
-                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="ColumnAggregatorNode&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="ColumnAggregatorNode(ReteContainer, IMultisetAggregationOperator&lt;Domain,Accumulator,AggregateResult&gt;, TupleMask, int)"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode.AggregatorOuterIdentityIndexer"/>
+                <message_argument value="propagate(Tuple, Tuple, Tuple, Timestamp)"/>
             </message_arguments>
         </filter>
-        <filter id="643850349">
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/AbstractColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode$AggregatorOuterIndexer">
+        <filter comment="internal API change" id="338792546">
             <message_arguments>
-                <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="ColumnAggregatorNode&lt;Domain, Accumulator, AggregateResult&gt;"/>
-                <message_argument value="ColumnAggregatorNode(ReteContainer, IMultisetAggregationOperator&lt;Domain,Accumulator,AggregateResult&gt;, boolean, TupleMask, TupleMask, IPosetComparator)"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.AbstractColumnAggregatorNode.AggregatorOuterIndexer"/>
+                <message_argument value="propagate(Tuple, Tuple, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/ColumnAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
+                <message_argument value="updateDefault(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
+                <message_argument value="updateWithDeleteAndRederive(Direction, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode"/>
+                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/aggregation/IndexerBasedAggregatorNode.java" type="org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode"/>
+                <message_argument value="aggregateGroupAfterUpdate(Tuple, Collection&lt;Tuple&gt;, Object, Direction, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode"/>
+                <message_argument value="aggregateUpdate(Direction, Tuple, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/boundary/ExternalInputEnumeratorNode.java" type="org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/CompilerHelper.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper"/>
+                <message_argument value="makeQueryTrace(PQuery, Map&lt;PBody,RecipeTraceInfo&gt;, Collection&lt;ReteNodeRecipe&gt;, QueryEvaluationHint, IQueryMetaContext, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/RecursionCutoffPoint.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.RecursionCutoffPoint">
+        <filter comment="internal API change" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.RecursionCutoffPoint"/>
+                <message_argument value="RecursionCutoffPoint(PQuery, QueryEvaluationHint, IQueryMetaContext, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/construction/plancompiler/ReteRecipeCompiler.java" type="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecipeCompiler">
+        <filter comment="internal API change" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecipeCompiler"/>
+                <message_argument value="ReteRecipeCompiler(IQueryPlannerStrategy, Logger, IQueryMetaContext, IQueryCacheContext, IQueryBackendHintProvider, QueryAnalyzer, boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecipeCompiler"/>
+                <message_argument value="differentialDataFlowEvaluation"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/EvaluatorCore.java" type="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore"/>
+                <message_argument value="performEvaluation(Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore"/>
+                <message_argument value="performEvaluation(Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore"/>
+                <message_argument value="tupleFromResult(Tuple, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/EvaluatorCore.java" type="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore$FunctionEvaluatorCore">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore.FunctionEvaluatorCore"/>
+                <message_argument value="tupleFromResult(Tuple, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/EvaluatorCore.java" type="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore$PredicateEvaluatorCore">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore.PredicateEvaluatorCore"/>
+                <message_argument value="tupleFromResult(Tuple, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/MemorylessEvaluatorNode.java" type="org.eclipse.viatra.query.runtime.rete.eval.MemorylessEvaluatorNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.MemorylessEvaluatorNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.MemorylessEvaluatorNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/OutputCachingEvaluatorNode.java" type="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode"/>
+                <message_argument value="createDefaultLogic()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode"/>
+                <message_argument value="createRecursiveTimelyLogic()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/eval/OutputCachingEvaluatorNode.java" type="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode$NetworkStructureChangeSensitiveLogic">
+        <filter id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="pullIntoWithTimeline(Map&lt;Tuple,Timeline&lt;Timestamp&gt;&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="resumeAt(Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/DualInputNode.java" type="org.eclipse.viatra.query.runtime.rete.index.DualInputNode">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode"/>
+                <message_argument value="getWithTimestamp(Tuple, Indexer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/DualInputNode.java" type="org.eclipse.viatra.query.runtime.rete.index.DualInputNode$NetworkStructureChangeSensitiveLogic">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="notifyUpdate(DualInputNode.Side, Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="pullIntoWithTimeline(Map&lt;Tuple,Timeline&lt;Timestamp&gt;&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="notifyUpdate(DualInputNode.Side, Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.DualInputNode.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/GenericProjectionIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer"/>
+                <message_argument value="getWithTimestamp(Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer"/>
+                <message_argument value="update(Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/IdentityIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.IdentityIndexer">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IdentityIndexer"/>
+                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/Indexer.java" type="org.eclipse.viatra.query.runtime.rete.index.Indexer">
+        <filter comment="internal API change" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.Indexer"/>
+                <message_argument value="getTimeline(Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.Indexer"/>
+                <message_argument value="getWithTimestamp(Tuple)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/IndexerListener.java" type="org.eclipse.viatra.query.runtime.rete.index.IndexerListener">
+        <filter comment="internal API change" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerListener"/>
+                <message_argument value="notifyIndexerUpdate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerListener"/>
+                <message_argument value="notifyIndexerUpdate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/index/IndexerWithMemory.java" type="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory"/>
+                <message_argument value="update(Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory"/>
+                <message_argument value="createTimelessLogic()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory"/>
+                <message_argument value="createTimelyLogic()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory"/>
+                <message_argument value="update(Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
         <filter id="576725006">
             <message_arguments>
                 <message_argument value="Receiver"/>
                 <message_argument value="IndexerWithMemory"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/IndexerWithMemory.java" type="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory$NetworkStructureChangeSensitiveLogic">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="resumeAt(Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory.NetworkStructureChangeSensitiveLogic"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/NullIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.NullIndexer">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.NullIndexer"/>
+                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/SpecializedProjectionIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer"/>
+                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer"/>
+                <message_argument value="sharedSubscriptionList"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer"/>
+                <message_argument value="propagate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer"/>
+                <message_argument value="propagateToListener(IndexerListener, Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/SpecializedProjectionIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer$ListenerSubscription">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription"/>
+                <message_argument value="propagate(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/StandardIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.StandardIndexer">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.StandardIndexer"/>
+                <message_argument value="propagate(Direction, Tuple, Tuple, boolean, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="388018290">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.StandardIndexer"/>
+                <message_argument value="originalListeners"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="388018290">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.StandardIndexer"/>
+                <message_argument value="proxyListeners"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/index/TransitiveClosureNodeIndexer.java" type="org.eclipse.viatra.query.runtime.rete.index.TransitiveClosureNodeIndexer">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.TransitiveClosureNodeIndexer"/>
+                <message_argument value="propagate(Direction, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/matcher/ReteBackendFactory.java" type="org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory"/>
+                <message_argument value="create(IQueryBackendContext, boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/matcher/ReteEngine.java" type="org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine">
+        <filter comment="internal API change" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine"/>
+                <message_argument value="ReteEngine(IQueryBackendContext, int, boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine"/>
+                <message_argument value="differentialDataFlowEvaluation"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine"/>
+                <message_argument value="isDifferentialDataFlowEvaluation()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -48,11 +540,117 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/misc/Bag.java" type="org.eclipse.viatra.query.runtime.rete.misc.Bag">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.misc.Bag"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/misc/ConstantNode.java" type="org.eclipse.viatra.query.runtime.rete.misc.ConstantNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.misc.ConstantNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/misc/DeltaMonitor.java" type="org.eclipse.viatra.query.runtime.rete.misc.DeltaMonitor">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.misc.DeltaMonitor"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/Network.java" type="org.eclipse.viatra.query.runtime.rete.network.Network">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Network"/>
+                <message_argument value="sendConstructionUpdate(Address&lt;? extends Receiver&gt;, Direction, Tuple)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Network"/>
+                <message_argument value="sendConstructionUpdates(Address&lt;? extends Receiver&gt;, Direction, Collection&lt;Tuple&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Network"/>
+                <message_argument value="sendExternalUpdate(Address&lt;? extends Receiver&gt;, Direction, Tuple)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/PosetAwareReceiver.java" type="org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver">
+        <filter comment="internal API change" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver"/>
+                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver"/>
+                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean)"/>
+            </message_arguments>
+        </filter>
         <filter id="576720909">
             <message_arguments>
                 <message_argument value="Receiver"/>
                 <message_argument value="PosetAwareReceiver"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/Receiver.java" type="org.eclipse.viatra.query.runtime.rete.network.Receiver">
+        <filter comment="internal API change" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Receiver"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/ReteContainer.java" type="org.eclipse.viatra.query.runtime.rete.network.ReteContainer">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.ReteContainer"/>
+                <message_argument value="isDifferentialDataFlowEvaluation()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.ReteContainer"/>
+                <message_argument value="pullContentsWithTimestamp(Supplier, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.ReteContainer"/>
+                <message_argument value="sendUpdateToRemoteAddress(Address&lt;? extends Receiver&gt;, Direction, Tuple)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/StandardNode.java" type="org.eclipse.viatra.query.runtime.rete.network.StandardNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.StandardNode"/>
+                <message_argument value="propagateUpdate(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/Supplier.java" type="org.eclipse.viatra.query.runtime.rete.network.Supplier">
+        <filter comment="internal API change" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Supplier"/>
+                <message_argument value="pullIntoWithTimeline(Map&lt;Tuple,Timeline&lt;Timestamp&gt;&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.Supplier"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -64,6 +662,112 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/communication/CommunicationGroup.java" type="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup"/>
+                <message_argument value="addRederivable(RederivableNode)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup"/>
+                <message_argument value="getRederivables()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup"/>
+                <message_argument value="removeRederivable(RederivableNode)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/communication/CommunicationTracker.java" type="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker">
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker"/>
+                <message_argument value="postProcessGroup(CommunicationGroup)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker"/>
+                <message_argument value="reconstructQueueContents(Set&lt;CommunicationGroup&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/communication/Timestamp.java" type="org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp$AllZeroMap">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp.AllZeroMap"/>
+                <message_argument value="get(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/mailbox/Mailbox.java" type="org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox">
+        <filter comment="internal API change" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox"/>
+                <message_argument value="postMessage(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox"/>
+                <message_argument value="postMessage(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/remote/RemoteReceiver.java" type="org.eclipse.viatra.query.runtime.rete.remote.RemoteReceiver">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.remote.RemoteReceiver"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.remote.RemoteReceiver"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/remote/RemoteSupplier.java" type="org.eclipse.viatra.query.runtime.rete.remote.RemoteSupplier">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.remote.RemoteSupplier"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.remote.RemoteSupplier"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/AbstractUniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.AbstractUniquenessEnforcerNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.AbstractUniquenessEnforcerNode"/>
+                <message_argument value="getMemory()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.AbstractUniquenessEnforcerNode"/>
+                <message_argument value="pullInto(Collection&lt;Tuple&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/CallbackNode.java" type="org.eclipse.viatra.query.runtime.rete.single.CallbackNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.CallbackNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/single/DefaultProductionNode.java" type="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode">
         <filter id="576778288">
             <message_arguments>
@@ -72,11 +776,141 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/DiscriminatorBucketNode.java" type="org.eclipse.viatra.query.runtime.rete.single.DiscriminatorBucketNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DiscriminatorBucketNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DiscriminatorBucketNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/DiscriminatorDispatcherNode.java" type="org.eclipse.viatra.query.runtime.rete.single.DiscriminatorDispatcherNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DiscriminatorDispatcherNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.DiscriminatorDispatcherNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/FilterNode.java" type="org.eclipse.viatra.query.runtime.rete.single.FilterNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.FilterNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.FilterNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TimelyProductionNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TimelyProductionNode">
         <filter id="576778288">
             <message_arguments>
                 <message_argument value="TimelyUniquenessEnforcerNode"/>
                 <message_argument value="TimelyProductionNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TimelyUniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode"/>
+                <message_argument value="getMemory()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TransformerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TransformerNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransformerNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransformerNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TransitiveClosureNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TransparentNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TransparentNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransparentNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TransparentNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/UniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode">
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="getMemory()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="pullIntoWithTimestamp(Map&lt;Tuple,Timestamp&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="update(Direction, Tuple, Timestamp)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="internal API change" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
+                <message_argument value="updateWithPosetInfo(Direction, Tuple, boolean)"/>
             </message_arguments>
         </filter>
     </resource>

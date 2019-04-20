@@ -10,16 +10,22 @@ package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Signed;
 import org.eclipse.viatra.query.runtime.matchers.util.TimelyMemory;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Diff;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.timely.TimelyMemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.timely.TimelyMemoryNullIndexer;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration.TimelineRepresentation;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.ResumableNode;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 
@@ -29,116 +35,126 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbo
  * @author Tamas Szabo
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
- * @since 2.2
+ * @since 2.4
  */
-public class TimelyUniquenessEnforcerNode extends AbstractUniquenessEnforcerNode {
+public class TimelyUniquenessEnforcerNode extends AbstractUniquenessEnforcerNode implements ResumableNode {
 
     protected final TimelyMemory<Timestamp> memory;
-    
-    public TimelyUniquenessEnforcerNode(final ReteContainer reteContainer, final int tupleWidth) {
-        super(reteContainer, tupleWidth);
-        this.memory = new TimelyMemory<Timestamp>();
-        reteContainer.registerClearable(this.memory);
+    /**
+     * @since 2.4
+     */
+    protected CommunicationGroup group;
+
+    public TimelyUniquenessEnforcerNode(final ReteContainer container, final int tupleWidth) {
+        super(container, tupleWidth);
+        this.memory = new TimelyMemory<Timestamp>(
+                container.getTimelyConfiguration().getTimelineRepresentation() == TimelineRepresentation.FAITHFUL);
+        container.registerClearable(this.memory);
         this.mailbox = instantiateMailbox();
-        reteContainer.registerClearable(this.mailbox);
+        container.registerClearable(this.mailbox);
     }
 
     protected Mailbox instantiateMailbox() {
         return new TimelyMailbox(this, this.reteContainer);
     }
-    
+
     @Override
-    public Collection<Tuple> getMemory() {
-        return this.memory.keySet();
-    }
-
-    /**
-     * The output of the production node should be the smallest timestamp for a given tuple.
-     */
-    @Override
-    public void update(final Direction direction, final Tuple update, final Timestamp timestamp) {
-        if (direction == Direction.INSERT) {
-            final TimestampReplacement<Timestamp> pair = this.memory.put(update, timestamp);
-            final Timestamp oldLeast = pair.oldValue;
-            final Timestamp newLeast = pair.newValue;
-
-            if (oldLeast != null) {
-                final int comparisonResult = newLeast.compareTo(oldLeast);
-                if (comparisonResult > 0) {
-                    // it can never happen that we end up with a new least timestamp that 
-                    // is greater than the old least as a result of an insertion
-                    issueError("[INTERNAL ERROR] Illegal least timestamp detected for " + update + " in "
-                            + this.getClass().getName() + " " + this + " for pattern(s) "
-                            + getTraceInfoPatternsEnumerated(), null);
-                } else if (comparisonResult == 0) {
-                    // we do not care about this case - oldLeast is still the least timestamp
-                } else {
-                    // we have a new least timestamp - delete the old and insert the new
-                    propagate(Direction.REVOKE, update, oldLeast);
-                    propagate(Direction.INSERT, update, newLeast);
-                }
-            } else {
-                // first time we insert the update
-                propagate(Direction.INSERT, update, newLeast);
-            }
-        } else {
-            TimestampReplacement<Timestamp> pair = null;
-            try {
-                pair = this.memory.remove(update, timestamp);
-            } catch (final IllegalStateException e) {
-                issueError("[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in "
-                        + this.getClass().getName() + " " + this + " for pattern(s) "
-                        + getTraceInfoPatternsEnumerated(), e);
-                // pair will remain unset in case of the exception, it is time to return
-                return;
-            }
-            final Timestamp oldLeast = pair.oldValue;
-            final Timestamp newLeast = pair.newValue;
-
-            if (newLeast != null) {
-                final int comparisonResult = newLeast.compareTo(oldLeast);
-                if (comparisonResult < 0) {
-                    // it can never happen that we end up with a smaller timestamp as a result of a deletion
-                    issueError("[INTERNAL ERROR] Illegal least timestamp detected for " + update + " in "
-                            + this.getClass().getName() + " " + this + " for pattern(s) "
-                            + getTraceInfoPatternsEnumerated(), null);
-                } else if (comparisonResult == 0) {
-                    // we do not care about this case - oldLeast is still the least timestamp
-                } else {
-                    // we lost the least timestamp, but we have a new alternative
-                    propagate(Direction.REVOKE, update, oldLeast);
-                    propagate(Direction.INSERT, update, newLeast);
-                }
-            } else {
-                // we lost the least timestamp without a new alternative
-                propagate(Direction.REVOKE, update, oldLeast);
-            }
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        for (final Tuple tuple : this.memory.getTuplesAtInfinity()) {
+            collector.add(tuple);
         }
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public CommunicationGroup getCurrentGroup() {
+        return this.group;
+    }
+
+    @Override
+    public void setCurrentGroup(final CommunicationGroup group) {
+        this.group = group;
+    }
+
+    @Override
+    public Collection<Tuple> getTuples() {
+        return this.memory.getTuplesAtInfinity();
+    }
+
+    /**
+     * @since 2.4
+     */
+    @Override
+    public Timestamp getResumableTimestamp() {
+        return this.memory.getResumableTimestamp();
+    }
+
+    /**
+     * @since 2.4
+     */
+    @Override
+    public void resumeAt(final Timestamp timestamp) {
+        final Map<Tuple, Diff<Timestamp>> diffMap = this.memory.resumeAt(timestamp);
+        for (final Entry<Tuple, Diff<Timestamp>> entry : diffMap.entrySet()) {
+            for (final Signed<Timestamp> signed : entry.getValue()) {
+                propagate(signed.getDirection(), entry.getKey(), signed.getPayload());
+            }
+        }
+        final Timestamp nextTimestamp = this.memory.getResumableTimestamp();
+        if (nextTimestamp != null) {
+            this.group.notifyHasMessage(this.mailbox, nextTimestamp);
+        }
+    }
+
+    @Override
+    public void update(final Direction direction, final Tuple update, final Timestamp timestamp) {
+        Diff<Timestamp> resultDiff = null;
+        if (direction == Direction.INSERT) {
+            resultDiff = this.memory.put(update, timestamp);
+        } else {
+            try {
+                resultDiff = this.memory.remove(update, timestamp);
+            } catch (final IllegalStateException e) {
+                issueError("[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in "
+                        + this.getClass().getName() + " " + this + " for pattern(s) "
+                        + getTraceInfoPatternsEnumerated(), e);
+                // diff will remain unset in case of the exception, it is time to return
+                return;
+            }
+        }
+
+        for (final Signed<Timestamp> signed : resultDiff) {
+            propagate(signed.getDirection(), update, signed.getPayload());
+        }
+    }
+
+    @Override
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         collector.putAll(this.memory.asMap());
     }
 
     @Override
     public ProjectionIndexer getNullIndexer() {
-        if (memoryNullIndexer == null) {
-            memoryNullIndexer = new TimelyMemoryNullIndexer(reteContainer, tupleWidth, memory, this, this,
-                    specializedListeners);
-            this.getCommunicationTracker().registerDependency(this, memoryNullIndexer);
+        if (this.memoryNullIndexer == null) {
+            this.memoryNullIndexer = new TimelyMemoryNullIndexer(this.reteContainer, this.tupleWidth, this.memory, this,
+                    this, this.specializedListeners);
+            this.getCommunicationTracker().registerDependency(this, this.memoryNullIndexer);
         }
-        return memoryNullIndexer;
+        return this.memoryNullIndexer;
     }
 
     @Override
     public ProjectionIndexer getIdentityIndexer() {
-        if (memoryIdentityIndexer == null) {
-            memoryIdentityIndexer = new TimelyMemoryIdentityIndexer(reteContainer, tupleWidth, memory,
-                    this, this, specializedListeners);
-            this.getCommunicationTracker().registerDependency(this, memoryIdentityIndexer);
+        if (this.memoryIdentityIndexer == null) {
+            this.memoryIdentityIndexer = new TimelyMemoryIdentityIndexer(this.reteContainer, this.tupleWidth,
+                    this.memory, this, this, this.specializedListeners);
+            this.getCommunicationTracker().registerDependency(this, this.memoryIdentityIndexer);
         }
-        return memoryIdentityIndexer;
+        return this.memoryIdentityIndexer;
+    }
+
+    @Override
+    public void networkStructureChanged() {
+        super.networkStructureChanged();
     }
 
 }

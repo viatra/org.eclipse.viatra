@@ -246,7 +246,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
 
     protected void copyExpressionEvaluationConstraint(ExpressionEvaluation expressionEvaluation) {
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));
+        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable, expressionEvaluation.isUnwinding()));
     }
     
     

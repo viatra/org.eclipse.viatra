@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.runtime.rete.aggregation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -19,9 +20,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.StandardIndexer;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -30,6 +32,12 @@ import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
 /**
+ * Groups incoming tuples by the given mask, and aggregates values at a specific index in each group.
+ * <p>
+ * Direct children are not supported, use via outer join indexers instead.
+ * <p>
+ * There are both timeless and timely implementations.
+ * 
  * @author Tamas Szabo
  * @since 2.2
  *
@@ -129,7 +137,7 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         // DIRECT CHILDREN NOT SUPPORTED
         throw new UnsupportedOperationException();
     }
@@ -152,7 +160,8 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
     @Override
     public Indexer getAggregatorOuterIdentityIndexer(final int resultPositionInSignature) {
         if (aggregatorOuterIdentityIndexers == null) {
-            aggregatorOuterIdentityIndexers = new AbstractColumnAggregatorNode.AggregatorOuterIdentityIndexer[sourceWidth + 1];
+            aggregatorOuterIdentityIndexers = new AbstractColumnAggregatorNode.AggregatorOuterIdentityIndexer[sourceWidth
+                    + 1];
         }
         if (aggregatorOuterIdentityIndexers[resultPositionInSignature] == null) {
             aggregatorOuterIdentityIndexers[resultPositionInSignature] = new AggregatorOuterIdentityIndexer(
@@ -164,22 +173,31 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
     }
 
     /**
-     * @since 1.6
+     * @since 2.4
+     */
+    public void propagateAggregateResultUpdate(final Tuple group, final AggregateResult oldValue,
+            final AggregateResult newValue, final Timestamp timestamp) {
+        if (!Objects.equals(oldValue, newValue)) {
+            propagate(Direction.DELETE, group, oldValue, timestamp);
+            propagate(Direction.INSERT, group, newValue, timestamp);
+        }
+    }
+
+    /**
+     * @since 2.4
      */
     @SuppressWarnings("unchecked")
-    public void propagate(final Tuple group, final AggregateResult oldValue, final AggregateResult newValue, final Timestamp timestamp) {
-        if (!Objects.equals(oldValue, newValue)) {
-            final Tuple oldResultTuple = tupleFromAggregateResult(group, oldValue);
-            final Tuple newResultTuple = tupleFromAggregateResult(group, newValue);
+    public void propagate(final Direction direction, final Tuple group, final AggregateResult value,
+            final Timestamp timestamp) {
+        final Tuple tuple = tupleFromAggregateResult(group, value);
 
-            if (aggregatorOuterIndexer != null) {
-                aggregatorOuterIndexer.propagate(group, oldResultTuple, newResultTuple, timestamp);
-            }
-            if (aggregatorOuterIdentityIndexers != null) {
-                for (final AggregatorOuterIdentityIndexer aggregatorOuterIdentityIndexer : aggregatorOuterIdentityIndexers) {
-                    if (aggregatorOuterIdentityIndexer != null) {
-                        aggregatorOuterIdentityIndexer.propagate(group, oldResultTuple, newResultTuple, timestamp);
-                    }
+        if (aggregatorOuterIndexer != null) {
+            aggregatorOuterIndexer.propagate(direction, tuple, group, timestamp);
+        }
+        if (aggregatorOuterIdentityIndexers != null) {
+            for (final AggregatorOuterIdentityIndexer aggregatorOuterIdentityIndexer : aggregatorOuterIdentityIndexers) {
+                if (aggregatorOuterIdentityIndexer != null) {
+                    aggregatorOuterIdentityIndexer.propagate(direction, tuple, group, timestamp);
                 }
             }
         }
@@ -187,7 +205,17 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
 
     public abstract Tuple getAggregateTuple(final Tuple key);
 
+    /**
+     * @since 2.4
+     */
+    public abstract Map<Tuple, Timeline<Timestamp>> getAggregateTupleTimeline(final Tuple key);
+
     public abstract AggregateResult getAggregateResult(final Tuple key);
+
+    /**
+     * @since 2.4
+     */
+    public abstract Map<AggregateResult, Timeline<Timestamp>> getAggregateResultTimeline(final Tuple key);
 
     protected Tuple tupleFromAggregateResult(final Tuple groupTuple, final AggregateResult aggregateResult) {
         if (aggregateResult == null) {
@@ -202,27 +230,45 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
      * signature.
      * 
      * @author Gabor Bergmann
+     * @author Tamas Szabo
+     * 
      */
     protected class AggregatorOuterIndexer extends StandardIndexer {
+
+        /**
+         * @since 2.4
+         */
+        protected NetworkStructureChangeSensitiveLogic logic;
 
         public AggregatorOuterIndexer() {
             super(AbstractColumnAggregatorNode.this.reteContainer, TupleMask.omit(sourceWidth, sourceWidth + 1));
             this.parent = AbstractColumnAggregatorNode.this;
+            this.logic = createLogic();
+        }
+
+        @Override
+        public void networkStructureChanged() {
+            super.networkStructureChanged();
+            this.logic = createLogic();
         }
 
         @Override
         public Collection<Tuple> get(final Tuple signature) {
-            final Tuple aggregateTuple = getAggregateTuple(signature);
-            return aggregateTuple == null ? null : Collections.singleton(aggregateTuple);
+            return this.logic.get(signature);
         }
 
-        public void propagate(final Tuple signature, final Tuple oldTuple, final Tuple newTuple,
+        @Override
+        public Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature) {
+            return this.logic.getTimeline(signature);
+        }
+
+        /**
+         * @since 2.4
+         */
+        public void propagate(final Direction direction, final Tuple tuple, final Tuple group,
                 final Timestamp timestamp) {
-            if (oldTuple != null) {
-                propagate(Direction.REVOKE, oldTuple, signature, true, timestamp);
-            }
-            if (newTuple != null) {
-                propagate(Direction.INSERT, newTuple, signature, true, timestamp);
+            if (tuple != null) {
+                propagate(direction, tuple, group, true, timestamp);
             }
         }
 
@@ -230,6 +276,56 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
         public Node getActiveNode() {
             return AbstractColumnAggregatorNode.this;
         }
+
+        /**
+         * @since 2.4
+         */
+        protected NetworkStructureChangeSensitiveLogic createLogic() {
+            if (this.reteContainer.isTimelyEvaluation()
+                    && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
+                return this.TIMELY;
+            } else {
+                return this.TIMELESS;
+            }
+        }
+
+        private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
+
+            @Override
+            public Collection<Tuple> get(final Tuple signature) {
+                final Tuple aggregateTuple = getAggregateTuple(signature);
+                if (aggregateTuple == null) {
+                    return null;
+                } else {
+                    return Collections.singleton(aggregateTuple);
+                }
+            }
+
+            @Override
+            public Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature) {
+                throw new UnsupportedOperationException();
+            }
+
+        };
+
+        private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
+
+            @Override
+            public Collection<Tuple> get(final Tuple signatureWithResult) {
+                return TIMELESS.get(signatureWithResult);
+            }
+
+            @Override
+            public Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature) {
+                final Map<Tuple, Timeline<Timestamp>> aggregateTuples = getAggregateTupleTimeline(signature);
+                if (aggregateTuples.isEmpty()) {
+                    return null;
+                } else {
+                    return aggregateTuples;
+                }
+            }
+
+        };
 
     }
 
@@ -239,16 +335,22 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
      * resultPositionInSignature.
      * 
      * @author Gabor Bergmann
+     * @author Tamas Szabo
+     *
      */
     protected class AggregatorOuterIdentityIndexer extends StandardIndexer {
+
         protected final int resultPositionInSignature;
         protected final TupleMask pruneResult;
         protected final TupleMask reorderMask;
+        /**
+         * @since 2.4
+         */
+        protected NetworkStructureChangeSensitiveLogic logic;
 
         public AggregatorOuterIdentityIndexer(final int resultPositionInSignature) {
             super(AbstractColumnAggregatorNode.this.reteContainer,
                     TupleMask.displace(sourceWidth, resultPositionInSignature, sourceWidth + 1));
-            this.parent = AbstractColumnAggregatorNode.this;
             this.resultPositionInSignature = resultPositionInSignature;
             this.pruneResult = TupleMask.omit(resultPositionInSignature, sourceWidth + 1);
             if (resultPositionInSignature == sourceWidth) {
@@ -256,26 +358,35 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
             } else {
                 this.reorderMask = mask;
             }
+            this.logic = createLogic();
+        }
+
+        @Override
+        public void networkStructureChanged() {
+            super.networkStructureChanged();
+            this.logic = createLogic();
         }
 
         @Override
         public Collection<Tuple> get(final Tuple signatureWithResult) {
-            final Tuple prunedSignature = pruneResult.transform(signatureWithResult);
-            final AggregateResult result = getAggregateResult(prunedSignature);
-            if (result != null && Objects.equals(signatureWithResult.get(resultPositionInSignature), result)) {
-                return Collections.singleton(signatureWithResult);
-            } else {
-                return null;
-            }
+            return this.logic.get(signatureWithResult);
         }
 
-        public void propagate(final Tuple signature, final Tuple oldTuple, final Tuple newTuple,
+        /**
+         * @since 2.4
+         */
+        @Override
+        public Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature) {
+            return this.logic.getTimeline(signature);
+        }
+
+        /**
+         * @since 2.4
+         */
+        public void propagate(final Direction direction, final Tuple tuple, final Tuple group,
                 final Timestamp timestamp) {
-            if (oldTuple != null) {
-                propagate(Direction.REVOKE, reorder(oldTuple), signature, true, timestamp);
-            }
-            if (newTuple != null) {
-                propagate(Direction.INSERT, reorder(newTuple), signature, true, timestamp);
+            if (tuple != null) {
+                propagate(direction, reorder(tuple), group, true, timestamp);
             }
         }
 
@@ -291,8 +402,73 @@ public abstract class AbstractColumnAggregatorNode<Domain, Accumulator, Aggregat
 
         @Override
         public Node getActiveNode() {
-            return AbstractColumnAggregatorNode.this;
+            return this.parent;
         }
+
+        /**
+         * @since 2.4
+         */
+        protected NetworkStructureChangeSensitiveLogic createLogic() {
+            if (this.reteContainer.isTimelyEvaluation()
+                    && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
+                return this.TIMELY;
+            } else {
+                return this.TIMELESS;
+            }
+        }
+
+        private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
+
+            @Override
+            public Collection<Tuple> get(final Tuple signatureWithResult) {
+                final Tuple prunedSignature = pruneResult.transform(signatureWithResult);
+                final AggregateResult result = getAggregateResult(prunedSignature);
+                if (result != null && Objects.equals(signatureWithResult.get(resultPositionInSignature), result)) {
+                    return Collections.singleton(signatureWithResult);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature) {
+                throw new UnsupportedOperationException();
+            }
+
+        };
+
+        private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
+
+            @Override
+            public Collection<Tuple> get(final Tuple signatureWithResult) {
+                return TIMELESS.get(signatureWithResult);
+            }
+
+            @Override
+            public Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signatureWithResult) {
+                final Tuple prunedSignature = pruneResult.transform(signatureWithResult);
+                final Map<AggregateResult, Timeline<Timestamp>> result = getAggregateResultTimeline(prunedSignature);
+                for (final Entry<AggregateResult, Timeline<Timestamp>> entry : result.entrySet()) {
+                    if (Objects.equals(signatureWithResult.get(resultPositionInSignature), entry.getKey())) {
+                        return Collections.singletonMap(signatureWithResult, entry.getValue());
+                    }
+                }
+                return null;
+            }
+
+        };
+
+    }
+
+    /**
+     * @since 2.4
+     */
+    protected static abstract class NetworkStructureChangeSensitiveLogic {
+
+        public abstract Collection<Tuple> get(final Tuple signatureWithResult);
+
+        public abstract Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature);
+
     }
 
 }

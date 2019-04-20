@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 /**
  * A filter node that keeps only those tuples that contain a certain value at a certain position.
  * 
- * @author Bergmann G�bor
+ * @author Bergmann Gabor
  * 
  */
 public class ValueBinderFilterNode extends FilterNode {

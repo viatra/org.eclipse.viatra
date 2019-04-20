@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -41,10 +42,9 @@ public abstract class StandardNode extends BaseNode implements Supplier, Network
     }
 
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    protected void propagateUpdate(final Direction direction, final Tuple updateElement,
-            final Timestamp timestamp) {
+    protected void propagateUpdate(final Direction direction, final Tuple updateElement, final Timestamp timestamp) {
         for (final Mailbox childMailbox : childMailboxes) {
             childMailbox.postMessage(direction, updateElement, timestamp);
         }

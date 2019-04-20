@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -28,7 +29,8 @@ public class ConstantNode extends StandardNode {
     protected Tuple constant;
 
     /**
-     * @param constant will be wrapped using {@link IQueryRuntimeContext#wrapTuple(Tuple)}
+     * @param constant
+     *            will be wrapped using {@link IQueryRuntimeContext#wrapTuple(Tuple)}
      */
     public ConstantNode(ReteContainer reteContainer, Tuple constant) {
         super(reteContainer);
@@ -39,10 +41,10 @@ public class ConstantNode extends StandardNode {
     public void pullInto(Collection<Tuple> collector, boolean flush) {
         collector.add(constant);
     }
-    
+
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
-        collector.put(constant, Timestamp.ZERO);
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
+        collector.put(constant, Timestamp.INSERT_AT_ZERO_TIMELINE);
     }
 
 }

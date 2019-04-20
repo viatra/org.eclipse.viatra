@@ -52,21 +52,17 @@ public class ReteEngine implements IQueryBackend {
      */
     protected final boolean deleteAndRederiveEvaluation;
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    protected final boolean differentialDataFlowEvaluation;
+    protected final TimelyConfiguration timelyConfiguration;
 
     private IQueryBackendContext context;
     private Logger logger;
     protected IQueryRuntimeContext runtimeContext;
 
     protected Collection<Disconnectable> disconnectables;
-//    protected IPredicateTraceListener traceListener;
-    // protected MachineListener machineListener;
 
     protected Map<PQuery, RetePatternMatcher> matchers;
-    // protected Map<GTPattern, Map<Map<Integer, Scope>, RetePatternMatcher>> matchersScoped; // (pattern, scopemap) ->
-    // matcher
 
     protected ReteRecipeCompiler compiler;
 
@@ -76,10 +72,6 @@ public class ReteEngine implements IQueryBackend {
     
     private HintConfigurator hintConfigurator;
 
-    // while RETE does its job.
-
-    // protected BlockingQueue<Throwable> caughtExceptions;
-
     /**
      * @param context
      *            the context of the pattern matcher, conveying all information from the outside world.
@@ -88,13 +80,13 @@ public class ReteEngine implements IQueryBackend {
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
     public ReteEngine(IQueryBackendContext context, int reteThreads) {
-        this(context, reteThreads, false, false);
+        this(context, reteThreads, false, null);
     }
     
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    public ReteEngine(IQueryBackendContext context, int reteThreads, boolean deleteAndRederiveEvaluation, boolean differentialDataFlowEvaluation) {
+    public ReteEngine(IQueryBackendContext context, int reteThreads, boolean deleteAndRederiveEvaluation, TimelyConfiguration timelyConfiguration) {
         super();
         this.context = context;
         this.logger = context.getLogger();
@@ -102,7 +94,7 @@ public class ReteEngine implements IQueryBackend {
         this.reteThreads = reteThreads;
         this.parallelExecutionEnabled = reteThreads > 0;
         this.deleteAndRederiveEvaluation = deleteAndRederiveEvaluation;
-        this.differentialDataFlowEvaluation = differentialDataFlowEvaluation;
+        this.timelyConfiguration = timelyConfiguration;
         initEngine();
         this.compiler = null;
     }
@@ -122,10 +114,10 @@ public class ReteEngine implements IQueryBackend {
     }
     
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    public boolean isDifferentialDataFlowEvaluation() {
-        return this.differentialDataFlowEvaluation;
+    public TimelyConfiguration getTimelyConfiguration() {
+        return this.timelyConfiguration;
     }
 
     /**
@@ -402,7 +394,7 @@ public class ReteEngine implements IQueryBackend {
     // }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     public void executeDelayedCommands() {
         for (final ReteContainer container : this.reteNet.getContainers()) {

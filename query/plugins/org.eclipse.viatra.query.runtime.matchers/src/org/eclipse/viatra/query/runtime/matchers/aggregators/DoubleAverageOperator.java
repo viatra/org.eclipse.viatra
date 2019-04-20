@@ -71,4 +71,12 @@ public class DoubleAverageOperator implements IMultisetAggregationOperator<Doubl
         return averageOpt.isPresent() ? averageOpt.getAsDouble() : null;
     }
     
+    /**
+     * @since 2.4
+     */
+    @Override
+    public AverageAccumulator<Double> clone(AverageAccumulator<Double> original) {
+        return new AverageAccumulator<Double>(original.value, original.count);
+    }
+    
 }

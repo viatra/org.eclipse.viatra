@@ -14,24 +14,21 @@ import java.util.TreeMap;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration.TimelineRepresentation;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.AdaptableMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.FallThroughCapableMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.ResumableNode;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
-public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbox {
+public class TimelyMailbox implements Mailbox {
 
     protected TreeMap<Timestamp, Map<Tuple, Integer>> queue;
-    protected TreeMap<Timestamp, Map<Tuple, Integer>> buffer;
     protected final Receiver receiver;
     protected final ReteContainer container;
-    protected boolean delivering;
-    protected Mailbox adapter;
     protected CommunicationGroup group;
     protected boolean fallThrough;
 
@@ -39,26 +36,10 @@ public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbo
         this.receiver = receiver;
         this.container = container;
         this.queue = CollectionsFactory.createTreeMap();
-        this.buffer = CollectionsFactory.createTreeMap();
-        this.adapter = this;
     }
 
     protected TreeMap<Timestamp, Map<Tuple, Integer>> getActiveQueue() {
-        if (this.delivering) {
-            return this.buffer;
-        } else {
-            return this.queue;
-        }
-    }
-
-    @Override
-    public Mailbox getAdapter() {
-        return this.adapter;
-    }
-
-    @Override
-    public void setAdapter(final Mailbox adapter) {
-        this.adapter = adapter;
+        return this.queue;
     }
 
     @Override
@@ -86,7 +67,7 @@ public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbo
             significantChange = true;
         }
 
-        if (direction == Direction.REVOKE) {
+        if (direction == Direction.DELETE) {
             count--;
         } else {
             count++;
@@ -103,13 +84,16 @@ public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbo
         }
 
         if (significantChange) {
-            final Mailbox targetMailbox = this.adapter;
-            final CommunicationGroup targetGroup = this.adapter.getCurrentGroup();
-
             if (wasEmpty) {
-                targetGroup.notifyHasMessage(targetMailbox, timestamp);
+                this.group.notifyHasMessage(this, timestamp);
             } else if (tupleMap.isEmpty()) {
-                targetGroup.notifyLostAllMessages(targetMailbox, timestamp);
+                final Timestamp resumableTimestamp = (this.receiver instanceof ResumableNode)
+                        ? ((ResumableNode) this.receiver).getResumableTimestamp()
+                        : null;
+                // check if there is folding left to do before unsubscribing just based on the message queue being empty
+                if (resumableTimestamp == null || resumableTimestamp.compareTo(timestamp) != 0) {
+                    this.group.notifyLostAllMessages(this, timestamp);
+                }
             }
         }
     }
@@ -118,62 +102,70 @@ public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbo
     public void deliverAll(final MessageSelector selector) {
         if (selector instanceof Timestamp) {
             final Timestamp timestamp = (Timestamp) selector;
-            // use the buffer during delivering so that there is a clear
-            // separation between the stages
-            this.delivering = true;
-            // REMOVE the tuples associated with the selector, not just query them
+            // REMOVE the tuples associated with the selector, dont just query them
             final Map<Tuple, Integer> tupleMap = this.queue.remove(timestamp);
 
-            for (final Entry<Tuple, Integer> entry : tupleMap.entrySet()) {
-                int count = entry.getValue();
+            // tupleMap may be empty if we only have lazy folding to do
+            if (tupleMap != null) {
+                for (final Entry<Tuple, Integer> entry : tupleMap.entrySet()) {
+                    int count = entry.getValue();
 
-                Direction direction;
-                if (count < 0) {
-                    direction = Direction.REVOKE;
-                    count = -count;
-                } else {
-                    direction = Direction.INSERT;
-                }
+                    Direction direction;
+                    if (count < 0) {
+                        direction = Direction.DELETE;
+                        count = -count;
+                    } else {
+                        direction = Direction.INSERT;
+                    }
 
-                for (int i = 0; i < count; i++) {
-                    this.receiver.update(direction, entry.getKey(), timestamp);
+                    for (int i = 0; i < count; i++) {
+                        // if (print) {
+                        // System.out
+                        // .println(timestamp + " " + direction + " " + entry.getKey() + " " + this.receiver);
+                        // }
+                        this.receiver.update(direction, entry.getKey(), timestamp);
+                    }
                 }
             }
 
-            this.delivering = false;
-
-            mergeBufferIntoQueue();
-            this.buffer = CollectionsFactory.createTreeMap();
+            if (this.container.getTimelyConfiguration()
+                    .getTimelineRepresentation() == TimelineRepresentation.FAITHFUL) {
+                // (1) either normal delivery, which ended up being a lazy folding state
+                // (2) and/or lazy folding needs to be resumed
+                if (this.receiver instanceof ResumableNode) {
+                    ((ResumableNode) this.receiver).resumeAt(timestamp);
+                }
+            }
         } else {
             throw new IllegalArgumentException("Unsupported message selector " + selector);
         }
     }
 
-    protected void mergeBufferIntoQueue() {
-        for (final Entry<Timestamp, Map<Tuple, Integer>> outerEntry : this.buffer.entrySet()) {
-            final Timestamp selector = outerEntry.getKey();
-            final Map<Tuple, Integer> tupleMap = this.queue.get(selector);
-            if (tupleMap == null) {
-                this.queue.put(selector, outerEntry.getValue());
-            } else {
-                for (final Entry<Tuple, Integer> innerEntry : outerEntry.getValue().entrySet()) {
-                    final Tuple tuple = innerEntry.getKey();
-                    final Integer queueCount = tupleMap.get(tuple);
-                    final Integer bufferCount = innerEntry.getValue();
-                    if (queueCount == null) {
-                        tupleMap.put(tuple, bufferCount);
-                    } else {
-                        final int sum = bufferCount + queueCount;
-                        if (sum != 0) {
-                            tupleMap.put(tuple, sum);
-                        } else {
-                            tupleMap.remove(tuple);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // protected void mergeBufferIntoQueue() {
+    // for (final Entry<Timestamp, Map<Tuple, Integer>> outerEntry : this.buffer.entrySet()) {
+    // final Timestamp selector = outerEntry.getKey();
+    // final Map<Tuple, Integer> tupleMap = this.queue.get(selector);
+    // if (tupleMap == null) {
+    // this.queue.put(selector, outerEntry.getValue());
+    // } else {
+    // for (final Entry<Tuple, Integer> innerEntry : outerEntry.getValue().entrySet()) {
+    // final Tuple tuple = innerEntry.getKey();
+    // final Integer queueCount = tupleMap.get(tuple);
+    // final Integer bufferCount = innerEntry.getValue();
+    // if (queueCount == null) {
+    // tupleMap.put(tuple, bufferCount);
+    // } else {
+    // final int sum = bufferCount + queueCount;
+    // if (sum != 0) {
+    // tupleMap.put(tuple, sum);
+    // } else {
+    // tupleMap.remove(tuple);
+    // }
+    // }
+    // }
+    // }
+    // }
+    // }
 
     @Override
     public String toString() {
@@ -188,7 +180,6 @@ public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbo
     @Override
     public void clear() {
         this.queue.clear();
-        this.buffer.clear();
     }
 
     @Override
@@ -199,16 +190,6 @@ public class TimelyMailbox implements AdaptableMailbox, FallThroughCapableMailbo
     @Override
     public void setCurrentGroup(final CommunicationGroup group) {
         this.group = group;
-    }
-
-    @Override
-    public boolean isFallThrough() {
-        return this.fallThrough;
-    }
-
-    @Override
-    public void setFallThrough(final boolean fallThrough) {
-        this.fallThrough = fallThrough;
     }
 
 }

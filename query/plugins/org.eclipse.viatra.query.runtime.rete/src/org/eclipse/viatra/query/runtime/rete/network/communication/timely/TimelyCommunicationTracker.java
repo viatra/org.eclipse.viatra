@@ -9,55 +9,95 @@
 package org.eclipse.viatra.query.runtime.rete.network.communication.timely;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 
+import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopologicalSorting;
+import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.index.IndexerListener;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
 import org.eclipse.viatra.query.runtime.rete.index.StandardIndexer;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration.TimelineRepresentation;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
+import org.eclipse.viatra.query.runtime.rete.network.communication.NodeComparator;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.single.DiscriminatorDispatcherNode;
 
 /**
- * Differential dataflow-specific implementation of the {@link CommunicationTracker}.
+ * Timely (DDF) implementation of the {@link CommunicationTracker}.
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public class TimelyCommunicationTracker extends CommunicationTracker {
 
+    protected final TimelyConfiguration configuration;
+
+    public TimelyCommunicationTracker(final TimelyConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     @Override
-    protected CommunicationGroup createGroup(Node representative, int index) {
+    protected CommunicationGroup createGroup(final Node representative, final int index) {
         final boolean isSingleton = this.sccInformationProvider.sccs.getPartition(representative).size() == 1;
         return new TimelyCommunicationGroup(this, representative, index, isSingleton);
     }
 
     @Override
+    protected void reconstructQueueContents(final Set<CommunicationGroup> oldActiveGroups) {
+        for (final CommunicationGroup oldGroup : oldActiveGroups) {
+            for (final Entry<MessageSelector, Collection<Mailbox>> entry : oldGroup.getMailboxes().entrySet()) {
+                for (final Mailbox mailbox : entry.getValue()) {
+                    final CommunicationGroup newGroup = this.groupMap.get(mailbox.getReceiver());
+                    newGroup.notifyHasMessage(mailbox, entry.getKey());
+                }
+            }
+        }
+    }
+
+    @Override
     public Mailbox proxifyMailbox(final Node requester, final Mailbox original) {
-        final TimestampTransformation preprocessor = getPreprocessor(requester, original.getReceiver());
+        final Mailbox mailboxToProxify = (original instanceof TimelyMailboxProxy)
+                ? ((TimelyMailboxProxy) original).getWrappedMailbox()
+                : original;
+        final TimestampTransformation preprocessor = getPreprocessor(requester, mailboxToProxify.getReceiver());
         if (preprocessor == null) {
-            return original;
+            return mailboxToProxify;
         } else {
-            return new TimelyMailboxProxy(original, preprocessor);
+            return new TimelyMailboxProxy(mailboxToProxify, preprocessor);
         }
     }
 
     @Override
     public IndexerListener proxifyIndexerListener(final Node requester, final IndexerListener original) {
-        final TimestampTransformation preprocessor = getPreprocessor(requester, original.getOwner());
+        final IndexerListener listenerToProxify = (original instanceof TimelyIndexerListenerProxy)
+                ? ((TimelyIndexerListenerProxy) original).getWrappedIndexerListener()
+                : original;
+        final TimestampTransformation preprocessor = getPreprocessor(requester, listenerToProxify.getOwner());
         if (preprocessor == null) {
-            return original;
+            return listenerToProxify;
         } else {
-            return new TimelyIndexerListenerProxy(original, preprocessor);
+            return new TimelyIndexerListenerProxy(listenerToProxify, preprocessor);
         }
     }
 
     protected TimestampTransformation getPreprocessor(final Node source, final Node target) {
-        final CommunicationGroup sourceGroup = this.getGroup(source);
+        final Node effectiveSource = source instanceof SpecializedProjectionIndexer
+                ? ((SpecializedProjectionIndexer) source).getActiveNode()
+                : source;
+        final CommunicationGroup sourceGroup = this.getGroup(effectiveSource);
         final CommunicationGroup targetGroup = this.getGroup(target);
 
         if (sourceGroup != null && targetGroup != null) {
@@ -86,6 +126,40 @@ public class TimelyCommunicationTracker extends CommunicationTracker {
         }
     }
 
+    @Override
+    protected void postProcessGroup(final CommunicationGroup group) {
+        if (this.configuration.getTimelineRepresentation() == TimelineRepresentation.FAITHFUL) {
+            final Node representative = group.getRepresentative();
+            final Set<Node> groupMembers = this.sccInformationProvider.sccs.getPartition(representative);
+            if (groupMembers.size() > 1) {
+                final Graph<Node> graph = new Graph<Node>();
+
+                for (final Node node : groupMembers) {
+                    graph.insertNode(node);
+                }
+
+                for (final Node source : groupMembers) {
+                    for (final Node target : this.dependencyGraph.getTargetNodes(source)) {
+                        // (1) the edge is not a recursion cut point
+                        // (2) the edge is within this group
+                        if (!this.isRecursionCutPoint(source, target) && groupMembers.contains(target)) {
+                            graph.insertEdge(source, target);
+                        }
+                    }
+                }
+
+                final List<Node> orderedNodes = TopologicalSorting.compute(graph);
+                final Map<Node, Integer> nodeMap = CollectionsFactory.createMap();
+                int identifier = 0;
+                for (final Node orderedNode : orderedNodes) {
+                    nodeMap.put(orderedNode, identifier++);
+                }
+
+                ((TimelyCommunicationGroup) group).setComparatorAndReorderMailboxes(new NodeComparator(nodeMap));
+            }
+        }
+    }
+
     /**
      * This static field is used for debug purposes in the DotGenerator.
      */
@@ -96,6 +170,17 @@ public class TimelyCommunicationTracker extends CommunicationTracker {
             return new Function<Node, String>() {
                 @Override
                 public String apply(final Node target) {
+                    if (source instanceof SpecializedProjectionIndexer) {
+                        final Collection<ListenerSubscription> subscriptions = ((SpecializedProjectionIndexer) source)
+                                .getSubscriptions();
+                        for (final ListenerSubscription subscription : subscriptions) {
+                            if (subscription.getListener().getOwner() == target
+                                    && subscription.getListener() instanceof TimelyIndexerListenerProxy) {
+                                return ((TimelyIndexerListenerProxy) subscription.getListener()).preprocessor
+                                        .toString();
+                            }
+                        }
+                    }
                     if (source instanceof StandardIndexer) {
                         final Collection<IndexerListener> listeners = ((StandardIndexer) source).getListeners();
                         for (final IndexerListener listener : listeners) {

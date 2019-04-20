@@ -27,12 +27,29 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 public class ExpressionEvaluation extends BaseTypeSafeConstraint {
 
     private IExpressionEvaluator evaluator;
+    private boolean isUnwinding;
 
     public ExpressionEvaluation(PBody pBody, IExpressionEvaluator evaluator, PVariable outputVariable) {
+        this(pBody, evaluator, outputVariable, false);
+    }
+
+    /**
+     * @since 2.4
+     */
+    public ExpressionEvaluation(PBody pBody, IExpressionEvaluator evaluator, PVariable outputVariable,
+            boolean isUnwinding) {
         super(pBody, getPVariablesOfExpression(pBody, evaluator), outputVariable);
         this.evaluator = evaluator;
+        this.isUnwinding = isUnwinding;
     }
-    
+
+    /**
+     * @since 2.4
+     */
+    public boolean isUnwinding() {
+        return isUnwinding;
+    }
+
     public IExpressionEvaluator getEvaluator() {
         return evaluator;
     }
@@ -45,14 +62,13 @@ public class ExpressionEvaluation extends BaseTypeSafeConstraint {
 
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-        if (outputVariable == null) 
+        if (outputVariable == null)
             return Collections.emptyMap();
-        else 
+        else
             return Collections.singletonMap(inputVariables, Collections.singleton(outputVariable));
     }
-    
-    private static Set<PVariable> getPVariablesOfExpression(PBody pBody,
-            IExpressionEvaluator evaluator) {
+
+    private static Set<PVariable> getPVariablesOfExpression(PBody pBody, IExpressionEvaluator evaluator) {
         Set<PVariable> result = new HashSet<PVariable>();
         for (String name : evaluator.getInputParameterNames()) {
             PVariable variable = pBody.getOrCreateVariableByName(name);

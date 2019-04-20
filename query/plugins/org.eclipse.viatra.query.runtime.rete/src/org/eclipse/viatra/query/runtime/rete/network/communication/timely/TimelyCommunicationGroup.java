@@ -10,18 +10,18 @@ package org.eclipse.viatra.query.runtime.rete.network.communication.timely;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
-import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
-import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
 import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
@@ -29,25 +29,45 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbo
 import org.eclipse.viatra.query.runtime.rete.util.Options;
 
 /**
- * A differential dataflow-specific communication group. Mailboxes are ordered according to the timestamps of their
- * messages.
+ * A timely communication group implementation. {@link TimelyMailbox}es and {@link LazyFoldingNode}s are ordered in the
+ * increasing order of timestamps.
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public class TimelyCommunicationGroup extends CommunicationGroup {
 
     private final boolean isSingleton;
-    private final TreeMap<MessageSelector, Set<Mailbox>> mailboxQueue;
+    private final TreeMap<Timestamp, Set<Mailbox>> mailboxQueue;
+    // may be null - only used in the scattered case where we need to take care of mailboxes and resumables too
+    private Comparator<Node> nodeComparator;
     private boolean currentlyDelivering;
-    private MessageSelector currentlyDeliveredTimestamp;
+    private Timestamp currentlyDeliveredTimestamp;
 
-    public TimelyCommunicationGroup(final CommunicationTracker tracker, final Node representative, final int identifier,
-            final boolean isSingleton) {
+    public TimelyCommunicationGroup(final TimelyCommunicationTracker tracker, final Node representative,
+            final int identifier, final boolean isSingleton) {
         super(tracker, representative, identifier);
         this.isSingleton = isSingleton;
         this.mailboxQueue = CollectionsFactory.createTreeMap();
         this.currentlyDelivering = false;
+    }
+
+    /**
+     * Sets the {@link Comparator} to be used to order the {@link Mailbox}es at a given {@link Timestamp} in the mailbox
+     * queue. Additionally, reorders already queued {@link Mailbox}es to reflect the new comparator. The comparator may
+     * be null, in this case, no set ordering will be enforced among the {@link Mailbox}es.
+     */
+    public void setComparatorAndReorderMailboxes(final Comparator<Node> nodeComparator) {
+        this.nodeComparator = nodeComparator;
+        if (!this.mailboxQueue.isEmpty()) {
+            final HashMap<Timestamp, Set<Mailbox>> queueCopy = new HashMap<Timestamp, Set<Mailbox>>(this.mailboxQueue);
+            this.mailboxQueue.clear();
+            for (final Entry<Timestamp, Set<Mailbox>> entry : queueCopy.entrySet()) {
+                for (final Mailbox mailbox : entry.getValue()) {
+                    this.notifyHasMessage(mailbox, entry.getKey());
+                }
+            }
+        }
     }
 
     @Override
@@ -58,21 +78,18 @@ public class TimelyCommunicationGroup extends CommunicationGroup {
             // it is not okay to loop over the mailboxes at once because a mailbox may disappear from the collection as
             // a result of delivering messages from another mailboxes under the same timestamp
             // because of this, it is crucial that we pick the mailboxes one by one
-            final Entry<MessageSelector, Set<Mailbox>> entry = this.mailboxQueue.firstEntry();
-            final MessageSelector timestamp = entry.getKey();
+            final Entry<Timestamp, Set<Mailbox>> entry = this.mailboxQueue.firstEntry();
+            final Timestamp timestamp = entry.getKey();
             final Set<Mailbox> mailboxes = entry.getValue();
             final Mailbox mailbox = mailboxes.iterator().next();
             mailboxes.remove(mailbox);
-
             if (mailboxes.isEmpty()) {
                 this.mailboxQueue.pollFirstEntry();
             }
-
             assert mailbox instanceof TimelyMailbox;
-
-            this.currentlyDeliveredTimestamp = timestamp;
+            /* debug */ this.currentlyDeliveredTimestamp = timestamp;
             mailbox.deliverAll(timestamp);
-            this.currentlyDeliveredTimestamp = null;
+            /* debug */ this.currentlyDeliveredTimestamp = null;
         }
         this.currentlyDelivering = false;
     }
@@ -87,20 +104,25 @@ public class TimelyCommunicationGroup extends CommunicationGroup {
         if (kind instanceof Timestamp) {
             final Timestamp timestamp = (Timestamp) kind;
             if (Options.MONITOR_VIOLATION_OF_DIFFERENTIAL_DATAFLOW_TIMESTAMPS) {
-                final Timestamp first = (Timestamp) this.currentlyDeliveredTimestamp;
-                if (timestamp.compareTo(first) < 0) {
+                if (timestamp.compareTo(this.currentlyDeliveredTimestamp) < 0) {
                     final Logger logger = this.representative.getContainer().getNetwork().getEngine().getLogger();
                     logger.error(
                             "[INTERNAL ERROR] Violation of differential dataflow communication schema! The communication component with representative "
                                     + this.representative + " observed decreasing timestamp during message delivery!");
                 }
             }
-
-            Set<Mailbox> mailboxes = this.mailboxQueue.get(timestamp);
-            if (mailboxes == null) {
-                mailboxes = new HashSet<Mailbox>();
-                this.mailboxQueue.put(timestamp, mailboxes);
-            }
+            final Set<Mailbox> mailboxes = this.mailboxQueue.computeIfAbsent(timestamp, k -> {
+                if (this.nodeComparator == null) {
+                    return CollectionsFactory.createSet();
+                } else {
+                    return new TreeSet<Mailbox>(new Comparator<Mailbox>() {
+                        @Override
+                        public int compare(final Mailbox left, final Mailbox right) {
+                            return nodeComparator.compare(left.getReceiver(), right.getReceiver());
+                        }
+                    });
+                }
+            });
             mailboxes.add(mailbox);
             if (!this.isEnqueued && !this.currentlyDelivering) {
                 this.tracker.activateUnenqueued(this);
@@ -113,33 +135,27 @@ public class TimelyCommunicationGroup extends CommunicationGroup {
     @Override
     public void notifyLostAllMessages(final Mailbox mailbox, final MessageSelector kind) {
         if (kind instanceof Timestamp) {
-            final Collection<Mailbox> mailboxes = this.mailboxQueue.get(kind);
-            assert mailboxes.contains(mailbox);
-            mailboxes.remove(mailbox);
-            if (mailboxes.isEmpty()) {
-                this.mailboxQueue.remove(kind);
-            }
+            final Timestamp timestamp = (Timestamp) kind;
+            this.mailboxQueue.compute(timestamp, (k, v) -> {
+                if (v == null) {
+                    throw new IllegalStateException("No mailboxes registered at timestamp " + timestamp + "!");
+                }
+                if (!v.remove(mailbox)) {
+                    throw new IllegalStateException(
+                            "The mailbox " + mailbox + " was not registered at timestamp " + timestamp + "!");
+                }
+                if (v.isEmpty()) {
+                    return null;
+                } else {
+                    return v;
+                }
+            });
             if (this.mailboxQueue.isEmpty()) {
                 this.tracker.deactivate(this);
             }
         } else {
             throw new IllegalArgumentException(UNSUPPORTED_MESSAGE_KIND + kind);
         }
-    }
-
-    @Override
-    public void addRederivable(final RederivableNode node) {
-        throw new UnsupportedOperationException("Differential group does not support DRed mode!");
-    }
-
-    @Override
-    public void removeRederivable(final RederivableNode node) {
-        throw new UnsupportedOperationException("Differential group does not support DRed mode!");
-    }
-
-    @Override
-    public Collection<RederivableNode> getRederivables() {
-        return Collections.emptySet();
     }
 
     @Override

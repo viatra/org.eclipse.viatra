@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.rete.network.Node;
-import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
 import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
@@ -68,21 +67,6 @@ public class SingletonCommunicationGroup extends CommunicationGroup {
         } else {
             throw new IllegalArgumentException(UNSUPPORTED_MESSAGE_KIND + kind);
         }
-    }
-
-    @Override
-    public void addRederivable(final RederivableNode node) {
-        throw new UnsupportedOperationException("Singleton group does not support DRED mode!");
-    }
-
-    @Override
-    public void removeRederivable(final RederivableNode node) {
-        throw new UnsupportedOperationException("Singleton group does not support DRED mode!");
-    }
-
-    @Override
-    public Collection<RederivableNode> getRederivables() {
-        return Collections.emptySet();
     }
 
     @Override

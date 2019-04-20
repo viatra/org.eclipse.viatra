@@ -15,7 +15,8 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -34,7 +35,8 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     }
 
     @Override
-    protected void update(Direction direction, Tuple updateElement, Tuple signature, boolean change, Timestamp timestamp) {
+    protected void update(Direction direction, Tuple updateElement, Tuple signature, boolean change,
+            Timestamp timestamp) {
         propagate(direction, updateElement, signature, change, timestamp);
     }
 
@@ -42,12 +44,12 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     public Collection<Tuple> get(Tuple signature) {
         return memory.get(signature);
     }
-    
+
     @Override
-    public Map<Tuple, Timestamp> getWithTimestamp(Tuple signature) {
-        return memory.getWithTimestamp(signature);
+    public Map<Tuple, Timeline<Timestamp>> getTimeline(Tuple signature) {
+        return memory.getWithTimeline(signature);
     }
-    
+
     @Override
     public Iterator<Tuple> iterator() {
         return memory.iterator();
@@ -65,7 +67,7 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
     public int getBucketCount() {
         return memory.getKeysetSize();
     }
-    
+
     @Override
     public Receiver getActiveNode() {
         return this;

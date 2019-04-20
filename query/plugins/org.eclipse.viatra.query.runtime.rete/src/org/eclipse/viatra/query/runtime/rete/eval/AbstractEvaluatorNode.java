@@ -8,7 +8,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.eval;
 
+import java.util.Iterator;
+
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 
 /**
@@ -45,6 +50,16 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode implements I
     @Override
     public String prettyPrintTraceInfoPatternList() {
         return getTraceInfoPatternsEnumerated();
+    }
+    
+    /**
+     * @since 2.4
+     */
+    protected void propagateIterableUpdate(final Direction direction, final Iterable<Tuple> update, final Timestamp timestamp) {
+        final Iterator<Tuple> itr = update.iterator();
+        while (itr.hasNext()) {
+            propagateUpdate(direction, itr.next(), timestamp);
+        }
     }
     
 }

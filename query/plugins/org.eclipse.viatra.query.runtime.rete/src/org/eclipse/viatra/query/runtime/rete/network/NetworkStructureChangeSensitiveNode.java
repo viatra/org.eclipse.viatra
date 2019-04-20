@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.rete.network.communication.Communication
  * be used to perform changes in behavior.
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public interface NetworkStructureChangeSensitiveNode extends Node {
 

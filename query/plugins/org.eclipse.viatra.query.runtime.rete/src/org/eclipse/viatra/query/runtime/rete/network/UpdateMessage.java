@@ -10,6 +10,7 @@
 package org.eclipse.viatra.query.runtime.rete.network;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 class UpdateMessage {
     public Receiver receiver;

@@ -18,7 +18,8 @@ import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
@@ -57,7 +58,7 @@ public class TransitiveClosureNode extends SingleInputNode
 
     @Override
     public void networkStructureChanged() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation() && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
+        if (this.reteContainer.isTimelyEvaluation() && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
             throw new IllegalStateException(this.toString() + " cannot be used in recursive differential dataflow evaluation!");
         }
         super.networkStructureChanged();
@@ -88,12 +89,12 @@ public class TransitiveClosureNode extends SingleInputNode
     }
 
     @Override
-    public void pullIntoWithTimestamp(
-            final Map<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple, Timestamp> collector,
+    public void pullIntoWithTimeline(
+            final Map<org.eclipse.viatra.query.runtime.matchers.tuple.Tuple, Timeline<Timestamp>> collector,
             final boolean flush) {
         // use all zero timestamps because this node cannot be used in recursive groups anyway
         for (final Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
-            collector.put(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()), Timestamp.ZERO);
+            collector.put(Tuples.staticArityFlatTupleOf(tuple.getSource(), tuple.getTarget()), Timestamp.INSERT_AT_ZERO_TIMELINE);
         }
     }
 
@@ -109,7 +110,7 @@ public class TransitiveClosureNode extends SingleInputNode
                 graphDataSource.insertNode(target);
                 graphDataSource.insertEdge(source, target);
             }
-            if (direction == Direction.REVOKE) {
+            if (direction == Direction.DELETE) {
                 graphDataSource.deleteEdgeIfExists(source, target);
 
                 if (((IncSCCAlg<Object>) transitiveClosureAlgorithm).isIsolated(source)) {
@@ -138,7 +139,7 @@ public class TransitiveClosureNode extends SingleInputNode
     @Override
     public void tupleDeleted(Object source, Object target) {
         org.eclipse.viatra.query.runtime.matchers.tuple.Tuple tuple = Tuples.staticArityFlatTupleOf(source, target);
-        propagateUpdate(Direction.REVOKE, tuple, Timestamp.ZERO);
+        propagateUpdate(Direction.DELETE, tuple, Timestamp.ZERO);
     }
 
 }

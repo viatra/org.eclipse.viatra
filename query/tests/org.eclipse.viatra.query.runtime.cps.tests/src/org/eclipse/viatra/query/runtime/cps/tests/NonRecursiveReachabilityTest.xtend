@@ -44,7 +44,10 @@ class NonRecursiveReachabilityTest {
 	def static Collection<IQueryBackendFactory> testData() {
 		newArrayList(
 			BackendType.Rete_DRed.newBackendInstance,
-			BackendType.Rete_Differential.newBackendInstance
+			BackendType.Rete_Timely_First_Only_Sequential.newBackendInstance,
+			BackendType.Rete_Timely_First_Only_Parallel.newBackendInstance,
+			BackendType.Rete_Timely_Faithful_Sequential.newBackendInstance,
+			BackendType.Rete_Timely_Faithful_Parallel.newBackendInstance
 		)
 	}
 	

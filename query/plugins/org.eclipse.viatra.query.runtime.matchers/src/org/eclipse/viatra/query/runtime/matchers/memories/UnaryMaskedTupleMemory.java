@@ -17,10 +17,11 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
-import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 
 /**
  * Specialized for unary mask; tuples are indexed by a single column as opposed to a projection (signature) tuple.
@@ -99,7 +100,7 @@ public final class UnaryMaskedTupleMemory<Timestamp extends Comparable<Timestamp
     }
     
     @Override
-    public Map<Tuple, Timestamp> getWithTimestamp(ITuple signature) {
+    public Map<Tuple, Timeline<Timestamp>> getWithTimeline(ITuple signature) {
         throw new UnsupportedOperationException("Timeless memories do not support timestamp-based lookup!");
     }
 

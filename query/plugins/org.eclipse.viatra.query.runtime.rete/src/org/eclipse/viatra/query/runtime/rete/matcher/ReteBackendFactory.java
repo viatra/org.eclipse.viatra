@@ -41,21 +41,21 @@ public class ReteBackendFactory implements IQueryBackendFactory {
      */
     @Override
     public IQueryBackend create(IQueryBackendContext context) {
-        return create(context, false, false);
+        return create(context, false, null);
     }
 
     /**
-     * @since 2.2
+     * @since 2.4
      */
     public IQueryBackend create(IQueryBackendContext context, boolean deleteAndRederiveEvaluation,
-            boolean differentialDataFlowEvaluation) {
+            TimelyConfiguration timelyConfiguration) {
         ReteEngine engine;
-        engine = new ReteEngine(context, reteThreads, deleteAndRederiveEvaluation, differentialDataFlowEvaluation);
+        engine = new ReteEngine(context, reteThreads, deleteAndRederiveEvaluation, timelyConfiguration);
         IQueryBackendHintProvider hintConfiguration = engine.getHintConfiguration();
         ReteRecipeCompiler compiler = new ReteRecipeCompiler(
                 Options.builderMethod.layoutStrategy(context, hintConfiguration), context.getLogger(),
                 context.getRuntimeContext().getMetaContext(), context.getQueryCacheContext(), hintConfiguration,
-                context.getQueryAnalyzer(), deleteAndRederiveEvaluation, differentialDataFlowEvaluation);
+                context.getQueryAnalyzer(), deleteAndRederiveEvaluation, timelyConfiguration);
         engine.setCompiler(compiler);
         return engine;
     }

@@ -9,22 +9,25 @@
 
 package org.eclipse.viatra.query.runtime.rete.index;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
 /**
  * A specialized projection indexer that can be memory-less (relying on an external source of information).
  * 
- * <p> All specialized projection indexers of a single node will share the same listener list, so
- * that notification order is maintained (see Bug 518434).
+ * <p>
+ * All specialized projection indexers of a single node will share the same listener list, so that notification order is
+ * maintained (see Bug 518434).
  * 
  * @author Gabor Bergmann
  * @noimplement Rely on the provided implementations
@@ -34,53 +37,86 @@ import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 public abstract class SpecializedProjectionIndexer extends StandardIndexer implements ProjectionIndexer {
 
     protected Node activeNode;
-    protected List<ListenerSubscription> sharedSubscriptionList;
+    protected List<ListenerSubscription> subscriptions;
 
     /**
      * @since 1.7
      */
-    public SpecializedProjectionIndexer(ReteContainer reteContainer, TupleMask mask, Supplier parent, 
-            Node activeNode, List<ListenerSubscription> sharedSubscriptionList) {
+    public SpecializedProjectionIndexer(final ReteContainer reteContainer, final TupleMask mask, final Supplier parent,
+            final Node activeNode, final List<ListenerSubscription> subscriptions) {
         super(reteContainer, mask);
         this.parent = parent;
         this.activeNode = activeNode;
-        this.sharedSubscriptionList = sharedSubscriptionList;
+        this.subscriptions = subscriptions;
+    }
+
+    public List<ListenerSubscription> getSubscriptions() {
+        return subscriptions;
     }
 
     @Override
     public Node getActiveNode() {
         return activeNode;
     }
-    
+
     @Override
-    protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change, Timestamp timestamp) {
+    protected void propagate(final Direction direction, final Tuple updateElement, final Tuple signature,
+            final boolean change, final Timestamp timestamp) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
-    public void attachListener(IndexerListener listener) {
+    public void attachListener(final IndexerListener listener) {
         super.attachListener(listener);
-        ListenerSubscription subscription = new ListenerSubscription(this, listener);
+        final CommunicationTracker tracker = this.getCommunicationTracker();
+        final IndexerListener proxy = tracker.proxifyIndexerListener(this, listener);
+        final ListenerSubscription subscription = new ListenerSubscription(this, proxy);
+        tracker.registerDependency(this, proxy.getOwner());
         // See Bug 518434
         // Must add to the first position, so that the later listeners are notified earlier.
-        // Thus if the beta node added as listener is also an indirect descendant of the same indexer on its opposite slot, 
+        // Thus if the beta node added as listener is also an indirect descendant of the same indexer on its opposite
+        // slot,
         // then the beta node is connected later than its ancestor's listener, therefore it will be notified earlier,
         // eliminating duplicate insertions and lost deletions that would result from fall-through update propagation
-        sharedSubscriptionList.add(0, subscription);
+        subscriptions.add(0, subscription);
     }
+
     @Override
-    public void detachListener(IndexerListener listener) {
+    public void detachListener(final IndexerListener listener) {
+        final CommunicationTracker tracker = this.getCommunicationTracker();
+        // obtain the proxy before the super call would unregister the dependency
+        final IndexerListener proxy = tracker.proxifyIndexerListener(this, listener);
         super.detachListener(listener);
-        ListenerSubscription subscription = new ListenerSubscription(this, listener);
-        sharedSubscriptionList.remove(subscription);
+        final ListenerSubscription subscription = new ListenerSubscription(this, proxy);
+        final boolean wasContained = subscriptions.remove(subscription);
+        assert wasContained;
+        tracker.unregisterDependency(this, proxy.getOwner());
     }
-    
+
+    @Override
+    public void networkStructureChanged() {
+        super.networkStructureChanged();
+        final List<ListenerSubscription> oldSubscriptions = new ArrayList<ListenerSubscription>();
+        oldSubscriptions.addAll(subscriptions);
+        subscriptions.clear();
+        for (final ListenerSubscription oldSubscription : oldSubscriptions) {
+            // there is no need to unregister and re-register the dependency between indexer and listener
+            // because the owner of the listener is the same (even if it is proxified)
+            final CommunicationTracker tracker = this.getCommunicationTracker();
+            // the subscriptions are shared, so we MUST reuse the indexer of the subscription instead of simply 'this'
+            final IndexerListener proxy = tracker.proxifyIndexerListener(oldSubscription.indexer, oldSubscription.listener);
+            final ListenerSubscription newSubscription = new ListenerSubscription(oldSubscription.indexer, proxy);
+            subscriptions.add(newSubscription);
+        }
+    }
+
     /**
-     * @since 1.7
+     * @since 2.4
      */
-    public abstract void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement, Timestamp timestamp);
-        
-    /** 
+    public abstract void propagateToListener(IndexerListener listener, Direction direction, Tuple updateElement,
+            Timestamp timestamp);
+
+    /**
      * Infrastructure to share subscriptions between specialized indexers of the same parent node.
      * 
      * @author Gabor Bergmann
@@ -95,9 +131,24 @@ public abstract class SpecializedProjectionIndexer extends StandardIndexer imple
             this.indexer = indexer;
             this.listener = listener;
         }
-        
+
+        /**
+         * @since 2.4
+         */
+        public SpecializedProjectionIndexer getIndexer() {
+            return indexer;
+        }
+
+        /**
+         * @since 2.4
+         */
+        public IndexerListener getListener() {
+            return listener;
+        }
+
         /**
          * Call this from parent node.
+         * @since 2.4
          */
         public void propagate(Direction direction, Tuple updateElement, Timestamp timestamp) {
             indexer.propagateToListener(listener, direction, updateElement, timestamp);
@@ -117,12 +168,9 @@ public abstract class SpecializedProjectionIndexer extends StandardIndexer imple
             if (getClass() != obj.getClass())
                 return false;
             ListenerSubscription other = (ListenerSubscription) obj;
-            return Objects.equals(listener, other.listener) &&
-                    Objects.equals(indexer, other.indexer);
+            return Objects.equals(listener, other.listener) && Objects.equals(indexer, other.indexer);
         }
-        
-        
-    }
 
+    }
 
 }

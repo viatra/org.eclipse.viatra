@@ -14,7 +14,9 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Signed;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
@@ -37,7 +39,7 @@ public class JoinNode extends DualInputNode {
     private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+        public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
             throw new UnsupportedOperationException();
         }
 
@@ -69,7 +71,7 @@ public class JoinNode extends DualInputNode {
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
                 final Tuple signature, final boolean change, final Timestamp timestamp) {
             // in the default case, all timestamps must be zero
-            assert timestamp == Timestamp.ZERO;
+            assert Timestamp.ZERO.equals(timestamp);
 
             final Collection<Tuple> opposites = retrieveOpposites(side, signature);
 
@@ -101,7 +103,7 @@ public class JoinNode extends DualInputNode {
     private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+        public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
             if (primarySlot == null || secondarySlot == null) {
                 return;
             }
@@ -112,13 +114,18 @@ public class JoinNode extends DualInputNode {
 
             for (final Tuple signature : primarySlot.getSignatures()) {
                 // primaries can not be null due to the contract of IterableIndex.getSignatures()
-                final Map<Tuple, Timestamp> primaries = getWithTimestamp(signature, primarySlot);
-                final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, secondarySlot);
+                final Map<Tuple, Timeline<Timestamp>> primaries = getTimeline(signature, primarySlot);
+                final Map<Tuple, Timeline<Timestamp>> opposites = getTimeline(signature, secondarySlot);
                 if (opposites != null) {
                     for (final Tuple primary : primaries.keySet()) {
-                        final Timestamp primaryTimestamp = primaries.get(primary);
                         for (final Tuple opposite : opposites.keySet()) {
-                            collector.put(unify(primary, opposite), primaryTimestamp.max(opposites.get(opposite)));
+                            final Timeline<Timestamp> primaryTimeline = primaries.get(primary);
+                            final Timeline<Timestamp> oppositeTimeline = opposites.get(opposite);
+                            final Timeline<Timestamp> mergedTimeline = primaryTimeline
+                                    .mergeMultiplicative(oppositeTimeline);
+                            if (!mergedTimeline.isEmpty()) {
+                                collector.put(unify(primary, opposite), mergedTimeline);
+                            }
                         }
                     }
                 }
@@ -134,13 +141,18 @@ public class JoinNode extends DualInputNode {
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
                 final Tuple signature, final boolean change, final Timestamp timestamp) {
             final Indexer oppositeIndexer = getSlot(side.opposite());
-            final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
+            final Map<Tuple, Timeline<Timestamp>> opposites = getTimeline(signature, oppositeIndexer);
 
             if (!coincidence) {
                 if (opposites != null) {
                     for (final Tuple opposite : opposites.keySet()) {
-                        propagateUpdate(direction, unify(side, updateElement, opposite),
-                                timestamp.max(opposites.get(opposite)));
+                        final Tuple unifiedTuple = unify(side, updateElement, opposite);
+                        for (final Signed<Timestamp> signed : opposites.get(opposite).asChangeSequence()) {
+                            // TODO only consider signed timestamps that are greater or equal to timestamp
+                            // plus compact the previous timestamps into at most one update
+                            propagateUpdate(signed.getDirection().multiply(direction), unifiedTuple,
+                                    timestamp.max(signed.getPayload()));
+                        }
                     }
                 }
             } else {
@@ -151,11 +163,14 @@ public class JoinNode extends DualInputNode {
                             // handle self-joins of a single tuple separately
                             continue;
                         }
-                        final Timestamp oppositeTimestamp = opposites.get(opposite);
-                        propagateUpdate(direction, unify(opposite, updateElement),
-                                timestamp.max(oppositeTimestamp));
-                        propagateUpdate(direction, unify(updateElement, opposite),
-                                timestamp.max(oppositeTimestamp));
+                        final Tuple u1 = unify(opposite, updateElement);
+                        final Tuple u2 = unify(updateElement, opposite);
+                        for (final Signed<Timestamp> oppositeSigned : opposites.get(opposite).asChangeSequence()) {
+                            final Direction updateDirection = direction.multiply(oppositeSigned.getDirection());
+                            final Timestamp updateTimestamp = timestamp.max(oppositeSigned.getPayload());
+                            propagateUpdate(updateDirection, u1, updateTimestamp);
+                            propagateUpdate(updateDirection, u2, updateTimestamp);
+                        }
                     }
                 }
 

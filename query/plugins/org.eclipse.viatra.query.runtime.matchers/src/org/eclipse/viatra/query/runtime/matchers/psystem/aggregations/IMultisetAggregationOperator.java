@@ -77,4 +77,30 @@ public interface IMultisetAggregationOperator<Domain, Accumulator, AggregateResu
      * @since 2.0
      */
     AggregateResult aggregateStream(Stream<Domain> stream);
+    
+    /**
+     * Clones the given accumulator (with all its internal contents).
+     */
+    default Accumulator clone(Accumulator original) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * Combines the given aggregate result and accumulator into a single aggregate result. 
+     */
+    default AggregateResult combine(AggregateResult left, Accumulator right) {
+        throw new UnsupportedOperationException();
+    }
+    
+    default boolean contains(Domain value, Accumulator accumulator) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * Pretty prints the contents of the given accumulator. 
+     */
+    default String prettyPrint(final Accumulator accumulator) {
+        return accumulator.toString();
+    }
+    
 }

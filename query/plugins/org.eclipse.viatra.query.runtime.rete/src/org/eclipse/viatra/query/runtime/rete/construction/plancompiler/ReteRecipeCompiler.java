@@ -75,12 +75,14 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryT
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.PosetTriplet;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.CountAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorBucketRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorDispatcherRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InequalityFilterRecipe;
@@ -125,24 +127,27 @@ public class ReteRecipeCompiler {
      */
     protected final boolean deleteAndRederiveEvaluation;
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    protected final boolean differentialDataFlowEvaluation;
+    protected final TimelyConfiguration timelyEvaluation;
     
     /**
      * @since 1.5
      */
     public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, Logger logger, IQueryMetaContext metaContext,
             IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider, QueryAnalyzer queryAnalyzer) {
-        this(plannerStrategy, logger, metaContext, queryCacheContext, hintProvider, queryAnalyzer, false, false);
+        this(plannerStrategy, logger, metaContext, queryCacheContext, hintProvider, queryAnalyzer, false, null);
     }
     
+    /**
+     * @since 2.4
+     */
     public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, Logger logger, IQueryMetaContext metaContext,
             IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider, QueryAnalyzer queryAnalyzer, 
-            boolean deleteAndRederiveEvaluation, boolean differentialDataFlowEvaluation) {
+            boolean deleteAndRederiveEvaluation, TimelyConfiguration timelyEvaluation) {
         super();
         this.deleteAndRederiveEvaluation = deleteAndRederiveEvaluation;
-        this.differentialDataFlowEvaluation = differentialDataFlowEvaluation;
+        this.timelyEvaluation = timelyEvaluation;
         this.plannerStrategy = plannerStrategy;
         this.logger = logger;
         this.metaContext = metaContext;
@@ -201,7 +206,8 @@ public class ReteRecipeCompiler {
 
             boolean reentrant = !compilationInProgress.add(query);
             if (reentrant) { // oops, recursion into body in progress
-                RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext, deleteAndRederiveEvaluation);
+                RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext,
+                        deleteAndRederiveEvaluation, timelyEvaluation);
                 recursionCutoffPoints.addPair(query, cutoffPoint);
                 return cutoffPoint.getCompiledQuery();
             } else { // not reentrant, therefore no recursion, do the compilation
@@ -299,7 +305,7 @@ public class ReteRecipeCompiler {
         }
 
         CompiledQuery compiled = CompilerHelper.makeQueryTrace(query, bodyFinalTraces, bodyFinalRecipes,
-                getHints(query), metaContext, deleteAndRederiveEvaluation);
+                getHints(query), metaContext, deleteAndRederiveEvaluation, timelyEvaluation);
 
         return compiled;
     }
@@ -571,10 +577,10 @@ public class ReteRecipeCompiler {
         Mask groupMask = CompilerHelper.toRecipeMask(callGroupMask);
 
         // temporary solution to support the deprecated option for now
-        boolean deleteAndRederiveEvaluationDep = this.deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(plan));
+        final boolean deleteAndRederiveEvaluationDep = this.deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(plan));
        
         columnAggregatorRecipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
-        if (deleteAndRederiveEvaluationDep) {
+        if (deleteAndRederiveEvaluationDep || (this.timelyEvaluation != null)) {
             List<PParameter> parameters = constraint.getReferredQuery().getParameters();
             IInputKey key = parameters.get(columnIndex).getDeclaredUnaryType();
             if (key != null && metaContext.isPosetKey(key)) {
@@ -662,6 +668,9 @@ public class ReteRecipeCompiler {
         enforcerRecipe.setParent(parentCompiled.getRecipe());
         enforcerRecipe.setExpression(RecipesHelper.expressionDefinition(constraint.getEvaluator()));
         enforcerRecipe.setCacheOutput(cacheOutput);
+        if (enforcerRecipe instanceof EvalRecipe) {
+            ((EvalRecipe) enforcerRecipe).setUnwinding(constraint.isUnwinding());
+        }
         for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
             enforcerRecipe.getMappedIndices().put(entry.getKey(), entry.getValue());
         }
@@ -763,10 +772,10 @@ public class ReteRecipeCompiler {
             recipe.getParents().add(trimmerRecipe);
 
             // temporary solution to support the deprecated option for now
-            boolean deleteAndRederiveEvaluationDep = this.deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(parentPlan));
+            final boolean deleteAndRederiveEvaluationDep = this.deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(parentPlan));
             
             recipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
-            if (deleteAndRederiveEvaluationDep) {
+            if (deleteAndRederiveEvaluationDep || (this.timelyEvaluation != null)) {
                 PosetTriplet triplet = CompilerHelper.computePosetInfo(targetVariables, parentPlan.getBody(), metaContext);
 
                 if (triplet.comparator != null) {

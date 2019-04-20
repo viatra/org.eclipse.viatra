@@ -71,4 +71,12 @@ public class IntegerAverageOperator implements IMultisetAggregationOperator<Inte
         return averageOpt.isPresent() ? averageOpt.getAsDouble() : null;
     }
     
+    /**
+     * @since 2.4
+     */
+    @Override
+    public AverageAccumulator<Integer> clone(AverageAccumulator<Integer> original) {
+        return new AverageAccumulator<Integer>(original.value, original.count);
+    }
+    
 }

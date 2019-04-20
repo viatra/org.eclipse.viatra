@@ -111,6 +111,7 @@
       <genOperations ecoreOperation="recipes.ecore#//CheckRecipe/getArity"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//EvalRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//EvalRecipe/unwinding"/>
       <genOperations ecoreOperation="recipes.ecore#//EvalRecipe/getArity"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//IndexerBasedAggregatorRecipe">

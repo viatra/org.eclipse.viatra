@@ -16,7 +16,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -35,7 +36,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
 public abstract class DualInputNode extends StandardNode implements NetworkStructureChangeSensitiveNode {
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected NetworkStructureChangeSensitiveLogic logic;
 
@@ -173,10 +174,10 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected NetworkStructureChangeSensitiveLogic createLogic() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()
+        if (this.reteContainer.isTimelyEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
             return createTimelyLogic();
         } else {
@@ -197,8 +198,8 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
-        this.logic.pullIntoWithTimestamp(collector, flush);
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
+        this.logic.pullIntoWithTimeline(collector, flush);
     }
 
     /**
@@ -256,17 +257,18 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
 
     @Override
     public void networkStructureChanged() {
+        super.networkStructureChanged();
         this.logic = createLogic();
         this.refreshIndexerGroupCache();
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected abstract NetworkStructureChangeSensitiveLogic createTimelyLogic();
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected abstract NetworkStructureChangeSensitiveLogic createTimelessLogic();
 
@@ -274,12 +276,12 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
      * This map caches the result of a CommunicationTracker.areInSameGroup(indexer, this) call. It does that for both
      * the primary and secondary slots. This way we can avoid the lookup in the getWithTimestamp call for each tuple.
      * The cache needs to be maintained when the network structure changes.
-     * @since 2.2
+     * @since 2.3
      */
     protected Map<Indexer, Boolean> indexerGroupCache;
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected void refreshIndexerGroupCache() {
         this.indexerGroupCache.clear();
@@ -294,12 +296,12 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     }
 
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    protected Map<Tuple, Timestamp> getWithTimestamp(final Tuple signature, final Indexer indexer) {
+    protected Map<Tuple, Timeline<Timestamp>> getTimeline(final Tuple signature, final Indexer indexer) {
         if (this.indexerGroupCache.get(indexer)) {
             // recursive timely case
-            return indexer.getWithTimestamp(signature);
+            return indexer.getTimeline(signature);
         } else {
             // the indexer is in a different group, treat all of its tuples as they would have timestamp 0
             final Collection<Tuple> tuples = indexer.get(signature);
@@ -312,7 +314,7 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected static abstract class NetworkStructureChangeSensitiveLogic {
 
@@ -329,13 +331,17 @@ public abstract class DualInputNode extends StandardNode implements NetworkStruc
          *            Masked signature of updateElement.
          * @param change
          *            Indicates whether this is/was the first/last instance of this signature in this slot.
+         * @since 2.4
          */
         public abstract void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
                 final Tuple signature, final boolean change, final Timestamp timestamp);
 
         public abstract void pullInto(final Collection<Tuple> collector, final boolean flush);
 
-        public abstract void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush);
+        /**
+         * @since 2.4
+         */
+        public abstract void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush);
 
     }
 

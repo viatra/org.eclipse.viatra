@@ -71,4 +71,12 @@ public class LongAverageOperator implements IMultisetAggregationOperator<Long, A
         return averageOpt.isPresent() ? averageOpt.getAsDouble() : null;
     }
     
+    /**
+     * @since 2.4
+     */
+    @Override
+    public AverageAccumulator<Long> clone(AverageAccumulator<Long> original) {
+        return new AverageAccumulator<Long>(original.value, original.count);
+    }
+    
 }

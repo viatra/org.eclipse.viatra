@@ -319,7 +319,11 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         if(expressionEvaluation.getOutputVariable() == null){
             operations.add(new ExpressionCheck(expressionEvaluation.getEvaluator(), nameMap));
         } else {
-            operations.add(new ExpressionEvalCheck(expressionEvaluation.getEvaluator(), nameMap, variableMapping.get(expressionEvaluation.getOutputVariable())));
+            if (expressionEvaluation.isUnwinding()) {
+                throw new IllegalArgumentException("Unwinding eval is not supported!");
+            } else {  
+                operations.add(new ExpressionEvalCheck(expressionEvaluation.getEvaluator(), nameMap, variableMapping.get(expressionEvaluation.getOutputVariable())));
+            }
         }
     }
 
@@ -411,7 +415,11 @@ public abstract class AbstractOperationCompiler implements IOperationCompiler {
         if(expressionEvaluation.getOutputVariable() == null){
             operations.add(new ExpressionCheck(expressionEvaluation.getEvaluator(), nameMap));
         } else {
-            operations.add(new ExpressionEval(expressionEvaluation.getEvaluator(), nameMap, variableMapping.get(expressionEvaluation.getOutputVariable())));
+            if (expressionEvaluation.isUnwinding()) {
+                throw new IllegalArgumentException("Unwinding eval is not supported!");
+            } else {                
+                operations.add(new ExpressionEval(expressionEvaluation.getEvaluator(), nameMap, variableMapping.get(expressionEvaluation.getOutputVariable())));
+            }
         }
     }
 

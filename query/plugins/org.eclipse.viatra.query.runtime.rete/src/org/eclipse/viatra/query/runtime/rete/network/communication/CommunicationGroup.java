@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.rete.network.Node;
-import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
@@ -69,13 +68,7 @@ public abstract class CommunicationGroup implements Comparable<CommunicationGrou
      */
     public abstract void notifyHasMessage(final Mailbox mailbox, final MessageSelector kind);
 
-    public abstract void addRederivable(final RederivableNode node);
-
-    public abstract void removeRederivable(final RederivableNode node);
-
     public abstract Map<MessageSelector, Collection<Mailbox>> getMailboxes();
-
-    public abstract Collection<RederivableNode> getRederivables();
 
     public abstract boolean isRecursive();
 

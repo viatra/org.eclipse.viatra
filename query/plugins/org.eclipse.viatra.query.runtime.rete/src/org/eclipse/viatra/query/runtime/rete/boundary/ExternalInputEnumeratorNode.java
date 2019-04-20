@@ -19,8 +19,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextLis
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -76,7 +77,7 @@ public class ExternalInputEnumeratorNode extends StandardNode
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
+        if (this.reteContainer.isTimelyEvaluation()) {
             return new TimelyMailbox(this, this.reteContainer);
         } else {
             return new BehaviorChangingMailbox(this, this.reteContainer);
@@ -143,11 +144,11 @@ public class ExternalInputEnumeratorNode extends StandardNode
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         final Iterable<Tuple> tuples = getTuplesInternal();
         if (tuples != null) {
             for (final Tuple tuple : tuples) {
-                collector.put(tuple, Timestamp.ZERO);
+                collector.put(tuple, Timestamp.INSERT_AT_ZERO_TIMELINE);
             }            
         }
     }
@@ -173,7 +174,7 @@ public class ExternalInputEnumeratorNode extends StandardNode
     }
 
     private static Direction direction(boolean isInsertion) {
-        return isInsertion ? Direction.INSERT : Direction.REVOKE;
+        return isInsertion ? Direction.INSERT : Direction.DELETE;
     }
 
     /* Self-addressed from network */

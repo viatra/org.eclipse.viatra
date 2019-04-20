@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
@@ -178,7 +178,7 @@ public class PosetAwareMailbox extends AbstractUpdateSplittingMailbox<GroupBased
                     final int count = entry.getValue();
                     assert count < 0;
                     for (int i = 0; i < Math.abs(count); i++) {
-                        this.receiver.updateWithPosetInfo(Direction.REVOKE, update, false);
+                        this.receiver.updateWithPosetInfo(Direction.DELETE, update, false);
                     }
                 }
             }
@@ -195,7 +195,7 @@ public class PosetAwareMailbox extends AbstractUpdateSplittingMailbox<GroupBased
                     final Tuple update = entry.getKey();
                     final int count = entry.getValue();
                     assert count != 0;
-                    final Direction direction = count < 0 ? Direction.REVOKE : Direction.INSERT;
+                    final Direction direction = count < 0 ? Direction.DELETE : Direction.INSERT;
                     for (int i = 0; i < Math.abs(count); i++) {
                         this.receiver.updateWithPosetInfo(direction, update, true);
                     }

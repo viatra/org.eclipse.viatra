@@ -31,6 +31,13 @@ import java.util.stream.Stream;
  * @since 2.3
  */
 public final class Sets {
+    
+    /**
+     * @since 2.4
+     */
+    public static <A> Set<A> newSet(Iterable<A> elements) {
+        return org.eclipse.collections.impl.factory.Sets.mutable.ofAll(elements);
+    }
 
     public static <A> Set<A> intersection(Set<A> left, Set<A> right) {
         return org.eclipse.collections.impl.factory.Sets.intersect(left, right);

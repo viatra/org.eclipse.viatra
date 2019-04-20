@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -46,7 +47,7 @@ public class RemoteReceiver extends SingleInputNode {
     }
     
     @Override
-    public void pullIntoWithTimestamp(Map<Tuple, Timestamp> collector, boolean flush) {
+    public void pullIntoWithTimeline(Map<Tuple, Timeline<Timestamp>> collector, boolean flush) {
         throw new UnsupportedOperationException();
     }
 

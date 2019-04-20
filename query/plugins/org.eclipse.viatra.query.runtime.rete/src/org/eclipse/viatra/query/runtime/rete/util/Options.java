@@ -63,7 +63,7 @@ public class Options {
     /**
      * Enable for internal debugging of message delivery in {@link TimelyCommunicationGroup}s;
      * catches cases when there is a violation of increasing timestamps during message delivery within a group.  
-     * @since 2.2
+     * @since 2.3
      */
     public static final boolean MONITOR_VIOLATION_OF_DIFFERENTIAL_DATAFLOW_TIMESTAMPS = false;
     

@@ -124,4 +124,12 @@ public class ExtremumOperator<T extends Comparable<T>>
         }
     }
     
+    /**
+     * @since 2.4
+     */
+    @Override
+    public SortedMap<T, Integer> clone(SortedMap<T, Integer> original) {
+        return new TreeMap<T, Integer>(original);
+    }
+    
 }

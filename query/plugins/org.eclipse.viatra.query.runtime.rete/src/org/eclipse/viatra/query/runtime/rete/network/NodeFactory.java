@@ -22,6 +22,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.CountNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FirstOnlyParallelTimelyColumnAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FirstOnlySequentialTimelyColumnAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FaithfulParallelTimelyColumnAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FaithfulSequentialTimelyColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputStatelessFilterNode;
 import org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore;
@@ -30,6 +34,9 @@ import org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.JoinNode;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration.AggregatorArchitecture;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration.TimelineRepresentation;
 import org.eclipse.viatra.query.runtime.rete.misc.ConstantNode;
 import org.eclipse.viatra.query.runtime.rete.recipes.AggregatorIndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
@@ -39,6 +46,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.CountAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorBucketRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorDispatcherRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
@@ -183,13 +191,6 @@ class NodeFactory {
     private Supplier instantiateNode(ReteContainer reteContainer, InputFilterRecipe recipe) {
         return new ExternalInputStatelessFilterNode(reteContainer, toMaskOrNull(recipe.getMask()));
     }
-    // private Supplier instantiateNode(ReteContainer reteContainer, BinaryInputRecipe recipe) {
-    // return new InputNode(reteContainer, 2, recipe.getTypeKey());
-    // }
-    //
-    // private Supplier instantiateNode(ReteContainer reteContainer, UnaryInputRecipe recipe) {
-    // return new InputNode(reteContainer, 1, recipe.getTypeKey());
-    // }
 
     private Supplier instantiateNode(ReteContainer reteContainer, CountAggregatorRecipe recipe) {
         return new CountNode(reteContainer);
@@ -202,35 +203,70 @@ class NodeFactory {
     private Supplier instantiateNode(ReteContainer reteContainer, ExpressionEnforcerRecipe recipe) {
         final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
         final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-        int sourceTupleWidth = recipe.getParent().getArity();
-        EvaluatorCore core = (recipe instanceof CheckRecipe)
-                ? new EvaluatorCore.PredicateEvaluatorCore(logger, evaluator, posMapping, sourceTupleWidth)
-                : new EvaluatorCore.FunctionEvaluatorCore(logger, evaluator, posMapping, sourceTupleWidth);
-        if (recipe.isCacheOutput())
+        final int sourceTupleWidth = recipe.getParent().getArity();
+        EvaluatorCore core = null;
+        if (recipe instanceof CheckRecipe) {
+            core = new EvaluatorCore.PredicateEvaluatorCore(logger, evaluator, posMapping, sourceTupleWidth);
+        } else if (recipe instanceof EvalRecipe) {
+            final boolean isUnwinding = ((EvalRecipe) recipe).isUnwinding();
+            core = new EvaluatorCore.FunctionEvaluatorCore(logger, evaluator, posMapping, sourceTupleWidth, isUnwinding);
+        } else {
+            throw new IllegalArgumentException("Unhandled expression enforcer recipe: " + recipe.getClass() + "!");
+        }
+        if (recipe.isCacheOutput()) {
             return new OutputCachingEvaluatorNode(reteContainer, core);
-        else
+        } else {
             return new MemorylessEvaluatorNode(reteContainer, core);
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Supplier instantiateNode(ReteContainer reteContainer, SingleColumnAggregatorRecipe recipe) {
-//        if (reteContainer.isDifferentialDataFlowEvaluation()) {
-//            TupleMask coreMask = toMask(recipe.getGroupByMask());
-//            int aggregatedColumn = recipe.getAggregableIndex();
-//            IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
-//            return new TimelyColumnAggregatorNode(reteContainer, operator, coreMask, aggregatedColumn);
-//        } else 
-        if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
-            TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
-            TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
-            IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo().getPosetComparator();
-            IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
-            return new ColumnAggregatorNode(reteContainer, operator, recipe.isDeleteRederiveEvaluation(), coreMask,
-                    posetMask, posetComparator);            
+        final IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
+        TupleMask coreMask = null;
+        if (recipe.getOptionalMonotonicityInfo() != null) {
+            coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
         } else {
-            TupleMask coreMask = toMask(recipe.getGroupByMask());
-            int aggregatedColumn = recipe.getAggregableIndex();
-            IMultisetAggregationOperator operator = recipe.getMultisetAggregationOperator();
+            coreMask = toMask(recipe.getGroupByMask());
+        }
+
+        if (reteContainer.isTimelyEvaluation()) {
+            final TimelyConfiguration timelyConfiguration = reteContainer.getTimelyConfiguration();
+            final AggregatorArchitecture aggregatorArchitecture = timelyConfiguration.getAggregatorArchitecture();
+            final TimelineRepresentation timelineRepresentation = timelyConfiguration.getTimelineRepresentation();
+
+            TupleMask posetMask = null;
+
+            if (recipe.getOptionalMonotonicityInfo() != null) {
+                posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
+            } else {
+                final int aggregatedColumn = recipe.getAggregableIndex();
+                posetMask = TupleMask.selectSingle(aggregatedColumn, coreMask.sourceWidth);
+            }
+
+            if (timelineRepresentation == TimelineRepresentation.FIRST_ONLY
+                    && aggregatorArchitecture == AggregatorArchitecture.SEQUENTIAL) {
+                return new FirstOnlySequentialTimelyColumnAggregatorNode(reteContainer, operator, coreMask, posetMask);
+            } else if (timelineRepresentation == TimelineRepresentation.FIRST_ONLY
+                    && aggregatorArchitecture == AggregatorArchitecture.PARALLEL) {
+                return new FirstOnlyParallelTimelyColumnAggregatorNode(reteContainer, operator, coreMask, posetMask);
+            } else if (timelineRepresentation == TimelineRepresentation.FAITHFUL
+                    && aggregatorArchitecture == AggregatorArchitecture.SEQUENTIAL) {
+                return new FaithfulSequentialTimelyColumnAggregatorNode(reteContainer, operator, coreMask, posetMask);
+            } else if (timelineRepresentation == TimelineRepresentation.FAITHFUL
+                    && aggregatorArchitecture == AggregatorArchitecture.PARALLEL) {
+                return new FaithfulParallelTimelyColumnAggregatorNode(reteContainer, operator, coreMask, posetMask);
+            } else {
+                throw new IllegalArgumentException("Unsupported timely configuration!");
+            }
+        } else if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
+            final TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
+            final IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo()
+                    .getPosetComparator();
+            return new ColumnAggregatorNode(reteContainer, operator, recipe.isDeleteRederiveEvaluation(), coreMask,
+                    posetMask, posetComparator);
+        } else {
+            final int aggregatedColumn = recipe.getAggregableIndex();
             return new ColumnAggregatorNode(reteContainer, operator, coreMask, aggregatedColumn);
         }
     }
@@ -240,12 +276,13 @@ class NodeFactory {
     }
 
     private Supplier instantiateNode(ReteContainer reteContainer, ProductionRecipe recipe) {
-        if (reteContainer.isDifferentialDataFlowEvaluation()) {
+        if (reteContainer.isTimelyEvaluation()) {
             return new TimelyProductionNode(reteContainer, toStringIndexMap(recipe.getMappedIndices()));
         } else if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
             TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
             TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
-            IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo().getPosetComparator();
+            IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo()
+                    .getPosetComparator();
             return new DefaultProductionNode(reteContainer, toStringIndexMap(recipe.getMappedIndices()),
                     recipe.isDeleteRederiveEvaluation(), coreMask, posetMask, posetComparator);
         } else {
@@ -255,12 +292,13 @@ class NodeFactory {
     }
 
     private Supplier instantiateNode(ReteContainer reteContainer, UniquenessEnforcerRecipe recipe) {
-        if (reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new TimelyUniquenessEnforcerNode(reteContainer, recipe.getArity());   
+        if (reteContainer.isTimelyEvaluation()) {
+            return new TimelyUniquenessEnforcerNode(reteContainer, recipe.getArity());
         } else if (recipe.isDeleteRederiveEvaluation() && recipe.getOptionalMonotonicityInfo() != null) {
             TupleMask coreMask = toMask(recipe.getOptionalMonotonicityInfo().getCoreMask());
             TupleMask posetMask = toMask(recipe.getOptionalMonotonicityInfo().getPosetMask());
-            IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo().getPosetComparator();
+            IPosetComparator posetComparator = (IPosetComparator) recipe.getOptionalMonotonicityInfo()
+                    .getPosetComparator();
             return new UniquenessEnforcerNode(reteContainer, recipe.getArity(), recipe.isDeleteRederiveEvaluation(),
                     coreMask, posetMask, posetComparator);
         } else {
@@ -339,6 +377,5 @@ class NodeFactory {
     private TupleMask toMask(Mask mask) {
         return TupleMask.fromSelectedIndices(mask.getSourceArity(), mask.getSourceIndices());
     }
-
 
 }

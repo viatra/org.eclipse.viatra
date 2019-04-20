@@ -17,11 +17,12 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.rete.matcher.DRedReteBackendFactory;
-import org.eclipse.viatra.query.runtime.rete.matcher.DifferentialReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyReteBackendFactory;
 
 public enum BackendType {
-    Rete, Rete_DRed, Rete_Differential, LocalSearch, LocalSearch_Generic, LocalSearch_Flat, LocalSearch_NoBase;
+    Rete, Rete_DRed, Rete_Timely_First_Only_Sequential, Rete_Timely_First_Only_Parallel, Rete_Timely_Faithful_Sequential, 
+    Rete_Timely_Faithful_Parallel, LocalSearch, LocalSearch_Generic, LocalSearch_Flat, LocalSearch_NoBase;
 
     public IQueryBackendFactory getNewBackendInstance() {
         switch (this) {
@@ -29,8 +30,14 @@ public enum BackendType {
             return ReteBackendFactory.INSTANCE;
         case Rete_DRed:
             return DRedReteBackendFactory.INSTANCE;
-        case Rete_Differential:
-            return DifferentialReteBackendFactory.INSTANCE;
+        case Rete_Timely_First_Only_Sequential:
+            return TimelyReteBackendFactory.FIRST_ONLY_SEQUENTIAL;
+        case Rete_Timely_First_Only_Parallel:
+            return TimelyReteBackendFactory.FIRST_ONLY_PARALLEL;
+        case Rete_Timely_Faithful_Sequential:
+            return TimelyReteBackendFactory.FAITHFUL_SEQUENTIAL;
+        case Rete_Timely_Faithful_Parallel:
+            return TimelyReteBackendFactory.FAITHFUL_PARALLEL;
         case LocalSearch_Flat:
         case LocalSearch_NoBase:
         case LocalSearch:

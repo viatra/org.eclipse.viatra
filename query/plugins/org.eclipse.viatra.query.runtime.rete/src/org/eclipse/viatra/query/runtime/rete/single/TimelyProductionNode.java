@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
  *
  * @author Tamas Szabo
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @since 2.2
+ * @since 2.3
  */
 public class TimelyProductionNode extends TimelyUniquenessEnforcerNode implements ProductionNode {
 

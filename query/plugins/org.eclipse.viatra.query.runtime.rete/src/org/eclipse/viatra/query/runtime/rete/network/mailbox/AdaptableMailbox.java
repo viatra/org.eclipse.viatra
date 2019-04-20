@@ -9,6 +9,7 @@
 package org.eclipse.viatra.query.runtime.rete.network.mailbox;
 
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.TimelyMailboxProxy;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 
 /**

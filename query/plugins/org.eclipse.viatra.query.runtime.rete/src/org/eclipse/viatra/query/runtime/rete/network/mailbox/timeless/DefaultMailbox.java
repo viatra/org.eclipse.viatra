@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
@@ -87,7 +87,7 @@ public class DefaultMailbox implements AdaptableMailbox {
             significantChange = true;
         }
 
-        if (direction == Direction.REVOKE) {
+        if (direction == Direction.DELETE) {
             count--;
         } else {
             count++;
@@ -124,7 +124,7 @@ public class DefaultMailbox implements AdaptableMailbox {
 
                 Direction direction;
                 if (count < 0) {
-                    direction = Direction.REVOKE;
+                    direction = Direction.DELETE;
                     count = -count;
                 } else {
                     direction = Direction.INSERT;

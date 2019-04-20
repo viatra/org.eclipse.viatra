@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.network.communication;
  * Subclasses of this interface represent meta data of update messages in Rete. 
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public interface MessageSelector {
     

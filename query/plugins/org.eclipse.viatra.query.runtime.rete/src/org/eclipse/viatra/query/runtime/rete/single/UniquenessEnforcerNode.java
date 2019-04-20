@@ -16,24 +16,25 @@ import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiset;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.PosetAwareReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timeless.RecursiveCommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.PosetAwareMailbox;
-import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 
 /**
- * Default uniqueness enforcer node implementation. 
- * 
+ * Timeless uniqueness enforcer node implementation.
+ * <p>
  * The node is capable of operating in the delete and re-derive mode. In this mode, it is also possible to equip the
  * node with an {@link IPosetComparator} to identify monotone changes; thus, ensuring that a fix-point can be reached
  * during the evaluation.
@@ -55,11 +56,11 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
      * @since 1.6
      */
     protected boolean deleteRederiveEvaluation;
-    
+
     /**
      * @since 1.7
      */
-    protected CommunicationGroup currentGroup = null;
+    protected CommunicationGroup currentGroup;
 
     public UniquenessEnforcerNode(final ReteContainer reteContainer, final int tupleWidth) {
         this(reteContainer, tupleWidth, false);
@@ -95,8 +96,9 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
     /**
      * @since 1.6
      */
-    public UniquenessEnforcerNode(final ReteContainer reteContainer, final int tupleWidth, final boolean deleteRederiveEvaluation,
-            final TupleMask coreMask, final TupleMask posetMask, final IPosetComparator posetComparator) {
+    public UniquenessEnforcerNode(final ReteContainer reteContainer, final int tupleWidth,
+            final boolean deleteRederiveEvaluation, final TupleMask coreMask, final TupleMask posetMask,
+            final IPosetComparator posetComparator) {
         super(reteContainer, tupleWidth);
         this.memory = CollectionsFactory.createMultiset();
         this.rederivableMemory = CollectionsFactory.createMultiset();
@@ -108,6 +110,18 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
         this.posetComparator = posetComparator;
         this.mailbox = instantiateMailbox();
         reteContainer.registerClearable(this.mailbox);
+    }
+    
+    @Override
+    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
+        for (final Tuple tuple : this.memory.distinctValues()) {
+            collector.add(tuple);
+        }
+    }
+    
+    @Override
+    public Collection<Tuple> getTuples() {
+        return this.memory.distinctValues();
     }
 
     @Override
@@ -131,7 +145,7 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
     }
 
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
         throw new UnsupportedOperationException("Use the timely version of this node!");
     }
 
@@ -139,18 +153,11 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
-            return new TimelyMailbox(this, this.reteContainer);
-        } else if (coreMask != null && posetMask != null && posetComparator != null) {
+        if (coreMask != null && posetMask != null && posetComparator != null) {
             return new PosetAwareMailbox(this, this.reteContainer);
         } else {
             return new BehaviorChangingMailbox(this, this.reteContainer);
         }
-    }
-
-    @Override
-    public Collection<Tuple> getMemory() {
-        return memory.distinctValues();
     }
 
     @Override
@@ -172,9 +179,10 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
     }
 
     /**
-     * @since 1.6
+     * @since 2.4
      */
-    protected boolean updateWithDeleteAndRederive(final Direction direction, final Tuple update, final boolean monotone) {
+    protected boolean updateWithDeleteAndRederive(final Direction direction, final Tuple update,
+            final boolean monotone) {
         boolean propagate = false;
 
         final int memoryCount = memory.getCount(update);
@@ -188,7 +196,7 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
                     // this can happen if the INSERT cancelled out a DELETE
-                    currentGroup.removeRederivable(this);
+                    ((RecursiveCommunicationGroup) currentGroup).removeRederivable(this);
                 }
             } else {
                 // the tuple is in the main memory
@@ -214,7 +222,7 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
                 }
                 if (rederivableMemory.isEmpty()) {
                     // there is nothing left to be re-derived
-                    currentGroup.removeRederivable(this);
+                    ((RecursiveCommunicationGroup) currentGroup).removeRederivable(this);
                 }
             } else {
                 // the tuple is in the main memory
@@ -225,7 +233,7 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
                     if (count > 0) {
                         if (rederivableMemory.isEmpty()) {
                             // there is now something to be re-derived
-                            currentGroup.addRederivable(this);
+                            ((RecursiveCommunicationGroup) currentGroup).addRederivable(this);
                         }
                         rederivableMemory.addPositive(update, count);
                     }
@@ -239,7 +247,7 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
     }
 
     /**
-     * @since 1.6
+     * @since 2.4
      */
     protected boolean updateDefault(final Direction direction, final Tuple update) {
         boolean propagate = false;
@@ -271,29 +279,29 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
         memory.addPositive(update, count);
         // if there is no other re-derivable tuple, then unregister the node itself
         if (this.rederivableMemory.isEmpty()) {
-            currentGroup.removeRederivable(this);
+            ((RecursiveCommunicationGroup) currentGroup).removeRederivable(this);
         }
         propagate(Direction.INSERT, update, Timestamp.ZERO);
     }
 
     @Override
     public ProjectionIndexer getNullIndexer() {
-        if (memoryNullIndexer == null) {
-            memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory.distinctValues(), this,
-                    this, specializedListeners);
-            this.getCommunicationTracker().registerDependency(this, memoryNullIndexer);
+        if (this.memoryNullIndexer == null) {
+            this.memoryNullIndexer = new MemoryNullIndexer(this.reteContainer, this.tupleWidth,
+                    this.memory.distinctValues(), this, this, this.specializedListeners);
+            this.getCommunicationTracker().registerDependency(this, this.memoryNullIndexer);
         }
-        return memoryNullIndexer;
+        return this.memoryNullIndexer;
     }
 
     @Override
     public ProjectionIndexer getIdentityIndexer() {
-        if (memoryIdentityIndexer == null) {
-            memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory.distinctValues(),
-                    this, this, specializedListeners);
-            this.getCommunicationTracker().registerDependency(this, memoryIdentityIndexer);
+        if (this.memoryIdentityIndexer == null) {
+            this.memoryIdentityIndexer = new MemoryIdentityIndexer(this.reteContainer, this.tupleWidth,
+                    this.memory.distinctValues(), this, this, this.specializedListeners);
+            this.getCommunicationTracker().registerDependency(this, this.memoryIdentityIndexer);
         }
-        return memoryIdentityIndexer;
+        return this.memoryIdentityIndexer;
     }
 
     @Override

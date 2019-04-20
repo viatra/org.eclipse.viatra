@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
@@ -180,8 +181,7 @@ public class Network {
      * reside in any of the containers associated with this network. To be called from a user thread during normal
      * operation, NOT during construction.
      * 
-     * @return the value of the target container's clock at the time when the message was accepted into its message
-     *         queue
+     * @since 2.4
      */
     public void sendExternalUpdate(Address<? extends Receiver> receiver, Direction direction, Tuple updateElement) {
         if (threads > 0) {
@@ -207,6 +207,7 @@ public class Network {
      * 
      * @return the value of the target container's clock at the time when the message was accepted into its message
      *         queue
+     * @since 2.4
      */
     public void sendConstructionUpdate(Address<? extends Receiver> receiver, Direction direction, Tuple updateElement) {
         // structuralChangeLock.lock();
@@ -225,8 +226,7 @@ public class Network {
      * @pre: structuralChangeLock MUST be grabbed by the sequence (but not necessarily this thread, as the sequence may
      *       span through network calls, that's why it's not enforced here )
      * 
-     * @return the value of the target container's clock at the time when the message was accepted into its message
-     *         queue
+     * @since 2.4
      */
     public void sendConstructionUpdates(Address<? extends Receiver> receiver, Direction direction,
             Collection<Tuple> updateElements) {

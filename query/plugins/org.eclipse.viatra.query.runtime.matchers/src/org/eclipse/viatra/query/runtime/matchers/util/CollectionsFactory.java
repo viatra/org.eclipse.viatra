@@ -40,7 +40,7 @@ public final class CollectionsFactory
     
     /**
      * Instantiates a new tree map. 
-     * @since 2.2
+     * @since 2.3
      */
     public static <K, V> TreeMap<K, V> createTreeMap() {
         return FRAMEWORK.createTreeMap();
@@ -165,7 +165,7 @@ public final class CollectionsFactory
         public abstract <K,V> Map<K,V> createMap();
         public abstract <K,V> Map<K,V> createMap(Map<K,V> initial);
         /**
-         * @since 2.2
+         * @since 2.3
          */
         public abstract <K, V> TreeMap<K, V> createTreeMap();
         public abstract <E> Set<E> createSet();

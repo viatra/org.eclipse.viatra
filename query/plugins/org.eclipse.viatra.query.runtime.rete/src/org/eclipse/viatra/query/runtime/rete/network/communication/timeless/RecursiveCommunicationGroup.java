@@ -29,7 +29,7 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
  * node is a monotonicity aware one or a set of nodes that form an SCC. 
  * 
  * @author Tamas Szabo
- * @since 1.6
+ * @since 2.4
  */
 public class RecursiveCommunicationGroup extends CommunicationGroup {
 
@@ -129,7 +129,6 @@ public class RecursiveCommunicationGroup extends CommunicationGroup {
         }
     }
 
-    @Override
     public void addRederivable(final RederivableNode node) {
         this.rederivables.add(node);
         if (!this.isEnqueued) {
@@ -137,7 +136,6 @@ public class RecursiveCommunicationGroup extends CommunicationGroup {
         }
     }
 
-    @Override
     public void removeRederivable(final RederivableNode node) {
         this.rederivables.remove(node);
         if (isEmpty()) {
@@ -145,7 +143,6 @@ public class RecursiveCommunicationGroup extends CommunicationGroup {
         }
     }
 
-    @Override
     public Collection<RederivableNode> getRederivables() {
         return this.rederivables;
     }

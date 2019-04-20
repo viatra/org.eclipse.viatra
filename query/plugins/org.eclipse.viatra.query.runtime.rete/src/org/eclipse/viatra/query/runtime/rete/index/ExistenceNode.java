@@ -13,7 +13,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Signed;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
@@ -50,7 +52,7 @@ public class ExistenceNode extends DualInputNode {
 
     @Override
     public void networkStructureChanged() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation() && this.secondarySlot != null
+        if (this.reteContainer.isTimelyEvaluation() && this.secondarySlot != null
                 && this.reteContainer.getCommunicationTracker().areInSameGroup(this, this.secondarySlot)) {
             throw new IllegalStateException("Secondary parent must be in an upstream dependency component!");
         }
@@ -60,7 +62,7 @@ public class ExistenceNode extends DualInputNode {
     private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+        public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
             throw new UnsupportedOperationException();
         }
 
@@ -87,7 +89,7 @@ public class ExistenceNode extends DualInputNode {
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
                 final Tuple signature, final boolean change, final Timestamp timestamp) {
             // in the default case, all timestamps must be zero
-            assert timestamp == Timestamp.ZERO;
+            assert Timestamp.ZERO.equals(timestamp);
 
             switch (side) {
             case PRIMARY:
@@ -120,7 +122,7 @@ public class ExistenceNode extends DualInputNode {
     private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
+        public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
             if (primarySlot == null || secondarySlot == null) {
                 return;
             }
@@ -130,8 +132,9 @@ public class ExistenceNode extends DualInputNode {
 
             for (final Tuple signature : primarySlot.getSignatures()) {
                 // primaries can not be null due to the contract of IterableIndex.getSignatures()
-                final Map<Tuple, Timestamp> primaries = getWithTimestamp(signature, primarySlot);
-                final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, secondarySlot);
+                final Map<Tuple, Timeline<Timestamp>> primaries = getTimeline(signature, primarySlot);
+                // see contract: secondary must be in an upstream SCC
+                final Collection<Tuple> opposites = secondarySlot.get(signature);
                 if ((opposites != null) ^ negative) {
                     for (final Tuple primary : primaries.keySet()) {
                         collector.put(primary, primaries.get(primary));
@@ -148,29 +151,33 @@ public class ExistenceNode extends DualInputNode {
         @Override
         public void notifyUpdate(final Side side, final Direction direction, final Tuple updateElement,
                 final Tuple signature, final boolean change, final Timestamp timestamp) {
-            final Indexer oppositeIndexer = getSlot(side.opposite());
-            final Map<Tuple, Timestamp> opposites = getWithTimestamp(signature, oppositeIndexer);
-
             switch (side) {
-            case PRIMARY:
+            case PRIMARY: {
+                final Collection<Tuple> opposites = secondarySlot.get(signature);
                 if ((opposites != null) ^ negative) {
                     propagateUpdate(direction, updateElement, timestamp);
                 }
                 break;
-            case SECONDARY:
+            }
+            case SECONDARY: {
+                final Map<Tuple, Timeline<Timestamp>> opposites = primarySlot.getTimeline(signature);
                 if (change) {
                     if (opposites != null) {
                         for (final Tuple opposite : opposites.keySet()) {
-                            propagateUpdate((negative ? direction.opposite() : direction), opposite,
-                                    opposites.get(opposite));
+                            for (final Signed<Timestamp> oppositeSigned : opposites.get(opposite).asChangeSequence()) {
+                                final Direction product = direction.multiply(oppositeSigned.getDirection());
+                                propagateUpdate((negative ? product.opposite() : product), opposite,
+                                        oppositeSigned.getPayload());
+                            }
                         }
                     }
                 }
                 break;
+            }
             case BOTH:
                 // in case the slots coincide,
                 // negative --> always empty
-                // !positive --> identity
+                // positive --> identity
                 if (!negative) {
                     propagateUpdate(direction, updateElement, timestamp);
                 }

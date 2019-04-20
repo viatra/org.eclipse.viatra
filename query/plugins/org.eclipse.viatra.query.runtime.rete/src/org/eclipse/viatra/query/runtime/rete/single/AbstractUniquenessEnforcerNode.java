@@ -14,9 +14,9 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.SpecializedProjectionIndexer.ListenerSubscription;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
 
 /**
  * Ensures that no identical copies get to the output. Only one replica of each pattern substitution may traverse this
- * node.
+ * node. There are both timeless and timely implementations.
  * 
  * @author Gabor Bergmann
  * @author Tamas Szabo
@@ -63,7 +63,15 @@ public abstract class AbstractUniquenessEnforcerNode extends StandardNode implem
     public Mailbox getMailbox() {
         return this.mailbox;
     }
+    
+    /**
+     * @since 2.4
+     */
+    public abstract Collection<Tuple> getTuples();
 
+    /**
+     * @since 2.4
+     */
     protected void propagate(final Direction direction, final Tuple update, final Timestamp timestamp) {
         // See Bug 518434
         // trivial (non-active) indexers must be updated before other listeners
@@ -95,18 +103,6 @@ public abstract class AbstractUniquenessEnforcerNode extends StandardNode implem
             }
         }
         return super.constructIndex(mask, traces);
-    }
-    
-    /**
-     * @since 2.2
-     */
-    public abstract Collection<Tuple> getMemory();
-
-    @Override
-    public void pullInto(final Collection<Tuple> collector, final boolean flush) {
-        for (final Tuple tuple : this.getMemory()) {
-            collector.add(tuple);
-        }
     }
 
     public abstract ProjectionIndexer getNullIndexer();

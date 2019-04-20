@@ -123,7 +123,7 @@ class FlattenerCopier extends PBodyCopier {
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));
+        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable, expressionEvaluation.isUnwinding()));
     }
     
 }

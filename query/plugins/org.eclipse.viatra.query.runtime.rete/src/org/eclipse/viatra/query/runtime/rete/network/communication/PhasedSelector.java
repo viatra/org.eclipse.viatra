@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.network.communication;
  * A default message selector that can be used to associate phases to messages. 
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public enum PhasedSelector implements MessageSelector {
     

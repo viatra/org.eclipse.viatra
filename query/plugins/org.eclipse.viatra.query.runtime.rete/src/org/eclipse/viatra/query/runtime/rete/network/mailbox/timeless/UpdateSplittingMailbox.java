@@ -11,7 +11,7 @@ package org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
@@ -103,7 +103,7 @@ public class UpdateSplittingMailbox extends AbstractUpdateSplittingMailbox<Defau
                 final int count = entry.getValue();
                 assert count < 0;
                 for (int i = 0; i < Math.abs(count); i++) {
-                    this.receiver.update(Direction.REVOKE, update, Timestamp.ZERO);
+                    this.receiver.update(Direction.DELETE, update, Timestamp.ZERO);
                 }
             }
             this.deliveringAntiMonotone = false;

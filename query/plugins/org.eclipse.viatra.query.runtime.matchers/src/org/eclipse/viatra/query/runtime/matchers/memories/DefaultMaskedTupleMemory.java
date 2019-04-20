@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryT
 import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup.ChangeGranularity;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 
 /**
  * @author Gabor Bergmann
@@ -84,7 +85,7 @@ public final class DefaultMaskedTupleMemory<Timestamp extends Comparable<Timesta
     }
     
     @Override
-    public Map<Tuple, Timestamp> getWithTimestamp(ITuple signature) {
+    public Map<Tuple, Timeline<Timestamp>> getWithTimeline(ITuple signature) {
         throw new UnsupportedOperationException("Timeless memories do not support timestamp-based lookup!");
     }
 

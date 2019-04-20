@@ -36,7 +36,9 @@ Export-Package: org.eclipse.viatra.query.runtime.matchers,
  org.eclipse.viatra.query.runtime.matchers.scopes;x-friends:="org.eclipse.viatra.query.runtime,org.eclipse.viatra.query.runtime.tests",
  org.eclipse.viatra.query.runtime.matchers.scopes.tables;x-friends:="org.eclipse.viatra.query.runtime,org.eclipse.viatra.query.runtime.tests,org.eclipse.viatra.transformation.runtime.emf",
  org.eclipse.viatra.query.runtime.matchers.tuple,
- org.eclipse.viatra.query.runtime.matchers.util
+ org.eclipse.viatra.query.runtime.matchers.util,
+ org.eclipse.viatra.query.runtime.matchers.util.resumable,
+ org.eclipse.viatra.query.runtime.matchers.util.timeline
 Bundle-ClassPath: .
 Import-Package: org.apache.log4j;version="1.2.15"
 Require-Bundle: org.eclipse.collections;bundle-version="9.2.0"

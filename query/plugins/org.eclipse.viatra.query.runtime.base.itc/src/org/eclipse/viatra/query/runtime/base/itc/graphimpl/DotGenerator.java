@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
  * This class contains utility methods to generate dot representations for {@link Graph} instances.
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public class DotGenerator {
 
@@ -111,16 +111,14 @@ public class DotGenerator {
                         }
                     }
 
-                    final int count = targets.getCount(target);
                     final String targetPresentation = nameFunction == null ? target.toString()
                             : nameFunction.apply(target);
-                    for (int i = 0; i < count; i++) {
-                        builder.append("\"" + sourcePresentation + "\" -> \"" + targetPresentation + "\"");
-                        if (edgeLabel != null) {
-                            builder.append("[label=\"" + edgeLabel + "\"]");
-                        }
-                        builder.append(";\n");
+
+                    builder.append("\"" + sourcePresentation + "\" -> \"" + targetPresentation + "\"");
+                    if (edgeLabel != null) {
+                        builder.append("[label=\"" + edgeLabel + "\"]");
                     }
+                    builder.append(";\n");
                 }
             }
         }
@@ -142,11 +140,14 @@ public class DotGenerator {
 
     /**
      * Returns a simple name shortener function that can be used in the graphviz visualization to help with readability.
+     * WARNING: if you shorten the name of the {@link Node}s too much, the visualization may become incorrect because
+     * grahpviz will treat different nodes as the same if their shortened names are the same.
      * 
-     * @param maxLength the maximum length of the text that is kept from the toString of the objects in the graph
+     * @param maxLength
+     *            the maximum length of the text that is kept from the toString of the objects in the graph
      * @return the shrunk toString value
      */
-    public static<V> Function<V, String> getNameShortener(final int maxLength) {
+    public static <V> Function<V, String> getNameShortener(final int maxLength) {
         return new Function<V, String>() {
             @Override
             public String apply(final V obj) {

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.runtime.rete.recipes" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/EvalRecipe.java" type="org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe">
+        <filter comment="added eval unwind" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe"/>
+                <message_argument value="isUnwinding()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="added eval unwind" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe"/>
+                <message_argument value="setUnwinding(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesPackage.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage">
+        <filter comment="added eval unwind" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="EVAL_RECIPE_FEATURE_COUNT"/>
+                <message_argument value="6"/>
+            </message_arguments>
+        </filter>
+        <filter comment="added eval unwind" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="EVAL_RECIPE__UNWINDING"/>
+            </message_arguments>
+        </filter>
+        <filter comment="added eval unwind" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getEvalRecipe_Unwinding()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesPackage.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage$Literals">
+        <filter comment="added eval unwind" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="EVAL_RECIPE__UNWINDING"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

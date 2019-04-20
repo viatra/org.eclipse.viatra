@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 
@@ -34,8 +35,8 @@ public abstract class TransformerNode extends SingleInputNode {
     }
     
     @Override
-    public void pullIntoWithTimestamp(final Map<Tuple, Timestamp> collector, final boolean flush) {
-        for (final Entry<Tuple, Timestamp> entry : reteContainer.pullPropagatedContentsWithTimestamp(this, flush).entrySet()) {
+    public void pullIntoWithTimeline(final Map<Tuple, Timeline<Timestamp>> collector, final boolean flush) {
+        for (final Entry<Tuple, Timeline<Timestamp>> entry : reteContainer.pullPropagatedContentsWithTimestamp(this, flush).entrySet()) {
             collector.put(transform(entry.getKey()), entry.getValue());
         }
     }

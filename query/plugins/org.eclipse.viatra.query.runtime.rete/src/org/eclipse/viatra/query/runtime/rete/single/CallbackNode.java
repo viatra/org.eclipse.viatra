@@ -10,8 +10,8 @@ package org.eclipse.viatra.query.runtime.rete.single;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.misc.SimpleReceiver;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 

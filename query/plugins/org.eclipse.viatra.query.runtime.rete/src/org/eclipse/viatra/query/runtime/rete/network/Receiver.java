@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.Collection;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
@@ -25,6 +26,7 @@ public interface Receiver extends Node {
 
     /**
      * updates the receiver with a newly found or lost partial matching
+     * @since 2.4
      */
     public void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp);
 

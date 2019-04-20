@@ -18,8 +18,8 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.ProductionNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
@@ -453,7 +453,7 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
     // if the corresponding rete input isn't created yet, call is ignored
     
     private static Direction direction(boolean isInsertion) {
-        return isInsertion ? Direction.INSERT : Direction.REVOKE;
+        return isInsertion ? Direction.INSERT : Direction.DELETE;
     }
     
 //    @Override

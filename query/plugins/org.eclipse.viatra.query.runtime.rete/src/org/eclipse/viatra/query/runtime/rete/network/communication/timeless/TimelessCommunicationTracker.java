@@ -8,8 +8,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.network.communication.timeless;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
@@ -20,17 +22,18 @@ import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
+import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 
 /**
- * Timeless implementation of the communication tracker. 
+ * Timeless implementation of the communication tracker.
  * 
  * @author Tamas Szabo
  * @since 2.2
  */
 public class TimelessCommunicationTracker extends CommunicationTracker {
-    
+
     @Override
     protected CommunicationGroup createGroup(Node representative, int index) {
         final boolean isSingleton = this.sccInformationProvider.sccs.getPartition(representative).size() == 1;
@@ -53,17 +56,39 @@ public class TimelessCommunicationTracker extends CommunicationTracker {
 
         return group;
     }
-    
+
+    @Override
+    protected void reconstructQueueContents(final Set<CommunicationGroup> oldActiveGroups) {
+        for (final CommunicationGroup oldGroup : oldActiveGroups) {
+            for (final Entry<MessageSelector, Collection<Mailbox>> entry : oldGroup.getMailboxes().entrySet()) {
+                for (final Mailbox mailbox : entry.getValue()) {
+                    final CommunicationGroup newGroup = this.groupMap.get(mailbox.getReceiver());
+                    newGroup.notifyHasMessage(mailbox, entry.getKey());
+                }
+            }
+
+            if (oldGroup instanceof RecursiveCommunicationGroup) {
+                for (final RederivableNode node : ((RecursiveCommunicationGroup) oldGroup).getRederivables()) {
+                    final CommunicationGroup newGroup = this.groupMap.get(node);
+                    if (!(newGroup instanceof RecursiveCommunicationGroup)) {
+                        throw new IllegalStateException("The new group must also be recursive! " + newGroup);
+                    }
+                    ((RecursiveCommunicationGroup) newGroup).addRederivable(node);
+                }
+            }
+        }
+    }
+
     @Override
     public Mailbox proxifyMailbox(final Node requester, final Mailbox original) {
         return original;
     }
-    
+
     @Override
     public IndexerListener proxifyIndexerListener(final Node requester, final IndexerListener original) {
         return original;
     }
-    
+
     @Override
     protected void postProcessNode(final Node node) {
         if (node instanceof Receiver) {
@@ -82,6 +107,11 @@ public class TimelessCommunicationTracker extends CommunicationTracker {
             }
         }
     }
+    
+    @Override
+    protected void postProcessGroup(final CommunicationGroup group) {
+        
+    }
 
     /**
      * @since 2.0
@@ -93,7 +123,7 @@ public class TimelessCommunicationTracker extends CommunicationTracker {
             final Set<Node> sourcesToCheck = new HashSet<Node>();
             sourcesToCheck.add(source);
             // DualInputNodes must be checked additionally because they do not use a mailbox directly.
-            // It can happen that their indexers actually belong to other SCCs. 
+            // It can happen that their indexers actually belong to other SCCs.
             if (source instanceof DualInputNode) {
                 final DualInputNode dualInput = (DualInputNode) source;
                 final IterableIndexer primarySlot = dualInput.getPrimarySlot();
@@ -110,7 +140,7 @@ public class TimelessCommunicationTracker extends CommunicationTracker {
                 assert otherGroup != null;
                 if (!ownGroup.equals(otherGroup)) {
                     return true;
-                }                
+                }
             }
         }
         return false;

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -45,9 +46,9 @@ public interface Indexer extends Node {
     public Collection<Tuple> get(Tuple signature);
     
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    default public Map<Tuple, Timestamp> getWithTimestamp(Tuple signature) {
+    default public Map<Tuple, Timeline<Timestamp>> getTimeline(Tuple signature) {
         throw new UnsupportedOperationException();
     }
 

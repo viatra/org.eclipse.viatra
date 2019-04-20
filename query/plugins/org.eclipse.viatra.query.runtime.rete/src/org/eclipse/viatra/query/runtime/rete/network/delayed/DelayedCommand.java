@@ -13,7 +13,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Signed;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
+import org.eclipse.viatra.query.runtime.rete.network.Network;
+import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -22,13 +26,13 @@ import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
- * Instances of this class are responsible for initializing a {@link Receiver} with the 
- * contents of a {@link Supplier}. However, due to the dynamic nature of the Rete {@link Network} and to 
- * the fact that certain {@link Node}s in the {@link Network} are sensitive to the shape of the {@link Network}, 
- * the commands must be delayed until the construction of the {@link Network} has stabilized.  
+ * Instances of this class are responsible for initializing a {@link Receiver} with the contents of a {@link Supplier}.
+ * However, due to the dynamic nature of the Rete {@link Network} and to the fact that certain {@link Node}s in the
+ * {@link Network} are sensitive to the shape of the {@link Network}, the commands must be delayed until the
+ * construction of the {@link Network} has stabilized.
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public abstract class DelayedCommand implements Runnable {
 
@@ -51,9 +55,13 @@ public abstract class DelayedCommand implements Runnable {
         final Mailbox mailbox = tracker.proxifyMailbox(this.supplier, this.receiver.getMailbox());
 
         if (this.isTimestampAware()) {
-            final Map<Tuple, Timestamp> contents = this.container.pullContentsWithTimestamp(this.supplier, false);
-            for (final Entry<Tuple, Timestamp> entry : contents.entrySet()) {
-                mailbox.postMessage(this.direction, entry.getKey(), entry.getValue());
+            final Map<Tuple, Timeline<Timestamp>> contents = this.container.pullContentsWithTimeline(this.supplier,
+                    false);
+            for (final Entry<Tuple, Timeline<Timestamp>> entry : contents.entrySet()) {
+                for (final Signed<Timestamp> change : entry.getValue().asChangeSequence()) {
+                    mailbox.postMessage(change.getDirection().multiply(this.direction), entry.getKey(),
+                            change.getPayload());
+                }
             }
         } else {
             final Collection<Tuple> contents = this.container.pullContents(this.supplier, false);

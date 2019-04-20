@@ -13,7 +13,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -26,7 +25,10 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Clearable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationTracker;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -75,6 +77,8 @@ public final class ReteContainer {
     protected Set<DelayedCommand> delayedCommandBuffer;
     protected boolean executingDelayedCommands;
 
+    protected final TimelyConfiguration timelyConfiguration;
+
     /**
      * @param threaded
      *            false if operating in a single-threaded environment
@@ -83,13 +87,14 @@ public final class ReteContainer {
         super();
         this.network = network;
         this.backendContext = network.getEngine().getBackendContext();
+        this.timelyConfiguration = network.getEngine().getTimelyConfiguration();
 
         this.delayedCommandQueue = new LinkedHashSet<DelayedCommand>();
         this.delayedCommandBuffer = new LinkedHashSet<DelayedCommand>();
         this.executingDelayedCommands = false;
 
-        if (this.isDifferentialDataFlowEvaluation()) {
-            this.tracker = new TimelyCommunicationTracker();
+        if (this.isTimelyEvaluation()) {
+            this.tracker = new TimelyCommunicationTracker(this.getTimelyConfiguration());
         } else {
             this.tracker = new TimelessCommunicationTracker();
         }
@@ -114,10 +119,17 @@ public final class ReteContainer {
     }
 
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    public boolean isDifferentialDataFlowEvaluation() {
-        return this.network.getEngine().isDifferentialDataFlowEvaluation();
+    public boolean isTimelyEvaluation() {
+        return this.timelyConfiguration != null;
+    }
+
+    /**
+     * @since 2.4
+     */
+    public TimelyConfiguration getTimelyConfiguration() {
+        return this.timelyConfiguration;
     }
 
     /**
@@ -219,14 +231,14 @@ public final class ReteContainer {
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     public boolean isExecutingDelayedCommands() {
         return this.executingDelayedCommands;
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     public Set<DelayedCommand> getDelayedCommandQueue() {
         if (this.executingDelayedCommands) {
@@ -250,8 +262,7 @@ public final class ReteContainer {
      * Disconnects a receiver from a supplier
      */
     public void disconnectAndDesynchronize(Supplier supplier, Receiver receiver) {
-        final boolean wasInSameSCC = this.isDifferentialDataFlowEvaluation()
-                && this.tracker.areInSameGroup(supplier, receiver);
+        final boolean wasInSameSCC = this.isTimelyEvaluation() && this.tracker.areInSameGroup(supplier, receiver);
         supplier.removeChild(receiver);
         receiver.removeParent(supplier);
         tracker.unregisterDependency(supplier, receiver);
@@ -259,7 +270,7 @@ public final class ReteContainer {
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     public void executeDelayedCommands() {
         if (!this.delayedCommandQueue.isEmpty()) {
@@ -354,7 +365,7 @@ public final class ReteContainer {
      * Sends an update message to a node in a different container. The receiver is indicated by the Address. Designed to
      * be called by RemoteReceivers, DO NOT use in any other way.
      *
-     * @return the value of the container's clock at the time when the message was accepted into the local message queue
+     * @since 2.4
      */
     public void sendUpdateToRemoteAddress(Address<? extends Receiver> address, Direction direction,
             Tuple updateElement) {
@@ -388,7 +399,7 @@ public final class ReteContainer {
      * <p> Note that there may be multiple copies of a Tuple in case of a {@link TrimmerNode}, so the result is not always a set.
      * 
      * @param flush if true, a flush is performed before pulling the contents 
-     * @since 2.2
+     * @since 2.3
      */
     public Collection<Tuple> pullContents(final Supplier supplier, final boolean flush) {
         if (flush) {
@@ -400,21 +411,21 @@ public final class ReteContainer {
     }
 
     /**
-     * @since 2.2
+     * @since 2.4
      */
-    public Map<Tuple, Timestamp> pullContentsWithTimestamp(final Supplier supplier, final boolean flush) {
+    public Map<Tuple, Timeline<Timestamp>> pullContentsWithTimeline(final Supplier supplier, final boolean flush) {
         if (flush) {
             flushUpdates();
         }
-        final Map<Tuple, Timestamp> collector = CollectionsFactory.createMap();
-        supplier.pullIntoWithTimestamp(collector, flush);
+        final Map<Tuple, Timeline<Timestamp>> collector = CollectionsFactory.createMap();
+        supplier.pullIntoWithTimeline(collector, flush);
         return collector;
     }
 
     /**
      * Retrieves the contents of a SingleInputNode's parentage.
      * 
-     * @since 2.2
+     * @since 2.3
      */
     public Collection<Tuple> pullPropagatedContents(final SingleInputNode supplier, final boolean flush) {
         if (flush) {
@@ -428,14 +439,14 @@ public final class ReteContainer {
     /**
      * Retrieves the timestamp-aware contents of a SingleInputNode's parentage.
      * 
-     * @since 2.2
+     * @since 2.3
      */
-    public Map<Tuple, Timestamp> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier,
+    public Map<Tuple, Timeline<Timestamp>> pullPropagatedContentsWithTimestamp(final SingleInputNode supplier,
             final boolean flush) {
         if (flush) {
             flushUpdates();
         }
-        final Map<Tuple, Timestamp> collector = new HashMap<Tuple, Timestamp>();
+        final Map<Tuple, Timeline<Timestamp>> collector = CollectionsFactory.createMap();
         supplier.propagatePullIntoWithTimestamp(collector, flush);
         return collector;
     }
@@ -446,7 +457,7 @@ public final class ReteContainer {
      *
      * @param supplier
      *            the address of the supplier to be pulled.
-     * @since 2.2
+     * @since 2.3
      */
     public Collection<Tuple> remotePull(Address<? extends Supplier> supplier, boolean flush) {
         if (!isLocal(supplier))

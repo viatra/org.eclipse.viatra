@@ -23,4 +23,9 @@ public abstract class AbstractMemorylessAggregationOperator<Domain, AggregateRes
         return result;
     }
 
+    @Override
+    public AggregateResult clone(AggregateResult original) {
+        return original;
+    }
+    
 }

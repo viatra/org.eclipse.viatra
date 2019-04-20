@@ -9,7 +9,8 @@
 package org.eclipse.viatra.query.runtime.rete.network.communication.timely;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.MessageSelector;
@@ -17,11 +18,11 @@ import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 
 /**
- * A differential proxy for another {@link Mailbox}, which performs some preprocessing 
+ * A timely proxy for another {@link Mailbox}, which performs some preprocessing 
  * on the differential timestamps before passing it on to the real recipient. 
  * 
  * @author Tamas Szabo
- * @since 2.2
+ * @since 2.3
  */
 public class TimelyMailboxProxy implements Mailbox {
 
@@ -29,8 +30,13 @@ public class TimelyMailboxProxy implements Mailbox {
     protected final Mailbox wrapped;
 
     public TimelyMailboxProxy(final Mailbox wrapped, final TimestampTransformation preprocessor) {
+        Preconditions.checkArgument(!(wrapped instanceof TimelyMailboxProxy), "Proxy in a proxy is not allowed!");
         this.wrapped = wrapped;
         this.preprocessor = preprocessor;
+    }
+    
+    public Mailbox getWrappedMailbox() {
+        return wrapped;
     }
 
     @Override

@@ -11,33 +11,40 @@ package org.eclipse.viatra.query.runtime.rete.index;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
-import org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Signed;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Diff;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration.TimelineRepresentation;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
+import org.eclipse.viatra.query.runtime.rete.network.communication.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.network.communication.timely.ResumableNode;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timeless.BehaviorChangingMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.mailbox.timely.TimelyMailbox;
 
 /**
  * @author Gabor Bergmann
- * 
+ * @author Tamas Szabo
  */
 public abstract class IndexerWithMemory extends StandardIndexer
-        implements Receiver, NetworkStructureChangeSensitiveNode {
+        implements Receiver, NetworkStructureChangeSensitiveNode, ResumableNode {
 
     protected MaskedTupleMemory<Timestamp> memory;
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected NetworkStructureChangeSensitiveLogic logic;
 
@@ -47,13 +54,16 @@ public abstract class IndexerWithMemory extends StandardIndexer
     protected final Mailbox mailbox;
 
     /**
-     * @param reteContainer
-     * @param mask
+     * @since 2.4
      */
-    public IndexerWithMemory(ReteContainer reteContainer, TupleMask mask) {
+    protected CommunicationGroup group;
+
+    public IndexerWithMemory(final ReteContainer reteContainer, final TupleMask mask) {
         super(reteContainer, mask);
-        memory = MaskedTupleMemory.create(mask, MemoryType.SETS, this, reteContainer.isDifferentialDataFlowEvaluation()
-                && reteContainer.getCommunicationTracker().isInRecursiveGroup(this));
+        memory = MaskedTupleMemory.create(mask, MemoryType.SETS, this,
+                reteContainer.isTimelyEvaluation() && reteContainer.getCommunicationTracker().isInRecursiveGroup(this),
+                reteContainer.isTimelyEvaluation() && reteContainer.getTimelyConfiguration()
+                        .getTimelineRepresentation() == TimelineRepresentation.FAITHFUL);
         reteContainer.registerClearable(memory);
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
@@ -61,14 +71,25 @@ public abstract class IndexerWithMemory extends StandardIndexer
     }
 
     @Override
+    public CommunicationGroup getCurrentGroup() {
+        return this.group;
+    }
+
+    @Override
+    public void setCurrentGroup(final CommunicationGroup group) {
+        this.group = group;
+    }
+
+    @Override
     public void networkStructureChanged() {
         super.networkStructureChanged();
-        final boolean wasTimestampAware = this.memory.isTimely();
-        final boolean isTimestampAware = this.reteContainer.isDifferentialDataFlowEvaluation()
+        final boolean wasTimely = this.memory.isTimely();
+        final boolean isTimely = this.reteContainer.isTimelyEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this);
-        if (wasTimestampAware != isTimestampAware) {
+        if (wasTimely != isTimely) {
             final MaskedTupleMemory<Timestamp> newMemory = MaskedTupleMemory.create(mask, MemoryType.SETS, this,
-                    isTimestampAware);
+                    isTimely, isTimely && reteContainer.getTimelyConfiguration()
+                            .getTimelineRepresentation() == TimelineRepresentation.FAITHFUL);
             newMemory.initializeWith(this.memory, Timestamp.ZERO);
             memory.clear();
             memory = newMemory;
@@ -84,7 +105,7 @@ public abstract class IndexerWithMemory extends StandardIndexer
      * @since 2.0
      */
     protected Mailbox instantiateMailbox() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()) {
+        if (this.reteContainer.isTimelyEvaluation()) {
             return new TimelyMailbox(this, this.reteContainer);
         } else {
             return new BehaviorChangingMailbox(this, this.reteContainer);
@@ -104,18 +125,19 @@ public abstract class IndexerWithMemory extends StandardIndexer
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
+    public void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp) {
         this.logic.update(direction, updateElement, timestamp);
     }
 
     /**
      * Refined version of update
+     * @since 2.4
      */
-    protected abstract void update(Direction direction, Tuple updateElement, Tuple signature, boolean change,
-            Timestamp timestamp);
+    protected abstract void update(final Direction direction, final Tuple updateElement, final Tuple signature,
+            final boolean change, final Timestamp timestamp);
 
     @Override
-    public void appendParent(Supplier supplier) {
+    public void appendParent(final Supplier supplier) {
         if (parent == null) {
             parent = supplier;
         } else {
@@ -125,7 +147,7 @@ public abstract class IndexerWithMemory extends StandardIndexer
     }
 
     @Override
-    public void removeParent(Supplier supplier) {
+    public void removeParent(final Supplier supplier) {
         if (parent == supplier) {
             parent = null;
         } else {
@@ -134,73 +156,108 @@ public abstract class IndexerWithMemory extends StandardIndexer
         }
     }
 
+    /**
+     * @since 2.4
+     */
     @Override
     public Collection<Supplier> getParents() {
         return Collections.singleton(parent);
     }
 
     /**
-     * @since 2.2
+     * @since 2.4
+     */
+    @Override
+    public void resumeAt(final Timestamp timestamp) {
+        this.logic.resumeAt(timestamp);
+    }
+
+    /**
+     * @since 2.4
+     */
+    @Override
+    public Timestamp getResumableTimestamp() {
+        return this.memory.getResumableTimestamp();
+    }
+
+    /**
+     * @since 2.3
      */
     protected static abstract class NetworkStructureChangeSensitiveLogic {
 
+        /**
+         * @since 2.4
+         */
         public abstract void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp);
 
+        /**
+         * @since 2.4
+         */
+        public abstract void resumeAt(final Timestamp timestamp);
+
     }
 
     /**
-     * @since 2.2
+     * @since 2.3
      */
     protected NetworkStructureChangeSensitiveLogic createLogic() {
-        if (this.reteContainer.isDifferentialDataFlowEvaluation()
+        if (this.reteContainer.isTimelyEvaluation()
                 && this.reteContainer.getCommunicationTracker().isInRecursiveGroup(this)) {
-            return createTimelyLogic();
+            return TIMELY;
         } else {
-            return createTimelessLogic();
+            return TIMELESS;
         }
-    }
-
-    /**
-     * @since 2.2
-     */
-    protected NetworkStructureChangeSensitiveLogic createTimelessLogic() {
-        return this.TIMELESS;
-    }
-
-    /**
-     * @since 2.2
-     */
-    protected NetworkStructureChangeSensitiveLogic createTimelyLogic() {
-        return this.TIMELY;
     }
 
     private final NetworkStructureChangeSensitiveLogic TIMELY = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
-            final Tuple signature = mask.transform(updateElement);
-            if (direction == Direction.INSERT) {
-                final TimestampReplacement<Timestamp> pair = IndexerWithMemory.this.memory.addWithTimestamp(updateElement,
-                        signature, timestamp);
-                if (pair.oldValue == null) {
-                    // first time we see this tuple
-                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, timestamp);
-                } else if (pair.newValue.compareTo(pair.oldValue) < 0) {
-                    // we have a new least timestamp
-                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.oldValue);
-                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, pair.newValue);
+        public void resumeAt(final Timestamp timestamp) {
+            final Iterable<Tuple> signatures = memory.getResumableSignatures();
+
+            final Map<Tuple, Boolean> wasPresent = CollectionsFactory.createMap();
+            for (final Tuple signature : signatures) {
+                wasPresent.put(signature, memory.isPresentAtInfinity(signature));
+            }
+
+            final Map<Tuple, Map<Tuple, Diff<Timestamp>>> signatureMap = memory.resumeAt(timestamp);
+
+            for (final Entry<Tuple, Map<Tuple, Diff<Timestamp>>> outerEntry : signatureMap.entrySet()) {
+                final Tuple signature = outerEntry.getKey();
+                final Map<Tuple, Diff<Timestamp>> diffMap = outerEntry.getValue();
+                final boolean isPresent = memory.isPresentAtInfinity(signature);
+                // only send out a potential true value the first time for a given signature, then set it to false
+                boolean change = wasPresent.get(signature) ^ isPresent;
+
+                for (final Entry<Tuple, Diff<Timestamp>> innerEntry : diffMap.entrySet()) {
+                    final Tuple tuple = innerEntry.getKey();
+                    final Diff<Timestamp> diffs = innerEntry.getValue();
+                    for (final Signed<Timestamp> signed : diffs) {
+                        IndexerWithMemory.this.update(signed.getDirection(), tuple, signature, change,
+                                signed.getPayload());
+                    }
+                    // change is a signature-wise flag, so it is ok to "try" to signal it for the first tuple only
+                    change = false;
                 }
-            } else {
-                final TimestampReplacement<Timestamp> pair = IndexerWithMemory.this.memory.removeWithTimestamp(updateElement,
-                        signature, timestamp);
-                if (pair.newValue == null) {
-                    // we lost the tuple
-                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.oldValue);
-                } else if (pair.newValue.compareTo(pair.oldValue) > 0) {
-                    // we have a new least timestamp
-                    IndexerWithMemory.this.update(Direction.REVOKE, updateElement, signature, true, pair.oldValue);
-                    IndexerWithMemory.this.update(Direction.INSERT, updateElement, signature, true, pair.newValue);
-                }
+            }
+
+            final Timestamp nextTimestamp = memory.getResumableTimestamp();
+            if (nextTimestamp != null) {
+                group.notifyHasMessage(mailbox, nextTimestamp);
+            }
+        }
+
+        @Override
+        public void update(final Direction direction, final Tuple update, final Timestamp timestamp) {
+            final Tuple signature = mask.transform(update);
+            final boolean wasPresent = memory.isPresentAtInfinity(signature);
+            final Diff<Timestamp> resultDiff = direction == Direction.INSERT
+                    ? memory.addWithTimestamp(update, signature, timestamp)
+                    : memory.removeWithTimestamp(update, signature, timestamp);
+            final boolean isPresent = memory.isPresentAtInfinity(signature);
+            final boolean change = wasPresent ^ isPresent;
+            for (final Signed<Timestamp> signed : resultDiff) {
+                IndexerWithMemory.this.update(signed.getDirection(), update, signature, change, signed.getPayload());
             }
         }
 
@@ -209,11 +266,16 @@ public abstract class IndexerWithMemory extends StandardIndexer
     private final NetworkStructureChangeSensitiveLogic TIMELESS = new NetworkStructureChangeSensitiveLogic() {
 
         @Override
-        public void update(Direction direction, Tuple updateElement, Timestamp timestamp) {
-            final Tuple signature = mask.transform(updateElement);
-            final boolean change = (direction == Direction.INSERT) ? memory.add(updateElement, signature)
-                    : memory.remove(updateElement, signature);
-            IndexerWithMemory.this.update(direction, updateElement, signature, change, timestamp);
+        public void update(final Direction direction, final Tuple update, final Timestamp timestamp) {
+            final Tuple signature = mask.transform(update);
+            final boolean change = direction == Direction.INSERT ? memory.add(update, signature)
+                    : memory.remove(update, signature);
+            IndexerWithMemory.this.update(direction, update, signature, change, timestamp);
+        }
+
+        @Override
+        public void resumeAt(final Timestamp timestamp) {
+            // there is nothing to resume in the timeless case because we do not even care about timestamps
         }
 
     };

@@ -15,9 +15,9 @@ import java.util.List;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.BaseNode;
 import org.eclipse.viatra.query.runtime.rete.network.NetworkStructureChangeSensitiveNode;
-import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
@@ -32,8 +32,8 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 public abstract class StandardIndexer extends BaseNode implements Indexer, NetworkStructureChangeSensitiveNode {
 
     protected Supplier parent;
-    protected final List<IndexerListener> originalListeners;
-    protected final List<IndexerListener> proxyListeners;
+    private final List<IndexerListener> originalListeners;
+    private final List<IndexerListener> proxyListeners;
     protected TupleMask mask;
 
     public StandardIndexer(ReteContainer reteContainer, TupleMask mask) {
@@ -44,6 +44,9 @@ public abstract class StandardIndexer extends BaseNode implements Indexer, Netwo
         this.proxyListeners = CollectionsFactory.createObserverList();
     }
 
+    /**
+     * @since 2.4
+     */
     protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change, Timestamp timestamp) {
         for (IndexerListener listener : proxyListeners) {
             listener.notifyIndexerUpdate(direction, updateElement, signature, change, timestamp);
@@ -76,10 +79,16 @@ public abstract class StandardIndexer extends BaseNode implements Indexer, Netwo
 
     @Override
     public void detachListener(IndexerListener listener) {
-        // obtain the proxy before unregistering the dependency because that may change SCCs
-        final IndexerListener proxy = this.getCommunicationTracker().proxifyIndexerListener(this, listener);
         this.originalListeners.remove(listener);
-        this.proxyListeners.remove(proxy);
+        IndexerListener listenerToRemove = null;
+        for (final IndexerListener proxyListener : this.proxyListeners) {
+            if (proxyListener.getOwner() == listener.getOwner()) {
+                listenerToRemove = proxyListener;
+                break;
+            }
+        }
+        assert listenerToRemove != null;
+        this.proxyListeners.remove(listenerToRemove);
         this.getCommunicationTracker().unregisterDependency(this, listener.getOwner());
     }
     

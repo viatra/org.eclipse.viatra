@@ -34,6 +34,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.rete.matcher.TimelyConfiguration;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerBasedAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
@@ -257,16 +258,19 @@ public class CompilerHelper {
      * <p> PRE: in case this is a recursion cutoff point (see {@link RecursionCutoffPoint}) 
      *  and bodyFinalTraces will be filled later, 
      *  the object yielded now by bodyFinalTraces.values() must return up-to-date results later 
-     * @since 1.6
+     * @since 2.4
      */
     public static CompiledQuery makeQueryTrace(PQuery query, Map<PBody, RecipeTraceInfo> bodyFinalTraces,
-            Collection<ReteNodeRecipe> bodyFinalRecipes, QueryEvaluationHint hint, IQueryMetaContext context, boolean deleteAndRederiveEvaluation) {
+            Collection<ReteNodeRecipe> bodyFinalRecipes, QueryEvaluationHint hint, IQueryMetaContext context, 
+            boolean deleteAndRederiveEvaluation, TimelyConfiguration timelyEvaluation) {
         ProductionRecipe recipe = ReteRecipeCompiler.FACTORY.createProductionRecipe();
 
         // temporary solution to support the deprecated option for now
         boolean deleteAndRederiveEvaluationDep = deleteAndRederiveEvaluation || ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(hint);
         
-        if (deleteAndRederiveEvaluationDep) {
+        recipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
+        
+        if (deleteAndRederiveEvaluationDep || (timelyEvaluation != null)) {
             PosetTriplet triplet = computePosetInfo(query.getParameters(), context);
             if (triplet.comparator != null) {
                 MonotonicityInfo info = FACTORY.createMonotonicityInfo();
@@ -277,7 +281,6 @@ public class CompilerHelper {
             }
         }
 
-        recipe.setDeleteRederiveEvaluation(deleteAndRederiveEvaluationDep);
         recipe.setPattern(query);
         recipe.setPatternFQN(query.getFullyQualifiedName());
         recipe.setTraceInfo(recipe.getPatternFQN());

@@ -11,9 +11,9 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
- * Implementations of this interface aid the query engine with the ordering of poset elements. 
- * This information is particularly important in the delete and re-derive evaluation mode 
- * because they let the engine identify monotone change pairs.
+ * Implementations of this interface aid the query engine with the ordering of poset elements. This information is
+ * particularly important in the delete and re-derive evaluation mode because they let the engine identify monotone
+ * change pairs.
  * 
  * @author Tamas Szabo
  * @since 1.6
@@ -21,12 +21,15 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 public interface IPosetComparator {
 
     /**
-     * Returns true if the 'left' tuple of poset elements is smaller or equal than the 'right' tuple of poset elements. 
-     *  
-     * @param left the first tuple of poset elements
-     * @param right the second tuple of poset elements
+     * Returns true if the 'left' tuple of poset elements is smaller or equal than the 'right' tuple of poset elements according to
+     * the partial order that this poset comparator employs. 
+     * 
+     * @param left
+     *            the left tuple of poset elements
+     * @param right
+     *            the right tuple of poset elements
      * @return true if left is smaller or equal to right, false otherwise
      */
-    public boolean isLessOrEqual(Tuple left, Tuple right);
-    
+    public boolean isLessOrEqual(final Tuple left, final Tuple right);
+
 }

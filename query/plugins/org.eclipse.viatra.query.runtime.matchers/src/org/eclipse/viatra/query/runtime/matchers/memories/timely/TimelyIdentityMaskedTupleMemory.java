@@ -11,17 +11,27 @@ package org.eclipse.viatra.query.runtime.matchers.memories.timely;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.matchers.memories.TimestampReplacement;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Diff;
+import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 
+/**
+ * Timely specialization for identity mask. 
+ * 
+ * @author Tamas Szabo
+ * @since 2.3
+ */
 public final class TimelyIdentityMaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
         extends AbstractTimelyTrivialMaskedMemory<Timestamp> {
 
-    public TimelyIdentityMaskedTupleMemory(final TupleMask mask, final Object owner) {
-        super(mask, owner);
+    public TimelyIdentityMaskedTupleMemory(final TupleMask mask, final Object owner, final boolean isLazy) {
+        super(mask, owner, isLazy);
         if (!mask.isIdentity())
             throw new IllegalArgumentException(mask.toString());
     }
@@ -38,26 +48,25 @@ public final class TimelyIdentityMaskedTupleMemory<Timestamp extends Comparable<
 
     @Override
     public Collection<Tuple> get(final ITuple signature) {
-        if (this.memory.containsKey(signature)) {
-            return Collections.singleton((Tuple) signature);
+        if (this.memory.getTuplesAtInfinity().contains(signature)) {
+            return Collections.singleton(signature.toImmutable());
         } else {
             return null;
         }
     }
 
     @Override
-    public Map<Tuple, Timestamp> getWithTimestamp(final ITuple signature) {
-        final Timestamp value = this.memory.get(signature);
+    public Map<Tuple, Timeline<Timestamp>> getWithTimeline(final ITuple signature) {
+        final Timeline<Timestamp> value = this.memory.get(signature);
         if (value != null) {
-            return Collections.singletonMap((Tuple) signature, value);
+            return Collections.singletonMap(signature.toImmutable(), value);
         } else {
             return null;
         }
     }
 
     @Override
-    public TimestampReplacement<Timestamp> removeWithTimestamp(final Tuple tuple, final Tuple signature,
-            final Timestamp timestamp) {
+    public Diff<Timestamp> removeWithTimestamp(final Tuple tuple, final Tuple signature, final Timestamp timestamp) {
         try {
             return this.memory.remove(tuple, timestamp);
         } catch (final IllegalStateException e) {
@@ -66,9 +75,32 @@ public final class TimelyIdentityMaskedTupleMemory<Timestamp extends Comparable<
     }
 
     @Override
-    public TimestampReplacement<Timestamp> addWithTimestamp(final Tuple tuple, final Tuple signature,
-            final Timestamp timestamp) {
+    public Diff<Timestamp> addWithTimestamp(final Tuple tuple, final Tuple signature, final Timestamp timestamp) {
         return this.memory.put(tuple, timestamp);
+    }
+
+    @Override
+    public boolean isPresentAtInfinity(final ITuple signature) {
+        return this.memory.isPresentAtInfinity(signature.toImmutable());
+    }
+
+    @Override
+    public Set<Tuple> getResumableSignatures() {
+        if (this.memory.getResumableTimestamp() != null) {
+            return this.memory.getResumableTuples();
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+    @Override
+    public Map<Tuple, Map<Tuple, Diff<Timestamp>>> resumeAt(final Timestamp timestamp) {
+        final Map<Tuple, Diff<Timestamp>> diffMap = this.memory.resumeAt(timestamp);
+        final Map<Tuple, Map<Tuple, Diff<Timestamp>>> result = CollectionsFactory.createMap();
+        for (final Entry<Tuple, Diff<Timestamp>> entry : diffMap.entrySet()) {
+            result.put(entry.getKey(), Collections.singletonMap(entry.getKey(), entry.getValue()));
+        }
+        return result;
     }
 
 }
