@@ -7,6 +7,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 == New and Noteworthy
 
+=== License change to EPL v2.0
+Starting with version 2.2, VIATRA will use EPL v2.0 as its license. For details about this change look at https://www.eclipse.org/legal/epl-2.0/
+
 === Query Editor Enhancements
 
 VIATRA 2.2 introduces a set of code minings to provide extra inline information about the developed patterns. Currently, two information sources are enabled:
