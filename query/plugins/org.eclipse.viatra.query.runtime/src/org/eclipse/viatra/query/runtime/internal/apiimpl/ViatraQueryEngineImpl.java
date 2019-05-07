@@ -572,6 +572,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
      */
     private IQueryResultProvider getResultProviderInternal(PQuery query, QueryEvaluationHint hint) {
         Preconditions.checkArgument(query != null, "Query cannot be null!");
+        Preconditions.checkArgument(query.getStatus() != PQueryStatus.ERROR, "Cannot initialize a result provider for the erronoues query `%s`.", query.getSimpleName());
         final IQueryBackend backend = getQueryBackend(engineOptions.getQueryBackendFactory(getQueryEvaluationHint(query, hint)));
         return backend.getResultProvider(query, hint);
     }

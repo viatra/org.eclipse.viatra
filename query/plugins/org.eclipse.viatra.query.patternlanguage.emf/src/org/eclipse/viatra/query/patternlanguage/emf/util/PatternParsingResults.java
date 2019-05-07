@@ -21,7 +21,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PVisibility;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.validation.Issue;
@@ -122,7 +124,7 @@ public final class PatternParsingResults {
      * Finds and returns a given query specification by qualified name.
      * @since 2.0
      */
-    public Optional<IQuerySpecification<?>> getQuerySpecification(String fqn) {
+    public Optional<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getQuerySpecification(String fqn) {
         // XXX This local variable is necessary otherwise the generic type information is lost between map and filter calls 
         final Stream<IQuerySpecification<?>> stream = patterns.stream()
                 .map(this::getOrCreateQuerySpecification);
