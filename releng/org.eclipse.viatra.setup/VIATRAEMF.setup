@@ -133,7 +133,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2018-12"
+      defaultValue="2019-03"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -219,6 +219,15 @@
           name="2019-03">
         <repository
             url="http://download.eclipse.org/releases/2019-03"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+      </repositoryList>
+      <repositoryList
+          name="2019-06">
+        <repository
+            url="http://download.eclipse.org/releases/2019-06"/>
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
@@ -675,6 +684,13 @@
               name="2019-03">
             <repository
                 url="http://download.eclipse.org/releases/2019-03"/>
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2019-06">
+            <repository
+                url="http://download.eclipse.org/releases/2019-06"/>
             <repository
                 url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
           </repositoryList>
@@ -1318,7 +1334,7 @@
       <repository
           url="http://download.itemis.com/updates/releases"/>
       <repository
-          url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
+          url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
       <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
     </setupTask>
     <setupTask
@@ -1374,6 +1390,13 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="2019-06">
+          <repository
+              url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1412,14 +1435,21 @@
           <repository
               url="http://download.eclipse.org/releases/2018-12"/>
           <repository
-              url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
+              url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
         </repositoryList>
         <repositoryList
             name="2019-03">
           <repository
               url="http://download.eclipse.org/releases/2019-03"/>
           <repository
-              url="http://download.eclipse.org/efxclipse/updates-released/3.4.1/site"/>
+              url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-06">
+          <repository
+              url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
         </repositoryList>
       </targlet>
       <targlet
