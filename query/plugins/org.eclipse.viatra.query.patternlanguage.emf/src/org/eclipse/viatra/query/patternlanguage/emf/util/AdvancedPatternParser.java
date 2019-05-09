@@ -38,6 +38,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsData;
 import org.eclipse.xtext.util.UriUtil;
 import org.eclipse.xtext.validation.Issue;
@@ -45,7 +46,9 @@ import org.eclipse.xtext.xbase.resource.BatchLinkableResource;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
+import com.google.inject.Provider;
 
 /**
  * An updateable, stateful pattern parser that allows the management of complex query libraries with interresource cross
@@ -69,6 +72,14 @@ public class AdvancedPatternParser extends BasePatternParser {
         uriTextMap = new HashMap<>();
         diagnosticsMap = new HashMap<>();
         dependencyCache = HashMultimap.create();
+    }
+
+    @Override
+    public void createResourceSet(Provider<XtextResourceSet> resourceSetProvider) {
+        super.createResourceSet(resourceSetProvider);
+
+        List<Resource> builtInLibraryResources = ImmutableList.copyOf(resourceSet.getResources());
+        updateIndex(resourceSet, builtInLibraryResources);
     }
 
     protected AdvancedPatternParsingResults addSpecifications(Map<URI, String> input, Map<?, ?> options,
@@ -398,17 +409,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         });
         
         // Before validation the Xtext index needs to be updated with this content
-        for (Resource resource : resources) {
-            ResourceDescriptionsData resourceDescriptionsData = ResourceDescriptionsData.ResourceSetAdapter
-                    .findResourceDescriptionsData(resourceSet);
-            if (resourceDescriptionsData == null) {
-                resourceDescriptionsData = new ResourceDescriptionsData(new ArrayList<IResourceDescription>());
-                ResourceDescriptionsData.ResourceSetAdapter.installResourceDescriptionsData(resourceSet,
-                        resourceDescriptionsData);
-            }
-
-            addDeltaToIndex(resource.getURI(), resource, resourceDescriptionsData);
-        }
+        updateIndex(resourceSet, resources);
         
         // Validate all resources and collect all the patterns and diagnostics
         Map<URI, PatternParsingResults> results = new HashMap<>();
@@ -432,6 +433,20 @@ public class AdvancedPatternParser extends BasePatternParser {
         return results;
     }
 
+    private void updateIndex(ResourceSet resourceSet, List<Resource> resources) {
+        for (Resource resource : resources) {
+            ResourceDescriptionsData resourceDescriptionsData = ResourceDescriptionsData.ResourceSetAdapter
+                    .findResourceDescriptionsData(resourceSet);
+            if (resourceDescriptionsData == null) {
+                resourceDescriptionsData = new ResourceDescriptionsData(new ArrayList<IResourceDescription>());
+                ResourceDescriptionsData.ResourceSetAdapter.installResourceDescriptionsData(resourceSet,
+                        resourceDescriptionsData);
+            }
+
+            addDeltaToIndex(resource.getURI(), resource, resourceDescriptionsData);
+        }
+    }
+
     private void addDeltaToIndex(URI uri, Resource resource, ResourceDescriptionsData index) {
         IResourceDescription description = manager.getResourceDescription(resource);
         Delta delta = manager.createDelta(index.getResourceDescription(uri), description);
@@ -446,7 +461,7 @@ public class AdvancedPatternParser extends BasePatternParser {
         		.filter(BatchLinkableResource.class::isInstance)
         		.filter(res -> !urisToIgnore.contains(res.getURI()))
 				.filter(res -> res.getContents().stream().anyMatch(PatternModel.class::isInstance))
-				.filter(res -> !diagnosticsMap.containsKey(res.getURI()) || diagnosticsMap.get(res.getURI()).getStatus() == PatternValidationStatus.ERROR)
+				.filter(res -> diagnosticsMap.containsKey(res.getURI()) && diagnosticsMap.get(res.getURI()).getStatus() == PatternValidationStatus.ERROR)
 				.map(res -> res.getURI())
 				.collect(Collectors.toSet());
         uris.addAll(calculateImpact(uris));

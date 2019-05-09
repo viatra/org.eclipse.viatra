@@ -8,16 +8,20 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.tests.standalone
 
+import com.google.common.base.Charsets
+import com.google.common.io.Files
+import java.util.Collections
 import java.util.HashMap
 import org.eclipse.emf.common.util.URI
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.*
-import java.util.Collections
 
 class AdvancedPatternParserTest {
 
@@ -599,4 +603,42 @@ class AdvancedPatternParserTest {
         Collections.sort(specificationList)
         assertArrayEquals(#{"", "test"}, specificationList.toArray)
     }
+    
+    @Test
+    def void libraryTest() {
+        val librarySource = '''
+            package library
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern test(c : EClass) {
+             EClass.name(c, _);
+            }
+        '''
+        val libraryUri = createTempFile(librarySource)
+        
+        val usingLibrarySource = '''
+            package usinglibrary
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern test(c : EClass) {
+             find library.test(c);
+            }
+        '''
+        val usingLibraryUri = URI.createURI("usingLibrary")
+
+        val results = new PatternParserBuilder().withLibrary(libraryUri).buildAdvanced.addSpecifications(usingLibraryUri, usingLibrarySource)
+        assertEquals(1, results.addedSpecifications.filter[internalQueryRepresentation.status === PQueryStatus.OK].size)
+    }
+    
+    @Rule
+    public val tempFolder = new TemporaryFolder
+    
+    private def URI createTempFile(String contents) {
+        val file = tempFolder.newFile("temp.vql")
+        Files.write(contents, file, Charsets.UTF_8)
+        URI.createFileURI(file.absolutePath)
+    }
+    
 }
