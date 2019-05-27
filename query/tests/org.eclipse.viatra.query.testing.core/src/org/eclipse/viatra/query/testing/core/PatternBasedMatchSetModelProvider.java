@@ -8,7 +8,6 @@
  */
 package org.eclipse.viatra.query.testing.core;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -29,12 +28,25 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
     private AdvancedViatraQueryEngine engine;
 
     public PatternBasedMatchSetModelProvider(QueryEvaluationHint hint) {
-        this(hint, new HashMap<String, JavaObjectAccess>());
+        this(hint, new SnapshotHelper());
     }
-
+    
+    /** 
+     * @deprecated 
+     * Use @link #PatternMatchSetModelProvider(QueryEvaluationHint, SnapshotHelper) instead
+     */
+    @Deprecated
     public PatternBasedMatchSetModelProvider(QueryEvaluationHint engineHints, Map<String, JavaObjectAccess> accessmap) {
         this.engineHints = engineHints;
         this.helper = new SnapshotHelper(accessmap);
+    }
+    
+    /**
+     * @since 2.2
+     */
+    public PatternBasedMatchSetModelProvider(QueryEvaluationHint engineHints, SnapshotHelper helper) {
+        this.engineHints = engineHints;
+        this.helper = helper;
     }
 
     /**

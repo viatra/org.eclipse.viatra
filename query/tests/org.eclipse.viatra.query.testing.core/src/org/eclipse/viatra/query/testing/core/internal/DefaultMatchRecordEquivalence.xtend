@@ -17,19 +17,33 @@ import org.eclipse.viatra.query.testing.core.api.JavaObjectAccess
 import org.eclipse.viatra.query.testing.core.api.MatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution
+import org.eclipse.viatra.query.testing.core.SnapshotHelper
+
 
 /** 
+ * TODO for CustomEMFSubstitutions, we don't check if the type attributes match
  * @author Peter Lunk
  */
 class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
     
-    
+    /** 
+     * @deprecated 
+     * Use @link #DefaultMatchRecordEquivalence(SnapshotHelper) instead
+     */      
+    @Deprecated
     new(Map<String, JavaObjectAccess> accessMap) {
         super(accessMap)
     }
     
+    /**
+     * @since 2.2
+     */
+    new(SnapshotHelper helper) {
+        super(helper)
+    }
+    
     new() {
-        super(Maps.newHashMap)
+        super(new SnapshotHelper)
     }
         
     override protected boolean doEquivalent(MatchRecord a, MatchRecord b) {
@@ -47,7 +61,7 @@ class DefaultMatchRecordEquivalence extends MatchRecordEquivalence {
                     if((a as InternalEObject).eIsProxy && (b as InternalEObject).eIsProxy ){
                         return (a as InternalEObject).eProxyURI == (b as InternalEObject).eProxyURI 
                     }
-                }
+                } 
                 return Objects.equals(a,b)
             }
 

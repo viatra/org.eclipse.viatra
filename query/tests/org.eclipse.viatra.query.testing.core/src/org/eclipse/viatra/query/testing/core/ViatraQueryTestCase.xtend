@@ -9,10 +9,13 @@
 package org.eclipse.viatra.query.testing.core
 
 import com.google.common.base.Joiner
+import java.util.HashMap
 import java.util.Iterator
 import java.util.LinkedList
 import java.util.List
 import java.util.Map
+import java.util.function.Consumer
+import java.util.function.Predicate
 import org.apache.log4j.Level
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.common.util.URI
@@ -33,9 +36,6 @@ import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivale
 import org.junit.Assert
 import org.junit.Assume
 import org.junit.ComparisonFailure
-import com.google.common.collect.Maps
-import java.util.function.Predicate
-import java.util.function.Consumer
 
 /** 
  * @author Grill Balazs
@@ -52,19 +52,24 @@ class ViatraQueryTestCase {
     boolean isScopeSet = false
 
     final List<IMatchSetModelProvider> modelProviders
-    extension SnapshotHelper snapshotHelper
-    Map<String, JavaObjectAccess> accessMap;
+    final extension SnapshotHelper snapshotHelper
     
     val TestingSeverityAggregatorLogAppender appender
 
     new() {
-        this(Maps.newHashMap)
+        this(new SnapshotHelper)
     }
     
     new(Map<String, JavaObjectAccess> accessMap) {
+        this(new SnapshotHelper(accessMap, new HashMap))
+    }
+    
+    /**
+     * @since 2.2
+     */
+    new(SnapshotHelper helper) {
         this.modelProviders = new LinkedList
-        this.accessMap = accessMap
-        this.snapshotHelper = new SnapshotHelper(accessMap)
+        this.snapshotHelper = helper
         val a = ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine).getAppender(
             SEVERITY_AGGREGATOR_LOGAPPENDER_NAME)
         this.appender = if (a instanceof TestingSeverityAggregatorLogAppender) {
@@ -77,6 +82,11 @@ class ViatraQueryTestCase {
             na
         }
     }
+    
+    def getSnapshotHelper() {
+        return snapshotHelper
+    } 
+    
 
     def assertLogSeverityThreshold(Level severity) {
         if (appender.severity.toInt > severity.toInt) {
@@ -167,7 +177,7 @@ class ViatraQueryTestCase {
     
     def <Match extends IPatternMatch> assertMatchSetsEqual(
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {
-        assertMatchSetsEqual(querySpecification, new DefaultMatchRecordEquivalence(accessMap))
+        assertMatchSetsEqual(querySpecification, new DefaultMatchRecordEquivalence(snapshotHelper))
     }
 
 
@@ -198,7 +208,7 @@ class ViatraQueryTestCase {
     }
     
     def assertMatchSetsEqual(IQueryGroup queryGroup) {
-        assertMatchSetsEqual(queryGroup, new DefaultMatchRecordEquivalence(accessMap))
+        assertMatchSetsEqual(queryGroup, new DefaultMatchRecordEquivalence(snapshotHelper))
     }
 
      /**
@@ -249,7 +259,7 @@ class ViatraQueryTestCase {
     def <Match extends IPatternMatch> getMatchSetDiff(
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
         IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
-        getMatchSetDiff(querySpecification, expectedProvider, actualProvider, new DefaultMatchRecordEquivalence(accessMap))
+        getMatchSetDiff(querySpecification, expectedProvider, actualProvider, new DefaultMatchRecordEquivalence(snapshotHelper))
     }
 
     /**

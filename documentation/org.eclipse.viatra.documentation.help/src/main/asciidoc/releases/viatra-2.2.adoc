@@ -48,3 +48,15 @@ Prior to version 2.2, the filter settings of batch transformation rules were ign
 3. If both the transformation rule and the statement defines a filter, the filter defined by the statement overrides the default filter.
 
 This behavior might change the behavior of existing transformations when transformation rule filters were defined but filterless statements were used: in such case, the default rule filters will be applied. In such cases, the unnecessary default filters should be removed; or if necessary, a new filter could be used to override the default filter where the rule was activate.
+
+=== API break in the query test framework
+
+Prior to version 2.2, the main test class `ViatraQueryTest` had a field `accessMap` for storing the mapping of plain Java types to their handler objects for snapshot creation. In version 2.2, the encouraged way of providing this and further serialization information is in form of a single `SnapshotHelper` instance, initialized at the same time when the test case is created.
+
+*Details*:
+The field `accessMap` and the API method `withClasses` for updating the mapping have been removed. Instead, a SnapshotHelper can (and should) be provided while calling the first method, `test`, for test case initialization. Accordingly, `test` has a new signature now, which accepts a SnapshotHelper instance. For example, very often, a helper might be created on spot when the test case gets initialized:
+
+[source,xtend]
+----
+ViatraQueryTest.test(SomeQuerySpecification.instance, new SnapshotHelper(accessMap, customEMFSerializerMap))
+---- 

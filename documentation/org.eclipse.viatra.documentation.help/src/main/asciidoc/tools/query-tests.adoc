@@ -112,9 +112,27 @@ public class CustomIntegerAccess extends JavaObjectAccess{
     ...
     Map<String, JavaObjectAccess> objectAccess = Maps.newHashMap();
     map.put(CustomInteger.class.getName(),new CustomIntegerAccess());
-    ViatraQueryTest.test(specs, objectAccess).on(new EMFScope([MODEL])).with([SNAPSHOT]).assertEquals();
+    ViatraQueryTest.test(specs, new SnapshotHelper(objectAccess)).on(new EMFScope([MODEL])).with([SNAPSHOT]).assertEquals();
     ...
 ----
+
+== Specifying custom serialization for EMF objects
+
+In the default configuration of the snapshot generator, any EMF object is converted to a generic EMF substitution. However, in some scenarios, the user might want to specify a (list of) custom function(s), which define how EMF objects should be represented in the snapshot.
+
+The framework allows for registering such custom functions, in form of a map indexed by the types (EClass) desired to be handled in a user-defined way, where the corresponding map value stores the substitution function. Such functions are expected to receive an EObject and return a String.
+
+The following example shows how to specify a simple custom function for the class ApplicationType from the CPS metamodel, and how to set up a corresponding test case.  
+
+[source,xtend]
+----
+customMap.put(CyberPhysicalSystemPackage.Literals.APPLICATION_TYPE, [at | (at as ApplicationType).identifier])
+        
+ViatraQueryTest.test(ApplicationTypesQuerySpecification.instance, snapshotHelper(customMap))
+          .on(new EMFScope([MODEL]))
+          .with([SNAPSHOT])
+          .assertEquals
+----                        
 
 === Coverage analysis and reporting ===
 

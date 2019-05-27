@@ -70,5 +70,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//SerializedJavaObjectSubstitution/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//SerializedJavaObjectSubstitution/type"/>
     </genClasses>
+    <genClasses ecoreClass="snapshot.ecore#//CustomEMFSubstitution">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//CustomEMFSubstitution/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference snapshot.ecore#//CustomEMFSubstitution/type"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>
