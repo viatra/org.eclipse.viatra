@@ -67,9 +67,9 @@ This page focuses on the entire syntax of the language. To get familiar with the
 2. Pattern parameters can be suffixed by a type declaration that will be valid in each pattern body. Here is an alternative way to express the type of variable `b`:
   * `pattern myPattern(a,b : MyClass,c) {...pattern contraints...}`
   * In the language, these parameter types are considered the same as type constraints in the pattern body.
-  * Type declarations are optional, but *strongly recommended* to use. In later versions, they might become mandatory. We recommend using EClass types for all EObject parameter variables, and, since version 1.4, Java class types (prefixed with the `java` keyword) for attribute-valued and computed parameters.
+  * Type declarations are optional, but *strongly recommended* to use. In future versions of VIATRA, they might become mandatory. We recommend using EClass types for all EObject parameter variables, and, since version 1.4, Java class types (prefixed with the `java` keyword) for attribute-valued and computed parameters.
 3. Since version 1.4, parameters can optionally be marked as incoming (`in`) or outgoing (`out`). Incoming parameters *must* be bound when the pattern matcher initializes, while outgoing parameters *must not*. Unmarked parameters are neither incoming nor outgoing: they might be either bound or unbound when called. These declarations are used as only hints; the pattern matcher might ignore them if necessary.
-  * `pattern myPattern(in a, out b, c) {...}`
+  * `pattern myPattern(in a, out b, c) {...}`
 4. Since version 1.4, the evaluation backend can be specified as local search-only (`search`) or Rete-only (`incremental`), providing hints to the runtime what pattern matcher should be initialized for this pattern. If undefined, the default hints of the engine is used (by default, Rete).
   * `search pattern myPattern(a,b,c) {...}`
   * `incremental pattern myPattern(a,b,c) {...}`
@@ -111,8 +111,11 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
   * Semantically equivalent to `true == eval(aNumberVariable > aStringVariable.length());`
   * The Java types of variables are inferred based on the EMF Ecore specification (using the generated Java classes).
 6. One can also use the transitive closure of binary patterns in a pattern call, such as the transitive closure of pattern friend (note the `+` symbol after the name of the called pattern): `find friend+(myGuy, friendOfAFriendOfAFriend);`
+
+:star: *
+
 7. Starting with VIATRA 2.0, it is also possible to calculate the reflexive transitive closure of a pattern call, e.g. to return all friends and
-(note the `*` symbol after the name of the called pattern): `find friend*(myGuy, friendOfAFriendOfAFriend);`. This is equivalent with the following construct: `pattern friendOrMySelf(self, other) { other == self; } or { find friend+(self, other);}`
+(note the `{star}` symbol after the name of the called pattern): `find friend{star}(myGuy, friendOfAFriendOfAFriend);`. This is equivalent with the following construct: `pattern friendOrMySelf(self, other) { other == self; } or { find friend+(self, other);}`
 
 === Matches, Variables and References
 
@@ -401,11 +404,11 @@ By default, `check()`/`eval()` constraints do not support calling arbitrary Java
 * if it is implemented by you, annotate it with the `@Pure` annotation of Xbase (`org.eclipse.xtext.xbase.lib.Pure`)
 * if it comes from a third-party library, register it via the `org.eclipse.viatra.query.patternlanguage.purewhitelist` extension point and a . Using this extension, some standard library methods are marked as pure by default, including methods from `java.lang.Math` and `java.lang.String`.
 
-Starting with version 2.0, the registration method has changed to support the url:https://docs.oracle.com/javase/tutorial/ext/basics/spi.html[Java ServiceLoader] mechanism. This allows extending the standalone compiler, e.g. the maven plug-ins with support for these extensions. However, because of the limitations of the mechanism, both the extension and the serviceloader entries are required - the ServiceLoader is used in standalone environments, while the Eclipse IDE relies on the extensions. For example usages, see the following links:
+Starting with version 2.0, the registration method has changed to support the https://docs.oracle.com/javase/tutorial/ext/basics/spi.html[Java ServiceLoader] mechanism. This allows extending the standalone compiler, e.g. the maven plug-ins with support for these extensions. However, because of the limitations of the mechanism, both the extension and the serviceloader entries are required - the ServiceLoader is used in standalone environments, while the Eclipse IDE relies on the extensions. For example usages, see the following links:
 
- * url:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/src/org/eclipse/viatra/query/patternlanguage/emf/validation/whitelist/extensions/MathWhitelistProvider.java[Extension library for the class java.lang.Math]
- * url:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/src/META-INF/services/org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureElementProvider[ServiceLoader registration]
- * url:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/plugin.xml[Extension registration for Eclipse plug-ins]
+ * http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/src/org/eclipse/viatra/query/patternlanguage/emf/validation/whitelist/extensions/MathWhitelistProvider.java[Extension library for the class java.lang.Math]
+ * http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/src/META-INF/services/org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureElementProvider[ServiceLoader registration]
+ * http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.patternlanguage.emf/plugin.xml[Extension registration for Eclipse plug-ins]
 
 === Custom Aggregators
 
