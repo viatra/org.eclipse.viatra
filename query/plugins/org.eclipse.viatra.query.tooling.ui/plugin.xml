@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="projectbuilder"
+         name="VIATRA Query Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory">
+               <parameter name="guicekey" value="org.eclipse.viatra.query.tooling.ui.builder.ViatraQueryProjectBuilder"/>
+         </run></builder>
+   </extension>
+
+</plugin>

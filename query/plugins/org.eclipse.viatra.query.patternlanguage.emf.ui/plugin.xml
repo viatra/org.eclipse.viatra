@@ -869,17 +869,6 @@
       </page>
    </extension>
    <extension
-         id="org.eclipse.viatra.query.tooling.ui.projectbuilder"
-         name="VIATRA Query Project Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory">
-               <parameter name="guicekey" value="org.eclipse.viatra.query.tooling.ui.builder.ViatraQueryProjectBuilder"/>
-         </run></builder>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.eclipse.viatra.query.tooling.ui.perspective.TransformationDevelopmentPerspective"
