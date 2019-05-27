@@ -75,7 +75,7 @@ public class PatternSetValidator {
             validator.validate(resource, CheckMode.ALL, null).stream().filter(
                     issue -> {
                         URI uri = issue.getUriToProblem();
-                        return Objects.equals(resource.getURI(), uri.trimFragment())
+                        return uri != null && Objects.equals(resource.getURI(), uri.trimFragment())
                                 && EcoreUtil.isAncestor(patternSet, resource.getEObject(uri.fragment()));
                     })
                     .forEach(collectedIssues::accept);
