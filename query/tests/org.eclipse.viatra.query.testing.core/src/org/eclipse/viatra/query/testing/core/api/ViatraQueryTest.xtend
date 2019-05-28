@@ -9,14 +9,17 @@
 package org.eclipse.viatra.query.testing.core.api
 
 import com.google.inject.Injector
+import java.util.HashMap
 import java.util.LinkedList
 import java.util.List
 import java.util.Map
+import java.util.function.Consumer
+import java.util.function.Predicate
 import org.apache.log4j.Level
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
@@ -24,18 +27,16 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
+import org.eclipse.viatra.query.runtime.matchers.util.Preconditions
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.IMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.InitializedSnapshotMatchSetModelProvider
+import org.eclipse.viatra.query.testing.core.SnapshotHelper
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.internal.AnalyzedPatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
-import java.util.function.Predicate
-import java.util.function.Consumer
-import java.util.HashMap
-import org.eclipse.viatra.query.runtime.matchers.util.Preconditions
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -45,23 +46,15 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions
 class ViatraQueryTest {
 
     val ViatraQueryTestCase testCase;
-    val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
-    Map<String, JavaObjectAccess> accessMap;
+    val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList
     val List<IPatternExecutionAnalyzer> analyzers = new LinkedList
 
     private new() {
-        this(new HashMap())
-    }
+        this(new SnapshotHelper)
+    }    
     
-    /**
-     * Initializes a {@link ViatraQueryTest} with a map containing {@link JavaObjectAccess} objects for 
-     * serialization and deserialization of plain Java types.
-     * 
-     * @since 1.6
-     */
-    private new(Map<String, JavaObjectAccess> accessMap) {
-        this.accessMap = accessMap
-        testCase = new ViatraQueryTestCase(accessMap)
+    private new(SnapshotHelper helper) {
+        testCase = new ViatraQueryTestCase(helper)
     }
     
 
@@ -83,14 +76,29 @@ class ViatraQueryTest {
      * Tests the given query with the given Java object access settings.
      */
     static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern, Map<String, JavaObjectAccess> accessMap) {
-        new ViatraQueryTest(accessMap).and(pattern)
+        new ViatraQueryTest(new SnapshotHelper(accessMap, new HashMap)).and(pattern)
+    }
+    
+    /**
+     * Tests the given query with the given snapshot helper configuration.
+     */
+    static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern, SnapshotHelper helper) {
+        new ViatraQueryTest(helper).and(pattern)
     }
 
 	/**
      * Tests every query in the given group with the given Java object access settings.
      */
     static def test(IQueryGroup patterns, Map<String, JavaObjectAccess> accessMap) {
-        new ViatraQueryTest(accessMap).and(patterns)
+        new ViatraQueryTest(new SnapshotHelper(accessMap, new HashMap)).and(patterns)
+    }
+    
+    
+   /**
+     * Tests every query in the given group with the given snapshot helper configuration.
+     */
+    static def test(IQueryGroup patterns, SnapshotHelper helper) {
+        new ViatraQueryTest(helper).and(patterns)
     }
 
 	/**
@@ -165,16 +173,6 @@ class ViatraQueryTest {
 	    patterns += allReferredPatterns
     	this
     }
-    
-    /**
-     * Add Java Object Access elements
-     * 
-     * @since 1.6
-     */
-    def withClasses(Map<String, JavaObjectAccess> accessmap) {
-        this.accessMap = accessmap;
-        this
-    }
 
     /**
      * Add an analyzer to pattern executions
@@ -200,7 +198,7 @@ class ViatraQueryTest {
      */
     def with(QueryEvaluationHint hint) {
         
-        val modelProvider = new AnalyzedPatternBasedMatchSetModelProvider(hint, accessMap, analyzers);
+        val modelProvider = new AnalyzedPatternBasedMatchSetModelProvider(hint, testCase.snapshotHelper, analyzers);
         testCase.addMatchSetModelProvider(modelProvider)
         this
     }
@@ -231,6 +229,7 @@ class ViatraQueryTest {
         testCase.addMatchSetModelProvider(new InitializedSnapshotMatchSetModelProvider(snapshot))
         this
     }
+    
 
     /**
      * Initialize test model using EMF Scope
@@ -323,7 +322,7 @@ class ViatraQueryTest {
      */
     def assertEquals(Level treshold) {
         patterns.forEach [
-            testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>, new DefaultMatchRecordEquivalence(accessMap))
+            testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>, new DefaultMatchRecordEquivalence(testCase.snapshotHelper))
         ]
         testCase.assertLogSeverityThreshold(treshold)
     }

@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.api.IPatternExecutionAnalyzer
 import org.eclipse.viatra.query.testing.core.api.JavaObjectAccess
+import org.eclipse.viatra.query.testing.core.SnapshotHelper
 
 /**
  * This implementation adds support to call analyzers
@@ -28,8 +29,21 @@ class AnalyzedPatternBasedMatchSetModelProvider extends PatternBasedMatchSetMode
     
     final Iterable<? extends IPatternExecutionAnalyzer> analyzers;
     
+    /** 
+     * @deprecated 
+     * Use @link #AnalyzedPatternMatchSetModelProvider(QueryEvaluationHint, SnapshotHelper, Iterable<? extends IPatternExecutionAnalyzer>) instead
+     */    
+    @Deprecated
     new(QueryEvaluationHint hint, Map<String, JavaObjectAccess> accessmap, Iterable<? extends IPatternExecutionAnalyzer> analyzers) {
         super(hint, accessmap)
+        this.analyzers = analyzers;
+    }
+    
+    /**
+     * @since 2.2
+     */
+    new(QueryEvaluationHint hint, SnapshotHelper helper, Iterable<? extends IPatternExecutionAnalyzer> analyzers) {
+        super(hint, helper)
         this.analyzers = analyzers;
     }
     

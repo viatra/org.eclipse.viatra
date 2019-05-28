@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Abel Hegedus, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2019, Geza Kulcsar, Abel Hegedus, Istvan Rath and Daniel Varro
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
  * http://www.eclipse.org/legal/epl-v20.html.
@@ -40,6 +40,9 @@ import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory
 import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
+import org.eclipse.viatra.query.testing.snapshot.CustomEMFSubstitution
+import java.util.function.Function
+import org.eclipse.emf.ecore.EClass
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -47,6 +50,8 @@ import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
 class SnapshotHelper {
     
     final Map<String, JavaObjectAccess> accessMap;
+    
+    final Map<EClass, Function<EObject,String>> customEObjectSerializerMap;
     
     new(){
         this(Maps.newHashMap)
@@ -57,9 +62,22 @@ class SnapshotHelper {
      * serialization and deserialization of plain Java types.
      * 
      * @since 1.6
+     * 
+     * @deprecated 
+     * Use @link #SnapshotHelper(Map<String, JavaObjectAccess>,  Map<EClass, Function<EObject,String>>) instead
      */
+    @Deprecated
     new(Map<String, JavaObjectAccess> accessMap){
         this.accessMap = accessMap
+        this.customEObjectSerializerMap = Maps.newHashMap
+    }
+    
+    /**
+     * @since 2.2
+     */
+    new(Map<String, JavaObjectAccess> accessMap,  Map<EClass, Function<EObject,String>> customMap) {
+        this.accessMap = accessMap
+        this.customEObjectSerializerMap = customMap
     }
     
     /**
@@ -78,6 +96,8 @@ class SnapshotHelper {
             MiscellaneousSubstitution: substitution.value
             StringSubstitution: substitution.value
             SerializedJavaObjectSubstitution: substitution
+            /* TODO we don't check if the type attributes match */
+            CustomEMFSubstitution: substitution.value
         }
     }
     
@@ -239,10 +259,25 @@ class SnapshotHelper {
                 sub
             }
             EObject : {
-                val sub = SnapshotFactory::eINSTANCE.createEMFSubstitution
-                sub.setValue(value)
-                sub.setParameterName(parameterName)
-                sub
+
+                var obj = getMostSpecificSerializationRule(value.eClass)
+                
+                if (obj !== null) {
+                    
+                    val sub = SnapshotFactory::eINSTANCE.createCustomEMFSubstitution
+                    sub.setValue(obj.apply(value))
+                    sub.setType(value.eClass())
+                    sub.setParameterName(parameterName)
+                    sub
+                    
+                } else {
+                    
+                    val sub = SnapshotFactory::eINSTANCE.createEMFSubstitution
+                    sub.setValue(value)
+                    sub.setParameterName(parameterName)
+                    sub
+                
+                } 
             }
             Integer : {
                 val sub = SnapshotFactory::eINSTANCE.createIntSubstitution
@@ -287,9 +322,9 @@ class SnapshotHelper {
                 sub				
             }
             default : {
-                val access = accessMap.get(value.class.name)
-                if(access !== null){
-                   val sub = access.toSubstitution(value)
+                val obj = accessMap.get(value.class.name)
+                if(obj !== null){
+                   val sub = obj.toSubstitution(value)
                    sub.parameterName = parameterName
                    sub
                 }else{
@@ -300,6 +335,26 @@ class SnapshotHelper {
                 }
             }
         }
+    }
+    
+    private def Function<EObject,String> getMostSpecificSerializationRule(EClass cls) {
+        
+                var obj = customEObjectSerializerMap.get(cls)
+                
+                 /* In case of multiple inheritance, the order of traversal is unspecified
+                  * Keep in mind when multiple parents provide separate rules
+                  */
+            
+                if (obj !== null) { 
+                    return obj
+                } else {    
+                    for (type : cls.ESuperTypes) {
+                        if (customEObjectSerializerMap.get(type) !== null) { return customEObjectSerializerMap.get(type) }
+                    }
+                    for (type : cls.ESuperTypes) {
+                        return getMostSpecificSerializationRule(type)
+                    }
+                }
     }
     
     /**

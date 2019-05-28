@@ -48,6 +48,11 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.AppInstanceAllocatedToHostInstance"/>
     </group>
   </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.CustomEMFTestQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.CustomEMFTestQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.CustomEMFTestQueries">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.ChildAndCommon"/>
+    </group>
+  </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.DanglingTestQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.DanglingTestQueries" id="org.eclipse.viatra.query.runtime.cps.tests.queries.DanglingTestQueries">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.stateToState1"/>

@@ -22,9 +22,22 @@ abstract class MatchRecordEquivalence extends Equivalence<MatchRecord> {
     protected extension SnapshotHelper helper
     protected Map<String, JavaObjectAccess> accessMap
     
+    /** 
+     * @deprecated 
+     * Use @link #MatchRecordEquivalence(SnapshotHelper) instead
+     */
+    @Deprecated
     new(Map<String, JavaObjectAccess> accessMap){
         this.accessMap = accessMap;
         helper = new SnapshotHelper(accessMap);
+    }
+    
+    /**
+     * @since 2.2
+     */
+    new(SnapshotHelper helper){
+        this.accessMap = accessMap;
+        this.helper = helper;
     }
     
     
