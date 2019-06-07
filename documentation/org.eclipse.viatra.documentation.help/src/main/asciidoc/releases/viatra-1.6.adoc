@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-16]]
 = VIATRA 1.6
 
+Release date:: 2017-06-28
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/1.6.0
+
 == Model Query Evaluation
 
 VIATRA 1.6 provides a few new features that aim for better compatibility in a wider range of use cases. In general, VIATRA should work out of the box the same way it worked before, but there are some settings that allow a more finely tuned behaviour for certain situations.

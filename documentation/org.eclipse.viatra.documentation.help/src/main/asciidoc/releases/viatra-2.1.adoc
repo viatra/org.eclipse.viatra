@@ -5,6 +5,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 = VIATRA 2.1
 
+Release date:: 2018-12-19
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.1.0
+
 == New and Noteworthy
 
 === Graphical Query Editor

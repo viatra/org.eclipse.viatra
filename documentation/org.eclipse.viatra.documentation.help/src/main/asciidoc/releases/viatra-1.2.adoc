@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-12]]
 = VIATRA 1.2
 
+Release date:: 2016-04-28
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/1.2.0
+
 == Combined EMF-IncQuery and VIATRA
 VIATRA 1.2 includes both the high-performance query engine of EMF-IncQuery and includes an event-driven transformation engine. This shared stack supports the development of various tasks, including batch and event-driven transformations, complex event processing and design space exploration concepts.
 

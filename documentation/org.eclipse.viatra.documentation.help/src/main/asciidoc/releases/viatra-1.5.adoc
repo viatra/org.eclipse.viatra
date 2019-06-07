@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-15]]
 = VIATRA 1.5
 
+Release date:: 2016-12-21
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/1.5.0
+
 == Support for more number literals in query language
 
 All number literals supported by Xtend (see https://eclipse.org/xtend/documentation/203_xtend_expressions.html#number-literals[documentation] for details) are now directly supported by the VIATRA Query language.

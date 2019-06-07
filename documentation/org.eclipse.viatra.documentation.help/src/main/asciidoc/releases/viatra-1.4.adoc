@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-14]]
 = VIATRA 1.4
 
+Release date:: 2016-09-30
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/1.4.0
+
 == Local search support during query evaluation
 
 In version 1.4 the previously introduced local search support was greatly enhanced: several bugs and performance issues were fixed, while better integration is provided with the rest of VIATRA Query. In version 1.4 the planner and runtime is considered ready for production use, while future enhancements are still planned for future versions.

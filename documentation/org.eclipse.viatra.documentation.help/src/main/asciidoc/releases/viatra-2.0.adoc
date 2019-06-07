@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-20]]
 = VIATRA 2.0
 
+Release date:: 2018-06-27
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.0.0
+
 == New and Noteworthy
 
 === New Language Features

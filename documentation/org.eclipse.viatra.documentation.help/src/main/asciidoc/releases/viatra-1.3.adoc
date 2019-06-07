@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-13]]
 = VIATRA 1.3
 
+Release date:: 2016-07-07
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/1.3.0
+
 == Neon compatibility
 
 Previous versions of VIATRA were not 100% compatible the Eclipse Neon release for multiple reasons:

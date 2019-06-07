@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-17]]
 = VIATRA 1.7
 
+Release date:: 2017-12-13
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/1.7.0
+
 == Optimizations in Query Runtime
 
 The memory usage of the query engine was optimized in several ways during VIATRA 1.7, ensuring the new version requires up to 50% less stable memory to index its contents. This reduction was mainly achieved by using compact collections provided by the http://eclipse.org/collections[Eclipse Collections] framework and creating custom tuple implementations.

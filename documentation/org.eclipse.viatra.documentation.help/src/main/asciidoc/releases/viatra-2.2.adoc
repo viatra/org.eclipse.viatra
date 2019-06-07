@@ -3,33 +3,39 @@ ifndef::rootdir[:rootdir: .]
 ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[viatra-22]]
 
-= VIATRA 2.2 (To be released on 19th June 2019)
+= VIATRA 2.2
+
+Release date:: 2019-06-19
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.2.0
 
 == New and Noteworthy
 
 === License change to EPL v2.0
 Starting with version 2.2, VIATRA will use EPL v2.0 as its license. For details about this change look at https://www.eclipse.org/legal/epl-2.0/
 
-=== Query Editor Enhancements
+=== Code Mining in Query Editor
 
 VIATRA 2.2 introduces a set of code minings to provide extra inline information about the developed patterns. Currently, two information sources are enabled:
  
- * Inferred parameter types are displayed if missing.
- * In case of pattern calls the names of the called parameters is also displayed, helping    
+image::releases/22_codemining.png[Code Mining in Action,605,144]
+
+ * Inferred parameter types are displayed if missing. It is still recommended to always specify the parameter types (e.g. using the appropriate quick fixes to generate them), but displaying the missing values might still be helpful.
+ * In case of pattern calls the names of the called parameters is also displayed, making it easier to understand more complex calls, especially ones with unnamed variables.
+
+image::releases/22_codemining_prefs.png[Preference Page to Enable Code Mining,624,266]
 
 Code minings are only available if Eclipse Photon or newer is used; however, for version 2.2, we consider code minings experimental: in future versions we might update when minings are presented, both for performance and usability concerns. Because of this reason, code minings are by default turned off; in case of interest they can be turned on using an appropriate preference setting.
 
-image::releases/22_codemining_prefs.png[Preference Page to Enable Code Mining]
-image::releases/22_codemining.png[Code Mining in Action]
+=== Easier Parameter Creation in Query Editor
 
 To ease the modification previously created patterns, the editor makes it easier to convert existing local variables to parameters easily by appropriate content assist and quick fix-based enhancements.
 
-image::releases/22_add_parameter.png[Quick Fix for Single-use Variables Support Adding a Parameter]
-image::releases/20_ca_parameter.png[Content Assist Offers Existing Variables for Parameters]
+image::releases/22_add_parameter.png[Quick Fix for Single-use Variables Support Adding a Parameter,614,126]
+image::releases/22_ca_parameter.png[Content Assist Offers Existing Variables for Parameters,507,83]
 
 === Batch Transformation API Refresh
 
-The batch transformation API was updated to provide better support for that are controlled by data dependencies. The control flow for these transformations is usually trivial - the rules are executed one by one until there are no more matches left. This behavior is very similar to event-driven transformation with the main difference that these transformations are not executed on changes in the underlying model but triggered manually.   
+The batch transformation API was updated to provide better support for transformations that are almost exclusively controlled by data dependencies. The control flow for these transformations is usually trivial - the rules are executed one by one until there are no more matches left. This behavior is very similar to event-driven transformation with the main difference that these transformations are not executed on changes in the underlying model but are triggered manually.   
 
 The API received multiple small enhancements to support such transformations:
 
@@ -41,13 +47,13 @@ The API received multiple small enhancements to support such transformations:
 
 === Batch Transformation API
 
-Prior to version 2.2, the filter settings of batch transformation rules were ignored, and only filters defined in statements were taken into account. In version 2.2, filters are handled the following way:
+Prior to version 2.2, the filter settings of batch transformation rules were ignored by mistake, and only filters defined in statements were taken into account. In version 2.2, filters are handled the following way:
 
 1. If neither the transformation rule nor the statement define a filter, all matches of the pattern are considered.
-2. If either the transformation rule or the statement define a filter (but not both), the filter is used.
+2. If either the transformation rule or the statement define a filter (but not both), that filter is used.
 3. If both the transformation rule and the statement defines a filter, the filter defined by the statement overrides the default filter.
 
-This behavior might change the behavior of existing transformations when transformation rule filters were defined but filterless statements were used: in such case, the default rule filters will be applied. In such cases, the unnecessary default filters should be removed; or if necessary, a new filter could be used to override the default filter where the rule was activate.
+This behavior might change the behavior of existing transformations when transformation rule filters were defined but filterless statements were used: in such case, the default rule filters will be applied. In such cases, the unnecessary default filters should be removed; or if necessary, a new filter could be used to override the default filter when activating the rule.
 
 === API break in the query test framework
 
