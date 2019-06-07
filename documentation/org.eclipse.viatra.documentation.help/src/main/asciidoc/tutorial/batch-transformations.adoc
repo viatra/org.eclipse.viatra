@@ -9,7 +9,7 @@ The exercise also covers registering a menu command which initializes the transf
 
 == Create transformation
 
-For the transformation, we have to created a _VIATRA Query Project_ (the one from the <<_query_development,query development tutorial>> could also be reused), and create a new query file called _CpsXformM2M.vql_ to store the patterns we want to use in the transformation with the following contents:
+For the transformation, we have to create a _VIATRA Query Project_ (the one from the <<_query_development,query development tutorial>> could also be reused), and create a new query file called _CpsXformM2M.vql_ to store the patterns we want to use in the transformation with the following contents:
 
 [[bmt-queries]]
 [source,vql]
@@ -263,7 +263,7 @@ public class TransformHandler extends AbstractHandler implements IHandler {
 
 * Launch _Eclipse Application_
 * Create a generic resource project
-* Copy a `.cyberphysicalsystem` resource in it if you already have one, or create a new _CaberPhysicalSystem Model_
+* Copy a `.cyberphysicalsystem` resource in it if you already have one, or create a new _CyberPhysicalSystem Model_
 +
 .Project with a .cyberphysicalsystem resource
 image::tutorial/viatraIncr_example1.png[]

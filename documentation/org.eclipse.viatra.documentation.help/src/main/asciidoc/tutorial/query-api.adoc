@@ -169,7 +169,7 @@ TIP: If asking for the has/count calls is immediately followed by the processing
 
 == Advanced query engine features
 
-There are cases where the standard engine lifecycle is inappropriate, e.g. the models will not be unloaded but we want to spare memory by freeing up indexes. Furthermore, there are some functionality, like hint handling or match update listener support that was not added the the base implementation to keep its API clean.
+There are cases where the standard engine lifecycle is inappropriate, e.g. the models will not be unloaded but we want to spare memory by freeing up indexes. Furthermore, there are some functionality, like hint handling or match update listener support that was not added to the base implementation to keep its API clean.
 
 [[query-runtime-prepareadvanced]]
 [source,java,indent=0]

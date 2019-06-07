@@ -46,10 +46,10 @@ image::tutorial/transformation_wizard.png[]
 
 *** Setup the name of the transformation and click Next
 +
-.Model Transformation Wizard - Name of the new batch transformation
+.Model Transformation Wizard - Name of the new event-driven transformation
 image::tutorial/eventdriven_transformation_wizard_name.png[]
 
-*** Setup the type of the transformation to _BatchTransformation_ and click Finish
+*** Setup the type of the transformation to _EventDrivenTransformation_ and click Finish
 +
 .Model Transformation Wizard - Type of the new transformation
 image::tutorial/eventdriven_transformation_wizard_type.png[]

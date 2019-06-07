@@ -15,16 +15,18 @@ NOTE: The pattern language always works on sets: neither the constraints nor the
 == Define your First Query
 To define queries, first a  _VIATRA Query Project_ has to be created with the standard _New Project Wizard_ of Eclipse. Such projects are specialized Eclipse plug-in projects with preconfigured VIATRA dependencies and the query generator initialized. Query specifications have to be added to the Java classpath of the projects, more specifically into Java packages. Based on these observations the creation of the first query consists of the following steps:
 
-. Create a new VIATRA Query project in the host Eclipse with the following name: `org.eclipse.viatra.examples.cps.queries`.
-. Add `org.eclipse.viatra.examples.cps.model` to the Plug-in dependencies
-. Create a new query definition in a package named `org.eclipse.viatra.examples.cps.queries` and a file named `CPSQueries.vql`. In the wizard create an empty query. Fill the first query:
+. Create a new VIATRA Query project in the host Eclipse with any name. The tutorial will assume the following name: `org.eclipse.viatra.examples.cps.queries`.
+. Add `org.eclipse.viatra.examples.cps.model` to the Plug-in dependencies to make the CPS metamodel available for the project.
+. Create a Java package to store the queries. The tutorial will assume one named `org.eclipse.viatra.examples.cps.queries`.
+. Create a new query definition in a package named using the `New Query Definition` wizard from the VIATRA category. The tutorial assumes the query file is named `CPSQueries.vql`.
+. Fill the first query:
 +
 [[vql-first]]
 [source,vql,indent=0]
 .queries.vql
 ----
 // Java package declaration, must match the container of the file
-package org.eclipse.viatra.documentation.example.queries
+package org.eclipse.viatra.examples.cps.queries
 
 // EPackage import
 import "http://org.eclipse.viatra/model/cps"
@@ -62,7 +64,7 @@ In the following, we define a set of patterns that illustrate additional capabil
 
 . List all `HostInstance` elements whose IP address is an empty string
 * This pattern, similar to the first pattern, still consists of a single constraint. The pattern constraints can refer to Java literals, like empty strings or numbers directly. This pattern should have no matches in the example model, as by default all instances have a non-empty IP address set up.
-* Notice that if you create a new `HostInstance` element, it will not appear in the match results. This happens because in EMF unset an empty attributes are different. You can write a pattern that finds missing attribute values using the `neg find` construct (see later).
+* Notice that if you create a new `HostInstance` element, it will not appear in the match results. This happens because in EMF unset and empty attributes are different (similar to the difference between empty Strings and null in Java). You can write a pattern that finds missing attribute values using the `neg find` construct (see later).
 +
 [[vql-emptyipaddress]]
 [source,vql,indent=0]
@@ -174,7 +176,13 @@ pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp : java 
 }
 ----
 
-When adding such a constraint annotation to a graph pattern, the code generator initializes a validation project that includes and registers the rules derived from the patterns for the framework. These rules can be tried out by opening a new, runtime Eclipse instance, opening an erroneous instance model in the model editor (the same one added to the `targetEditorId` parameter), and starting the validation from the popup menu items under *VIATRA Validation*.
+When adding such a constraint annotation to a graph pattern, the code generator initializes a validation project that includes and registers the rules derived from the patterns for the framework. These rules can be tried out by opening a new runtime Eclipse instance:
+
+* Launch a new `Eclipse application` containing all projects in the workspace.
+* In the newly launched Eclipse instance, open an erroneous instance model in the model editor (make sure the editor is the same one that is added to the `targetEditorId` parameter).
+* Start the validation from the popup menu items under *VIATRA Validation*.
+
+For more information about look at the link:https://www.vogella.com/tutorials/EclipsePlugin/article.html[Eclipse IDE Plug-in Development tutorial at vogella.com].
 
 == More Complex Queries
 
@@ -182,7 +190,7 @@ This section introduces a set of more complex queries, useful for both introduci
 
 === Calculate the Maximum Number of Instances
 
-It is possible to find the Application Type that has the most instances defined in the model by combining a _counting_ of the values of the related feature and a _max_ function.  The `numberOfInstances` helper pattern uses a `count` call of the `ApplicationType.instances` feature (note the omission of the `find` keyword there). This feature is available starting with VIATRA 2.0, and allows reducing the number of trivial helper patterns, like the pattern `hostIpAddress` introduced earlier in this tutorial.
+It is possible to find the Application Type that has the most instances defined in the model by combining a _counting_ of the values of the related feature and a _max_ function.  The `sumNumberOfInstances` helper pattern uses a `count` call of the `ApplicationType.instances` feature (note the omission of the `find` keyword there). This feature is available starting with VIATRA 2.0, and allows reducing the number of trivial helper patterns, like the pattern `hostIpAddress` introduced earlier in this tutorial.
 
 After the counts are available in the match set of a pattern, it is easy to calculate the maximum value using the `max find` construct.
 
