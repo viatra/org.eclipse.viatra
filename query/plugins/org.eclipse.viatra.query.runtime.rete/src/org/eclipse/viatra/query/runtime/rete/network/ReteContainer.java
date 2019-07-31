@@ -10,6 +10,7 @@
 package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedConnectComma
 import org.eclipse.viatra.query.runtime.rete.network.delayed.DelayedDisconnectCommand;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
+import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
 
 /**
@@ -383,13 +385,16 @@ public final class ReteContainer {
     /**
      * Retrieves a safe copy of the contents of a supplier.
      * 
+     * <p> Note that there may be multiple copies of a Tuple in case of a {@link TrimmerNode}, so the result is not always a set.
+     * 
+     * @param flush if true, a flush is performed before pulling the contents 
      * @since 2.2
      */
-    public Set<Tuple> pullContents(final Supplier supplier, final boolean flush) {
+    public Collection<Tuple> pullContents(final Supplier supplier, final boolean flush) {
         if (flush) {
             flushUpdates();
         }
-        final Set<Tuple> collector = new LinkedHashSet<Tuple>();
+        final Collection<Tuple> collector = new ArrayList<Tuple>();
         supplier.pullInto(collector, flush);
         return collector;
     }
