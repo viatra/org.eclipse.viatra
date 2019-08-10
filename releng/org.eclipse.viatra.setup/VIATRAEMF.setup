@@ -133,7 +133,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2019-03"
+      defaultValue="2019-06"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -160,7 +160,7 @@
           name="org.hamcrest"/>
       <requirement
           name="com.google.guava"
-          versionRange="[15.0.0,21.0.0)"/>
+          versionRange="[15.0.0,28.0.0)"/>
       <repositoryList
           name="Mars">
         <repository
@@ -228,6 +228,15 @@
           name="2019-06">
         <repository
             url="http://download.eclipse.org/releases/2019-06"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+      </repositoryList>
+      <repositoryList
+          name="2019-09">
+        <repository
+            url="http://download.eclipse.org/releases/2019-09"/>
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
@@ -385,6 +394,24 @@
             name="2019-03">
           <repository
               url="http://download.eclipse.org/releases/2019-03"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-06">
+          <repository
+              url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-09">
+          <repository
+              url="http://download.eclipse.org/releases/2019-09"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
@@ -691,6 +718,13 @@
               name="2019-06">
             <repository
                 url="http://download.eclipse.org/releases/2019-06"/>
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+          </repositoryList>
+          <repositoryList
+              name="2019-09">
+            <repository
+                url="http://download.eclipse.org/releases/2019-09"/>
             <repository
                 url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
           </repositoryList>
@@ -1397,6 +1431,13 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="2019-09">
+          <repository
+              url="http://download.eclipse.org/releases/2019-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1448,6 +1489,13 @@
             name="2019-06">
           <repository
               url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-09">
+          <repository
+              url="http://download.eclipse.org/releases/2019-09"/>
           <repository
               url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
         </repositoryList>
