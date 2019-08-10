@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.viatra.dse.feature.source_0.22.0.qualifier.jar" id="org.eclipse.viatra.dse.feature.source" version="0.22.0.qualifier">
+   <feature url="features/org.eclipse.viatra.dse.feature.source_0.23.0.qualifier.jar" id="org.eclipse.viatra.dse.feature.source" version="0.23.0.qualifier">
       <category name="org.eclipse.viatra.extensions"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.integration.gmf.feature.source_2.2.0.qualifier.jar" id="org.eclipse.viatra.integration.gmf.feature.source" version="2.2.0.qualifier">
+   <feature url="features/org.eclipse.viatra.integration.gmf.feature.source_2.3.0.qualifier.jar" id="org.eclipse.viatra.integration.gmf.feature.source" version="2.3.0.qualifier">
       <category name="org.eclipse.viatra.extensions"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.integration.graphiti.feature.source_0.22.0.qualifier.jar" id="org.eclipse.viatra.integration.graphiti.feature.source" version="0.22.0.qualifier">
+   <feature url="features/org.eclipse.viatra.integration.graphiti.feature.source_0.23.0.qualifier.jar" id="org.eclipse.viatra.integration.graphiti.feature.source" version="0.23.0.qualifier">
       <category name="org.eclipse.viatra.extensions"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.integration.uml.feature.source_2.2.0.qualifier.jar" id="org.eclipse.viatra.integration.uml.feature.source" version="2.2.0.qualifier">
+   <feature url="features/org.eclipse.viatra.integration.uml.feature.source_2.3.0.qualifier.jar" id="org.eclipse.viatra.integration.uml.feature.source" version="2.3.0.qualifier">
       <category name="org.eclipse.viatra.extensions"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.query.sdk.feature.source_2.2.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.feature.source" version="2.2.0.qualifier">
+   <feature url="features/org.eclipse.viatra.query.sdk.feature.source_2.3.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.feature.source" version="2.3.0.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.query.sdk.extensions.feature_0.22.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.extensions.feature" version="0.22.0.qualifier">
+   <feature url="features/org.eclipse.viatra.query.sdk.extensions.feature_0.23.0.qualifier.jar" id="org.eclipse.viatra.query.sdk.extensions.feature" version="0.23.0.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.query.language.vgql.feature_0.22.0.qualifier.jar" id="org.eclipse.viatra.query.language.vgql.feature" version="0.22.0.qualifier">
+   <feature url="features/org.eclipse.viatra.query.language.vgql.feature_0.23.0.qualifier.jar" id="org.eclipse.viatra.query.language.vgql.feature" version="0.23.0.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
    <category-def name="org.eclipse.viatra.core" label="VIATRA Core"/>

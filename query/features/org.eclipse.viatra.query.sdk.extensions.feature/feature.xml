@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.sdk.extensions.feature"
       label="VIATRA Query and Transformation SDK Extensions (Incubation)"
-      version="0.22.0.qualifier"
+      version="0.23.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.1">
@@ -28,14 +28,14 @@
          version="0.0.0"/>
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-         version="2.2.0.qualifier"
+         version="2.3.0.qualifier"
          name="VIATRA Viewers Runtime - GEF4 Zest Support"/>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.2.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="2.3.0" match="equivalent"/>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
-      <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="2.2.0" match="compatible"/>
+      <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="2.3.0" match="compatible"/>
       <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.fx.jface" version="5.0.0" match="compatible"/>

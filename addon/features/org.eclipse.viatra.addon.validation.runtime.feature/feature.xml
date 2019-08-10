@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.validation.runtime.feature"
       label="VIATRA Validation Framework Runtime"
-      version="2.2.0.qualifier"
+      version="2.3.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.1">
@@ -24,8 +24,8 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.runtime.feature" version="2.2.0" match="equivalent"/>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="2.2.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.runtime.feature" version="2.3.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="2.3.0" match="equivalent"/>
       <import feature="org.eclipse.emf.edit" version="2.10" match="compatible"/>
    </requires>
 
