@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.matchers" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter id="923795461">
-            <message_arguments>
-                <message_argument value="2.2.0"/>
-                <message_argument value="2.1.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.matchers.memories.AbstractSetBackedMaskedTupleMemory">
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.AbstractSetBackedMaskedTupleMemory"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers_2.1.0"/>
-            </message_arguments>
-        </filter>
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.AbstractSetBackedMaskedTupleMemory"/>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/DoubleAverageOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.DoubleAverageOperator">
         <filter comment="Internal implementation of the experimental aggregator API" id="576725006">
             <message_arguments>
@@ -169,65 +147,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/memories/DefaultMaskedTupleMemory.java" type="org.eclipse.viatra.query.runtime.matchers.memories.DefaultMaskedTupleMemory">
-        <filter id="337682486">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.DefaultMaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-        <filter id="1158676482">
-            <message_arguments>
-                <message_argument value="2.0"/>
-                <message_argument value="2.2"/>
-                <message_argument value="DefaultMaskedTupleMemory(TupleMask, CollectionsFactory.MemoryType, Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/memories/IdentityMaskedTupleMemory.java" type="org.eclipse.viatra.query.runtime.matchers.memories.IdentityMaskedTupleMemory">
-        <filter id="337682486">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.IdentityMaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-        <filter id="338849923">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.IdentityMaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/memories/MaskedTupleMemory.java" type="org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory">
-        <filter id="337682486">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/memories/NullaryMaskedTupleMemory.java" type="org.eclipse.viatra.query.runtime.matchers.memories.NullaryMaskedTupleMemory">
-        <filter id="337682486">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.NullaryMaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-        <filter id="338849923">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.NullaryMaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/memories/UnaryMaskedTupleMemory.java" type="org.eclipse.viatra.query.runtime.matchers.memories.UnaryMaskedTupleMemory">
-        <filter id="337682486">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.memories.UnaryMaskedTupleMemory"/>
-            </message_arguments>
-        </filter>
-        <filter id="1158676482">
-            <message_arguments>
-                <message_argument value="2.0"/>
-                <message_argument value="2.2"/>
-                <message_argument value="UnaryMaskedTupleMemory(TupleMask, CollectionsFactory.MemoryType, Object)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/InitializablePQuery.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery">
         <filter comment="Internal API implementation" id="576720909">
             <message_arguments>
@@ -265,22 +184,6 @@
             <message_arguments>
                 <message_argument value="IPTraceableTraceProvider"/>
                 <message_argument value="IRewriterTraceCollector"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/util/CollectionsFactory.java" type="org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory$ICollectionsFramework">
-        <filter id="403804204">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.ICollectionsFramework"/>
-                <message_argument value="createTreeMap()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/util/IMultiLookup.java" type="org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup">
-        <filter id="403804204">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup"/>
-                <message_argument value="isEmpty()"/>
             </message_arguments>
         </filter>
     </resource>

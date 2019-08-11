@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Query Runtime Tests using the CPS Domain
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime.cps.tests;singleton:=true
-Bundle-Version: 2.2.0.qualifier
+Bundle-Version: 2.2.1.qualifier
 Bundle-Vendor: The Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.runtime.cps.tests.queries,
  org.eclipse.viatra.query.runtime.cps.tests.queries.api,
@@ -13,17 +13,17 @@ Export-Package: org.eclipse.viatra.query.runtime.cps.tests.queries,
  org.eclipse.viatra.query.runtime.cps.tests.queries.resolveordering.util,
  org.eclipse.viatra.query.runtime.cps.tests.queries.util
 Require-Bundle: org.eclipse.emf.ecore,
- org.eclipse.viatra.query.testing.core;bundle-version="[2.2.0,2.3.0)",
+ org.eclipse.viatra.query.testing.core;bundle-version="[2.2.1,2.3.0)",
  com.google.guava,
  org.eclipse.xtend.lib,
  org.junit,
- org.eclipse.viatra.query.runtime;bundle-version="[2.2.0,2.3.0)",
- org.eclipse.viatra.query.testing.snapshot;bundle-version="[2.2.0,2.3.0)",
- org.eclipse.viatra.examples.cps.model;bundle-version="[2.0.0,2.3.0)",
- org.eclipse.viatra.query.runtime.rete;bundle-version="[2.2.0,2.3.0)",
- org.eclipse.viatra.query.runtime.localsearch;bundle-version="[2.2.0,2.3.0)",
- org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.2.0,2.3.0)",
- org.eclipse.viatra.query.patternlanguage.emf.tests;bundle-version="2.2.0"
+ org.eclipse.viatra.query.runtime;bundle-version="[2.2.1,2.3.0)",
+ org.eclipse.viatra.query.testing.snapshot;bundle-version="[2.2.1,2.3.0)",
+ org.eclipse.viatra.examples.cps.model;bundle-version="[2.0.0,2.4.0)",
+ org.eclipse.viatra.query.runtime.rete;bundle-version="[2.2.1,2.3.0)",
+ org.eclipse.viatra.query.runtime.localsearch;bundle-version="[2.2.1,2.3.0)",
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.2.1,2.3.0)",
+ org.eclipse.viatra.query.patternlanguage.emf.tests;bundle-version="[2.2.1,2.3.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eclipse.viatra.query.runtime.cps.tests
 Import-Package: com.google.inject,

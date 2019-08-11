@@ -1353,9 +1353,9 @@
     <setupTask
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
-        version="2.1"
-        location="${installation.location}/api/v2.1/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.1.0.zip"/>
+        version="2.2"
+        location="${installation.location}/api/v2.2/"
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.2.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
