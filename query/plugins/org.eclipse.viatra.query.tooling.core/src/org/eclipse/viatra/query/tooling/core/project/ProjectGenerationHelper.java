@@ -154,11 +154,13 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(proj);
+            bundleDesc.setLocationURI(description.getLocationURI());
             IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml")};
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, DEFAULT_VIATRA_IMPORT_PACKAGES, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
             //Ensure UTF-8 encoding
             proj.setDefaultCharset(UTF8_ENCODING, monitor);
+
             // Adding VIATRA Query-specific natures
             ProjectGenerationHelper.updateNatures(proj,
                     ImmutableList.of(ViatraQueryNature.XTEXT_NATURE_ID, ViatraQueryNature.NATURE_ID),
