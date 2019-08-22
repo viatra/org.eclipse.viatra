@@ -110,18 +110,17 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             }
             
             if (unique && !changed) { 
-                String msg = String.format(
-                        "Error: trying to add duplicate value %s to the unique feature %s of host object %s. This indicates some errors in underlying model representation.", 
-                        value, featureKey, holder);
-                logNotificationHandlingError(msg);
+                navigationHelper.logIncidentFeatureTupleInsertion(value, holder, featureKey);
             }
             return changed;
         }
+
         /**
          * @return true if this was the last duplicate of the value added to this feature of this holder (false is only
          *         expected for non-unique features)
          */
         boolean removeFeatureTuple(boolean unique, final Object value, final EObject holder) {
+            Object featureKey = getFeatureKey();
             try {
                 // TODO we currently assume V2H map exists
                 boolean changed = removeFromValueToHolderMap(value, holder);
@@ -130,36 +129,31 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
                 }
                 
                 if (unique && !changed) { 
-                    String msg = String.format(
-                            "Error: trying to remove duplicate value %s from the unique feature %s of host object %s. This indicates some errors in underlying model representation.", 
-                            value, featureKey, holder);
-                    logNotificationHandlingError(msg);
+                    navigationHelper.logIncidentFeatureTupleRemoval(value, holder, featureKey);
                 }
                 return changed;
             } catch (IllegalStateException ex) {
-                String msg = String.format(
-                        "Error: trying to remove non-existing value %s from the feature %s of host object %s. This indicates some errors in underlying model representation.", 
-                        value, featureKey, holder);
-                logNotificationHandlingError(msg);
+                navigationHelper.logIncidentFeatureTupleRemoval(value, holder, featureKey);
                 return false;
             }
         }
 
-        private boolean addToHolderToValueMap(Object value, EObject holder) {
+
+        protected boolean addToHolderToValueMap(Object value, EObject holder) {
             IMultiset<Object> values = holderToValueMap.computeIfAbsent(holder, 
                     CollectionsFactory::emptyMultiset);
             boolean changed = values.addOne(value);
             return changed;
         }
         
-        private boolean addToValueToHolderMap(final Object value, final EObject holder) {
+        protected boolean addToValueToHolderMap(final Object value, final EObject holder) {
             IMultiset<EObject> holders = valueToHolderMap.computeIfAbsent(value, 
                     CollectionsFactory::emptyMultiset);
             boolean changed = holders.addOne(holder);
             return changed;
         }
         
-        private boolean removeFromHolderToValueMap(Object value, EObject holder) throws IllegalStateException {
+        protected boolean removeFromHolderToValueMap(Object value, EObject holder) throws IllegalStateException {
             IMultiset<Object> values = holderToValueMap.get(holder);
             if (values == null)
                 throw new IllegalStateException();
@@ -168,7 +162,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
                 holderToValueMap.remove(holder);
             return changed;
         }
-        private boolean removeFromValueToHolderMap(final Object value, final EObject holder) throws IllegalStateException {
+        protected boolean removeFromValueToHolderMap(final Object value, final EObject holder) throws IllegalStateException {
             IMultiset<EObject> holders = valueToHolderMap.get(value);
             if (holders == null)
                 throw new IllegalStateException();
@@ -178,7 +172,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             return changed;
         }
 
-        private Map<EObject, IMultiset<Object>> getHolderToValueMap() {
+        protected Map<EObject, IMultiset<Object>> getHolderToValueMap() {
             if (holderToValueMap == null) {
                 holderToValueMap = CollectionsFactory.createMap();
                 
@@ -197,7 +191,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
             }
             return holderToValueMap;
         }        
-        private Map<Object, IMultiset<EObject>> getValueToHolderMap() {
+        protected Map<Object, IMultiset<EObject>> getValueToHolderMap() {
             // TODO we currently assume V2H map exists
             return valueToHolderMap;
         }
@@ -261,7 +255,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
     /**
      * TODO: specialize for to-one features and unique to-many features
      */
-    private FeatureData createFeatureData(Object featureKey) {
+    protected FeatureData createFeatureData(Object featureKey) {
         FeatureData data = new FeatureData();
         data.featureKey = featureKey;
         return data;
@@ -302,7 +296,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         return sources == null ? Collections.emptySet() : sources.distinctValues();
     }
     
-    private Map<Object, IMultiset<Object>> getValueToFeatureMap() {
+    protected Map<Object, IMultiset<Object>> getValueToFeatureMap() {
         if (valueToFeatureMap == null) { // must be inverted from feature data
             valueToFeatureMap = CollectionsFactory.createMap();
             for (FeatureData featureData : featureDataMap.values()) {
@@ -313,11 +307,11 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         return valueToFeatureMap;
     }
     
-    private void insertIntoValueToFeatureMap(final Object featureKey, Object target) {
+    protected void insertIntoValueToFeatureMap(final Object featureKey, Object target) {
         IMultiset<Object> featureKeys = valueToFeatureMap.computeIfAbsent(target, CollectionsFactory::emptyMultiset);
         featureKeys.addOne(featureKey);
     }
-    private void removeFromValueToFeatureMap(final Object featureKey, final Object value) {
+    protected void removeFromValueToFeatureMap(final Object featureKey, final Object value) {
         IMultiset<Object> featureKeys = valueToFeatureMap.get(value);
         if (featureKeys == null) 
             throw new IllegalStateException();
@@ -339,8 +333,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         Set<EObject> set = instanceMap.computeIfAbsent(keyClass, CollectionsFactory::emptySet);
         
         if (!set.add(value)) {
-            String msg = String.format("Notification received to index %s as a %s, but it already exists in the index. This indicates some errors in underlying model representation.", value, keyClass);
-            logNotificationHandlingError(msg);
+            navigationHelper.logIncidentInstanceInsertion(keyClass, value);
         } else {
             isDirty = true;
             navigationHelper.notifyInstanceListeners(keyClass, value, true);
@@ -351,8 +344,7 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
         final Set<EObject> set = instanceMap.get(keyClass);
         if (set != null) {
             if(!set.remove(value)) {
-                String msg = String.format("Notification received to remove %s as a %s, but it is missing from the index. This indicates some errors in underlying model representation.", value, keyClass);
-                logNotificationHandlingError(msg);
+                navigationHelper.logIncidentInstanceRemoval(keyClass, value);
             } else {
                 if (set.isEmpty()) {
                     instanceMap.remove(keyClass);
@@ -361,11 +353,12 @@ public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
                 navigationHelper.notifyInstanceListeners(keyClass, value, false);
             }
         } else {
-            String msg = String.format("Notification received to remove %s as a %s, but it is missing from the index. This indicates some errors in underlying model representation.", value, keyClass);
-            logNotificationHandlingError(msg);
+            navigationHelper.logIncidentInstanceRemoval(keyClass, value);
         }
 
     }
+
+    
 
     // END ********* InstanceSet *********
 

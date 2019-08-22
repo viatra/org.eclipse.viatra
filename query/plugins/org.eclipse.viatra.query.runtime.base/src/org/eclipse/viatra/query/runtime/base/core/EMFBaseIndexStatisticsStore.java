@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * @author Grill Balázs
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class EMFBaseIndexStatisticsStore extends AbstractBaseIndexStore {
 
@@ -46,7 +46,7 @@ public class EMFBaseIndexStatisticsStore extends AbstractBaseIndexStore {
     public void removeInstance(Object key){
         Integer v = stats.get(key);
         if(v == null || v <= 0) {
-            logNotificationHandlingError(String.format("No instances of %s is registered before calling removeInstance method.", key));
+            navigationHelper.logIncidentStatRemoval(key);
             return;
         }
         if (v.intValue() == 1){
@@ -55,7 +55,6 @@ public class EMFBaseIndexStatisticsStore extends AbstractBaseIndexStore {
             stats.put(key, v-1);
         }
     }
-    
     public int countInstances(Object key){
         Integer v = stats.get(key);
         return v == null ? 0 : v.intValue();

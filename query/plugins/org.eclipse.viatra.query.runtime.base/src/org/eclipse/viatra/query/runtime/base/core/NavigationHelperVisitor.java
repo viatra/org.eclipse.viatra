@@ -52,7 +52,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             return wildcardMode.hasInstances() || (IndexingLevel.FULL == allObservedClasses.get(eClass)) || registerSampledClass(eClass);
         }
 
-        private boolean registerSampledClass(Object eClass) {
+        protected boolean registerSampledClass(Object eClass) {
             Boolean classAlreadyChecked = sampledClasses.get(eClass);
             if (classAlreadyChecked != null) {
                 return classAlreadyChecked;
@@ -111,7 +111,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             this.dataTypes = dataTypes;
         }
 
-        private IndexingLevel getExistingIndexingLevel(Object eClass){
+        protected IndexingLevel getExistingIndexingLevel(Object eClass){
             IndexingLevel result = IndexingLevel.NONE;
             result = result.merge(oldClasses.get(eClass));
             result = result.merge(oldClasses.get(metaStore.getEObjectClassKey()));
@@ -126,7 +126,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             return result;
         }
         
-        private IndexingLevel getRequestedIndexingLevel(Object eClass){
+        protected IndexingLevel getRequestedIndexingLevel(Object eClass){
             IndexingLevel result = IndexingLevel.NONE;
             result = result.merge(newClasses.get(eClass));
             result = result.merge(newClasses.get(metaStore.getEObjectClassKey()));
@@ -141,7 +141,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             return result;
         }
         
-        private IndexingLevel getTraversalIndexing(Object eClass){
+        protected IndexingLevel getTraversalIndexing(Object eClass){
             IndexingLevel level = classObservationMap.get(eClass);
             if (level == null){
                 IndexingLevel existing = getExistingIndexingLevel(eClass);
@@ -344,7 +344,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         }
     }
 
-    private void visitReference(EObject source, EReference feature, EObject target) {
+    protected void visitReference(EObject source, EReference feature, EObject target) {
         Object featureKey = toKey(feature);
         if (observesFeature(featureKey)) {
             boolean unique = feature.isUnique();
