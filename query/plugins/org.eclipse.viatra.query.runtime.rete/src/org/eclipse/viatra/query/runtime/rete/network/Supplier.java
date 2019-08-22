@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.communication.Timestamp;
+import org.eclipse.viatra.query.runtime.rete.single.TrimmerNode;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -43,7 +44,9 @@ public interface Supplier extends Node {
      * Returns the contents of this object in this particular moment. 
      * For memoryless nodes, this may involve a costly recomputation of contents.
      * 
-     *  <p> Intended mainly for debug purposes, therefore does not do flushing. 
+     * The result is returned as a Set, even when it has multiplicities (at the output of {@link TrimmerNode}).
+     * 
+     *  <p> Intended mainly for debug purposes; therefore flushing is performed only if explicitly requested
      *  During runtime, flushing may be preferred; see {@link ReteContainer#pullContents(Supplier)}
      * @since 2.2
      */
