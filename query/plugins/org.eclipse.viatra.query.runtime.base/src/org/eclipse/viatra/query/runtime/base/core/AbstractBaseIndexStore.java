@@ -19,26 +19,10 @@ public class AbstractBaseIndexStore {
     protected final NavigationHelperImpl navigationHelper;
     protected final Logger logger;
     protected final BaseIndexOptions options;
-    private boolean notificationErrorReported;
     
     public AbstractBaseIndexStore(NavigationHelperImpl navigationHelper, Logger logger) {
         this.navigationHelper = navigationHelper;
         this.logger = logger;
         this.options = navigationHelper.getBaseIndexOptions();
-        this.notificationErrorReported = false;
-    }
-    
-    protected void logNotificationHandlingError(String msg) {
-        if (options.isStrictNotificationMode()) {
-            // This will cause e.g. query engine to become tainted
-            navigationHelper.notifyFatalListener(msg, new IllegalStateException(msg));
-        } else {
-            if (notificationErrorReported) {
-                logger.debug(msg);
-            } else {
-                notificationErrorReported = true;
-                logger.error(msg);
-            }
-        }
     }
 }

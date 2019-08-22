@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.runtime.base" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Internal API updates only" id="924844039">
+            <message_arguments>
+                <message_argument value="2.2.1"/>
+                <message_argument value="2.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/base/comprehension/EMFModelComprehension.java" type="org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension">
+        <filter comment="Internal API updates" id="1193279491">
+            <message_arguments>
+                <message_argument value="2.2.1"/>
+                <message_argument value="options"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="1226833923">
+            <message_arguments>
+                <message_argument value="2.2.1"/>
+                <message_argument value="emulateUntraversableFeature(EMFVisitor, EObject, EStructuralFeature, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="1226833923">
+            <message_arguments>
+                <message_argument value="2.2.1"/>
+                <message_argument value="traverseFeatureInternal(EMFVisitor, EObject, EStructuralFeature, Object, boolean, Integer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="1226833923">
+            <message_arguments>
+                <message_argument value="2.2.1"/>
+                <message_argument value="traverseFeatureInternalSimple(EMFVisitor, EObject, EStructuralFeature, Object, Integer)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API updates" id="1226833923">
+            <message_arguments>
+                <message_argument value="2.2.1"/>
+                <message_argument value="unprunableFeature(EMFVisitor, EObject, EStructuralFeature)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

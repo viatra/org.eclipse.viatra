@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
+import org.eclipse.viatra.query.runtime.base.core.NavigationHelperVisitor.ChangeVisitor;
 
 /**
  * Content Adapter that recursively attaches itself to the containment hierarchy of an EMF model. 
@@ -44,7 +45,7 @@ import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
  * 
  * @author Gabor Bergmann
  * @see EContentAdapter
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class NavigationHelperContentAdapter extends AdapterImpl {
 
@@ -53,7 +54,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
 
 
     // move optimization to avoid removing and re-adding entire subtrees
-    protected EObject ignoreInsertionAndDeletion;
+    EObject ignoreInsertionAndDeletion;
     // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
     // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
@@ -74,8 +75,15 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
         resourceFilterConfiguration = options.getResourceFilterConfiguration();
         this.comprehension = navigationHelper.getComprehension();
         
-        removalVisitor = new NavigationHelperVisitor.ChangeVisitor(navigationHelper, false);
-        insertionVisitor = new NavigationHelperVisitor.ChangeVisitor(navigationHelper, true);
+        removalVisitor = initChangeVisitor(false);
+        insertionVisitor = initChangeVisitor(true);
+    }
+
+    /**
+     * Point of customization, called by constructor.
+     */
+    protected ChangeVisitor initChangeVisitor(boolean isInsertion) {
+        return new NavigationHelperVisitor.ChangeVisitor(navigationHelper, isInsertion);
     }
 
     // key representative of the EObject class
@@ -122,7 +130,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
     }
 
     @SuppressWarnings("deprecation")
-    private boolean handleNotification(final Notification notification, final EObject notifier,
+    protected boolean handleNotification(final Notification notification, final EObject notifier,
             final EStructuralFeature feature) {
         final Object oldValue = notification.getOldValue();
         final Object newValue = notification.getNewValue();
@@ -182,7 +190,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
         return notifyLightweightObservers;
     }
 
-    private void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature,
+    protected void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature,
             final Object value, final Integer position) {
         // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
         comprehension.traverseFeature(getVisitorForChange(isInsertion), notifier, feature, value, position);
@@ -245,7 +253,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
     }
 
     // The additional boolean options are there to save the cost of extra checks, see Bug 483089 and Bug 483086.
-    void removeAdapter(final Notifier notifier, boolean additionalObjectContainerPossible,
+    protected void removeAdapter(final Notifier notifier, boolean additionalObjectContainerPossible,
             boolean additionalResourceContainerPossible) {
         if (notifier == ignoreInsertionAndDeletion) {
             return;
@@ -280,7 +288,17 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
     /**
      * @throws InvocationTargetException
      */
-    private void removeAdapterInternal(final Notifier notifier) throws InvocationTargetException {
+    protected void removeAdapterInternal(final Notifier notifier) throws InvocationTargetException {
+        // some non-standard EMF implementations send these 
+        if (!notifier.eAdapters().contains(this)) {
+            // the adapter was not even attached to the notifier
+            navigationHelper.logIncidentAdapterRemoval(notifier);
+
+            // skip the rest of the method, do not traverse contents
+            //  as they have either never been added to the index or already removed
+            return;
+        }
+
         if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(notifier)) {
             return;
         }
@@ -305,7 +323,6 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
             }
         });
     }
-
 
     protected EMFVisitor getVisitorForChange(final boolean isInsertion) {
         return isInsertion ? insertionVisitor : removalVisitor;

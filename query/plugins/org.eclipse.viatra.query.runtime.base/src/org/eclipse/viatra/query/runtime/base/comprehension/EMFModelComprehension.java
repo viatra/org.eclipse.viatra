@@ -27,11 +27,11 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * @author Bergmann Gábor
@@ -39,11 +39,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *         Does not directly visit derived links, unless marked as a WellBehavingFeature. Derived edges are
  *         automatically interpreted correctly in these cases: - EFeatureMaps - eOpposites of containments
  * 
- * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class EMFModelComprehension {
 
-    private BaseIndexOptions options;
+    /**
+     * @since 2.2.1
+     */
+    protected BaseIndexOptions options;
     
     /**
      * Creates a model comprehension with the specified options. The options are copied, therefore subsequent changes
@@ -219,7 +222,10 @@ public class EMFModelComprehension {
                 traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, null);
         }
     }
-    private boolean unprunableFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature) {
+    /**
+     * @since 2.2.1
+     */
+    protected boolean unprunableFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature) {
         return (feature instanceof EAttribute && EcorePackage.eINSTANCE.getEFeatureMapEntry().equals(
                 ((EAttribute) feature).getEAttributeType()))
                 || (feature instanceof EReference && ((EReference) feature).isContainment() && (!visitor
@@ -239,8 +245,9 @@ public class EMFModelComprehension {
 
     /**
      * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
+     * @since 2.2.1
      */
-    private void traverseFeatureInternalSimple(EMFVisitor visitor, EObject source, EStructuralFeature feature,
+    protected void traverseFeatureInternalSimple(EMFVisitor visitor, EObject source, EStructuralFeature feature,
             Object target, Integer position) {
         final boolean visitorPrunes = visitor.pruneFeature(feature);
         if (visitorPrunes && !unprunableFeature(visitor, source, feature))
@@ -252,8 +259,9 @@ public class EMFModelComprehension {
     /**
      * @pre target != null
      * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
+     * @since 2.2.1
      */
-    private void traverseFeatureInternal(EMFVisitor visitor, EObject source, EStructuralFeature feature,
+    protected void traverseFeatureInternal(EMFVisitor visitor, EObject source, EStructuralFeature feature,
             Object target, boolean visitorPrunes, Integer position) {
         if (feature instanceof EAttribute) {
             if (!visitorPrunes)
@@ -318,8 +326,9 @@ public class EMFModelComprehension {
      * Emulates a derived edge, if it is not visited otherwise
      * 
      * @pre target != null
+     * @since 2.2.1
      */
-    private void emulateUntraversableFeature(EMFVisitor visitor, EObject source,
+    protected void emulateUntraversableFeature(EMFVisitor visitor, EObject source,
             final EStructuralFeature emulated, final Object target) {
         if (untraversableDirectly(emulated))
             traverseFeatureInternalSimple(visitor, source, emulated, target, null);

@@ -26,6 +26,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -63,6 +64,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilte
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra.query.runtime.base.core.EMFBaseIndexInstanceStore.FeatureData;
+import org.eclipse.viatra.query.runtime.base.core.NavigationHelperVisitor.TraversingVisitor;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
@@ -73,6 +75,10 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @author Gabor Bergmann and Tamas Szabo
+ */
 public class NavigationHelperImpl implements NavigationHelper {
 
     /**
@@ -80,14 +86,13 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected IndexingLevel wildcardMode;
 
-    protected Notifier notifier;
-    protected Set<Notifier> modelRoots;
+    private Set<Notifier> modelRoots;
     private boolean expansionAllowed;
     private boolean traversalDescendsAlongCrossResourceContainment;
     // protected NavigationHelperVisitor visitor;
     protected NavigationHelperContentAdapter contentAdapter;
 
-    private final Logger logger;
+    protected final Logger logger;
 
     // type object or String id
     protected Map<Object, IndexingLevel> directlyObservedClasses = new HashMap<Object, IndexingLevel>();
@@ -234,7 +239,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.logger = logger;
         assert (logger != null);
 
-        this.comprehension = new EMFModelComprehension(baseIndexOptions);
+        this.comprehension = initModelComprehension();
         this.wildcardMode = baseIndexOptions.getWildcardLevel();
         this.subscribedInstanceListeners = new HashMap<InstanceListener, Set<EClass>>();
         this.subscribedFeatureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
@@ -244,15 +249,14 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.ignoreResolveNotificationFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashMap<Object, IndexingLevel>();
 
-        metaStore = new EMFBaseIndexMetaStore(this);
-        instanceStore = new EMFBaseIndexInstanceStore(this, logger);
-        statsStore = new EMFBaseIndexStatisticsStore(this, logger);
+        metaStore = initMetaStore();
+        instanceStore = initInstanceStore();
+        statsStore = initStatStore();
 
-        this.contentAdapter = new NavigationHelperContentAdapter(this);
+        this.contentAdapter = initContentAdapter();
         this.baseIndexChangeListeners = new HashSet<EMFBaseIndexChangeListener>();
         this.errorListeners = new LinkedHashSet<IEMFIndexingErrorListener>();
 
-        this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
         this.expansionAllowed = false;
         this.traversalDescendsAlongCrossResourceContainment = false;
@@ -262,7 +266,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
               
     }
-    
+
     @Override
     public IndexingLevel getWildcardLevel() {
         return wildcardMode;
@@ -276,8 +280,8 @@ public class NavigationHelperImpl implements NavigationHelper {
                 NavigationHelperImpl.this.wildcardMode = mergedLevel;
 
                 // force traversal upon change of wildcard level
-                final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-                        Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap());
+                final NavigationHelperVisitor visitor = initTraversingVisitor(
+                       Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap());
                 coalesceTraversals(() -> traverse(visitor)); 
             }
         } catch (InvocationTargetException ex) {
@@ -320,7 +324,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return valMap.contains(value);
     }
 
-    private FeatureData featureData(EStructuralFeature feature) {
+    protected FeatureData featureData(EStructuralFeature feature) {
         return instanceStore.getFeatureData(toKey(feature));
     }
 
@@ -382,7 +386,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private void processDirectInstancesInternal(EClass type, IEClassProcessor processor, Object typeKey) {
+    protected void processDirectInstancesInternal(EClass type, IEClassProcessor processor, Object typeKey) {
         final Set<EObject> instances = instanceStore.getInstanceSet(typeKey);
         if (instances != null) {
             for (EObject eObject : instances) {
@@ -396,7 +400,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return getSettingsForTarget(target);
     }
 
-    private Set<Setting> getSettingsForTarget(Object target) {
+    protected Set<Setting> getSettingsForTarget(Object target) {
         Set<Setting> retSet = new HashSet<Setting>();
         for (Object featureKey : instanceStore.getFeatureKeysPointingTo(target)) {
             Set<EObject> holders = instanceStore.getFeatureData(featureKey).getDistinctHoldersOfValue(target);
@@ -455,11 +459,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private Object toKey(EClassifier eClassifier) {
+    protected Object toKey(EClassifier eClassifier) {
         return metaStore.toKey(eClassifier);
     }
 
-    private Object toKey(EStructuralFeature feature) {
+    protected Object toKey(EStructuralFeature feature) {
         return metaStore.toKey(feature);
     }
 
@@ -508,7 +512,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return instances != null && instances.contains(object);
     }
     
-    private boolean doCalculateInstanceOf(Object candidateTypeKey, Object typeKey) {
+    protected boolean doCalculateInstanceOf(Object candidateTypeKey, Object typeKey) {
         if (candidateTypeKey.equals(typeKey)) return true;
         if (metaStore.getEObjectClassKey().equals(candidateTypeKey)) return true;
         
@@ -767,7 +771,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private String logTaskFormat(final String task) {
+    protected String logTaskFormat(final String task) {
         return "VIATRA Query encountered an error in processing the EMF model. " + "This happened while trying to "
                 + task;
     }
@@ -831,7 +835,7 @@ public class NavigationHelperImpl implements NavigationHelper {
      * @param level non-null
      * @return whether actually changed
      */
-    private static <V> boolean putIntoMapMerged(Map<V, IndexingLevel> map, V key, IndexingLevel level) {
+    protected static <V> boolean putIntoMapMerged(Map<V, IndexingLevel> map, V key, IndexingLevel level) {
         IndexingLevel l = map.get(key);
         IndexingLevel merged = level.merge(l);
         if (merged != l) {
@@ -845,7 +849,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * @return true if actually changed
      */
-    private boolean addObservedClassesInternal(Object eClassKey, IndexingLevel level) {
+    protected boolean addObservedClassesInternal(Object eClassKey, IndexingLevel level) {
         boolean changed = putIntoMapMerged(allObservedClasses, eClassKey, level);
         if (!changed) return false;
         
@@ -1176,7 +1180,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return finalResult;
     }
 
-    private <V> Callable<V> considerRevisit() {
+    protected <V> Callable<V> considerRevisit() {
         // has there been any requests for a retraversal at all?
         if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
             // make copies of requested types so that 
@@ -1261,8 +1265,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 // So, is an actual traversal needed, or are we done?
                 if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
                     // repeat the cycle with this visit
-                    final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-                            toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+                    final NavigationHelperVisitor visitor = initTraversingVisitor(toGatherClasses, toGatherFeatures, toGatherDataTypes, oldClasses);
                     
                     return new Callable<V>() {
                         @Override
@@ -1284,8 +1287,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         
         return null; // no callable -> no further action
     }
-    
-    private void executeTraversalCallbacks() throws InvocationTargetException{
+
+    protected void executeTraversalCallbacks() throws InvocationTargetException{
         final Runnable[] callbacks = traversalCallbacks.toArray(new Runnable[traversalCallbacks.size()]);
         traversalCallbacks.clear();
         if (callbacks.length > 0){
@@ -1293,7 +1296,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private void traverse(final NavigationHelperVisitor visitor) {
+    protected void traverse(final NavigationHelperVisitor visitor) {
         // Cloning model roots avoids a concurrent modification exception
         for (Notifier root : new HashSet<Notifier>(modelRoots)) {
             comprehension.traverseModel(visitor, root);
@@ -1344,7 +1347,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private void addRootInternal(Notifier emfRoot) {
+    protected void addRootInternal(Notifier emfRoot) {
         if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
             throw new ViatraBaseException(ViatraBaseException.INVALID_EMFROOT);
         }
@@ -1356,7 +1359,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return instanceStore.getAllCurrentClasses();
     }
     
-    private boolean isRegistrationNecessary(IndexingLevel level) {
+    protected boolean isRegistrationNecessary(IndexingLevel level) {
         boolean inWildcardMode = isInWildcardMode(level);
         if (inWildcardMode && !loggedRegistrationMessage) {
             loggedRegistrationMessage = true;
@@ -1365,13 +1368,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         return !inWildcardMode;
     }
 
-    private <X, Y> void ensureNoListeners(Set<Object> unobservedTypes,
+    protected <X, Y> void ensureNoListeners(Set<Object> unobservedTypes,
             final Table<Object, X, Set<Y>> listenerRegistry) {
         if (!Collections.disjoint(unobservedTypes, listenerRegistry.rowKeySet()))
             throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
     }
 
-    private void ensureNoListenersForDispose() {
+    protected void ensureNoListenersForDispose() {
         if (!(baseIndexChangeListeners.isEmpty() && subscribedFeatureListeners.isEmpty()
                 && subscribedDataTypeListeners.isEmpty() && subscribedInstanceListeners.isEmpty()))
             throw new IllegalStateException("Cannot dispose while there are active listeners");
@@ -1380,6 +1383,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * Resamples the values of not well-behaving derived features if those features are also indexed.
      */
+    @Override
     public void resampleDerivedFeatures() {
         // otherwise notifications are delivered anyway
         if (!baseIndexOptions.isTraverseOnlyWellBehavingDerivedFeatures()) {
@@ -1423,7 +1427,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     }
 
-    private void resampleManyFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
+    protected void resampleManyFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
             Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
         InternalEObject internalEObject = (InternalEObject) source;
         Collection<?> newValues = (Collection<?>) newValue;
@@ -1450,7 +1454,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    private void resampleSingleFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
+    protected void resampleSingleFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
             Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
         InternalEObject internalEObject = (InternalEObject) source;
         Object oldValue = oldValues.stream().findFirst().orElse(null);
@@ -1495,7 +1499,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return statsStore.countFeatures(toKey(feature));
     }
 
-    private IndexingLevel getIndexingLevel(Object type) {
+    protected IndexingLevel getIndexingLevel(Object type) {
         if (type instanceof EClass) {
             return getIndexingLevel((EClass)type);
         } else if (type instanceof EDataType) {
@@ -1545,4 +1549,142 @@ public class NavigationHelperImpl implements NavigationHelper {
         coalesceTraversals(() -> traversalCallbacks.add(traversalCallback));
     }
 
+    /**
+     * Records a non-exception incident such as faulty notifications.
+     * Depending on the strictness setting {@link BaseIndexOptions#isStrictNotificationMode()} and log levels, 
+     * this may be treated as a fatal error, merely logged, or just ignored.
+     * 
+     * @param msgProvider message supplier that only invoked if the message actually gets logged.
+     * 
+     * @since 2.2.1
+     */
+    protected void logIncident(Supplier<String> msgProvider) {
+        if (baseIndexOptions.isStrictNotificationMode()) {
+            // This will cause e.g. query engine to become tainted
+            String msg = msgProvider.get();
+            notifyFatalListener(msg, new IllegalStateException(msg));
+        } else {
+            if (notificationErrorReported) {
+                if (logger.isDebugEnabled()) {
+                    String msg = msgProvider.get();
+                    logger.debug(msg);
+                }
+            } else {
+                notificationErrorReported = true;
+                String msg = msgProvider.get();
+                logger.error(msg);
+            }
+        }
+    }
+    boolean notificationErrorReported = false;
+
+
+// DESIGNATED CUSTOMIZATION POINTS FOR SUBCLASSES
+    
+    /**
+     * Point of customization, called by constructor
+     * @since 2.2.1
+     */
+    protected NavigationHelperContentAdapter initContentAdapter() {
+        return new NavigationHelperContentAdapter(this);
+    }
+
+    /**
+     * Point of customization, called by constructor
+     * @since 2.2.1
+     */
+    protected EMFBaseIndexStatisticsStore initStatStore() {
+        return new EMFBaseIndexStatisticsStore(this, logger);
+    }
+
+    /**
+     * Point of customization, called by constructor
+     * @since 2.2.1
+     */
+    protected EMFBaseIndexInstanceStore initInstanceStore() {
+        return new EMFBaseIndexInstanceStore(this, logger);
+    }
+
+    /**
+     * Point of customization, called by constructor
+     * @since 2.2.1
+     */
+   protected EMFBaseIndexMetaStore initMetaStore() {
+        return new EMFBaseIndexMetaStore(this);
+    }
+
+   /**
+    * Point of customization, called by constructor
+    * @since 2.2.1
+    */
+    protected EMFModelComprehension initModelComprehension() {
+        return new EMFModelComprehension(baseIndexOptions);
+    }
+    
+    /**
+     * Point of customization, called at runtime
+     * @since 2.2.1
+     */
+    protected TraversingVisitor initTraversingVisitor(final Map<Object, IndexingLevel> toGatherClasses,
+            final Map<Object, IndexingLevel> toGatherFeatures, final Map<Object, IndexingLevel> toGatherDataTypes,
+            final Map<Object, IndexingLevel> oldClasses) {
+        return new NavigationHelperVisitor.TraversingVisitor(this,
+                toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+    }
+    
+    
+
+    /**
+     * Point of customization, e.g. override to suppress
+     * @since 2.2.1
+     */
+    protected void logIncidentAdapterRemoval(final Notifier notifier) {
+        logIncident(() -> String.format("Erroneous removal of unattached notification adapter from notifier %s", notifier));
+    }
+    
+    /**
+     * Point of customization, e.g. override to suppress
+     * @since 2.2.1
+     */
+    protected void logIncidentFeatureTupleInsertion(final Object value, final EObject holder, Object featureKey) {
+        logIncident(() -> String.format(
+                "Error: trying to add duplicate value %s to the unique feature %s of host object %s. This indicates some errors in underlying model representation.", 
+                value, featureKey, holder));
+    }
+    
+    /**
+     * Point of customization, e.g. override to suppress
+     * @since 2.2.1
+     */
+   protected void logIncidentFeatureTupleRemoval(final Object value, final EObject holder, Object featureKey) {
+       logIncident(() -> String.format(
+                "Error: trying to remove duplicate value %s from the unique feature %s of host object %s. This indicates some errors in underlying model representation.", 
+                value, featureKey, holder));
+    }
+
+   /**
+    * Point of customization, e.g. override to suppress
+    * @since 2.2.1
+    */
+    protected void logIncidentInstanceInsertion(final Object keyClass, final EObject value) {
+        logIncident(() -> String.format("Notification received to index %s as a %s, but it already exists in the index. This indicates some errors in underlying model representation.", value, keyClass));
+    }
+
+    /**
+     * Point of customization, e.g. override to suppress
+     * @since 2.2.1
+     */
+    protected void logIncidentInstanceRemoval(final Object keyClass, final EObject value) {
+        logIncident(() -> String.format("Notification received to remove %s as a %s, but it is missing from the index. This indicates some errors in underlying model representation.", value, keyClass));
+    }
+
+    /**
+     * Point of customization, e.g. override to suppress
+     * @since 2.2.1
+     */
+   protected void logIncidentStatRemoval(Object key) {
+        logIncident(() -> String.format("No instances of %s is registered before calling removeInstance method.", key));
+    }
+    
+    
 }

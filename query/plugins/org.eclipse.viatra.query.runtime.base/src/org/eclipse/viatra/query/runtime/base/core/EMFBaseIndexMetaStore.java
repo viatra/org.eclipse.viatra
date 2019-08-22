@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EClass;
@@ -38,6 +38,7 @@ import com.google.common.collect.Table;
  * Stores the indexed metamodel information.
  * 
  * @author Gabor Bergmann
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class EMFBaseIndexMetaStore {
     
@@ -99,7 +100,7 @@ public class EMFBaseIndexMetaStore {
     /**
      * Map from enum classes generated for {@link EEnum}s to the actual EEnum.
      */
-    Map<Class<?>, EEnum> generatedEENumClasses = new HashMap<Class<?>, EEnum>();
+    private Map<Class<?>, EEnum> generatedEENumClasses = new HashMap<Class<?>, EEnum>();
     
     /**
      * @return the eObjectClassKey
@@ -121,7 +122,7 @@ public class EMFBaseIndexMetaStore {
         }
     }
 
-    private String toKeyDynamicInternal(final EClassifier classifier) {
+    protected String toKeyDynamicInternal(final EClassifier classifier) {
         String id = uniqueIDFromClassifier.get(classifier);
         if (id == null) {
             Preconditions.checkArgument(!classifier.eIsProxy(),
@@ -135,7 +136,7 @@ public class EMFBaseIndexMetaStore {
         return id;
     }
 
-    private String enumToKeyDynamicInternal(Enumerator enumerator) {
+    protected String enumToKeyDynamicInternal(Enumerator enumerator) {
         String id = uniqueIDFromEnumerator.get(enumerator);
         if (id == null) {
             if (enumerator instanceof EEnumLiteral) {
@@ -171,7 +172,7 @@ public class EMFBaseIndexMetaStore {
         return id;
     }
 
-    private String constructEnumID(String nsURI, String name, String literal) {
+    protected String constructEnumID(String nsURI, String name, String literal) {
         return String.format("%s##%s##%s", nsURI, name, literal);
     }
 
@@ -195,7 +196,7 @@ public class EMFBaseIndexMetaStore {
         }
     }
 
-    private Enumerator enumToCanonicalDynamicInternal(final Enumerator value) {
+    protected Enumerator enumToCanonicalDynamicInternal(final Enumerator value) {
         final String key = enumToKeyDynamicInternal(value);
         Enumerator canonicalEnumerator = uniqueIDToCanonicalEnumerator.computeIfAbsent(key, 
                 // if no canonical version appointed yet, appoint first version
@@ -273,7 +274,7 @@ public class EMFBaseIndexMetaStore {
      * @param classifier
      *            the classifier instance
      */
-    private void checkEPackage(final EClassifier classifier) {
+    protected void checkEPackage(final EClassifier classifier) {
         final EPackage ePackage = classifier.getEPackage();
         if (knownPackages.add(ePackage)) { // this is a new EPackage
             final String nsURI = ePackage.getNsURI();
@@ -300,7 +301,7 @@ public class EMFBaseIndexMetaStore {
      * @param superClassKey
      *            EClass or String id of superclass
      */
-    private void maintainTypeHierarhyInternal(final Object subClassKey, final Object superClassKey) {
+    protected void maintainTypeHierarhyInternal(final Object subClassKey, final Object superClassKey) {
         // update observed class and instance listener tables according to new subtype information
         Map<Object, IndexingLevel> allObservedClasses = navigationHelper.getAllObservedClassesInternal();
         if (allObservedClasses.containsKey(superClassKey)) {
