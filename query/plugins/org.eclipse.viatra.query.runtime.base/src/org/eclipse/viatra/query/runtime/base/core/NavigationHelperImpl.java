@@ -28,6 +28,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notification;
@@ -86,7 +87,8 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected IndexingLevel wildcardMode;
 
-    private Set<Notifier> modelRoots;
+    
+    protected Set<Notifier> modelRoots;
     private boolean expansionAllowed;
     private boolean traversalDescendsAlongCrossResourceContainment;
     // protected NavigationHelperVisitor visitor;
@@ -1304,11 +1306,48 @@ public class NavigationHelperImpl implements NavigationHelper {
         notifyBaseIndexChangeListeners();
     }
 
+    /**
+     * Returns a stream of model roots registered to the navigation helper instance
+     * @since 2.3
+     */
+    protected Stream<Notifier> getModelRoots() {
+        return modelRoots.stream();
+    }
+    
     @Override
     public void addRoot(Notifier emfRoot) {
         addRootInternal(emfRoot);
     }
 
+    /**
+     * Supports removing model roots
+     * </p>
+     * Note: for now this API is considered experimental thus it is not added to the {@link NavigationHelper} interface.
+     * @since 2.3
+     */
+    protected void removeRoot(Notifier root) {
+        if (!((root instanceof EObject) || (root instanceof Resource) || (root instanceof ResourceSet))) {
+            throw new ViatraBaseException(ViatraBaseException.INVALID_EMFROOT);
+        }
+        
+        if (!modelRoots.contains(root))
+            return;
+
+        if (root instanceof Resource) {
+            IBaseIndexResourceFilter resourceFilter = getBaseIndexOptions().getResourceFilterConfiguration();
+            if (resourceFilter != null && resourceFilter.isResourceFiltered((Resource) root))
+                return;
+        }
+        final IBaseIndexObjectFilter objectFilter = getBaseIndexOptions().getObjectFilterConfiguration();
+        if (objectFilter != null && objectFilter.isFiltered(root))
+            return;
+
+        // no veto by filters
+        modelRoots.remove(root);
+        contentAdapter.removeAdapter(root);
+        notifyBaseIndexChangeListeners();
+    }
+    
     @Override
     public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList) {
         if (element.eAdapters().contains(contentAdapter)
