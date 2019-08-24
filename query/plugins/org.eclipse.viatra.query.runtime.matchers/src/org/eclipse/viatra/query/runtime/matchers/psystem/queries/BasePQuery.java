@@ -44,6 +44,7 @@ public abstract class BasePQuery implements PQuery {
 	private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
 	private QueryEvaluationHint evaluationHints = new QueryEvaluationHint(null, (IQueryBackendFactory)null);
 	PDisjunction canonicalDisjunction;
+	private List<String> parameterNames = null; // Lazy initialization
 	
 	/** For traceability only. */
 	private List<Object> wrappingQuerySpecifications = new ArrayList<Object>(1);
@@ -128,7 +129,10 @@ public abstract class BasePQuery implements PQuery {
 	@Override
 	public List<String> getParameterNames() {
 		ensureInitialized();
-	    return getParameters().stream().map(PParameter::getName).collect(Collectors.toList());
+		if (parameterNames == null) {
+		    parameterNames = getParameters().stream().map(PParameter::getName).collect(Collectors.toList()); 
+		}
+	    return parameterNames;
 	}
 
 	@Override

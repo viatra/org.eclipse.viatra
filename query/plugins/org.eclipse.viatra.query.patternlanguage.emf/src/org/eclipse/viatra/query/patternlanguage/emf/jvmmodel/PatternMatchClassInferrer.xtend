@@ -108,11 +108,25 @@ class PatternMatchClassInferrer {
             annotations += annotationRef(Override)
             parameters += pattern.toParameter("parameterName", typeRef(String))
             body = '''
-                «FOR variable : pattern.parameters»
-                    if ("«variable.name»".equals(parameterName)) return this.«variable.fieldName»;
-                «ENDFOR»
-                return null;
+                switch(parameterName) {
+                    «FOR variable : pattern.parameters»
+                    case "«variable.name»": return this.«variable.fieldName»;
+                    «ENDFOR»
+                    default: return null;
+                }
             '''
+        ]
+        matchClass.members += pattern.toMethod("get", typeRef(Object)) [
+            annotations += annotationRef(Override)
+            parameters += pattern.toParameter("index", typeRef(int))
+            body = if (pattern.parameters.size > 0) '''
+                switch(index) {
+                    «FOR i : 0..pattern.parameters.size -1»
+                    case «i»: return this.«pattern.parameters.get(i).fieldName»;
+                    «ENDFOR»
+                    default: return null;
+                }
+            ''' else '''return null;'''
         ]
         for (Variable variable : pattern.parameters) {
             val getter = variable.toMethod(variable.getterMethodName, variable.calculateType) [
