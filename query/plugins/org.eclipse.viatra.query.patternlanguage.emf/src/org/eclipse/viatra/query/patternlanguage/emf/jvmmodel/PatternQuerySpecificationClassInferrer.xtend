@@ -369,9 +369,9 @@ class PatternQuerySpecificationClassInferrer {
             visibility = JvmVisibility::PRIVATE
             static = true
             documentation = '''
-                Inner class allowing the singleton instance of {@link «pattern.findInferredSpecification»} to be created 
+                Inner class allowing the singleton instance of {@link «pattern.findInferredSpecification.simpleName»} to be created 
                     <b>not</b> at the class load time of the outer class, 
-                    but rather at the first call to {@link «pattern.findInferredSpecification»#instance()}.
+                    but rather at the first call to {@link «pattern.findInferredSpecification.simpleName»#instance()}.
                 
                 <p> This workaround is required e.g. to support recursion.
             '''
