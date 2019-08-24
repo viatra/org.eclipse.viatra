@@ -40,6 +40,11 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     }
 
     @Override
+    public Object get(int position) {
+        return array[position];
+    }
+
+    @Override
     public boolean set(String parameterName, Object newValue) {
         if (!isMutable()) throw new UnsupportedOperationException();
         Integer index = specification.getPositionOfParameter(parameterName);
