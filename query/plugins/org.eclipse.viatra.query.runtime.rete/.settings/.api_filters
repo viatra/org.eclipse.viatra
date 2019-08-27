@@ -56,6 +56,21 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/network/ReteContainer.java" type="org.eclipse.viatra.query.runtime.rete.network.ReteContainer">
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.network.ReteContainer"/>
+                <message_argument value="pullContents(Supplier, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="1141899266">
+            <message_arguments>
+                <message_argument value="2.2"/>
+                <message_argument value="2.3"/>
+                <message_argument value="pullContents(Supplier, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/network/Tunnel.java" type="org.eclipse.viatra.query.runtime.rete.network.Tunnel">
         <filter id="576720909">
             <message_arguments>
