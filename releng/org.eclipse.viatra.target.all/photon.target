@@ -24,8 +24,8 @@
 <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.1"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.license.feature.group" version="2.0.1.v20180423-1114"/>
-<repository location="http://download.eclipse.org/cbi/updates/license/2.0.1.v20180423-1114"/>
+<unit id="org.eclipse.license.feature.group" version="2.0.2.v20181016-2210"/>
+<repository location="http://download.eclipse.org/cbi/updates/license/2.0.2.v20181016-2210"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.uml2.sdk.feature.group" version="5.0.2.v20150202-0947"/>

@@ -143,7 +143,7 @@
         activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="org.eclipse.license.feature.group"
-          versionRange="2.0.1"/>
+          versionRange="2.0.2"/>
       <requirement
           name="org.eclipse.emf.sdk.feature.group"/>
       <requirement
