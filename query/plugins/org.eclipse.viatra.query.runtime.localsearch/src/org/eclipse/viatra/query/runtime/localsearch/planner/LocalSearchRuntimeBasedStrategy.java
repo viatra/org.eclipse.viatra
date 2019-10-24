@@ -29,8 +29,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.query.runtime.matchers.util.Sets;
 
 /**
  * This class contains the logic for local search plan calculation based on costs of the operations.

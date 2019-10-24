@@ -195,7 +195,7 @@ public class RuleEngine {
     public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
         Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         Objects.requireNonNull(filter, FILTER_MUST_BE_SPECIFIED);
-        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getInstance(specification, filter).getAllActivations()));
+        return ruleBase.getInstance(specification, filter).streamAllActivations().collect(Collectors.toSet());
     }
 
     /**
@@ -223,7 +223,7 @@ public class RuleEngine {
         Objects.requireNonNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         Objects.requireNonNull(state, "Activation state must be specified!");
         Objects.requireNonNull(filter, FILTER_MUST_BE_SPECIFIED);
-        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getInstance(specification, filter).getActivations(state)));
+        return Collections.unmodifiableSet(new HashSet<>(ruleBase.getInstance(specification, filter).getActivationsFor(state)));
     }
     
     /**

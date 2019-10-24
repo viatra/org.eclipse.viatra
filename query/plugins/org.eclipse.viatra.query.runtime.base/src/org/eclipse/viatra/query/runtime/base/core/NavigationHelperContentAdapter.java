@@ -164,11 +164,11 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
         case Notification.REMOVING_ADAPTER:
             notifyLightweightObservers = false;
             break;
-        case Notification.RESOLVE:
+        case Notification.RESOLVE: // must be EReference
             if (navigationHelper.isFeatureResolveIgnored(feature))
                 break; // otherwise same as SET
             if (!feature.isMany()) { // if single-valued, can be removed from delayed resolutions
-                navigationHelper.delayedProxyResolutions.remove(notifier, feature);
+                navigationHelper.delayedProxyResolutions.removePairOrNop(notifier, (EReference) feature);
             }
             featureUpdate(false, notifier, feature, oldValue, position);
             featureUpdate(true, notifier, feature, newValue, position);
@@ -308,7 +308,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
                 if (notifier instanceof EObject) {
                     final EObject eObject = (EObject) notifier;
                     comprehension.traverseObject(getVisitorForChange(false), eObject);
-                    navigationHelper.delayedProxyResolutions.removeAll(eObject);
+                    navigationHelper.delayedProxyResolutions.lookupAndRemoveAll(eObject);
                 } else if (notifier instanceof Resource) {
                     if (resourceFilterConfiguration != null
                             && resourceFilterConfiguration.isResourceFiltered((Resource) notifier)) {

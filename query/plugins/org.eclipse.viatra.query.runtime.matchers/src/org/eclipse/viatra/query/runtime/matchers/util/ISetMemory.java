@@ -24,5 +24,14 @@ public interface ISetMemory<T> extends IMemory<T> {
     default void forEachEntryWithMultiplicities(BiConsumer<T, Integer> entryConsumer) {
         for (T t : this.distinctValues()) entryConsumer.accept(t, 1);
     }
+    
+
+    @Override
+    default boolean removeOne(T value) {
+        if (!removeOneOrNop(value))
+            throw new IllegalStateException();
+        return true;
+    }
+
 
 }

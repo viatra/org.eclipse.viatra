@@ -69,12 +69,9 @@ import org.eclipse.viatra.query.runtime.base.core.NavigationHelperVisitor.Traver
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Table;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -125,7 +122,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * Features per EObject to be resolved later (towards the end of a coalescing period when no Resources are loading)
      */
-    protected Multimap<EObject, EReference> delayedProxyResolutions = LinkedHashMultimap.create();
+    protected IMultiLookup<EObject, EReference> delayedProxyResolutions = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
     /**
      * Reasources that are currently loading, implying the proxy resolution attempts should be delayed
      */
@@ -150,9 +147,9 @@ public class NavigationHelperImpl implements NavigationHelper {
     // if null, must be recomputed from subscriptions
     // potentially multiple subscription types for each element type because (a) nsURI collisions, (b) multiple
     // supertypes
-    private Table<Object, InstanceListener, Set<EClass>> instanceListeners;
-    private Table<Object, FeatureListener, Set<EStructuralFeature>> featureListeners;
-    private Table<Object, DataTypeListener, Set<EDataType>> dataTypeListeners;
+    private Map<Object, Map<InstanceListener, Set<EClass>>> instanceListeners;
+    private Map<Object, Map<FeatureListener, Set<EStructuralFeature>>> featureListeners;
+    private Map<Object, Map<DataTypeListener, Set<EDataType>>> dataTypeListeners;
 
     private final Set<IEMFIndexingErrorListener> errorListeners;
     private final BaseIndexOptions baseIndexOptions;
@@ -679,7 +676,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void notifyDataTypeListeners(final Object typeKey, final Object value, final boolean isInsertion,
             final boolean firstOrLastOccurrence) {
-        for (final Entry<DataTypeListener, Set<EDataType>> entry : getDataTypeListeners().row(typeKey).entrySet()) {
+        for (final Entry<DataTypeListener, Set<EDataType>> entry : getDataTypeListeners().getOrDefault(typeKey, Collections.emptyMap()).entrySet()) {
             final DataTypeListener listener = entry.getKey();
             for (final EDataType subscriptionType : entry.getValue()) {
                 if (isInsertion) {
@@ -693,7 +690,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void notifyFeatureListeners(final EObject host, final Object featureKey, final Object value,
             final boolean isInsertion) {
-        for (final Entry<FeatureListener, Set<EStructuralFeature>> entry : getFeatureListeners().row(featureKey)
+        for (final Entry<FeatureListener, Set<EStructuralFeature>> entry : getFeatureListeners().getOrDefault(featureKey, Collections.emptyMap())
                 .entrySet()) {
             final FeatureListener listener = entry.getKey();
             for (final EStructuralFeature subscriptionType : entry.getValue()) {
@@ -707,7 +704,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     void notifyInstanceListeners(final Object clazzKey, final EObject instance, final boolean isInsertion) {
-        for (final Entry<InstanceListener, Set<EClass>> entry : getInstanceListeners().row(clazzKey).entrySet()) {
+        for (final Entry<InstanceListener, Set<EClass>> entry : getInstanceListeners().getOrDefault(clazzKey, Collections.emptyMap()).entrySet()) {
             final InstanceListener listener = entry.getKey();
             for (final EClass subscriptionType : entry.getValue()) {
                 if (isInsertion) {
@@ -887,9 +884,9 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * @return the instanceListeners
      */
-    Table<Object, InstanceListener, Set<EClass>> getInstanceListeners() {
+    Map<Object, Map<InstanceListener, Set<EClass>>> getInstanceListeners() {
         if (instanceListeners == null) {
-            instanceListeners = HashBasedTable.create(100, 1);
+            instanceListeners = CollectionsFactory.createMap();
             for (Entry<InstanceListener, Set<EClass>> subscription : subscribedInstanceListeners.entrySet()) {
                 final InstanceListener listener = subscription.getKey();
                 for (EClass subscriptionType : subscription.getValue()) {
@@ -906,26 +903,24 @@ public class NavigationHelperImpl implements NavigationHelper {
         return instanceListeners;
     }
 
-    Table<Object, InstanceListener, Set<EClass>> peekInstanceListeners() {
+    Map<Object, Map<InstanceListener, Set<EClass>>> peekInstanceListeners() {
         return instanceListeners;
     }
 
     void addInstanceListenerInternal(final InstanceListener listener, EClass subscriptionType,
             final Object elementTypeKey) {
-        Set<EClass> subscriptionTypes = instanceListeners.get(elementTypeKey, listener);
-        if (subscriptionTypes == null) {
-            subscriptionTypes = new HashSet<EClass>();
-            instanceListeners.put(elementTypeKey, listener, subscriptionTypes);
-        }
+        Set<EClass> subscriptionTypes = instanceListeners
+                .computeIfAbsent(elementTypeKey, (k) -> CollectionsFactory.createMap())
+                .computeIfAbsent(listener, (k) -> CollectionsFactory.createSet());
         subscriptionTypes.add(subscriptionType);
     }
 
     /**
      * @return the featureListeners
      */
-    Table<Object, FeatureListener, Set<EStructuralFeature>> getFeatureListeners() {
+    Map<Object, Map<FeatureListener, Set<EStructuralFeature>>> getFeatureListeners() {
         if (featureListeners == null) {
-            featureListeners = HashBasedTable.create(100, 1);
+            featureListeners = CollectionsFactory.createMap();
             for (Entry<FeatureListener, Set<EStructuralFeature>> subscription : subscribedFeatureListeners.entrySet()) {
                 final FeatureListener listener = subscription.getKey();
                 for (EStructuralFeature subscriptionType : subscription.getValue()) {
@@ -939,20 +934,18 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void addFeatureListenerInternal(final FeatureListener listener, EStructuralFeature subscriptionType,
             final Object elementTypeKey) {
-        Set<EStructuralFeature> subscriptionTypes = featureListeners.get(elementTypeKey, listener);
-        if (subscriptionTypes == null) {
-            subscriptionTypes = new HashSet<EStructuralFeature>();
-            featureListeners.put(elementTypeKey, listener, subscriptionTypes);
-        }
+        Set<EStructuralFeature> subscriptionTypes = featureListeners
+                .computeIfAbsent(elementTypeKey, (k) -> CollectionsFactory.createMap())
+                .computeIfAbsent(listener, (k) -> CollectionsFactory.createSet());
         subscriptionTypes.add(subscriptionType);
     }
 
     /**
      * @return the dataTypeListeners
      */
-    Table<Object, DataTypeListener, Set<EDataType>> getDataTypeListeners() {
+    Map<Object, Map<DataTypeListener, Set<EDataType>>> getDataTypeListeners() {
         if (dataTypeListeners == null) {
-            dataTypeListeners = HashBasedTable.create(100, 1);
+            dataTypeListeners = CollectionsFactory.createMap();
             for (Entry<DataTypeListener, Set<EDataType>> subscription : subscribedDataTypeListeners.entrySet()) {
                 final DataTypeListener listener = subscription.getKey();
                 for (EDataType subscriptionType : subscription.getValue()) {
@@ -966,11 +959,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void addDatatypeListenerInternal(final DataTypeListener listener, EDataType subscriptionType,
             final Object elementTypeKey) {
-        Set<EDataType> subscriptionTypes = dataTypeListeners.get(elementTypeKey, listener);
-        if (subscriptionTypes == null) {
-            subscriptionTypes = new HashSet<EDataType>();
-            dataTypeListeners.put(elementTypeKey, listener, subscriptionTypes);
-        }
+        Set<EDataType> subscriptionTypes = dataTypeListeners
+                .computeIfAbsent(elementTypeKey, (k) -> CollectionsFactory.createMap())
+                .computeIfAbsent(listener, (k) -> CollectionsFactory.createSet());
         subscriptionTypes.add(subscriptionType);
     }
 
@@ -1158,12 +1149,12 @@ public class NavigationHelperImpl implements NavigationHelper {
                 // are there proxies left to be resolved? are we allowed to resolve them now?
                 while ((!delayedProxyResolutions.isEmpty()) && resolutionDelayingResources.isEmpty()) {
                     // pop first entry
-                    final Collection<Entry<EObject, EReference>> entries = delayedProxyResolutions.entries();
-                    final Entry<EObject, EReference> toResolve = entries.iterator().next();
-                    entries.remove(toResolve);
+                    EObject toResolveObject = delayedProxyResolutions.distinctKeys().iterator().next();
+                    EReference toResolveReference = delayedProxyResolutions.lookup(toResolveObject).iterator().next();
+                    delayedProxyResolutions.removePair(toResolveObject, toResolveReference);    
 
                     // see if we can resolve proxies
-                    comprehension.tryResolveReference(toResolve.getKey(), toResolve.getValue());
+                    comprehension.tryResolveReference(toResolveObject, toResolveReference);
                 }
 
                 delayTraversals = false;
@@ -1408,8 +1399,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     protected <X, Y> void ensureNoListeners(Set<Object> unobservedTypes,
-            final Table<Object, X, Set<Y>> listenerRegistry) {
-        if (!Collections.disjoint(unobservedTypes, listenerRegistry.rowKeySet()))
+            final Map<Object, Map<X, Set<Y>>> listenerRegistry) {
+        if (!Collections.disjoint(unobservedTypes, listenerRegistry.keySet()))
             throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
     }
 

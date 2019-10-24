@@ -8,16 +8,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.event;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.IInstanceObserver;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.transformation.evm.notification.AttributeMonitor;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Abel Hegedus
@@ -26,7 +27,7 @@ import com.google.common.collect.Multimap;
 public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor<MatchType> {
 
     private IInstanceObserver observer;
-    private Multimap<Object, MatchType> observedMultimap;
+    private IMultiLookup<Object, MatchType> observedMultimap;
     private IBaseIndex index;
     
     public LightweightAttributeMonitor(IBaseIndex index) {
@@ -36,7 +37,7 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
             @Override
             public void notifyBinaryChanged(Object sourceElement,
                     Object edgeType) {
-                Collection<MatchType> matches = observedMultimap.get(sourceElement);
+                IMemoryView<MatchType> matches = observedMultimap.lookupOrEmpty(sourceElement);
                 for (MatchType matchType : matches) {
                     notifyListeners(matchType);
                 }
@@ -45,13 +46,13 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
             @Override
             public void notifyTernaryChanged(Object sourceElement,
                     Object edgeType) {
-                Collection<MatchType> matches = observedMultimap.get(sourceElement);
+                IMemoryView<MatchType> matches = observedMultimap.lookupOrEmpty(sourceElement);
                 for (MatchType matchType : matches) {
                     notifyListeners(matchType);
                 }
             }        
         };
-        this.observedMultimap = HashMultimap.create();
+        this.observedMultimap = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
     }
     
     @Override
@@ -59,13 +60,13 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
         Collection<Object> allObjects = findAllObjects(atom);
         for (Object object : allObjects) {
             index.addInstanceObserver(observer, object);
-            observedMultimap.put(object, atom);
+            observedMultimap.addPair(object, atom);
         }
     }
 
     @Override
     public void unregisterForAll() {
-        for (Object eobj : observedMultimap.keySet()) {
+        for (Object eobj : observedMultimap.distinctKeys()) {
             index.removeInstanceObserver(observer, eobj);
         }
     }
@@ -75,12 +76,12 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
         Collection<Object> allObjects = findAllObjects(atom);
         for (Object object : allObjects) {
             index.removeInstanceObserver(observer, object);
-            observedMultimap.remove(object, atom);
+            observedMultimap.removePair(object, atom);
         }
     }
 
     private Collection<Object> findAllObjects(MatchType atom){
-        Collection<Object> objs = new ArrayList<>();
+        Collection<Object> objs = new HashSet<>();
         for (String param : atom.parameterNames()) {
             Object location = atom.get(param);
             objs.add(location);

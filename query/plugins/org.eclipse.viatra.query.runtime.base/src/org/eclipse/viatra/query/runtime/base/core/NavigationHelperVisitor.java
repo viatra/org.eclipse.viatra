@@ -393,7 +393,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                     return;
             }
             // otherwise, attempt resolution later, at the end of the coalesced traversal block
-            navigationHelper.delayedProxyResolutions.put(source, reference);
+            navigationHelper.delayedProxyResolutions.addPairOrNop(source, reference);
         }
     }
 

@@ -14,8 +14,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 
-import com.google.common.collect.Iterables;
-
 /**
  * @author Abel Hegedus
  *
@@ -54,9 +52,9 @@ public class QueryBasedFeatures {
     }
     
     public static boolean checkEcorePackageAnnotation(EPackage pckg) {
-        return Iterables.any(pckg.getEAnnotations(), annotation -> {
+        return pckg.getEAnnotations().stream().anyMatch(annotation -> {
             if(QueryBasedFeatures.ECORE_ANNOTATION.equals(annotation.getSource())){
-                return Iterables.any(annotation.getDetails().entrySet(), entry -> {
+                return annotation.getDetails().entrySet().stream().anyMatch(entry -> {
                     if(QueryBasedFeatures.SETTING_DELEGATES_KEY.equals(entry.getKey())){
                         StringTokenizer delegateTokents = new StringTokenizer(entry.getValue());
                         while(delegateTokents.hasMoreTokens()){
@@ -73,9 +71,9 @@ public class QueryBasedFeatures {
     }
 
     public static boolean checkFeatureAnnotation(EStructuralFeature feature, final String patternFQN) {
-        return Iterables.any(feature.getEAnnotations(), annotation -> {
+        return feature.getEAnnotations().stream().anyMatch(annotation -> {
             if(QueryBasedFeatures.ANNOTATION_SOURCE.equals(annotation.getSource())){
-                return Iterables.any(annotation.getDetails().entrySet(), entry -> {
+                return annotation.getDetails().entrySet().stream().anyMatch(entry -> {
                     boolean keyOK = QueryBasedFeatures.PATTERN_FQN_KEY.equals(entry.getKey());
                     boolean valueOK = patternFQN.equals(entry.getValue());
                     return keyOK && valueOK;

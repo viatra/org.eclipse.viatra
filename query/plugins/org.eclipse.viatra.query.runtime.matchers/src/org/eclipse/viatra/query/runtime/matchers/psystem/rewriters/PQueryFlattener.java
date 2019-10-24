@@ -31,8 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IConstraintFi
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRenamer.HierarchicalName;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
-
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.query.runtime.matchers.util.Sets;
 
 /**
  * This rewriter class holds the query flattening logic

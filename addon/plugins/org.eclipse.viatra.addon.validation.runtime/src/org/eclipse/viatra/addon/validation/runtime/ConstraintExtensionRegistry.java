@@ -9,12 +9,13 @@
 package org.eclipse.viatra.addon.validation.runtime;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,13 +24,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * The constraint extension registry is singleton utility for 
@@ -48,11 +46,13 @@ public class ConstraintExtensionRegistry {
     private static final String ENABLED_FOR_EDITOR_ATTRIBUTE_NAME = "enabledForEditor";
     private static final String CLASS_ATTRIBUTE_NAME = "class";
 
-    static Set<String> genericEditorIds = Sets.newHashSet(
-            "org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID",
-            "org.eclipse.emf.ecore.presentation.ReflectiveEditorID", "org.eclipse.emf.genericEditor");
+    static Set<String> genericEditorIds = Stream.of(
+                "org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID",
+                "org.eclipse.emf.ecore.presentation.ReflectiveEditorID", 
+                "org.eclipse.emf.genericEditor"
+            ).collect(Collectors.toSet());
     
-    private static Multimap<String, IProvider<IConstraintSpecification>> editorConstraintSpecificationMap;
+    private static IMultiLookup<String, IProvider<IConstraintSpecification>> editorConstraintSpecificationMap;
 
     /**
      * Constructor hidden for utility class
@@ -66,7 +66,7 @@ public class ConstraintExtensionRegistry {
      * 
      * @return A Multimap containing all the registered constraint specifications for each editor Id.
      */
-    protected static synchronized Multimap<String, IProvider<IConstraintSpecification>> getEditorConstraintSpecificationMap() {
+    protected static synchronized IMultiLookup<String, IProvider<IConstraintSpecification>> getEditorConstraintSpecificationMap() {
         if (editorConstraintSpecificationMap == null) {
             editorConstraintSpecificationMap = loadConstraintSpecificationsFromExtensions();
         }
@@ -81,11 +81,11 @@ public class ConstraintExtensionRegistry {
      * @return <code>true</code> if there are registered constraint specifications
      */
     public static synchronized boolean isConstraintSpecificationsRegisteredForEditorId(String editorId) {
-        Multimap<String, IProvider<IConstraintSpecification>> specificationMap = getEditorConstraintSpecificationMap();
-        if(specificationMap.containsKey(WILDCARD_EDITOR_ID)) {
+        IMultiLookup<String, IProvider<IConstraintSpecification>> specificationMap = getEditorConstraintSpecificationMap();
+        if(specificationMap.lookupExists(WILDCARD_EDITOR_ID)) {
             return true;
         }
-        return specificationMap.containsKey(editorId);
+        return specificationMap.lookupExists(editorId);
     }
 
     /**
@@ -97,28 +97,30 @@ public class ConstraintExtensionRegistry {
      */
     public static synchronized Set<IConstraintSpecification> getConstraintSpecificationsForEditorId(String editorId) {
         if (genericEditorIds.contains(editorId)) {
-            Iterable<IConstraintSpecification> constraintSpecifications = unwrapConstraintSpecifications(getEditorConstraintSpecificationMap().values());
-            return ImmutableSet.copyOf(constraintSpecifications);
+            Set<IConstraintSpecification> constraintSpecifications = unwrapConstraintSpecifications(StreamSupport.stream(getEditorConstraintSpecificationMap().distinctValues().spliterator(), false));
+            return constraintSpecifications;
         }
-        Set<IConstraintSpecification> set = Sets.newHashSet(unwrapConstraintSpecifications(getEditorConstraintSpecificationMap()
-                .get(editorId)));
-        Iterables.addAll(set, unwrapConstraintSpecifications(getEditorConstraintSpecificationMap().get(WILDCARD_EDITOR_ID)));
+        Set<IConstraintSpecification> set = unwrapConstraintSpecifications(Stream.concat(
+                getEditorConstraintSpecificationMap().lookupOrEmpty(editorId).asStream(), 
+                getEditorConstraintSpecificationMap().lookupOrEmpty(WILDCARD_EDITOR_ID).asStream()
+        ));
         return set;
     }
 
-    private static Iterable<IConstraintSpecification> unwrapConstraintSpecifications(Collection<IProvider<IConstraintSpecification>> providers) {
-        return providers.stream().filter(Objects::nonNull).map(Supplier::get).collect(Collectors.toList());
+    private static Set<IConstraintSpecification> unwrapConstraintSpecifications(Stream<IProvider<IConstraintSpecification>> providers) {
+        return providers.filter(Objects::nonNull).map(Supplier::get).collect(Collectors.toSet());
     }
 
     /**
      * Loads and returns the constraint specifications registered in the available extensions. (constraintspecification
      * extension point extensions)
      * 
-     * @return A Multimap containing all the registered constraint specifications from the available extension for each
+     * @return A IMultiLookup containing all the registered constraint specifications from the available extension for each
      *         editor Id.
      */
-    private static synchronized Multimap<String, IProvider<IConstraintSpecification>> loadConstraintSpecificationsFromExtensions() {
-        Multimap<String, IProvider<IConstraintSpecification>> result = HashMultimap.create();
+    private static synchronized IMultiLookup<String, IProvider<IConstraintSpecification>> loadConstraintSpecificationsFromExtensions() {
+        IMultiLookup<String, IProvider<IConstraintSpecification>> result = 
+                CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
     
         IExtensionRegistry reg = Platform.getExtensionRegistry();
         IExtensionPoint ep = reg.getExtensionPoint(VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID);
@@ -143,7 +145,7 @@ public class ConstraintExtensionRegistry {
      *            The configuration element to be processed.
      */
     private static void processConstraintSpecificationConfigurationElement(
-            Multimap<String, IProvider<IConstraintSpecification>> result, IConfigurationElement ce) {
+            IMultiLookup<String, IProvider<IConstraintSpecification>> result, IConfigurationElement ce) {
         List<String> ids = new ArrayList<String>();
         for (IConfigurationElement child : ce.getChildren()) {
             if (child.getName().equals(ENABLED_FOR_EDITOR_ATTRIBUTE_NAME)) {
@@ -159,7 +161,7 @@ public class ConstraintExtensionRegistry {
             ids.add(WILDCARD_EDITOR_ID);
         }
         for (String id : ids) {
-            result.put(id, constraintSpecificationProvider);
+            result.addPair(id, constraintSpecificationProvider);
         }
     }
     

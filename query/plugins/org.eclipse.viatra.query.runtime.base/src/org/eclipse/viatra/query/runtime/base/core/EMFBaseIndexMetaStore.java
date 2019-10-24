@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.core;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,11 +28,11 @@ import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Table;
 
 /**
  * Stores the indexed metamodel information.
@@ -84,7 +84,7 @@ public class EMFBaseIndexMetaStore {
     /**
      * EPacakge NsURI -> EPackage instances; this is instance-level to detect collisions
      */
-    private final Multimap<String, EPackage> uniqueIDToPackage = HashMultimap.create();
+    private final IMultiLookup<String, EPackage> uniqueIDToPackage = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
 
     /**
      * static maps between metamodel elements and their unique IDs
@@ -92,9 +92,9 @@ public class EMFBaseIndexMetaStore {
     private final Map<EClassifier, String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
     private final Map<ETypedElement, String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
     private final Map<Enumerator, String> uniqueIDFromEnumerator = new HashMap<Enumerator, String>();
-    private final Multimap<String, EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
-    private final Multimap<String, ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
-    private final Multimap<String, Enumerator> uniqueIDToEnumerator = HashMultimap.create(100, 1);
+    private final IMultiLookup<String, EClassifier> uniqueIDToClassifier = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
+    private final IMultiLookup<String, ETypedElement> uniqueIDToTypedElement = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
+    private final IMultiLookup<String, Enumerator> uniqueIDToEnumerator = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
     private final Map<String, Enumerator> uniqueIDToCanonicalEnumerator = new HashMap<String, Enumerator>();
 
     /**
@@ -129,7 +129,7 @@ public class EMFBaseIndexMetaStore {
                     "Classifier %s is an unresolved proxy", classifier);
             id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
             uniqueIDFromClassifier.put(classifier, id);
-            uniqueIDToClassifier.put(id, classifier);
+            uniqueIDToClassifier.addPair(id, classifier);
             // metamodel maintenance will call back toKey(), but now the ID maps are already filled
             maintainMetamodel(classifier);
         }
@@ -167,7 +167,7 @@ public class EMFBaseIndexMetaStore {
                 }
             }
             uniqueIDFromEnumerator.put(enumerator, id);
-            uniqueIDToEnumerator.put(id, enumerator);
+            uniqueIDToEnumerator.addPair(id, enumerator);
         }
         return id;
     }
@@ -185,7 +185,7 @@ public class EMFBaseIndexMetaStore {
                 id = toKeyDynamicInternal((EClassifier) feature.eContainer()) + "##" + feature.getEType().getName()
                         + "##" + feature.getName();
                 uniqueIDFromTypedElement.put(feature, id);
-                uniqueIDToTypedElement.put(id, feature);
+                uniqueIDToTypedElement.addPair(id, feature);
                 // metamodel maintenance will call back toKey(), but now the ID maps are already filled
                 maintainMetamodel(feature);
             }
@@ -200,7 +200,7 @@ public class EMFBaseIndexMetaStore {
         final String key = enumToKeyDynamicInternal(value);
         Enumerator canonicalEnumerator = uniqueIDToCanonicalEnumerator.computeIfAbsent(key, 
                 // if no canonical version appointed yet, appoint first version
-                k -> uniqueIDToEnumerator.get(k).iterator().next());
+                k -> uniqueIDToEnumerator.lookup(k).iterator().next());
         return canonicalEnumerator;
     }
 
@@ -278,9 +278,9 @@ public class EMFBaseIndexMetaStore {
         final EPackage ePackage = classifier.getEPackage();
         if (knownPackages.add(ePackage)) { // this is a new EPackage
             final String nsURI = ePackage.getNsURI();
-            final Collection<EPackage> packagesOfURI = uniqueIDToPackage.get(nsURI);
-            if (!packagesOfURI.contains(ePackage)) { // this should be true
-                uniqueIDToPackage.put(nsURI, ePackage);
+            final IMemoryView<EPackage> packagesOfURI = uniqueIDToPackage.lookupOrEmpty(nsURI);
+            if (!packagesOfURI.containsNonZero(ePackage)) { // this should be true
+                uniqueIDToPackage.addPair(nsURI, ePackage);
                 // collision detection between EPackages (disabled in dynamic model mode)
                 if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage
                                                                     // instance is the second for the same URI
@@ -308,9 +308,9 @@ public class EMFBaseIndexMetaStore {
             // we know that there are no known subtypes of subClassKey at this point, so a single insert should suffice
             allObservedClasses.put(subClassKey, allObservedClasses.get(superClassKey));
         }
-        final Table<Object, InstanceListener, Set<EClass>> instanceListeners = navigationHelper.peekInstanceListeners();
+        final Map<Object, Map<InstanceListener, Set<EClass>>> instanceListeners = navigationHelper.peekInstanceListeners();
         if (instanceListeners != null) { // table already constructed
-            for (final Entry<InstanceListener, Set<EClass>> entry : instanceListeners.row(superClassKey).entrySet()) {
+            for (final Entry<InstanceListener, Set<EClass>> entry : instanceListeners.getOrDefault(superClassKey, Collections.emptyMap()).entrySet()) {
                 final InstanceListener listener = entry.getKey();
                 for (final EClass subscriptionType : entry.getValue()) {
                     navigationHelper.addInstanceListenerInternal(listener, subscriptionType, subClassKey);
@@ -344,7 +344,7 @@ public class EMFBaseIndexMetaStore {
      * @return the {@link EStructuralFeature} instance
      */
     public EStructuralFeature getKnownFeature(final String featureId) {
-        final Collection<ETypedElement> features = uniqueIDToTypedElement.get(featureId);
+        final IMemoryView<ETypedElement> features = uniqueIDToTypedElement.lookup(featureId);
         if (features != null && !features.isEmpty()) {
             final ETypedElement next = features.iterator().next();
             if (next instanceof EStructuralFeature) {
@@ -369,7 +369,7 @@ public class EMFBaseIndexMetaStore {
      * Returns the corresponding {@link EClassifier} instance for the id.
      */
     public EClassifier getKnownClassifier(final String key) {
-        final Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get(key);
+        final IMemoryView<EClassifier> classifiersOfThisID = uniqueIDToClassifier.lookup(key);
         if (classifiersOfThisID != null && !classifiersOfThisID.isEmpty()) {
             return classifiersOfThisID.iterator().next();
         } else {

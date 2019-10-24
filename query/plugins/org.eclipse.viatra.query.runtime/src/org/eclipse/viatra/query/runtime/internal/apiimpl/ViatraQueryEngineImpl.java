@@ -58,14 +58,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * A VIATRA Query engine back-end (implementation)
@@ -100,8 +100,8 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     /**
      * Initialized matchers for each query
      */
-    private final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<?>>, ViatraQueryMatcher<?>> matchers = ArrayListMultimap
-            .create();
+    private final IMultiLookup<IQuerySpecification<? extends ViatraQueryMatcher<?>>, ViatraQueryMatcher<?>> matchers = 
+            CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
 
     /**
      * The RETE and other pattern matcher implementations of the VIATRA Query Engine.
@@ -195,7 +195,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
     @Override
     public Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers() {
-        return new HashSet<>(matchers.values());
+        return matchers.distinctValuesStream().collect(Collectors.toSet());
     }
 
     @Override
@@ -227,6 +227,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
         return getExistingMatcher(querySpecification, null);
     }
 
+    @Override
     public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(
             IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalOverrideHints) {
         return doGetExistingMatcher(querySpecification, getRequestedCapability(querySpecification, optionalOverrideHints));
@@ -235,7 +236,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
     @SuppressWarnings("unchecked")
     private <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher doGetExistingMatcher(
             IQuerySpecification<Matcher> querySpecification, IMatcherCapability requestedCapability) {
-        for (ViatraQueryMatcher<?> matcher : matchers.get(querySpecification)) {
+        for (ViatraQueryMatcher<?> matcher : matchers.lookupOrEmpty(querySpecification)) {
             BaseMatcher<?> baseMatcher = (BaseMatcher<?>) matcher;
             if (baseMatcher.getCapabilities().canBeSubstitute(requestedCapability))
                 return (Matcher) matcher;
@@ -276,7 +277,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine
 
     ///////////////// internal stuff //////////////
     private void internalRegisterMatcher(IQuerySpecification<?> querySpecification, ViatraQueryMatcher<?> matcher) {
-        matchers.put(querySpecification, matcher);
+        matchers.addPair(querySpecification, matcher);
         lifecycleProvider.matcherInstantiated(matcher);
     }
 

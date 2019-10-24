@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -24,8 +25,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.VolatileMaskedTuple;
-
-import com.google.common.collect.Iterables;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link IQueryRuntimeContext VIATRA Base indexer}.
@@ -48,7 +47,10 @@ public class ExtendToEStructuralFeatureSource implements IIteratingSearchOperati
         public Iterator<EObject> getIterator(MatchingFrame frame, ISearchContext context) {
             maskedTuple.updateTuple(frame);
             Iterable<? extends Object> values = context.getRuntimeContext().enumerateValues(type, indexerMask, maskedTuple);
-            return Iterables.filter(values, EObject.class).iterator();
+            return StreamSupport.stream(values.spliterator(), false)
+                    .filter(EObject.class::isInstance)
+                    .map(EObject.class::cast)
+                    .iterator();
         }
         
         @Override

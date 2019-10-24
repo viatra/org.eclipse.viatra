@@ -46,12 +46,10 @@ public class EclipseCollectionsSetMemory<Value> extends UnifiedSet<Value> implem
         else if (count == -1) return removeOne(value); 
         else throw new IllegalStateException();
     }
-
+    
     @Override
-    public boolean removeOne(Value value) {
-        if (!super.remove(value))
-            throw new IllegalStateException();
-        return true;
+    public boolean removeOneOrNop(Value value) {
+        return super.remove(value);
     }
 
     @Override

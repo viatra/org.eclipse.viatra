@@ -36,10 +36,8 @@ public class EclipseCollectionsLongSetMemory extends LongHashSet implements ISet
     }
 
     @Override
-    public boolean removeOne(Long value) {
-        if (!super.remove(value))
-            throw new IllegalStateException();
-        return true;
+    public boolean removeOneOrNop(Long value) {
+        return super.remove(value);
     }
 
     @Override

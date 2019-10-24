@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.impl;
 
-import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.LazyLoadingQueryGroup;
@@ -43,7 +43,9 @@ public class GlobalRegistryView extends AbstractRegistryView implements IDefault
     
     @Override
     public IQueryGroup getQueryGroup() {
-        IQueryGroup queryGroup = LazyLoadingQueryGroup.of(new HashSet<>(fqnToEntryMap.values())); 
+        Set<IQuerySpecificationRegistryEntry> allQueries = 
+                fqnToEntryMap.distinctValuesStream().collect(Collectors.toSet());
+        IQueryGroup queryGroup = LazyLoadingQueryGroup.of(allQueries); 
         return queryGroup;
     }
 

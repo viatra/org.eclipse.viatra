@@ -16,5 +16,11 @@ package org.eclipse.viatra.query.runtime.matchers.util;
  * @since 1.7
  */
 public interface IDeltaBag<T> extends IMemory<T> {
+    
+    @Override
+    default boolean removeOneOrNop(T value) {
+        // makes no difference for delta bags
+        return removeOne(value);
+    }
 
 }

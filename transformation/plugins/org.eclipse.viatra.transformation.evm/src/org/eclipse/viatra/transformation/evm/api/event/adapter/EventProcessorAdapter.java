@@ -45,7 +45,7 @@ public abstract class EventProcessorAdapter<EventAtom> {
     public void processEvent(Event<EventAtom> event) {
         Objects.requireNonNull(event,"Cannot process null event!");
         
-        Map<ActivationState, Activation<EventAtom>> activationMap = getInstance().getActivations(event.getEventAtom());
+        Map<ActivationState, Activation<EventAtom>> activationMap = getInstance().getActivationsFor(event.getEventAtom());
         if(activationMap.size() > 0) {
             Preconditions.checkArgument(activationMap.size() == 1, "%s activations in the same rule for the same match", activationMap.size() == 0 ? "No" : "Multiple");
             Activation<EventAtom> act = activationMap.values().iterator().next();

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.addon.validation.runtime" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="ignoring compatibility break of constraint registry" id="923795461">
+            <message_arguments>
+                <message_argument value="2.3.0"/>
+                <message_argument value="2.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/addon/validation/runtime/ConstraintExtensionRegistry.java" type="org.eclipse.viatra.addon.validation.runtime.ConstraintExtensionRegistry">
+        <filter comment="ignoring compatibility break of constraint registry" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.addon.validation.runtime.ConstraintExtensionRegistry"/>
+                <message_argument value="getEditorConstraintSpecificationMap()"/>
+            </message_arguments>
+        </filter>
+        <filter comment=" ignoring breakage of constraint registry" id="1143996420">
+            <message_arguments>
+                <message_argument value="getEditorConstraintSpecificationMap()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

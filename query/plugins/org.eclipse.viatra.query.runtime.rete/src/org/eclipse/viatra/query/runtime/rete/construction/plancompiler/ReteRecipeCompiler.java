@@ -70,6 +70,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.SurrogateQuer
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.PosetTriplet;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
@@ -100,9 +103,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.ParameterProjectionTra
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * Compiles queries and query plans into Rete recipes, traced by respectively a {@link CompiledQuery} or
@@ -170,7 +170,7 @@ public class ReteRecipeCompiler {
 
     private Map<PQuery, CompiledQuery> queryCompilerCache = new HashMap<PQuery, CompiledQuery>();
     private Set<PQuery> compilationInProgress = new HashSet<PQuery>();
-    private Multimap<PQuery, RecursionCutoffPoint> recursionCutoffPoints = HashMultimap.create();
+    private IMultiLookup<PQuery, RecursionCutoffPoint> recursionCutoffPoints = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
     private Map<SubPlan, CompiledSubPlan> subPlanCompilerCache = new HashMap<SubPlan, CompiledSubPlan>();
     private Map<ReteNodeRecipe, SubPlan> compilerBackTrace = new HashMap<ReteNodeRecipe, SubPlan>();
 
@@ -202,7 +202,7 @@ public class ReteRecipeCompiler {
             boolean reentrant = !compilationInProgress.add(query);
             if (reentrant) { // oops, recursion into body in progress
                 RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query), metaContext, deleteAndRederiveEvaluation);
-                recursionCutoffPoints.put(query, cutoffPoint);
+                recursionCutoffPoints.addPair(query, cutoffPoint);
                 return cutoffPoint.getCompiledQuery();
             } else { // not reentrant, therefore no recursion, do the compilation
                 try {
@@ -211,7 +211,7 @@ public class ReteRecipeCompiler {
                     // backTrace.put(compiled.getRecipe(), plan);
 
                     // if this was a recursive query, mend all points where recursion was cut off
-                    for (RecursionCutoffPoint cutoffPoint : recursionCutoffPoints.get(query)) {
+                    for (RecursionCutoffPoint cutoffPoint : recursionCutoffPoints.lookupOrEmpty(query)) {
                         cutoffPoint.mend(compiled);
                     }
                 } finally {

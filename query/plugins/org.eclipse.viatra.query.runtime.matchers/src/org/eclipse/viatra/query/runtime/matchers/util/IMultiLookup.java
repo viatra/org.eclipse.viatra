@@ -8,6 +8,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
+import java.util.stream.Stream;
+
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+
 /**
  * A multi-map that associates sets / multisets / delta sets of values to each key.
  * 
@@ -24,6 +28,14 @@ public interface IMultiLookup<Key, Value> {
      */
     boolean isEmpty();
     
+    
+    /**
+     * Returns true if there are any values associated with the given key.
+     * @param key a key for which associated values are sought
+     * @since 2.3
+     */
+    boolean lookupExists(Key key);
+
     /**
      * Returns a (read-only) bucket of values associated with the given key.
      * Clients must not modify the returned bucket.
@@ -43,6 +55,14 @@ public interface IMultiLookup<Key, Value> {
         return bucket == null ? EmptyMemory.instance() : bucket;
     }
     
+    /**
+     * Returns a (read-only) bucket of values associated with the given key, while simultaneously removing them.
+     * Clients must not modify the returned bucket.
+     * @param key a key for which associated values are sought
+     * @return a bucket of values, never null
+     * @since 2.3
+     */
+    IMemoryView<Value> lookupAndRemoveAll(Key key);
     
     /**
      * Returns a (read-only) bucket of values associated with the given key, which can be of any type.
@@ -71,6 +91,12 @@ public interface IMultiLookup<Key, Value> {
     Iterable<Key> distinctKeys();
     
     /**
+     * @return the set of distinct keys that have values associated.
+     * @since 2.3
+     */
+    Stream<Key> distinctKeysStream();
+    
+    /**
      * @return the number of distinct keys that have values associated.
      */
     int countKeys();
@@ -79,6 +105,14 @@ public interface IMultiLookup<Key, Value> {
      * Iterates once over each distinct value.
      */
     Iterable<Value> distinctValues();
+    
+    /**
+     * Iterates once over each distinct value.
+     * @since 2.3
+     */
+    Stream<Value> distinctValuesStream();
+
+    
     
     /**
      * How significant was the change?     * 
@@ -102,17 +136,39 @@ public interface IMultiLookup<Key, Value> {
     }
     
     /**
-     * Adds key-value pair to the lookup structure.
+     * Adds key-value pair to the lookup structure, or fails if not possible.
+     * <p> If the addition would cause duplicates but the bucket type does not allow it ({@link MemoryType#SETS}), 
+     *   the operation throws an {@link IllegalStateException}.
      * @return the granularity of the change
      * @throws IllegalStateException if addition would cause duplication that is not permitted 
      */
     public ChangeGranularity addPair(Key key, Value value);
     /**
-     * Removes key-value pair from the lookup structure.
+     * Adds key-value pair to the lookup structure. 
+     * <p> If the addition would cause duplicates but the bucket type does not allow it ({@link MemoryType#SETS}), 
+     *   the operation is silently ignored and {@link ChangeGranularity#DUPLICATE} is returned.
+     * @return the granularity of the change, or {@link ChangeGranularity#DUPLICATE} if addition would result in a duplicate and therefore ignored
+     * @since 2.3
+     */
+    public ChangeGranularity addPairOrNop(Key key, Value value);
+    /**
+     * Removes key-value pair from the lookup structure, or fails if not possible.
+     * <p> When attempting to remove a key-value pair with zero multiplicity from a non-delta bucket type 
+     * ({@link MemoryType#SETS} or {@link MemoryType#MULTISETS}}), an {@link IllegalStateException} is thrown. 
      * @return the granularity of the change
      * @throws IllegalStateException if removing non-existing element that is not permitted 
      */
     public ChangeGranularity removePair(Key key, Value value);
+    /**
+     * Removes key-value pair from the lookup structure.
+     * <p> When attempting to remove a key-value pair with zero multiplicity from a non-delta bucket type 
+     * ({@link MemoryType#SETS} or {@link MemoryType#MULTISETS}}), 
+     * the operation is silently ignored and {@link ChangeGranularity#DUPLICATE} is returned. 
+     * @return the granularity of the change
+     * @throws IllegalStateException if removing non-existing element that is not permitted 
+     * @since 2.3
+     */
+    public ChangeGranularity removePairOrNop(Key key, Value value);
     
     /**
      * Updates multiplicity of key-value pair by a positive amount.

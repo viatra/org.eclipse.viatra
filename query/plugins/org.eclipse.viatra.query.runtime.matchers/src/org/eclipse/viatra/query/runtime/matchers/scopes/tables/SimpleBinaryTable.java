@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.ITuple;
@@ -187,7 +186,7 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
         switch (seedMask.getSize()) {
         case 0: // unseeded
             // TODO we currently assume V2H map exists
-            return StreamSupport.stream(getAllDistinctValues().spliterator(), false)
+            return getAllDistinctValuesStream()
                     .flatMap(value -> valueToHolderMap.lookup(value).distinctValues().stream()
                     .map(source -> Tuples.staticArityFlatTupleOf(source, value)));
 
@@ -269,9 +268,14 @@ public class SimpleBinaryTable<Source, Target> extends AbstractIndexTable
     public Iterable<Source> getAllDistinctHolders() {
         return getHolderToValueMap().distinctKeys();
     }
-
+    public Stream<Source> getAllDistinctHoldersStream() {
+        return getHolderToValueMap().distinctKeysStream();
+    }
     public Iterable<Target> getAllDistinctValues() {
         return getValueToHolderMap().distinctKeys();
+    }
+    public Stream<Target> getAllDistinctValuesStream() {
+        return getValueToHolderMap().distinctKeysStream();
     }
 
     public Set<Source> getDistinctHoldersOfValue(Target value) {

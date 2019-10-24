@@ -39,9 +39,6 @@ import org.eclipse.viatra.query.runtime.rete.construction.RetePatternBuildExcept
 import org.eclipse.viatra.query.runtime.rete.util.Options;
 import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
-
 /**
  * Layout ideas: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=398763
  * 
@@ -169,10 +166,9 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         private void admitSubPlan(SubPlan plan) {
             // are there any unapplied constant filters that we can apply here?
             if (ReteHintOptions.prioritizeConstantFiltering.getValueOrDefault(hints)) {
-                SetView<ConstantValue> unappliedConstants = 
-                        Sets.difference(constantConstraints, plan.getAllEnforcedConstraints());
-                for (ConstantValue constantConstraint : unappliedConstants) {
-                    if (plan.getVisibleVariables().containsAll(constantConstraint.getAffectedVariables())) {
+                for (ConstantValue constantConstraint : constantConstraints) {
+                    if (!plan.getAllEnforcedConstraints().contains(constantConstraint) &&
+                            plan.getVisibleVariables().containsAll(constantConstraint.getAffectedVariables())) {
                         plan = planFactory.createSubPlan(new PApply(constantConstraint), plan);
                     }                    
                 }

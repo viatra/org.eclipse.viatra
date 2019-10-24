@@ -12,8 +12,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -34,11 +36,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.ICache;
 import org.eclipse.viatra.query.runtime.matchers.util.PurgableCache;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Marton Bur, Zoltan Ujhelyi
@@ -52,7 +52,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
     
     private final PurgableCache generalCache;
     
-    private final Multimap<PQuery, AbstractLocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
+    private final Map<PQuery, List<AbstractLocalSearchResultProvider>> resultProviderCache = CollectionsFactory.createMap();
     
     
     /**
@@ -83,14 +83,14 @@ public abstract class LocalSearchBackend implements IQueryBackend {
         
         final QueryEvaluationHint callHints = getHintProvider().getQueryEvaluationHint(query).overrideBy(hints);
         IMatcherCapability requestedCapability = context.getRequiredMatcherCapability(query, callHints);
-        for(AbstractLocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
+        for(AbstractLocalSearchResultProvider existingResultProvider : resultProviderCache.getOrDefault(query, Collections.emptyList())){
             if (requestedCapability.canBeSubstitute(existingResultProvider.getCapabilites())){
                 return existingResultProvider;
             }
         }
         
         AbstractLocalSearchResultProvider resultProvider = initializeResultProvider(query, hints);
-        resultProviderCache.put(query, resultProvider);
+        resultProviderCache.computeIfAbsent(query, k->new ArrayList<>()).add(resultProvider);
         resultProvider.prepare();
         return resultProvider;
     }
@@ -135,7 +135,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
      */
     @Override
     public AbstractLocalSearchResultProvider peekExistingResultProvider(PQuery query) {
-        return resultProviderCache.get(query).stream().findAny().orElse(null);
+        return resultProviderCache.getOrDefault(query, Collections.emptyList()).stream().findAny().orElse(null);
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
      * @since 2.0
      */
     public void recomputePlans(PQuery... queries) {
-        recomputePlans(Arrays.stream(queries).flatMap(query -> resultProviderCache.get(query).stream()));
+        recomputePlans(Arrays.stream(queries).flatMap(query -> resultProviderCache.getOrDefault(query, Collections.emptyList()).stream()));
     }
     
     /**
@@ -218,7 +218,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
      * @since 2.0
      */
     public void recomputePlans(Collection<PQuery> queries) {
-        recomputePlans(queries.stream().flatMap(query -> resultProviderCache.get(query).stream()));
+        recomputePlans(queries.stream().flatMap(query -> resultProviderCache.getOrDefault(query, Collections.emptyList()).stream()));
     }
     
     /**
@@ -229,7 +229,7 @@ public abstract class LocalSearchBackend implements IQueryBackend {
      * @since 2.0
      */
     public void recomputePlans() {
-        recomputePlans(resultProviderCache.values().stream());
+        recomputePlans(resultProviderCache.values().stream().flatMap(List::stream));
     }
     
     private void recomputePlans(Stream<AbstractLocalSearchResultProvider> resultProviders) {

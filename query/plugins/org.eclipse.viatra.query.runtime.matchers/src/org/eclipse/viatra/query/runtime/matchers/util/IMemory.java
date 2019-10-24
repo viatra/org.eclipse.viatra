@@ -52,6 +52,19 @@ public interface IMemory<T> extends IMemoryView<T>, Clearable {
      * @throws IllegalStateException if {@link IMultiset} or {@link ISetMemory} and value had no occurrences in the memory
      */
     boolean removeOne(T value);
+    
+    /**
+     * Removes one occurrence of the given value from the memory, if possible.
+     * 
+     * <p> Memory is unchanged and false is returned if 
+     *   {@link IMultiset} or {@link ISetMemory} and value had no occurrences in the memory
+     * 
+     * @return true if this was the the last occurrence of the value, or
+     *      (in case of {@link IDeltaBag}) is the first negative occurrence of the value 
+     *      
+     * @since 2.3
+     */
+    boolean removeOneOrNop(T value);
 
     /**
      * Removes all occurrences of the given value from the memory.
@@ -61,6 +74,7 @@ public interface IMemory<T> extends IMemoryView<T>, Clearable {
     /**
      * Empties out the memory. 
      */
+    @Override
     void clear();
 
 }

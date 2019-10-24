@@ -10,21 +10,18 @@
 package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 /**
  * An RuleBase is associated to an {@link EventRealm} and it is responsible for creating, managing and disposing rules
@@ -36,7 +33,7 @@ import com.google.common.collect.Table;
 public class RuleBase {
 
     protected final EventRealm eventRealm;
-    protected final Table<RuleSpecification<?>, EventFilter<?>, RuleInstance<?>> ruleInstanceTable;
+    protected final Map<RuleSpecification<?>, Map<EventFilter<?>, RuleInstance<?>>> ruleInstanceTable;
     protected final Agenda agenda;
     protected final Logger logger;
 
@@ -50,7 +47,7 @@ public class RuleBase {
      */
     protected RuleBase(final EventRealm eventRealm, final Agenda agenda) {
         this.eventRealm = Objects.requireNonNull(eventRealm, "Cannot create RuleBase with null event source");
-        this.ruleInstanceTable = HashBasedTable.create();
+        this.ruleInstanceTable = CollectionsFactory.createMap();
         this.logger = agenda.getLogger();
         this.agenda = agenda;
     }
@@ -73,7 +70,7 @@ public class RuleBase {
         }
         final RuleInstance<EventAtom> rule = specification.instantiateRule(eventRealm, filter);
         rule.addActivationNotificationListener(agenda.getActivationListener(), true);
-        ruleInstanceTable.put(specification, filter, rule);
+        ruleInstanceTable.computeIfAbsent(specification, (k) -> CollectionsFactory.createMap()).put(filter, rule);
         return rule;
     }
 
@@ -103,7 +100,10 @@ public class RuleBase {
         final RuleInstance<?> instance = findInstance(specification, filter);
         if (instance != null) {
             instance.dispose();
-            ruleInstanceTable.remove(specification, filter);
+            ruleInstanceTable.compute(specification, (k, old) -> {
+                old.remove(filter);
+                return old.isEmpty() ? null: old; 
+            });
             return true;
         }
         return false;
@@ -114,7 +114,7 @@ public class RuleBase {
      *
      */
     protected void dispose() {
-        for (final RuleInstance<?> instance : ruleInstanceTable.values()) {
+        for (final RuleInstance<?> instance : getRuleInstances()) {
             instance.dispose();
         }
     }
@@ -127,7 +127,7 @@ public class RuleBase {
      * @since 2.0
      */
     public Map<RuleSpecification<?>, Set<EventFilter<?>>> getRuleSpecificationMultimap() {
-        return ruleInstanceTable.rowMap().entrySet().stream()
+        return ruleInstanceTable.entrySet().stream()
                 .collect(Collectors.toMap(Entry::getKey, entry -> entry.getValue().keySet()));
     }
 
@@ -135,7 +135,7 @@ public class RuleBase {
      * @return an immutable copy of the set of rule instances
      */
     public Set<RuleInstance<?>> getRuleInstances() {
-        return Collections.unmodifiableSet(new HashSet<>(ruleInstanceTable.values()));
+        return ruleInstanceTable.values().stream().flatMap((instancesByFilter) -> instancesByFilter.values().stream()).collect(Collectors.toSet());
     }
 
     /**
@@ -157,7 +157,7 @@ public class RuleBase {
     @SuppressWarnings("unchecked")
     protected <EventAtom> RuleInstance<EventAtom> findInstance(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
-        return (RuleInstance<EventAtom>) ruleInstanceTable.get(specification, filter);
+        return (RuleInstance<EventAtom>) ruleInstanceTable.getOrDefault(specification, Collections.emptyMap()).get(filter);
     }
 
     /**

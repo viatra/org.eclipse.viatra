@@ -11,13 +11,13 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -30,9 +30,9 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
@@ -81,14 +81,11 @@ public class IterateOverEDatatypeInstances implements IIteratingSearchOperation 
     
     protected Stream<EAttribute> doGetEAttributes(EClass eclass, ISearchContext context){
         @SuppressWarnings({ "unchecked"})
-        Table<EDataType, EClass, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Table.class, HashBasedTable::create);
-        if(!cache.contains(dataType, eclass)) {
-            EList<EAttribute> eAllAttributes = eclass.getEAllAttributes();
-            cache.put(dataType, eclass, 
-                    eAllAttributes.stream().filter(input -> Objects.equals(input.getEType(), dataType)).collect(Collectors.toSet())
-            );
-        }
-        return cache.get(dataType, eclass).stream();
+        Map<Tuple, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Map.class, CollectionsFactory::createMap);
+        Tuple compositeKey = Tuples.staticArityFlatTupleOf(dataType, eclass);
+        return cache.computeIfAbsent(compositeKey, (k) -> 
+            eclass.getEAllAttributes().stream().filter(input -> Objects.equals(input.getEType(), dataType)).collect(Collectors.toSet())
+        ).stream();
     }
 
     public EDataType getDataType() {

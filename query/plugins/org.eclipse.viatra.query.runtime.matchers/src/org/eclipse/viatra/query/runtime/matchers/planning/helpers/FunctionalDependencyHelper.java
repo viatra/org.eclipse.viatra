@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.query.runtime.matchers.util.Sets;
 
 /**
  * Helper utility class for functional dependency analysis.

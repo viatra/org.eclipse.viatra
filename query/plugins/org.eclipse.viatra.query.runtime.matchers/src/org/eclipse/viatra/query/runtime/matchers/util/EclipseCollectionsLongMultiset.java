@@ -51,11 +51,22 @@ public class EclipseCollectionsLongMultiset extends LongIntHashMap implements IM
 
     @Override
     public boolean removeOne(Long value) {
+        return removeOneInternal(value, true);
+    }
+    @Override
+    public boolean removeOneOrNop(Long value) {
+        return removeOneInternal(value, false);
+    }
+    
+    
+    protected boolean removeOneInternal(Long value, boolean throwIfImpossible) {
         int oldCount = super.getIfAbsent(value, 0);
-        if (oldCount == 0)
-            throw new IllegalStateException(String.format(
+        if (oldCount == 0) {
+            if (throwIfImpossible) throw new IllegalStateException(String.format(
                     "Cannot remove value '%s' that is not contained in %s", 
                     value, this));
+            else return false;
+        }
         
         int rest = oldCount - 1;
         boolean empty = rest == 0;

@@ -11,18 +11,19 @@ package org.eclipse.viatra.query.runtime.registry.view;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryType;
+import org.eclipse.viatra.query.runtime.matchers.util.IMemoryView;
+import org.eclipse.viatra.query.runtime.matchers.util.IMultiLookup;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SetMultimap;
 
 /**
  * An abstract {@link IRegistryView} implementation that stores the registry, the set of listeners added to the view and
@@ -31,14 +32,13 @@ import com.google.common.collect.SetMultimap;
  * 
  * @author Abel Hegedus
  * @since 1.3
- *
  */
 public abstract class AbstractRegistryView implements IRegistryView {
 
     private static final String LISTENER_EXCEPTION_REMOVE = "Exception occurred while notifying view listener %s about entry removal";
     private static final String LISTENER_EXCEPTION_ADD = "Exception occurred while notifying view listener %s about entry addition";
     protected final IQuerySpecificationRegistry registry;
-    protected final SetMultimap<String, IQuerySpecificationRegistryEntry> fqnToEntryMap;
+    protected final IMultiLookup<String, IQuerySpecificationRegistryEntry> fqnToEntryMap;
     protected final Set<IQuerySpecificationRegistryChangeListener> listeners;
     protected final boolean allowDuplicateFQNs;
 
@@ -61,7 +61,7 @@ public abstract class AbstractRegistryView implements IRegistryView {
     public AbstractRegistryView(IQuerySpecificationRegistry registry, boolean allowDuplicateFQNs) {
         this.registry = registry;
         this.allowDuplicateFQNs = allowDuplicateFQNs;
-        this.fqnToEntryMap = Multimaps.newSetMultimap(new TreeMap<>(), HashSet::new);
+        this.fqnToEntryMap = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
         this.listeners = new HashSet<>();
     }
 
@@ -72,25 +72,25 @@ public abstract class AbstractRegistryView implements IRegistryView {
 
     @Override
     public Iterable<IQuerySpecificationRegistryEntry> getEntries() {
-        return Collections.unmodifiableSet(new HashSet<>(fqnToEntryMap.values()));
+        return fqnToEntryMap.distinctValuesStream().collect(Collectors.toSet());
     }
 
     @Override
     public Set<String> getQuerySpecificationFQNs() {
-        return Collections.unmodifiableSet(new HashSet<>(fqnToEntryMap.keySet()));
+        return fqnToEntryMap.distinctKeysStream().collect(Collectors.toSet());
     }
 
     @Override
     public boolean hasQuerySpecificationFQN(String fullyQualifiedName) {
         Preconditions.checkArgument(fullyQualifiedName != null, "FQN must not be null!");
-        return fqnToEntryMap.containsKey(fullyQualifiedName);
+        return fqnToEntryMap.lookupExists(fullyQualifiedName);
     }
 
     @Override
     public Set<IQuerySpecificationRegistryEntry> getEntries(String fullyQualifiedName) {
         Preconditions.checkArgument(fullyQualifiedName != null, "FQN must not be null!");
-        Set<IQuerySpecificationRegistryEntry> entries = fqnToEntryMap.get(fullyQualifiedName);
-        return Collections.unmodifiableSet(new HashSet<>(entries));
+        IMemoryView<IQuerySpecificationRegistryEntry> entries = fqnToEntryMap.lookupOrEmpty(fullyQualifiedName);
+        return Collections.unmodifiableSet(entries.distinctValues());
     }
 
     @Override
@@ -109,13 +109,15 @@ public abstract class AbstractRegistryView implements IRegistryView {
     public void entryAdded(IQuerySpecificationRegistryEntry entry) {
         if (isEntryRelevant(entry)) {
             String fullyQualifiedName = entry.getFullyQualifiedName();
-            if(!allowDuplicateFQNs && fqnToEntryMap.containsKey(fullyQualifiedName)){
-                Set<IQuerySpecificationRegistryEntry> removed = fqnToEntryMap.removeAll(fullyQualifiedName);
+            IMemoryView<IQuerySpecificationRegistryEntry> duplicates = fqnToEntryMap.lookup(fullyQualifiedName);
+            if(!allowDuplicateFQNs && duplicates != null) {
+                Set<IQuerySpecificationRegistryEntry> removed = new HashSet<>(duplicates.distinctValues());
                 for (IQuerySpecificationRegistryEntry e : removed) {
+                    fqnToEntryMap.removePair(fullyQualifiedName, e);
                     notifyListeners(e, false);
                 }
             }
-            fqnToEntryMap.put(fullyQualifiedName, entry);
+            fqnToEntryMap.addPair(fullyQualifiedName, entry);
             notifyListeners(entry, true);
         }
     }
@@ -124,7 +126,7 @@ public abstract class AbstractRegistryView implements IRegistryView {
     public void entryRemoved(IQuerySpecificationRegistryEntry entry) {
         if (isEntryRelevant(entry)) {
             String fullyQualifiedName = entry.getFullyQualifiedName();
-            fqnToEntryMap.remove(fullyQualifiedName, entry);
+            fqnToEntryMap.removePair(fullyQualifiedName, entry);
             notifyListeners(entry, false);
         }
     }

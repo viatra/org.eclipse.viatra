@@ -44,8 +44,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.query.runtime.matchers.util.Sets;
 
 
 /**
@@ -122,7 +121,7 @@ class PConstraintInfoInferrer {
         // A ConstantValue constraint has a single variable, which is allowed to be unbound 
         // (extending through ConstantValue is considered a cheap operation)
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
-        Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
+        Set<? extends Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
         doCreateConstraintInfos(resultList, pConstraint, affectedVariables, bindings);
     }
 
@@ -273,7 +272,7 @@ class PConstraintInfoInferrer {
     private void createConstraintInfoTypeConstraint(List<PConstraintInfo> resultList, 
             TypeConstraint typeConstraint) {
         Set<PVariable> affectedVariables = typeConstraint.getAffectedVariables();
-        Set<Set<PVariable>> bindings = null;
+        Set<? extends Set<PVariable>> bindings = null;
         
         IInputKey inputKey = typeConstraint.getSupplierKey();
         if(inputKey.isEnumerable()){
@@ -295,7 +294,7 @@ class PConstraintInfoInferrer {
     }
     
     private void doCreateConstraintInfos(List<PConstraintInfo> constraintInfos,
-            PConstraint pConstraint, Set<PVariable> affectedVariables, Iterable<Set<PVariable>> bindings) {
+            PConstraint pConstraint, Set<PVariable> affectedVariables, Iterable<? extends Set<PVariable>> bindings) {
         Set<PConstraintInfo> sameWithDifferentBindings = new HashSet<>();
         for (Set<PVariable> boundVariables : bindings) {
             
@@ -307,7 +306,7 @@ class PConstraintInfoInferrer {
         }
     }
     
-    private Set<Set<PVariable>> excludeUnnavigableOperationMasks(TypeConstraint typeConstraint, Set<Set<PVariable>> bindings) {
+    private Set<Set<PVariable>> excludeUnnavigableOperationMasks(TypeConstraint typeConstraint, Set<? extends Set<PVariable>> bindings) {
         PVariable firstVariable = typeConstraint.getVariableInTuple(0);
         return bindings.stream().filter(
                 boundVariablesSet -> (boundVariablesSet.isEmpty() || boundVariablesSet.contains(firstVariable)))

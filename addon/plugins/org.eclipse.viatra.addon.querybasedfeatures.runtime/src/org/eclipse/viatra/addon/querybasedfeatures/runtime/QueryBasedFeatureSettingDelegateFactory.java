@@ -10,6 +10,7 @@ package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
@@ -31,12 +32,10 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 
 /**
  * @author Abel Hegedus
@@ -49,19 +48,23 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     
     private final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specificationMap;
     
-    private final ListMultimap<ViatraQueryEngine, QueryBasedFeature> delayedFeatures;
+    private final Map<ViatraQueryEngine, List<QueryBasedFeature>> delayedFeatures;
     
     public QueryBasedFeatureSettingDelegateFactory() {
         engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedViatraQueryEngine>>();
         specificationMap = new HashMap<>();
-        delayedFeatures = ArrayListMultimap.create();
+        delayedFeatures = CollectionsFactory.createMap();
     }
     
     public Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getSpecificationMap() {
         return specificationMap;
     }
     
-    protected ListMultimap<ViatraQueryEngine,QueryBasedFeature> getDelayedFeatures() {
+    /**
+     * Returns a live multimap associating all QBFs waiting to be initialized to each VQ engine. 
+     * Note that the multimap is currently only ever expected to grow, never deleted from or cleaned up. 
+     */
+    protected Map<ViatraQueryEngine, List<QueryBasedFeature>> getDelayedFeatures() {
         return delayedFeatures;
     }
     

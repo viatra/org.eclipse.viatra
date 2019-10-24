@@ -9,18 +9,19 @@
 package org.eclipse.viatra.query.runtime.rete.boundary;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputRecipe;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 /**
  * A class responsible for connecting input nodes to the runtime context.
@@ -31,7 +32,7 @@ import com.google.common.collect.Table;
 public final class InputConnector {
     Network network;
     
-    private Table<IInputKey, Tuple, Address<ExternalInputEnumeratorNode>> externalInputRoots = HashBasedTable.create(100, 1);
+    private Map<IInputKey, Map<Tuple, Address<ExternalInputEnumeratorNode>>> externalInputRoots = CollectionsFactory.createMap();
     
 //    /*
 //     * arity:1 used as simple entity constraints label is the object representing the type null label means all entities
@@ -88,7 +89,7 @@ public final class InputConnector {
         IInputKey inputKey = (IInputKey) recipe.getInputKey();
         Tuple seed = nopSeed(inputKey); // no preseeding as of now
         final Address<ExternalInputEnumeratorNode> freshAddress = Address.of(inputNode);
-        externalInputRoots.put(inputKey, seed, freshAddress);
+        externalInputRoots.computeIfAbsent(inputKey, (k)->CollectionsFactory.createMap()).put(seed, freshAddress);
         inputNode.connectThroughContext(network.getEngine(), inputKey, seed);
         
 //		final Address<Tunnel> freshAddress = Address.of((Tunnel)freshNode);
@@ -184,18 +185,18 @@ public final class InputConnector {
 //	}
 
     
-    public Collection<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodes() {
-        return externalInputRoots.values();
+    public Stream<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodes() {
+        return externalInputRoots.values().stream().flatMap((map)->map.values().stream());
     }
     public Collection<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodesForKey(IInputKey inputKey) {
-        return externalInputRoots.row(inputKey).values();
+        return externalInputRoots.getOrDefault(inputKey, Collections.emptyMap()).values();
     }
     public Address<ExternalInputEnumeratorNode> getExternalInputNodeForKeyUnseeded(IInputKey inputKey) {
-        return externalInputRoots.get(inputKey, null);
+        return externalInputRoots.getOrDefault(inputKey, Collections.emptyMap()).get(nopSeed(inputKey));
     }
     public Address<ExternalInputEnumeratorNode> getExternalInputNode(IInputKey inputKey, Tuple seed) {
         if (seed == null) seed = nopSeed(inputKey);
-        return externalInputRoots.get(inputKey, seed);
+        return externalInputRoots.getOrDefault(inputKey, Collections.emptyMap()).get(seed);
     }
 
 

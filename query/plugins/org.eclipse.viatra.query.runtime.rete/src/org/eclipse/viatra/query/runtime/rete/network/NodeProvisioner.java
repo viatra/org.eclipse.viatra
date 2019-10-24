@@ -13,7 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper;
@@ -37,9 +39,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.ActiveNodeConflictTrac
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.viatra.query.runtime.rete.traceability.UserRequestTrace;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 /**
  * Stores the internal parts of a rete network. Nodes are stored according to type and parameters.
@@ -233,18 +232,18 @@ public class NodeProvisioner {
             return reteContainer.resolveLocal(address);
     }
 
-    private Table<RecipeTraceInfo, TupleMask, UserRequestTrace> projectionIndexerUserRequests = HashBasedTable.create();
+    /** the composite key tuple is formed as (RecipeTraceInfo, TupleMask) */
+    private Map<Tuple, UserRequestTrace> projectionIndexerUserRequests = CollectionsFactory.createMap();
 
     // local version
     // TODO remove?
     public synchronized ProjectionIndexer accessProjectionIndexer(RecipeTraceInfo productionTrace, TupleMask mask) {
-        UserRequestTrace indexerTrace = projectionIndexerUserRequests.get(productionTrace, mask);
-        if (indexerTrace == null) {
+        Tuple tableKey = Tuples.staticArityFlatTupleOf(productionTrace, mask);
+        UserRequestTrace indexerTrace = projectionIndexerUserRequests.computeIfAbsent(tableKey, (k) -> {
             final org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe projectionIndexerRecipe = projectionIndexerRecipe(
                     productionTrace, mask);
-            indexerTrace = new UserRequestTrace(projectionIndexerRecipe, productionTrace);
-            projectionIndexerUserRequests.put(productionTrace, mask, indexerTrace);
-        }
+            return new UserRequestTrace(projectionIndexerRecipe, productionTrace);
+        });
         final Address<? extends Node> address = getOrCreateNodeByRecipe(indexerTrace);
         return (ProjectionIndexer) reteContainer.resolveLocal(address);
     }
@@ -273,17 +272,15 @@ public class NodeProvisioner {
     private org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe projectionIndexerRecipe(
             RecipeTraceInfo parentTrace, TupleMask mask) {
         final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
-        ProjectionIndexerRecipe projectionIndexerRecipe = resultSeedRecipes.get(parentRecipe, mask);
-        if (projectionIndexerRecipe == null) {
-            projectionIndexerRecipe = RecipesHelper.projectionIndexerRecipe(parentRecipe,
-                    CompilerHelper.toRecipeMask(mask));
-            resultSeedRecipes.put(parentRecipe, mask, projectionIndexerRecipe);
-        }
+        Tuple tableKey = Tuples.staticArityFlatTupleOf(parentRecipe, mask);
+        ProjectionIndexerRecipe projectionIndexerRecipe = resultSeedRecipes.computeIfAbsent(tableKey, (k) -> 
+            RecipesHelper.projectionIndexerRecipe(parentRecipe, CompilerHelper.toRecipeMask(mask))
+        );
         return projectionIndexerRecipe;
     }
 
-    private Table<ReteNodeRecipe, TupleMask, org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe> resultSeedRecipes = HashBasedTable
-            .create();
+    /** the composite key tuple is formed as (ReteNodeRecipe, TupleMask) */
+    private Map<Tuple, org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe> resultSeedRecipes = CollectionsFactory.createMap();
 
     // public synchronized Address<? extends Supplier>
     // accessValueBinderFilterNode(

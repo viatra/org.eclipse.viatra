@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
@@ -23,8 +25,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Gabor Bergmann
@@ -145,11 +145,12 @@ class JoinCandidate {
     // it is a Heath-join iff common variables functionally determine either all primary or all secondary variables
     public boolean isHeath() {
         if (heath == null) {
+            Set<PConstraint> union = Stream.concat(
+                    primary.getAllEnforcedConstraints().stream(),
+                    secondary.getAllEnforcedConstraints().stream()
+            ).collect(Collectors.toSet());
             Map<Set<PVariable>, Set<PVariable>> dependencies = 
-                    analyzer.getFunctionalDependencies(Sets.union(
-                            primary.getAllEnforcedConstraints(), 
-                            secondary.getAllEnforcedConstraints()
-                    ), false);
+                    analyzer.getFunctionalDependencies(union, false);
             // does varCommon determine either varPrimary or varSecondary?
             Set<PVariable> varCommonClosure = FunctionalDependencyHelper.closureOf(varCommon, dependencies);
 

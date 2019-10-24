@@ -9,6 +9,7 @@
 
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -35,9 +37,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 /**
  * A disjunction rewriter for creating a normalized form of specification, unifying variables and running basic sanity
@@ -234,13 +234,13 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         Set<TypeJudgement> allJudgements = new HashSet<TypeJudgement>();
         Set<TypeJudgement> newJudgementsToAdd = new HashSet<TypeJudgement>();
         Queue<TypeJudgement> judgementsToProcess = new LinkedList<TypeJudgement>();
-        Multimap<TypeJudgement, PConstraint> traceability = HashMultimap.create();
+        Map<TypeJudgement, List<PConstraint>> traceability = CollectionsFactory.createMap();
         
         for (ITypeConstraint typeConstraint : body.getConstraintsOfType(ITypeConstraint.class)) {
             TypeJudgement equivalentJudgement = typeConstraint.getEquivalentJudgement();
             judgementsToProcess.add(equivalentJudgement);
             allJudgements.add(equivalentJudgement);
-            traceability.put(equivalentJudgement, typeConstraint);
+            traceability.computeIfAbsent(equivalentJudgement, k-> new ArrayList<>()).add(typeConstraint);
         }
         
         while (!judgementsToProcess.isEmpty()) {
@@ -249,14 +249,18 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
                 if (allJudgements.add(alternativeJudgement)) {
                     newJudgementsToAdd.add(alternativeJudgement);
                     judgementsToProcess.add(alternativeJudgement);
-                    traceability.putAll(alternativeJudgement, traceability.get(judgement));
+                    traceability.merge(
+                            alternativeJudgement, 
+                            traceability.getOrDefault(judgement, new ArrayList<>()),
+                            (old,further) -> {old.addAll(further); return old;}
+                    );
                 }
             }
         }
         
         for (TypeJudgement typeJudgement : newJudgementsToAdd) {
             PConstraint newConstraint = typeJudgement.createConstraintFor(body);
-            for (PConstraint source : traceability.get(typeJudgement)) {
+            for (PConstraint source : traceability.getOrDefault(typeJudgement, Collections.emptyList())) {
                 addTrace(source, newConstraint);
             }
         }        

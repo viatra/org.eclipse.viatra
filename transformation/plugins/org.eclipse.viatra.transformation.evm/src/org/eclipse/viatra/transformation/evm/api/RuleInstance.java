@@ -10,9 +10,16 @@ package org.eclipse.viatra.transformation.evm.api;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
@@ -21,11 +28,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventType;
 import org.eclipse.viatra.transformation.evm.notification.ActivationNotificationProvider;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationProvider;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 
 /**
  * The rule instance is created in the EVM for a rule specification. 
@@ -62,7 +64,8 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
     }
 
     private final RuleSpecification<EventAtom> specification;
-    private final Table<ActivationState, EventAtom, Activation<EventAtom>> activations;
+    private final Map<ActivationState, Map<EventAtom, Activation<EventAtom>>> activationsByState;
+    private final Map<EventAtom, Map<ActivationState, Activation<EventAtom>>> activationsByEvent;
     private final ActivationNotificationProvider activationNotificationProvider;
     private EventHandler<EventAtom> handler;
    
@@ -75,7 +78,8 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      */
     protected RuleInstance(final RuleSpecification<EventAtom> specification) {
         this.specification = Objects.requireNonNull(specification, "Cannot create rule instance for null specification!");
-        this.activations = HashBasedTable.create();
+        this.activationsByState = CollectionsFactory.createMap();
+        this.activationsByEvent = CollectionsFactory.createMap();
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
     }
@@ -122,8 +126,8 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * @param context
      */
     protected void doFire(final Activation<EventAtom> activation, final ActivationState activationState, final EventAtom atom, final Context context) {
-        if (activations.contains(activationState, atom)) {
-            Collection<Job<EventAtom>> jobs = Optional.fromNullable(specification.getJobs(activationState)).or(Collections.emptyList());
+        if (activationsByState.getOrDefault(activationState, Collections.emptyMap()).containsKey(atom)) {
+            Collection<Job<EventAtom>> jobs = Optional.ofNullable(specification.getJobs(activationState)).orElse(Collections.emptyList());
             activationStateTransition(activation, EventType.RuleEngineEventType.FIRE);
             for (Job<? super EventAtom> job : jobs) {
                 try {
@@ -152,10 +156,19 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
         ActivationState nextActivationState = specification.getLifeCycle().nextActivationState(activationState, event);
         EventAtom atom = activation.getAtom();
         if (nextActivationState != null) {
-            Activation<EventAtom> removed = activations.remove(activationState, atom);
+            // remove old activation
+            Map<EventAtom, Activation<EventAtom>> byEvent = activationsByState.getOrDefault(activationState, Collections.emptyMap());
+            Activation<EventAtom> removed = byEvent.remove(atom);
+            if (removed != null && byEvent.isEmpty()) activationsByState.remove(activationState);
+            activationsByEvent.computeIfPresent(atom, (k,map) -> {
+                map.remove(activationState);
+                return map.isEmpty()? null : map;
+            });
+            
             activation.setState(nextActivationState);
             if (!nextActivationState.isInactive()) {
-                activations.put(nextActivationState, atom, activation);
+                activationsByState.computeIfAbsent(nextActivationState, k -> CollectionsFactory.createMap()).put(atom, activation);
+                activationsByEvent.computeIfAbsent(atom, k -> CollectionsFactory.createMap()).put(nextActivationState, activation);
                 if(removed == null) { // activation did not exist
                     activationNotificationProvider.notifyActivationCreated(activation, activationState);
                 } else { // still exists, only changed
@@ -214,30 +227,127 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
 
     /**
      * 
-     * @return the live map of activations of a given atom
-     * @since 2.0
+     * @return a possibly live map of activations of a given atom
+     * @since 2.3
      */
-    public Map<ActivationState, Activation<EventAtom>> getActivations(EventAtom atom) {
-        return activations.column(atom);
+    public Map<ActivationState, Activation<EventAtom>> getActivationsFor(EventAtom atom) {
+        return activationsByEvent.getOrDefault(atom, Collections.emptyMap());
     }
     
     
     /**
-     * 
-     * @return the live set of activations
+     * @return a stream of the current set of activations (live, do not modify while iterating)
      */
-    public Collection<Activation<EventAtom>> getAllActivations() {
-        return activations.values();
+    public Stream<Activation<EventAtom>> streamAllActivations() {
+        return activationsByState.values().stream().flatMap(byEvent -> byEvent.values().stream());
     }
+    /**
+     * 
+     * @return an unmodifiable live view of the set of activations
+     */
+    public Set<Activation<EventAtom>> getAllActivations() {
+        return allActivationsLiveView;
+    }
+    private final Set<Activation<EventAtom>> allActivationsLiveView = new Set<Activation<EventAtom>>() {
+
+        @Override
+        public int size() {
+            // cheaply iterate over states, of which there are not as many as event atoms
+            return activationsByState.entrySet().stream().mapToInt(entry -> entry.getValue().size()).sum();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return activationsByState.isEmpty();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            if (o instanceof Activation<?>) {
+                Activation<?> activation = (Activation<?>) o;
+                ActivationState state = activation.getState();
+                Object atom = activation.getAtom();
+                return activationsByEvent.getOrDefault(atom, Collections.emptyMap()).containsKey(state);
+            } else return false;
+        }
+
+        @Override
+        public Iterator<Activation<EventAtom>> iterator() {
+            return streamAllActivations().iterator();
+        }
+
+        @Override
+        public Object[] toArray() {
+            return streamAllActivations().toArray();
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            // slightly suboptimal
+            return streamAllActivations().collect(Collectors.toList()).toArray(a);
+        }
+
+        @Override
+        public boolean add(Activation<EventAtom> e) {
+            throw new UnsupportedOperationException("Unmodifiable view");
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            throw new UnsupportedOperationException("Unmodifiable view");
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            return c.stream().allMatch(o -> this.contains(o));
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends Activation<EventAtom>> c) {
+            throw new UnsupportedOperationException("Unmodifiable view");
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            throw new UnsupportedOperationException("Unmodifiable view");
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            throw new UnsupportedOperationException("Unmodifiable view");
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException("Unmodifiable view");
+        }
+        
+        @Override
+        public int hashCode() {
+            return streamAllActivations().mapToInt(act -> act.hashCode()).sum();
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this)
+                return true;
+            if (obj instanceof Set<?>) {
+                Set<?> set = (Set<?>) obj;
+                return set.size() == this.size() && this.containsAll(set);
+            } else return false;
+        }
+        
+    };
 
     /**
      * 
      * @param state
-     * @return the live set of activations in the given state
+     * @return the possibly live set of activations in the given state
+     * @since 2.3
      */
-    public Collection<Activation<EventAtom>> getActivations(final ActivationState state) {
+    public Collection<Activation<EventAtom>> getActivationsFor(final ActivationState state) {
         Objects.requireNonNull(state, "Cannot return activations for null state");
-        return activations.row(state).values();
+        return activationsByState.getOrDefault(state, Collections.emptyMap()).values();
     }
 
     /**
@@ -249,17 +359,19 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      */
     protected void dispose() {
         this.handler.dispose();
-        for (Cell<ActivationState, EventAtom, Activation<EventAtom>> cell : activations.cellSet()) {
-            Activation<EventAtom> activation = cell.getValue();
-            ActivationState activationState = activation.getState();
-            activation.setState(specification.getLifeCycle().getInactiveState());
-            activationNotificationProvider.notifyActivationRemoved(activation, activationState);
-        } 
+        for (Entry<ActivationState, Map<EventAtom, Activation<EventAtom>>> stateEntry : activationsByState.entrySet()) {
+            for (Entry<EventAtom, Activation<EventAtom>> eventEntry : stateEntry.getValue().entrySet()) {
+                Activation<EventAtom> activation = eventEntry.getValue();
+                ActivationState activationState = activation.getState();
+                activation.setState(specification.getLifeCycle().getInactiveState());
+                activationNotificationProvider.notifyActivationRemoved(activation, activationState);
+            }
+        }
         this.activationNotificationProvider.dispose();
     }
     
     @Override
     public String toString() {
-        return String.format("%s{spec=%s, activations=%s}", getClass().getName(), specification, activations);
+        return String.format("%s{spec=%s, activations=%s}", getClass().getName(), specification, activationsByState);
     }
 }

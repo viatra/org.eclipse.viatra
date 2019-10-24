@@ -24,5 +24,4 @@ Export-Package: org.eclipse.viatra.addon.viewers.runtime.zest,
  org.eclipse.viatra.addon.viewers.runtime.zest.extensions,
  org.eclipse.viatra.addon.viewers.runtime.zest.sources
 Bundle-Activator: org.eclipse.viatra.addon.viewers.runtime.zest.ViewersZestPlugin
-Import-Package: com.google.common.base;version="15.0.0"
 Automatic-Module-Name: org.eclipse.viatra.addon.viewers.runtime.zest

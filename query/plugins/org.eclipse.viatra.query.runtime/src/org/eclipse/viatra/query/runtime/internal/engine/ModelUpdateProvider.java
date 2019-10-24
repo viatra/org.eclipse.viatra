@@ -10,6 +10,7 @@ package org.eclipse.viatra.query.runtime.internal.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,24 +26,21 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.ChangeLevel;
 import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 
 public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryModelUpdateListener> {
 
     private final AdvancedViatraQueryEngine queryEngine;
     private ChangeLevel currentChange = ChangeLevel.NO_CHANGE;
     private ChangeLevel maxLevel = ChangeLevel.NO_CHANGE;
-    private final Multimap<ChangeLevel, ViatraQueryModelUpdateListener> listenerMap;
+    private final Map<ChangeLevel, Collection<ViatraQueryModelUpdateListener>> listenerMap;
     private final Logger logger;
     
     public ModelUpdateProvider(AdvancedViatraQueryEngine queryEngine, Logger logger) {
         super();
         this.queryEngine = queryEngine;
         this.logger = logger;
-        Map<ChangeLevel, Collection<ViatraQueryModelUpdateListener>> map = new EnumMap<>(ChangeLevel.class);
-        listenerMap = Multimaps.newSetMultimap(map, HashSet::new);
+        listenerMap = new EnumMap<>(ChangeLevel.class);
     }
     
     @Override
@@ -60,7 +58,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
         }
         
         ChangeLevel changeLevel = listener.getLevel();
-        listenerMap.put(changeLevel, listener);
+        listenerMap.computeIfAbsent(changeLevel, (k)->CollectionsFactory.createSet()).add(listener);
         // increase or keep max level of listeners
         ChangeLevel oldMaxLevel = maxLevel;
         maxLevel = maxLevel.changeOccured(changeLevel); 
@@ -75,8 +73,11 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
     @Override
     protected void listenerRemoved(ViatraQueryModelUpdateListener listener) {
         ChangeLevel changeLevel = listener.getLevel();
-        boolean removed = listenerMap.remove(changeLevel, listener);
-        if(!removed) {
+        Collection<ViatraQueryModelUpdateListener> old = listenerMap.getOrDefault(changeLevel, Collections.emptySet());
+        boolean removed = old.remove(listener);
+        if(removed) {
+            if (old.isEmpty()) listenerMap.remove(changeLevel);
+        } else {
             handleUnsuccesfulRemove(listener);
         }
         
@@ -113,10 +114,12 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
     }
 
     private void handleUnsuccesfulRemove(ViatraQueryModelUpdateListener listener) {
-        for (Entry<ChangeLevel, ViatraQueryModelUpdateListener> entry : listenerMap.entries()) {
-            if(entry.getValue().equals(listener)) {
+        for (Entry<ChangeLevel, Collection<ViatraQueryModelUpdateListener>> entry : listenerMap.entrySet()) {
+            Collection<ViatraQueryModelUpdateListener> existingListeners = entry.getValue();
+            // if the listener is contained in some other bucket, remove it from there
+            if(existingListeners.remove(listener)) {
                 logger.error("Listener "+listener+" change level changed since initialization!");
-                listenerMap.remove(entry.getKey(), entry.getValue());
+                if (existingListeners.isEmpty()) listenerMap.remove(entry.getKey());
                 return; // listener is contained only once
             }
         }
@@ -156,10 +159,12 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
     // - index: IQBase dirty callback
     private final ViatraBaseIndexChangeListener indexListener = new ViatraBaseIndexChangeListener() {
         
+        @Override
         public boolean onlyOnIndexChange() {
             return false;
         }
         
+        @Override
         public void notifyChanged(boolean indexChanged) {
             if(indexChanged) {
                 currentChange = currentChange.changeOccured(ChangeLevel.INDEX);

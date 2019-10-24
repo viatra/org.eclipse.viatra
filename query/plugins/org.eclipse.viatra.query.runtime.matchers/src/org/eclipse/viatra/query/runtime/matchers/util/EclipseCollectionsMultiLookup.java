@@ -9,6 +9,7 @@
 package org.eclipse.viatra.query.runtime.matchers.util;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
@@ -61,8 +62,8 @@ class EclipseCollectionsMultiLookup {
         }
         
         @Override
-        public void lowLevelRemove(Key key) {
-            super.remove(key);
+        public Object lowLevelRemove(Key key) {
+            return super.remove(key);
         }
         
         @Override
@@ -82,6 +83,11 @@ class EclipseCollectionsMultiLookup {
             return super.size();
         }
         
+        @Override
+        public Stream<Key> distinctKeysStream() {
+            // may be more efficient than the default spliterator
+            return super.keySet().stream();
+        }
         
         public abstract static class ToSets<Key, Value> extends FromObjects<Key, Value, MarkedSet<Value>> 
             implements IMultiLookupAbstract.ToSetsAbstract<Key, Value>
@@ -153,8 +159,8 @@ class EclipseCollectionsMultiLookup {
         }
         
         @Override
-        public void lowLevelRemove(Long key) {
-            super.remove(key);
+        public Object lowLevelRemove(Long key) {
+            return super.remove(key);
         }
         
         @Override

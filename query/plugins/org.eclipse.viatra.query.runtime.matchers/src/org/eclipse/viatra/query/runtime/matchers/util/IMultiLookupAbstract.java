@@ -11,6 +11,9 @@ package org.eclipse.viatra.query.runtime.matchers.util;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.viatra.query.runtime.matchers.util.MarkedMemory.MarkedSet;
 
@@ -61,7 +64,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     /**
      * Implementor shall bind to the low-level remove() or equivalent of the underlying Key-to-Object map
      */
-    abstract void lowLevelRemove(Key key);
+    abstract Object lowLevelRemove(Key key);
     
     /**
      * Implementor shall bind to the low-level putIfAbsent() or equivalent of the underlying Key-to-Object map
@@ -92,9 +95,23 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     // generic multi-lookup logic
    
     @Override
+    default boolean lookupExists(Key key) {
+        Object object = lowLevelGet(key);
+        return null != object;
+    }
+    
+    @Override
     public default IMemoryView<Value> lookup(Key key) {
         Object object = lowLevelGet(key);
         if (object == null) return null;
+        if (object instanceof MarkedMemory) return (Bucket) object;
+        return yieldSingleton((Value)object);
+    }
+    
+    @Override
+    default IMemoryView<Value> lookupAndRemoveAll(Key key) {
+        Object object = lowLevelRemove(key);
+        if (object == null) return EmptyMemory.instance();
         if (object instanceof MarkedMemory) return (Bucket) object;
         return yieldSingleton((Value)object);
     }
@@ -109,6 +126,15 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
 
     @Override
     public default ChangeGranularity addPair(Key key, Value value) {
+        return addPairInternal(key, value, true);
+    }
+    
+    @Override
+    default ChangeGranularity addPairOrNop(Key key, Value value) {
+        return addPairInternal(key, value, false);
+    }
+
+    public default ChangeGranularity addPairInternal(Key key, Value value, boolean throwIfImpossible) {
         Object old = lowLevelPutIfAbsent(key, value);
         boolean keyChange = (old == null);
 
@@ -119,11 +145,17 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
             if (old instanceof MarkedMemory) { // ... as collection
                 bucket = (Bucket) old;
             } else { // ... as singleton
+                if (!this.duplicatesAllowed() && Objects.equals(value, old)) {
+                    if (throwIfImpossible) 
+                        throw new IllegalStateException(); 
+                    else 
+                        return ChangeGranularity.DUPLICATE;
+                }
                 bucket = createSingletonBucket((Value) old);
                 lowLevelPut(key, bucket);
             }
             // will throw if forbidden duplicate, return false if allowed duplicate
-            if (addToBucket(bucket, value)) {
+            if (addToBucket(bucket, value, throwIfImpossible)) {
                 // deltas may become empty or a singleton after addition!
                 if (negativesAllowed()) {
                     if (bucket.isEmpty()) { 
@@ -168,12 +200,21 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
 
     @Override
     public default ChangeGranularity removePair(Key key, Value value) {
+        return removePairInternal(key, value, true);
+    }
+    
+    @Override
+    default ChangeGranularity removePairOrNop(Key key, Value value) {
+        return removePairInternal(key, value, false);
+    }
+
+    public default ChangeGranularity removePairInternal(Key key, Value value, boolean throwIfImpossible) {
         Object old = lowLevelGet(key);
         if (old instanceof MarkedMemory) { // ... as collection
             @SuppressWarnings("unchecked")
             Bucket bucket = (Bucket) old;
             // will throw if removing non-existent, return false if removing duplicate
-            boolean valueChange = removeFromBucket(bucket, value);
+            boolean valueChange = removeFromBucket(bucket, value, throwIfImpossible);            
             handleSingleton(key, bucket);
             if (valueChange) 
                 return ChangeGranularity.VALUE;
@@ -182,10 +223,17 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
         } else if (value.equals(old)) { // matching singleton
             lowLevelRemove(key);
             return ChangeGranularity.KEY;
-        } else { // different singleton, will produce a delta
-            Bucket deltaBucket = createDeltaBucket((Value) old, value); // will throw if no deltas supported
-            lowLevelPut(key, deltaBucket);
-            return ChangeGranularity.VALUE; // no key change
+        } else { // different singleton, will produce a delta if possible
+            if (negativesAllowed()) {
+                Bucket deltaBucket = createDeltaBucket((Value) old, value); // will throw if no deltas supported
+                lowLevelPut(key, deltaBucket);
+                return ChangeGranularity.VALUE; // no key change                
+            } else {
+                if (throwIfImpossible) 
+                    throw new IllegalStateException(); 
+                else 
+                    return ChangeGranularity.DUPLICATE;
+            }
         }
     }
 
@@ -243,8 +291,18 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
     }
     
     @Override
+    default Stream<Value> distinctValuesStream() {
+        return StreamSupport.stream(distinctValues().spliterator(), false);
+    }
+    
+    @Override
     default Iterable<Key> distinctKeys() {
         return lowLevelKeySet();
+    }
+    
+    @Override
+    default Stream<Key> distinctKeysStream() {
+        return StreamSupport.stream(distinctKeys().spliterator(), false);
     }
     
     @Override
@@ -258,20 +316,26 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
      * @return iff negative multiplicites are allowed
      */
     abstract boolean negativesAllowed();
+
+    /**
+     * @return iff larger-than-1 multiplicites are allowed
+     * @since 2.3
+     */
+    abstract boolean duplicatesAllowed();
     
     /**
      * Increases the multiplicity of the value in the bucket.
      * @return true iff non-duplicate
-     * @throws IllegalStateException if disallowed duplication 
+     * @throws IllegalStateException if disallowed duplication and throwIfImpossible is specified 
      */
-    abstract boolean addToBucket(Bucket bucket, Value value);
+    abstract boolean addToBucket(Bucket bucket, Value value, boolean throwIfImpossible);
 
     /**
      * Decreases the multiplicity of the value in the bucket.
      * @return false if removing duplicate value
-     * @throws IllegalStateException if removing non-existing value (unless delta map)
+     * @throws IllegalStateException if removing non-existing value (unless delta map) and throwIfImpossible is specified
      */
-    abstract boolean removeFromBucket(Bucket bucket, Value value);
+    abstract boolean removeFromBucket(Bucket bucket, Value value, boolean throwIfImpossible);
 
     /**
      * Checks whether the bucket is a singleton, i.e. it contains a single value with multiplicity +1
@@ -320,16 +384,21 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
         public default boolean negativesAllowed() {
             return false;
         }
-
         @Override
-        public default boolean addToBucket(MarkedSet<Value> bucket, Value value) {
-            if (bucket.addOne(value)) return true; 
-            else throw new IllegalStateException();
+        default boolean duplicatesAllowed() {
+            return false;
         }
 
         @Override
-        public default boolean removeFromBucket(MarkedSet<Value> bucket, Value value) {
-            return bucket.removeOne(value);
+        public default boolean addToBucket(MarkedSet<Value> bucket, Value value, boolean throwIfImpossible) {
+            if (bucket.addOne(value)) return true; 
+            else if (throwIfImpossible) throw new IllegalStateException();
+            else return false;
+        }
+
+        @Override
+        public default boolean removeFromBucket(MarkedSet<Value> bucket, Value value, boolean throwIfImpossible) {
+            return throwIfImpossible ? bucket.removeOne(value) : bucket.removeOneOrNop(value);
         }
 
         @Override
@@ -373,15 +442,19 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
         public default boolean negativesAllowed() {
             return false;
         }
+        @Override
+        default boolean duplicatesAllowed() {
+            return true;
+        }
 
         @Override
-        public default boolean addToBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value) {
+        public default boolean addToBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value, boolean throwIfImpossible) {
             return bucket.addOne(value); 
         }
 
         @Override
-        public default boolean removeFromBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value) {
-            return bucket.removeOne(value);
+        public default boolean removeFromBucket(MarkedMemory.MarkedMultiset<Value> bucket, Value value, boolean throwIfImpossible) {
+            return throwIfImpossible ? bucket.removeOne(value) : bucket.removeOneOrNop(value);
         }
 
         @Override
