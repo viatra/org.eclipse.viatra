@@ -9,6 +9,8 @@
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,11 +38,20 @@ import com.google.common.collect.Iterables;
 public final class PatternParsingResults {
     private final PatternSetValidationDiagnostics diag;
     private final List<Pattern> patterns;
+    private final Collection<Pattern> removedPatterns;
     private final SpecificationBuilder builder;
     
     public PatternParsingResults(List<Pattern> patterns, PatternSetValidationDiagnostics diag, SpecificationBuilder builder) {
+        this(patterns, Collections.emptyList(), diag, builder);
+    }
+    
+    /**
+     * @since 2.3
+     */
+    public PatternParsingResults(List<Pattern> patterns, Collection<Pattern> removedPatterns, PatternSetValidationDiagnostics diag, SpecificationBuilder builder) {
         this.diag = diag;
         this.patterns = patterns;
+        this.removedPatterns = removedPatterns;
         this.builder = builder;
     }
     
@@ -110,6 +121,13 @@ public final class PatternParsingResults {
     }
 
     /**
+     * @since 2.3
+     */
+    public Iterable<Pattern> getRemovedPatterns() {
+        return removedPatterns;
+    }
+    
+    /**
      * Collects all the query that are parsed and built successfully
      * @return In case of parsing errors, the returned contents is undefined.
      */
@@ -141,5 +159,23 @@ public final class PatternParsingResults {
         } else {
             return builder.buildErroneousSpecification(pattern, errors.stream(), false);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(builder, diag, patterns, removedPatterns);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PatternParsingResults other = (PatternParsingResults) obj;
+        return Objects.equals(builder, other.builder) && Objects.equals(diag, other.diag)
+                && Objects.equals(patterns, other.patterns) && Objects.equals(removedPatterns, other.removedPatterns);
     }
 }

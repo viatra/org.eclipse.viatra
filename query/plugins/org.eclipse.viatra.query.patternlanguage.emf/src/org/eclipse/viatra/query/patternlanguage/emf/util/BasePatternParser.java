@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -84,8 +85,14 @@ public abstract class BasePatternParser {
     }
 
     protected Resource resource(InputStream in, URI uriToUse, Map<?, ?> options, ResourceSet resourceSet) {
-        Resource resource = resourceFactory.createResource(uriToUse);
-        resourceSet.getResources().add(resource);
+        Resource resource = resourceSet.getResources().stream()
+            .filter(res -> Objects.equals(uriToUse, res.getURI()))
+            .findFirst()
+            .orElseGet(() -> {
+                Resource res = resourceFactory.createResource(uriToUse);
+                resourceSet.getResources().add(res);
+                return res;
+            });
         try {
             resource.load(in, options);
             return resource;

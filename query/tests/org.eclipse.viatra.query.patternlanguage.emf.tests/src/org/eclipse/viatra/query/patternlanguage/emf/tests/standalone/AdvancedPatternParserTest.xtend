@@ -497,6 +497,147 @@ class AdvancedPatternParserTest {
             
     }
     
+    /*  Test case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=552532 */
+    @Test
+    def void removePatternWithUpdateTest() {
+        val input = new HashMap<URI, String>
+
+        val String original = '''
+            package pat1
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, _);
+            }
+            
+            pattern b1(c : EClass) {
+             find b(c);
+            }
+        '''
+        
+        val String afterRemoval = '''
+            package pat1
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, _);
+            }
+        '''
+
+        val uri = URI.createURI('''__synthetic_pattern''').resolve(URI.createFileURI(System.getProperty("user.dir")))
+        input.put(uri, original)
+
+        val parser = PatternParserBuilder.instance.buildAdvanced
+
+        val results = parser.addSpecifications(input);
+        assertEquals(2,
+            results.getAddedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+         
+        input.clear    
+        input.put(uri, afterRemoval)
+        
+        val updatedResults = parser.updateSpecifications(input)
+        assertEquals(1,
+            updatedResults.getUpdatedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(1,
+            updatedResults.getRemovedSpecifications.size)
+    }
+    
+    /*  Test case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=552532 */
+    @Test
+    def void multiFilePatternDeleteByUpdateTest() {
+        val input = new HashMap<URI, String>
+
+        val String pattern1 = '''
+            package pat1
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern b(c : EClass) {
+             EClass.name(c, _);
+            }
+        '''
+
+        val String pattern2 = '''
+            package pat2
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern c(c : EClass) {
+             EClass.name(c, _);
+            }
+        '''
+        
+        val uri1 = URI.createURI('''__synthetic_pattern1''').resolve(URI.createFileURI(System.getProperty("user.dir")))
+        val uri2 = URI.createURI('''__synthetic_pattern2''').resolve(URI.createFileURI(System.getProperty("user.dir")))
+        input.put(uri1, pattern1)
+        input.put(uri2, pattern2)
+
+        val parser = PatternParserBuilder.instance.buildAdvanced
+
+        val results = parser.addSpecifications(input);
+        assertTrue(
+            results.getAddedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size === 2)
+         
+        input.clear    
+        val String updatedPattern1 = '''
+            package pat1
+                        
+            import "http://www.eclipse.org/emf/2002/Ecore";
+                        
+            pattern b(c : EClass) {
+             EClass.name(c, _);
+            }
+                        
+            pattern b1(c : EClass) {
+             find pat2.c(c);
+            }
+        '''
+        
+        input.put(uri1, updatedPattern1)
+        
+        val updatedResults = parser.updateSpecifications(input)
+        assertEquals(2,
+            updatedResults.getUpdatedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(0,
+            updatedResults.getImpactedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.ERROR].size)
+            
+        input.clear    
+        val String updatedPattern2 = '''
+            package pat2
+                        
+            import "http://www.eclipse.org/emf/2002/Ecore";
+                        
+            pattern c1(c : EClass) {
+             EClass.name(c, _);
+            }
+        '''
+        
+        input.put(uri2, updatedPattern2)
+        
+        val readdWithDifferentNameResults = parser.updateSpecifications(input);
+        
+        assertEquals(1,
+            readdWithDifferentNameResults.getUpdatedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(1,
+            readdWithDifferentNameResults.getImpactedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(1,
+            readdWithDifferentNameResults.getImpactedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.ERROR].size)
+            
+        input.put(uri2, pattern2)
+        
+        val fixedCalledNameResults = parser.updateSpecifications(input)
+        assertEquals(1,
+            fixedCalledNameResults.getUpdatedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(2,
+            fixedCalledNameResults.getImpactedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.OK].size)
+        assertEquals(0,
+            fixedCalledNameResults.getImpactedSpecifications.filter[it.internalQueryRepresentation.status === PQueryStatus.ERROR].size)
+            
+    }
+    
     /* Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=546423 */
     @Test
     def void multipatternFileDeleteTest() {
