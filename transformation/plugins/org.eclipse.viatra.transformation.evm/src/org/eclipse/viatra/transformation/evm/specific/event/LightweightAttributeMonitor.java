@@ -52,7 +52,7 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
                 }
             }        
         };
-        this.observedMultimap = CollectionsFactory.createMultiLookup(Object.class, MemoryType.SETS, Object.class);
+        this.observedMultimap = CollectionsFactory.createMultiLookup(Object.class, MemoryType.MULTISETS, Object.class);
     }
     
     @Override
