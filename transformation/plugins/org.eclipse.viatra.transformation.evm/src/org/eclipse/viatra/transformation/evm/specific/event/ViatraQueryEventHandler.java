@@ -26,16 +26,18 @@ import org.eclipse.viatra.transformation.evm.api.event.adapter.EventHandlerAdapt
 import org.eclipse.viatra.transformation.evm.api.event.adapter.EventProcessorAdapter;
 import org.eclipse.viatra.transformation.evm.notification.AttributeMonitor;
 import org.eclipse.viatra.transformation.evm.notification.IActivationNotificationListener;
-import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum;
 
 public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventHandlerAdapter<Match> {
 
     private AttributeMonitor<Match> attributeMonitor;
     private UnregisterMonitorActivationNotificationListener unregisterListener;
+    private final boolean needsAttributeMonitor;
     
     protected ViatraQueryEventHandler(ViatraQueryEventSource<Match> source, EventFilter<? super Match> filter, RuleInstance<Match> instance) {
         super(source, filter, instance);
+        needsAttributeMonitor = instance.getLifeCycle().containsTo(CRUDActivationStateEnum.UPDATED);
     }
 
     protected AttributeMonitor<Match> prepareAttributeMonitor(){
@@ -54,12 +56,15 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
     protected void prepareEventHandler() {
         super.prepareEventHandler();
         
-        attributeMonitor = Objects.requireNonNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         ViatraQueryEventSource<Match> eventSource = (ViatraQueryEventSource<Match>) getSource();
         eventSource.addHandler(this);
-        attributeMonitor.addAttributeMonitorListener(eventSource.getAttributeMonitorListener());
-        unregisterListener = Objects.requireNonNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
-        getInstance().addActivationNotificationListener(unregisterListener, false);
+        
+        if (needsAttributeMonitor) {            
+            attributeMonitor = Objects.requireNonNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
+            attributeMonitor.addAttributeMonitorListener(eventSource.getAttributeMonitorListener());
+            unregisterListener = Objects.requireNonNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
+            getInstance().addActivationNotificationListener(unregisterListener, false);
+        }
     }
 
     protected UnregisterMonitorActivationNotificationListener prepareActivationNotificationListener() {
@@ -80,7 +85,7 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
             protected void activationMissing(Event<Match> event) {
                 Match eventAtom = event.getEventAtom();
                 Activation<Match> activation = getInstance().createActivation(eventAtom);
-                if(getInstance().getLifeCycle().containsTo(CRUDActivationStateEnum.UPDATED)) {
+                if(needsAttributeMonitor) {
                     attributeMonitor.registerFor(eventAtom);
                 }
                 getInstance().activationStateTransition(activation, CRUDEventTypeEnum.CREATED);
@@ -131,9 +136,11 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
 
     @Override
     public void dispose() {
-        getInstance().removeActivationNotificationListener(unregisterListener);
         ((ViatraQueryEventSource<Match>) getSource()).removeHandler(this);
-        attributeMonitor.dispose();
+        if (needsAttributeMonitor) {            
+            getInstance().removeActivationNotificationListener(unregisterListener);
+            attributeMonitor.dispose();
+        }
     }
 
 }
