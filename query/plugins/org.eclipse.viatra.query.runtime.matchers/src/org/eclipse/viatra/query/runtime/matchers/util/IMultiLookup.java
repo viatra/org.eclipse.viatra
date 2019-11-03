@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory.MemoryT
  * 
  * @author Gabor Bergmann
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMultiLookup<Key, Value> {
     

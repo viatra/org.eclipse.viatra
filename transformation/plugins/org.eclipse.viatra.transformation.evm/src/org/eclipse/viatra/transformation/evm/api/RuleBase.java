@@ -70,7 +70,7 @@ public class RuleBase {
         }
         final RuleInstance<EventAtom> rule = specification.instantiateRule(eventRealm, filter);
         rule.addActivationNotificationListener(agenda.getActivationListener(), true);
-        ruleInstanceTable.computeIfAbsent(specification, (k) -> CollectionsFactory.createMap()).put(filter, rule);
+        ruleInstanceTable.computeIfAbsent(specification, k -> CollectionsFactory.createMap()).put(filter, rule);
         return rule;
     }
 
@@ -135,7 +135,7 @@ public class RuleBase {
      * @return an immutable copy of the set of rule instances
      */
     public Set<RuleInstance<?>> getRuleInstances() {
-        return ruleInstanceTable.values().stream().flatMap((instancesByFilter) -> instancesByFilter.values().stream()).collect(Collectors.toSet());
+        return ruleInstanceTable.values().stream().flatMap(instancesByFilter -> instancesByFilter.values().stream()).collect(Collectors.toSet());
     }
 
     /**

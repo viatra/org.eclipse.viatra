@@ -58,7 +58,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
         }
         
         ChangeLevel changeLevel = listener.getLevel();
-        listenerMap.computeIfAbsent(changeLevel, (k)->CollectionsFactory.createSet()).add(listener);
+        listenerMap.computeIfAbsent(changeLevel, k -> CollectionsFactory.createSet()).add(listener);
         // increase or keep max level of listeners
         ChangeLevel oldMaxLevel = maxLevel;
         maxLevel = maxLevel.changeOccured(changeLevel); 

@@ -910,8 +910,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     void addInstanceListenerInternal(final InstanceListener listener, EClass subscriptionType,
             final Object elementTypeKey) {
         Set<EClass> subscriptionTypes = instanceListeners
-                .computeIfAbsent(elementTypeKey, (k) -> CollectionsFactory.createMap())
-                .computeIfAbsent(listener, (k) -> CollectionsFactory.createSet());
+                .computeIfAbsent(elementTypeKey, k -> CollectionsFactory.createMap())
+                .computeIfAbsent(listener, k -> CollectionsFactory.createSet());
         subscriptionTypes.add(subscriptionType);
     }
 
@@ -935,8 +935,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     void addFeatureListenerInternal(final FeatureListener listener, EStructuralFeature subscriptionType,
             final Object elementTypeKey) {
         Set<EStructuralFeature> subscriptionTypes = featureListeners
-                .computeIfAbsent(elementTypeKey, (k) -> CollectionsFactory.createMap())
-                .computeIfAbsent(listener, (k) -> CollectionsFactory.createSet());
+                .computeIfAbsent(elementTypeKey, k -> CollectionsFactory.createMap())
+                .computeIfAbsent(listener, k -> CollectionsFactory.createSet());
         subscriptionTypes.add(subscriptionType);
     }
 
@@ -960,8 +960,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     void addDatatypeListenerInternal(final DataTypeListener listener, EDataType subscriptionType,
             final Object elementTypeKey) {
         Set<EDataType> subscriptionTypes = dataTypeListeners
-                .computeIfAbsent(elementTypeKey, (k) -> CollectionsFactory.createMap())
-                .computeIfAbsent(listener, (k) -> CollectionsFactory.createSet());
+                .computeIfAbsent(elementTypeKey, k -> CollectionsFactory.createMap())
+                .computeIfAbsent(listener, k -> CollectionsFactory.createSet());
         subscriptionTypes.add(subscriptionType);
     }
 

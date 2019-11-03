@@ -65,6 +65,9 @@ public class EclipseCollectionsMultiset<T> extends EclipseCollectionsBagMemory<T
         return removeOneInternal(value, false);
     }
 
+    /**
+     * @since 2.3
+     */
     protected boolean removeOneInternal(T value, boolean throwIfImpossible) {
         int oldCount = super.getIfAbsent(value, 0);
         if (oldCount == 0) {

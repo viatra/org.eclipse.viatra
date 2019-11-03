@@ -239,7 +239,7 @@ public class NodeProvisioner {
     // TODO remove?
     public synchronized ProjectionIndexer accessProjectionIndexer(RecipeTraceInfo productionTrace, TupleMask mask) {
         Tuple tableKey = Tuples.staticArityFlatTupleOf(productionTrace, mask);
-        UserRequestTrace indexerTrace = projectionIndexerUserRequests.computeIfAbsent(tableKey, (k) -> {
+        UserRequestTrace indexerTrace = projectionIndexerUserRequests.computeIfAbsent(tableKey, k -> {
             final org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe projectionIndexerRecipe = projectionIndexerRecipe(
                     productionTrace, mask);
             return new UserRequestTrace(projectionIndexerRecipe, productionTrace);
@@ -273,7 +273,7 @@ public class NodeProvisioner {
             RecipeTraceInfo parentTrace, TupleMask mask) {
         final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
         Tuple tableKey = Tuples.staticArityFlatTupleOf(parentRecipe, mask);
-        ProjectionIndexerRecipe projectionIndexerRecipe = resultSeedRecipes.computeIfAbsent(tableKey, (k) -> 
+        ProjectionIndexerRecipe projectionIndexerRecipe = resultSeedRecipes.computeIfAbsent(tableKey, k -> 
             RecipesHelper.projectionIndexerRecipe(parentRecipe, CompilerHelper.toRecipeMask(mask))
         );
         return projectionIndexerRecipe;

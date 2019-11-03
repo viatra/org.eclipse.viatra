@@ -48,6 +48,12 @@ public class EclipseCollectionsSetMemory<Value> extends UnifiedSet<Value> implem
     }
     
     @Override
+    public boolean removeOne(Value value) {
+        // Kept for binary compatibility
+        return ISetMemory.super.removeOne(value);
+    }
+    
+    @Override
     public boolean removeOneOrNop(Value value) {
         return super.remove(value);
     }

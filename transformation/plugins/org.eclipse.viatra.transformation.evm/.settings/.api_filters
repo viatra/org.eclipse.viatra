@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.transformation.evm" version="2">
+    <resource path="src/org/eclipse/viatra/transformation/evm/api/RuleBase.java" type="org.eclipse.viatra.transformation.evm.api.RuleBase">
+        <filter comment="Internal API update" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.api.RuleBase"/>
+                <message_argument value="ruleInstanceTable"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/evm/api/RuleInstance.java" type="org.eclipse.viatra.transformation.evm.api.RuleInstance">
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.api.RuleInstance"/>
+                <message_argument value="getActivations(ActivationState)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.api.RuleInstance"/>
+                <message_argument value="getActivations(EventAtom)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.transformation.evm.api.RuleInstance"/>
+                <message_argument value="getAllActivations()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

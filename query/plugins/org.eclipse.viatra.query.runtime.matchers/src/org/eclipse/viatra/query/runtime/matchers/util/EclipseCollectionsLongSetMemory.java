@@ -36,6 +36,15 @@ public class EclipseCollectionsLongSetMemory extends LongHashSet implements ISet
     }
 
     @Override
+    public boolean removeOne(Long value) {
+        // Kept for binary compatibility
+        return ISetMemory.super.removeOne(value);
+    }
+    
+    /**
+     * @since 2.3
+     */
+    @Override
     public boolean removeOneOrNop(Long value) {
         return super.remove(value);
     }
