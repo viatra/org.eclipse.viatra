@@ -44,6 +44,8 @@ import org.eclipse.viatra.transformation.evm.notification.IActivationNotificatio
  */
 public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
 
+    private static final String UNMODIFIABLE_VIEW_MESSAGE = "Unmodifiable view";
+
     /**
      * A default implementation for providing activation state change 
      * notifications to listeners.
@@ -237,6 +239,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
     
     /**
      * @return a stream of the current set of activations (live, do not modify while iterating)
+     * @since 2.3
      */
     public Stream<Activation<EventAtom>> streamAllActivations() {
         return activationsByState.values().stream().flatMap(byEvent -> byEvent.values().stream());
@@ -244,6 +247,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
     /**
      * 
      * @return an unmodifiable live view of the set of activations
+     * @since 2.3
      */
     public Set<Activation<EventAtom>> getAllActivations() {
         return allActivationsLiveView;
@@ -289,42 +293,42 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
 
         @Override
         public boolean add(Activation<EventAtom> e) {
-            throw new UnsupportedOperationException("Unmodifiable view");
+            throw new UnsupportedOperationException(UNMODIFIABLE_VIEW_MESSAGE);
         }
 
         @Override
         public boolean remove(Object o) {
-            throw new UnsupportedOperationException("Unmodifiable view");
+            throw new UnsupportedOperationException(UNMODIFIABLE_VIEW_MESSAGE);
         }
 
         @Override
         public boolean containsAll(Collection<?> c) {
-            return c.stream().allMatch(o -> this.contains(o));
+            return c.stream().allMatch(this::contains);
         }
 
         @Override
         public boolean addAll(Collection<? extends Activation<EventAtom>> c) {
-            throw new UnsupportedOperationException("Unmodifiable view");
+            throw new UnsupportedOperationException(UNMODIFIABLE_VIEW_MESSAGE);
         }
 
         @Override
         public boolean retainAll(Collection<?> c) {
-            throw new UnsupportedOperationException("Unmodifiable view");
+            throw new UnsupportedOperationException(UNMODIFIABLE_VIEW_MESSAGE);
         }
 
         @Override
         public boolean removeAll(Collection<?> c) {
-            throw new UnsupportedOperationException("Unmodifiable view");
+            throw new UnsupportedOperationException(UNMODIFIABLE_VIEW_MESSAGE);
         }
 
         @Override
         public void clear() {
-            throw new UnsupportedOperationException("Unmodifiable view");
+            throw new UnsupportedOperationException(UNMODIFIABLE_VIEW_MESSAGE);
         }
         
         @Override
         public int hashCode() {
-            return streamAllActivations().mapToInt(act -> act.hashCode()).sum();
+            return streamAllActivations().mapToInt(Activation::hashCode).sum();
         }
         
         @Override

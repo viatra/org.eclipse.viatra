@@ -20,6 +20,7 @@ package org.eclipse.viatra.query.runtime.matchers.util;
  * 
  * @author Gabor Bergmann
  * @since 1.7
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMemory<T> extends IMemoryView<T>, Clearable {
 

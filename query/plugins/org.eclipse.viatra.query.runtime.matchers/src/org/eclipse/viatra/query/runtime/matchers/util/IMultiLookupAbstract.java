@@ -40,7 +40,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.MarkedMemory.MarkedSet;
  *      and bind the lowLevel* methods accordingly.
  * 
  * @noreference This interface is not intended to be referenced by clients.
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * 
  * @author Gabor Bergmann
  * @since 2.0
@@ -372,6 +372,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
      *      and bind the lowLevel* methods accordingly.
      * 
      * @noreference This interface is not intended to be referenced by clients.
+     * @noimplement This interface is not intended to be implemented by clients.
      * @author Gabor Bergmann
      */
     public static interface ToSetsAbstract<Key, Value> extends IMultiLookupAbstract<Key, Value, MarkedMemory.MarkedSet<Value>> {
@@ -430,6 +431,7 @@ public interface IMultiLookupAbstract<Key, Value, Bucket extends MarkedMemory<Va
      *      and bind the lowLevel* methods accordingly.
      * 
      * @noreference This interface is not intended to be referenced by clients.
+     * @noimplement This interface is not intended to be implemented by clients.
      * @author Gabor Bergmann
      */
     public static interface ToMultisetsAbstract<Key, Value> extends IMultiLookupAbstract<Key, Value, MarkedMemory.MarkedMultiset<Value>> {

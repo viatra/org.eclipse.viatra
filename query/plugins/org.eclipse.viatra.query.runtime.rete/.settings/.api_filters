@@ -32,6 +32,19 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/boundary/InputConnector.java" type="org.eclipse.viatra.query.runtime.rete.boundary.InputConnector">
+        <filter comment="Internal API update" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.boundary.InputConnector"/>
+                <message_argument value="getAllExternalInputNodes()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Internal API update" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAllExternalInputNodes()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/index/IndexerWithMemory.java" type="org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory">
         <filter id="576725006">
             <message_arguments>

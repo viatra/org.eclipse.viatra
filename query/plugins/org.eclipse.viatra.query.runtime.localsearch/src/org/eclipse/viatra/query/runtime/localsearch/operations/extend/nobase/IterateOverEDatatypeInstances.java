@@ -83,7 +83,7 @@ public class IterateOverEDatatypeInstances implements IIteratingSearchOperation 
         @SuppressWarnings({ "unchecked"})
         Map<Tuple, Set<EAttribute>> cache = context.accessBackendLevelCache(getClass(), Map.class, CollectionsFactory::createMap);
         Tuple compositeKey = Tuples.staticArityFlatTupleOf(dataType, eclass);
-        return cache.computeIfAbsent(compositeKey, (k) -> 
+        return cache.computeIfAbsent(compositeKey, k -> 
             eclass.getEAllAttributes().stream().filter(input -> Objects.equals(input.getEType(), dataType)).collect(Collectors.toSet())
         ).stream();
     }

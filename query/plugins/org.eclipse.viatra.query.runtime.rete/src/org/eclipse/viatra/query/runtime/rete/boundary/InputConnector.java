@@ -89,7 +89,7 @@ public final class InputConnector {
         IInputKey inputKey = (IInputKey) recipe.getInputKey();
         Tuple seed = nopSeed(inputKey); // no preseeding as of now
         final Address<ExternalInputEnumeratorNode> freshAddress = Address.of(inputNode);
-        externalInputRoots.computeIfAbsent(inputKey, (k)->CollectionsFactory.createMap()).put(seed, freshAddress);
+        externalInputRoots.computeIfAbsent(inputKey, k -> CollectionsFactory.createMap()).put(seed, freshAddress);
         inputNode.connectThroughContext(network.getEngine(), inputKey, seed);
         
 //		final Address<Tunnel> freshAddress = Address.of((Tunnel)freshNode);
@@ -186,7 +186,7 @@ public final class InputConnector {
 
     
     public Stream<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodes() {
-        return externalInputRoots.values().stream().flatMap((map)->map.values().stream());
+        return externalInputRoots.values().stream().flatMap(map -> map.values().stream());
     }
     public Collection<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodesForKey(IInputKey inputKey) {
         return externalInputRoots.getOrDefault(inputKey, Collections.emptyMap()).values();

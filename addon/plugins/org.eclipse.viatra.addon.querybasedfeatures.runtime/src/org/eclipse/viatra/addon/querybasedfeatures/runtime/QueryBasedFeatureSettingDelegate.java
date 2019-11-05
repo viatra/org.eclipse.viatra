@@ -169,7 +169,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
 
     private void initializeQueryBasedFeature(AdvancedViatraQueryEngine engine, QueryBasedFeature queryBasedFeature) {
         try {
-            List<QueryBasedFeature> delayedFeatures = delegateFactory.getDelayedFeatures().computeIfAbsent(engine, (k) -> new ArrayList<>());
+            List<QueryBasedFeature> delayedFeatures = delegateFactory.getDelayedFeatures().computeIfAbsent(engine, k -> new ArrayList<>());
             // query-based feature initialization is delayed, but list is used as ordered set
             if(!delayedFeatures.contains(queryBasedFeature)){
                 delayedFeatures.add(queryBasedFeature);
