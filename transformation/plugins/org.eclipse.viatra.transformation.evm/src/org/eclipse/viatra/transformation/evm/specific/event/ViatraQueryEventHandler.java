@@ -55,12 +55,14 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
     @Override
     protected void prepareEventHandler() {
         super.prepareEventHandler();
+        if (needsAttributeMonitor) {            
+            attributeMonitor = Objects.requireNonNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
+        }
         
         ViatraQueryEventSource<Match> eventSource = (ViatraQueryEventSource<Match>) getSource();
         eventSource.addHandler(this);
         
         if (needsAttributeMonitor) {            
-            attributeMonitor = Objects.requireNonNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
             attributeMonitor.addAttributeMonitorListener(eventSource.getAttributeMonitorListener());
             unregisterListener = Objects.requireNonNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
             getInstance().addActivationNotificationListener(unregisterListener, false);
