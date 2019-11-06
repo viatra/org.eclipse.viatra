@@ -138,9 +138,11 @@ public class ViatraQueryEventHandler<Match extends IPatternMatch> extends EventH
 
     @Override
     public void dispose() {
-        ((ViatraQueryEventSource<Match>) getSource()).removeHandler(this);
         if (needsAttributeMonitor) {            
             getInstance().removeActivationNotificationListener(unregisterListener);
+        }
+        ((ViatraQueryEventSource<Match>) getSource()).removeHandler(this);
+        if (needsAttributeMonitor) {            
             attributeMonitor.dispose();
         }
     }
