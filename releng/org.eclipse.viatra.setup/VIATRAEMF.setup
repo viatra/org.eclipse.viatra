@@ -242,6 +242,15 @@
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
       </repositoryList>
+      <repositoryList
+          name="2019-12">
+        <repository
+            url="http://download.eclipse.org/releases/2019-12"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+      </repositoryList>
     </targlet>
   </setupTask>
   <setupTask
@@ -412,6 +421,15 @@
             name="2019-09">
           <repository
               url="http://download.eclipse.org/releases/2019-09"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-12">
+          <repository
+              url="http://download.eclipse.org/releases/2019-12"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
@@ -726,7 +744,14 @@
             <repository
                 url="http://download.eclipse.org/releases/2019-09"/>
             <repository
-                url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+                url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
+          </repositoryList>
+          <repositoryList
+              name="2019-12">
+            <repository
+                url="http://download.eclipse.org/releases/2019-12"/>
+            <repository
+                url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
           </repositoryList>
         </targlet>
       </setupTask>
@@ -1599,6 +1624,13 @@
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="2019-12">
+          <repository
+              url="http://download.eclipse.org/releases/2019-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="GEF5"
@@ -1659,6 +1691,13 @@
               url="http://download.eclipse.org/releases/2019-09"/>
           <repository
               url="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-12">
+          <repository
+              url="http://download.eclipse.org/releases/2019-12"/>
+          <repository
+              url="http://download.eclipse.org/efxclipse/updates-released/3.6.0/site"/>
         </repositoryList>
       </targlet>
       <targlet
