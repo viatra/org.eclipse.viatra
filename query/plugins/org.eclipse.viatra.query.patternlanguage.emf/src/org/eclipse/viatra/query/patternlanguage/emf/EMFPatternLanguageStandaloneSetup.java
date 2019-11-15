@@ -53,6 +53,18 @@ public class EMFPatternLanguageStandaloneSetup extends EMFPatternLanguageStandal
             .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.VALIDATE_CLASSPATH_KEY))
             .toInstance(false);
         }
+
+        /**
+         * @since 2.3
+         */
+        @Override
+        public void configureQueryGroupGeneration(Binder binder) {
+            binder.bind(Boolean.class)
+            .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.GENERATE_QUERY_GROUP_KEY))
+            .toInstance(false);
+        }
+        
+        
     }
     
     /**

@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageConfigurationConstants;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.JavaTypesHelper;
@@ -95,6 +96,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
 /**
  * Validators for Core Pattern Language.
@@ -191,7 +193,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
     private JvmModelAssociator associator;
     @Inject
     private PureWhitelist whitelist;
+
+    private boolean queryGroupGenerationEnabled = true; 
     
+    
+    /**
+     * @since 2.3
+     */
+    @Inject
+    public void enableQueryGroupGeneration(@Named(EMFPatternLanguageConfigurationConstants.GENERATE_QUERY_GROUP_KEY) boolean queryGroupGenerationEnabled) {
+        this.queryGroupGenerationEnabled = queryGroupGenerationEnabled;
+    }
+
     @Override
     public void register(EValidatorRegistrar reg) {
         // Overriding for composed validator
@@ -415,7 +428,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                             otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
                             IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                 }
-                if (!isDuplicateFound) {
+                if (!isDuplicateFound && queryGroupGenerationEnabled) {
                     EObject _jvmElement = associator.getPrimaryJvmElement(pattern);
                     if (_jvmElement instanceof JvmDeclaredType) {
                         String qualifiedName = ((JvmDeclaredType) _jvmElement).getQualifiedName();

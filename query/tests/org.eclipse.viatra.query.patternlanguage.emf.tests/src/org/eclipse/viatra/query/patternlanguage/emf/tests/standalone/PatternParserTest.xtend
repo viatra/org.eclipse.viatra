@@ -18,6 +18,7 @@ import org.junit.Test
 
 import static org.junit.Assert.*
 import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.xtext.common.types.JvmGenericType
 
 class PatternParserTest {
     
@@ -203,5 +204,59 @@ class PatternParserTest {
         assertFalse(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
         val specificationList = results.querySpecifications.map[fullyQualifiedName].toList
         assertArrayEquals(#{"", "test"}, specificationList.toArray)
+    }
+    
+    /**
+     * When putting a pattern in a file with the same name, the generated pattern name would clash with the name
+     * of the generated pattern group. This test uses the default module that results in the inferring of this
+     * pattern group and a corresponding validation error.
+     * 
+     * For details, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=553055
+     */
+    @Test()
+    def void groupNameConflictTest() {
+        val conflictingName = "conflict"
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern «conflictingName»(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            // This is the default injector used  
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createInjector)
+            .build
+        val uri = URI.createFileURI(conflictingName + ".vql")
+        val results = parser.parse(pattern, uri)
+        assertEquals(2, results.patterns.get(0).eResource.contents.filter(JvmGenericType).size)
+        assertEquals(2, results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].size)
+    }
+    
+    /**
+     * When putting a pattern in a file with the same name, the generated pattern name would clash with the name
+     * of the generated pattern group. This test uses the standalone parser module that omits the pattern group
+     * inference and generation, resulting in fewer inferred types and no type error.
+     * 
+     * For details, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=553055
+     */
+    @Test()
+    def void noGroupNameConflictTest() {
+        val conflictingName = "conflict"
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern «conflictingName»(c : EClass) {
+             EClass.name(c, "someName2");
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .build
+        val uri = URI.createFileURI(conflictingName + ".vql")
+        val results = parser.parse(pattern, uri)
+        assertEquals(1, results.patterns.size)
+        assertEquals(1, results.patterns.get(0).eResource.contents.filter(JvmGenericType).size)
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
     }
 }

@@ -27,6 +27,8 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageGeneratorConfig.MatcherGenerationStrategy
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageConfigurationConstants
+import com.google.inject.name.Named
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -56,6 +58,17 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     @Inject extension PatternMatchProcessorClassInferrer
     @Inject extension PatternGroupClassInferrer
     @Inject extension IJvmModelAssociator associator
+
+    var queryGroupGenerationEnabled = true; 
+    
+    
+    /**
+     * @since 2.3
+     */
+    @Inject
+    def enableQueryGroupGeneration(@Named(EMFPatternLanguageConfigurationConstants.GENERATE_QUERY_GROUP_KEY) boolean queryGroupGenerationEnabled) {
+        this.queryGroupGenerationEnabled = queryGroupGenerationEnabled;
+    }
 
     /**
      * Is called for each Pattern instance in a resource.
@@ -212,7 +225,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                 pattern.inferPattern(acceptor, isPrelinkingPhase)
             }
             logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
-            if (!model.patterns.empty) {
+            if (queryGroupGenerationEnabled && !model.patterns.empty) {
                 val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder, config, false)
                 acceptor.accept(groupClass) [
                     initializePatternGroup(model, _typeReferenceBuilder, config, false)

@@ -224,4 +224,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
         return ServiceLoaderBasedAnnotationValidatorLoader.class;
     }
+    
+    /**
+     * @since 2.3
+     */
+    public void configureQueryGroupGeneration(Binder binder) {
+        binder.bind(Boolean.class)
+        .annotatedWith(Names.named(EMFPatternLanguageConfigurationConstants.GENERATE_QUERY_GROUP_KEY))
+        .toInstance(true);
+    }
 }

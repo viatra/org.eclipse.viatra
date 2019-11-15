@@ -17,6 +17,26 @@ Starting with version 2.3, both the query and transformation runtime works witho
 . The generated pattern matcher code may still depend on Guava if the queries themselves are including `check` or `eval` expressions. For this reason, query projects are still generated with a Guava dependency; but they can be manually removed if unused.
 . The infrastructure used to parse VQL files still requires Guava to function.
 
+=== Code Generator Updates
+
+Starting with this version, it is possible to disable query group generation (and the validation rules related to it) via customizing the language configuration module. The built-in standalone parser modules disables query group generation, but by default this functionality will stay enabled. The simplest way to rely on this updated generator is the following:
+
+[source,xtend]
+----
+val String pattern = '''
+    import "http://www.eclipse.org/emf/2002/Ecore";
+    
+    pattern b(c : EClass) {
+     EClass.name(c, "someName2");
+    }
+'''
+
+val parser = new PatternParserBuilder()
+    .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+    .build
+val uri = URI.createFileURI("b.vql")
+val results = parser.parse(pattern, uri)
+----
 
 == Migrating to VIATRA 2.3
 

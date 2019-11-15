@@ -27,4 +27,10 @@ public class EMFPatternLanguageConfigurationConstants {
      * Configuration key for enabling or disabling classpath validation
      */
     public static final String VALIDATE_CLASSPATH_KEY = "VALIDATE_CLASSPATH";
+    
+    /**
+     * Configuration key for enabling or disabling query group generation
+     * @since 2.3
+     */
+    public static final String GENERATE_QUERY_GROUP_KEY = "GENERATE_QUERY_GROUPS";
 }
