@@ -38,6 +38,26 @@ val uri = URI.createFileURI("b.vql")
 val results = parser.parse(pattern, uri)
 ----
 
+=== Base Index Profiler
+
+In order to measure the effects of VIATRA, version 2.3 includes a simple profiler for the base index itself that measures the time spent inside the adapters VIATRA uses to initialize the indexes and keep them up-to-date. Given the use of the profiler results in reduced performance, it is turned off by default, but can be enabled with the appropriate base index option.
+
+Usage:
+
+[source,java]
+----
+// Initialized profiling during model load
+BaseIndexOptions options = new BaseIndexOptions()
+    .withIndexProfilingEnabledMode(ProfilerMode.ENABLED);
+NavigationHelper baseIndex = ... ;
+val profiler = new BaseIndexProfiler(baseIndex)
+
+doTasks(baseIndex);
+
+long count = profiler.getNotificationCount(); 
+long time = profiler.totalMeasuredTimeInMS);
+---- 
+
 == Migrating to VIATRA 2.3
 
 The `viatra-query-runtima` and `viatra-transformation-runtime` Maven modules does not add any version of Guava to the classpath anymore. If the actual projects using VIATRA depends on it, it should add it manually as dependencies.

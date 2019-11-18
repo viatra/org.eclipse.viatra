@@ -66,6 +66,7 @@ import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra.query.runtime.base.core.EMFBaseIndexInstanceStore.FeatureData;
 import org.eclipse.viatra.query.runtime.base.core.NavigationHelperVisitor.TraversingVisitor;
+import org.eclipse.viatra.query.runtime.base.core.profiler.ProfilingNavigationHelperContentAdapter;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.matchers.ViatraQueryRuntimeException;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
@@ -1616,7 +1617,15 @@ public class NavigationHelperImpl implements NavigationHelper {
      * @since 2.3
      */
     protected NavigationHelperContentAdapter initContentAdapter() {
-        return new NavigationHelperContentAdapter(this);
+        switch (baseIndexOptions.getIndexerProfilerMode()) {
+        case START_DISABLED:
+            return new ProfilingNavigationHelperContentAdapter(this, false);
+        case START_ENABLED:
+            return new ProfilingNavigationHelperContentAdapter(this, true);
+        case OFF:
+        default:
+            return new NavigationHelperContentAdapter(this);
+        }
     }
 
     /**

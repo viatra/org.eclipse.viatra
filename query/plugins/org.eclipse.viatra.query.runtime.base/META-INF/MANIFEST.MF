@@ -15,6 +15,7 @@ Require-Bundle: org.eclipse.viatra.query.runtime.base.itc;bundle-version="[2.3.0
  org.eclipse.emf.common
 Export-Package: org.eclipse.viatra.query.runtime.base.api,
  org.eclipse.viatra.query.runtime.base.api.filters,
+ org.eclipse.viatra.query.runtime.base.api.profiler,
  org.eclipse.viatra.query.runtime.base.comprehension,
  org.eclipse.viatra.query.runtime.base.exception
 Bundle-Vendor: Eclipse VIATRA Project

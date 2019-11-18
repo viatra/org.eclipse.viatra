@@ -13,6 +13,7 @@ import java.util.Objects;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
+import org.eclipse.viatra.query.runtime.base.api.profiler.ProfilerMode;
 
 /**
  * The base index options indicate how the indices are built.
@@ -67,6 +68,11 @@ public class BaseIndexOptions {
      * @since 1.6
      */
     protected static final boolean STRICT_NOTIFICATION_MODE_DEFAULT = true;
+    
+    /**
+     * @since 2.3
+     */
+    protected static final ProfilerMode INDEX_PROFILER_MODE_DEFAULT = ProfilerMode.OFF;
 
     /**
      * @since 1.6
@@ -90,6 +96,13 @@ public class BaseIndexOptions {
      * @since 1.6
      */
     protected boolean strictNotificationMode = STRICT_NOTIFICATION_MODE_DEFAULT;
+    
+    /**
+     * Returns whether base index profiling should be turned on.
+     * 
+     * @since 2.3
+     */
+    protected ProfilerMode indexerProfilerMode = INDEX_PROFILER_MODE_DEFAULT; 
 
     /**
      * Creates a base index options with the default values.
@@ -232,6 +245,16 @@ public class BaseIndexOptions {
         result.strictNotificationMode = strictNotificationMode;
         return result;
     }
+    
+    /**
+     * @since 2.3
+     */
+    public BaseIndexOptions withIndexProfilerMode(ProfilerMode indexerProfilerMode) {
+        BaseIndexOptions result = copy();
+        result.indexerProfilerMode = indexerProfilerMode;
+        return result;
+    }
+    
     /**
      * @return whether the base index option has wildcard mode set
      */
@@ -259,6 +282,16 @@ public class BaseIndexOptions {
     }
 
     /**
+     * Returns whether base indexer profiling is enabled. The profiling causes some slowdown, but provides information
+     * about how much time the base indexer takes for initialization and updates.
+     * 
+     * @since 2.3
+     */
+    public ProfilerMode getIndexerProfilerMode() {
+        return indexerProfilerMode;
+    }
+
+    /**
      * Creates an independent copy of itself. The values of each option will be the same as this options. This method is
      * used when a provided option must be copied to avoid external option changes afterward.
      * 
@@ -272,6 +305,7 @@ public class BaseIndexOptions {
         baseIndexOptions.resourceFilterConfiguration = this.resourceFilterConfiguration;
         baseIndexOptions.featureFilterConfiguration = this.featureFilterConfiguration;
         baseIndexOptions.strictNotificationMode = this.strictNotificationMode;
+        baseIndexOptions.indexerProfilerMode = this.indexerProfilerMode;
         return baseIndexOptions;
     }
 
@@ -279,7 +313,7 @@ public class BaseIndexOptions {
     public int hashCode() {
         return Objects.hash(dynamicEMFMode, notifierFilterConfiguration, resourceFilterConfiguration,
                 featureFilterConfiguration, traverseOnlyWellBehavingDerivedFeatures, wildcardMode, strictNotificationMode,
-                danglingFreeAssumption);
+                danglingFreeAssumption, indexerProfilerMode);
     }
 
     @Override
@@ -324,6 +358,9 @@ public class BaseIndexOptions {
         if (strictNotificationMode != other.strictNotificationMode) {
             return false;
         }
+        if (indexerProfilerMode != other.indexerProfilerMode) {
+            return false;
+        }
         return true;
     }
     
@@ -336,6 +373,7 @@ public class BaseIndexOptions {
         appendModifier(sb, danglingFreeAssumption, DANGLING_FREE_ASSUMPTION_DEFAULT, "danglingFreeAssumption");
         appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERSE_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
         appendModifier(sb, strictNotificationMode, STRICT_NOTIFICATION_MODE_DEFAULT, "strictNotificationMode");
+        appendModifier(sb, indexerProfilerMode, INDEX_PROFILER_MODE_DEFAULT, "indexerProfilerMode");
         appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
         appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");
         appendModifier(sb, featureFilterConfiguration, null, "featureFilterConfiguration=");
