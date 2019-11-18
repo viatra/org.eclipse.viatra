@@ -1,0 +1,23 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-23]]
+
+= VIATRA 2.3
+
+Release date:: 2019-12-18
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.3.0
+
+== New and Noteworthy
+
+=== Dependency Cleanup
+
+Starting with version 2.3, both the query and transformation runtime works without relying on Guava. This allows avoiding various issues in standalone applications where other users may add a different Guava version than the one used by VIATRA itself. However, there are two important cases to consider:
+
+. The generated pattern matcher code may still depend on Guava if the queries themselves are including `check` or `eval` expressions. For this reason, query projects are still generated with a Guava dependency; but they can be manually removed if unused.
+. The infrastructure used to parse VQL files still requires Guava to function.
+
+
+== Migrating to VIATRA 2.3
+
+The `viatra-query-runtima` and `viatra-transformation-runtime` Maven modules does not add any version of Guava to the classpath anymore. If the actual projects using VIATRA depends on it, it should add it manually as dependencies.
