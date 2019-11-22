@@ -15,6 +15,10 @@ changes in the underlying model.
 
 ## Developer resources
 
+VIATRA uses Oomph to set up a development environment in Eclipse
+(https://wiki.eclipse.org/VIATRA/DeveloperDocumentation/DevEnvironment)
+and uses Maven to build the contents (https://wiki.eclipse.org/VIATRA/DeveloperDocumentation/BuildConfig).
+
 Information regarding source code management, builds, coding standards, and
 more.
 
@@ -41,7 +45,7 @@ For code contributions, the use of Gerrit is preferred, see https://wiki.eclipse
 * ssh://«username»@git.eclipse.org:29418/viatra/org.eclipse.viatra
 * ssh://«username»@git.eclipse.org:29418/viatra/org.eclipse.viatra.modelobfuscator
 * ssh://«username»@git.eclipse.org:29418/viatra/org.eclipse.viatra.examples
-* ssh://«username»@git.eclipse.org:29418/viatra/org.eclipse.viatra.vpm
+* ssh://«username»@git.eclipse.org:29418/viatra/org.eclipse.viatra.vpm 
 
 ## Eclipse Contributor Agreement
 
