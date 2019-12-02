@@ -60,4 +60,4 @@ long time = profiler.totalMeasuredTimeInMS);
 
 == Migrating to VIATRA 2.3
 
-The `viatra-query-runtima` and `viatra-transformation-runtime` Maven modules does not add any version of Guava to the classpath anymore. If the actual projects using VIATRA depends on it, it should add it manually as dependencies.
+The `viatra-query-runtime` and `viatra-transformation-runtime` Maven modules do not add any version of Guava to the classpath anymore. If the actual project using VIATRA depends on Guava, it can be added as dependency.
