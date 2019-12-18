@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -39,8 +40,10 @@ public class ExpressionEval implements ISearchOperation {
         public Iterator<?> getIterator(MatchingFrame frame, ISearchContext context) {
             try {
                 Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
-                if (result != null){
+                if (!unwind && result != null){
                     return Collections.singletonList(result).iterator();
+                } else if (unwind && result instanceof Set<?>) {
+                    return ((Set<?>)result).iterator();
                 } else {
                     return Collections.emptyIterator();
                 }
@@ -57,12 +60,21 @@ public class ExpressionEval implements ISearchOperation {
     }
     
     private final IExpressionEvaluator evaluator;
+    private final boolean unwind;
     private final Map<String, Integer> nameMap;
     private final int position;
 
     public ExpressionEval(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, int position) {
+        this(evaluator, nameMap, false, position);
+    }
+    
+    /**
+     * @since 2.7
+     */
+    public ExpressionEval(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, boolean unwind, int position) {
         this.evaluator = evaluator;
         this.nameMap = nameMap;
+        this.unwind = unwind;
         this.position = position;
     }
     

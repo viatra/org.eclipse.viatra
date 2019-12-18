@@ -372,7 +372,7 @@ public class PatternBodyTransformer {
 
     private void gatherCheckConstraint(final CheckConstraint check, PatternModelAcceptor<?> acceptor) {
         XExpression expression = check.getExpression();
-        acceptor.acceptExpressionEvaluation(expression, null);
+        acceptor.acceptExpressionEvaluation(expression, null, false);
     }
 
     private String getVariableName(VariableReference variable, PatternModelAcceptor<?> acceptor) {
@@ -430,10 +430,9 @@ public class PatternBodyTransformer {
 
     private String eval(FunctionEvaluationValue eval, PatternModelAcceptor<?> acceptor) {
         String outputVariableName = acceptor.createVirtualVariable();
-
         XExpression expression = eval.getExpression();
-        acceptor.acceptExpressionEvaluation(expression, outputVariableName);
-
+        boolean isUnwind = eval.isUnwind();
+        acceptor.acceptExpressionEvaluation(expression, outputVariableName, isUnwind);
         return outputVariableName;
     }
 

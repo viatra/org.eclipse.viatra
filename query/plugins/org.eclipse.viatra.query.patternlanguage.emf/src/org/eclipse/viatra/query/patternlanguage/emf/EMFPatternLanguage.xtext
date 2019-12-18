@@ -167,7 +167,7 @@ ComputationValue:
     AggregatedValue | FunctionEvaluationValue;
 
 FunctionEvaluationValue:
-    'eval' '(' expression=XExpression ')';
+    'eval' (unwind?='unwind')? '(' expression=XExpression ')';
 
 AggregatedValue:
 // TODO aggregator should be QualifiedName

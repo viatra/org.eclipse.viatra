@@ -868,6 +868,26 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             }
         }
     }
+    
+    /** 
+     * @since 2.7
+     */
+    @Check
+    public void checkReturnTypeOfFunctionEvaluationValues(FunctionEvaluationValue evalValue) {
+        final XExpression xExpression = evalValue.getExpression();
+        if (xExpression == null || !evalValue.isUnwind())
+            return;
+        
+        final IResolvedTypes resolvedType = typeResolver.resolveTypes(xExpression);
+        final LightweightTypeReference returnType = resolvedType.getReturnType(xExpression);
+        final boolean isSetType = returnType.isSubtypeOf(Set.class);
+
+        if (!isSetType) {
+            error("Eval unwind expressions must evaluate to an implementation of java.util.Set", evalValue,
+                    PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE__EXPRESSION,
+                    IssueCodes.EVAL_INCORRECT_RETURNVALUE);
+        }
+    }
 
     @Check(CheckType.NORMAL)
     public void checkVariableNames(PatternBody body) {

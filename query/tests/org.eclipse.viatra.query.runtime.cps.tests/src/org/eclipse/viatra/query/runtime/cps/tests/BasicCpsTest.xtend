@@ -50,6 +50,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
 import org.junit.Rule
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.XtextInfrastructureRule
+import org.eclipse.viatra.query.runtime.cps.tests.queries.util.PrefixesQuerySpecification
 
 class BasicCpsTest extends AbstractQueryComparisonTest {
     
@@ -515,6 +516,15 @@ class BasicCpsTest extends AbstractQueryComparisonTest {
     def void wildCardTestFinalPattern() {
         Assume.assumeTrue(type != BackendType.LocalSearch_NoBase) // This test takes 20+ seconds to run without base
         ViatraQueryTest.test(FinalPatternQuerySpecification.instance).analyzeWith(coverage)
+                        .on(scope)
+                        .with(snapshot)
+                        .with(type.hints)
+                        .assertEquals
+    }
+    
+    @Test
+    def void expressionUnwindPattern() {
+        ViatraQueryTest.test(PrefixesQuerySpecification.instance).analyzeWith(coverage)
                         .on(scope)
                         .with(snapshot)
                         .with(type.hints)

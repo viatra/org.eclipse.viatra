@@ -148,7 +148,10 @@ public final class IssueCodes {
     
     public static final String OTHER_ISSUE = ISSUE_CODE_PREFIX + "other_issue";
 
-    
+    /**
+     * @since 2.7
+     */
+    public static final String INVALID_EXECUTION_TYPE = ISSUE_CODE_PREFIX + "invalid_execution_type";
     
     /**
      * This prefix is used to distinguish between Java and EMF parameter type proposals

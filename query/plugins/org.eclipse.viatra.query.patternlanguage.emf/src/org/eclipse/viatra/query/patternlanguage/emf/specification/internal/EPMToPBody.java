@@ -192,10 +192,10 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     @Override
-    public void acceptExpressionEvaluation(XExpression expression, String outputVariableName) {
+    public void acceptExpressionEvaluation(XExpression expression, String outputVariableName, boolean isUnwinding) {
         XBaseEvaluator evaluator = new XBaseEvaluator(expression, pattern);
         PVariable outputPVariable = outputVariableName == null ? null : findPVariable(outputVariableName);
-        new ExpressionEvaluation(pBody, evaluator, outputPVariable);
+        new ExpressionEvaluation(pBody, evaluator, outputPVariable, isUnwinding);
     }
     
     @Override

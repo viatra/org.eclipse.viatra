@@ -64,6 +64,11 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.checkDivisionByZero"/>
     </group>
   </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.ExpressionEvaluation" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.ExpressionEvaluation" id="org.eclipse.viatra.query.runtime.cps.tests.queries.ExpressionEvaluation">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.prefixes"/>
+    </group>
+  </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.FlattenedPatternCall" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.FlattenedPatternCall" id="org.eclipse.viatra.query.runtime.cps.tests.queries.FlattenedPatternCall">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.called"/>

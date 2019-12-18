@@ -6479,6 +6479,81 @@
     </matches>
     <filter/>
   </matchSetRecords>
+    <matchSetRecords patternQualifiedName="org.eclipse.viatra.query.runtime.cps.tests.queries.prefixes">
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps.app.SecondAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps.app"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.SecondAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps.app.FirstAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps.app"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst1"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps.app.FirstAppClass0"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple.cps.app"/>
+    </matches>
+    <matches>
+      <substitutions xsi:type="vqSnapshot:EMFSubstitution" parameterName="application">
+        <value href="../instances/demo.cyberphysicalsystem#simple.cps.app.FirstAppClass0.inst0"/>
+      </substitutions>
+      <substitutions xsi:type="vqSnapshot:StringSubstitution" parameterName="namePrefix" value="simple"/>
+    </matches>
+    <filter/>
+  </matchSetRecords>
   <modelRoots
       href="../instances/demo.cyberphysicalsystem#testModel6504822858552"/>
 </vqSnapshot:QuerySnapshot>

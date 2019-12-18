@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -33,9 +34,12 @@ public class ExpressionEvalCheck implements ISearchOperation {
         protected boolean check(MatchingFrame frame, ISearchContext context) {
             try {
                 Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
-                if (result != null) {
+                if (!unwind && result != null) {
                     Object currentValue = frame.get(outputPosition);
                     return result.equals(currentValue);
+                } else if (unwind && result instanceof Set<?>) {
+                    Object currentValue = frame.get(outputPosition);
+                    return ((Set<?>)result).contains(currentValue);
                 }
             } catch (Exception e) {
                 context.getLogger().warn("Error while evaluating expression", e);
@@ -52,10 +56,19 @@ public class ExpressionEvalCheck implements ISearchOperation {
     private final int outputPosition;
     private final IExpressionEvaluator evaluator;
     private final Map<String, Integer> nameMap;
+    private final boolean unwind;
     
     public ExpressionEvalCheck(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, int position) {
+        this(evaluator, nameMap, false, position);
+    }
+    
+    /**
+     * @since 2.7
+     */
+    public ExpressionEvalCheck(IExpressionEvaluator evaluator, Map<String, Integer> nameMap, boolean unwind, int position) {
         this.evaluator = evaluator;
         this.nameMap = nameMap;
+        this.unwind = unwind;
         this.outputPosition = position;
     }
 

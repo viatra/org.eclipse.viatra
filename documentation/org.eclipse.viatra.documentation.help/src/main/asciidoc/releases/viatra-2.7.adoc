@@ -19,4 +19,17 @@ pattern maxInteger(value : java Integer) {
 }
 ----
 
+Another new language feature in version 2.7 is eval unwinding: it is now possible to return multiple different values from any given attribute value. This feature is useful for extracting data from otherwise unstructured information, e.g. multiple URLs from a specific documentation field.
+
+[source,vql]
+----
+/* Match set are the tuples <value=2>, <value=3> and <value=5>*/
+incremental pattern firstThreePrimes(value : java Integer) {
+  value == eval unwind (newHashSet(2, 3, 5));
+}
+----
+
+
 == Migrating to VIATRA 2.7
+
+As the eval unwinding feature introduces the `unwind` keyword to the language, metamodels providing features named the same need to be escaped.

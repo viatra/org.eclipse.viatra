@@ -297,7 +297,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 ''')
             }
 
-            override acceptExpressionEvaluation(XExpression expression, String outputVariableName) {
+            override acceptExpressionEvaluation(XExpression expression, String outputVariableName, boolean isUnwind) {
                 val inputParameterNames = PatternLanguageHelper.getUsedVariables(expression, body.getVariables()).map[name]
                 target.append(
                         '''
@@ -358,7 +358,9 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.newLine
 
                 target.
-                    append('''}, «IF outputVariableName !== null » «outputVariableName.escape» «ELSE» null«ENDIF»); ''')
+                    append('''}, «IF outputVariableName !== null » «outputVariableName.escape» «ELSE» null«ENDIF», ''')
+                target.append(isUnwind)
+                target.append(');')
                 target.newLine
             }
 

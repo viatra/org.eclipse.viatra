@@ -114,6 +114,7 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
   *  Attribute expression evaluation: the `eval()` construct lets you compute values by Java (actually https://www.eclipse.org/xtend/[Xbase]) expressions referencing variables of EDataTypes and java values.
      * `qualifiedName == eval(parentName + "." + simpleName);`
      * The Java types of variables are inferred based on the EMF Ecore specification (using the generated Java classes)
+     * `eval unwind (...)` lets you compute values for each member of a Set object
 5. Additional attribute constraints using the check() construct, similarly to eval():
   * `check(aNumberVariable > aStringVariable.length());`
   * Semantically equivalent to `true == eval(aNumberVariable > aStringVariable.length());`

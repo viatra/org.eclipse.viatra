@@ -70,7 +70,10 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
      * @since 2.1
      */
     public static final double INVERSE_NAVIGATION_PENALTY_GENERIC = 0.01;
-    
+    /**
+     * @since 2.7
+     */
+    public static final double EVAL_UNWIND_EXTENSION_FACTOR = 3.0;
     
     private final double inverseNavigationPenalty;
     
@@ -310,7 +313,12 @@ public abstract class StatisticsBasedConstraintCostFunction implements ICostFunc
      * @since 1.7
      */
     protected double _calculateCost(final ExpressionEvaluation evaluation, final IConstraintEvaluationContext input) {
-        return _calculateCost((PConstraint)evaluation, input);
+        // Even if there are multiple results here, if all output variable is bound eval unwind will not result in
+        // multiple branches in search graph
+        final double multiplier = evaluation.isUnwinding() && !input.getFreeVariables().isEmpty()
+                ? EVAL_UNWIND_EXTENSION_FACTOR
+                : 1.0;
+        return _calculateCost((PConstraint) evaluation, input) * multiplier;
     }
     
     /**

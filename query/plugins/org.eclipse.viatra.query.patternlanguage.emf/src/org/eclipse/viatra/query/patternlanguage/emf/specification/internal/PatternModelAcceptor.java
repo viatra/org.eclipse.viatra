@@ -144,7 +144,7 @@ public interface PatternModelAcceptor<Result> {
     /**
      * Accepts an {@link ExpressionEvaluation}.
      */
-    void acceptExpressionEvaluation(XExpression expression, String outputVariableName);
+    void acceptExpressionEvaluation(XExpression expression, String outputVariableName, boolean isUnwinding);
 
     /**
      * Accepts a {@link AbstractAggregator} over an embedded constraint.

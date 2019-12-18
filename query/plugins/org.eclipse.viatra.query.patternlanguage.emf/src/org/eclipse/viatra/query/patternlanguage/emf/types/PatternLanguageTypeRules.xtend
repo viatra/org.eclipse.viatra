@@ -250,7 +250,7 @@ class PatternLanguageTypeRules {
    }
    
    def dispatch void inferTypes(FunctionEvaluationValue reference, TypeInformation information) {
-       information.provideType(new XbaseExpressionTypeJudgement(reference, reference.expression, typeResolver))
+       information.provideType(new XbaseExpressionTypeJudgement(reference, reference.expression, typeResolver, reference.isUnwind()))
    }
    
    def dispatch void inferTypes(BoolValue reference, TypeInformation information) {

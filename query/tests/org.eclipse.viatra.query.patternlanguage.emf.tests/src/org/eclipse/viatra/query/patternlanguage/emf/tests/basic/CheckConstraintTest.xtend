@@ -231,4 +231,33 @@ class CheckConstraintTest extends AbstractValidatorTest {
         tester.validate(model).assertOK
     }
 
+    @Test
+    def evalUnwindValidReturnType() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern evalTest(n : java Integer) {
+                n == eval unwind (newHashSet(1, 3, 5, 7));
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def evalUnwindRequiresSetArgumentCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            incremental pattern evalTest(n : java Integer) {
+                n == eval unwind (newArrayList(1, 3, 5, 7));
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getErrorCode(IssueCodes::EVAL_INCORRECT_RETURNVALUE)
+        )
+    }
+
 }

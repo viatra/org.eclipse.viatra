@@ -9,17 +9,22 @@
         </filter>
     </resource>
     <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/ui/contentassist/AbstractEMFPatternLanguageProposalProvider.java" type="org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.AbstractEMFPatternLanguageProposalProvider">
-        <filter comment="Generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeFunctionEvaluationValue_Unwind(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
                 <message_argument value="completeJavaConstantValue_ClassRef(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
-        <filter comment="Generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
                 <message_argument value="completeJavaConstantValue_FieldRef(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
         </filter>
-        <filter comment="Generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
                 <message_argument value="complete_JavaConstantValue(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
             </message_arguments>
