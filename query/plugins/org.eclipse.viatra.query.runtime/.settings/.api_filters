@@ -42,12 +42,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/registry/view/AbstractRegistryView.java" type="org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView">
-        <filter comment="ignoring minor API break of registry view superclass" id="388161617">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView"/>
-                <message_argument value="fqnToEntryMap"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>
