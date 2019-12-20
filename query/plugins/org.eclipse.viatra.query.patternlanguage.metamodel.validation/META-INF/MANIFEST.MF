@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Pattern Language Metamodel Validation
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.metamodel.validation;singleton:=true
-Bundle-Version: 0.23.0.qualifier
+Bundle-Version: 0.24.0.qualifier
 Export-Package: org.eclipse.viatra.query.patternlanguage.metamodel
 Require-Bundle: org.eclipse.viatra.query.patternlanguage.metamodel,
  org.eclipse.viatra.query.runtime,
