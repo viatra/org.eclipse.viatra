@@ -60,10 +60,10 @@ public abstract class IndexerWithMemory extends StandardIndexer
 
     public IndexerWithMemory(final ReteContainer reteContainer, final TupleMask mask) {
         super(reteContainer, mask);
-        memory = MaskedTupleMemory.create(mask, MemoryType.SETS, this,
-                reteContainer.isTimelyEvaluation() && reteContainer.getCommunicationTracker().isInRecursiveGroup(this),
-                reteContainer.isTimelyEvaluation() && reteContainer.getTimelyConfiguration()
-                        .getTimelineRepresentation() == TimelineRepresentation.FAITHFUL);
+        final boolean isTimely = reteContainer.isTimelyEvaluation()
+                && reteContainer.getCommunicationTracker().isInRecursiveGroup(this);
+        memory = MaskedTupleMemory.create(mask, MemoryType.SETS, this, isTimely, isTimely && reteContainer
+                .getTimelyConfiguration().getTimelineRepresentation() == TimelineRepresentation.FAITHFUL);
         reteContainer.registerClearable(memory);
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
@@ -131,6 +131,7 @@ public abstract class IndexerWithMemory extends StandardIndexer
 
     /**
      * Refined version of update
+     * 
      * @since 2.4
      */
     protected abstract void update(final Direction direction, final Tuple updateElement, final Tuple signature,

@@ -81,9 +81,6 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
             if (bucketType != MemoryType.SETS) {
                 throw new IllegalArgumentException("Timely memories only support SETS as the bucket type!");
             }
-            if (isLazy && !isTimely) {
-                throw new IllegalArgumentException("Lazy maintenance is only supported by timely memories!");
-            }
             if (mask.isIdentity()) {
                 return new TimelyIdentityMaskedTupleMemory<T>(mask, owner, isLazy);
             } else if (0 == mask.getSize()) {
@@ -94,6 +91,9 @@ public abstract class MaskedTupleMemory<Timestamp extends Comparable<Timestamp>>
                 return new TimelyDefaultMaskedTupleMemory<T>(mask, owner, isLazy);
             }
         } else {
+            if (isLazy) {
+                throw new IllegalArgumentException("Lazy maintenance is only supported by timely memories!");
+            }
             if (mask.isIdentity()) {
                 return new IdentityMaskedTupleMemory<T>(mask, bucketType, owner);
             } else if (0 == mask.getSize()) {

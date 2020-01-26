@@ -52,16 +52,20 @@ public abstract class Timeline<Timestamp extends Comparable<Timestamp>> {
                 if (thisIdx % 2 == 1) {
                     result.add(thatNext);
                 }
+                thatIdx++;
                 thatNext = thatIdx < that.size() ? that.getUnsigned(thatIdx) : null;
             } else if (thatNext == null || thisMinusThat < 0) {
                 if (thatIdx % 2 == 1) {
                     result.add(thisNext);
                 }
+                thisIdx++;
                 thisNext = thisIdx < this.size() ? this.getUnsigned(thisIdx) : null;
             } else {
                 if (thisIdx % 2 == thatIdx % 2) {
                     result.add(thisNext);
                 }
+                thisIdx++;
+                thatIdx++;
                 thatNext = thatIdx < that.size() ? that.getUnsigned(thatIdx) : null;
                 thisNext = thisIdx < this.size() ? this.getUnsigned(thisIdx) : null;
             }
