@@ -17,15 +17,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQuerySt
 import org.junit.Test
 
 import static org.junit.Assert.assertTrue
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
-import org.junit.BeforeClass
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.junit.Rule
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.XtextInfrastructureRule
 
 class GenericMatcherTest {
     
-    @BeforeClass
-    static def void initializeInjector() {
-        EMFPatternLanguageStandaloneSetup.doSetup
-    }
+    @Rule
+    public val rule = new XtextInfrastructureRule(this, CustomizedEMFPatternLanguageInjectorProvider)
     
     def getScope() {
         val uri = URI.createPlatformPluginURI("org.eclipse.viatra.query.runtime.cps.tests/models/instances/dangling.cyberphysicalsystem", false)

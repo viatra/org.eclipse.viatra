@@ -11,7 +11,6 @@ package org.eclipse.viatra.query.runtime.cps.tests
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.runtime.cps.tests.queries.TransitionsOfApplicationTypeMatcher
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.TransitionsOfApplicationTypeQuerySpecification
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
@@ -24,23 +23,23 @@ import org.eclipse.viatra.query.testing.core.SnapshotHelper
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
-import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.junit.Rule
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.XtextInfrastructureRule
 
 class APICpsTest {
     extension ModelLoadHelper = new ModelLoadHelper
     extension SnapshotHelper snHelper = new SnapshotHelper
+    
+    @Rule
+    public val rule = new XtextInfrastructureRule(this, CustomizedEMFPatternLanguageInjectorProvider)
 
     public static val TESTED_PATTERN = "org.eclipse.viatra.query.runtime.cps.tests.queries.transitionsOfApplicationType"
     public static val TESTED_QUERY_FILE = "org.eclipse.viatra.query.runtime.cps.tests/org/eclipse/viatra/query/runtime/cps/tests/queries/simpleCpsQueries.vql"
     public static val TESTED_SNAPSHOT = "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test.snapshot"
-
-    @BeforeClass
-    static def initParser() {
-        EMFPatternLanguageStandaloneSetup.doSetup
-    }
 
     def snapshot() {
         val snp = TESTED_SNAPSHOT

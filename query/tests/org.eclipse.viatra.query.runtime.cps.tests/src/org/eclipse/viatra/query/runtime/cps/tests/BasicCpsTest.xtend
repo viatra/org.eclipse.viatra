@@ -44,16 +44,18 @@ import org.junit.AfterClass
 import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.HasMoreHostedApplications2QuerySpecification
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.junit.Rule
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.XtextInfrastructureRule
 
-@RunWith(Parameterized)
 class BasicCpsTest extends AbstractQueryComparisonTest {
     
     static var CoverageAnalyzer coverage;
+    @Rule
+    public val rule = new XtextInfrastructureRule(this, CustomizedEMFPatternLanguageInjectorProvider)
     
     override getSnapshotUri() {
          "org.eclipse.viatra.query.runtime.cps.tests/models/snapshots/test.snapshot"

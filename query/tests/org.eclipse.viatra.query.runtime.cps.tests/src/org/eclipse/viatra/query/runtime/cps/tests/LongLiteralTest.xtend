@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.LongValueConstantQuerySpecification
 import org.eclipse.viatra.query.runtime.cps.tests.queries.util.LongValueConstantWithCheckQuerySpecification
-import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
@@ -32,6 +31,9 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.junit.Rule
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.XtextInfrastructureRule
 
 /**
  * This test reproduces bug 520878. As the bug only affects the generated code, this test executes the same patterns with {@link GenericQuerySpecification}
@@ -39,6 +41,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
  */ 
 @RunWith(Parameterized)
 class LongLiteralTest {
+    
     @Parameters(name = "Backend: {0}, Model: {1}")
     def static Collection<Object[]> testData() {
         newArrayList(Sets.cartesianProduct(
@@ -55,9 +58,12 @@ class LongLiteralTest {
     ResourceSet rs
     Injector injector
     
+    @Rule
+    public val rule = new XtextInfrastructureRule(this, CustomizedEMFPatternLanguageInjectorProvider)
+    
     @Before
     def void prepareTest() {
-        injector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration
+        injector = rule.injector
         val modelUri = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, modelPath)
         rs = new ResourceSetImpl
         rs.getResource(modelUri, true)

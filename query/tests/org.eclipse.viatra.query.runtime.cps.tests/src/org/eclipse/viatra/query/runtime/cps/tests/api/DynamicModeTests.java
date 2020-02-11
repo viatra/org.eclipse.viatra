@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.viatra.query.patternlanguage.emf.tests.StandaloneParserEMFPatternLanguageInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.XtextInfrastructureRule;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParsingResults;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -25,12 +27,16 @@ import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class DynamicModeTests {
     
     private EPackage epackage;
     private ResourceSet rs;
+    
+    @Rule
+    public XtextInfrastructureRule rule = new XtextInfrastructureRule(this, StandaloneParserEMFPatternLanguageInjectorProvider.class);
     
     @Before
     public void initializeEngine() {
