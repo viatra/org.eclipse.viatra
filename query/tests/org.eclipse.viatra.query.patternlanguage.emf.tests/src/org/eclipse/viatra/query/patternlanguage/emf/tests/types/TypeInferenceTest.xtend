@@ -829,4 +829,19 @@ class TypeInferenceTest extends AbstractValidatorTest {
         
         tester.validate(model).assertWarning(IssueCodes::MISTYPED_PARAMETER)
     }
+    
+    @Test
+	def void transitiveClosureInferenceTest() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+			
+			pattern unsatisfiedRequirementsUnderPackage(root : TestPackage, req : TestClass){
+			    TestPackageableElement.owningPackage+(mainReq, root);
+			    TestClass.nestedClassifier*(mainReq, req);
+			}
+		''')
+
+        // TODO this pattern should parse fine, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=559522
+		tester.validate(model).assertError(IssueCodes::TRANSITIVE_PATTERNCALL_TYPE)
+	}
 }
