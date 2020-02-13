@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -389,14 +390,34 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                             IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
                 }
                 
-                if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE && !type1.isEnumerable()) {
-                    error(String.format(
-                            "Reflexive transitive closure is not supported over non enumerable type %s.",
-                            typeSystem.typeString(type1)),
-                            getParameterFeature(call),
-                            0,
-                            IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
+                if (call.getTransitive() == ClosureType.REFLEXIVE_TRANSITIVE) {
+                    if (!type1.isEnumerable()) {
+                        error(String.format(
+                                "Reflexive transitive closure is not supported over non enumerable type %s.",
+                                typeSystem.typeString(type1)),
+                                getParameterFeature(call),
+                                0,
+                                IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
+                    } else {
+                        ValueReference universeParameter = PatternLanguageHelper.getCallParameters(call).get(0);
+                        IInputKey inferredUniverseType = typeInferrer.getType(universeParameter);
+                        if (inferredUniverseType == null) {
+                            error("Cannot infer type of reflexive transitive closure.",
+                                    getParameterFeature(call),
+                                    0,
+                                    IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
+                        } else if (!Objects.equals(type1, inferredUniverseType) && !inferredUniverseType.isEnumerable()) {
+                            error(String.format(
+                                    "Reflexive transitive closure is not supported over non enumerable type %s.",
+                                    typeSystem.typeString(inferredUniverseType)),
+                                    getParameterFeature(call),
+                                    0,
+                                    IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
+                        }
+                    }
+                        
                 }
+                    
             }
             
             final EObject eContainer = call.eContainer();

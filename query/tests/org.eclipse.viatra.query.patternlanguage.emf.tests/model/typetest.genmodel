@@ -48,5 +48,16 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/bigInt"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Numbers/bigDecimal"/>
     </genClasses>
+    <genClasses ecoreClass="typetest.ecore#//TestPackageableElement">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference typetest.ecore#//TestPackageableElement/owningPackage"/>
+    </genClasses>
+    <genClasses ecoreClass="typetest.ecore#//TestPackage">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference typetest.ecore#//TestPackage/ownedElements"/>
+    </genClasses>
+    <genClasses ecoreClass="typetest.ecore#//TestClass">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference typetest.ecore#//TestClass/nestedClassifier"/>
+    </genClasses>
+    <genClasses ecoreClass="typetest.ecore#//TestInterface"/>
+    <genClasses ecoreClass="typetest.ecore#//TestClassifier"/>
   </genPackages>
 </genmodel:GenModel>

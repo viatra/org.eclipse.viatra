@@ -38,4 +38,17 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bigInt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bigDecimal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TestPackageableElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owningPackage" eType="#//TestPackage"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TestPackage" eSuperTypes="#//TestPackageableElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ownedElements" upperBound="-1"
+        eType="#//TestPackageableElement" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TestClass" eSuperTypes="#//TestClassifier">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nestedClassifier" upperBound="-1"
+        eType="#//TestClassifier" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TestInterface" eSuperTypes="#//TestClassifier"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TestClassifier" eSuperTypes="#//TestPackageableElement"/>
 </ecore:EPackage>
