@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Viewers IDE
 Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.tooling.ui;singleton:=true
-Bundle-Version: 2.3.0.qualifier
+Bundle-Version: 2.3.1.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
- org.eclipse.viatra.addon.viewers.runtime;bundle-version="[2.3.0,2.4.0)",
- org.eclipse.viatra.query.runtime;bundle-version="[2.3.0,2.4.0)",
+ org.eclipse.viatra.addon.viewers.runtime;bundle-version="[2.3.1,2.4.0)",
+ org.eclipse.viatra.query.runtime;bundle-version="[2.3.1,2.4.0)",
  org.eclipse.emf.edit;bundle-version="2.7.0",
  org.eclipse.emf.edit.ui;bundle-version="2.7.0",
- org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[2.3.0,2.4.0)"
+ org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[2.3.1,2.4.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs
