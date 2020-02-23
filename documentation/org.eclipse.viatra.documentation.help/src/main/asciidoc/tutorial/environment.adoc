@@ -5,12 +5,10 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 [[environment]]
 = Setting up the tutorial
 
-This tutorial was written for version 2.0.0 (released on 28th June 2018). VIATRA 2.0 is available from the Simultaneous Release Train p2 repository (http://download.eclipse.org/releases/photon); for older releases or for older versions use the release p2 repository at http://download.eclipse.org/viatra/updates/release/2.0.0
+This tutorial was last updated using VIATRA 2.3.0 (released on 18th December 2019), available from the Simultaneous Release Train p2 repository (http://download.eclipse.org/releases/2019-12). The latest version can be downloaded from http://download.eclipse.org/viatra/updates/release/latest that should be compatible with everything described here. To install VIATRA, select the `VIATRA Query and Transformation SDK` from the selected repository to install.
 
 .Install window
 image::tutorial/install.png[Install window]
-
-For a faster installation, you may deselect the _Contact all update sites during install\..._ field, but then it might be necessary to install the required _Eclipse Collections_ and _Xtext Runtime_ features manually.
 
 This document assumes that the CPS metamodels are installed into the Eclipse instance. They are available from the p2 repository http://download.eclipse.org/viatra/examples/cps
 
