@@ -147,7 +147,7 @@ If a filter condition has to be reused, it is possible to create mutable matches
 [[query-runtime-printfilteredmatches2]]
 [source,java,indent=0]
 ----
-include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/QueryRunnerApplication.java[tag=printFilteredMatches]
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/QueryRunnerApplication.java[tag=printFilteredMatches2]
 ----
 
 Finally, if we are only interested in whether there exist any match fulfilling the query, or we want to know how many matches there are, the matcher has methods that calculate these. Both of these methods can be combined with filter matches.
