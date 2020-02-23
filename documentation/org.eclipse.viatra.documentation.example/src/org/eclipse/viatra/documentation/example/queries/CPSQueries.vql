@@ -103,6 +103,7 @@ pattern reachableState(sm :StateMachine, state: State){
 // tag::maximumNumberOfInstances[]
 pattern maximumNumberOfInstances(at : ApplicationType, max : java Integer) {
 	max == max find sumNumberOfInstances(at, #);
+	find sumNumberOfInstances(applicationType, max);
 }
 
 pattern sumNumberOfInstances(at : ApplicationType, n : java Integer) {
