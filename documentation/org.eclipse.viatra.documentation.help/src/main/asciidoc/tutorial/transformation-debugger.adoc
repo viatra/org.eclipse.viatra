@@ -11,59 +11,42 @@ The VIATRA framework incorporates a debugger framework that supports the followi
 * Display the model instances associated with the transformation under debugging.
 * Allow the user to define various transformation breakpoints.
 
+NOTE: The model transformation debugger described in this section requires the `VIATRA Query and Transformation SDK Extensions (Incubation)` component to be installed from the VIATRA repository. The debugger in its current form is considered experimental, and both the feature set and API setup is subject to change in future releases of VIATRA.
+
 == Setting Up the Transformation Under Debugging
 In order to support debugging, the model transformation definition needs minor modifications. These can be done in two different ways:
 
 * If the transformation is being newly developed, it is highly advised to use the VIATRA model transformation creation wizard. As shown on the figure below, the user can select the "VIATRA debugger support" checkbox, this way the generated code will incorporate the appropriate setup.
-
-NOTE: Use the _VIATRA Debugger Session Name_ optional parameter to define a textual identifier for the transformation. Usage of this identifier helps the transformation developer to  differentiate between different model transformation sessions, while using the transformation debugger.
-
-.Opening the Wizard
-image::transformation/screenshots/wizard_selection.png[Wizard selection]
-.Selecting debugger support
-image::transformation/screenshots/wizard_debugging.png[Wizard debug]
-
-* In case of an already-existing transformation, the model transformation definition needs to be modified manually. This involves adding the VIATRA debug configuration to the VIATRA transformation builder. The following example snippet shows how this is achieved in the example.
+* In case of an already-existing transformation, the model transformation definition needs to be modified manually. This involves adding the VIATRA debug configuration to the VIATRA transformation builder (requiring an additional dependency to the plugin `org.eclipse.viatra.transformation.runtime.debug`). The following example snippet shows how this is achieved for the example.
 
 [[Transformation-setup]]
 [source,Java]
 ----
-private def createTransformation() {
-    import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration
-    ...
-    transformation = BatchTransformation.forEngine(engine).addAdapterConfiguration(new TransformationDebuggerConfiguration("TestTransformation")).build
-    ...
-}
-----
+// New import declaration
+import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration
 
-As the VIATRA transformation debugger is a _Remote Debugging_-style debugger, the example transformation needs to be started manually. This is especially true in case of batch transformations, since event-driven transformations typically run continuously. The example uses a simple command and handler to run the model transformation on a predefined test model.
-
-[[Transformation-handler]]
-[source,Java]
-----
-public class BatchTestHandler extends AbstractHandler {
-    @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        final Job job = new Job(JOB_NAME) {
-            protected IStatus run(IProgressMonitor monitor) {
-                // Load the CPS model
-                CPSModelInitializer init = new CPSModelInitializer();
-                CPSToDeployment cps2dep = init.loadModel(SOURCE_MODEL_URI);
-                // Initialize CPS to Deployment Transformation
-                CPSTransformation transformation = new CPSBatchTransformation(cps2dep);
-                // Execute the transformation and observe the effects of the selected adapter
-                transformation.execute();
-                transformation.dispose();
-                return Status.OK_STATUS;
-            }
-        };
-        job.schedule();
-        return null;
+public class CPS2DeploymentTransformationViatra {
+...
+    private def createTransformation() {
+        ...
+        // Initializes a debugger configuration with the name `TestTransformation`
+        val debugger = new TransformationDebuggerConfiguration("TestTransformation")
+        transformation = BatchTransformation
+            .forEngine(engine)
+            // Adds the debugger configuration to the transformation
+            .addAdapterConfiguration(debugger)
+            .build
+        ...
     }
+
+...
 }
 ----
 
-In order to properly initiate the VIATRA debugger runtime agent, the target Eclipse instance should be launched via using the following command line arguments:
+NOTE: Here we replace the previously created transformation to always start with debugging enabled. If necessary, the addition of the adapters could be made configurable by the transformation developer and separate menu items can be added as necessary.
+
+The transformation debugger configuration registers a runtime agent that blocks transformation execution until a debugger client connects via JMX. For the agent to work, a few command line parameters to be specified:
+
 [[Transformation-vmargs]]
 [source,Java]
 ----
