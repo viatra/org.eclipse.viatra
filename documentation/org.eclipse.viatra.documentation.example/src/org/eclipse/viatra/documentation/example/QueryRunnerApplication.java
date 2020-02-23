@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.documentation.example;
 
+import java.util.function.Consumer;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -33,6 +35,7 @@ public class QueryRunnerApplication implements IApplication {
 		printAllMatches(engine);
 		printAllMatches2(engine);
 		printAllMatches3(engine);
+		printAllMatches4(engine);
 		
 		printOneMatch(engine);
 		
@@ -77,7 +80,7 @@ public class QueryRunnerApplication implements IApplication {
 	// end::prepareQueryEngine[]
 	
 	// tag::printAllMatches[]
-	private void printAllMatches(ViatraQueryEngine engine ) {
+	private void printAllMatches(ViatraQueryEngine engine) {
 		// Access pattern matcher
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		// Get and iterate over all matches
@@ -89,20 +92,32 @@ public class QueryRunnerApplication implements IApplication {
 	// end::printAllMatches[]
 	
 	// tag::printAllMatches2[]
-	private void printAllMatches2(ViatraQueryEngine engine ) {
-		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
-		matcher.forEachMatch(match -> System.out.println(match.getHost()));
+	private void printAllMatches2(ViatraQueryEngine engine) {
+	    HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
+	    matcher.forEachMatch(new Consumer<HostIpAddress.Match>() {
+	        @Override
+	        public void accept(HostIpAddress.Match match) {
+	            System.out.println(match.getHost());
+	        }
+	    });
 	}
 	// end::printAllMatches2[]
 	
 	// tag::printAllMatches3[]
-	private void printAllMatches3(ViatraQueryEngine engine ) {
+	private void printAllMatches3(ViatraQueryEngine engine) {
+		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
+		matcher.forEachMatch(match -> System.out.println(match.getHost()));
+	}
+	// end::printAllMatches3[]
+	
+	// tag::printAllMatches4[]
+	private void printAllMatches4(ViatraQueryEngine engine) {
 		HostIpAddress.Matcher matcher = HostIpAddress.Matcher.on(engine);
 		for (HostInstance hi : matcher.getAllValuesOfhost()) {
 			System.out.println(hi);
 		}
 	}
-	// end::printAllMatches3[]
+	// end::printAllMatches4[]
 	
 	// tag::printOneMatch[]
 	private void printOneMatch(ViatraQueryEngine engine) {
