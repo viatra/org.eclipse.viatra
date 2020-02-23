@@ -63,7 +63,7 @@ NOTE: If the 'Load model from active editor' button is not enabled, it either me
 In the following, we define a set of patterns that illustrate additional capabilities of the query language. Each pattern will come with a short definition, followed by the code itself and some remarks about how the pattern works.
 
 . List all `HostInstance` elements whose IP address is an empty string
-* This pattern, similar to the first pattern, still consists of a single constraint. The pattern constraints can refer to Java literals, like empty strings or numbers directly. This pattern should have no matches in the example model, as by default all instances have a non-empty IP address set up.
+* This pattern, similar to the first pattern, still consists of a single constraint. The pattern constraints can refer to Java literals, like empty strings or numbers directly.
 * Notice that if you create a new `HostInstance` element, it will not appear in the match results. This happens because in EMF unset and empty attributes are different (similar to the difference between empty Strings and null in Java). You can write a pattern that finds missing attribute values using the `neg find` construct (see later).
 +
 [[vql-emptyipaddress]]
