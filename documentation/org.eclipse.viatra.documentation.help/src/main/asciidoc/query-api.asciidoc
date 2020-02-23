@@ -39,11 +39,11 @@ MatchProcessor:: used to handle query results in a functional style (similar to 
 
 A *Match object* represents a single match of the pattern, i.e. a tuple of objects whose members point to corresponding elements of the instance model (or scalar values) that the pattern is matched against. It is essentially a Data Transfer Object that is used to extract query result information from VIATRA Query, with an SQL analogy you could think of it as one "row" of the result set of a query. The generated fields correspond to the pattern header parameters. 
 
-You can also use *Match* objects to specify fixed input parameters to a query (while other fields can be left unspecified) - analogously to a "prepared" SQL statement that accepts input parameter bindings. In this case, the input Match will act as a filter (mask) and the results of you queries will also be instances of this class (where parameters already have the values given in the input). See TODO below for further details. 
+You can also use *Match* objects to specify fixed input parameters to a query (while other fields can be left unspecified) - analogously to a "prepared" SQL statement that accepts input parameter bindings. In this case, the input Match will act as a filter (mask) and the results of you queries will also be instances of this class (where parameters already have the values given in the input). See below for further details. 
 
 The code example below shows the `ApplicationInstancesMatch` class generated for the *applicationInstances* pattern (with a single parameter AI). The generated class implements the interface `IPatternMatch` through the `BasePatternMatch` internal implementation class. 
 
-NOTE: Immutable matches returned by pattern matchers never include null as a parameter value. Mutable matches, e.g. ones created for filtering uses null to represent unset values; but such matches are never returned from the matcher.
+NOTE: Immutable matches returned by pattern matchers never include null as a parameter value and can never change after initialized. Mutable matches, e.g. ones created for filtering uses null to represent unset values; but such matches are never returned from the matcher.
 
 [[query-api-match]]
 [source,java]
@@ -84,7 +84,7 @@ The *Matcher* is the main entry point of the VIATRA Query API, with pattern-spec
 
 The example generated source code below demonstrates the *ApplicationInstancesMatcher* class generated for the *eClassNames* pattern from the running example. The matcher class implements the ViatraQueryMatcher generic interface, and its implementation code extends the `BaseGeneratedMatcher` internal class, inheriting several useful methods. In the listing below, we show some methods that are not actually part of generated code, but conform to the interface `ViatraQueryMatcher` and are accessible through inheritance from `BaseGeneratedMatcher`. 
 
-NOTE: The pattern matcher API of VIATRA never returns null, but handles null as input parameters. This means, there is no need to check for null when processing matches.
+NOTE: Each function of the pattern matcher API has an overridden version that accepts a (partial) match as input parameters. These input matches may be both mutable and immutable, and can contain null values. However, VIATRA matchers always return immutable matches without null values. This means, there is no need to check for null when processing matches.
 
 [[query-api-matcher]]
 [source,java]
