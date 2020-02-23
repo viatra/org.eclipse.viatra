@@ -192,7 +192,7 @@ This section introduces a set of more complex queries, useful for both introduci
 
 It is possible to find the Application Type that has the most instances defined in the model by combining a _counting_ of the values of the related feature and a _max_ function.  The `sumNumberOfInstances` helper pattern uses a `count` call of the `ApplicationType.instances` feature (note the omission of the `find` keyword there). This feature is available starting with VIATRA 2.0, and allows reducing the number of trivial helper patterns, like the pattern `hostIpAddress` introduced earlier in this tutorial.
 
-After the counts are available in the match set of a pattern, it is easy to calculate the maximum value using the `max find` construct.
+After the counts are available in the match set of a pattern, it is possible to calculate the maximum value using the `max find` construct. However, it is important that calculating the maximum does not connect the ApplicationType instances to their maximum, that needs to be done with an additional constraint.
 
 [[vql-maximumNumberOfInstances]]
 [source,vql,indent=0]
