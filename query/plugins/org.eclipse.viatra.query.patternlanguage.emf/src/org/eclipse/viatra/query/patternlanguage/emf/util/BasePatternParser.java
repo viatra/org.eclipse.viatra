@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -38,7 +39,7 @@ import com.google.inject.name.Named;
  * 
  * @author Peter Lunk
  * @since 2.1
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class BasePatternParser {
     public static final String SYNTHETIC_URI_PREFIX = "__synthetic";
@@ -55,22 +56,28 @@ public abstract class BasePatternParser {
 
     @Inject
     protected PatternSetValidator validator;
-
+    
     protected String fileExtension;
 
     protected SpecificationBuilder builder;
 
-    protected ResourceSet resourceSet;
+    protected XtextResourceSet resourceSet;
 
     protected final Set<URI> libraryURIs;
     protected final Set<IQuerySpecification<?>> librarySpecifications;
 
     private boolean reuseSpecificationBuilder;
+
+    private Optional<ClassLoader> classloader;
     
-    protected BasePatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs) {
+    /**
+     * @since 2.4
+     */
+    protected BasePatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs, Optional<ClassLoader> classloader) {
         this.librarySpecifications = new HashSet<>(librarySpecifications);
         this.libraryURIs = libraryURIs;
         this.reuseSpecificationBuilder = true;
+        this.classloader = classloader;
     }
     
     protected SpecificationBuilder getOrCreateSpecificationBuilder() {
@@ -109,6 +116,7 @@ public abstract class BasePatternParser {
     @Inject
     public void createResourceSet(Provider<XtextResourceSet> resourceSetProvider) {
         this.resourceSet = resourceSetProvider.get();
+        classloader.ifPresent(resourceSet::setClasspathURIContext);
         for (URI uri : libraryURIs) {
             resourceSet.getResource(uri, true);
         }

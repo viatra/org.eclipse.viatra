@@ -259,4 +259,28 @@ class PatternParserTest {
         assertEquals(1, results.patterns.get(0).eResource.contents.filter(JvmGenericType).size)
         assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
     }
+    
+    @Test()
+    def void customJavacodeCheck() {
+        val String pattern = '''
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            import java org.eclipse.viatra.query.patternlanguage.emf.tests.standalone.PatternParserTest;
+            
+            pattern javaCallTest(c : EClass) {
+             EClass.name(c, name);
+             check(PatternParserTest.checkName(name));
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .withClassLoader(PatternParserTest.classLoader)
+            .build
+        val results = parser.parse(pattern)
+        results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].forEach[println]
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+    }
+    
+    static def boolean checkName(String name) {
+        return name.startsWith("abc")
+    }
 }

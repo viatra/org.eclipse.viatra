@@ -1,0 +1,46 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-24]]
+
+= VIATRA 2.4
+
+Release date:: 2020-06-17
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.4.0
+
+== New and Noteworthy
+
+=== Fixed Custom Java Support in Pattern Parser
+
+The pattern parser infrastructure did not provide access to classes ouside the default classpath of the language runtime plugin, e.g. classes defined in plugins VIATRA does not depend on in Eclipse environments. To solve this issue, VIATRA 2.4 allows specifying a classloader for the pattern parser that gets used.
+
+[source,xtend]
+----
+class PatternParserTest {
+
+  static def boolean checkName(String name) {
+    return name.startsWith("abc")
+  }
+
+  def void parse() {
+    val String pattern = '''
+      import "http://www.eclipse.org/emf/2002/Ecore";
+      import java org.eclipse.viatra.query.examples.PatternParserTest;
+      
+      pattern javaCallTest(c : EClass) {
+        EClass.name(c, name);
+        check(PatternParserTest.checkName(name));
+      }
+    '''
+
+    val parser = new PatternParserBuilder()
+      .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+      .withClassLoader(PatternParserTest.classLoader)
+      .build
+    val uri = URI.createFileURI("b.vql")
+    val results = parser.parse(pattern, uri)
+----
+
+
+
+== Migrating to VIATRA 2.4

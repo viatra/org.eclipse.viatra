@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.util;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -33,6 +34,8 @@ public class PatternParserBuilder {
     private Set<IQuerySpecification<?>> librarySpecifications = new HashSet<>();
 
     private BiFunction<ResourceSet, String, URI> unusedURIComputer = PatternParser.UNUSED_ABSOLUTE_FILE_URI_PROVIDER;
+
+    private ClassLoader classLoader;
 
     
     public static PatternParserBuilder instance(){
@@ -74,6 +77,17 @@ public class PatternParserBuilder {
         return this;
     }
     
+    /**
+     * Sets a custom classloader for resolving the types in check and eval expressions. If no custom classloader is set,
+     * the one use to load the type {@link PatternParserBuilder} is used.
+     * 
+     * @since 2.4
+     */
+    public PatternParserBuilder withClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+        return this;
+    }
+    
     private Injector getInjector() {
         if (injector == null) {
             return Objects.requireNonNull(XtextInjectorProvider.INSTANCE.getInjector(), PPERROR);
@@ -85,13 +99,13 @@ public class PatternParserBuilder {
      * Initializes the pattern parser instance
      */
     public PatternParser build() {
-        PatternParser parser = new PatternParser(librarySpecifications, libraryURIs, unusedURIComputer);
+        PatternParser parser = new PatternParser(librarySpecifications, libraryURIs, unusedURIComputer, Optional.ofNullable(classLoader));
         getInjector().injectMembers(parser);
         return parser;
     }
     
     public AdvancedPatternParser buildAdvanced() {
-        AdvancedPatternParser parser = new AdvancedPatternParser(librarySpecifications, libraryURIs);
+        AdvancedPatternParser parser = new AdvancedPatternParser(librarySpecifications, libraryURIs, Optional.ofNullable(classLoader));
         getInjector().injectMembers(parser);
         return parser;
     }

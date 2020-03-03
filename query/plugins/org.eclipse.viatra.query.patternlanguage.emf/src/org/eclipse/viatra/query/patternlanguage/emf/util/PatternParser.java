@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -29,6 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
 
 /**
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PatternParser extends BasePatternParser{
 
@@ -67,10 +69,10 @@ public class PatternParser extends BasePatternParser{
 
 
     /**
-     * @since 2.1
+     * @since 2.4
      */
-    protected PatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs, BiFunction<ResourceSet, String, URI> unusedURIComputer) {
-        super(librarySpecifications, libraryURIs);
+    protected PatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs, BiFunction<ResourceSet, String, URI> unusedURIComputer, Optional<ClassLoader> classloader) {
+        super(librarySpecifications, libraryURIs, classloader);
         this.unusedURIComputer = unusedURIComputer;
     }
 

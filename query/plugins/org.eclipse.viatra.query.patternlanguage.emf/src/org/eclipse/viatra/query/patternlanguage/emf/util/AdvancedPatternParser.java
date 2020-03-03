@@ -57,7 +57,7 @@ import com.google.inject.Provider;
  * 
  * @author Peter Lunk
  * @since 2.1
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 @SuppressWarnings("restriction")
 public class AdvancedPatternParser extends BasePatternParser {
@@ -67,8 +67,11 @@ public class AdvancedPatternParser extends BasePatternParser {
     private final Map<URI, PatternSetValidationDiagnostics> diagnosticsMap;
     private final Multimap<URI, URI> dependencyCache;
 
-    protected AdvancedPatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs) {
-        super(librarySpecifications, libraryURIs);
+    /**
+     * @since 2.4
+     */
+    protected AdvancedPatternParser(Set<IQuerySpecification<?>> librarySpecifications, Set<URI> libraryURIs, Optional<ClassLoader> classloader) {
+        super(librarySpecifications, libraryURIs, classloader);
         uriTextMap = new HashMap<>();
         diagnosticsMap = new HashMap<>();
         dependencyCache = HashMultimap.create();
