@@ -10,19 +10,17 @@ module org.eclipse.viatra.query.patternlanguage.emf.GenerateEMFPatternLanguage
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.emf.mwe2.ecore.*
-import org.eclipse.xtext.generator.*
-import org.eclipse.xtext.ui.generator.*
 import org.eclipse.xtext.xtext.generator.*
 import org.eclipse.xtext.xtext.generator.model.project.*
 
 var projectName = "org.eclipse.viatra.query.patternlanguage.emf"
-var runtimeProject = "../${projectName}"
+var rootPath = ".."
+var runtimeProject = "${rootPath}/${projectName}"
 var metamodel = "platform:/resource/${projectName}/model/PatternLanguage.genmodel"
 
 Workflow {
     bean = StandaloneSetup {
         scanClassPath = true
-        platformUri = "${runtimeProject}/.."
         
         registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
         registerGeneratedEPackage = "org.eclipse.xtext.common.types.TypesPackage"
@@ -45,11 +43,14 @@ Workflow {
         configuration = {
             project = StandardProjectConfig {
                 baseName = projectName
-                rootPath = ".."
+                rootPath = rootPath
                 
+                runtime = {
+                       root="${rootPath}/${projectName}"
+                }
                 runtimeTest = {
-                    root = "../../tests/${projectName}.tests"
                     enabled = true
+                    root = "${rootPath}/../tests/${projectName}.tests"
                     pluginXml = {
                         path = "plugin.xml_gen"
                     }
@@ -59,6 +60,7 @@ Workflow {
                 }
                 genericIde = {
                     enabled = true
+                    root = "${rootPath}/${projectName}.ide"
                     metaInf = "${runtimeProject}.ide/META-INF"
                     pluginXml = {
                         path = "plugin.xml_gen"
@@ -70,6 +72,7 @@ Workflow {
                 }
                 eclipsePlugin = {
                     enabled = true
+                    root = "${rootPath}/${projectName}.ui"
                     pluginXml = {
                         path = "plugin.xml_gen"
                     }
@@ -79,7 +82,7 @@ Workflow {
                 }
                 eclipsePluginTest = {
                     enabled = true
-                    root = "../../tests/${projectName}.ui.tests"
+                    root = "${rootPath}/../tests/${projectName}.ui.tests"
                     pluginXml = {
                         path = "plugin.xml_gen"
                     }

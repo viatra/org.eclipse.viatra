@@ -1,10 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2018, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
  * http://www.eclipse.org/legal/epl-v20.html.
  * 
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * This file was generated from GeneratorModel.xtext
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.generator.model.validation;
 
@@ -14,8 +16,13 @@ import org.eclipse.viatra.query.tooling.generator.model.generatorModel.Generator
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelReference;
 import org.eclipse.xtext.validation.Check;
 
-public class GeneratorModelJavaValidator extends AbstractGeneratorModelJavaValidator {
-
+/**
+ * This class contains custom validation rules. 
+ *
+ * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
+ */
+public class GeneratorModelValidator extends AbstractGeneratorModelValidator {
+	
     private static final String OVERRIDE_MESSAGE = "The genmodel import overrides the EPackage %s from the EMF EPackage registry. Be careful as this might cause issues with the interpretative tooling.";
 
     @Check
@@ -35,4 +42,5 @@ public class GeneratorModelJavaValidator extends AbstractGeneratorModelJavaValid
         }
 
     }
+	
 }

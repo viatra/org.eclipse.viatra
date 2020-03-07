@@ -10,7 +10,7 @@ package org.eclipse.viatra.query.tooling.generator.model.ui;
 
 import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.viatra.query.tooling.generator.model.validation.GeneratorModelJavaValidator;
+import org.eclipse.viatra.query.tooling.generator.model.validation.GeneratorModelValidator;
 import org.eclipse.xtext.service.SingletonBinding;
 
 import com.google.inject.Provides;
@@ -33,7 +33,7 @@ public class GeneratorModelUiModule extends AbstractGeneratorModelUiModule {
     }
 
     @SingletonBinding(eager = true)
-    public Class<? extends GeneratorModelJavaValidator> bindGeneratorModelJavaValidator() {
+    public Class<? extends GeneratorModelValidator> bindGeneratorModelJavaValidator() {
         return GenmodelProjectBasedValidation.class;
     }
 }

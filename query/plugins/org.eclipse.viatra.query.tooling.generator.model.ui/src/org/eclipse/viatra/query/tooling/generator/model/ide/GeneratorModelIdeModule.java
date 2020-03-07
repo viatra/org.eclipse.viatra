@@ -8,15 +8,11 @@
  *
  * This file was generated from GeneratorModel.xtext
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.generator.model.scoping;
+package org.eclipse.viatra.query.tooling.generator.model.ide;
 
 
 /**
- * This class contains custom scoping description.
- * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
- * on how and when to use it.
+ * Use this class to register ide components.
  */
-public class GeneratorModelScopeProvider extends AbstractGeneratorModelScopeProvider {
-
+public class GeneratorModelIdeModule extends AbstractGeneratorModelIdeModule {
 }

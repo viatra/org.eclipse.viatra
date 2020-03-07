@@ -163,7 +163,7 @@
           name="org.hamcrest"/>
       <requirement
           name="com.google.guava"
-          versionRange="[15.0.0,28.0.0)"/>
+          versionRange="[27.1.0,28.0.0)"/>
       <requirement
           name="org.eclipse.fx.runtime.min.feature.feature.group"/>
       <requirement
@@ -886,13 +886,15 @@
             name="de.itemis.xtext.antlr.feature.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.16.0,3.0.0)"/>
+            versionRange="[2.20.0,3.0.0)"/>
         <repositoryList
             name="2019-06">
           <repository
               url="http://download.eclipse.org/releases/2019-06"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
         </repositoryList>
         <repositoryList
             name="2019-09">
@@ -900,6 +902,8 @@
               url="http://download.eclipse.org/releases/2019-09"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
         </repositoryList>
         <repositoryList
             name="2019-12">
@@ -914,11 +918,11 @@
           activeRepositoryList="">
         <requirement
             name="org.eclipse.collections.feature.source.feature.group"
-            versionRange="[9.2.0,10.0.0)"/>
+            versionRange="[10.1.0,11.0.0)"/>
         <repositoryList
-            name="9.2.0">
+            name="10.2.0">
           <repository
-              url="http://download.eclipse.org/collections/9.2.0/repository"/>
+              url="http://download.eclipse.org/collections/10.2.0/repository"/>
         </repositoryList>
       </targlet>
     </setupTask>

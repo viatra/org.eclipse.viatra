@@ -18,13 +18,14 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.7.6.201602180812</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../jacoco</jacoco.targetdir>
-		<xtend.compiler.version>2.16.0</xtend.compiler.version>
+		<xtend.compiler.version>2.20.0</xtend.compiler.version>
+		<mwe.version>2.11.1</mwe.version>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<viatra.main.version>2.4.0-SNAPSHOT</viatra.main.version>
 		<cbi.jarsigner.version>1.1.3</cbi.jarsigner.version>
-		<simrel.repository.url>http://download.eclipse.org/releases/mars</simrel.repository.url>
+		<simrel.repository.url>http://download.eclipse.org/releases/2019-06</simrel.repository.url>
 		<!-- Composite site related properties -->
 		<viatra.updates.dir>updates</viatra.updates.dir>
 		<viatra.download.area>target/composite</viatra.download.area>

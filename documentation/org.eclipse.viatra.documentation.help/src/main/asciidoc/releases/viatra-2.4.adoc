@@ -44,3 +44,10 @@ class PatternParserTest {
 
 
 == Migrating to VIATRA 2.4
+
+VIATRA 2.4 removes support for older versions of its dependencies. When updating to VIATRA 2.4, ensure the required dependencies are updated to at least as follows:
+
+* Eclipse Platform 2019-06 or newer for the query editing support
+* Xtext version 2.20
+  * This resulted in increased Guava minimum version 27.1.0 
+* Eclipse Collections version 10.2

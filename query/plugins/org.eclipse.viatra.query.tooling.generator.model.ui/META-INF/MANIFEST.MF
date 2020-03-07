@@ -5,14 +5,14 @@ Bundle-Version: 2.4.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.generator.model.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version="[2.4.0,2.5.0)";visibility:=reexport,
- org.eclipse.xtext.ui;bundle-version="[2.16.0,3.0.0)",
+ org.eclipse.xtext.ui;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0",
- org.eclipse.xtext.ui.shared;bundle-version="[2.16.0,3.0.0)",
+ org.eclipse.xtext.ui.shared;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.ui,
  org.antlr.runtime,
- org.eclipse.xtext.common.types.ui;bundle-version="[2.16.0,3.0.0)",
- org.eclipse.xtext.ui.codetemplates.ui;bundle-version="[2.16.0,3.0.0)",
+ org.eclipse.xtext.common.types.ui;bundle-version="[2.20.0,3.0.0)",
+ org.eclipse.xtext.ui.codetemplates.ui;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.compare,
  org.eclipse.jdt.core,
  org.eclipse.emf.codegen.ecore,
@@ -20,9 +20,9 @@ Require-Bundle: org.eclipse.viatra.query.tooling.generator.model;bundle-version=
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.viatra.query.tooling.generator.model.ui.contentassist,
- org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr,
+ org.eclipse.viatra.query.tooling.generator.model.ide.contentassist.antlr,
  org.eclipse.viatra.query.tooling.generator.model.ui.quickfix,
- org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr.internal
-Bundle-Activator: org.eclipse.viatra.query.tooling.generator.model.ui.internal.GeneratorModelActivator
+ org.eclipse.viatra.query.tooling.generator.model.ide.contentassist.antlr.internal
+Bundle-Activator: org.eclipse.viatra.query.tooling.generator.model.ui.internal.ModelActivator
 Bundle-Vendor: Eclipse VIATRA Project
 Automatic-Module-Name: org.eclipse.viatra.query.tooling.generator.model.ui

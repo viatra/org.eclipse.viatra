@@ -15,13 +15,13 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelReference;
-import org.eclipse.viatra.query.tooling.generator.model.validation.GeneratorModelJavaValidator;
+import org.eclipse.viatra.query.tooling.generator.model.validation.GeneratorModelValidator;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
 
-public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator {
+public class GenmodelProjectBasedValidation extends GeneratorModelValidator {
 
     public static final String GENMODEL_DEPENDENCY = "org.eclipse.viatra.query.tooling.generator.model.ui."
             + "genmodel_dependency";

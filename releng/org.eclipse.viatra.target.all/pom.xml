@@ -11,33 +11,4 @@
     </parent>
     <artifactId>org.eclipse.viatra.target.all</artifactId>
     <packaging>eclipse-target-definition</packaging>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
-                <executions>
-                    <!-- make target file available for incremental builds -->
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <!-- note: file names must be ${classifier}.target -->
-                                <artifact>
-                                    <file>oxygen.target</file>
-                                    <type>target</type>
-                                    <classifier>oxygen</classifier>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

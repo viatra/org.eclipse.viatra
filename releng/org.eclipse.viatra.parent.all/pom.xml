@@ -76,7 +76,6 @@
 		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
 	</parent>
 	<properties>
-		<target.classifier>oxygen</target.classifier>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.jacoco.reportPaths>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPaths>
@@ -114,7 +113,6 @@
 							<groupId>org.eclipse.viatra</groupId>
 							<artifactId>org.eclipse.viatra.target.all</artifactId>
 							<version>${viatra.main.version}</version>
-							<classifier>${target.classifier}</classifier>
 						</artifact>
 						<dependency-resolution>
 							<extraRequirements>

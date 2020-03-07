@@ -25,9 +25,9 @@ Export-Package: org.eclipse.viatra.dse.api,
  org.eclipse.viatra.dse.util,
  org.eclipse.viatra.dse.visualizer
 Bundle-ActivationPolicy: lazy
-Import-Package: com.google.common.base;version="15.0.0",
- com.google.common.collect;version="15.0.0",
- com.google.common.util.concurrent;version="15.0.0",
+Import-Package: com.google.common.base;version="27.1.0",
+ com.google.common.collect;version="27.1.0",
+ com.google.common.util.concurrent;version="27.1.0",
  org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Eclipse VIATRA Project
 Automatic-Module-Name: org.eclipse.viatra.dse

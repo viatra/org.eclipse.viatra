@@ -25,34 +25,17 @@
             <groupId>org.eclipse.xtext</groupId>
             <artifactId>org.eclipse.xtext</artifactId>
             <version>${xtend.compiler.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.xtext</groupId>
             <artifactId>org.eclipse.xtext.xbase</artifactId>
             <version>${xtend.compiler.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.xtext</groupId>
             <artifactId>org.eclipse.xtext.xtext.generator</artifactId>
             <version>${xtend.compiler.version}</version>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>[14.0,22)</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

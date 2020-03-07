@@ -10,10 +10,6 @@
     </parent>
   <artifactId>org.eclipse.viatra.query.patternlanguage.emf.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <properties>
-    <!-- Photon is required to build code minings, but not required to run the editor itself -->
-    <target.classifier>photon</target.classifier>
-  </properties>
   <build>
         <plugins>
             <plugin>

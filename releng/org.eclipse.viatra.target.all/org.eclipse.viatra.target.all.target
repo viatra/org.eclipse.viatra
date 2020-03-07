@@ -1,84 +1,73 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="viatra" sequenceNumber="35">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="VIATRA-201906" sequenceNumber="1492772502">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.8.2.v201511170833"/>
-<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170833/mwe/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
-<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
-<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
-<unit id="com.google.inject" version="3.0.0.v201312141243"/>
-<unit id="org.junit" version="4.11.0.v201303080030"/>
-<unit id="org.mockito" version="1.9.5.v201311280930"/>
-<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.gmf.runtime.notation.sdk.feature.group" version="1.5.0.v20110426-2159-47D08xGD6ExNBM7CIJa3CIKK9t84"/>
-<unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="1.5.0.v20110607-1200-67N09E9QnChoWswz-3wf_rz0kQ8Y"/>
-<unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.8.2.v20120215-0845"/>
-<repository location="http://download.eclipse.org/releases/indigo/201202240900/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.uml2.sdk.feature.group" version="5.0.2.v20150202-0947"/>
-<repository location="http://download.eclipse.org/modeling/mdt/uml2/updates/5.0/R201502020947/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.license.feature.group" version="2.0.1.v20180423-1114"/>
-<repository location="http://download.eclipse.org/cbi/updates/license/2.0.1.v20180423-1114"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.0.0.201711130301"/>
-<unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201711130301"/>
-<unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.0.2.201711130301"/>
-<repository location="http://download.eclipse.org/tools/gef/updates/releases/5.0.2_gef-maintenance_164"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201605250459"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.ecore.xcore.sdk.feature.group" version="1.3.0.v20150602-0808"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
-<repository location="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.8.2.v201511170842"/>
-<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170842/mwe2lang/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xpand.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/xpand/R201406030414"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
-<unit id="de.itemis.xtext.antlr.sdk.feature.group" version="2.1.1.v201405091103"/>
-<repository location="http://download.itemis.com/updates/releases/2.1.1"/>
+<repository location="http://download.itemis.com/updates/releases/2.1.1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.transaction.sdk.feature.group" version="1.5.1.v20110823-1800-777T19A_WsXmjNatPxcrPm1rOKlH"/>
-<repository location="http://download.eclipse.org/releases/indigo"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.20.0.v20191202-1256"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
+</location>
+<location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
+<unit id="com.google.inject" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
+<unit id="org.junit" version="4.12.0.v201504281640"/>
+<unit id="org.mockito" version="1.9.5.v201605172210"/>
+<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
+<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.jdt.source.feature.group" version="3.8.2.v20130116-090414-8-8nFu3FNOfwKLRuqgXKIy9z0I83"/>
-<unit id="org.eclipse.platform.sdk" version="4.2.2.M20130204-1200"/>
-<unit id="org.eclipse.pde.feature.group" version="3.8.2.v20130116-091538-7c7wFj0FFt6Zr9bd4AM1JEQMS"/>
-<unit id="org.eclipse.platform.feature.group" version="4.2.1.v20130118-173121-9MF7GHYdG0B5kx4E_SkfZV-1mNjVATf67ZAb7"/>
-<unit id="org.eclipse.jdt.feature.group" version="3.8.2.v20130116-090414-8-8nFu3FNOfwKLRuqgXKIy9z0I83"/>
-<unit id="org.eclipse.pde.source.feature.group" version="3.8.2.v20130116-091538-7c7wFj0FFt6Zr9bd4AM1JEQMS"/>
-<unit id="org.eclipse.pde.source.feature.group" version="3.8.2.v20130116-091538-7c7wFj0FFt6Zr9bd4AM1JEQMS"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.2/R-4.2.2-201302041200"/>
+<unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.11.2.v20200224-0816"/>
+<unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="2.11.2.v20200224-0816"/>
+<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.11.2.v20200224-0816"/>
+<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
 </location>
-<location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
-<repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="2.0.2.v20181016-2210"/>
+<repository location="http://download.eclipse.org/cbi/updates/license/2.0.2.v20181016-2210"/>
 </location>
-<location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-<unit id="org.eclipse.equinox.sdk.feature.group" version="3.10.2.v20150204-1316"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.5.0.201902220600"/>
+<repository location="http://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.18.0.v20190528-1257"/>
+<unit id="org.eclipse.jdt.feature.group" version="3.18.0.v20190605-1800"/>
+<unit id="org.eclipse.pde.feature.group" version="3.14.0.v20190605-1800"/>
+<unit id="org.eclipse.platform.feature.group" version="4.12.0.v20190605-1801"/>
+<unit id="org.eclipse.platform.sdk" version="4.12.0.I20190605-1800"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.12/R-4.12-201906051800/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.18.0.v20190528-0845" />
+<unit id="org.eclipse.emf.transaction.sdk.feature.group" version="1.12.0.201805140824"/>
+<unit id="org.eclipse.gmf.runtime.notation.sdk.feature.group" version="1.12.0.201805221301"/>
+<unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="1.12.1.201905141505"/>
+<unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.16.0.201906041401"/>
+<unit id="org.eclipse.uml2.sdk.feature.group" version="5.5.0.v20181203-1331"/>
+<unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.1.0.201905091638"/>
+<unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201905091638"/>
+<unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.1.0.201905091638"/>
+<repository location="https://download.eclipse.org/releases/2019-06/201906191000/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+  <unit id="org.eclipse.collections.feature.feature.group" version="10.1.0.v20200211-1558"/>
+  <repository location="http://download.eclipse.org/collections/10.2.0/repository"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.viatra.examples.cps.metamodel.feature.feature.group" version="2.0.0.201801280931"/>
+<repository location="http://download.eclipse.org/viatra/examples/cps/2.0.0.201801280453"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+  <unit id="org.eclipse.sirius.runtime.ide.ui.source.feature.group" version="6.0.1.201808231529"/>
+  <unit id="org.eclipse.sirius.runtime.aql.source.feature.group" version="6.0.1.201808231529"/>
+  <unit id="org.eclipse.sirius.properties.feature.source.feature.group" version="6.0.1.201808231529"/>
+  <unit id="org.eclipse.sirius.runtime.ide.eef.source.feature.group" version="6.0.1.201808231529"/>
+  <unit id="org.eclipse.sirius.runtime.ide.xtext.source.feature.group" version="6.0.1.201808231529"/>
+  <repository location="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
 </location>
 </locations>
-<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 </target>
