@@ -34,6 +34,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUiModule;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.EcoreUtil2;
@@ -54,6 +55,7 @@ import org.eclipse.xtext.xbase.ui.quickfix.XbaseQuickfixProvider;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
@@ -93,6 +95,8 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     private EMFTypeInferrer typeInferrer;
     @Inject
     private EMFTypeSystem typeSystem;
+    @Inject @Named(EMFPatternLanguageUiModule.ENABLE_EXPLANATION_QUICKFIXES)
+    private boolean explanationsEnabled;
     
     @Fix(IssueCodes.IDENTIFIER_AS_KEYWORD)
     public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
@@ -271,8 +275,10 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     }
 
     private void explainWithHelp(final Issue issue, IssueResolutionAcceptor acceptor, final String helpContextID) {
-        acceptor.accept(issue, "Explain message", "", null,
-                (IModification) context -> PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID));
+        if (explanationsEnabled) {
+            acceptor.accept(issue, "Explain message", "", null,
+                context -> PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID));
+        }
     }
     
 }

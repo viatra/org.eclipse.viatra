@@ -77,6 +77,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
 import org.eclipse.xtext.xbase.validation.UniqueClassNameValidator;
+import org.osgi.framework.Bundle;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -90,6 +91,11 @@ import com.google.inject.name.Names;
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
     private static final String LOGGER_ROOT = "org.eclipse.viatra.query";
+    
+    /**
+     * @since 2.4
+     */
+    public static final String ENABLE_EXPLANATION_QUICKFIXES = "org.eclipse.viatra.query.vql.enabledexplanations";
 
     public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
         super(plugin);
@@ -302,5 +308,15 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @SingletonBinding(eager = true)
     public Class<? extends UniqueClassNameValidator> bindUniqueClassNameValidator() {
         return EMFPatternLanguageUniqueClassNameValidator.class;
+    }
+    
+    /**
+     * @since 2.4
+     */
+    public void configureEnabledExplanation(Binder binder) {
+        final Bundle helpBundle = Platform.getBundle("org.eclipse.viatra.documentation.help");
+        binder.bind(Boolean.class)
+            .annotatedWith(Names.named(ENABLE_EXPLANATION_QUICKFIXES))
+            .toInstance(helpBundle != null);
     }
 }
